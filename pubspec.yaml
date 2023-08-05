@@ -20,3 +20,33 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/animations
+    - assets/brand
+    - assets/fonts
+    - assets/images
+  
+  fonts:
+    - family: MIcons
+      fonts:
+        - asset: assets/fonts/MIcons.ttf
+    - family: SFProDisplay
+      fonts:
+        - asset: assets/fonts/SFProDisplay_Thin.ttf
+          weight: 100
+        - asset: assets/fonts/SFProDisplay_UltraLight.ttf
+          weight: 200
+        - asset: assets/fonts/SFProDisplay_Light.ttf
+          weight: 300
+        - asset: assets/fonts/SFProDisplay_Regular.ttf
+          weight: 400
+        - asset: assets/fonts/SFProDisplay_Medium.ttf
+          weight: 500
+        - asset: assets/fonts/SFProDisplay_SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/SFProDisplay_Bold.ttf
+          weight: 700
+        - asset: assets/fonts/SFProDisplay_Black.ttf
+          weight: 800
+        - asset: assets/fonts/SFProDisplay_Heavy.ttf
+          weight: 900
