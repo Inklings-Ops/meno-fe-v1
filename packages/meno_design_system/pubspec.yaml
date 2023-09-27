@@ -1,26 +1,18 @@
-name: meno_fe_v1
-description: A new Flutter project.
-publish_to: 'none'
-version: 0.1.0
+name: meno_design_system
+description: A new Flutter package project.
+version: 0.0.1
+homepage:
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
+  sdk: '>=3.1.2 <4.0.0'
+  flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  meno_design_system:
-    path: packages/meno_design_system
   flutter_gen: ^5.3.1
-  flutter_hooks: ^0.20.0
   flutter_svg: ^2.0.7
-  hooks_riverpod: ^2.3.7
-  intl: ^0.18.1
-
   pinput: ^3.0.1
-
-  widgetbook: ^3.2.0
-  widgetbook_annotation: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -29,16 +21,18 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_gen_runner: ^5.3.1
 
-  widgetbook_generator: ^3.1.0
-
 flutter_gen:
-  output: lib/core/gen/
+  output: lib/src/gen/
   integrations:
     flutter_svg: true
     # flare_flutter: true
     # rive: true
     # lottie: true
 
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
   assets:
