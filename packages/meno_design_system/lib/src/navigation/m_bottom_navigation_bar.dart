@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/src/m_decorations.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 import 'package:meno_design_system/src/theme/m_color.dart';
 import 'package:meno_design_system/src/theme/m_icons.dart';
-import 'package:meno_design_system/src/theme/m_theme.dart';
 
 /// A customizable bottom navigation bar widget for your Flutter app.
 ///
@@ -77,7 +77,7 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
         border: Border(
           top: BorderSide(
             width: 0.80,
-            color: MTheme.resolve(isLight, MColor.grey30, MColor.grey400),
+            color: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
           ),
         ),
       ),

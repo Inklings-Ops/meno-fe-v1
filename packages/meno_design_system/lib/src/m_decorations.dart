@@ -20,4 +20,13 @@ class MDecorations {
       spreadRadius: 1,
     ),
   ];
+
+  static const cardShadow = <BoxShadow>[
+    BoxShadow(
+      color: Color(0x0C000000),
+      blurRadius: 10,
+      offset: Offset(0, 2),
+      spreadRadius: 2,
+    )
+  ];
 }

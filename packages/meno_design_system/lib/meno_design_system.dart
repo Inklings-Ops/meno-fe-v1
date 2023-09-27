@@ -1,5 +1,6 @@
 library meno_design_system;
 
+export 'src/badges/m_badge.dart';
 export 'src/buttons/m_back_button.dart';
 export 'src/buttons/m_button.dart';
 export 'src/buttons/m_button_icon_placement.dart';
@@ -9,6 +10,7 @@ export 'src/buttons/m_primary_button.dart';
 export 'src/buttons/m_secondary_button.dart';
 export 'src/buttons/m_success_button.dart';
 export 'src/buttons/m_text_button.dart';
+export 'src/cards/m_card.dart';
 export 'src/dividers/m_divider.dart';
 export 'src/gen/assets.gen.dart';
 export 'src/gen/fonts.gen.dart';
@@ -17,6 +19,7 @@ export 'src/input_fields/m_text_form_field.dart';
 export 'src/loading_indicator/m_loading_indicator.dart';
 export 'src/navigation/m_app_bar.dart';
 export 'src/navigation/m_bottom_navigation_bar.dart';
+export 'src/text/m_text.dart';
 export 'src/theme/m_color.dart';
 export 'src/theme/m_color_scheme.dart';
 export 'src/theme/m_icons.dart';
@@ -25,4 +28,3 @@ export 'src/theme/styles/m_app_bar_styles.dart';
 export 'src/theme/styles/m_button_style.dart';
 export 'src/theme/styles/m_text_field_style.dart';
 export 'src/theme/styles/m_text_style.dart';
-export 'src/text/m_text.dart';

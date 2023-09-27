@@ -4,34 +4,34 @@ import 'm_color.dart';
 
 class MColorScheme extends ThemeExtension<MColorScheme> {
   final Brightness? brightness;
-  final Color? primary;
-  final Color? onPrimary;
-  final Color? primaryContainer;
-  final Color? onPrimaryContainer;
-  final Color? secondary;
-  final Color? onSecondary;
-  final Color? secondaryContainer;
-  final Color? onSecondaryContainer;
-  final Color? tertiary;
-  final Color? onTertiary;
-  final Color? tertiaryContainer;
-  final Color? onTertiaryContainer;
-  final Color? error;
-  final Color? onError;
-  final Color? errorContainer;
-  final Color? onErrorContainer;
-  final Color? background;
-  final Color? onBackground;
-  final Color? surface;
-  final Color? onSurface;
-  final Color? surfaceTint;
-  final Color? inverseSurface;
-  final Color? onInverseSurface;
-  final Color? inversePrimary;
-  final Color? outline;
-  final Color? outlineVariant;
-  final Color? scrim;
-  final Color? shadow;
+  final MColor? primary;
+  final MColor? onPrimary;
+  final MColor? primaryContainer;
+  final MColor? onPrimaryContainer;
+  final MColor? secondary;
+  final MColor? onSecondary;
+  final MColor? secondaryContainer;
+  final MColor? onSecondaryContainer;
+  final MColor? tertiary;
+  final MColor? onTertiary;
+  final MColor? tertiaryContainer;
+  final MColor? onTertiaryContainer;
+  final MColor? error;
+  final MColor? onError;
+  final MColor? errorContainer;
+  final MColor? onErrorContainer;
+  final MColor? background;
+  final MColor? onBackground;
+  final MColor? surface;
+  final MColor? onSurface;
+  final MColor? surfaceTint;
+  final MColor? inverseSurface;
+  final MColor? onInverseSurface;
+  final MColor? inversePrimary;
+  final MColor? outline;
+  final MColor? outlineVariant;
+  final MColor? scrim;
+  final MColor? shadow;
 
   MColorScheme({
     this.brightness,
@@ -105,41 +105,41 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
       outline: resolve(isLight, MColor.primary300, MColor.primary75),
       outlineVariant: resolve(isLight, MColor.grey30, MColor.grey400),
       scrim: resolve(isLight, MColor.n0, MColor.n0),
-      shadow: const Color.fromRGBO(54, 0, 144, 0.3),
+      shadow: MColor.shadow,
     );
   }
 
   @override
   ThemeExtension<MColorScheme> copyWith({
     Brightness? brightness,
-    Color? primary,
-    Color? onPrimary,
-    Color? primaryContainer,
-    Color? onPrimaryContainer,
-    Color? secondary,
-    Color? onSecondary,
-    Color? secondaryContainer,
-    Color? onSecondaryContainer,
-    Color? tertiary,
-    Color? onTertiary,
-    Color? tertiaryContainer,
-    Color? onTertiaryContainer,
-    Color? error,
-    Color? onError,
-    Color? errorContainer,
-    Color? onErrorContainer,
-    Color? background,
-    Color? onBackground,
-    Color? surface,
-    Color? onSurface,
-    Color? surfaceTint,
-    Color? inverseSurface,
-    Color? onInverseSurface,
-    Color? inversePrimary,
-    Color? outline,
-    Color? outlineVariant,
-    Color? scrim,
-    Color? shadow,
+    MColor? primary,
+    MColor? onPrimary,
+    MColor? primaryContainer,
+    MColor? onPrimaryContainer,
+    MColor? secondary,
+    MColor? onSecondary,
+    MColor? secondaryContainer,
+    MColor? onSecondaryContainer,
+    MColor? tertiary,
+    MColor? onTertiary,
+    MColor? tertiaryContainer,
+    MColor? onTertiaryContainer,
+    MColor? error,
+    MColor? onError,
+    MColor? errorContainer,
+    MColor? onErrorContainer,
+    MColor? background,
+    MColor? onBackground,
+    MColor? surface,
+    MColor? onSurface,
+    MColor? surfaceTint,
+    MColor? inverseSurface,
+    MColor? onInverseSurface,
+    MColor? inversePrimary,
+    MColor? outline,
+    MColor? outlineVariant,
+    MColor? scrim,
+    MColor? shadow,
   }) {
     return MColorScheme(
       brightness: brightness ?? this.brightness,
@@ -182,39 +182,46 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
     if (other is! MColorScheme) return this;
     return MColorScheme(
       brightness: other.brightness,
-      primary: Color.lerp(primary, other.primary, t),
-      onPrimary: Color.lerp(onPrimary, other.onPrimary, t),
-      primaryContainer: Color.lerp(primaryContainer, other.primaryContainer, t),
+      primary: MColor.lerp(primary, other.primary, t),
+      onPrimary: MColor.lerp(onPrimary, other.onPrimary, t),
+      primaryContainer:
+          MColor.lerp(primaryContainer, other.primaryContainer, t),
       onPrimaryContainer:
-          Color.lerp(onPrimaryContainer, other.onPrimaryContainer, t),
-      secondary: Color.lerp(secondary, other.secondary, t),
-      onSecondary: Color.lerp(onSecondary, other.onSecondary, t),
+          MColor.lerp(onPrimaryContainer, other.onPrimaryContainer, t),
+      secondary: MColor.lerp(secondary, other.secondary, t),
+      onSecondary: MColor.lerp(onSecondary, other.onSecondary, t),
       secondaryContainer:
-          Color.lerp(secondaryContainer, other.secondaryContainer, t),
+          MColor.lerp(secondaryContainer, other.secondaryContainer, t),
       onSecondaryContainer:
-          Color.lerp(onSecondaryContainer, other.onSecondaryContainer, t),
-      tertiary: Color.lerp(tertiary, other.tertiary, t),
-      onTertiary: Color.lerp(onTertiary, other.onTertiary, t),
+          MColor.lerp(onSecondaryContainer, other.onSecondaryContainer, t),
+      tertiary: MColor.lerp(tertiary, other.tertiary, t),
+      onTertiary: MColor.lerp(onTertiary, other.onTertiary, t),
       tertiaryContainer:
-          Color.lerp(tertiaryContainer, other.tertiaryContainer, t),
+          MColor.lerp(tertiaryContainer, other.tertiaryContainer, t),
       onTertiaryContainer:
-          Color.lerp(onTertiaryContainer, other.onTertiaryContainer, t),
-      error: Color.lerp(error, other.error, t),
-      onError: Color.lerp(onError, other.onError, t),
-      errorContainer: Color.lerp(errorContainer, other.errorContainer, t),
-      onErrorContainer: Color.lerp(onErrorContainer, other.onErrorContainer, t),
-      background: Color.lerp(background, other.background, t),
-      onBackground: Color.lerp(onBackground, other.onBackground, t),
-      surface: Color.lerp(surface, other.surface, t),
-      onSurface: Color.lerp(onSurface, other.onSurface, t),
-      surfaceTint: Color.lerp(surfaceTint, other.surfaceTint, t),
-      inverseSurface: Color.lerp(inverseSurface, other.inverseSurface, t),
-      onInverseSurface: Color.lerp(onInverseSurface, other.onInverseSurface, t),
-      inversePrimary: Color.lerp(inversePrimary, other.inversePrimary, t),
-      outline: Color.lerp(outline, other.outline, t),
-      outlineVariant: Color.lerp(outlineVariant, other.outlineVariant, t),
-      scrim: Color.lerp(scrim, other.scrim, t),
-      shadow: Color.lerp(shadow, other.shadow, t),
+          MColor.lerp(onTertiaryContainer, other.onTertiaryContainer, t),
+      error: MColor.lerp(error, other.error, t),
+      onError: MColor.lerp(onError, other.onError, t),
+      errorContainer: MColor.lerp(errorContainer, other.errorContainer, t),
+      onErrorContainer:
+          MColor.lerp(onErrorContainer, other.onErrorContainer, t),
+      background: MColor.lerp(background, other.background, t),
+      onBackground: MColor.lerp(onBackground, other.onBackground, t),
+      surface: MColor.lerp(surface, other.surface, t),
+      onSurface: MColor.lerp(onSurface, other.onSurface, t),
+      surfaceTint: MColor.lerp(surfaceTint, other.surfaceTint, t),
+      inverseSurface: MColor.lerp(inverseSurface, other.inverseSurface, t),
+      onInverseSurface:
+          MColor.lerp(onInverseSurface, other.onInverseSurface, t),
+      inversePrimary: MColor.lerp(inversePrimary, other.inversePrimary, t),
+      outline: MColor.lerp(outline, other.outline, t),
+      outlineVariant: MColor.lerp(outlineVariant, other.outlineVariant, t),
+      scrim: MColor.lerp(scrim, other.scrim, t),
+      shadow: MColor.lerp(shadow, other.shadow, t),
     );
+  }
+
+  static MColorScheme? of(BuildContext context) {
+    return Theme.of(context).extension<MColorScheme>();
   }
 }

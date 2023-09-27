@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/m_dimensions.dart';
-import 'package:meno_design_system/src/theme/m_color_scheme.dart';
-import 'package:meno_design_system/src/theme/styles/m_app_bar_styles.dart';
-import 'package:meno_design_system/src/theme/styles/m_button_style.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_field_style.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
-
-import 'm_color.dart';
+import 'package:meno_design_system/src/m_internal.dart';
+import 'package:meno_design_system/src/theme/styles/m_card_styles.dart';
 
 class MTheme {
   static ThemeData get dark => createTheme(brightness: Brightness.dark);
@@ -25,6 +20,7 @@ class MTheme {
       buttonStyles: buttonStyles,
       colorScheme: colorScheme,
       appBarStyle: appBarStyle,
+      cardStyles: MCardStyles.$default(colorScheme: colorScheme),
     );
   }
 
@@ -33,10 +29,14 @@ class MTheme {
     required MButtonStyle buttonStyles,
     required MColorScheme colorScheme,
     required MAppBarStyles appBarStyle,
+    required MCardStyles cardStyles,
   }) {
     final isLight = brightness == Brightness.light;
 
     return ThemeData(
+      cardTheme: CardTheme(
+        color: cardStyles.backgroundColor,
+      ),
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: colorScheme.primary!,
@@ -69,36 +69,40 @@ class MTheme {
         shadow: colorScheme.shadow,
       ),
       dividerTheme: DividerThemeData(
-        color: resolve(isLight, MColor.grey30, MColor.grey400),
+        color: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
         thickness: 1,
       ),
-      dividerColor: resolve(isLight, MColor.grey30, MColor.grey400),
+      dividerColor: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        backgroundColor: resolve(isLight, MColor.white, MColor.primary700),
-        unselectedItemColor: resolve(isLight, MColor.grey70, MColor.grey50),
+        backgroundColor:
+            MInternal.resolve(isLight, MColor.white, MColor.primary700),
+        unselectedItemColor:
+            MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
         selectedItemColor:
-            resolve(isLight, MColor.primary300, MColor.primary75),
+            MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
         unselectedIconTheme: IconThemeData(
-          color: resolve(isLight, MColor.grey70, MColor.grey50),
+          color: MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
           size: 20,
         ),
         selectedIconTheme: IconThemeData(
-          color: resolve(isLight, MColor.primary300, MColor.primary75),
+          color:
+              MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
           size: 20,
         ),
         unselectedLabelStyle: MTextStyle.microMedium.copyWith(
           height: 1,
-          color: resolve(isLight, MColor.grey70, MColor.grey50),
+          color: MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
         ),
         selectedLabelStyle: MTextStyle.microMedium.copyWith(
           height: 1,
-          color: resolve(isLight, MColor.primary300, MColor.primary75),
+          color:
+              MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
         ),
       ),
       scaffoldBackgroundColor:
-          resolve(isLight, MColor.white, MColor.primary700),
+          MInternal.resolve(isLight, MColor.white, MColor.primary700),
       appBarTheme: AppBarTheme(
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
@@ -124,51 +128,9 @@ class MTheme {
         buttonStyles,
         colorScheme,
         appBarStyle,
+        cardStyles,
         MTextFieldStyle.$default(brightness: brightness),
       ],
     );
-  }
-
-  static T resolve<T>(bool isLight, T lightThemeValue, T darkThemeValue) {
-    return isLight ? lightThemeValue : darkThemeValue;
-  }
-
-  /// Convenience method for easier use of [MaterialStateProperty.all].
-  static MaterialStateProperty<T> all<T>(T value) {
-    return MaterialStateProperty.all(value);
-  }
-
-  /// Convenience method for easier use of [MaterialStateProperty.resolveWith].
-  static MaterialStateProperty<T?> resolveWith<T>({
-    required T defaultValue,
-    T? pressedValue,
-    T? disabledValue,
-    T? hoveredValue,
-    String? parent,
-    T? selectedValue,
-  }) {
-    return MaterialStateProperty.resolveWith((states) {
-      // disabled
-      if (states.contains(MaterialState.disabled) && disabledValue != null) {
-        return disabledValue;
-      }
-
-      // pressed / focused
-      if (states.any({MaterialState.pressed, MaterialState.focused}.contains) &&
-          pressedValue != null) {
-        return pressedValue;
-      }
-      // hovered
-      if (states.contains(MaterialState.hovered) && hoveredValue != null) {
-        return hoveredValue;
-      }
-
-      // selected
-      if (states.contains(MaterialState.selected) && selectedValue != null) {
-        return selectedValue;
-      }
-      // default
-      return defaultValue;
-    });
   }
 }

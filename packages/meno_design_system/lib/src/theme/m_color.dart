@@ -8,8 +8,10 @@ class MColor extends Color {
   static const MColor black = MColor._(0xFF020D1C);
   static const MColor white = MColor._(0xFFFFFFFF);
   static const MColor transparent = MColor._(0x00000000);
-  static const MColor shadow = MColor._(0x0C000000);
+  static const MColor shadow = MColor._(0x4B360090);
   static const MColor counter = MColor._(0xFF2A213C);
+  static const MColor newBadgeLight = MColor._(0xFFF4EEFF);
+  static const MColor newBadgeDark = MColor._(0xFF2A213C);
 
   // Primary
   static const MColor primary50 = MColor._(0xFFF4EEFF);

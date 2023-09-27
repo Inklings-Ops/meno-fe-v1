@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 import 'package:meno_design_system/src/theme/m_color.dart';
 import 'package:meno_design_system/src/theme/m_icons.dart';
-import 'package:meno_design_system/src/theme/m_theme.dart';
 import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
 
 import 'm_icon_button.dart';
-
 
 enum _ActionButtonVariant { icon, withText }
 
@@ -54,7 +53,7 @@ abstract class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
-    final resolveColor = MTheme.resolve(isLight, MColor.black, MColor.white);
+    final resolveColor = MInternal.resolve(isLight, MColor.black, MColor.white);
     final resolveTextStyle = MTextStyle.captionMedium.copyWith(
       color: resolveColor,
     );

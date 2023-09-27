@@ -151,13 +151,13 @@ class MTextStyle extends TextStyle {
   // Nano
   static const MTextStyle nanoBold = MTextStyle._(
     fontSize: 10.0,
-    height: 14.0 / 10.0,
+    // height: 14.0 / 10.0,
     fontWeight: FontWeight.w700,
     fontFamily: _fontFamily,
   );
   static const MTextStyle nanoMedium = MTextStyle._(
     fontSize: 10.0,
-    height: 14.0 / 10.0,
+    // height: 14.0 / 10.0,
     fontWeight: FontWeight.w500,
     fontFamily: _fontFamily,
   );

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/src/m_dimensions.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 import 'package:meno_design_system/src/theme/m_color.dart';
-import 'package:meno_design_system/src/theme/m_theme.dart';
 import 'package:meno_design_system/src/theme/styles/base_button_style.dart';
-
 
 class MButtonStyle extends ThemeExtension<MButtonStyle> {
   final BaseButtonStyle? primary;
@@ -128,17 +127,17 @@ class MButtonStyle extends ThemeExtension<MButtonStyle> {
 
   static ButtonStyle get baseButtonStyle {
     return ButtonStyle(
-      overlayColor: MTheme.all(MColor.transparent),
-      shape: MTheme.all(
+      overlayColor: MInternal.all(MColor.transparent),
+      shape: MInternal.all(
         const RoundedRectangleBorder(
           borderRadius: MDimensions.mediumBorderRadius,
         ),
       ),
-      iconSize: MTheme.resolveWith(defaultValue: 14),
-      fixedSize: MTheme.all(const Size.fromHeight(MDimensions.medium)),
-      padding: MTheme.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
-      elevation: MTheme.all(0),
-      shadowColor: MTheme.all(MColor.shadow),
+      iconSize: MInternal.resolveWith(defaultValue: 14),
+      fixedSize: MInternal.all(const Size.fromHeight(MDimensions.medium)),
+      padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
+      elevation: MInternal.all(0),
+      shadowColor: MInternal.all(MColor.shadow),
     );
   }
 

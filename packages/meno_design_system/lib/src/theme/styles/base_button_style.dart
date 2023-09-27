@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/theme/m_theme.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 
 class BaseButtonStyle {
   final Color? background;
@@ -90,29 +90,29 @@ class BaseButtonStyle {
 
   ButtonStyle get toButtonStyle {
     return ButtonStyle(
-      elevation: MTheme.resolveWith(defaultValue: 0),
-      overlayColor: MTheme.resolveWith(
+      elevation: MInternal.resolveWith(defaultValue: 0),
+      overlayColor: MInternal.resolveWith(
         defaultValue: background!,
         pressedValue: backgroundPressed,
       ),
-      backgroundColor: MTheme.resolveWith(
+      backgroundColor: MInternal.resolveWith(
         defaultValue: background!,
         pressedValue: background,
         disabledValue: backgroundDisabled,
       ),
-      foregroundColor: MTheme.resolveWith(
+      foregroundColor: MInternal.resolveWith(
         defaultValue: foreground!,
         pressedValue: foregroundPressed,
         disabledValue: foregroundDisabled,
       ),
-      iconColor: MTheme.resolveWith(
+      iconColor: MInternal.resolveWith(
         defaultValue: iconColor!,
         pressedValue: iconColorPressed,
         disabledValue: iconColorDisabled,
       ),
       side: borderColor == null
           ? null
-          : MTheme.resolveWith(
+          : MInternal.resolveWith(
               defaultValue: BorderSide(color: borderColor!, width: 1.50),
               pressedValue: BorderSide(color: borderColorPressed!, width: 1.50),
               disabledValue: BorderSide(color: borderColorDisabled!),

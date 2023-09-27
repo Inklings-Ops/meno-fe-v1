@@ -7,9 +7,9 @@ class MText extends Text {
     Key? key,
     MColor? color,
     MTextStyle? style,
-    super.maxLines,
+    super.maxLines = 1,
     super.locale,
-    super.overflow,
+    super.overflow = TextOverflow.ellipsis,
     super.textAlign,
   }) : super(
           key: key,
