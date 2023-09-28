@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'auth_failure.dart';
+part of 'auth_exception.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$AuthFailure {
+mixin _$AuthException {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
@@ -70,16 +70,16 @@ mixin _$AuthFailure {
 }
 
 /// @nodoc
-abstract class $AuthFailureCopyWith<$Res> {
-  factory $AuthFailureCopyWith(
-          AuthFailure value, $Res Function(AuthFailure) then) =
-      _$AuthFailureCopyWithImpl<$Res, AuthFailure>;
+abstract class $AuthExceptionCopyWith<$Res> {
+  factory $AuthExceptionCopyWith(
+          AuthException value, $Res Function(AuthException) then) =
+      _$AuthExceptionCopyWithImpl<$Res, AuthException>;
 }
 
 /// @nodoc
-class _$AuthFailureCopyWithImpl<$Res, $Val extends AuthFailure>
-    implements $AuthFailureCopyWith<$Res> {
-  _$AuthFailureCopyWithImpl(this._value, this._then);
+class _$AuthExceptionCopyWithImpl<$Res, $Val extends AuthException>
+    implements $AuthExceptionCopyWith<$Res> {
+  _$AuthExceptionCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -98,7 +98,7 @@ abstract class _$$_MessageCopyWith<$Res> {
 
 /// @nodoc
 class __$$_MessageCopyWithImpl<$Res>
-    extends _$AuthFailureCopyWithImpl<$Res, _$_Message>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_Message>
     implements _$$_MessageCopyWith<$Res> {
   __$$_MessageCopyWithImpl(_$_Message _value, $Res Function(_$_Message) _then)
       : super(_value, _then);
@@ -127,7 +127,7 @@ class _$_Message implements _Message {
 
   @override
   String toString() {
-    return 'AuthFailure.message(message: $message)';
+    return 'AuthException.message(message: $message)';
   }
 
   @override
@@ -223,7 +223,7 @@ class _$_Message implements _Message {
   }
 }
 
-abstract class _Message implements AuthFailure {
+abstract class _Message implements AuthException {
   const factory _Message(final String message) = _$_Message;
 
   String get message;
@@ -241,7 +241,7 @@ abstract class _$$InvalidEmailOrPasswordCopyWith<$Res> {
 
 /// @nodoc
 class __$$InvalidEmailOrPasswordCopyWithImpl<$Res>
-    extends _$AuthFailureCopyWithImpl<$Res, _$InvalidEmailOrPassword>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$InvalidEmailOrPassword>
     implements _$$InvalidEmailOrPasswordCopyWith<$Res> {
   __$$InvalidEmailOrPasswordCopyWithImpl(_$InvalidEmailOrPassword _value,
       $Res Function(_$InvalidEmailOrPassword) _then)
@@ -255,7 +255,7 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
 
   @override
   String toString() {
-    return 'AuthFailure.invalidEmailOrPassword()';
+    return 'AuthException.invalidEmailOrPassword()';
   }
 
   @override
@@ -343,7 +343,7 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   }
 }
 
-abstract class InvalidEmailOrPassword implements AuthFailure {
+abstract class InvalidEmailOrPassword implements AuthException {
   const factory InvalidEmailOrPassword() = _$InvalidEmailOrPassword;
 }
 
@@ -356,7 +356,7 @@ abstract class _$$EmailAlreadyInUseCopyWith<$Res> {
 
 /// @nodoc
 class __$$EmailAlreadyInUseCopyWithImpl<$Res>
-    extends _$AuthFailureCopyWithImpl<$Res, _$EmailAlreadyInUse>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$EmailAlreadyInUse>
     implements _$$EmailAlreadyInUseCopyWith<$Res> {
   __$$EmailAlreadyInUseCopyWithImpl(
       _$EmailAlreadyInUse _value, $Res Function(_$EmailAlreadyInUse) _then)
@@ -370,7 +370,7 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
 
   @override
   String toString() {
-    return 'AuthFailure.emailAlreadyInUse()';
+    return 'AuthException.emailAlreadyInUse()';
   }
 
   @override
@@ -458,7 +458,7 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
   }
 }
 
-abstract class EmailAlreadyInUse implements AuthFailure {
+abstract class EmailAlreadyInUse implements AuthException {
   const factory EmailAlreadyInUse() = _$EmailAlreadyInUse;
 }
 
@@ -471,7 +471,7 @@ abstract class _$$ServerErrorCopyWith<$Res> {
 
 /// @nodoc
 class __$$ServerErrorCopyWithImpl<$Res>
-    extends _$AuthFailureCopyWithImpl<$Res, _$ServerError>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$ServerError>
     implements _$$ServerErrorCopyWith<$Res> {
   __$$ServerErrorCopyWithImpl(
       _$ServerError _value, $Res Function(_$ServerError) _then)
@@ -485,7 +485,7 @@ class _$ServerError implements ServerError {
 
   @override
   String toString() {
-    return 'AuthFailure.serverError()';
+    return 'AuthException.serverError()';
   }
 
   @override
@@ -573,6 +573,6 @@ class _$ServerError implements ServerError {
   }
 }
 
-abstract class ServerError implements AuthFailure {
+abstract class ServerError implements AuthException {
   const factory ServerError() = _$ServerError;
 }

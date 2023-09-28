@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import 'entities/entities.dart';
-import 'failures/auth_failure.dart';
+import 'exceptions/auth_exception.dart';
 import 'inputs/inputs.dart';
 
 /// Meno Authentication Facade
@@ -19,13 +19,13 @@ abstract class IAuthFacade {
   ///
   /// If the user is not registered with Meno, they will be automatically registered.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthFailure` object and the right value is a `Unit` object.
-  Future<Either<AuthFailure, Unit>> googleSignIn({bool isRegister = false});
+  /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
+  Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false});
 
   /// Logs the user in with their email address and password.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthFailure` object and the right value is a `Unit` object.
-  Future<Either<AuthFailure, Unit>> login({
+  /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
+  Future<Either<AuthException, Unit>> login({
     required IEmail email,
     required IPassword password,
   });
@@ -40,8 +40,8 @@ abstract class IAuthFacade {
 
   /// Registers a new user with Meno.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthFailure` object and the right value is a `Unit` object.
-  Future<Either<AuthFailure, Unit>> register({
+  /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
+  Future<Either<AuthException, Unit>> register({
     required IFullName fullName,
     required IEmail email,
     required IPassword password,

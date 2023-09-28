@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/injector/injector.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies();
   runApp(const MenoApp());
 }
 
