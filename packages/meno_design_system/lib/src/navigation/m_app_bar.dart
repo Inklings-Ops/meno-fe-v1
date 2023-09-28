@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-enum _AppBarVariant { primary, secondary }
+enum _AppBarVariant { home, primary, secondary }
 
 class MAppBar extends _AppBar {
   factory MAppBar.primary({
@@ -17,6 +17,13 @@ class MAppBar extends _AppBar {
     bool centerTitle,
     List<Widget>? actions,
   }) = _SecondaryAppBar;
+
+  factory MAppBar.home({
+    Key? key,
+    required String title,
+    bool centerTitle,
+    List<Widget>? actions,
+  }) = _HomeAppBar;
 
   const MAppBar._({
     super.key,
@@ -50,6 +57,7 @@ abstract class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => switch (variant) {
+        _AppBarVariant.home => const Size.fromHeight(80.0),
         _AppBarVariant.primary => const Size.fromHeight(120.0),
         _AppBarVariant.secondary => const Size.fromHeight(kToolbarHeight),
       };
@@ -133,6 +141,24 @@ class _SecondaryAppBar extends MAppBar {
         );
 }
 
+class _HomeAppBar extends MAppBar {
+  _HomeAppBar({
+    super.key,
+    required super.title,
+    super.onBackPressed,
+    super.centerTitle = false,
+    super.actions,
+  }) : super._(
+          variant: _AppBarVariant.home,
+          child: _HomeAppBarImpl(
+            title,
+            onBackPressed: onBackPressed,
+            centerTitle: centerTitle,
+            actions: actions,
+          ),
+        );
+}
+
 class _SecondaryAppBarImpl extends StatelessWidget {
   final String title;
   final VoidCallback? onBackPressed;
@@ -153,6 +179,51 @@ class _SecondaryAppBarImpl extends StatelessWidget {
       centerTitle: centerTitle,
       title: MText(title),
       actions: actions,
+    );
+  }
+}
+
+class _HomeAppBarImpl extends StatelessWidget {
+  final String title;
+  final VoidCallback? onBackPressed;
+  final bool centerTitle;
+  final List<Widget>? actions;
+
+  const _HomeAppBarImpl(
+    this.title, {
+    this.onBackPressed,
+    this.centerTitle = false,
+    this.actions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      flexibleSpace: Container(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          height: 56,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const MText("Hello,", style: MTextStyle.captionRegular),
+                    MText(title, style: MTextStyle.subheadingMedium),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (actions != null) ...actions!,
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
