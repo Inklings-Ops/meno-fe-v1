@@ -101,8 +101,8 @@ class MColor extends Color {
 
   // Decorative/Yellow
   static const MColor decorativeYellow50 = MColor._(0xFFFFFFDF);
-  static const MColor decorativeYellow75 = MColor._(0xFFffff2c);
-  static const MColor decorativeYellow100 = MColor._(0xFFffff01);
+  static const MColor decorativeYellow75 = MColor._(0xFFFFFF2C);
+  static const MColor decorativeYellow100 = MColor._(0xFFFFFF01);
   static const MColor decorativeYellow200 = MColor._(0xFFFFDC4D);
 
   /// Linearly interpolate between two MColor values.

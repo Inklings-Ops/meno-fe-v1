@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/m_dimensions.dart';
 import 'package:meno_design_system/src/m_internal.dart';
 import 'package:meno_design_system/src/theme/m_color.dart';
 import 'package:meno_design_system/src/theme/styles/base_button_style.dart';
@@ -130,11 +129,11 @@ class MButtonStyle extends ThemeExtension<MButtonStyle> {
       overlayColor: MInternal.all(MColor.transparent),
       shape: MInternal.all(
         const RoundedRectangleBorder(
-          borderRadius: MDimensions.mediumBorderRadius,
+          borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
       ),
       iconSize: MInternal.resolveWith(defaultValue: 14),
-      fixedSize: MInternal.all(const Size.fromHeight(MDimensions.medium)),
+      fixedSize: MInternal.all(const Size.fromHeight(48.0)),
       padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
       elevation: MInternal.all(0),
       shadowColor: MInternal.all(MColor.shadow),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_dimensions.dart';
 import 'package:meno_design_system/src/m_internal.dart';
 import 'package:meno_design_system/src/theme/styles/m_card_styles.dart';
+import 'package:meno_design_system/src/theme/styles/m_otp_field_style.dart';
 
 class MTheme {
   static ThemeData get dark => createTheme(brightness: Brightness.dark);
@@ -113,10 +113,7 @@ class MTheme {
         ),
         actionsIconTheme: appBarStyle.iconTheme,
       ),
-      iconTheme: IconThemeData(
-        color: colorScheme.primary,
-        size: MDimensions.micro,
-      ),
+      iconTheme: IconThemeData(color: colorScheme.primary, size: 24.0),
       elevatedButtonTheme: buttonStyles.elevatedButtonTheme,
       outlinedButtonTheme: buttonStyles.outlinedButtonTheme,
       textButtonTheme: buttonStyles.textButtonTheme,
@@ -129,6 +126,7 @@ class MTheme {
         colorScheme,
         appBarStyle,
         cardStyles,
+        MOtpFieldStyles.$default(brightness: brightness),
         MTextFieldStyle.$default(brightness: brightness),
       ],
     );

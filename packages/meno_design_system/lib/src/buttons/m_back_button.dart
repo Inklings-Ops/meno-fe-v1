@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/m_internal.dart';
-import 'package:meno_design_system/src/theme/m_color.dart';
-import 'package:meno_design_system/src/theme/m_icons.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
-
-import 'm_icon_button.dart';
 
 enum _ActionButtonVariant { icon, withText }
 
@@ -18,8 +14,8 @@ class MBackButton extends _ActionButton {
   const factory MBackButton.withText({
     Key? key,
     String title,
-    Color? iconColor,
-    TextStyle? textStyle,
+    MColor? iconColor,
+    MTextStyle? textStyle,
     VoidCallback? onPressed,
   }) = _MBackButtonWithText;
 
@@ -36,9 +32,9 @@ class MBackButton extends _ActionButton {
 abstract class _ActionButton extends StatelessWidget {
   final _ActionButtonVariant variant;
   final VoidCallback? onPressed;
-  final Color? color;
+  final MColor? color;
   final String title;
-  final TextStyle? textStyle;
+  final MTextStyle? textStyle;
 
   const _ActionButton({
     super.key,
@@ -54,9 +50,7 @@ abstract class _ActionButton extends StatelessWidget {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
     final resolveColor = MInternal.resolve(isLight, MColor.black, MColor.white);
-    final resolveTextStyle = MTextStyle.captionMedium.copyWith(
-      color: resolveColor,
-    );
+    const resolveTextStyle = MTextStyle.captionMedium;
 
     return switch (variant) {
       _ActionButtonVariant.icon => MIconButton(
@@ -64,7 +58,7 @@ abstract class _ActionButton extends StatelessWidget {
           icon: MIcons.chevron_left,
           color: color,
         ),
-      _ActionButtonVariant.withText => InkWell(
+      _ActionButtonVariant.withText => GestureDetector(
           onTap: () => _onPressed(context),
           child: Row(
             children: [
@@ -73,7 +67,11 @@ abstract class _ActionButton extends StatelessWidget {
                 color: color ?? resolveColor,
                 size: 16,
               ),
-              Text(title, style: textStyle ?? resolveTextStyle),
+              MText(
+                title,
+                style: textStyle ?? resolveTextStyle,
+                color: color ?? resolveColor,
+              ),
             ],
           ),
         ),
@@ -95,6 +93,6 @@ class _MBackButtonWithText extends MBackButton {
     super.title = "Back",
     super.textStyle,
     super.onPressed,
-    Color? iconColor,
+    MColor? iconColor,
   }) : super._(variant: _ActionButtonVariant.withText, color: iconColor);
 }

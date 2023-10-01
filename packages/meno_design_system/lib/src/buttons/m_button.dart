@@ -8,7 +8,7 @@ import 'm_button_icon_placement.dart';
 
 abstract class MButton extends StatelessWidget {
   final String label;
-  final IconData? icon;
+  final Widget? icon;
   final MButtonIconPlacement iconPlacement;
   final VoidCallback? onPressed;
 
@@ -21,7 +21,7 @@ abstract class MButton extends StatelessWidget {
   const MButton.icon({
     Key? key,
     required String label,
-    required IconData icon,
+    required Widget icon,
     MButtonIconPlacement iconPlacement = MButtonIconPlacement.left,
     required VoidCallback? onPressed,
   }) : this._(
@@ -61,7 +61,7 @@ abstract class MButton extends StatelessWidget {
 }
 
 class _MButtonWithIcon extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final MButtonIconPlacement iconPlacement;
 
@@ -81,9 +81,9 @@ class _MButtonWithIcon extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (iconPlacement == MButtonIconPlacement.left) ...[Icon(icon), gap],
+        if (iconPlacement == MButtonIconPlacement.left) ...[icon, gap],
         Flexible(child: MText(label)),
-        if (iconPlacement == MButtonIconPlacement.right) ...[gap, Icon(icon)],
+        if (iconPlacement == MButtonIconPlacement.right) ...[gap, icon],
       ],
     );
   }

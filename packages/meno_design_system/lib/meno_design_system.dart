@@ -17,6 +17,8 @@ export 'src/gen/fonts.gen.dart';
 export 'src/input_fields/m_otp_field.dart';
 export 'src/input_fields/m_text_form_field.dart';
 export 'src/loading_indicator/m_loading_indicator.dart';
+export 'src/m_dimensions.dart';
+export 'src/m_size.dart';
 export 'src/navigation/m_app_bar.dart';
 export 'src/navigation/m_bottom_navigation_bar.dart';
 export 'src/text/m_text.dart';

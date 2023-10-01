@@ -110,6 +110,11 @@ class BaseButtonStyle {
         pressedValue: iconColorPressed,
         disabledValue: iconColorDisabled,
       ),
+      shape: MInternal.all(
+        const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ),
       side: borderColor == null
           ? null
           : MInternal.resolveWith(

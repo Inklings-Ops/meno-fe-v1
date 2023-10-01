@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_dimensions.dart';
 
 class MTextFormField extends StatefulWidget {
   final String label;
@@ -18,6 +17,7 @@ class MTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool isPassword;
   final FormFieldValidator<String>? validator;
+  final AutovalidateMode autovalidateMode;
 
   const MTextFormField({
     super.key,
@@ -35,6 +35,7 @@ class MTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
     this.validator,
+    this.autovalidateMode = AutovalidateMode.always,
   });
 
   @override
@@ -48,15 +49,14 @@ class _MTextFormFieldState extends State<MTextFormField> {
   int? currentLength;
 
   bool obscureText = false;
-  bool hasError = false;
-
-  String? errorText;
 
   Widget? suffixIcon, prefixIcon;
 
   @override
   Widget build(BuildContext context) {
     final styles = MTextFieldStyle.of(context)!;
+
+    final bool hasFocus = widget.focusNode?.hasFocus == true;
 
     if (widget.prefixIcon != null && widget.maxLines == 1) {
       prefixIcon = _PrefixIcon(icon: widget.prefixIcon!);
@@ -73,66 +73,97 @@ class _MTextFormFieldState extends State<MTextFormField> {
       );
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _Label(widget.label, icon: widget.labelIcon, hasError: hasError),
-            if (widget.maxLines > 1)
-              _Counter(
-                maxLength: 244,
-                currentLength: widget.controller?.text.length ?? 0,
-                enabled: widget.enabled,
-                hasError: hasError,
-              ),
-          ],
-        ),
-        MDimensions.verticalSpace8,
-        TextFormField(
-          style: styles.textStyle,
-          initialValue: widget.initialValue,
-          controller: widget.controller,
-          focusNode: widget.focusNode,
-          keyboardType: widget.keyboardType,
-          obscureText: obscureText,
-          maxLength: 244,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          onChanged: widget.onChanged,
-          obscuringCharacter: "*",
-          maxLines: widget.maxLines,
-          validator: onValidate,
-          cursorWidth: 1,
-          cursorHeight: 18,
-          decoration: InputDecoration(
-            enabled: widget.enabled,
-            hintText: widget.hint,
-            hintStyle: styles.hintTextStyle,
-            contentPadding: const EdgeInsets.all(12),
-            counter: const SizedBox(),
-            fillColor:
-                widget.enabled ? styles.fillColor : styles.fillColorDisabled,
-            filled: true,
-            iconColor: styles.iconColor,
-            prefixIconColor: styles.iconColor,
-            suffixIconColor: styles.iconColor,
-            border: const OutlineInputBorder(
-              borderRadius: MDimensions.mediumBorderRadius,
-              borderSide: BorderSide(color: MColor.grey50, width: 1.0),
+    final MColor? effectiveIconColor =
+        hasFocus ? styles.iconColor : MColor.grey80;
+
+    final MColor? effectiveFillColor =
+        widget.enabled ? styles.fillColor : styles.fillColorDisabled;
+
+    return FormField<String?>(
+      validator: widget.validator,
+      autovalidateMode: widget.autovalidateMode,
+      builder: (field) => Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LimitedBox(
+            maxHeight: 18.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _Label(
+                  widget.label,
+                  icon: widget.labelIcon,
+                  hasError: field.hasError,
+                ),
+                if (widget.maxLines > 1)
+                  _Counter(
+                    maxLength: 244,
+                    currentLength: widget.controller?.text.length ?? 0,
+                    enabled: widget.enabled,
+                    hasError: field.hasError,
+                  ),
+              ],
             ),
-            disabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: MDimensions.mediumBorderRadius,
-            ),
-            prefixIconConstraints: BoxConstraints.tight(const Size(36, 34)),
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
           ),
-        ),
-      ],
+          MSize.verticalSpaceSmall,
+          TextFormField(
+            autovalidateMode: widget.autovalidateMode,
+            style: styles.textStyle?.copyWith(
+              color: widget.focusNode?.hasFocus == true
+                  ? styles.textColor
+                  : MColor.grey80,
+            ),
+            initialValue: widget.initialValue,
+            controller: widget.controller,
+            focusNode: widget.focusNode,
+            keyboardType: widget.keyboardType,
+            obscureText: obscureText,
+            maxLength: 244,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            onChanged: widget.onChanged,
+            obscuringCharacter: "*",
+            maxLines: widget.maxLines,
+            cursorWidth: 1,
+            cursorHeight: 18,
+            enabled: widget.enabled,
+            decoration: InputDecoration(
+              enabled: widget.enabled,
+              hintText: widget.hint,
+              hintStyle: styles.hintTextStyle,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 18,
+              ),
+              counter: const SizedBox(),
+              fillColor: effectiveFillColor,
+              filled: true,
+              iconColor: effectiveIconColor,
+              prefixIconColor: effectiveIconColor,
+              suffixIconColor: effectiveIconColor,
+              enabledBorder:
+                  field.hasError ? styles.borderError : styles.border,
+              focusedBorder:
+                  field.hasError ? styles.borderError : styles.border,
+              disabledBorder: styles.borderDisabled,
+              prefixIconConstraints: BoxConstraints.tight(const Size(36, 34)),
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+            ),
+          ),
+          if (field.errorText != null)
+            Container(
+              alignment: Alignment.centerLeft,
+              height: 18,
+              child: MText(
+                field.errorText!,
+                style: styles.errorTextStyle,
+                color: styles.errorColor,
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -154,14 +185,6 @@ class _MTextFormFieldState extends State<MTextFormField> {
     if (widget.focusNode != oldWidget.focusNode) {
       _focusNodeNotifier.value = widget.focusNode;
     }
-  }
-
-  String? onValidate(String? value) {
-    setState(() {
-      errorText = widget.validator?.call(value);
-      hasError = errorText != null;
-    });
-    return errorText;
   }
 
   T resolveBorder<T>(bool isBoxed, T boxedValue, T underlinedValue) {
@@ -248,7 +271,7 @@ class _Label extends StatelessWidget {
         MText(
           label,
           color: hasError ? styles.errorColor : styles.textColor,
-          style: hasError ? styles.labelTextStyleError : styles.labelTextStyle,
+          style: styles.labelTextStyle,
         ),
       ],
     );

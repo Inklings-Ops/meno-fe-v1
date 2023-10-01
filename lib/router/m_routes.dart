@@ -1,6 +1,8 @@
 class MRoutes {
   MRoutes._();
 
+  static const String onboarding = "/onboarding";
+  static const String login = "/login";
   static const String layout = "/";
   static const String home = "home";
   static const String discover = "discover";

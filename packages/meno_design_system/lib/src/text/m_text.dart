@@ -8,7 +8,10 @@ class MText extends StatelessWidget {
   final int maxLines;
   final Locale? locale;
   final TextOverflow overflow;
-  final TextAlign textAlign;
+  final TextAlign? textAlign;
+  final TextDecoration? decoration;
+  final MColor? decorationColor;
+  final double? decorationThickness;
 
   const MText(
     this.data, {
@@ -18,7 +21,10 @@ class MText extends StatelessWidget {
     this.maxLines = 1,
     this.locale,
     this.overflow = TextOverflow.ellipsis,
-    this.textAlign = TextAlign.center,
+    this.textAlign,
+    this.decoration,
+    this.decorationColor,
+    this.decorationThickness,
   });
 
   @override
@@ -37,6 +43,9 @@ class MText extends StatelessWidget {
         fontWeight: style?.fontWeight,
         height: style?.height,
         debugLabel: style?.debugLabel,
+        decoration: decoration,
+        decorationColor: decorationColor,
+        decorationThickness: decorationThickness,
       ),
     );
   }

@@ -12,8 +12,10 @@ import 'package:meno_fe_v1/features/auth/infrastructure/datasources/auth_remote_
     as _i3;
 import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_credentials_dto.dart'
     as _i5;
-import 'package:meno_fe_v1/features/auth/infrastructure/mapper/auth_mapper.dart'
+import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_dto.dart'
     as _i8;
+import 'package:meno_fe_v1/features/auth/infrastructure/mapper/auth_mapper.dart'
+    as _i9;
 import 'package:meno_fe_v1/features/auth/infrastructure/responses/auth_response.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -206,15 +208,6 @@ class MockAuthLocalDatasource extends _i1.Mock
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> deleteUserCredentials() => (super.noSuchMethod(
-        Invocation.method(
-          #deleteUserCredentials,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-  @override
   _i4.Future<void> deleteUserToken() => (super.noSuchMethod(
         Invocation.method(
           #deleteUserToken,
@@ -224,15 +217,14 @@ class MockAuthLocalDatasource extends _i1.Mock
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<_i5.UserCredentialsDto?> getUserCredentials() =>
-      (super.noSuchMethod(
+  _i4.Future<_i8.UserDto?> getUser() => (super.noSuchMethod(
         Invocation.method(
-          #getUserCredentials,
+          #getUser,
           [],
         ),
-        returnValue: _i4.Future<_i5.UserCredentialsDto?>.value(),
-        returnValueForMissingStub: _i4.Future<_i5.UserCredentialsDto?>.value(),
-      ) as _i4.Future<_i5.UserCredentialsDto?>);
+        returnValue: _i4.Future<_i8.UserDto?>.value(),
+        returnValueForMissingStub: _i4.Future<_i8.UserDto?>.value(),
+      ) as _i4.Future<_i8.UserDto?>);
   @override
   _i4.Future<String?> getUserToken() => (super.noSuchMethod(
         Invocation.method(
@@ -243,6 +235,24 @@ class MockAuthLocalDatasource extends _i1.Mock
         returnValueForMissingStub: _i4.Future<String?>.value(),
       ) as _i4.Future<String?>);
   @override
+  _i4.Future<bool> hasUserButNoToken() => (super.noSuchMethod(
+        Invocation.method(
+          #hasUserButNoToken,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+  @override
+  _i4.Future<bool> isLoggedIn() => (super.noSuchMethod(
+        Invocation.method(
+          #isLoggedIn,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+  @override
   _i4.Future<void> storeToken(String? token) => (super.noSuchMethod(
         Invocation.method(
           #storeToken,
@@ -252,10 +262,9 @@ class MockAuthLocalDatasource extends _i1.Mock
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
   @override
-  _i4.Future<void> storeUserCredentials(_i5.UserCredentialsDto? dto) =>
-      (super.noSuchMethod(
+  _i4.Future<void> storeUser(_i8.UserDto? dto) => (super.noSuchMethod(
         Invocation.method(
-          #storeUserCredentials,
+          #storeUser,
           [dto],
         ),
         returnValue: _i4.Future<void>.value(),
@@ -266,4 +275,4 @@ class MockAuthLocalDatasource extends _i1.Mock
 /// A class which mocks [AuthMapper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthMapper extends _i1.Mock implements _i8.AuthMapper {}
+class MockAuthMapper extends _i1.Mock implements _i9.AuthMapper {}

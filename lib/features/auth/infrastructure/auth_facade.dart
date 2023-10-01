@@ -6,6 +6,7 @@ import 'package:meno_fe_v1/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/datasources/auth_local_datasource.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/datasources/auth_remote_datasource.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_credentials_dto.dart';
+import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_dto.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/mapper/auth_mapper.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/responses/auth_response.dart';
 
@@ -15,6 +16,8 @@ class AuthFacade implements IAuthFacade {
   final AuthRemoteDatasource _remote;
   final AuthLocalDatasource _local;
 
+  final _logger = Logger();
+
   AuthFacade({
     required AuthMapper authMapper,
     required AuthRemoteDatasource remoteDatasource,
@@ -23,12 +26,26 @@ class AuthFacade implements IAuthFacade {
         _remote = remoteDatasource,
         _local = localDatasource;
 
-  final _logger = Logger();
+  @override
+  Future<bool> get isLoggedIn => _local.isLoggedIn();
 
   @override
-  Future<User> getUser() {
-    // TODO: implement getUser
-    throw UnimplementedError();
+  Future<bool> get isPartiallyLoggedIn => _local.hasUserButNoToken();
+
+  @override
+  // TODO: implement isVerified
+  Future<bool> get isVerified => throw UnimplementedError();
+
+  @override
+  Future<User?> get user async {
+    final UserDto? userDto = await _local.getUser();
+    final User? userDomain = _authMapper.userToDomain(userDto);
+    return userDomain;
+  }
+
+  @override
+  Future<UserToken?> get userToken async {
+    return await _local.getUserToken();
   }
 
   @override
@@ -36,10 +53,6 @@ class AuthFacade implements IAuthFacade {
     // TODO: implement googleSignIn
     throw UnimplementedError();
   }
-
-  @override
-  // TODO: implement isVerified
-  Future<bool> get isVerified => throw UnimplementedError();
 
   @override
   Future<Either<AuthException, Unit>> login({
@@ -56,7 +69,7 @@ class AuthFacade implements IAuthFacade {
 
       final UserCredentialsDto userCredentialsDto = response.data!;
       await _local.storeToken(userCredentialsDto.token);
-      await _local.storeUserCredentials(userCredentialsDto);
+      await _local.storeUser(userCredentialsDto.userDto);
 
       return right(unit);
     } on DioException catch (e) {
@@ -87,8 +100,4 @@ class AuthFacade implements IAuthFacade {
     // TODO: implement register
     throw UnimplementedError();
   }
-
-  @override
-  // TODO: implement userToken
-  Future<UserToken> get userToken => throw UnimplementedError();
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/features/auth/domain/entities/user_credentials.dart';
-import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_credentials_dto.dart';
+import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_dto.dart';
 import 'package:meno_fe_v1/services/secure_storage_service.dart';
 import 'package:meno_fe_v1/shared/m_keys.dart';
 
@@ -21,11 +21,6 @@ class AuthLocalDatasource {
     await _storage.deleteAll();
   }
 
-  /// Deletes the user's credentials from the local storage.
-  Future<void> deleteUserCredentials() async {
-    await _storage.delete(MKeys.userCredentialsKey);
-  }
-
   /// Deletes the user's token from the local storage.
   Future<void> deleteUserToken() async {
     await _storage.delete(MKeys.userTokenKey);
@@ -34,12 +29,12 @@ class AuthLocalDatasource {
   /// Gets the user's credentials from the local storage.
   ///
   /// Returns a `Future` that completes to the user's credentials, or `null` if the user's credentials are not stored in the local storage.
-  Future<UserCredentialsDto?> getUserCredentials() async {
-    final String? jsonString = await _storage.read(MKeys.userCredentialsKey);
+  Future<UserDto?> getUser() async {
+    final String? jsonString = await _storage.read(MKeys.userKey);
     if (jsonString == null) {
       return null;
     }
-    return UserCredentialsDto.fromJson(jsonDecode(jsonString));
+    return UserDto.fromJson(jsonDecode(jsonString));
   }
 
   /// Gets the user's token from the local storage.
@@ -53,14 +48,27 @@ class AuthLocalDatasource {
     return token;
   }
 
+  /// Returns `true` if the user has a user object stored but no token, `false` otherwise.
+  Future<bool> hasUserButNoToken() async {
+    final bool hasUser = await _storage.hasKey(MKeys.userKey);
+    return hasUser;
+  }
+
+  /// Returns `true` if the user is logged in, `false` otherwise.
+  Future<bool> isLoggedIn() async {
+    final bool hasUserToken = await _storage.hasKey(MKeys.userTokenKey);
+    final bool hasUser = await _storage.hasKey(MKeys.userKey);
+    return (hasUser && hasUserToken);
+  }
+
   /// Stores the user's token in the local storage.
   Future<void> storeToken(UserToken token) async {
     await _storage.write(MKeys.userTokenKey, value: token);
   }
 
   /// Stores the user's credentials in the local storage.
-  Future<void> storeUserCredentials(UserCredentialsDto dto) async {
+  Future<void> storeUser(UserDto dto) async {
     final String encodedString = jsonEncode(dto.toJson());
-    await _storage.write(MKeys.userCredentialsKey, value: encodedString);
+    await _storage.write(MKeys.userKey, value: encodedString);
   }
 }

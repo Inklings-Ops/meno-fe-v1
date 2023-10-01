@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/theme/m_color_scheme.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MAppBarStyles extends ThemeExtension<MAppBarStyles> {
-  final Color? textColor;
-  final Color? backgroundColor;
-  final Color? accentColor;
+  final MColor? textColor;
+  final MColor? backgroundColor;
+  final MColor? accentColor;
   final MTextStyle? textStyle;
   final MTextStyle? actionTextStyle;
   final IconThemeData? iconTheme;
@@ -21,9 +20,9 @@ class MAppBarStyles extends ThemeExtension<MAppBarStyles> {
 
   factory MAppBarStyles.$default({required MColorScheme colorScheme}) {
     return MAppBarStyles(
-      textColor: colorScheme.primary,
+      textColor: colorScheme.onPrimary,
       backgroundColor: colorScheme.primary,
-      accentColor: colorScheme.secondary,
+      accentColor: MColor.secondary300,
       textStyle: MTextStyle.heading2Bold,
       actionTextStyle: MTextStyle.captionMedium,
       iconTheme: IconThemeData(color: colorScheme.primary, size: 24),
@@ -32,9 +31,9 @@ class MAppBarStyles extends ThemeExtension<MAppBarStyles> {
 
   @override
   ThemeExtension<MAppBarStyles> copyWith({
-    Color? textColor,
-    Color? backgroundColor,
-    Color? accentColor,
+    MColor? textColor,
+    MColor? backgroundColor,
+    MColor? accentColor,
     MTextStyle? textStyle,
     MTextStyle? actionTextStyle,
     IconThemeData? iconTheme,
@@ -53,9 +52,9 @@ class MAppBarStyles extends ThemeExtension<MAppBarStyles> {
   ThemeExtension<MAppBarStyles> lerp(MAppBarStyles? other, double t) {
     if (other is! MAppBarStyles) return this;
     return MAppBarStyles(
-      textColor: Color.lerp(backgroundColor, other.backgroundColor, t),
-      backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
-      accentColor: Color.lerp(accentColor, other.accentColor, t),
+      textColor: MColor.lerp(backgroundColor, other.backgroundColor, t),
+      backgroundColor: MColor.lerp(backgroundColor, other.backgroundColor, t),
+      accentColor: MColor.lerp(accentColor, other.accentColor, t),
       textStyle: MTextStyle.lerp(textStyle, other.textStyle, t),
       actionTextStyle:
           MTextStyle.lerp(actionTextStyle, other.actionTextStyle, t),

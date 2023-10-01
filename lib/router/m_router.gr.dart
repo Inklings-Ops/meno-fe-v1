@@ -33,6 +33,17 @@ abstract class _$MRouter extends RootStackRouter {
         child: const HomePage(),
       );
     },
+    LoginRoute.name: (routeData) {
+      final args = routeData.argsAs<LoginRouteArgs>(
+          orElse: () => const LoginRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: LoginPage(
+          key: args.key,
+          onLogin: args.onLogin,
+        ),
+      );
+    },
     MLayoutRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -43,6 +54,12 @@ abstract class _$MRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const NotesPage(),
+      );
+    },
+    OnboardingRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const OnboardingPage(),
       );
     },
     ProfileRoute.name: (routeData) {
@@ -97,6 +114,43 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
+  LoginRoute({
+    Key? key,
+    void Function(bool)? onLogin,
+    List<PageRouteInfo>? children,
+  }) : super(
+          LoginRoute.name,
+          args: LoginRouteArgs(
+            key: key,
+            onLogin: onLogin,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginRoute';
+
+  static const PageInfo<LoginRouteArgs> page = PageInfo<LoginRouteArgs>(name);
+}
+
+class LoginRouteArgs {
+  const LoginRouteArgs({
+    this.key,
+    this.onLogin,
+  });
+
+  final Key? key;
+
+  final void Function(bool)? onLogin;
+
+  @override
+  String toString() {
+    return 'LoginRouteArgs{key: $key, onLogin: $onLogin}';
+  }
+}
+
+/// generated route for
 /// [MLayout]
 class MLayoutRoute extends PageRouteInfo<void> {
   const MLayoutRoute({List<PageRouteInfo>? children})
@@ -120,6 +174,20 @@ class NotesRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'NotesRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [OnboardingPage]
+class OnboardingRoute extends PageRouteInfo<void> {
+  const OnboardingRoute({List<PageRouteInfo>? children})
+      : super(
+          OnboardingRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'OnboardingRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

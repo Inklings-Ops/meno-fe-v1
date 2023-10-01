@@ -89,35 +89,41 @@ class _PrimaryAppBarImpl extends StatelessWidget {
     final colorFilter = ColorFilter.mode(styles.accentColor!, BlendMode.srcIn);
 
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: styles.backgroundColor,
-      flexibleSpace: Stack(
-        alignment: Alignment.bottomCenter,
-        fit: StackFit.expand,
-        children: [
-          Container(
-            height: 70,
-            margin: MediaQuery.viewPaddingOf(context),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MBackButton.withText(
-                  iconColor: styles.actionTextStyle?.color,
-                  textStyle: styles.actionTextStyle,
-                ),
-                const SizedBox(height: 16),
-                MText(title, style: styles.textStyle),
-              ],
+      flexibleSpace: SizedBox(
+        height: 120 + MediaQuery.viewPaddingOf(context).top,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          fit: StackFit.passthrough,
+          children: [
+            Container(
+              margin: MediaQuery.viewPaddingOf(context),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MBackButton.withText(
+                    iconColor: styles.textColor,
+                    textStyle: styles.actionTextStyle,
+                  ),
+                  const SizedBox(height: 16),
+                  MText(
+                    title,
+                    style: styles.textStyle,
+                    color: styles.textColor,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            right: 0,
-            bottom: 0,
-            child: Assets.images.geometricLines.svg(colorFilter: colorFilter),
-          ),
-        ],
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Assets.images.geometricLines.svg(colorFilter: colorFilter),
+            ),
+          ],
+        ),
       ),
     );
   }

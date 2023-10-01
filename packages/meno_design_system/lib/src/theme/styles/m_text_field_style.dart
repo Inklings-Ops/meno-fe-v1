@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/theme/m_color.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   final MTextStyle? textStyle;
-  final MTextStyle? textStyleDisabled;
-  final MTextStyle? textStyleError;
-
+  final MTextStyle? errorTextStyle;
   final MTextStyle? hintTextStyle;
-  final MTextStyle? hintTextStyleDisabled;
-
   final MTextStyle? labelTextStyle;
-  final MTextStyle? labelTextStyleError;
-
   final MTextStyle? counterTextStyle;
-
   final MColor? textColor;
   final MColor? iconColor;
-  final MColor? iconColorError;
   final MColor? fillColor;
   final MColor? fillColorDisabled;
   final MColor? counterBgColor;
@@ -25,23 +16,18 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   final MColor? counterBgColorDisabled;
   final MColor? counterTextColorDisabled;
   final MColor? errorColor;
-
-  final BoxBorder? border;
-  final BoxBorder? borderFocused;
-  final BoxBorder? borderError;
+  final InputBorder? border;
+  final InputBorder? borderDisabled;
+  final InputBorder? borderError;
 
   MTextFieldStyle({
     this.textStyle,
-    this.textStyleDisabled,
-    this.textStyleError,
+    this.errorTextStyle,
     this.hintTextStyle,
-    this.hintTextStyleDisabled,
     this.labelTextStyle,
-    this.labelTextStyleError,
     this.counterTextStyle,
     this.textColor,
     this.iconColor,
-    this.iconColorError,
     this.fillColor,
     this.fillColorDisabled,
     this.counterBgColor,
@@ -50,7 +36,7 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     this.counterTextColorDisabled,
     this.errorColor,
     this.border,
-    this.borderFocused,
+    this.borderDisabled,
     this.borderError,
   });
 
@@ -60,9 +46,9 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
 
     return MTextFieldStyle(
       textStyle: MTextStyle.captionRegular,
+      errorTextStyle: MTextStyle.captionRegular,
       hintTextStyle: MTextStyle.captionRegular,
       labelTextStyle: MTextStyle.captionMedium,
-      labelTextStyleError: MTextStyle.captionMedium,
       counterTextStyle: MTextStyle.microMedium,
       iconColor: defaultColor,
       fillColor: resolve(isLight, MColor.white, MColor.primary700),
@@ -74,14 +60,20 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       counterTextColorDisabled: resolve(isLight, MColor.grey500, MColor.grey50),
       textColor: resolve(isLight, MColor.black, MColor.white),
       errorColor: resolve(isLight, MColor.error300, MColor.error75),
-      border: Border.all(color: MColor.grey50, width: 1),
-      borderFocused: Border.all(
-        color: resolve(isLight, MColor.primary300, MColor.primary75),
-        width: 2,
+      border: const OutlineInputBorder(
+        borderRadius: MDimensions.mediumBorderRadius,
+        borderSide: BorderSide(color: MColor.grey50, width: 1.0),
       ),
-      borderError: Border.all(
-        color: resolve(isLight, MColor.error300, MColor.error75),
-        width: 2,
+      borderDisabled: const OutlineInputBorder(
+        borderRadius: MDimensions.mediumBorderRadius,
+        borderSide: BorderSide.none,
+      ),
+      borderError: OutlineInputBorder(
+        borderRadius: MDimensions.mediumBorderRadius,
+        borderSide: BorderSide(
+          color: resolve(isLight, MColor.error300, MColor.error75),
+          width: 2.0,
+        ),
       ),
     );
   }
@@ -97,17 +89,12 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   @override
   ThemeExtension<MTextFieldStyle> copyWith({
     MTextStyle? textStyle,
-    MTextStyle? textStyleDisabled,
-    MTextStyle? textStyleError,
+    MTextStyle? errorTextStyle,
     MTextStyle? hintTextStyle,
-    MTextStyle? hintTextStyleDisabled,
     MTextStyle? labelTextStyle,
-    MTextStyle? labelTextStyleDisabled,
-    MTextStyle? labelTextStyleError,
     MTextStyle? counterTextStyle,
     MColor? textColor,
     MColor? iconColor,
-    MColor? iconColorError,
     MColor? fillColor,
     MColor? fillColorDisabled,
     MColor? counterBgColor,
@@ -115,23 +102,18 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     MColor? counterBgColorDisabled,
     MColor? counterTextColorDisabled,
     MColor? errorColor,
-    BoxBorder? border,
-    BoxBorder? borderFocused,
-    BoxBorder? borderError,
+    InputBorder? border,
+    InputBorder? borderDisabled,
+    InputBorder? borderError,
   }) {
     return MTextFieldStyle(
       textStyle: textStyle ?? this.textStyle,
-      textStyleDisabled: textStyleDisabled ?? this.textStyleDisabled,
-      textStyleError: textStyleError ?? this.textStyleError,
+      errorTextStyle: errorTextStyle ?? this.errorTextStyle,
       hintTextStyle: hintTextStyle ?? this.hintTextStyle,
-      hintTextStyleDisabled:
-          hintTextStyleDisabled ?? this.hintTextStyleDisabled,
       labelTextStyle: labelTextStyle ?? this.labelTextStyle,
-      labelTextStyleError: labelTextStyleError ?? this.labelTextStyleError,
       counterTextStyle: counterTextStyle ?? this.counterTextStyle,
       textColor: textColor ?? this.textColor,
       iconColor: iconColor ?? this.iconColor,
-      iconColorError: iconColorError ?? this.iconColorError,
       fillColor: fillColor ?? this.fillColor,
       fillColorDisabled: fillColorDisabled ?? this.fillColorDisabled,
       counterBgColor: counterBgColor ?? this.counterBgColor,
@@ -142,7 +124,7 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
           counterTextColorDisabled ?? this.counterTextColorDisabled,
       errorColor: errorColor ?? this.errorColor,
       border: border ?? this.border,
-      borderFocused: borderFocused ?? this.borderFocused,
+      borderDisabled: borderDisabled ?? this.borderDisabled,
       borderError: borderError ?? this.borderError,
     );
   }
@@ -151,20 +133,13 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   ThemeExtension<MTextFieldStyle> lerp(MTextFieldStyle? other, double t) {
     return MTextFieldStyle(
       textStyle: MTextStyle.lerp(textStyle, other?.textStyle, t),
-      textStyleDisabled:
-          MTextStyle.lerp(textStyleDisabled, other?.textStyleDisabled, t),
-      textStyleError: MTextStyle.lerp(textStyleError, other?.textStyleError, t),
+      errorTextStyle: MTextStyle.lerp(errorTextStyle, other?.errorTextStyle, t),
       hintTextStyle: MTextStyle.lerp(hintTextStyle, other?.hintTextStyle, t),
-      hintTextStyleDisabled: MTextStyle.lerp(
-          hintTextStyleDisabled, other?.hintTextStyleDisabled, t),
       labelTextStyle: MTextStyle.lerp(labelTextStyle, other?.labelTextStyle, t),
-      labelTextStyleError:
-          MTextStyle.lerp(labelTextStyleError, other?.labelTextStyleError, t),
       counterTextStyle:
           MTextStyle.lerp(counterTextStyle, other?.counterTextStyle, t),
       textColor: MColor.lerp(textColor, other?.textColor, t),
       iconColor: MColor.lerp(iconColor, other?.iconColor, t),
-      iconColorError: MColor.lerp(iconColorError, other?.iconColorError, t),
       fillColor: MColor.lerp(fillColor, other?.fillColor, t),
       fillColorDisabled:
           MColor.lerp(fillColorDisabled, other?.fillColorDisabled, t),
@@ -176,9 +151,9 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       counterTextColorDisabled: MColor.lerp(
           counterTextColorDisabled, other?.counterTextColorDisabled, t),
       errorColor: MColor.lerp(errorColor, other?.errorColor, t),
-      border: BoxBorder.lerp(border, other?.border, t),
-      borderFocused: BoxBorder.lerp(borderFocused, other?.borderFocused, t),
-      borderError: BoxBorder.lerp(borderError, other?.borderError, t),
+      border: border,
+      borderDisabled: borderDisabled,
+      borderError: borderError,
     );
   }
 }

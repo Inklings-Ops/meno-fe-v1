@@ -6,14 +6,25 @@ import 'inputs/inputs.dart';
 
 /// Meno Authentication Facade
 abstract class IAuthFacade {
+  /// Checks whether the user is currently authenticated or logged in.
+  ///
+  /// In this case, both the `UserToken` and `User` details must securely saved.
+  Future<bool> get isLoggedIn;
+
+  /// Checks whether the user is currently partially authenticated or logged in.
+  ///
+  /// In this case, just the `User` details are securely saved and the token is
+  /// removed.
+  Future<bool> get isPartiallyLoggedIn;
+
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
 
-  /// Gets the user's token.
-  Future<UserToken> get userToken;
-
   /// Gets the current user.
-  Future<User> getUser();
+  Future<User?> get user;
+
+  /// Gets the user's token.
+  Future<UserToken?> get userToken;
 
   /// Signs the user in with Google.
   ///

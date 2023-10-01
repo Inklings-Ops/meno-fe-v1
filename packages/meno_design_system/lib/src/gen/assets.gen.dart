@@ -14,20 +14,37 @@ import 'package:flutter/services.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/facebook.png
-  AssetGenImage get facebook =>
-      const AssetGenImage('assets/images/facebook.png');
+  /// File path: assets/images/clapping hands.svg
+  SvgGenImage get clappingHands =>
+      const SvgGenImage('assets/images/clapping hands.svg');
+
+  /// File path: assets/images/collision.svg
+  SvgGenImage get collision => const SvgGenImage('assets/images/collision.svg');
+
+  /// File path: assets/images/facebook.svg
+  SvgGenImage get facebook => const SvgGenImage('assets/images/facebook.svg');
+
+  /// File path: assets/images/finger snap.svg
+  SvgGenImage get fingerSnap =>
+      const SvgGenImage('assets/images/finger snap.svg');
+
+  /// File path: assets/images/flame.svg
+  SvgGenImage get flame => const SvgGenImage('assets/images/flame.svg');
 
   /// File path: assets/images/geometric lines.svg
   SvgGenImage get geometricLines =>
       const SvgGenImage('assets/images/geometric lines.svg');
 
-  /// File path: assets/images/google.png
-  AssetGenImage get google => const AssetGenImage('assets/images/google.png');
+  /// File path: assets/images/google.svg
+  SvgGenImage get google => const SvgGenImage('assets/images/google.svg');
 
-  /// File path: assets/images/high-voltage.png
-  AssetGenImage get highVoltage =>
-      const AssetGenImage('assets/images/high-voltage.png');
+  /// File path: assets/images/high voltage.svg
+  SvgGenImage get highVoltage =>
+      const SvgGenImage('assets/images/high voltage.svg');
+
+  /// File path: assets/images/image 1357.svg
+  SvgGenImage get image1357 =>
+      const SvgGenImage('assets/images/image 1357.svg');
 
   /// File path: assets/images/loading.gif
   AssetGenImage get loading => const AssetGenImage('assets/images/loading.gif');
@@ -39,20 +56,77 @@ class $AssetsImagesGen {
   SvgGenImage get logoLight =>
       const SvgGenImage('assets/images/logo-light.svg');
 
-  /// File path: assets/images/sparkles.png
-  AssetGenImage get sparkles =>
-      const AssetGenImage('assets/images/sparkles.png');
+  /// File path: assets/images/meno-purple.png
+  AssetGenImage get menoPurple =>
+      const AssetGenImage('assets/images/meno-purple.png');
+
+  /// File path: assets/images/meno-white.png
+  AssetGenImage get menoWhite =>
+      const AssetGenImage('assets/images/meno-white.png');
+
+  /// File path: assets/images/onboarding-1.png
+  AssetGenImage get onboarding1 =>
+      const AssetGenImage('assets/images/onboarding-1.png');
+
+  /// File path: assets/images/onboarding-2.png
+  AssetGenImage get onboarding2 =>
+      const AssetGenImage('assets/images/onboarding-2.png');
+
+  /// File path: assets/images/onboarding-3.png
+  AssetGenImage get onboarding3 =>
+      const AssetGenImage('assets/images/onboarding-3.png');
+
+  /// File path: assets/images/onboarding-4.png
+  AssetGenImage get onboarding4 =>
+      const AssetGenImage('assets/images/onboarding-4.png');
+
+  /// File path: assets/images/raising hands.svg
+  SvgGenImage get raisingHands =>
+      const SvgGenImage('assets/images/raising hands.svg');
+
+  /// File path: assets/images/red heart.svg
+  SvgGenImage get redHeart => const SvgGenImage('assets/images/red heart.svg');
+
+  /// File path: assets/images/sparkles.svg
+  SvgGenImage get sparkles => const SvgGenImage('assets/images/sparkles.svg');
+
+  /// File path: assets/images/thumbs up.svg
+  SvgGenImage get thumbsUp => const SvgGenImage('assets/images/thumbs up.svg');
+
+  /// File path: assets/images/waving hand.svg
+  SvgGenImage get wavingHand =>
+      const SvgGenImage('assets/images/waving hand.svg');
+
+  /// File path: assets/images/writing hand.svg
+  SvgGenImage get writingHand =>
+      const SvgGenImage('assets/images/writing hand.svg');
 
   /// List of all assets
   List<dynamic> get values => [
+        clappingHands,
+        collision,
         facebook,
+        fingerSnap,
+        flame,
         geometricLines,
         google,
         highVoltage,
+        image1357,
         loading,
         logoDark,
         logoLight,
-        sparkles
+        menoPurple,
+        menoWhite,
+        onboarding1,
+        onboarding2,
+        onboarding3,
+        onboarding4,
+        raisingHands,
+        redHeart,
+        sparkles,
+        thumbsUp,
+        wavingHand,
+        writingHand
       ];
 }
 

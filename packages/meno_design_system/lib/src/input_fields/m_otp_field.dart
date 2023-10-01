@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/src/m_dimensions.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_field_style.dart';
+import 'package:meno_design_system/src/theme/styles/m_otp_field_style.dart';
 import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
 import 'package:pinput/pinput.dart';
 
@@ -26,11 +26,11 @@ class MOtpField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MTextFieldStyle.of(context);
+    final styles = MOtpFieldStyles.of(context);
 
     final defaultPinTheme = PinTheme(
       constraints: const BoxConstraints(maxHeight: 88, maxWidth: 88),
-      padding: const EdgeInsets.all(MDimensions.small),
+      padding: const EdgeInsets.all(32.0),
       decoration: BoxDecoration(
         color: styles?.fillColor,
         border: styles?.border,

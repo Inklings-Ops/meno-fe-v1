@@ -22,20 +22,20 @@ class MTextStyle extends TextStyle {
   static const heading1Bold = MTextStyle._(
     fontFamily: _fontFamily,
     fontSize: 32.0,
-    height: 40.0 / 32.0,
+    height: 44.0 / 32.0,
     fontWeight: FontWeight.w700,
   );
 
   static const heading1Medium = MTextStyle._(
     fontFamily: _fontFamily,
     fontSize: 32.0,
-    height: 40.0 / 32.0,
+    height: 44.0 / 32.0,
     fontWeight: FontWeight.w500,
   );
 
   static const heading1Regular = MTextStyle._(
     fontSize: 32.0,
-    height: 40.0 / 32.0,
+    height: 44.0 / 32.0,
     fontWeight: FontWeight.w400,
   );
 
@@ -121,7 +121,7 @@ class MTextStyle extends TextStyle {
 
   static const MTextStyle captionRegular = MTextStyle._(
     fontSize: 14.0,
-    height: 18.0 / 14.0,
+    height: 16.0 / 14.0,
     fontWeight: FontWeight.w400,
     fontFamily: _fontFamily,
   );
