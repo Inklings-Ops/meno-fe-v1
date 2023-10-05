@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/features/auth/domain/entities/user.dart';
-import 'package:meno_fe_v1/features/auth/domain/inputs/inputs.dart';
+import 'package:meno_fe_v1/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_credentials_dto.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_dto.dart';
 
 /// A class for mapping between `UserCredentials` and `User` domain objects and `UserCredentialDto` and `User` DTOs.
@@ -35,6 +35,22 @@ class AuthMapper {
       imageId: domain.imageId,
       imageUrl: domain.imageUrl,
       deleted: domain.deleted,
+    );
+  }
+
+  UserCredentialsDto? userCredentialsToDto(UserCredentials? domain) {
+    if (domain == null) return null;
+    return UserCredentialsDto(
+      user: userToDto(domain.user)!,
+      token: domain.token,
+    );
+  }
+
+  UserCredentials? userCredentialsToDomain(UserCredentialsDto? dto) {
+    if (dto == null) return null;
+    return UserCredentials(
+      user: userToDomain(dto.user)!,
+      token: dto.token,
     );
   }
 }

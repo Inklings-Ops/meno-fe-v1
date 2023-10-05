@@ -17,7 +17,7 @@ class MTextFormField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool isPassword;
   final FormFieldValidator<String>? validator;
-  final AutovalidateMode autovalidateMode;
+  final AutovalidateMode? autovalidateMode;
 
   const MTextFormField({
     super.key,
@@ -35,7 +35,7 @@ class MTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.isPassword = false,
     this.validator,
-    this.autovalidateMode = AutovalidateMode.always,
+    this.autovalidateMode,
   });
 
   @override
@@ -48,7 +48,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
 
   int? currentLength;
 
-  bool obscureText = false;
+  late bool obscureText;
 
   Widget? suffixIcon, prefixIcon;
 
@@ -119,7 +119,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
             controller: widget.controller,
             focusNode: widget.focusNode,
             keyboardType: widget.keyboardType,
-            obscureText: obscureText,
+            obscureText: obscureText && widget.isPassword,
             maxLength: 244,
             maxLengthEnforcement: MaxLengthEnforcement.enforced,
             onChanged: widget.onChanged,
@@ -170,6 +170,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
   @override
   void initState() {
     super.initState();
+    obscureText = widget.isPassword;
     _controllerNotifier.value = widget.controller;
     _focusNodeNotifier.value = widget.focusNode;
   }

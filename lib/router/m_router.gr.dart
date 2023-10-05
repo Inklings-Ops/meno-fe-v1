@@ -27,6 +27,12 @@ abstract class _$MRouter extends RootStackRouter {
         child: const DiscoverPage(),
       );
     },
+    EmailVerificationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EmailVerificationPage(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -40,7 +46,7 @@ abstract class _$MRouter extends RootStackRouter {
         routeData: routeData,
         child: LoginPage(
           key: args.key,
-          onLogin: args.onLogin,
+          implyLeading: args.implyLeading,
         ),
       );
     },
@@ -57,15 +63,32 @@ abstract class _$MRouter extends RootStackRouter {
       );
     },
     OnboardingRoute.name: (routeData) {
+      final args = routeData.argsAs<OnboardingRouteArgs>(
+          orElse: () => const OnboardingRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const OnboardingPage(),
+        child: OnboardingPage(
+          key: args.key,
+          onBoarded: args.onBoarded,
+        ),
       );
     },
     ProfileRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ProfilePage(),
+      );
+    },
+    RegisterRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const RegisterPage(),
+      );
+    },
+    ReturnLoginRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ReturnLoginPage(),
       );
     },
   };
@@ -100,6 +123,20 @@ class DiscoverRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [EmailVerificationPage]
+class EmailVerificationRoute extends PageRouteInfo<void> {
+  const EmailVerificationRoute({List<PageRouteInfo>? children})
+      : super(
+          EmailVerificationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EmailVerificationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -118,13 +155,13 @@ class HomeRoute extends PageRouteInfo<void> {
 class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     Key? key,
-    void Function(bool)? onLogin,
+    bool implyLeading = false,
     List<PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
             key: key,
-            onLogin: onLogin,
+            implyLeading: implyLeading,
           ),
           initialChildren: children,
         );
@@ -137,16 +174,16 @@ class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
 class LoginRouteArgs {
   const LoginRouteArgs({
     this.key,
-    this.onLogin,
+    this.implyLeading = false,
   });
 
   final Key? key;
 
-  final void Function(bool)? onLogin;
+  final bool implyLeading;
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, onLogin: $onLogin}';
+    return 'LoginRouteArgs{key: $key, implyLeading: $implyLeading}';
   }
 }
 
@@ -180,16 +217,40 @@ class NotesRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [OnboardingPage]
-class OnboardingRoute extends PageRouteInfo<void> {
-  const OnboardingRoute({List<PageRouteInfo>? children})
-      : super(
+class OnboardingRoute extends PageRouteInfo<OnboardingRouteArgs> {
+  OnboardingRoute({
+    Key? key,
+    void Function(bool)? onBoarded,
+    List<PageRouteInfo>? children,
+  }) : super(
           OnboardingRoute.name,
+          args: OnboardingRouteArgs(
+            key: key,
+            onBoarded: onBoarded,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'OnboardingRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<OnboardingRouteArgs> page =
+      PageInfo<OnboardingRouteArgs>(name);
+}
+
+class OnboardingRouteArgs {
+  const OnboardingRouteArgs({
+    this.key,
+    this.onBoarded,
+  });
+
+  final Key? key;
+
+  final void Function(bool)? onBoarded;
+
+  @override
+  String toString() {
+    return 'OnboardingRouteArgs{key: $key, onBoarded: $onBoarded}';
+  }
 }
 
 /// generated route for
@@ -202,6 +263,34 @@ class ProfileRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ProfileRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [RegisterPage]
+class RegisterRoute extends PageRouteInfo<void> {
+  const RegisterRoute({List<PageRouteInfo>? children})
+      : super(
+          RegisterRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'RegisterRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ReturnLoginPage]
+class ReturnLoginRoute extends PageRouteInfo<void> {
+  const ReturnLoginRoute({List<PageRouteInfo>? children})
+      : super(
+          ReturnLoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ReturnLoginRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

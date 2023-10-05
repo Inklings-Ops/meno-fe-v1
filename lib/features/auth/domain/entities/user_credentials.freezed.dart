@@ -20,7 +20,7 @@ mixin _$UserCredentials {
   User get user => throw _privateConstructorUsedError;
 
   /// The user's token.
-  String get token => throw _privateConstructorUsedError;
+  String? get token => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $UserCredentialsCopyWith<UserCredentials> get copyWith =>
@@ -33,7 +33,7 @@ abstract class $UserCredentialsCopyWith<$Res> {
           UserCredentials value, $Res Function(UserCredentials) then) =
       _$UserCredentialsCopyWithImpl<$Res, UserCredentials>;
   @useResult
-  $Res call({User user, String token});
+  $Res call({User user, String? token});
 
   $UserCopyWith<$Res> get user;
 }
@@ -52,17 +52,17 @@ class _$UserCredentialsCopyWithImpl<$Res, $Val extends UserCredentials>
   @override
   $Res call({
     Object? user = null,
-    Object? token = null,
+    Object? token = freezed,
   }) {
     return _then(_value.copyWith(
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as User,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 
@@ -83,7 +83,7 @@ abstract class _$$_UserCredentialsCopyWith<$Res>
       __$$_UserCredentialsCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({User user, String token});
+  $Res call({User user, String? token});
 
   @override
   $UserCopyWith<$Res> get user;
@@ -101,17 +101,17 @@ class __$$_UserCredentialsCopyWithImpl<$Res>
   @override
   $Res call({
     Object? user = null,
-    Object? token = null,
+    Object? token = freezed,
   }) {
     return _then(_$_UserCredentials(
       user: null == user
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as User,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -119,7 +119,7 @@ class __$$_UserCredentialsCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_UserCredentials implements _UserCredentials {
-  const _$_UserCredentials({required this.user, required this.token});
+  const _$_UserCredentials({required this.user, this.token});
 
   /// The user.
   @override
@@ -127,7 +127,7 @@ class _$_UserCredentials implements _UserCredentials {
 
   /// The user's token.
   @override
-  final String token;
+  final String? token;
 
   @override
   String toString() {
@@ -155,8 +155,7 @@ class _$_UserCredentials implements _UserCredentials {
 
 abstract class _UserCredentials implements UserCredentials {
   const factory _UserCredentials(
-      {required final User user,
-      required final String token}) = _$_UserCredentials;
+      {required final User user, final String? token}) = _$_UserCredentials;
 
   @override
 
@@ -165,7 +164,7 @@ abstract class _UserCredentials implements UserCredentials {
   @override
 
   /// The user's token.
-  String get token;
+  String? get token;
   @override
   @JsonKey(ignore: true)
   _$$_UserCredentialsCopyWith<_$_UserCredentials> get copyWith =>

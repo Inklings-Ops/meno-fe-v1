@@ -7,7 +7,9 @@ class MAppBar extends _AppBar {
   factory MAppBar.primary({
     Key? key,
     required String title,
+    String backText,
     VoidCallback? onBackPressed,
+    bool implyLeading,
   }) = _PrimaryAppBar;
 
   factory MAppBar.secondary({
@@ -71,17 +73,31 @@ class _PrimaryAppBar extends MAppBar {
     super.key,
     required super.title,
     super.onBackPressed,
+    String backText = "Back",
+    bool implyLeading = true,
   }) : super._(
-          child: _PrimaryAppBarImpl(title, onBackPressed: onBackPressed),
+          child: _PrimaryAppBarImpl(
+            title,
+            backText: backText,
+            onBackPressed: onBackPressed,
+            implyLeading: implyLeading,
+          ),
           variant: _AppBarVariant.primary,
         );
 }
 
 class _PrimaryAppBarImpl extends StatelessWidget {
   final String title;
+  final String backText;
   final VoidCallback? onBackPressed;
+  final bool implyLeading;
 
-  const _PrimaryAppBarImpl(this.title, {this.onBackPressed});
+  const _PrimaryAppBarImpl(
+    this.title, {
+    required this.backText,
+    this.onBackPressed,
+    this.implyLeading = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +120,14 @@ class _PrimaryAppBarImpl extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MBackButton.withText(
-                    iconColor: styles.textColor,
-                    textStyle: styles.actionTextStyle,
-                  ),
-                  const SizedBox(height: 16),
+                  if (implyLeading) ...[
+                    MBackButton.withText(
+                      title: backText,
+                      iconColor: styles.textColor,
+                      textStyle: styles.actionTextStyle,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   MText(
                     title,
                     style: styles.textStyle,

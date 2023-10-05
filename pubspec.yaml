@@ -33,7 +33,11 @@ dependencies:
   http_parser: ^4.0.2
   logger: ^2.0.2+1
   flutter_onboarding_slider: ^1.0.10
+  internet_connection_checker: ^1.0.0+1
+
+
   figma_layout_grid: ^0.3.2
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:

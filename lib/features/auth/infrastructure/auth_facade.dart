@@ -1,7 +1,9 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/datasources/auth_local_datasource.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/datasources/auth_remote_datasource.dart';
@@ -9,28 +11,55 @@ import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_credentials_dt
 import 'package:meno_fe_v1/features/auth/infrastructure/dtos/user_dto.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/mapper/auth_mapper.dart';
 import 'package:meno_fe_v1/features/auth/infrastructure/responses/auth_response.dart';
+import 'package:meno_fe_v1/services/jwt_service.dart';
+import 'package:meno_fe_v1/services/network_service.dart';
 
 @LazySingleton(as: IAuthFacade)
 class AuthFacade implements IAuthFacade {
   final AuthMapper _authMapper;
   final AuthRemoteDatasource _remote;
   final AuthLocalDatasource _local;
-
-  final _logger = Logger();
+  final NetworkService _network;
+  final JWTService _jwt;
 
   AuthFacade({
     required AuthMapper authMapper,
     required AuthRemoteDatasource remoteDatasource,
     required AuthLocalDatasource localDatasource,
+    required NetworkService networkService,
+    required JWTService jwtService,
   })  : _authMapper = authMapper,
         _remote = remoteDatasource,
-        _local = localDatasource;
+        _local = localDatasource,
+        _network = networkService,
+        _jwt = jwtService;
 
   @override
-  Future<bool> get isLoggedIn => _local.isLoggedIn();
+  Future<bool> get isAuthenticated async {
+    // Check if a token is available
+    final hasToken = await _local.hasToken;
+
+    // Check if a user is available
+    final hasUser = await _local.hasUser;
+
+    // Return true only if both token and user are available
+    return hasToken && hasUser;
+  }
 
   @override
-  Future<bool> get isPartiallyLoggedIn => _local.hasUserButNoToken();
+  Future<bool> get isPartiallyAuthenticated async {
+    // Check if a token is available
+    final hasToken = await _local.hasToken;
+
+    // Check if a user is available
+    final hasUser = await _local.hasUser;
+
+    // Return true only if token is unavailable and user is available
+    return !hasToken && hasUser;
+  }
+
+  @override
+  bool isTokenExpired(String token) => _jwt.isExpired(token);
 
   @override
   // TODO: implement isVerified
@@ -38,14 +67,27 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<User?> get user async {
-    final UserDto? userDto = await _local.getUser();
+    final UserDto? userDto = await _local.getCurrentUser();
     final User? userDomain = _authMapper.userToDomain(userDto);
     return userDomain;
   }
 
   @override
-  Future<UserToken?> get userToken async {
-    return await _local.getUserToken();
+  Future<UserToken?> get userToken => _local.getCurrentUserToken();
+
+  @override
+  Future<Map<String, UserCredentials>?> getAllUserCredentials() async {
+    final fromLocal = await _local.getAllUserCredentials();
+
+    if (fromLocal != null) {
+      final userCredentialsMap = fromLocal.map((key, value) {
+        final userCredentials = _authMapper.userCredentialsToDomain(value)!;
+        return MapEntry(key, userCredentials);
+      });
+
+      return userCredentialsMap;
+    }
+    return null;
   }
 
   @override
@@ -61,6 +103,11 @@ class AuthFacade implements IAuthFacade {
   }) async {
     final String emailValue = email.get()!;
     final String passwordValue = password.get()!;
+
+    if (!(await _network.isConnected)) {
+      return left(const AuthException.networkError());
+    }
+
     try {
       final AuthResponse<UserCredentialsDto> response = await _remote.login(
         email: emailValue,
@@ -68,36 +115,93 @@ class AuthFacade implements IAuthFacade {
       );
 
       final UserCredentialsDto userCredentialsDto = response.data!;
-      await _local.storeToken(userCredentialsDto.token);
-      await _local.storeUser(userCredentialsDto.userDto);
+
+      await _local.storeAllUserCredentials(userCredentialsDto);
+      await _local.storeCurrentToken(userCredentialsDto.token!);
+      await _local.storeCurrentUser(userCredentialsDto.user);
 
       return right(unit);
     } on DioException catch (e) {
-      _logger.e(e);
-      return left(const AuthException.serverError());
+      switch (e.response?.statusCode) {
+        case 400:
+          return left(const AuthException.invalidEmailOrPassword());
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
     }
   }
 
   @override
-  Future<void> logout() {
-    // TODO: implement logout
-    throw UnimplementedError();
+  Future<void> logout() => _local.deleteCurrentUserCredentials();
+
+  @override
+  Future<void> partialLogout() => _local.deleteCurrentUserToken();
+
+  @override
+  Future<Either<AuthException, Unit>> changeUser(
+    UserCredentials credentials,
+  ) async {
+    final isExpired = _jwt.isExpired(credentials.token!);
+    if (isExpired) {
+      return left(const AuthException.userTokenExpired());
+    } else {
+      final dto = _authMapper.userCredentialsToDto(credentials)!;
+      await _local.storeAllUserCredentials(dto);
+      await _local.storeCurrentToken(dto.token!);
+      await _local.storeCurrentUser(dto.user);
+      return right(unit);
+    }
   }
 
   @override
-  Future<void> partialLogout() {
-    // TODO: implement partialLogout
-    throw UnimplementedError();
-  }
+  Future<Either<AuthException, Unit>> register({
+    required IFullName fullName,
+    required IEmail email,
+    required IPassword password,
+    IBio? bio,
+    IAvatar? avatar,
+  }) async {
+    final String fullNameValue = fullName.get()!;
+    final String emailValue = email.get()!;
+    final String passwordValue = password.get()!;
+    final String? bioValue = bio?.get();
+    final File? avatarValue = avatar?.get();
 
-  @override
-  Future<Either<AuthException, Unit>> register(
-      {required IFullName fullName,
-      required IEmail email,
-      required IPassword password,
-      IBio? bio,
-      IAvatar? avatar}) {
-    // TODO: implement register
-    throw UnimplementedError();
+    if (!(await _network.isConnected)) {
+      return left(const AuthException.networkError());
+    }
+
+    try {
+      final AuthResponse<UserCredentialsDto> response = await _remote.register(
+        fullName: fullNameValue,
+        email: emailValue,
+        password: passwordValue,
+        bio: bioValue,
+        image: avatarValue,
+      );
+
+      final UserCredentialsDto userCredentialsDto = response.data!;
+
+      await _local.storeAllUserCredentials(userCredentialsDto);
+      await _local.storeCurrentToken(userCredentialsDto.token!);
+      await _local.storeCurrentUser(userCredentialsDto.user);
+
+      return right(unit);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 400:
+          return left(const AuthException.emailAlreadyInUse());
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
   }
 }

@@ -12,10 +12,10 @@ class UserCredentialsDto with _$UserCredentialsDto {
   /// Creates a new `UserCredentialsDto` object.
   factory UserCredentialsDto({
     /// The user's DTO.
-    required UserDto userDto,
+    required UserDto user,
 
     /// The user's token.
-    required String token,
+    String? token,
   }) = _UserCredentialsDto;
 
   /// Creates a new `UserCredentialsDto` object from a JSON map.

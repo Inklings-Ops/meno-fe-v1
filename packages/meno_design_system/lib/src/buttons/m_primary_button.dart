@@ -7,11 +7,13 @@ import 'm_button_icon_placement.dart';
 
 class MPrimaryButton extends MButton {
   final bool loading;
+  final bool disabled;
 
   const MPrimaryButton({
     super.key,
     required super.label,
     required super.onPressed,
+    this.disabled = false,
     this.loading = false,
   });
 
@@ -22,13 +24,14 @@ class MPrimaryButton extends MButton {
     super.iconPlacement = MButtonIconPlacement.left,
     required super.onPressed,
     this.loading = false,
+    this.disabled = false,
   }) : super.icon();
 
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return ElevatedButton(
       style: MButtonStyle.of(context)?.primary?.override(),
-      onPressed: loading ? null : onPressed,
+      onPressed: (loading || disabled) ? null : onPressed,
       child: loading ? const MLoadingIndicator.four(width: 56) : child,
     );
   }

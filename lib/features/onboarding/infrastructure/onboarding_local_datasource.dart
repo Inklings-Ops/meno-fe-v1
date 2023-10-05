@@ -1,19 +1,18 @@
-import 'dart:convert';
-
-import 'package:meno_fe_v1/services/secure_storage_service.dart';
+import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/shared/m_keys.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+@Injectable()
 class OnboardingLocalDatasource {
-  final SecureStorageService _storage;
+  final SharedPreferences _pref;
 
   OnboardingLocalDatasource({
-    required SecureStorageService storage,
-  }) : _storage = storage;
+    required SharedPreferences storage,
+  }) : _pref = storage;
 
-  Future<bool> isOnboarded() async =>
-      await _storage.hasKey(MKeys.onboardingKey);
+  bool isOnboarded() => _pref.containsKey(MKeys.onboardingKey);
 
-  Future<void> setOnboarding(String key, {required bool value}) async {
-    return await _storage.write(key, value: jsonEncode(value));
-  }
+  Future<void> onboardingCompleted() => _pref.setInt(MKeys.onboardingKey, 1);
+
+  Future<void> clear() => _pref.remove(MKeys.onboardingKey);
 }

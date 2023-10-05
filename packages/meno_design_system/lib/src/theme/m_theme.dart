@@ -121,6 +121,44 @@ class MTheme {
       fontFamily: FontFamily.sFProDisplay,
       disabledColor: MColor.grey50,
       useMaterial3: true,
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: colorScheme.error,
+        contentTextStyle: MTextStyle.captionRegular,
+        insetPadding: const EdgeInsets.all(16),
+        behavior: SnackBarBehavior.floating,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+        ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        side: const BorderSide(width: 1, color: MColor.grey50),
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        dragHandleSize: const Size(32, 4),
+        showDragHandle: false,
+        dragHandleColor: MInternal.resolve(
+          isLight,
+          MColor.grey30,
+          MColor.grey400,
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(MCore.xxLarge),
+          ),
+        ),
+        backgroundColor: MInternal.resolve(
+          isLight,
+          MColor.white,
+          MColor.primary700,
+        ),
+        modalBackgroundColor: MInternal.resolve(
+          isLight,
+          MColor.white,
+          MColor.primary700,
+        ),
+      ),
       extensions: [
         buttonStyles,
         colorScheme,

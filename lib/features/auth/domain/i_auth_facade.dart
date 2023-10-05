@@ -9,13 +9,15 @@ abstract class IAuthFacade {
   /// Checks whether the user is currently authenticated or logged in.
   ///
   /// In this case, both the `UserToken` and `User` details must securely saved.
-  Future<bool> get isLoggedIn;
+  Future<bool> get isAuthenticated;
+
+  bool isTokenExpired(String token);
 
   /// Checks whether the user is currently partially authenticated or logged in.
   ///
   /// In this case, just the `User` details are securely saved and the token is
   /// removed.
-  Future<bool> get isPartiallyLoggedIn;
+  Future<bool> get isPartiallyAuthenticated;
 
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
@@ -25,6 +27,8 @@ abstract class IAuthFacade {
 
   /// Gets the user's token.
   Future<UserToken?> get userToken;
+
+  Future<Map<String, UserCredentials>?> getAllUserCredentials();
 
   /// Signs the user in with Google.
   ///
@@ -40,6 +44,8 @@ abstract class IAuthFacade {
     required IEmail email,
     required IPassword password,
   });
+
+  Future<Either<AuthException, Unit>> changeUser(UserCredentials credentials);
 
   /// Logs the user out.
   Future<void> logout();

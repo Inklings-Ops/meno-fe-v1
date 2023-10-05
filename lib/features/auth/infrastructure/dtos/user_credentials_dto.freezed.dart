@@ -21,10 +21,10 @@ UserCredentialsDto _$UserCredentialsDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserCredentialsDto {
   /// The user's DTO.
-  UserDto get userDto => throw _privateConstructorUsedError;
+  UserDto get user => throw _privateConstructorUsedError;
 
   /// The user's token.
-  String get token => throw _privateConstructorUsedError;
+  String? get token => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,9 +38,9 @@ abstract class $UserCredentialsDtoCopyWith<$Res> {
           UserCredentialsDto value, $Res Function(UserCredentialsDto) then) =
       _$UserCredentialsDtoCopyWithImpl<$Res, UserCredentialsDto>;
   @useResult
-  $Res call({UserDto userDto, String token});
+  $Res call({UserDto user, String? token});
 
-  $UserDtoCopyWith<$Res> get userDto;
+  $UserDtoCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -56,26 +56,26 @@ class _$UserCredentialsDtoCopyWithImpl<$Res, $Val extends UserCredentialsDto>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userDto = null,
-    Object? token = null,
+    Object? user = null,
+    Object? token = freezed,
   }) {
     return _then(_value.copyWith(
-      userDto: null == userDto
-          ? _value.userDto
-          : userDto // ignore: cast_nullable_to_non_nullable
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
               as UserDto,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $UserDtoCopyWith<$Res> get userDto {
-    return $UserDtoCopyWith<$Res>(_value.userDto, (value) {
-      return _then(_value.copyWith(userDto: value) as $Val);
+  $UserDtoCopyWith<$Res> get user {
+    return $UserDtoCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
     });
   }
 }
@@ -88,10 +88,10 @@ abstract class _$$_UserCredentialsDtoCopyWith<$Res>
       __$$_UserCredentialsDtoCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({UserDto userDto, String token});
+  $Res call({UserDto user, String? token});
 
   @override
-  $UserDtoCopyWith<$Res> get userDto;
+  $UserDtoCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -105,18 +105,18 @@ class __$$_UserCredentialsDtoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? userDto = null,
-    Object? token = null,
+    Object? user = null,
+    Object? token = freezed,
   }) {
     return _then(_$_UserCredentialsDto(
-      userDto: null == userDto
-          ? _value.userDto
-          : userDto // ignore: cast_nullable_to_non_nullable
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
               as UserDto,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -124,22 +124,22 @@ class __$$_UserCredentialsDtoCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_UserCredentialsDto implements _UserCredentialsDto {
-  _$_UserCredentialsDto({required this.userDto, required this.token});
+  _$_UserCredentialsDto({required this.user, this.token});
 
   factory _$_UserCredentialsDto.fromJson(Map<String, dynamic> json) =>
       _$$_UserCredentialsDtoFromJson(json);
 
   /// The user's DTO.
   @override
-  final UserDto userDto;
+  final UserDto user;
 
   /// The user's token.
   @override
-  final String token;
+  final String? token;
 
   @override
   String toString() {
-    return 'UserCredentialsDto(userDto: $userDto, token: $token)';
+    return 'UserCredentialsDto(user: $user, token: $token)';
   }
 
   @override
@@ -147,13 +147,13 @@ class _$_UserCredentialsDto implements _UserCredentialsDto {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_UserCredentialsDto &&
-            (identical(other.userDto, userDto) || other.userDto == userDto) &&
+            (identical(other.user, user) || other.user == user) &&
             (identical(other.token, token) || other.token == token));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, userDto, token);
+  int get hashCode => Object.hash(runtimeType, user, token);
 
   @JsonKey(ignore: true)
   @override
@@ -172,8 +172,8 @@ class _$_UserCredentialsDto implements _UserCredentialsDto {
 
 abstract class _UserCredentialsDto implements UserCredentialsDto {
   factory _UserCredentialsDto(
-      {required final UserDto userDto,
-      required final String token}) = _$_UserCredentialsDto;
+      {required final UserDto user,
+      final String? token}) = _$_UserCredentialsDto;
 
   factory _UserCredentialsDto.fromJson(Map<String, dynamic> json) =
       _$_UserCredentialsDto.fromJson;
@@ -181,11 +181,11 @@ abstract class _UserCredentialsDto implements UserCredentialsDto {
   @override
 
   /// The user's DTO.
-  UserDto get userDto;
+  UserDto get user;
   @override
 
   /// The user's token.
-  String get token;
+  String? get token;
   @override
   @JsonKey(ignore: true)
   _$$_UserCredentialsDtoCopyWith<_$_UserCredentialsDto> get copyWith =>

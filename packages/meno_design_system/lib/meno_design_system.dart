@@ -1,10 +1,12 @@
 library meno_design_system;
 
+export 'src/avatars/m_avatar.dart';
 export 'src/badges/m_badge.dart';
 export 'src/buttons/m_back_button.dart';
 export 'src/buttons/m_button.dart';
 export 'src/buttons/m_button_icon_placement.dart';
 export 'src/buttons/m_danger_button.dart';
+export 'src/buttons/m_google_button.dart';
 export 'src/buttons/m_icon_button.dart';
 export 'src/buttons/m_primary_button.dart';
 export 'src/buttons/m_secondary_button.dart';
@@ -19,6 +21,7 @@ export 'src/input_fields/m_text_form_field.dart';
 export 'src/loading_indicator/m_loading_indicator.dart';
 export 'src/m_dimensions.dart';
 export 'src/m_size.dart';
+export 'src/modals/m_modal.dart';
 export 'src/navigation/m_app_bar.dart';
 export 'src/navigation/m_bottom_navigation_bar.dart';
 export 'src/text/m_text.dart';

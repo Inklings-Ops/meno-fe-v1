@@ -16,7 +16,7 @@ class UserCredentials with _$UserCredentials {
     required User user,
 
     /// The user's token.
-    required UserToken token,
+    UserToken? token,
   }) = _UserCredentials;
 
   /// Creates a new `UserCredentials` object with all of the properties set to their default values.

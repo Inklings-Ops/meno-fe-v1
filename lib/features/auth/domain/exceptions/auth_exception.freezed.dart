@@ -22,6 +22,10 @@ mixin _$AuthException {
     required TResult Function() invalidEmailOrPassword,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -30,6 +34,10 @@ mixin _$AuthException {
     TResult? Function()? invalidEmailOrPassword,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -38,6 +46,10 @@ mixin _$AuthException {
     TResult Function()? invalidEmailOrPassword,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -46,24 +58,36 @@ mixin _$AuthException {
     required TResult Function(_Message value) message,
     required TResult Function(InvalidEmailOrPassword value)
         invalidEmailOrPassword,
-    required TResult Function(EmailAlreadyInUse value) emailAlreadyInUse,
-    required TResult Function(ServerError value) serverError,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
     TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult? Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult? Function(ServerError value)? serverError,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
     TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult Function(ServerError value)? serverError,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -154,6 +178,10 @@ class _$_Message implements _Message {
     required TResult Function() invalidEmailOrPassword,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
   }) {
     return message(this.message);
   }
@@ -165,6 +193,10 @@ class _$_Message implements _Message {
     TResult? Function()? invalidEmailOrPassword,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
   }) {
     return message?.call(this.message);
   }
@@ -176,6 +208,10 @@ class _$_Message implements _Message {
     TResult Function()? invalidEmailOrPassword,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
     required TResult orElse(),
   }) {
     if (message != null) {
@@ -190,8 +226,12 @@ class _$_Message implements _Message {
     required TResult Function(_Message value) message,
     required TResult Function(InvalidEmailOrPassword value)
         invalidEmailOrPassword,
-    required TResult Function(EmailAlreadyInUse value) emailAlreadyInUse,
-    required TResult Function(ServerError value) serverError,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
   }) {
     return message(this);
   }
@@ -201,8 +241,12 @@ class _$_Message implements _Message {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
     TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult? Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult? Function(ServerError value)? serverError,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
   }) {
     return message?.call(this);
   }
@@ -212,8 +256,12 @@ class _$_Message implements _Message {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
     TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult Function(ServerError value)? serverError,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
     required TResult orElse(),
   }) {
     if (message != null) {
@@ -274,6 +322,10 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
     required TResult Function() invalidEmailOrPassword,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
   }) {
     return invalidEmailOrPassword();
   }
@@ -285,6 +337,10 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
     TResult? Function()? invalidEmailOrPassword,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
   }) {
     return invalidEmailOrPassword?.call();
   }
@@ -296,6 +352,10 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
     TResult Function()? invalidEmailOrPassword,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
     required TResult orElse(),
   }) {
     if (invalidEmailOrPassword != null) {
@@ -310,8 +370,12 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
     required TResult Function(_Message value) message,
     required TResult Function(InvalidEmailOrPassword value)
         invalidEmailOrPassword,
-    required TResult Function(EmailAlreadyInUse value) emailAlreadyInUse,
-    required TResult Function(ServerError value) serverError,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
   }) {
     return invalidEmailOrPassword(this);
   }
@@ -321,8 +385,12 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
     TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult? Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult? Function(ServerError value)? serverError,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
   }) {
     return invalidEmailOrPassword?.call(this);
   }
@@ -332,8 +400,12 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
     TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult Function(ServerError value)? serverError,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
     required TResult orElse(),
   }) {
     if (invalidEmailOrPassword != null) {
@@ -348,25 +420,25 @@ abstract class InvalidEmailOrPassword implements AuthException {
 }
 
 /// @nodoc
-abstract class _$$EmailAlreadyInUseCopyWith<$Res> {
-  factory _$$EmailAlreadyInUseCopyWith(
-          _$EmailAlreadyInUse value, $Res Function(_$EmailAlreadyInUse) then) =
-      __$$EmailAlreadyInUseCopyWithImpl<$Res>;
+abstract class _$$_EmailAlreadyInUseCopyWith<$Res> {
+  factory _$$_EmailAlreadyInUseCopyWith(_$_EmailAlreadyInUse value,
+          $Res Function(_$_EmailAlreadyInUse) then) =
+      __$$_EmailAlreadyInUseCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$EmailAlreadyInUseCopyWithImpl<$Res>
-    extends _$AuthExceptionCopyWithImpl<$Res, _$EmailAlreadyInUse>
-    implements _$$EmailAlreadyInUseCopyWith<$Res> {
-  __$$EmailAlreadyInUseCopyWithImpl(
-      _$EmailAlreadyInUse _value, $Res Function(_$EmailAlreadyInUse) _then)
+class __$$_EmailAlreadyInUseCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_EmailAlreadyInUse>
+    implements _$$_EmailAlreadyInUseCopyWith<$Res> {
+  __$$_EmailAlreadyInUseCopyWithImpl(
+      _$_EmailAlreadyInUse _value, $Res Function(_$_EmailAlreadyInUse) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$EmailAlreadyInUse implements EmailAlreadyInUse {
-  const _$EmailAlreadyInUse();
+class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
+  const _$_EmailAlreadyInUse();
 
   @override
   String toString() {
@@ -376,7 +448,7 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$EmailAlreadyInUse);
+        (other.runtimeType == runtimeType && other is _$_EmailAlreadyInUse);
   }
 
   @override
@@ -389,6 +461,10 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
     required TResult Function() invalidEmailOrPassword,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
   }) {
     return emailAlreadyInUse();
   }
@@ -400,6 +476,10 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
     TResult? Function()? invalidEmailOrPassword,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
   }) {
     return emailAlreadyInUse?.call();
   }
@@ -411,6 +491,10 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
     TResult Function()? invalidEmailOrPassword,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
     required TResult orElse(),
   }) {
     if (emailAlreadyInUse != null) {
@@ -425,8 +509,12 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
     required TResult Function(_Message value) message,
     required TResult Function(InvalidEmailOrPassword value)
         invalidEmailOrPassword,
-    required TResult Function(EmailAlreadyInUse value) emailAlreadyInUse,
-    required TResult Function(ServerError value) serverError,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
   }) {
     return emailAlreadyInUse(this);
   }
@@ -436,8 +524,12 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
     TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult? Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult? Function(ServerError value)? serverError,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
   }) {
     return emailAlreadyInUse?.call(this);
   }
@@ -447,8 +539,12 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
     TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult Function(ServerError value)? serverError,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
     required TResult orElse(),
   }) {
     if (emailAlreadyInUse != null) {
@@ -458,30 +554,30 @@ class _$EmailAlreadyInUse implements EmailAlreadyInUse {
   }
 }
 
-abstract class EmailAlreadyInUse implements AuthException {
-  const factory EmailAlreadyInUse() = _$EmailAlreadyInUse;
+abstract class _EmailAlreadyInUse implements AuthException {
+  const factory _EmailAlreadyInUse() = _$_EmailAlreadyInUse;
 }
 
 /// @nodoc
-abstract class _$$ServerErrorCopyWith<$Res> {
-  factory _$$ServerErrorCopyWith(
-          _$ServerError value, $Res Function(_$ServerError) then) =
-      __$$ServerErrorCopyWithImpl<$Res>;
+abstract class _$$_ServerErrorCopyWith<$Res> {
+  factory _$$_ServerErrorCopyWith(
+          _$_ServerError value, $Res Function(_$_ServerError) then) =
+      __$$_ServerErrorCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$ServerErrorCopyWithImpl<$Res>
-    extends _$AuthExceptionCopyWithImpl<$Res, _$ServerError>
-    implements _$$ServerErrorCopyWith<$Res> {
-  __$$ServerErrorCopyWithImpl(
-      _$ServerError _value, $Res Function(_$ServerError) _then)
+class __$$_ServerErrorCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_ServerError>
+    implements _$$_ServerErrorCopyWith<$Res> {
+  __$$_ServerErrorCopyWithImpl(
+      _$_ServerError _value, $Res Function(_$_ServerError) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$ServerError implements ServerError {
-  const _$ServerError();
+class _$_ServerError implements _ServerError {
+  const _$_ServerError();
 
   @override
   String toString() {
@@ -491,7 +587,7 @@ class _$ServerError implements ServerError {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ServerError);
+        (other.runtimeType == runtimeType && other is _$_ServerError);
   }
 
   @override
@@ -504,6 +600,10 @@ class _$ServerError implements ServerError {
     required TResult Function() invalidEmailOrPassword,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
   }) {
     return serverError();
   }
@@ -515,6 +615,10 @@ class _$ServerError implements ServerError {
     TResult? Function()? invalidEmailOrPassword,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
   }) {
     return serverError?.call();
   }
@@ -526,6 +630,10 @@ class _$ServerError implements ServerError {
     TResult Function()? invalidEmailOrPassword,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
     required TResult orElse(),
   }) {
     if (serverError != null) {
@@ -540,8 +648,12 @@ class _$ServerError implements ServerError {
     required TResult Function(_Message value) message,
     required TResult Function(InvalidEmailOrPassword value)
         invalidEmailOrPassword,
-    required TResult Function(EmailAlreadyInUse value) emailAlreadyInUse,
-    required TResult Function(ServerError value) serverError,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
   }) {
     return serverError(this);
   }
@@ -551,8 +663,12 @@ class _$ServerError implements ServerError {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
     TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult? Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult? Function(ServerError value)? serverError,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
   }) {
     return serverError?.call(this);
   }
@@ -562,8 +678,12 @@ class _$ServerError implements ServerError {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
     TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
-    TResult Function(EmailAlreadyInUse value)? emailAlreadyInUse,
-    TResult Function(ServerError value)? serverError,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
     required TResult orElse(),
   }) {
     if (serverError != null) {
@@ -573,6 +693,562 @@ class _$ServerError implements ServerError {
   }
 }
 
-abstract class ServerError implements AuthException {
-  const factory ServerError() = _$ServerError;
+abstract class _ServerError implements AuthException {
+  const factory _ServerError() = _$_ServerError;
+}
+
+/// @nodoc
+abstract class _$$_UnknownErrorCopyWith<$Res> {
+  factory _$$_UnknownErrorCopyWith(
+          _$_UnknownError value, $Res Function(_$_UnknownError) then) =
+      __$$_UnknownErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_UnknownErrorCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_UnknownError>
+    implements _$$_UnknownErrorCopyWith<$Res> {
+  __$$_UnknownErrorCopyWithImpl(
+      _$_UnknownError _value, $Res Function(_$_UnknownError) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_UnknownError implements _UnknownError {
+  const _$_UnknownError();
+
+  @override
+  String toString() {
+    return 'AuthException.unknownError()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_UnknownError);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) message,
+    required TResult Function() invalidEmailOrPassword,
+    required TResult Function() emailAlreadyInUse,
+    required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
+  }) {
+    return unknownError();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? message,
+    TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? emailAlreadyInUse,
+    TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
+  }) {
+    return unknownError?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? message,
+    TResult Function()? invalidEmailOrPassword,
+    TResult Function()? emailAlreadyInUse,
+    TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (unknownError != null) {
+      return unknownError();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Message value) message,
+    required TResult Function(InvalidEmailOrPassword value)
+        invalidEmailOrPassword,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
+  }) {
+    return unknownError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Message value)? message,
+    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
+  }) {
+    return unknownError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Message value)? message,
+    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (unknownError != null) {
+      return unknownError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UnknownError implements AuthException {
+  const factory _UnknownError() = _$_UnknownError;
+}
+
+/// @nodoc
+abstract class _$$_TimeOutErrorCopyWith<$Res> {
+  factory _$$_TimeOutErrorCopyWith(
+          _$_TimeOutError value, $Res Function(_$_TimeOutError) then) =
+      __$$_TimeOutErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_TimeOutErrorCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_TimeOutError>
+    implements _$$_TimeOutErrorCopyWith<$Res> {
+  __$$_TimeOutErrorCopyWithImpl(
+      _$_TimeOutError _value, $Res Function(_$_TimeOutError) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_TimeOutError implements _TimeOutError {
+  const _$_TimeOutError();
+
+  @override
+  String toString() {
+    return 'AuthException.timeOutError()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_TimeOutError);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) message,
+    required TResult Function() invalidEmailOrPassword,
+    required TResult Function() emailAlreadyInUse,
+    required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
+  }) {
+    return timeOutError();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? message,
+    TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? emailAlreadyInUse,
+    TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
+  }) {
+    return timeOutError?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? message,
+    TResult Function()? invalidEmailOrPassword,
+    TResult Function()? emailAlreadyInUse,
+    TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (timeOutError != null) {
+      return timeOutError();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Message value) message,
+    required TResult Function(InvalidEmailOrPassword value)
+        invalidEmailOrPassword,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
+  }) {
+    return timeOutError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Message value)? message,
+    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
+  }) {
+    return timeOutError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Message value)? message,
+    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (timeOutError != null) {
+      return timeOutError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _TimeOutError implements AuthException {
+  const factory _TimeOutError() = _$_TimeOutError;
+}
+
+/// @nodoc
+abstract class _$$_NetworkErrorCopyWith<$Res> {
+  factory _$$_NetworkErrorCopyWith(
+          _$_NetworkError value, $Res Function(_$_NetworkError) then) =
+      __$$_NetworkErrorCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_NetworkErrorCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_NetworkError>
+    implements _$$_NetworkErrorCopyWith<$Res> {
+  __$$_NetworkErrorCopyWithImpl(
+      _$_NetworkError _value, $Res Function(_$_NetworkError) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_NetworkError implements _NetworkError {
+  const _$_NetworkError();
+
+  @override
+  String toString() {
+    return 'AuthException.networkError()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_NetworkError);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) message,
+    required TResult Function() invalidEmailOrPassword,
+    required TResult Function() emailAlreadyInUse,
+    required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
+  }) {
+    return networkError();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? message,
+    TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? emailAlreadyInUse,
+    TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
+  }) {
+    return networkError?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? message,
+    TResult Function()? invalidEmailOrPassword,
+    TResult Function()? emailAlreadyInUse,
+    TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (networkError != null) {
+      return networkError();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Message value) message,
+    required TResult Function(InvalidEmailOrPassword value)
+        invalidEmailOrPassword,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
+  }) {
+    return networkError(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Message value)? message,
+    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
+  }) {
+    return networkError?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Message value)? message,
+    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (networkError != null) {
+      return networkError(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _NetworkError implements AuthException {
+  const factory _NetworkError() = _$_NetworkError;
+}
+
+/// @nodoc
+abstract class _$$_UserTokenExpiredCopyWith<$Res> {
+  factory _$$_UserTokenExpiredCopyWith(
+          _$_UserTokenExpired value, $Res Function(_$_UserTokenExpired) then) =
+      __$$_UserTokenExpiredCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_UserTokenExpiredCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_UserTokenExpired>
+    implements _$$_UserTokenExpiredCopyWith<$Res> {
+  __$$_UserTokenExpiredCopyWithImpl(
+      _$_UserTokenExpired _value, $Res Function(_$_UserTokenExpired) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_UserTokenExpired implements _UserTokenExpired {
+  const _$_UserTokenExpired();
+
+  @override
+  String toString() {
+    return 'AuthException.userTokenExpired()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_UserTokenExpired);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) message,
+    required TResult Function() invalidEmailOrPassword,
+    required TResult Function() emailAlreadyInUse,
+    required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
+  }) {
+    return userTokenExpired();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? message,
+    TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? emailAlreadyInUse,
+    TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
+  }) {
+    return userTokenExpired?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? message,
+    TResult Function()? invalidEmailOrPassword,
+    TResult Function()? emailAlreadyInUse,
+    TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (userTokenExpired != null) {
+      return userTokenExpired();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Message value) message,
+    required TResult Function(InvalidEmailOrPassword value)
+        invalidEmailOrPassword,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
+  }) {
+    return userTokenExpired(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Message value)? message,
+    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
+  }) {
+    return userTokenExpired?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Message value)? message,
+    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (userTokenExpired != null) {
+      return userTokenExpired(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UserTokenExpired implements AuthException {
+  const factory _UserTokenExpired() = _$_UserTokenExpired;
 }

@@ -94,7 +94,7 @@ class MTextStyle extends TextStyle {
   static const MTextStyle bodyMedium = MTextStyle._(
     fontSize: 16.0,
     height: 1,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     fontFamily: _fontFamily,
   );
 

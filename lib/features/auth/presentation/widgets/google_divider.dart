@@ -10,9 +10,9 @@ class GoogleDivider extends StatelessWidget {
     return Row(
       children: [
         const Expanded(child: MDivider()),
-        MSize.verticalSpaceSmall,
+        MSize.horizontalSpaceSmall,
         MText(title, style: MTextStyle.microRegular),
-        MSize.verticalSpaceSmall,
+        MSize.horizontalSpaceSmall,
         const Expanded(child: MDivider()),
       ],
     );

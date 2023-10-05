@@ -8,20 +8,20 @@ part of 'user_credentials_dto.dart';
 
 Map<String, dynamic> _$UserCredentialsDtoToJson(UserCredentialsDto instance) =>
     <String, dynamic>{
-      'userDto': instance.userDto.toJson(),
+      'user': instance.user.toJson(),
       'token': instance.token,
     };
 
 _$_UserCredentialsDto _$$_UserCredentialsDtoFromJson(
         Map<String, dynamic> json) =>
     _$_UserCredentialsDto(
-      userDto: UserDto.fromJson(json['userDto'] as Map<String, dynamic>),
-      token: json['token'] as String,
+      user: UserDto.fromJson(json['user'] as Map<String, dynamic>),
+      token: json['token'] as String?,
     );
 
 Map<String, dynamic> _$$_UserCredentialsDtoToJson(
         _$_UserCredentialsDto instance) =>
     <String, dynamic>{
-      'userDto': instance.userDto,
+      'user': instance.user,
       'token': instance.token,
     };
