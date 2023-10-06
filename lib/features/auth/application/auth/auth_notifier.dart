@@ -1,121 +1,79 @@
-import 'dart:async';
-
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/injector/injector.dart';
 
-enum AuthState {
-  authenticated,
-  partiallyAuthenticated,
-  unauthenticated,
-}
+part 'auth_notifier.freezed.dart';
+part 'auth_state.dart';
+
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
+  (ref) => di<AuthNotifier>(),
+);
+
+final credentialsProvider = Provider(
+  (ref) => ref.watch(authProvider).credentials,
+);
+
+final userProvider = Provider((ref) => ref.watch(authProvider).user);
+
+final userTokenProvider = Provider((ref) => ref.watch(authProvider).token);
 
 @Injectable()
-class AuthNotifier extends ChangeNotifier {
-  final IAuthFacade facade;
+class AuthNotifier extends StateNotifier<AuthState> {
+  final IAuthFacade _facade;
 
-  AuthState _state = AuthState.unauthenticated;
-
-  User _user = User.empty();
-
-  UserToken? _token;
-
-  Map<String, UserCredentials> _allCredentials = {};
-
-  Option<Either<AuthException, Unit>> _option = none();
-
-  bool _loading = false;
-
-  AuthNotifier({required this.facade});
-
-  Map<String, UserCredentials> get allCredentials => _allCredentials;
-  set allCredentials(Map<String, UserCredentials> value) {
-    _allCredentials = value;
-    notifyListeners();
-  }
-
-  AuthState get state => _state;
-  set state(AuthState value) {
-    _state = value;
-    notifyListeners();
-  }
-
-  User get user => _user;
-  set user(User value) {
-    _user = value;
-    notifyListeners();
-  }
-
-  UserToken? get token => _token;
-  set token(UserToken? value) {
-    _token = value;
-    notifyListeners();
-  }
-
-  Option<Either<AuthException, Unit>> get option => _option;
-  set option(Option<Either<AuthException, Unit>> value) {
-    _option = value;
-    notifyListeners();
-  }
-
-  bool get loading => _loading;
-  set loading(bool value) {
-    _loading = value;
-    notifyListeners();
-  }
-
-  Future<void> changeUser(UserCredentials credentials) async {
-    loading = true;
-    final result = await facade.changeUser(credentials);
-    option = some(result);
-    await checkAuthenticated();
-    loading = false;
-    // notifyListeners();
-  }
+  AuthNotifier(this._facade) : super(AuthState.initial());
 
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
-    final bool isAuthenticated = await facade.isAuthenticated;
-    final bool isPartiallyAuthenticated = await facade.isPartiallyAuthenticated;
-
-    final User? currentUser = await facade.user;
-    final UserToken? currentToken = await facade.userToken;
+    final User? currentUser = await _facade.user;
+    final UserToken? currentToken = await _facade.userToken;
     final Map<String, UserCredentials>? credentials =
-        await facade.getAllUserCredentials();
+        await _facade.getAllUserCredentials();
 
-    if (isPartiallyAuthenticated) {
-      state = AuthState.partiallyAuthenticated;
-      user = currentUser!;
-      allCredentials = credentials!;
+    if (await _facade.isPartiallyAuthenticated) {
+      state = state.copyWith(
+        status: AuthStatus.partiallyAuthenticated,
+        user: currentUser!,
+        credentials: credentials!,
+      );
     }
 
-    if (isAuthenticated) {
-      state = AuthState.authenticated;
-      user = currentUser!;
-      token = currentToken;
-      allCredentials = credentials!;
+    if (await _facade.isAuthenticated) {
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: currentUser!,
+        credentials: credentials!,
+        token: currentToken!,
+      );
     }
-
-    notifyListeners();
   }
 
   Future<void> logout() async {
-    loading = true;
-    state = AuthState.unauthenticated;
-    user = User.empty();
-    token = null;
-    await facade.logout();
-    loading = false;
-    notifyListeners();
+    await _facade.logout();
+    state = AuthState.initial();
   }
 
   Future<void> partialLogout() async {
-    loading = true;
-    state = AuthState.authenticated;
-    token = null;
-    await facade.partialLogout();
-    loading = false;
-    notifyListeners();
+    await _facade.partialLogout();
+    state = state.copyWith(token: "");
+  }
+
+  Future<void> switchAccount(UserCredentials credentials) async {
+    state = state.copyWith(loading: true, option: none());
+
+    final result = await _facade.switchAccount(credentials);
+
+    state = state.copyWith(
+      loading: false,
+      option: some(result),
+      status: AuthStatus.authenticated,
+      user: credentials.user,
+      token: credentials.token!,
+    );
   }
 }
+
+enum AuthStatus { authenticated, unauthenticated, partiallyAuthenticated }

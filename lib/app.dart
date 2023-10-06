@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/onboarding/application/onboarding_provider.dart';
-import 'package:meno_fe_v1/injector/injector.dart';
 import 'package:meno_fe_v1/router/m_observer.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
 
@@ -22,7 +21,7 @@ class _MenoAppState extends ConsumerState<MenoApp> {
 
   @override
   Widget build(BuildContext context) {
-    final authNotifier = di<AuthNotifier>();
+    final authStatus = ref.watch(authProvider).status;
 
     return MaterialApp.router(
       theme: MTheme.light,
@@ -34,13 +33,13 @@ class _MenoAppState extends ConsumerState<MenoApp> {
           if (!ref.read(onboardingProvider).isOnboarded()) {
             return DeepLink([OnboardingRoute()]);
           } else {
-            switch (authNotifier.state) {
-              case AuthState.partiallyAuthenticated:
+            switch (authStatus) {
+              case AuthStatus.partiallyAuthenticated:
                 return const DeepLink([ReturnLoginRoute()]);
-              case AuthState.unauthenticated:
-                return DeepLink([LoginRoute()]);
-              default:
+              case AuthStatus.authenticated:
                 return DeepLink.defaultPath;
+              default:
+                return DeepLink([LoginRoute()]);
             }
           }
         },

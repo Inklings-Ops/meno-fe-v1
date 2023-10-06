@@ -4,11 +4,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/core/extensions/m_extensions.dart';
-import 'package:meno_fe_v1/features/auth/application/auth/auth_providers.dart';
+import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/application/register/register_notifier.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/auth_redirection_text.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/google_divider.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/password_rule_widget.dart';
+import 'package:meno_fe_v1/features/auth/presentation/widgets/remember_me_checkbox_tile.dart';
 import 'package:meno_fe_v1/features/onboarding/application/onboarding_provider.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
 
@@ -31,21 +32,12 @@ class RegisterPage extends HookConsumerWidget {
       next.option.fold(
         () => null,
         (either) => either.fold(
-          (failure) => context.showErrorSnackBar(
-            failure.maybeMap(
-              orElse: () => '',
-              emailAlreadyInUse: (_) => "This email is already in use",
-              networkError: (_) => "No internet connection",
-              serverError: (_) => 'Server error. Try again',
-              timeOutError: (_) => "The server timed out. Try again.",
-              unknownError: (_) => 'Unknown error. Try again',
-            ),
-          ),
+          (failure) => context.showRegistrationError(failure),
           (_) async {
             final router = context.router;
             context.clearSnackBars();
             ref.read(onboardingProvider).onboardingCompleted();
-            await ref.read(authProvider).checkAuthenticated();
+            await ref.read(authProvider.notifier).checkAuthenticated();
             router.replaceAll([const EmailVerificationRoute()]);
           },
         ),
@@ -75,25 +67,7 @@ class RegisterPage extends HookConsumerWidget {
               _Password(focusNode: passwordFocusNode),
               const PasswordRulesWidget(),
               MSize.verticalSpaceLarge,
-              Row(
-                children: [
-                  SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: Checkbox(
-                      value: ref.watch(registerProvider).rememberMe,
-                      onChanged: ref
-                          .watch(registerProvider.notifier)
-                          .onRememberMeChanged,
-                    ),
-                  ),
-                  10.horizontalSpace,
-                  const MText(
-                    "Remember me",
-                    style: MTextStyle.captionMedium,
-                  ),
-                ],
-              ),
+              const RememberMeCheckboxTile(),
               MSize.verticalSpaceXXLarge,
               MPrimaryButton(
                 label: "Create Your Account",

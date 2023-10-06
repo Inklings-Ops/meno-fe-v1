@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/core/extensions/m_extensions.dart';
-import 'package:meno_fe_v1/features/auth/application/auth/auth_providers.dart';
+import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/application/return_login/return_login_notifier.dart';
 import 'package:meno_fe_v1/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/auth_redirection_text.dart';
@@ -75,7 +75,7 @@ class ReturnLoginPage extends HookConsumerWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const MText(
                             "Welcome back,",
@@ -92,13 +92,7 @@ class ReturnLoginPage extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 24,
-                          foregroundImage: user.imageUrl != null
-                              ? NetworkImage(user.imageUrl!)
-                              : null,
-                          child: Assets.images.logoDark.svg(height: 24),
-                        ),
+                        MAvatar(radius: 24, url: user.imageUrl),
                         MSize.verticalSpaceSmall,
                         InkWell(
                           onTap: () {

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/m_internal.dart';
@@ -38,7 +39,7 @@ class MAvatar extends StatelessWidget {
     }
 
     if (hasUrl && !hasFile) {
-      foregroundImage = NetworkImage(url!);
+      foregroundImage = CachedNetworkImageProvider(url!);
     }
 
     if (hasFile) {

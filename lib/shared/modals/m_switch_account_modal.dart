@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/features/auth/application/auth/auth_providers.dart';
+import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/domain/entities/user.dart';
 import 'package:meno_fe_v1/features/auth/domain/entities/user_credentials.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
@@ -65,8 +65,9 @@ class MSwitchAccountModal extends HookConsumerWidget {
             value: currentUser.id == userIds[i],
             groupValue: true,
             onChanged: (v) {
-              ref.watch(authProvider).user = userCredentials[i].user;
-              ref.watch(authProvider).changeUser(userCredentials[i]);
+              ref
+                  .watch(authProvider.notifier)
+                  .switchAccount(userCredentials[i]);
             },
             controlAffinity: ListTileControlAffinity.trailing,
             contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),

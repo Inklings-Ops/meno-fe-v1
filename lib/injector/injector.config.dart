@@ -13,9 +13,10 @@ import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i5;
+import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart'
+    as _i16;
 import 'package:shared_preferences/shared_preferences.dart' as _i9;
 
-import '../features/auth/application/auth/auth_notifier.dart' as _i16;
 import '../features/auth/application/login/login_notifier.dart' as _i13;
 import '../features/auth/application/return_login/return_login_notifier.dart'
     as _i15;
@@ -76,7 +77,7 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i15.ReturnLoginNotifier(gh<_i11.IAuthFacade>()));
     await gh.factoryAsync<_i16.AuthNotifier>(
       () {
-        final i = _i16.AuthNotifier(facade: gh<_i11.IAuthFacade>());
+        final i = _i16.AuthNotifier(gh<_i11.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,

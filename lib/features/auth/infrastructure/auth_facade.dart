@@ -142,7 +142,7 @@ class AuthFacade implements IAuthFacade {
   Future<void> partialLogout() => _local.deleteCurrentUserToken();
 
   @override
-  Future<Either<AuthException, Unit>> changeUser(
+  Future<Either<AuthException, Unit>> switchAccount(
     UserCredentials credentials,
   ) async {
     final isExpired = _jwt.isExpired(credentials.token!);
@@ -150,7 +150,6 @@ class AuthFacade implements IAuthFacade {
       return left(const AuthException.userTokenExpired());
     } else {
       final dto = _authMapper.userCredentialsToDto(credentials)!;
-      await _local.storeAllUserCredentials(dto);
       await _local.storeCurrentToken(dto.token!);
       await _local.storeCurrentUser(dto.user);
       return right(unit);

@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/core/extensions/m_extensions.dart';
-import 'package:meno_fe_v1/features/auth/application/auth/auth_providers.dart';
+import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/application/login/login_notifier.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/auth_redirection_text.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/forgot_password_button.dart';
@@ -31,23 +31,14 @@ class LoginPage extends HookConsumerWidget {
       next.option.fold(
         () => null,
         (either) => either.fold(
-          (failure) => context.showErrorSnackBar(
-            failure.maybeMap(
-              orElse: () => '',
-              invalidEmailOrPassword: (_) => "Invalid email or password",
-              networkError: (_) => "No internet connection",
-              serverError: (_) => 'Server error. Try again',
-              timeOutError: (_) => "The server timed out. Try again.",
-              unknownError: (_) => 'Unknown error. Try again',
-            ),
-          ),
+          (failure) => context.showLoginError(failure),
           (_) async {
             final router = context.router;
             context.clearSnackBars();
+            await ref.read(authProvider.notifier).checkAuthenticated();
             if (router.canNavigateBack) {
               ref.read(onboardingProvider).onboardingCompleted();
             }
-            await ref.read(authProvider).checkAuthenticated();
             router.replaceAll([const MLayoutRoute()]);
           },
         ),
