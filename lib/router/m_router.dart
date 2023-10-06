@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:meno_fe_v1/features/auth/presentation/pages/create_new_password_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/login_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/register_page.dart';
+import 'package:meno_fe_v1/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/return_login_page.dart';
-import 'package:meno_fe_v1/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:meno_fe_v1/features/layout/presentation/pages/m_layout.dart';
 import 'package:meno_fe_v1/features/layout/presentation/pages/pages.dart';
+import 'package:meno_fe_v1/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:meno_fe_v1/router/m_routes.dart';
 
 part 'm_router.gr.dart';
@@ -19,6 +21,11 @@ class MRouter extends _$MRouter {
         AutoRoute(path: MRoutes.login, page: LoginRoute.page),
         AutoRoute(path: MRoutes.returnLogin, page: ReturnLoginRoute.page),
         AutoRoute(path: MRoutes.register, page: RegisterRoute.page),
+        AutoRoute(path: MRoutes.resetPassword, page: ResetPasswordRoute.page),
+        AutoRoute(
+          path: MRoutes.createNewPassword,
+          page: CreateNewPasswordRoute.page,
+        ),
         AutoRoute(
           path: MRoutes.emailVerification,
           page: EmailVerificationRoute.page,

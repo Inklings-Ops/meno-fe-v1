@@ -21,6 +21,12 @@ abstract class _$MRouter extends RootStackRouter {
         child: const CreateBroadcastPage(),
       );
     },
+    CreateNewPasswordRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const CreateNewPasswordPage(),
+      );
+    },
     DiscoverRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -85,6 +91,12 @@ abstract class _$MRouter extends RootStackRouter {
         child: const RegisterPage(),
       );
     },
+    ResetPasswordRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ResetPasswordPage(),
+      );
+    },
     ReturnLoginRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -104,6 +116,20 @@ class CreateBroadcastRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'CreateBroadcastRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [CreateNewPasswordPage]
+class CreateNewPasswordRoute extends PageRouteInfo<void> {
+  const CreateNewPasswordRoute({List<PageRouteInfo>? children})
+      : super(
+          CreateNewPasswordRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CreateNewPasswordRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -277,6 +303,20 @@ class RegisterRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'RegisterRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ResetPasswordPage]
+class ResetPasswordRoute extends PageRouteInfo<void> {
+  const ResetPasswordRoute({List<PageRouteInfo>? children})
+      : super(
+          ResetPasswordRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ResetPasswordRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

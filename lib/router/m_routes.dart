@@ -6,6 +6,8 @@ class MRoutes {
   static const String returnLogin = "/returnLogin";
   static const String register = "/register";
   static const String emailVerification = "/emailVerification";
+  static const String resetPassword = "/resetPassword";
+  static const String createNewPassword = "/createNewPassword";
   static const String layout = "/";
   static const String home = "home";
   static const String discover = "discover";

@@ -13,10 +13,9 @@ import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i5;
-import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart'
-    as _i16;
 import 'package:shared_preferences/shared_preferences.dart' as _i9;
 
+import '../features/auth/application/auth/auth_notifier.dart' as _i16;
 import '../features/auth/application/login/login_notifier.dart' as _i13;
 import '../features/auth/application/return_login/return_login_notifier.dart'
     as _i15;
