@@ -45,4 +45,11 @@ extension MContextX on BuildContext {
       ),
     );
   }
+
+  Future<void> showLoadingDialog() {
+    return showDialog(
+      context: this,
+      builder: (context) => const MLoadingIndicator.box(),
+    );
+  }
 }

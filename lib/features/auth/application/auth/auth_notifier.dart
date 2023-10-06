@@ -12,8 +12,8 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
   (ref) => di<AuthNotifier>(),
 );
 
-final credentialsProvider = Provider(
-  (ref) => ref.watch(authProvider).credentials,
+final allCredentialsProvider = Provider(
+  (ref) => ref.watch(authProvider).credentials.values.toList(),
 );
 
 final userProvider = Provider((ref) => ref.watch(authProvider).user);

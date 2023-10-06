@@ -45,8 +45,7 @@ abstract class IAuthFacade {
     required IPassword password,
   });
 
-  Future<Either<AuthException, Unit>> switchAccount(
-      UserCredentials credentials);
+  Future<Either<AuthException, Unit>> switchAccount(UserCredentials credentials);
 
   /// Logs the user out.
   Future<void> logout();
