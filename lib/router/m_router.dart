@@ -5,8 +5,8 @@ import 'package:meno_fe_v1/features/auth/presentation/pages/login_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/register_page.dart';
 import 'package:meno_fe_v1/features/auth/presentation/pages/return_login_page.dart';
 import 'package:meno_fe_v1/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:meno_fe_v1/layout/m_layout.dart';
-import 'package:meno_fe_v1/layout/pages.dart';
+import 'package:meno_fe_v1/features/layout/presentation/pages/m_layout.dart';
+import 'package:meno_fe_v1/features/layout/presentation/pages/pages.dart';
 import 'package:meno_fe_v1/router/m_routes.dart';
 
 part 'm_router.gr.dart';
