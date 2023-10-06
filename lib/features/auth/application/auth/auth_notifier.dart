@@ -16,6 +16,10 @@ final allCredentialsProvider = Provider(
   (ref) => ref.watch(authProvider).credentials.values.toList(),
 );
 
+final hasOneAccountProvider = Provider(
+  (ref) => ref.watch(allCredentialsProvider).length == 1,
+);
+
 final userProvider = Provider((ref) => ref.watch(authProvider).user);
 
 final userTokenProvider = Provider((ref) => ref.watch(authProvider).token);

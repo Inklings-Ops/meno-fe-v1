@@ -5,8 +5,10 @@ import 'package:meno_fe_v1/shared/constants/m_error_messages.dart';
 
 typedef MMessenger = ScaffoldFeatureController<SnackBar, SnackBarClosedReason>;
 
-extension MContextX on BuildContext {
-  MMessenger showErrorSnackBar(String message) {
+extension MSnackBarExtensions on BuildContext {
+  void clearSnackBars() => ScaffoldMessenger.of(this).clearSnackBars();
+
+  MMessenger _showErrorSnackBar(String message) {
     return ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: MText(
@@ -18,10 +20,8 @@ extension MContextX on BuildContext {
     );
   }
 
-  void clearSnackBars() => ScaffoldMessenger.of(this).clearSnackBars();
-
   MMessenger showLoginError(AuthException exception) {
-    return showErrorSnackBar(
+    return _showErrorSnackBar(
       exception.maybeMap(
         orElse: () => '',
         invalidEmailOrPassword: (_) => MErrorMessages.invalidEmailOrPassword,
@@ -34,7 +34,7 @@ extension MContextX on BuildContext {
   }
 
   MMessenger showRegistrationError(AuthException exception) {
-    return showErrorSnackBar(
+    return _showErrorSnackBar(
       exception.maybeMap(
         orElse: () => '',
         emailAlreadyInUse: (_) => MErrorMessages.emailAlreadyInUse,
@@ -43,13 +43,6 @@ extension MContextX on BuildContext {
         timeOutError: (_) => MErrorMessages.timeOutError,
         unknownError: (_) => MErrorMessages.unknownError,
       ),
-    );
-  }
-
-  Future<void> showLoadingDialog() {
-    return showDialog(
-      context: this,
-      builder: (context) => const MLoadingIndicator.box(),
     );
   }
 }

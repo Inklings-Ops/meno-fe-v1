@@ -20,7 +20,7 @@ class MDivider extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: topSpace),
-          Divider(endIndent: end, indent: start),
+          Divider(endIndent: end, indent: start, height: 1),
           SizedBox(height: bottomSpace),
         ],
       );

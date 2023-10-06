@@ -32,7 +32,7 @@ class MModal extends StatelessWidget {
             MText(title, style: MTextStyle.subheadingMedium),
             MSize.verticalSpaceSmall,
             const MDivider(),
-            MSize.verticalSpaceSmall,
+            24.verticalSpace,
             ...children,
           ],
         ),

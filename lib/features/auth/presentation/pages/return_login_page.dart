@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/core/extensions/m_extensions.dart';
+import 'package:meno_fe_v1/core/extensions/extensions.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/application/return_login/return_login_notifier.dart';
 import 'package:meno_fe_v1/features/auth/domain/domain.dart';
@@ -11,7 +11,6 @@ import 'package:meno_fe_v1/features/auth/presentation/widgets/auth_redirection_t
 import 'package:meno_fe_v1/features/auth/presentation/widgets/forgot_password_button.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/google_divider.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
-import 'package:meno_fe_v1/shared/modals/m_switch_account_modal.dart';
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -21,8 +20,6 @@ class ReturnLoginPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final User user = ref.watch(userProvider);
-
     final FocusScopeNode focusScope = useFocusScopeNode();
     final FocusNode passwordFocusNode = useFocusNode();
 
@@ -39,20 +36,12 @@ class ReturnLoginPage extends HookConsumerWidget {
       next.option.fold(
         () => null,
         (either) => either.fold(
-          (failure) => context.showErrorSnackBar(
-            failure.maybeMap(
-              orElse: () => '',
-              invalidEmailOrPassword: (_) => "Invalid password",
-              networkError: (_) => "No internet connection",
-              serverError: (_) => 'Server error. Try again',
-              timeOutError: (_) => "The server timed out. Try again.",
-              unknownError: (_) => 'Unknown error. Try again',
-            ),
-          ),
-          (_) {
+          (failure) => context.showLoginError(failure),
+          (_) async {
+            final router = context.router;
             context.clearSnackBars();
-            // AuthNotifier().checkAuthenticated();
-            context.router.replaceAll([const MLayoutRoute()]);
+            await ref.read(authProvider.notifier).checkAuthenticated();
+            router.replaceAll([const MLayoutRoute()]);
           },
         ),
       );
@@ -67,49 +56,13 @@ class ReturnLoginPage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 74,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const MText(
-                            "Welcome back,",
-                            style: MTextStyle.subheadingMedium,
-                          ),
-                          MText(
-                            user.fullName.get()!,
-                            style: MTextStyle.heading2Medium,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MAvatar(radius: 24, url: user.imageUrl),
-                        MSize.verticalSpaceSmall,
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (context) => const MSwitchAccountModal(),
-                            );
-                          },
-                          child: MText(
-                            "Switch account",
-                            style: MTextStyle.captionMedium,
-                            color: MColorScheme.of(context)?.primary,
-                          ),
-                        ),
-                      ],
-                    ),
+                    _AccountName(),
+                    _AccountAvatar(),
                   ],
                 ),
               ),
@@ -139,6 +92,58 @@ class ReturnLoginPage extends HookConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _AccountAvatar extends ConsumerWidget {
+  const _AccountAvatar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final User user = ref.watch(userProvider);
+
+    return GestureDetector(
+      onTap: context.showSwitchAccountSheet,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          MAvatar(radius: 24, url: user.imageUrl),
+          MSize.verticalSpaceSmall,
+          MText(
+            "Switch account",
+            style: MTextStyle.captionMedium,
+            color: MColorScheme.of(context)?.primary,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AccountName extends ConsumerWidget {
+  const _AccountName({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final User user = ref.watch(userProvider);
+
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const MText(
+            "Welcome back,",
+            style: MTextStyle.subheadingMedium,
+          ),
+          MText(
+            user.fullName.get()!,
+            style: MTextStyle.heading2Medium,
+          ),
+        ],
       ),
     );
   }

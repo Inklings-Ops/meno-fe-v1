@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/core/extensions/m_extensions.dart';
+import 'package:meno_fe_v1/core/extensions/extensions.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/domain/entities/user.dart';
 import 'package:meno_fe_v1/features/auth/domain/entities/user_credentials.dart';
@@ -13,9 +13,7 @@ class MSwitchAccountModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<UserCredentials> allCredentials =
-        ref.watch(allCredentialsProvider);
-    final int length = allCredentials.length;
+    final bool hasOneAccount = ref.watch(hasOneAccountProvider);
 
     Future<void>? dialog;
 
@@ -41,16 +39,11 @@ class MSwitchAccountModal extends HookConsumerWidget {
       );
     });
 
-    return MModal(
-      title: "Switch Account",
-      children: [
-        for (var i = 0; i < length; i++) ...[
-          _AccountListTile(credentials: allCredentials[i]),
-        ],
-        24.verticalSpace,
-        const _AddAccountTile(),
-      ],
-    );
+    if (hasOneAccount) {
+      return const _SwitchAccountModal1();
+    } else {
+      return const _SwitchAccountModal2();
+    }
   }
 }
 
@@ -72,7 +65,8 @@ class _AccountListTile extends ConsumerWidget {
       key: key,
       value: userAccount,
       groupValue: currentUser,
-      onChanged: (_) => ref.read(authProvider.notifier).switchAccount(credentials),
+      onChanged: (_) =>
+          ref.read(authProvider.notifier).switchAccount(credentials),
       controlAffinity: ListTileControlAffinity.trailing,
       contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
       dense: true,
@@ -118,6 +112,48 @@ class _AddAccountTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SwitchAccountModal1 extends StatelessWidget {
+  const _SwitchAccountModal1();
+
+  @override
+  Widget build(BuildContext context) {
+    return MModal(
+      title: "Switch Account",
+      children: [
+        MPrimaryButton(
+          label: "Log in to Existing Account",
+          onPressed: () => context.router.replaceAll([LoginRoute()]),
+        ),
+        MTextButton(
+          label: "Create New Account",
+          onPressed: () => context.router.replaceAll([const RegisterRoute()]),
+        ),
+      ],
+    );
+  }
+}
+
+class _SwitchAccountModal2 extends ConsumerWidget {
+  const _SwitchAccountModal2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<UserCredentials> allCredentials =
+        ref.watch(allCredentialsProvider);
+
+    return MModal(
+      title: "Switch Account",
+      children: [
+        for (UserCredentials credentials in allCredentials) ...[
+          _AccountListTile(credentials: credentials)
+        ],
+        24.verticalSpace,
+        const _AddAccountTile(),
+      ],
     );
   }
 }
