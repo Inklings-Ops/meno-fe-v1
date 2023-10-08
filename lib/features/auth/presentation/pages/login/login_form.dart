@@ -50,7 +50,7 @@ class LoginForm extends HookConsumerWidget {
               loading: state.loading,
               onPressed: () {
                 focusScope.unfocus();
-                if (Form.of(formContext).validate() == true) {
+                if (Form.of(formContext).validate()) {
                   ref.read(loginFormProvider.notifier).loginPressed();
                 }
               },
