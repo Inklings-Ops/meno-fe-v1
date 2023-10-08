@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/features/auth/application/register/register_notifier.dart';
+
+import '../../application/register_form/register_form_notifier.dart';
 
 class RememberMeCheckboxTile extends ConsumerWidget {
   const RememberMeCheckboxTile({super.key});
@@ -14,8 +15,9 @@ class RememberMeCheckboxTile extends ConsumerWidget {
           height: 20,
           width: 20,
           child: Checkbox(
-            value: ref.watch(registerProvider).rememberMe,
-            onChanged: ref.watch(registerProvider.notifier).onRememberMeChanged,
+            value: ref.watch(registerFormProvider).rememberMe,
+            onChanged:
+                ref.watch(registerFormProvider.notifier).onRememberMeChanged,
           ),
         ),
         10.horizontalSpace,

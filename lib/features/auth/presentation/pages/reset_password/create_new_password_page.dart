@@ -15,7 +15,7 @@ class CreateNewPasswordPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: MAppBar.primary(title: "Create New Password"),
+      appBar: MAppBar.primary(title:( "Create New Password")),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

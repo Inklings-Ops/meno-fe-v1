@@ -1,28 +1,29 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_fe_v1/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/injector/injector.dart';
 
-part 'register_notifier.freezed.dart';
-part 'register_state.dart';
+import '../../../../injector/injector.dart';
+import '../../domain/domain.dart';
+
+part 'register_form_notifier.freezed.dart';
+part 'register_form_state.dart';
 
 /// A state notifier provider for the registration form.
-final registerProvider =
-    StateNotifierProvider.autoDispose<RegisterNotifier, RegisterState>((ref) {
-  return RegisterNotifier(di<IAuthFacade>());
-});
+final registerFormProvider =
+    StateNotifierProvider.autoDispose<RegisterFormNotifier, RegisterFormState>(
+  (ref) => RegisterFormNotifier(di<IAuthFacade>()),
+);
 
-class RegisterNotifier extends StateNotifier<RegisterState> {
+class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
   /// The auth facade dependency.
   final IAuthFacade _authFacade;
 
-  /// Creates a new `RegisterNotifier` object.
-  RegisterNotifier(this._authFacade) : super(RegisterState.initial());
+  /// Creates a new `RegisterFormNotifier` object.
+  RegisterFormNotifier(this._authFacade) : super(RegisterFormState.initial());
 
   @override
   void dispose() {
-    state = RegisterState.initial();
+    state = RegisterFormState.initial();
     super.dispose();
   }
 
@@ -48,6 +49,10 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
 
     /// Updates the state with the new full name and clears the `option`.
     state = state.copyWith(fullName: iFullName, option: none());
+  }
+
+  void onRememberMeChanged(bool? value) {
+    state = state.copyWith(rememberMe: value ?? state.rememberMe);
   }
 
   /// Updates the user's password.
@@ -147,9 +152,5 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
       ),
       (_) => null,
     );
-  }
-
-  void onRememberMeChanged(bool? value) {
-    state = state.copyWith(rememberMe: value ?? state.rememberMe);
   }
 }

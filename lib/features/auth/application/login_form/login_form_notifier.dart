@@ -1,24 +1,25 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_fe_v1/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/injector/injector.dart';
 
+import '../../../../injector/injector.dart';
+import '../../domain/domain.dart';
+
+part 'login_form_state.dart';
 part 'login_notifier.freezed.dart';
-part 'login_state.dart';
 
 /// A state notifier provider for the login form.
-final loginProvider =
-    StateNotifierProvider.autoDispose<LoginNotifier, LoginState>((ref) {
-  return LoginNotifier(di<IAuthFacade>());
-});
+final loginFormProvider =
+    StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>(
+  (ref) => LoginFormNotifier(di<IAuthFacade>()),
+);
 
-class LoginNotifier extends StateNotifier<LoginState> {
+class LoginFormNotifier extends StateNotifier<LoginFormState> {
   /// The auth facade dependency.
   final IAuthFacade _authFacade;
 
-  /// Creates a new `LoginNotifier` object.
-  LoginNotifier(this._authFacade) : super(LoginState.initial());
+  /// Creates a new `LoginFormNotifier` object.
+  LoginFormNotifier(this._authFacade) : super(LoginFormState.initial());
 
   /// Updates the user's email address.
   ///
@@ -108,7 +109,7 @@ class LoginNotifier extends StateNotifier<LoginState> {
 
   @override
   void dispose() {
-    state = LoginState.initial();
+    state = LoginFormState.initial();
     super.dispose();
   }
 }

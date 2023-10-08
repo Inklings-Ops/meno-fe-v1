@@ -9,6 +9,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await configureDependencies();
+  // await di<SharedPreferences>().clear();
   // await di<SecureStorageService>().deleteAll();
   runApp(const ProviderScope(child: MenoApp()));
 }

@@ -1,9 +1,9 @@
-part of 'register_notifier.dart';
+part of 'register_form_notifier.dart';
 
 // Represents the state of the registration form.
 @freezed
-class RegisterState with _$RegisterState {
-  factory RegisterState({
+class RegisterFormState with _$RegisterFormState {
+  factory RegisterFormState({
     /// The user's full name - First and Last names.
     required IFullName fullName,
 
@@ -25,11 +25,11 @@ class RegisterState with _$RegisterState {
     required Option<Either<AuthException, Unit>> option,
 
     required bool rememberMe,
-  }) = _RegisterState;
+  }) = _RegisterFormState;
 
-  /// Creates a new `RegisterState` object with the initial values.
-  factory RegisterState.initial() {
-    return RegisterState(
+  /// Creates a new `RegisterFormState` object with the initial values.
+  factory RegisterFormState.initial() {
+    return RegisterFormState(
       fullName: IFullName(""),
       email: IEmail(""),
       password: IPassword(""),

@@ -1,7 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_fe_v1/features/auth/domain/domain.dart';
+
+import '../../domain/domain.dart';
 
 part 'reset_password_notifier.freezed.dart';
 part 'reset_password_state.dart';

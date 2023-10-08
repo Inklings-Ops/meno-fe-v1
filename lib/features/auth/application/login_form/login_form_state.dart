@@ -1,10 +1,10 @@
-part of "login_notifier.dart";
+part of 'login_form_notifier.dart';
 
 // Represents the state of the login form.
 @freezed
-class LoginState with _$LoginState {
-  /// Creates a new `LoginState` object.
-  factory LoginState({
+class LoginFormState with _$LoginFormState {
+  /// Creates a new `LoginFormState` object.
+  factory LoginFormState({
     /// The user's email address.
     required IEmail email,
 
@@ -19,11 +19,11 @@ class LoginState with _$LoginState {
 
     /// The result of the last login attempt.
     required Option<Either<AuthException, Unit>> option,
-  }) = _LoginState;
+  }) = _LoginFormState;
 
-  /// Creates a new `LoginState` object with the initial values.
-  factory LoginState.initial() {
-    return LoginState(
+  /// Creates a new `LoginFormState` object with the initial values.
+  factory LoginFormState.initial() {
+    return LoginFormState(
       email: IEmail(""),
       password: IPassword(""),
       showError: false,

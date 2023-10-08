@@ -2,26 +2,32 @@ import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/injector/injector.dart';
+
+import '../../../../injector/injector.dart';
+import '../../domain/domain.dart';
 
 part 'auth_notifier.freezed.dart';
 part 'auth_state.dart';
 
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
-  (ref) => di<AuthNotifier>(),
-);
-
+/// Provider that retrieves a list of all user credentials.
 final allCredentialsProvider = Provider(
   (ref) => ref.watch(authProvider).credentials.values.toList(),
 );
 
+/// Provider that manages the authentication state.
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
+  (ref) => di<AuthNotifier>(),
+);
+
+/// Provider that checks if the user has only one account.
 final hasOneAccountProvider = Provider(
   (ref) => ref.watch(allCredentialsProvider).length == 1,
 );
 
+/// Provider that retrieves the user data from the authentication state.
 final userProvider = Provider((ref) => ref.watch(authProvider).user);
 
+/// Provider that retrieves the user token from the authentication state.
 final userTokenProvider = Provider((ref) => ref.watch(authProvider).token);
 
 @Injectable()
@@ -30,41 +36,56 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this._facade) : super(AuthState.initial());
 
+  /// Checks the authentication status and updates the state accordingly.
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
-    final User? currentUser = await _facade.user;
-    final UserToken? currentToken = await _facade.userToken;
+    final List<Future> dataFutures = [
+      _facade.user,
+      _facade.userToken,
+      _facade.getAllUserCredentials(),
+    ];
+
+    final List<dynamic> results = await Future.wait(dataFutures);
+
+    final User? currentUser = results[0] as User?;
+    final UserToken? currentToken = results[1] as UserToken?;
     final Map<String, UserCredentials>? credentials =
-        await _facade.getAllUserCredentials();
+        results[2] as Map<String, UserCredentials>?;
 
-    if (await _facade.isPartiallyAuthenticated) {
-      state = state.copyWith(
-        status: AuthStatus.partiallyAuthenticated,
-        user: currentUser!,
-        credentials: credentials!,
-      );
+    final isPartiallyAuthenticated = await _facade.isPartiallyAuthenticated;
+    final isAuthenticated = await _facade.isAuthenticated;
+
+    AuthStatus status = AuthStatus.unauthenticated;
+    UserToken? token;
+
+    if (isAuthenticated) {
+      status = AuthStatus.authenticated;
+      token = currentToken;
+    } else if (isPartiallyAuthenticated) {
+      status = AuthStatus.partiallyAuthenticated;
     }
 
-    if (await _facade.isAuthenticated) {
-      state = state.copyWith(
-        status: AuthStatus.authenticated,
-        user: currentUser!,
-        credentials: credentials!,
-        token: currentToken!,
-      );
-    }
+    state = state.copyWith(
+      status: status,
+      user: currentUser!,
+      credentials: credentials!,
+      token: token,
+    );
   }
 
+  /// Logs the user out and resets the authentication state to initial.
   Future<void> logout() async {
     await _facade.logout();
     state = AuthState.initial();
   }
 
+  /// Performs a partial logout by clearing the token and keeping the user data.
   Future<void> partialLogout() async {
     await _facade.partialLogout();
     state = state.copyWith(token: "");
   }
 
+  /// Switches the user account and updates the authentication state.
   Future<void> switchAccount(UserCredentials credentials) async {
     state = state.copyWith(loading: true, option: none());
 
@@ -80,4 +101,5 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
+/// Enumeration representing different authentication status.
 enum AuthStatus { authenticated, unauthenticated, partiallyAuthenticated }

@@ -16,12 +16,23 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AuthState {
+  /// The authentication status.
   AuthStatus get status => throw _privateConstructorUsedError;
+
+  /// The user information.
   User get user => throw _privateConstructorUsedError;
-  String get token => throw _privateConstructorUsedError;
+
+  /// The authentication token.
+  String? get token => throw _privateConstructorUsedError;
+
+  /// User credentials.
   Map<String, UserCredentials> get credentials =>
       throw _privateConstructorUsedError;
+
+  /// Loading state indicator.
   bool get loading => throw _privateConstructorUsedError;
+
+  /// Exception or success option
   Option<Either<AuthException, Unit>> get option =>
       throw _privateConstructorUsedError;
 
@@ -38,7 +49,7 @@ abstract class $AuthStateCopyWith<$Res> {
   $Res call(
       {AuthStatus status,
       User user,
-      String token,
+      String? token,
       Map<String, UserCredentials> credentials,
       bool loading,
       Option<Either<AuthException, Unit>> option});
@@ -61,7 +72,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
   $Res call({
     Object? status = null,
     Object? user = null,
-    Object? token = null,
+    Object? token = freezed,
     Object? credentials = null,
     Object? loading = null,
     Object? option = null,
@@ -75,10 +86,10 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as User,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       credentials: null == credentials
           ? _value.credentials
           : credentials // ignore: cast_nullable_to_non_nullable
@@ -113,7 +124,7 @@ abstract class _$$_AuthStateCopyWith<$Res> implements $AuthStateCopyWith<$Res> {
   $Res call(
       {AuthStatus status,
       User user,
-      String token,
+      String? token,
       Map<String, UserCredentials> credentials,
       bool loading,
       Option<Either<AuthException, Unit>> option});
@@ -135,7 +146,7 @@ class __$$_AuthStateCopyWithImpl<$Res>
   $Res call({
     Object? status = null,
     Object? user = null,
-    Object? token = null,
+    Object? token = freezed,
     Object? credentials = null,
     Object? loading = null,
     Object? option = null,
@@ -149,10 +160,10 @@ class __$$_AuthStateCopyWithImpl<$Res>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as User,
-      token: null == token
+      token: freezed == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       credentials: null == credentials
           ? _value._credentials
           : credentials // ignore: cast_nullable_to_non_nullable
@@ -181,13 +192,22 @@ class _$_AuthState implements _AuthState {
       required this.option})
       : _credentials = credentials;
 
+  /// The authentication status.
   @override
   final AuthStatus status;
+
+  /// The user information.
   @override
   final User user;
+
+  /// The authentication token.
   @override
-  final String token;
+  final String? token;
+
+  /// User credentials.
   final Map<String, UserCredentials> _credentials;
+
+  /// User credentials.
   @override
   Map<String, UserCredentials> get credentials {
     if (_credentials is EqualUnmodifiableMapView) return _credentials;
@@ -195,8 +215,11 @@ class _$_AuthState implements _AuthState {
     return EqualUnmodifiableMapView(_credentials);
   }
 
+  /// Loading state indicator.
   @override
   final bool loading;
+
+  /// Exception or success option
   @override
   final Option<Either<AuthException, Unit>> option;
 
@@ -234,23 +257,35 @@ abstract class _AuthState implements AuthState {
   factory _AuthState(
           {required final AuthStatus status,
           required final User user,
-          required final String token,
+          required final String? token,
           required final Map<String, UserCredentials> credentials,
           required final bool loading,
           required final Option<Either<AuthException, Unit>> option}) =
       _$_AuthState;
 
   @override
+
+  /// The authentication status.
   AuthStatus get status;
   @override
+
+  /// The user information.
   User get user;
   @override
-  String get token;
+
+  /// The authentication token.
+  String? get token;
   @override
+
+  /// User credentials.
   Map<String, UserCredentials> get credentials;
   @override
+
+  /// Loading state indicator.
   bool get loading;
   @override
+
+  /// Exception or success option
   Option<Either<AuthException, Unit>> get option;
   @override
   @JsonKey(ignore: true)

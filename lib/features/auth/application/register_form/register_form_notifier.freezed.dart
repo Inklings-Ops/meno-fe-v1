@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'login_notifier.dart';
+part of 'register_form_notifier.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,46 +15,54 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$LoginState {
+mixin _$RegisterFormState {
+  /// The user's full name - First and Last names.
+  IFullName get fullName => throw _privateConstructorUsedError;
+
   /// The user's email address.
   IEmail get email => throw _privateConstructorUsedError;
 
   /// The user's password.
   IPassword get password => throw _privateConstructorUsedError;
+  String get passwordValue => throw _privateConstructorUsedError;
 
   /// Whether or not to show an error message.
   bool get showError => throw _privateConstructorUsedError;
 
-  /// Whether or not the login form is loading.
+  /// Whether or not the registration form is loading.
   bool get loading => throw _privateConstructorUsedError;
 
-  /// The result of the last login attempt.
+  /// The result of the last registration attempt.
   Option<Either<AuthException, Unit>> get option =>
       throw _privateConstructorUsedError;
+  bool get rememberMe => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $LoginStateCopyWith<LoginState> get copyWith =>
+  $RegisterFormStateCopyWith<RegisterFormState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $LoginStateCopyWith<$Res> {
-  factory $LoginStateCopyWith(
-          LoginState value, $Res Function(LoginState) then) =
-      _$LoginStateCopyWithImpl<$Res, LoginState>;
+abstract class $RegisterFormStateCopyWith<$Res> {
+  factory $RegisterFormStateCopyWith(
+          RegisterFormState value, $Res Function(RegisterFormState) then) =
+      _$RegisterFormStateCopyWithImpl<$Res, RegisterFormState>;
   @useResult
   $Res call(
-      {IEmail email,
+      {IFullName fullName,
+      IEmail email,
       IPassword password,
+      String passwordValue,
       bool showError,
       bool loading,
-      Option<Either<AuthException, Unit>> option});
+      Option<Either<AuthException, Unit>> option,
+      bool rememberMe});
 }
 
 /// @nodoc
-class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
-    implements $LoginStateCopyWith<$Res> {
-  _$LoginStateCopyWithImpl(this._value, this._then);
+class _$RegisterFormStateCopyWithImpl<$Res, $Val extends RegisterFormState>
+    implements $RegisterFormStateCopyWith<$Res> {
+  _$RegisterFormStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -64,13 +72,20 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? fullName = null,
     Object? email = null,
     Object? password = null,
+    Object? passwordValue = null,
     Object? showError = null,
     Object? loading = null,
     Object? option = null,
+    Object? rememberMe = null,
   }) {
     return _then(_value.copyWith(
+      fullName: null == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as IFullName,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -79,6 +94,10 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as IPassword,
+      passwordValue: null == passwordValue
+          ? _value.passwordValue
+          : passwordValue // ignore: cast_nullable_to_non_nullable
+              as String,
       showError: null == showError
           ? _value.showError
           : showError // ignore: cast_nullable_to_non_nullable
@@ -91,44 +110,58 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
           ? _value.option
           : option // ignore: cast_nullable_to_non_nullable
               as Option<Either<AuthException, Unit>>,
+      rememberMe: null == rememberMe
+          ? _value.rememberMe
+          : rememberMe // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_LoginStateCopyWith<$Res>
-    implements $LoginStateCopyWith<$Res> {
-  factory _$$_LoginStateCopyWith(
-          _$_LoginState value, $Res Function(_$_LoginState) then) =
-      __$$_LoginStateCopyWithImpl<$Res>;
+abstract class _$$_RegisterFormStateCopyWith<$Res>
+    implements $RegisterFormStateCopyWith<$Res> {
+  factory _$$_RegisterFormStateCopyWith(_$_RegisterFormState value,
+          $Res Function(_$_RegisterFormState) then) =
+      __$$_RegisterFormStateCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {IEmail email,
+      {IFullName fullName,
+      IEmail email,
       IPassword password,
+      String passwordValue,
       bool showError,
       bool loading,
-      Option<Either<AuthException, Unit>> option});
+      Option<Either<AuthException, Unit>> option,
+      bool rememberMe});
 }
 
 /// @nodoc
-class __$$_LoginStateCopyWithImpl<$Res>
-    extends _$LoginStateCopyWithImpl<$Res, _$_LoginState>
-    implements _$$_LoginStateCopyWith<$Res> {
-  __$$_LoginStateCopyWithImpl(
-      _$_LoginState _value, $Res Function(_$_LoginState) _then)
+class __$$_RegisterFormStateCopyWithImpl<$Res>
+    extends _$RegisterFormStateCopyWithImpl<$Res, _$_RegisterFormState>
+    implements _$$_RegisterFormStateCopyWith<$Res> {
+  __$$_RegisterFormStateCopyWithImpl(
+      _$_RegisterFormState _value, $Res Function(_$_RegisterFormState) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? fullName = null,
     Object? email = null,
     Object? password = null,
+    Object? passwordValue = null,
     Object? showError = null,
     Object? loading = null,
     Object? option = null,
+    Object? rememberMe = null,
   }) {
-    return _then(_$_LoginState(
+    return _then(_$_RegisterFormState(
+      fullName: null == fullName
+          ? _value.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as IFullName,
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
@@ -137,6 +170,10 @@ class __$$_LoginStateCopyWithImpl<$Res>
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
               as IPassword,
+      passwordValue: null == passwordValue
+          ? _value.passwordValue
+          : passwordValue // ignore: cast_nullable_to_non_nullable
+              as String,
       showError: null == showError
           ? _value.showError
           : showError // ignore: cast_nullable_to_non_nullable
@@ -149,19 +186,30 @@ class __$$_LoginStateCopyWithImpl<$Res>
           ? _value.option
           : option // ignore: cast_nullable_to_non_nullable
               as Option<Either<AuthException, Unit>>,
+      rememberMe: null == rememberMe
+          ? _value.rememberMe
+          : rememberMe // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_LoginState implements _LoginState {
-  _$_LoginState(
-      {required this.email,
+class _$_RegisterFormState implements _RegisterFormState {
+  _$_RegisterFormState(
+      {required this.fullName,
+      required this.email,
       required this.password,
+      required this.passwordValue,
       required this.showError,
       required this.loading,
-      required this.option});
+      required this.option,
+      required this.rememberMe});
+
+  /// The user's full name - First and Last names.
+  @override
+  final IFullName fullName;
 
   /// The user's email address.
   @override
@@ -170,58 +218,75 @@ class _$_LoginState implements _LoginState {
   /// The user's password.
   @override
   final IPassword password;
+  @override
+  final String passwordValue;
 
   /// Whether or not to show an error message.
   @override
   final bool showError;
 
-  /// Whether or not the login form is loading.
+  /// Whether or not the registration form is loading.
   @override
   final bool loading;
 
-  /// The result of the last login attempt.
+  /// The result of the last registration attempt.
   @override
   final Option<Either<AuthException, Unit>> option;
+  @override
+  final bool rememberMe;
 
   @override
   String toString() {
-    return 'LoginState(email: $email, password: $password, showError: $showError, loading: $loading, option: $option)';
+    return 'RegisterFormState(fullName: $fullName, email: $email, password: $password, passwordValue: $passwordValue, showError: $showError, loading: $loading, option: $option, rememberMe: $rememberMe)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_LoginState &&
+            other is _$_RegisterFormState &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
+            (identical(other.passwordValue, passwordValue) ||
+                other.passwordValue == passwordValue) &&
             (identical(other.showError, showError) ||
                 other.showError == showError) &&
             (identical(other.loading, loading) || other.loading == loading) &&
-            (identical(other.option, option) || other.option == option));
+            (identical(other.option, option) || other.option == option) &&
+            (identical(other.rememberMe, rememberMe) ||
+                other.rememberMe == rememberMe));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, email, password, showError, loading, option);
+  int get hashCode => Object.hash(runtimeType, fullName, email, password,
+      passwordValue, showError, loading, option, rememberMe);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_LoginStateCopyWith<_$_LoginState> get copyWith =>
-      __$$_LoginStateCopyWithImpl<_$_LoginState>(this, _$identity);
+  _$$_RegisterFormStateCopyWith<_$_RegisterFormState> get copyWith =>
+      __$$_RegisterFormStateCopyWithImpl<_$_RegisterFormState>(
+          this, _$identity);
 }
 
-abstract class _LoginState implements LoginState {
-  factory _LoginState(
-          {required final IEmail email,
-          required final IPassword password,
-          required final bool showError,
-          required final bool loading,
-          required final Option<Either<AuthException, Unit>> option}) =
-      _$_LoginState;
+abstract class _RegisterFormState implements RegisterFormState {
+  factory _RegisterFormState(
+      {required final IFullName fullName,
+      required final IEmail email,
+      required final IPassword password,
+      required final String passwordValue,
+      required final bool showError,
+      required final bool loading,
+      required final Option<Either<AuthException, Unit>> option,
+      required final bool rememberMe}) = _$_RegisterFormState;
 
+  @override
+
+  /// The user's full name - First and Last names.
+  IFullName get fullName;
   @override
 
   /// The user's email address.
@@ -231,19 +296,23 @@ abstract class _LoginState implements LoginState {
   /// The user's password.
   IPassword get password;
   @override
+  String get passwordValue;
+  @override
 
   /// Whether or not to show an error message.
   bool get showError;
   @override
 
-  /// Whether or not the login form is loading.
+  /// Whether or not the registration form is loading.
   bool get loading;
   @override
 
-  /// The result of the last login attempt.
+  /// The result of the last registration attempt.
   Option<Either<AuthException, Unit>> get option;
   @override
+  bool get rememberMe;
+  @override
   @JsonKey(ignore: true)
-  _$$_LoginStateCopyWith<_$_LoginState> get copyWith =>
+  _$$_RegisterFormStateCopyWith<_$_RegisterFormState> get copyWith =>
       throw _privateConstructorUsedError;
 }

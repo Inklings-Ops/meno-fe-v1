@@ -12,6 +12,7 @@ class MTextFormField extends StatefulWidget {
   final int maxLines;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
   final String? initialValue;
   final FocusNode? focusNode;
   final TextInputType keyboardType;
@@ -30,6 +31,7 @@ class MTextFormField extends StatefulWidget {
     this.maxLines = 1,
     this.controller,
     this.onChanged,
+    this.onFieldSubmitted,
     this.initialValue,
     this.focusNode,
     this.keyboardType = TextInputType.text,
@@ -115,6 +117,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
                   ? styles.textColor
                   : MColor.grey80,
             ),
+            onFieldSubmitted: widget.onFieldSubmitted,
             initialValue: widget.initialValue,
             controller: widget.controller,
             focusNode: widget.focusNode,

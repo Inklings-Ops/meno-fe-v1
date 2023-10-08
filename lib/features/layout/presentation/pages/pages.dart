@@ -23,8 +23,8 @@ class HomePage extends ConsumerWidget {
               icon: const Icon(MIcons.log_out),
               loading: ref.watch(authProvider).loading,
               onPressed: () {
-                ref.read(authProvider.notifier).partialLogout();
                 context.router.replaceAll([LoginRoute(isPasswordOnly: true)]);
+                ref.read(authProvider.notifier).partialLogout();
               },
             ),
           ],
