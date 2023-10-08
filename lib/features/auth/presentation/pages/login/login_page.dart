@@ -6,21 +6,34 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/core/extensions/extensions.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/auth/application/login/login_notifier.dart';
+import 'package:meno_fe_v1/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/auth_redirection_text.dart';
-import 'package:meno_fe_v1/features/auth/presentation/widgets/forgot_password_button.dart';
 import 'package:meno_fe_v1/features/auth/presentation/widgets/google_divider.dart';
+import 'package:meno_fe_v1/features/auth/presentation/widgets/user_account_details.dart';
 import 'package:meno_fe_v1/features/onboarding/application/onboarding_provider.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
+
+part 'login_page.widgets.dart';
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 @RoutePage()
-class LoginPage extends HookConsumerWidget {
+class LoginPage extends StatefulHookConsumerWidget {
   final bool implyLeading;
-  const LoginPage({super.key, this.implyLeading = false});
+  final bool isPasswordOnly;
 
+  const LoginPage({
+    super.key,
+    this.implyLeading = false,
+    this.isPasswordOnly = false,
+  });
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  @override
+  Widget build(BuildContext context) {
     final FocusScopeNode focusScope = useFocusScopeNode();
     final FocusNode emailFocusNode = useFocusNode();
     final FocusNode passwordFocusNode = useFocusNode();
@@ -34,12 +47,12 @@ class LoginPage extends HookConsumerWidget {
           (failure) => context.showLoginError(failure),
           (_) async {
             final router = context.router;
+            router.replaceAll([const MLayoutRoute()]);
             context.clearSnackBars();
             await ref.read(authProvider.notifier).checkAuthenticated();
             if (router.canNavigateBack) {
               ref.read(onboardingProvider).onboardingCompleted();
             }
-            router.replaceAll([const MLayoutRoute()]);
           },
         ),
       );
@@ -53,7 +66,10 @@ class LoginPage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      appBar: MAppBar.primary(title: "Log in", implyLeading: implyLeading),
+      appBar: MAppBar.primary(
+        title: "Log in",
+        implyLeading: widget.implyLeading,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 56),
         child: Form(
@@ -61,13 +77,21 @@ class LoginPage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _Email(focusNode: emailFocusNode),
-              24.verticalSpace,
+              if (widget.isPasswordOnly) ...[
+                UserAccountDetails(
+                  user: ref.watch(userProvider),
+                  action: context.showSwitchAccountSheet,
+                ),
+                MSize.verticalSpaceXXLarge,
+              ] else ...[
+                _Email(focusNode: emailFocusNode),
+                24.verticalSpace,
+              ],
               _Password(focusNode: passwordFocusNode),
               MSize.verticalSpaceMicro,
               const Align(
                 alignment: Alignment.centerRight,
-                child: ForgotPasswordButton(),
+                child: _ForgotPasswordButton(),
               ),
               MSize.verticalSpaceXXLarge,
               MPrimaryButton(
@@ -91,38 +115,15 @@ class LoginPage extends HookConsumerWidget {
       ),
     );
   }
-}
-
-class _Email extends ConsumerWidget {
-  final FocusNode focusNode;
-  const _Email({Key? key, required this.focusNode}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => MTextFormField(
-        label: "Email Address",
-        hint: "example@gmail.com",
-        prefixIcon: MIcons.mail,
-        focusNode: focusNode,
-        keyboardType: TextInputType.emailAddress,
-        enabled: !ref.watch(loginProvider).loading,
-        onChanged: ref.watch(loginProvider.notifier).emailChanged,
-        validator: ref.watch(loginProvider.notifier).validateEmail,
-      );
-}
-
-class _Password extends ConsumerWidget {
-  final FocusNode focusNode;
-  const _Password({Key? key, required this.focusNode}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) => MTextFormField(
-        label: "Be Secure",
-        hint: "Enter your password",
-        prefixIcon: MIcons.key,
-        isPassword: true,
-        focusNode: focusNode,
-        enabled: !ref.watch(loginProvider).loading,
-        onChanged: ref.watch(loginProvider.notifier).passwordChanged,
-        validator: ref.watch(loginProvider.notifier).validatePassword,
-      );
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isPasswordOnly) {
+        final IEmail email = ref.read(authProvider).user.email;
+        ref.read(loginProvider.notifier).emailChanged(email.get()!);
+      }
+    });
+  }
 }

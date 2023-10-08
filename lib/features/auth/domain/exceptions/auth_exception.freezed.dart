@@ -20,6 +20,7 @@ mixin _$AuthException {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -32,6 +33,7 @@ mixin _$AuthException {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -44,6 +46,7 @@ mixin _$AuthException {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -56,8 +59,9 @@ mixin _$AuthException {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -69,7 +73,8 @@ mixin _$AuthException {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -81,7 +86,8 @@ mixin _$AuthException {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -176,6 +182,7 @@ class _$_Message implements _Message {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -191,6 +198,7 @@ class _$_Message implements _Message {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -206,6 +214,7 @@ class _$_Message implements _Message {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -224,8 +233,9 @@ class _$_Message implements _Message {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -240,7 +250,8 @@ class _$_Message implements _Message {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -255,7 +266,8 @@ class _$_Message implements _Message {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -281,25 +293,25 @@ abstract class _Message implements AuthException {
 }
 
 /// @nodoc
-abstract class _$$InvalidEmailOrPasswordCopyWith<$Res> {
-  factory _$$InvalidEmailOrPasswordCopyWith(_$InvalidEmailOrPassword value,
-          $Res Function(_$InvalidEmailOrPassword) then) =
-      __$$InvalidEmailOrPasswordCopyWithImpl<$Res>;
+abstract class _$$_InvalidEmailOrPasswordCopyWith<$Res> {
+  factory _$$_InvalidEmailOrPasswordCopyWith(_$_InvalidEmailOrPassword value,
+          $Res Function(_$_InvalidEmailOrPassword) then) =
+      __$$_InvalidEmailOrPasswordCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$InvalidEmailOrPasswordCopyWithImpl<$Res>
-    extends _$AuthExceptionCopyWithImpl<$Res, _$InvalidEmailOrPassword>
-    implements _$$InvalidEmailOrPasswordCopyWith<$Res> {
-  __$$InvalidEmailOrPasswordCopyWithImpl(_$InvalidEmailOrPassword _value,
-      $Res Function(_$InvalidEmailOrPassword) _then)
+class __$$_InvalidEmailOrPasswordCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_InvalidEmailOrPassword>
+    implements _$$_InvalidEmailOrPasswordCopyWith<$Res> {
+  __$$_InvalidEmailOrPasswordCopyWithImpl(_$_InvalidEmailOrPassword _value,
+      $Res Function(_$_InvalidEmailOrPassword) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
-  const _$InvalidEmailOrPassword();
+class _$_InvalidEmailOrPassword implements _InvalidEmailOrPassword {
+  const _$_InvalidEmailOrPassword();
 
   @override
   String toString() {
@@ -309,7 +321,8 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$InvalidEmailOrPassword);
+        (other.runtimeType == runtimeType &&
+            other is _$_InvalidEmailOrPassword);
   }
 
   @override
@@ -320,6 +333,7 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -335,6 +349,7 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -350,6 +365,7 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -368,8 +384,9 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -384,7 +401,8 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -399,7 +417,8 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -415,8 +434,153 @@ class _$InvalidEmailOrPassword implements InvalidEmailOrPassword {
   }
 }
 
-abstract class InvalidEmailOrPassword implements AuthException {
-  const factory InvalidEmailOrPassword() = _$InvalidEmailOrPassword;
+abstract class _InvalidEmailOrPassword implements AuthException {
+  const factory _InvalidEmailOrPassword() = _$_InvalidEmailOrPassword;
+}
+
+/// @nodoc
+abstract class _$$_UnableToVerifyEmailCopyWith<$Res> {
+  factory _$$_UnableToVerifyEmailCopyWith(_$_UnableToVerifyEmail value,
+          $Res Function(_$_UnableToVerifyEmail) then) =
+      __$$_UnableToVerifyEmailCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$_UnableToVerifyEmailCopyWithImpl<$Res>
+    extends _$AuthExceptionCopyWithImpl<$Res, _$_UnableToVerifyEmail>
+    implements _$$_UnableToVerifyEmailCopyWith<$Res> {
+  __$$_UnableToVerifyEmailCopyWithImpl(_$_UnableToVerifyEmail _value,
+      $Res Function(_$_UnableToVerifyEmail) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$_UnableToVerifyEmail implements _UnableToVerifyEmail {
+  const _$_UnableToVerifyEmail();
+
+  @override
+  String toString() {
+    return 'AuthException.unableToVerifyEmail()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$_UnableToVerifyEmail);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message) message,
+    required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
+    required TResult Function() emailAlreadyInUse,
+    required TResult Function() serverError,
+    required TResult Function() unknownError,
+    required TResult Function() timeOutError,
+    required TResult Function() networkError,
+    required TResult Function() userTokenExpired,
+  }) {
+    return unableToVerifyEmail();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message)? message,
+    TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
+    TResult? Function()? emailAlreadyInUse,
+    TResult? Function()? serverError,
+    TResult? Function()? unknownError,
+    TResult? Function()? timeOutError,
+    TResult? Function()? networkError,
+    TResult? Function()? userTokenExpired,
+  }) {
+    return unableToVerifyEmail?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message)? message,
+    TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
+    TResult Function()? emailAlreadyInUse,
+    TResult Function()? serverError,
+    TResult Function()? unknownError,
+    TResult Function()? timeOutError,
+    TResult Function()? networkError,
+    TResult Function()? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (unableToVerifyEmail != null) {
+      return unableToVerifyEmail();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Message value) message,
+    required TResult Function(_InvalidEmailOrPassword value)
+        invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
+    required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
+    required TResult Function(_ServerError value) serverError,
+    required TResult Function(_UnknownError value) unknownError,
+    required TResult Function(_TimeOutError value) timeOutError,
+    required TResult Function(_NetworkError value) networkError,
+    required TResult Function(_UserTokenExpired value) userTokenExpired,
+  }) {
+    return unableToVerifyEmail(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Message value)? message,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
+    TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult? Function(_ServerError value)? serverError,
+    TResult? Function(_UnknownError value)? unknownError,
+    TResult? Function(_TimeOutError value)? timeOutError,
+    TResult? Function(_NetworkError value)? networkError,
+    TResult? Function(_UserTokenExpired value)? userTokenExpired,
+  }) {
+    return unableToVerifyEmail?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Message value)? message,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
+    TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
+    TResult Function(_ServerError value)? serverError,
+    TResult Function(_UnknownError value)? unknownError,
+    TResult Function(_TimeOutError value)? timeOutError,
+    TResult Function(_NetworkError value)? networkError,
+    TResult Function(_UserTokenExpired value)? userTokenExpired,
+    required TResult orElse(),
+  }) {
+    if (unableToVerifyEmail != null) {
+      return unableToVerifyEmail(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UnableToVerifyEmail implements AuthException {
+  const factory _UnableToVerifyEmail() = _$_UnableToVerifyEmail;
 }
 
 /// @nodoc
@@ -459,6 +623,7 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -474,6 +639,7 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -489,6 +655,7 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -507,8 +674,9 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -523,7 +691,8 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -538,7 +707,8 @@ class _$_EmailAlreadyInUse implements _EmailAlreadyInUse {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -598,6 +768,7 @@ class _$_ServerError implements _ServerError {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -613,6 +784,7 @@ class _$_ServerError implements _ServerError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -628,6 +800,7 @@ class _$_ServerError implements _ServerError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -646,8 +819,9 @@ class _$_ServerError implements _ServerError {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -662,7 +836,8 @@ class _$_ServerError implements _ServerError {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -677,7 +852,8 @@ class _$_ServerError implements _ServerError {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -737,6 +913,7 @@ class _$_UnknownError implements _UnknownError {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -752,6 +929,7 @@ class _$_UnknownError implements _UnknownError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -767,6 +945,7 @@ class _$_UnknownError implements _UnknownError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -785,8 +964,9 @@ class _$_UnknownError implements _UnknownError {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -801,7 +981,8 @@ class _$_UnknownError implements _UnknownError {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -816,7 +997,8 @@ class _$_UnknownError implements _UnknownError {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -876,6 +1058,7 @@ class _$_TimeOutError implements _TimeOutError {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -891,6 +1074,7 @@ class _$_TimeOutError implements _TimeOutError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -906,6 +1090,7 @@ class _$_TimeOutError implements _TimeOutError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -924,8 +1109,9 @@ class _$_TimeOutError implements _TimeOutError {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -940,7 +1126,8 @@ class _$_TimeOutError implements _TimeOutError {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -955,7 +1142,8 @@ class _$_TimeOutError implements _TimeOutError {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -1015,6 +1203,7 @@ class _$_NetworkError implements _NetworkError {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -1030,6 +1219,7 @@ class _$_NetworkError implements _NetworkError {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -1045,6 +1235,7 @@ class _$_NetworkError implements _NetworkError {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -1063,8 +1254,9 @@ class _$_NetworkError implements _NetworkError {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -1079,7 +1271,8 @@ class _$_NetworkError implements _NetworkError {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -1094,7 +1287,8 @@ class _$_NetworkError implements _NetworkError {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,
@@ -1154,6 +1348,7 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   TResult when<TResult extends Object?>({
     required TResult Function(String message) message,
     required TResult Function() invalidEmailOrPassword,
+    required TResult Function() unableToVerifyEmail,
     required TResult Function() emailAlreadyInUse,
     required TResult Function() serverError,
     required TResult Function() unknownError,
@@ -1169,6 +1364,7 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String message)? message,
     TResult? Function()? invalidEmailOrPassword,
+    TResult? Function()? unableToVerifyEmail,
     TResult? Function()? emailAlreadyInUse,
     TResult? Function()? serverError,
     TResult? Function()? unknownError,
@@ -1184,6 +1380,7 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String message)? message,
     TResult Function()? invalidEmailOrPassword,
+    TResult Function()? unableToVerifyEmail,
     TResult Function()? emailAlreadyInUse,
     TResult Function()? serverError,
     TResult Function()? unknownError,
@@ -1202,8 +1399,9 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Message value) message,
-    required TResult Function(InvalidEmailOrPassword value)
+    required TResult Function(_InvalidEmailOrPassword value)
         invalidEmailOrPassword,
+    required TResult Function(_UnableToVerifyEmail value) unableToVerifyEmail,
     required TResult Function(_EmailAlreadyInUse value) emailAlreadyInUse,
     required TResult Function(_ServerError value) serverError,
     required TResult Function(_UnknownError value) unknownError,
@@ -1218,7 +1416,8 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Message value)? message,
-    TResult? Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult? Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult? Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult? Function(_ServerError value)? serverError,
     TResult? Function(_UnknownError value)? unknownError,
@@ -1233,7 +1432,8 @@ class _$_UserTokenExpired implements _UserTokenExpired {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Message value)? message,
-    TResult Function(InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_InvalidEmailOrPassword value)? invalidEmailOrPassword,
+    TResult Function(_UnableToVerifyEmail value)? unableToVerifyEmail,
     TResult Function(_EmailAlreadyInUse value)? emailAlreadyInUse,
     TResult Function(_ServerError value)? serverError,
     TResult Function(_UnknownError value)? unknownError,

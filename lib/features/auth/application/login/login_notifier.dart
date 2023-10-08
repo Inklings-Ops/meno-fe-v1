@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/injector/injector.dart';
 
@@ -14,8 +13,6 @@ final loginProvider =
   return LoginNotifier(di<IAuthFacade>());
 });
 
-/// A state notifier for the login form.
-@lazySingleton
 class LoginNotifier extends StateNotifier<LoginState> {
   /// The auth facade dependency.
   final IAuthFacade _authFacade;

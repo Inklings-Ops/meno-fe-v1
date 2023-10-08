@@ -11,8 +11,6 @@ abstract class IAuthFacade {
   /// In this case, both the `UserToken` and `User` details must securely saved.
   Future<bool> get isAuthenticated;
 
-  bool isTokenExpired(String token);
-
   /// Checks whether the user is currently partially authenticated or logged in.
   ///
   /// In this case, just the `User` details are securely saved and the token is
@@ -28,6 +26,13 @@ abstract class IAuthFacade {
   /// Gets the user's token.
   Future<UserToken?> get userToken;
 
+  Future<Either<AuthException, Unit>> changePassword({
+    required IPassword currentPassword,
+    required IPassword newPassword,
+  });
+
+  Future<Either<AuthException, Unit>> forgotPassword(IEmail email);
+
   Future<Map<String, UserCredentials>?> getAllUserCredentials();
 
   /// Signs the user in with Google.
@@ -37,6 +42,8 @@ abstract class IAuthFacade {
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false});
 
+  bool isTokenExpired(String token);
+
   /// Logs the user in with their email address and password.
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
@@ -44,8 +51,6 @@ abstract class IAuthFacade {
     required IEmail email,
     required IPassword password,
   });
-
-  Future<Either<AuthException, Unit>> switchAccount(UserCredentials credentials);
 
   /// Logs the user out.
   Future<void> logout();
@@ -64,5 +69,25 @@ abstract class IAuthFacade {
     required IPassword password,
     IBio? bio,
     IAvatar? avatar,
+  });
+
+  Future<Either<AuthException, Unit>> requestOtp({
+    required IEmail email,
+    required String type,
+  });
+
+  Future<Either<AuthException, Unit>> resetPassword({
+    required IEmail email,
+    required String code,
+    required IPassword newPassword,
+  });
+
+  Future<Either<AuthException, Unit>> switchAccount(
+      UserCredentials credentials);
+
+  
+  Future<Either<AuthException, Unit>> verifyEmailAddress({
+    required IEmail email,
+    required String code,
   });
 }

@@ -92,7 +92,10 @@ class _AddAccountTile extends StatelessWidget {
     final MColorScheme colorScheme = MColorScheme.of(context)!;
 
     return InkWell(
-      onTap: () => context.replaceRoute(LoginRoute()),
+      onTap: () {
+        context.popRoute();
+        context.replaceRoute(LoginRoute());
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(
           vertical: MCore.small,
@@ -126,11 +129,17 @@ class _SwitchAccountModal1 extends StatelessWidget {
       children: [
         MPrimaryButton(
           label: "Log in to Existing Account",
-          onPressed: () => context.router.replaceAll([LoginRoute()]),
+          onPressed: () {
+            context.popRoute();
+            context.router.replaceAll([LoginRoute()]);
+          },
         ),
         MTextButton(
           label: "Create New Account",
-          onPressed: () => context.router.replaceAll([const RegisterRoute()]),
+          onPressed: () {
+            context.popRoute();
+            context.router.replaceAll([const RegisterRoute()]);
+          },
         ),
       ],
     );

@@ -35,7 +35,7 @@ class _MenoAppState extends ConsumerState<MenoApp> {
           } else {
             switch (authStatus) {
               case AuthStatus.partiallyAuthenticated:
-                return const DeepLink([ReturnLoginRoute()]);
+                return DeepLink([LoginRoute(isPasswordOnly: true)]);
               case AuthStatus.authenticated:
                 return DeepLink.defaultPath;
               default:

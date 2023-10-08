@@ -53,6 +53,7 @@ abstract class _$MRouter extends RootStackRouter {
         child: LoginPage(
           key: args.key,
           implyLeading: args.implyLeading,
+          isPasswordOnly: args.isPasswordOnly,
         ),
       );
     },
@@ -91,16 +92,22 @@ abstract class _$MRouter extends RootStackRouter {
         child: const RegisterPage(),
       );
     },
+    ResetPasswordOtpVerificationRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ResetPasswordOtpVerificationPage(),
+      );
+    },
     ResetPasswordRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const ResetPasswordPage(),
       );
     },
-    ReturnLoginRoute.name: (routeData) {
+    ResetPasswordSuccessRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const ReturnLoginPage(),
+        child: const ResetPasswordSuccessPage(),
       );
     },
   };
@@ -182,12 +189,14 @@ class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     Key? key,
     bool implyLeading = false,
+    bool isPasswordOnly = false,
     List<PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
             key: key,
             implyLeading: implyLeading,
+            isPasswordOnly: isPasswordOnly,
           ),
           initialChildren: children,
         );
@@ -201,15 +210,18 @@ class LoginRouteArgs {
   const LoginRouteArgs({
     this.key,
     this.implyLeading = false,
+    this.isPasswordOnly = false,
   });
 
   final Key? key;
 
   final bool implyLeading;
 
+  final bool isPasswordOnly;
+
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, implyLeading: $implyLeading}';
+    return 'LoginRouteArgs{key: $key, implyLeading: $implyLeading, isPasswordOnly: $isPasswordOnly}';
   }
 }
 
@@ -308,6 +320,20 @@ class RegisterRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ResetPasswordOtpVerificationPage]
+class ResetPasswordOtpVerificationRoute extends PageRouteInfo<void> {
+  const ResetPasswordOtpVerificationRoute({List<PageRouteInfo>? children})
+      : super(
+          ResetPasswordOtpVerificationRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ResetPasswordOtpVerificationRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [ResetPasswordPage]
 class ResetPasswordRoute extends PageRouteInfo<void> {
   const ResetPasswordRoute({List<PageRouteInfo>? children})
@@ -322,15 +348,15 @@ class ResetPasswordRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ReturnLoginPage]
-class ReturnLoginRoute extends PageRouteInfo<void> {
-  const ReturnLoginRoute({List<PageRouteInfo>? children})
+/// [ResetPasswordSuccessPage]
+class ResetPasswordSuccessRoute extends PageRouteInfo<void> {
+  const ResetPasswordSuccessRoute({List<PageRouteInfo>? children})
       : super(
-          ReturnLoginRoute.name,
+          ResetPasswordSuccessRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'ReturnLoginRoute';
+  static const String name = 'ResetPasswordSuccessRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

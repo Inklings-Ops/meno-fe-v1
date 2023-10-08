@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
-
 import 'package:meno_fe_v1/router/m_router.dart';
 
 @RoutePage()
@@ -25,7 +24,7 @@ class HomePage extends ConsumerWidget {
               loading: ref.watch(authProvider).loading,
               onPressed: () {
                 ref.read(authProvider.notifier).partialLogout();
-                context.router.replaceAll([const ReturnLoginRoute()]);
+                context.router.replaceAll([LoginRoute(isPasswordOnly: true)]);
               },
             ),
           ],

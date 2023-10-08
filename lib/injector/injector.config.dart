@@ -15,10 +15,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i5;
 import 'package:shared_preferences/shared_preferences.dart' as _i9;
 
-import '../features/auth/application/auth/auth_notifier.dart' as _i16;
-import '../features/auth/application/login/login_notifier.dart' as _i13;
-import '../features/auth/application/return_login/return_login_notifier.dart'
-    as _i15;
+import '../features/auth/application/auth/auth_notifier.dart' as _i14;
 import '../features/auth/domain/domain.dart' as _i11;
 import '../features/auth/infrastructure/auth_facade.dart' as _i12;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
@@ -27,11 +24,11 @@ import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart'
     as _i4;
 import '../features/auth/infrastructure/mapper/auth_mapper.dart' as _i3;
 import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
-    as _i14;
+    as _i13;
 import '../services/jwt_service.dart' as _i6;
 import '../services/network_service.dart' as _i7;
 import '../services/secure_storage_service.dart' as _i8;
-import 'register_module.dart' as _i17;
+import 'register_module.dart' as _i15;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -68,15 +65,11 @@ extension GetItInjectableX on _i1.GetIt {
           networkService: gh<_i7.NetworkService>(),
           jwtService: gh<_i6.JWTService>(),
         ));
-    gh.lazySingleton<_i13.LoginNotifier>(
-        () => _i13.LoginNotifier(gh<_i11.IAuthFacade>()));
-    gh.factory<_i14.OnboardingLocalDatasource>(() =>
-        _i14.OnboardingLocalDatasource(storage: gh<_i9.SharedPreferences>()));
-    gh.lazySingleton<_i15.ReturnLoginNotifier>(
-        () => _i15.ReturnLoginNotifier(gh<_i11.IAuthFacade>()));
-    await gh.factoryAsync<_i16.AuthNotifier>(
+    gh.factory<_i13.OnboardingLocalDatasource>(() =>
+        _i13.OnboardingLocalDatasource(storage: gh<_i9.SharedPreferences>()));
+    await gh.factoryAsync<_i14.AuthNotifier>(
       () {
-        final i = _i16.AuthNotifier(gh<_i11.IAuthFacade>());
+        final i = _i14.AuthNotifier(gh<_i11.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,
@@ -85,4 +78,4 @@ extension GetItInjectableX on _i1.GetIt {
   }
 }
 
-class _$RegisterModule extends _i17.RegisterModule {}
+class _$RegisterModule extends _i15.RegisterModule {}

@@ -5,7 +5,7 @@ class MText extends StatelessWidget {
   final String data;
   final MColor? color;
   final MTextStyle? style;
-  final int maxLines;
+  final int? maxLines;
   final Locale? locale;
   final TextOverflow overflow;
   final TextAlign? textAlign;
@@ -18,7 +18,7 @@ class MText extends StatelessWidget {
     super.key,
     this.color,
     this.style,
-    this.maxLines = 1,
+    this.maxLines,
     this.locale,
     this.overflow = TextOverflow.ellipsis,
     this.textAlign,

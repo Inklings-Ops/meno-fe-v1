@@ -17,6 +17,15 @@ abstract class AuthRemoteDatasource {
   factory AuthRemoteDatasource(Dio dio, {String baseUrl}) =
       _AuthRemoteDatasource;
 
+  @POST("/api/v1/users/password/change")
+  Future<AuthResponse> changePassword({
+    @Field() required String currentPassword,
+    @Field() required String newPassword,
+  });
+
+  @POST("/api/v1/users/password/forgot")
+  Future<AuthResponse> forgotPassword(@Field() String email);
+
   /// Signs in the user using Google.
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
@@ -53,5 +62,24 @@ abstract class AuthRemoteDatasource {
     @Part() required String password,
     @Part() String? bio,
     @Part(name: 'image', contentType: 'image/png') File? image,
+  });
+
+  @POST("/api/v1/users/otp")
+  Future<AuthResponse> requestOtp({
+    @Field() required String email,
+    @Field() required String type,
+  });
+
+  @POST("/api/v1/users/password/reset")
+  Future<AuthResponse> resetPassword({
+    @Field() required String email,
+    @Field() required String code,
+    @Field() required String newPassword,
+  });
+
+  @POST("/api/v1/users/email/verify")
+  Future<AuthResponse> verifyEmailAddress({
+    @Field() required String email,
+    @Field() required String code,
   });
 }

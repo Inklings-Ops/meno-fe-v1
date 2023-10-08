@@ -30,7 +30,7 @@ class MOtpField extends StatelessWidget {
 
     final defaultPinTheme = PinTheme(
       constraints: const BoxConstraints(maxHeight: 88, maxWidth: 88),
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: styles?.fillColor,
         border: styles?.border,

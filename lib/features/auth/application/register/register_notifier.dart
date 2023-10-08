@@ -13,11 +13,6 @@ final registerProvider =
   return RegisterNotifier(di<IAuthFacade>());
 });
 
-/// Create a new StateProvider to track the password criteria.
-final passwordCriteriaProvider = StateProvider<List<bool>>((ref) {
-  return [false, false, false];
-});
-
 class RegisterNotifier extends StateNotifier<RegisterState> {
   /// The auth facade dependency.
   final IAuthFacade _authFacade;

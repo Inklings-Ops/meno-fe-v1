@@ -90,6 +90,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/sparkles.svg
   SvgGenImage get sparkles => const SvgGenImage('assets/images/sparkles.svg');
 
+  /// File path: assets/images/success.png
+  AssetGenImage get success => const AssetGenImage('assets/images/success.png');
+
   /// File path: assets/images/thumbs up.svg
   SvgGenImage get thumbsUp => const SvgGenImage('assets/images/thumbs up.svg');
 
@@ -124,6 +127,7 @@ class $AssetsImagesGen {
         raisingHands,
         redHeart,
         sparkles,
+        success,
         thumbsUp,
         wavingHand,
         writingHand

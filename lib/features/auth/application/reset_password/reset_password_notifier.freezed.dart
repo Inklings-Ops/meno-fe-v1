@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'return_login_notifier.dart';
+part of 'reset_password_notifier.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,9 +15,8 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$ReturnLoginState {
-  /// The user's password.
-  IPassword get password => throw _privateConstructorUsedError;
+mixin _$ResetPasswordState {
+  IEmail get email => throw _privateConstructorUsedError;
 
   /// Whether or not to show an error message.
   bool get showError => throw _privateConstructorUsedError;
@@ -30,27 +29,27 @@ mixin _$ReturnLoginState {
       throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $ReturnLoginStateCopyWith<ReturnLoginState> get copyWith =>
+  $ResetPasswordStateCopyWith<ResetPasswordState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ReturnLoginStateCopyWith<$Res> {
-  factory $ReturnLoginStateCopyWith(
-          ReturnLoginState value, $Res Function(ReturnLoginState) then) =
-      _$ReturnLoginStateCopyWithImpl<$Res, ReturnLoginState>;
+abstract class $ResetPasswordStateCopyWith<$Res> {
+  factory $ResetPasswordStateCopyWith(
+          ResetPasswordState value, $Res Function(ResetPasswordState) then) =
+      _$ResetPasswordStateCopyWithImpl<$Res, ResetPasswordState>;
   @useResult
   $Res call(
-      {IPassword password,
+      {IEmail email,
       bool showError,
       bool loading,
       Option<Either<AuthException, Unit>> option});
 }
 
 /// @nodoc
-class _$ReturnLoginStateCopyWithImpl<$Res, $Val extends ReturnLoginState>
-    implements $ReturnLoginStateCopyWith<$Res> {
-  _$ReturnLoginStateCopyWithImpl(this._value, this._then);
+class _$ResetPasswordStateCopyWithImpl<$Res, $Val extends ResetPasswordState>
+    implements $ResetPasswordStateCopyWith<$Res> {
+  _$ResetPasswordStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -60,16 +59,16 @@ class _$ReturnLoginStateCopyWithImpl<$Res, $Val extends ReturnLoginState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? password = null,
+    Object? email = null,
     Object? showError = null,
     Object? loading = null,
     Object? option = null,
   }) {
     return _then(_value.copyWith(
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as IPassword,
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as IEmail,
       showError: null == showError
           ? _value.showError
           : showError // ignore: cast_nullable_to_non_nullable
@@ -87,41 +86,41 @@ class _$ReturnLoginStateCopyWithImpl<$Res, $Val extends ReturnLoginState>
 }
 
 /// @nodoc
-abstract class _$$_ReturnLoginStateCopyWith<$Res>
-    implements $ReturnLoginStateCopyWith<$Res> {
-  factory _$$_ReturnLoginStateCopyWith(
-          _$_ReturnLoginState value, $Res Function(_$_ReturnLoginState) then) =
-      __$$_ReturnLoginStateCopyWithImpl<$Res>;
+abstract class _$$_ResetPasswordStateCopyWith<$Res>
+    implements $ResetPasswordStateCopyWith<$Res> {
+  factory _$$_ResetPasswordStateCopyWith(_$_ResetPasswordState value,
+          $Res Function(_$_ResetPasswordState) then) =
+      __$$_ResetPasswordStateCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {IPassword password,
+      {IEmail email,
       bool showError,
       bool loading,
       Option<Either<AuthException, Unit>> option});
 }
 
 /// @nodoc
-class __$$_ReturnLoginStateCopyWithImpl<$Res>
-    extends _$ReturnLoginStateCopyWithImpl<$Res, _$_ReturnLoginState>
-    implements _$$_ReturnLoginStateCopyWith<$Res> {
-  __$$_ReturnLoginStateCopyWithImpl(
-      _$_ReturnLoginState _value, $Res Function(_$_ReturnLoginState) _then)
+class __$$_ResetPasswordStateCopyWithImpl<$Res>
+    extends _$ResetPasswordStateCopyWithImpl<$Res, _$_ResetPasswordState>
+    implements _$$_ResetPasswordStateCopyWith<$Res> {
+  __$$_ResetPasswordStateCopyWithImpl(
+      _$_ResetPasswordState _value, $Res Function(_$_ResetPasswordState) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? password = null,
+    Object? email = null,
     Object? showError = null,
     Object? loading = null,
     Object? option = null,
   }) {
-    return _then(_$_ReturnLoginState(
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as IPassword,
+    return _then(_$_ResetPasswordState(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as IEmail,
       showError: null == showError
           ? _value.showError
           : showError // ignore: cast_nullable_to_non_nullable
@@ -140,16 +139,15 @@ class __$$_ReturnLoginStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ReturnLoginState implements _ReturnLoginState {
-  _$_ReturnLoginState(
-      {required this.password,
+class _$_ResetPasswordState implements _ResetPasswordState {
+  _$_ResetPasswordState(
+      {required this.email,
       required this.showError,
       required this.loading,
       required this.option});
 
-  /// The user's password.
   @override
-  final IPassword password;
+  final IEmail email;
 
   /// Whether or not to show an error message.
   @override
@@ -165,16 +163,15 @@ class _$_ReturnLoginState implements _ReturnLoginState {
 
   @override
   String toString() {
-    return 'ReturnLoginState(password: $password, showError: $showError, loading: $loading, option: $option)';
+    return 'ResetPasswordState(email: $email, showError: $showError, loading: $loading, option: $option)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ReturnLoginState &&
-            (identical(other.password, password) ||
-                other.password == password) &&
+            other is _$_ResetPasswordState &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.showError, showError) ||
                 other.showError == showError) &&
             (identical(other.loading, loading) || other.loading == loading) &&
@@ -183,27 +180,26 @@ class _$_ReturnLoginState implements _ReturnLoginState {
 
   @override
   int get hashCode =>
-      Object.hash(runtimeType, password, showError, loading, option);
+      Object.hash(runtimeType, email, showError, loading, option);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ReturnLoginStateCopyWith<_$_ReturnLoginState> get copyWith =>
-      __$$_ReturnLoginStateCopyWithImpl<_$_ReturnLoginState>(this, _$identity);
+  _$$_ResetPasswordStateCopyWith<_$_ResetPasswordState> get copyWith =>
+      __$$_ResetPasswordStateCopyWithImpl<_$_ResetPasswordState>(
+          this, _$identity);
 }
 
-abstract class _ReturnLoginState implements ReturnLoginState {
-  factory _ReturnLoginState(
-          {required final IPassword password,
+abstract class _ResetPasswordState implements ResetPasswordState {
+  factory _ResetPasswordState(
+          {required final IEmail email,
           required final bool showError,
           required final bool loading,
           required final Option<Either<AuthException, Unit>> option}) =
-      _$_ReturnLoginState;
+      _$_ResetPasswordState;
 
   @override
-
-  /// The user's password.
-  IPassword get password;
+  IEmail get email;
   @override
 
   /// Whether or not to show an error message.
@@ -218,6 +214,6 @@ abstract class _ReturnLoginState implements ReturnLoginState {
   Option<Either<AuthException, Unit>> get option;
   @override
   @JsonKey(ignore: true)
-  _$$_ReturnLoginStateCopyWith<_$_ReturnLoginState> get copyWith =>
+  _$$_ResetPasswordStateCopyWith<_$_ResetPasswordState> get copyWith =>
       throw _privateConstructorUsedError;
 }
