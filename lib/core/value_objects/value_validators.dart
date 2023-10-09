@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'value_failure.dart';
 
 typedef ValidationResult = Either<ValueFailure<String>, String>;
+typedef ValidationResultNullable = Either<ValueFailure<String?>, String?>;
 
 ValidationResult validateBioLength(String input) {
   if (input.length > 250) {
@@ -54,7 +55,11 @@ ValidationResult validatePassword(String input) {
   }
 }
 
-ValidationResult validateBroadcastDescription(String input) {
+ValidationResultNullable validateBroadcastDescription(String? input) {
+  if (input == null) {
+    return right(null);
+  }
+
   if (input.length > 244) {
     return left(ValueFailure.descLengthExceeded(input));
   } else {

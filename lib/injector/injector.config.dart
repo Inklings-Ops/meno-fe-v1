@@ -12,23 +12,29 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
-    as _i5;
-import 'package:shared_preferences/shared_preferences.dart' as _i9;
+    as _i6;
+import 'package:shared_preferences/shared_preferences.dart' as _i10;
 
-import '../features/auth/application/auth/auth_notifier.dart' as _i14;
-import '../features/auth/domain/domain.dart' as _i11;
-import '../features/auth/infrastructure/auth_facade.dart' as _i12;
+import '../features/auth/application/auth/auth_notifier.dart' as _i18;
+import '../features/auth/domain/domain.dart' as _i12;
+import '../features/auth/infrastructure/auth_facade.dart' as _i13;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
-    as _i10;
+    as _i11;
 import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart'
     as _i4;
 import '../features/auth/infrastructure/mapper/auth_mapper.dart' as _i3;
+import '../features/broadcast/domain/domain.dart' as _i14;
+import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i15;
+import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart'
+    as _i16;
+import '../features/broadcast/infrastructure/mapper/broadcast_mapper.dart'
+    as _i5;
 import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
-    as _i13;
-import '../services/jwt_service.dart' as _i6;
-import '../services/network_service.dart' as _i7;
-import '../services/secure_storage_service.dart' as _i8;
-import 'register_module.dart' as _i15;
+    as _i17;
+import '../services/jwt_service.dart' as _i7;
+import '../services/network_service.dart' as _i8;
+import '../services/secure_storage_service.dart' as _i9;
+import 'register_module.dart' as _i19;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -45,31 +51,37 @@ extension GetItInjectableX on _i1.GetIt {
     gh.singleton<_i3.AuthMapper>(_i3.AuthMapper());
     gh.lazySingleton<_i4.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
-    gh.lazySingleton<_i5.InternetConnectionChecker>(
+    gh.singleton<_i5.BroadcastMapper>(_i5.BroadcastMapper());
+    gh.lazySingleton<_i6.InternetConnectionChecker>(
         () => registerModule.connectionChecker);
-    gh.lazySingleton<_i6.JWTService>(() => _i6.JWTService());
-    gh.factory<_i7.NetworkService>(
-        () => _i7.NetworkService(gh<_i5.InternetConnectionChecker>()));
-    gh.lazySingleton<_i8.SecureStorageService>(
-        () => _i8.SecureStorageService());
-    await gh.factoryAsync<_i9.SharedPreferences>(
+    gh.lazySingleton<_i7.JWTService>(() => _i7.JWTService());
+    gh.factory<_i8.NetworkService>(
+        () => _i8.NetworkService(gh<_i6.InternetConnectionChecker>()));
+    gh.lazySingleton<_i9.SecureStorageService>(
+        () => _i9.SecureStorageService());
+    await gh.factoryAsync<_i10.SharedPreferences>(
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.factory<_i10.AuthLocalDatasource>(() =>
-        _i10.AuthLocalDatasource(storage: gh<_i8.SecureStorageService>()));
-    gh.lazySingleton<_i11.IAuthFacade>(() => _i12.AuthFacade(
+    gh.factory<_i11.AuthLocalDatasource>(() =>
+        _i11.AuthLocalDatasource(storage: gh<_i9.SecureStorageService>()));
+    gh.lazySingleton<_i12.IAuthFacade>(() => _i13.AuthFacade(
           authMapper: gh<_i3.AuthMapper>(),
           remoteDatasource: gh<_i4.AuthRemoteDatasource>(),
-          localDatasource: gh<_i10.AuthLocalDatasource>(),
-          networkService: gh<_i7.NetworkService>(),
-          jwtService: gh<_i6.JWTService>(),
+          localDatasource: gh<_i11.AuthLocalDatasource>(),
+          networkService: gh<_i8.NetworkService>(),
+          jwtService: gh<_i7.JWTService>(),
         ));
-    gh.factory<_i13.OnboardingLocalDatasource>(() =>
-        _i13.OnboardingLocalDatasource(storage: gh<_i9.SharedPreferences>()));
-    await gh.factoryAsync<_i14.AuthNotifier>(
+    gh.lazySingleton<_i14.IBroadcastFacade>(() => _i15.BroadcastFacade(
+          mapper: gh<_i5.BroadcastMapper>(),
+          remote: gh<_i16.BroadcastRemoteDatasource>(),
+          network: gh<_i8.NetworkService>(),
+        ));
+    gh.factory<_i17.OnboardingLocalDatasource>(() =>
+        _i17.OnboardingLocalDatasource(storage: gh<_i10.SharedPreferences>()));
+    await gh.factoryAsync<_i18.AuthNotifier>(
       () {
-        final i = _i14.AuthNotifier(gh<_i11.IAuthFacade>());
+        final i = _i18.AuthNotifier(gh<_i12.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,
@@ -78,4 +90,4 @@ extension GetItInjectableX on _i1.GetIt {
   }
 }
 
-class _$RegisterModule extends _i15.RegisterModule {}
+class _$RegisterModule extends _i19.RegisterModule {}

@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$JoinBroadcastEntity {
-  String? get broadcastToken => throw _privateConstructorUsedError;
+  String get broadcastToken => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $JoinBroadcastEntityCopyWith<JoinBroadcastEntity> get copyWith =>
@@ -29,7 +29,7 @@ abstract class $JoinBroadcastEntityCopyWith<$Res> {
           JoinBroadcastEntity value, $Res Function(JoinBroadcastEntity) then) =
       _$JoinBroadcastEntityCopyWithImpl<$Res, JoinBroadcastEntity>;
   @useResult
-  $Res call({String? broadcastToken});
+  $Res call({String broadcastToken});
 }
 
 /// @nodoc
@@ -45,13 +45,13 @@ class _$JoinBroadcastEntityCopyWithImpl<$Res, $Val extends JoinBroadcastEntity>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? broadcastToken = freezed,
+    Object? broadcastToken = null,
   }) {
     return _then(_value.copyWith(
-      broadcastToken: freezed == broadcastToken
+      broadcastToken: null == broadcastToken
           ? _value.broadcastToken
           : broadcastToken // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ) as $Val);
   }
 }
@@ -64,7 +64,7 @@ abstract class _$$_JoinBroadcastEntityCopyWith<$Res>
       __$$_JoinBroadcastEntityCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? broadcastToken});
+  $Res call({String broadcastToken});
 }
 
 /// @nodoc
@@ -78,13 +78,13 @@ class __$$_JoinBroadcastEntityCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? broadcastToken = freezed,
+    Object? broadcastToken = null,
   }) {
     return _then(_$_JoinBroadcastEntity(
-      broadcastToken: freezed == broadcastToken
+      broadcastToken: null == broadcastToken
           ? _value.broadcastToken
           : broadcastToken // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
   }
 }
@@ -95,7 +95,7 @@ class _$_JoinBroadcastEntity implements _JoinBroadcastEntity {
   _$_JoinBroadcastEntity({required this.broadcastToken});
 
   @override
-  final String? broadcastToken;
+  final String broadcastToken;
 
   @override
   String toString() {
@@ -123,11 +123,11 @@ class _$_JoinBroadcastEntity implements _JoinBroadcastEntity {
 }
 
 abstract class _JoinBroadcastEntity implements JoinBroadcastEntity {
-  factory _JoinBroadcastEntity({required final String? broadcastToken}) =
+  factory _JoinBroadcastEntity({required final String broadcastToken}) =
       _$_JoinBroadcastEntity;
 
   @override
-  String? get broadcastToken;
+  String get broadcastToken;
   @override
   @JsonKey(ignore: true)
   _$$_JoinBroadcastEntityCopyWith<_$_JoinBroadcastEntity> get copyWith =>
