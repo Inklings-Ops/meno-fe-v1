@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:meno_fe_v1/core/value_objects/value_failure.dart';
-import 'package:meno_fe_v1/core/value_objects/value_object.dart';
-import 'package:meno_fe_v1/core/value_objects/value_validators.dart';
+
+import '../../../../core/value_objects/value_objects.dart';
 
 /// A typedef representing the result of validating an email address.
 typedef IEmailResult = Either<ValueFailure<String>, String>;
