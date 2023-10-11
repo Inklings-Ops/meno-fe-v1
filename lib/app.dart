@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
 import 'package:meno_fe_v1/features/onboarding/application/onboarding_provider.dart';
-import 'package:meno_fe_v1/router/m_observer.dart';
 import 'package:meno_fe_v1/router/m_router.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
@@ -28,7 +27,6 @@ class _MenoAppState extends ConsumerState<MenoApp> {
       darkTheme: MTheme.dark,
       debugShowCheckedModeBanner: false,
       routerConfig: _mRouter.config(
-        navigatorObservers: () => [MObserver()],
         deepLinkBuilder: (deepLink) async {
           if (!ref.read(onboardingProvider).isOnboarded()) {
             return DeepLink([OnboardingRoute()]);

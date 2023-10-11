@@ -46,12 +46,16 @@ class MBottomNavigationBar extends StatefulWidget {
   /// A callback function called when an item is tapped.
   final ValueChanged<int>? onTap;
 
+  /// Add a custom center item, e.g. a Microphone or Add button
+  final Widget? customItem;
+
   /// Creates an [MBottomNavigationBar] widget.
   const MBottomNavigationBar({
     Key? key,
     required this.currentIndex,
     required this.items,
     this.onTap,
+    this.customItem,
   }) : super(key: key);
 
   @override
@@ -93,21 +97,11 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
     final tiles = <Widget>[];
 
     for (var i = 0; i < itemCount; i++) {
-      if (i == 2) {
-        tiles.add(
-          _NavigationItem(
-            indexLabel: "Create",
-            selected: false,
-            onTap: () {},
-            item: const BottomNavigationBarItem(
-              icon: Icon(MIcons.microphone),
-              label: "Create",
-            ),
-          ),
-        );
+      if (widget.customItem != null && i == 2) {
+        tiles.add(widget.customItem!);
       }
       tiles.add(
-        _NavigationItem(
+        MBottomBarNavigationItem(
           indexLabel: widget.items[i].label,
           onTap: () => widget.onTap?.call(i),
           item: widget.items[i],
@@ -122,12 +116,12 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
 
 /// A responsive and customizable item for a bottom navigation bar.
 ///
-/// The [_NavigationItem] widget is designed to create individual items for
+/// The [MBottomBarNavigationItem] widget is designed to create individual items for
 /// a bottom navigation bar. It supports icons, labels, and tooltips for
 /// each item.
-class _NavigationItem extends StatelessWidget {
+class MBottomBarNavigationItem extends StatelessWidget {
   /// The [BottomNavigationBarItem] to display.
-  final BottomNavigationBarItem item;
+  final BottomNavigationBarItem? item;
 
   /// A label associated with the index for accessibility.
   final String? indexLabel;
@@ -138,23 +132,27 @@ class _NavigationItem extends StatelessWidget {
   /// Indicates whether this item is currently selected.
   final bool selected;
 
-  /// Creates a [_NavigationItem] widget.
-  const _NavigationItem({
-    required this.item,
+  final Widget? customItem;
+
+  /// Creates a [MBottomBarNavigationItem] widget.
+  const MBottomBarNavigationItem({
+    super.key,
+    this.item,
     this.indexLabel,
     required this.onTap,
     required this.selected,
-  });
+    this.customItem,
+  }) : assert(item == null || customItem == null);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).bottomNavigationBarTheme;
 
     final String? effectiveTooltip =
-        item.tooltip == '' ? null : item.tooltip ?? item.label;
+        item?.tooltip == '' ? null : item?.tooltip ?? item?.label;
 
-    final Widget content = item.label == "Create"
-        ? const _Microphone()
+    final Widget content = (customItem != null)
+        ? customItem!
         : Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -164,15 +162,16 @@ class _NavigationItem extends StatelessWidget {
                 data: selected
                     ? theme.selectedIconTheme!
                     : theme.unselectedIconTheme!,
-                child: item.icon,
+                child: item!.icon,
               ),
               const SizedBox(height: 6),
-              Text(
-                item.label!,
-                style: selected
-                    ? theme.selectedLabelStyle
-                    : theme.unselectedLabelStyle,
-              ),
+              if (item!.label != null)
+                Text(
+                  item!.label!,
+                  style: selected
+                      ? theme.selectedLabelStyle
+                      : theme.unselectedLabelStyle,
+                ),
             ],
           );
 
@@ -222,9 +221,9 @@ const BoxConstraints _kConstraints = BoxConstraints(
 /// A microphone icon widget with custom styling.
 ///
 /// The [_Microphone] widget displays a microphone icon with custom styling.
-class _Microphone extends StatelessWidget {
-  /// Creates a [_Microphone] widget.
-  const _Microphone();
+class Microphone extends StatelessWidget {
+  /// Creates a [Microphone] widget.
+  const Microphone({super.key});
 
   @override
   Widget build(BuildContext context) {

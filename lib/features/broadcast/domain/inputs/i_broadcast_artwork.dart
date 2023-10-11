@@ -11,7 +11,7 @@ class IBroadcastArtwork extends ValueObject<File?> {
 
   /// Creates a new `IBroadcastArtwork` object.
   factory IBroadcastArtwork(File? input) {
-    return IBroadcastArtwork._(validateImage(input));
+    return IBroadcastArtwork._(right(input));
   }
 
   /// Creates a new `IBroadcastArtwork` object with the specified value.

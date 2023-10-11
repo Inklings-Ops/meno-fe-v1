@@ -1,7 +1,9 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/core/isolates/m_isolates.dart';
 
 import '../../../../injector/injector.dart';
 import '../../domain/domain.dart';
@@ -39,18 +41,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Checks the authentication status and updates the state accordingly.
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
-    final List<Future> dataFutures = [
-      _facade.user,
-      _facade.userToken,
-      _facade.getAllUserCredentials(),
-    ];
+    RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+    final List<dynamic> results = await MIsolates.authResult(rootIsolateToken);
 
-    final List<dynamic> results = await Future.wait(dataFutures);
-
-    final User? currentUser = results[0] as User?;
+    final User currentUser = results[0] ?? User.empty();
     final UserToken? currentToken = results[1] as UserToken?;
-    final Map<String, UserCredentials>? credentials =
-        results[2] as Map<String, UserCredentials>?;
+    final Map<String, UserCredentials> credentials = results[2] ?? {};
 
     final isPartiallyAuthenticated = await _facade.isPartiallyAuthenticated;
     final isAuthenticated = await _facade.isAuthenticated;
@@ -67,8 +63,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     state = state.copyWith(
       status: status,
-      user: currentUser!,
-      credentials: credentials!,
+      user: currentUser,
+      credentials: credentials,
       token: token,
     );
   }

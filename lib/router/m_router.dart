@@ -1,16 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/login/login_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/register/email_verification_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/register/register_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/reset_password/create_new_password_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/reset_password/reset_password_otp_verification_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/reset_password/reset_password_page.dart';
-import 'package:meno_fe_v1/features/auth/presentation/pages/reset_password/reset_password_success_page.dart';
-import 'package:meno_fe_v1/features/layout/presentation/pages/m_layout.dart';
-import 'package:meno_fe_v1/features/layout/presentation/pages/pages.dart';
-import 'package:meno_fe_v1/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:meno_fe_v1/router/m_routes.dart';
+
+import '../features/auth/presentation/pages/login/login_page.dart';
+import '../features/auth/presentation/pages/register/email_verification_page.dart';
+import '../features/auth/presentation/pages/register/register_page.dart';
+import '../features/auth/presentation/pages/reset_password/create_new_password_page.dart';
+import '../features/auth/presentation/pages/reset_password/reset_password_otp_verification_page.dart';
+import '../features/auth/presentation/pages/reset_password/reset_password_page.dart';
+import '../features/auth/presentation/pages/reset_password/reset_password_success_page.dart';
+import '../features/broadcast/presentation/pages/create_broadcast/create_broadcast_page.dart';
+import '../features/broadcast/presentation/pages/home_page.dart';
+import '../features/layout/presentation/pages/m_layout.dart';
+import '../features/layout/presentation/pages/pages.dart';
+import '../features/onboarding/presentation/pages/onboarding_page.dart';
+import 'm_routes.dart';
 
 part 'm_router.gr.dart';
 
@@ -48,6 +51,12 @@ class MRouter extends _$MRouter {
             AutoRoute(path: MRoutes.notes, page: NotesRoute.page),
             AutoRoute(path: MRoutes.profile, page: ProfileRoute.page),
           ],
+        ),
+        CustomRoute(
+          path: MRoutes.createBroadcast,
+          page: CreateBroadcastRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideBottom,
+          durationInMilliseconds: 200,
         ),
       ];
 }

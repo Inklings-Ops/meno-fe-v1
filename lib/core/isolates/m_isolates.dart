@@ -1,0 +1,57 @@
+import 'dart:isolate';
+
+import 'package:flutter/services.dart';
+
+import '../../features/auth/domain/domain.dart';
+import '../../features/auth/infrastructure/datasources/auth_local_datasource.dart';
+import '../../features/auth/infrastructure/mapper/auth_mapper.dart';
+import '../../services/secure_storage_service.dart';
+
+class MIsolates {
+  static final AuthMapper _authMapper = AuthMapper();
+
+  static final SecureStorageService _storage = SecureStorageService();
+  static final AuthLocalDatasource _source =
+      AuthLocalDatasource(storage: _storage);
+  MIsolates._();
+
+  static Future<List<dynamic>> authResult(RootIsolateToken rootIsolateToken) {
+    return Isolate.run(() => _authIsolate(rootIsolateToken));
+  }
+
+  static Future<Map<String, UserCredentials>?> _getAllUserCredentials() async {
+    final map = await _source.getAllUserCredentials();
+    if (map != null) {
+      final userCredentialsMap = map.map((key, value) {
+        final userCredentials = _authMapper.userCredentialsToDomain(value)!;
+        return MapEntry(key, userCredentials);
+      });
+
+      return userCredentialsMap;
+    }
+    return null;
+  }
+
+  static Future<User?> _getCurrentUser() async {
+    final userDto = await _source.getCurrentUser();
+    final User? userDomain = _authMapper.userToDomain(userDto);
+    return userDomain;
+  }
+
+  static Future<String?> _getCurrentUserToken() async {
+    final userToken = await _source.getCurrentUserToken();
+    return userToken;
+  }
+
+  static Future<List<dynamic>> _authIsolate(RootIsolateToken token) async {
+    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+
+    final result = await Future.wait([
+      _getCurrentUser(),
+      _getCurrentUserToken(),
+      _getAllUserCredentials(),
+    ]);
+
+    return result;
+  }
+}

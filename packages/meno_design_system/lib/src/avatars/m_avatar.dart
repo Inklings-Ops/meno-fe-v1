@@ -9,7 +9,17 @@ class MAvatar extends StatelessWidget {
   final double radius;
   final String? url;
   final File? file;
-  const MAvatar({super.key, required this.radius, this.url, this.file});
+  final bool isArtwork;
+  final Widget? child;
+
+  const MAvatar({
+    super.key,
+    required this.radius,
+    this.url,
+    this.file,
+    this.isArtwork = false,
+    this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +38,21 @@ class MAvatar extends StatelessWidget {
     ImageProvider<Object>? foregroundImage;
     Widget? placeholder;
 
+    final SizedBox artwork = SizedBox(
+      height: radius * 0.7,
+      child: isLight
+          ? Assets.images.logoDark.svg()
+          : Assets.images.logoLight.svg(),
+    );
+
+    final Icon icon = Icon(
+      MIcons.user_circle,
+      size: radius,
+      color: isLight ? MColor.primary700 : MColor.white,
+    );
+
     if (!hasFile && !hasUrl) {
-      placeholder = Center(
-        child: Icon(
-          MIcons.user_circle,
-          size: radius,
-          color: isLight ? MColor.primary700 : MColor.white,
-        ),
-      );
+      placeholder = child ?? Center(child: isArtwork ? artwork : icon);
     }
 
     if (hasUrl && !hasFile) {
@@ -43,7 +60,7 @@ class MAvatar extends StatelessWidget {
     }
 
     if (hasFile) {
-      backgroundImage = AssetImage(file!.path);
+      backgroundImage = FileImage(file!);
     }
 
     return CircleAvatar(

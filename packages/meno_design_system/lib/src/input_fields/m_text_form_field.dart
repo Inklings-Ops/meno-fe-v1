@@ -10,6 +10,7 @@ class MTextFormField extends StatefulWidget {
   final IconData? suffixIcon;
   final bool enabled;
   final int maxLines;
+  final int? maxLength;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
@@ -19,6 +20,8 @@ class MTextFormField extends StatefulWidget {
   final bool isPassword;
   final FormFieldValidator<String>? validator;
   final AutovalidateMode? autovalidateMode;
+  final bool required;
+  final TextInputAction? textInputAction;
 
   const MTextFormField({
     super.key,
@@ -29,6 +32,7 @@ class MTextFormField extends StatefulWidget {
     this.suffixIcon,
     this.enabled = true,
     this.maxLines = 1,
+    this.maxLength,
     this.controller,
     this.onChanged,
     this.onFieldSubmitted,
@@ -38,6 +42,8 @@ class MTextFormField extends StatefulWidget {
     this.isPassword = false,
     this.validator,
     this.autovalidateMode,
+    this.required = false,
+    this.textInputAction,
   });
 
   @override
@@ -98,11 +104,12 @@ class _MTextFormFieldState extends State<MTextFormField> {
                   widget.label,
                   icon: widget.labelIcon,
                   hasError: field.hasError,
+                  required: widget.required,
                 ),
                 if (widget.maxLines > 1)
                   _Counter(
-                    maxLength: 244,
-                    currentLength: widget.controller?.text.length ?? 0,
+                    maxLength: widget.maxLength ?? 244,
+                    currentLength: _controllerNotifier.value?.text.length ?? 0,
                     enabled: widget.enabled,
                     hasError: field.hasError,
                   ),
@@ -123,6 +130,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
             focusNode: widget.focusNode,
             keyboardType: widget.keyboardType,
             obscureText: obscureText && widget.isPassword,
+            textInputAction: widget.textInputAction,
             maxLength: 244,
             maxLengthEnforcement: MaxLengthEnforcement.enforced,
             onChanged: widget.onChanged,
@@ -137,7 +145,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
               hintStyle: styles.hintTextStyle,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12,
-                vertical: 18,
+                vertical: 12,
               ),
               counter: const SizedBox(),
               fillColor: effectiveFillColor,
@@ -253,8 +261,14 @@ class _Label extends StatelessWidget {
   final String label;
   final bool hasError;
   final IconData? icon;
+  final bool required;
 
-  const _Label(this.label, {required this.hasError, this.icon});
+  const _Label(
+    this.label, {
+    required this.hasError,
+    this.icon,
+    this.required = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -277,6 +291,14 @@ class _Label extends StatelessWidget {
           color: hasError ? styles.errorColor : styles.textColor,
           style: styles.labelTextStyle,
         ),
+        if (required) ...[
+          6.horizontalSpace,
+          MText(
+            "*",
+            color: styles.errorColor,
+            style: styles.labelTextStyle,
+          ),
+        ],
       ],
     );
   }

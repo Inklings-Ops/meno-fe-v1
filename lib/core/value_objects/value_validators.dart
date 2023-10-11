@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-import 'package:path/path.dart' as p;
 
 import 'value_failure.dart';
 
@@ -62,21 +59,6 @@ ValidationResultNullable validateBroadcastDescription(String? input) {
 
   if (input.length > 244) {
     return left(ValueFailure.descLengthExceeded(input));
-  } else {
-    return right(input);
-  }
-}
-
-Either<ValueFailure<File?>, File?> validateImage(File? input) {
-  if (input == null) {
-    return right(null);
-  }
-
-  final allowedExtensions = ['.png', '.jpeg', '.jpg'];
-  final fileExtension = p.extension(input.path).toLowerCase();
-
-  if (!allowedExtensions.contains(fileExtension)) {
-    return left(ValueFailure.invalidImageType(input));
   } else {
     return right(input);
   }

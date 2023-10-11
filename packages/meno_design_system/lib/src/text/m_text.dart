@@ -12,6 +12,7 @@ class MText extends StatelessWidget {
   final TextDecoration? decoration;
   final MColor? decorationColor;
   final double? decorationThickness;
+  final bool? softWrap;
 
   const MText(
     this.data, {
@@ -25,6 +26,7 @@ class MText extends StatelessWidget {
     this.decoration,
     this.decorationColor,
     this.decorationThickness,
+    this.softWrap,
   });
 
   @override
@@ -36,6 +38,7 @@ class MText extends StatelessWidget {
       locale: locale,
       overflow: overflow,
       textAlign: textAlign,
+      softWrap: softWrap,
       style: TextStyle(
         color: color,
         fontFamily: style?.fontFamily,

@@ -61,6 +61,14 @@ class MTextStyle extends TextStyle {
     fontFamily: _fontFamily,
   );
 
+  // Heading 2
+  static const MTextStyle heading3Bold = MTextStyle._(
+    fontSize: 20.0,
+    height: 28.0 / 20.0,
+    fontWeight: FontWeight.w700,
+    fontFamily: _fontFamily,
+  );
+
   // Subheading
   static const MTextStyle subheadingBold = MTextStyle._(
     fontSize: 16.0,
@@ -136,7 +144,7 @@ class MTextStyle extends TextStyle {
 
   static const MTextStyle microMedium = MTextStyle._(
     fontSize: 12.0,
-    height: 16.0 / 12.0,
+    height: 1.0,
     fontWeight: FontWeight.w500,
     fontFamily: _fontFamily,
   );

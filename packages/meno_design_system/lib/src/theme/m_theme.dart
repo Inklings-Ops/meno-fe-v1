@@ -119,7 +119,8 @@ class MTheme {
       textButtonTheme: buttonStyles.textButtonTheme,
       filledButtonTheme: buttonStyles.filledButtonTheme,
       fontFamily: FontFamily.sFProDisplay,
-      disabledColor: MColor.grey50,
+      disabledColor:
+          MInternal.resolve(isLight, MColor.grey30, MColor.primaryAlt),
       useMaterial3: true,
       snackBarTheme: SnackBarThemeData(
         backgroundColor: colorScheme.error,

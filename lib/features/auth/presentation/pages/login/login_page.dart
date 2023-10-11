@@ -44,21 +44,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             if (!hasOnboarded) {
               ref.read(onboardingProvider).onboardingCompleted();
             }
-            router.replaceAll([const MLayoutRoute()]);
+            router.pushAndPopUntil(
+              const MLayoutRoute(),
+              predicate: (route) => false,
+            );
           },
         ),
       );
     });
 
-    return Scaffold(
+    return MScaffold(
       appBar: MAppBar.primary(
         title: "Log in",
         implyLeading: widget.implyLeading,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 56),
-        child: LoginForm(isPasswordOnly: widget.isPasswordOnly),
-      ),
+      isScrollable: true,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 56),
+      body: LoginForm(isPasswordOnly: widget.isPasswordOnly),
     );
   }
 

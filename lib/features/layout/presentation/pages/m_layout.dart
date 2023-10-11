@@ -10,11 +10,11 @@ import 'package:meno_fe_v1/shared/constants/m_bottom_navigation_bar_items.dart';
 
 @RoutePage(name: "MLayoutRoute")
 class MLayout extends HookConsumerWidget {
-  const MLayout({super.key});
+  const MLayout({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ValueNotifier<bool> loading = useState<bool>(false);
+    final loading = useState(false);
 
     useEffect(() {
       loading.value = true;
@@ -27,36 +27,40 @@ class MLayout extends HookConsumerWidget {
 
     if (loading.value) {
       return const Scaffold(body: MLoadingIndicator.box());
+    } else {
+      User user = ref.read(userProvider);
+      return AutoTabsScaffold(
+        appBarBuilder: (context, tabsRouter) {
+          if (tabsRouter.activeIndex == 0) {
+            return MAppBar.home(
+              title: user.fullName.get()!,
+              actions: const [MIconButton(icon: MIcons.bell, size: 20)],
+            );
+          }
+
+          if (tabsRouter.activeIndex == 3) {
+            return MAppBar.home(title: "Profile");
+          }
+
+          return MAppBar.secondary(title: tabsRouter.routeData.title(context));
+        },
+        bottomNavigationBuilder: (context, tabsRouter) => MBottomNavigationBar(
+          currentIndex: tabsRouter.activeIndex,
+          items: bottomNavigationBarItems,
+          onTap: tabsRouter.setActiveIndex,
+          customItem: MBottomBarNavigationItem(
+            selected: false,
+            onTap: () => context.navigateTo(const CreateBroadcastRoute()),
+            customItem: const Microphone(),
+          ),
+        ),
+        routes: const [
+          HomeRoute(),
+          DiscoverRoute(),
+          NotesRoute(),
+          ProfileRoute(),
+        ],
+      );
     }
-
-    final User user = ref.watch(userProvider);
-
-    return AutoTabsScaffold(
-      appBarBuilder: (context, tabsRouter) {
-        if (tabsRouter.activeIndex == 0) {
-          return MAppBar.home(
-            title: user.fullName.get()!,
-            actions: const [MIconButton(icon: MIcons.bell, size: 20)],
-          );
-        }
-
-        if (tabsRouter.activeIndex == 3) {
-          return MAppBar.home(title: "Profile");
-        }
-
-        return MAppBar.secondary(title: tabsRouter.routeData.title(context));
-      },
-      bottomNavigationBuilder: (context, tabsRouter) => MBottomNavigationBar(
-        currentIndex: tabsRouter.activeIndex,
-        items: bottomNavigationBarItems,
-        onTap: tabsRouter.setActiveIndex,
-      ),
-      routes: const [
-        HomeRoute(),
-        DiscoverRoute(),
-        NotesRoute(),
-        ProfileRoute(),
-      ],
-    );
   }
 }

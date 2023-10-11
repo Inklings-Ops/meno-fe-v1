@@ -27,6 +27,7 @@ class MAppBar extends _AppBar {
     List<Widget>? actions,
   }) = _HomeAppBar;
 
+
   const MAppBar._({
     super.key,
     required super.title,

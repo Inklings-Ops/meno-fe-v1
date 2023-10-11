@@ -1,10 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
-import 'package:logger/logger.dart';
 
-import '../../features/auth/domain/i_auth_facade.dart';
-import '../../injector/injector.dart';
 import '../../services/secure_storage_service.dart';
 import '../../shared/m_keys.dart';
 
@@ -36,9 +33,6 @@ class AuthTokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final someToken = di<IAuthFacade>().userToken;
-    Logger().w(someToken);
-
     final token = await SecureStorageService().read(MKeys.currentUserTokenKey);
 
     if (token != null) {

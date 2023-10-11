@@ -11,8 +11,9 @@ class ResetPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MScaffold(
       appBar: MAppBar.primary(title: "Reset Password"),
+      isScrollable: true,
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
