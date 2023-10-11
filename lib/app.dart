@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/features/auth/application/auth/auth_notifier.dart';
-import 'package:meno_fe_v1/features/onboarding/application/onboarding_provider.dart';
-import 'package:meno_fe_v1/router/m_router.dart';
+
+import 'src/features/auth/application/application.dart';
+import 'src/features/onboarding/onboarding.dart';
+import 'src/router/router.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
   const MenoApp({super.key});

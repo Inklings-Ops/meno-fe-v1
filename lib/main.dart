@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'app.dart';
-import 'injector/injector.dart';
+import 'src/dependency_injector/injector.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
