@@ -3,39 +3,53 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class MModal extends StatelessWidget {
   final String title;
-  final List<Widget> children;
+  final Widget content;
   final double? height;
+  final BoxConstraints? constraints;
+  final bool showCloseButton;
 
   const MModal({
     super.key,
     required this.title,
-    required this.children,
+    required this.content,
     this.height,
+    this.constraints,
+    this.showCloseButton = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: height,
+      constraints: constraints,
       width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.symmetric(
         vertical: MCore.medium,
         horizontal: 20,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const MDragHandle(),
-            MSize.verticalSpaceLarge,
-            MText(title, style: MTextStyle.subheadingMedium),
-            MSize.verticalSpaceSmall,
-            const MDivider(),
-            24.verticalSpace,
-            ...children,
-          ],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const MDragHandle(),
+          MSize.verticalSpaceLarge,
+          Row(
+            children: [
+              MText(title, style: MTextStyle.subheadingMedium),
+              const Spacer(),
+              if (showCloseButton)
+                MIconButton(
+                  icon: MIcons.x_close,
+                  color: MColorScheme.of(context)?.onBackground,
+                  onPressed: () => Navigator.pop(context),
+                ),
+            ],
+          ),
+          MSize.verticalSpaceSmall,
+          const MDivider(),
+          24.verticalSpace,
+          content,
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class MTextFormField extends StatefulWidget {
   final String label;
+  final bool showLabel;
   final IconData? labelIcon;
   final String? hint;
   final IconData? prefixIcon;
@@ -26,6 +27,7 @@ class MTextFormField extends StatefulWidget {
   const MTextFormField({
     super.key,
     required this.label,
+    this.showLabel = true,
     this.labelIcon,
     this.hint,
     this.prefixIcon,
@@ -95,28 +97,31 @@ class _MTextFormFieldState extends State<MTextFormField> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LimitedBox(
-            maxHeight: 18.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Label(
-                  widget.label,
-                  icon: widget.labelIcon,
-                  hasError: field.hasError,
-                  required: widget.required,
-                ),
-                if (widget.maxLines > 1)
-                  _Counter(
-                    maxLength: widget.maxLength ?? 244,
-                    currentLength: _controllerNotifier.value?.text.length ?? 0,
-                    enabled: widget.enabled,
+          if (widget.showLabel) ...[
+            LimitedBox(
+              maxHeight: 18.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _Label(
+                    widget.label,
+                    icon: widget.labelIcon,
                     hasError: field.hasError,
+                    required: widget.required,
                   ),
-              ],
+                  if (widget.maxLines > 1)
+                    _Counter(
+                      maxLength: widget.maxLength ?? 244,
+                      currentLength:
+                          _controllerNotifier.value?.text.length ?? 0,
+                      enabled: widget.enabled,
+                      hasError: field.hasError,
+                    ),
+                ],
+              ),
             ),
-          ),
-          MSize.verticalSpaceSmall,
+            MSize.verticalSpaceSmall,
+          ],
           TextFormField(
             autovalidateMode: widget.autovalidateMode,
             style: styles.textStyle?.copyWith(

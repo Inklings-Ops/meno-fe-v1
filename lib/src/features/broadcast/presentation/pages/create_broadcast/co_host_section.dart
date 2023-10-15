@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../auth/domain/domain.dart';
+import 'add_cohost_modal.dart';
 
 class CoHostSection extends StatelessWidget {
   const CoHostSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const LimitedBox(
+    return LimitedBox(
       maxHeight: 72,
       child: Row(
         children: [
-          CoHostItem(),
+          CoHostItem(
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const AddCohostModal(),
+            ),
+          ),
           MSize.horizontalSpaceSmall,
-          Wrap(
+          const Wrap(
             spacing: 8,
             children: [],
           ),

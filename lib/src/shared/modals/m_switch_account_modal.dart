@@ -126,22 +126,25 @@ class _SwitchAccountModal1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return MModal(
       title: "Switch Account",
-      children: [
-        MPrimaryButton(
-          label: "Log in to Existing Account",
-          onPressed: () {
-            context.popRoute();
-            context.router.replaceAll([LoginRoute()]);
-          },
-        ),
-        MTextButton(
-          label: "Create New Account",
-          onPressed: () {
-            context.popRoute();
-            context.router.replaceAll([const RegisterRoute()]);
-          },
-        ),
-      ],
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          MPrimaryButton(
+            label: "Log in to Existing Account",
+            onPressed: () {
+              context.popRoute();
+              context.router.replaceAll([LoginRoute()]);
+            },
+          ),
+          MTextButton(
+            label: "Create New Account",
+            onPressed: () {
+              context.popRoute();
+              context.router.replaceAll([const RegisterRoute()]);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -156,13 +159,16 @@ class _SwitchAccountModal2 extends ConsumerWidget {
 
     return MModal(
       title: "Switch Account",
-      children: [
-        for (UserCredentials credentials in allCredentials) ...[
-          _AccountListTile(credentials: credentials)
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (UserCredentials credentials in allCredentials) ...[
+            _AccountListTile(credentials: credentials)
+          ],
+          24.verticalSpace,
+          const _AddAccountTile(),
         ],
-        24.verticalSpace,
-        const _AddAccountTile(),
-      ],
+      ),
     );
   }
 }

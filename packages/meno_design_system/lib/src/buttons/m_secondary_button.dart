@@ -5,6 +5,7 @@ class MSecondaryButton extends MButton {
   final bool loading;
   final MColor? borderColor;
   final MColor? foregroundColor;
+  final double? borderRadius;
 
   const MSecondaryButton({
     super.key,
@@ -13,6 +14,7 @@ class MSecondaryButton extends MButton {
     this.loading = false,
     this.borderColor,
     this.foregroundColor,
+    this.borderRadius,
   });
 
   const MSecondaryButton.icon({
@@ -24,6 +26,7 @@ class MSecondaryButton extends MButton {
     this.loading = false,
     this.borderColor,
     this.foregroundColor,
+    this.borderRadius,
   }) : super.icon();
 
   @override
@@ -33,6 +36,11 @@ class MSecondaryButton extends MButton {
         foregroundColor: foregroundColor != null ? foregroundColor! : null,
         side: borderColor != null
             ? BorderSide(color: borderColor!, width: 1.50)
+            : null,
+        shape: borderRadius != null
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(borderRadius!)),
+              )
             : null,
       ),
       onPressed: loading ? null : onPressed,

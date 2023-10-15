@@ -15,25 +15,29 @@ class MImageSourceModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return MModal(
       title: "Choose Artwork",
-      children: [
-        ListTile(
-          leading: const Icon(MIcons.pause_circle),
-          title: const MText("Choose from Camera"),
-          onTap: () {
-            onCameraSourceTap();
-            Navigator.of(context).pop();
-          },
-        ),
-        MSize.verticalSpaceLarge,
-        ListTile(
-          leading: const Icon(MIcons.image),
-          title: const MText("Choose from Gallery"),
-          onTap: () {
-            onGallerySourceTap();
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(MIcons.pause_circle),
+            title: const MText("Choose from Camera"),
+            onTap: () {
+              onCameraSourceTap();
+              Navigator.of(context).pop();
+            },
+          ),
+          MSize.verticalSpaceLarge,
+          ListTile(
+            leading: const Icon(MIcons.image),
+            title: const MText("Choose from Gallery"),
+            onTap: () {
+              onGallerySourceTap();
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
     );
   }
 }
