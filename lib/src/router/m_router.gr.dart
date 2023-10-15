@@ -15,6 +15,12 @@ abstract class _$MRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    BroadcastRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const BroadcastPage(),
+      );
+    },
     CreateBroadcastRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -111,6 +117,20 @@ abstract class _$MRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [BroadcastPage]
+class BroadcastRoute extends PageRouteInfo<void> {
+  const BroadcastRoute({List<PageRouteInfo>? children})
+      : super(
+          BroadcastRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'BroadcastRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

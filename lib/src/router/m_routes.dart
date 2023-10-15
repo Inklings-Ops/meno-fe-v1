@@ -10,6 +10,8 @@ class MRoutes {
   static const String resetPasswordOtp = "/resetPasswordOtp";
   static const String resetPasswordSuccess = "/resetPasswordSuccess";
   static const String createNewPassword = "/createNewPassword";
+  static const String broadcast = "/broadcast";
+  static const String stream = "/stream";
   static const String layout = "/";
   static const String home = "home";
   static const String discover = "discover";

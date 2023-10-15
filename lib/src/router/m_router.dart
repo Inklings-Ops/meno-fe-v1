@@ -8,6 +8,7 @@ import '../features/auth/presentation/pages/reset_password/create_new_password_p
 import '../features/auth/presentation/pages/reset_password/reset_password_otp_verification_page.dart';
 import '../features/auth/presentation/pages/reset_password/reset_password_page.dart';
 import '../features/auth/presentation/pages/reset_password/reset_password_success_page.dart';
+import '../features/broadcast/presentation/pages/broadcast/broadcast_page.dart';
 import '../features/broadcast/presentation/pages/create_broadcast/create_broadcast_page.dart';
 import '../features/broadcast/presentation/pages/home_page.dart';
 import '../layout/presentation/pages/m_layout.dart';
@@ -57,6 +58,10 @@ class MRouter extends _$MRouter {
           page: CreateBroadcastRoute.page,
           transitionsBuilder: TransitionsBuilders.slideBottom,
           durationInMilliseconds: 200,
+        ),
+        AutoRoute(
+          path: MRoutes.broadcast,
+          page: BroadcastRoute.page,
         ),
       ];
 }
