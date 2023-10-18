@@ -138,7 +138,7 @@ class MTheme {
       ),
       bottomSheetTheme: BottomSheetThemeData(
         dragHandleSize: const Size(32, 4),
-        showDragHandle: false,
+        showDragHandle: true,
         dragHandleColor: MInternal.resolve(
           isLight,
           MColor.grey30,
@@ -159,6 +159,12 @@ class MTheme {
           MColor.white,
           MColor.primary700,
         ),
+      ),
+      tabBarTheme: TabBarTheme(
+        labelStyle: MTextStyle.captionMedium,
+        indicatorColor: colorScheme.primary,
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
       ),
       extensions: [
         buttonStyles,

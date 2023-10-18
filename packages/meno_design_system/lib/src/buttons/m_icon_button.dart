@@ -12,6 +12,8 @@ class MIconButton extends StatelessWidget {
   final IconData icon;
   final double size;
   final Color? color;
+  final Color? fillColor;
+  final bool isFilled;
   final VoidCallback? onPressed;
 
   const MIconButton({
@@ -20,6 +22,8 @@ class MIconButton extends StatelessWidget {
     this.size = 24,
     this.color,
     this.onPressed,
+    this.isFilled = false,
+    this.fillColor,
   });
 
   @override
@@ -34,8 +38,13 @@ class MIconButton extends StatelessWidget {
     return InkResponse(
       radius: math.max(Material.defaultSplashRadius, (size)),
       onTap: onPressed,
-      child: ConstrainedBox(
+      child: Container(
         constraints: constraints,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isFilled ? fillColor : null,
+        ),
+        padding: isFilled ? const EdgeInsets.all(8) : EdgeInsets.zero,
         child: SizedBox.square(
           dimension: effectiveSize,
           child: IconTheme.merge(

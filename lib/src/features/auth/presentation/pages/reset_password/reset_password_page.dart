@@ -14,11 +14,10 @@ class ResetPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MScaffold(
       appBar: MAppBar.primary(title: "Reset Password"),
-      isScrollable: true,
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

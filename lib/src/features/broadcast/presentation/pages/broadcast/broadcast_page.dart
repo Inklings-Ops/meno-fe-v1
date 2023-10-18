@@ -1,7 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+
+import 'broadcast_tab.dart';
+import 'chat_tab.dart';
+import 'live_bible_tab.dart';
+import 'notes_tab.dart';
 
 @RoutePage()
 class BroadcastPage extends StatefulHookConsumerWidget {
@@ -11,9 +17,47 @@ class BroadcastPage extends StatefulHookConsumerWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _BroadcastPageState();
 }
 
-class _BroadcastPageState extends ConsumerState<BroadcastPage> {
+class _BroadcastPageState extends ConsumerState<BroadcastPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return const MScaffold();
+    super.build(context);
+    final TabController tabController = useTabController(initialLength: 4);
+
+    return MScaffold(
+      padding: EdgeInsets.zero,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: Padding(
+          padding: MediaQuery.viewPaddingOf(context),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            constraints: const BoxConstraints(maxHeight: 32),
+            child: TabBar(
+              tabs: const [
+                Tab(text: "Broadcast"),
+                Tab(text: "Chats"),
+                Tab(text: "Live Bible"),
+                Tab(text: "Notes"),
+              ],
+              controller: tabController,
+            ),
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: const [
+          BroadcastTab(),
+          ChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
+      ),
+    );
   }
+
+  @override
+  // TODO: Should keep alive if broadcast is on
+  bool get wantKeepAlive => true;
 }

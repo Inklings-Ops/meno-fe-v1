@@ -34,8 +34,9 @@ class RegisterPage extends ConsumerWidget {
     return MScaffold(
       appBar: MAppBar.primary(title: "New Account", backText: "Go back"),
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-      isScrollable: true,
-      body: const RegisterForm(),
+      body: const SingleChildScrollView(
+        child: RegisterForm(),
+      ),
     );
   }
 }

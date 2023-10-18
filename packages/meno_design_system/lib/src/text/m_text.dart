@@ -7,7 +7,7 @@ class MText extends StatelessWidget {
   final MTextStyle? style;
   final int? maxLines;
   final Locale? locale;
-  final TextOverflow overflow;
+  final TextOverflow? overflow;
   final TextAlign? textAlign;
   final TextDecoration? decoration;
   final MColor? decorationColor;
@@ -21,7 +21,7 @@ class MText extends StatelessWidget {
     this.style,
     this.maxLines,
     this.locale,
-    this.overflow = TextOverflow.ellipsis,
+    this.overflow,
     this.textAlign,
     this.decoration,
     this.decorationColor,

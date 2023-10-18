@@ -13,6 +13,7 @@ class MBadge extends StatelessWidget {
   final double? width;
   final EdgeInsetsGeometry? padding;
   final BoxConstraints? constraints;
+  final bool showLoader;
 
   const MBadge.large({Key? key, required String value})
       : this._(
@@ -27,8 +28,10 @@ class MBadge extends StatelessWidget {
           key: key,
           value: "LIVE",
           viewCount: count,
+          height: 20,
+          showLoader: true,
           constraints: const BoxConstraints(minHeight: 20.0),
-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+          padding: const EdgeInsets.fromLTRB(4, 0, 8, 0),
         );
 
   MBadge.newBadge(BuildContext context, {Key? key})
@@ -44,6 +47,30 @@ class MBadge extends StatelessWidget {
             MColor.newBadgeDark,
           ),
           valueColor: MColorScheme.of(context)?.primary,
+        );
+
+  const MBadge.host({Key? key})
+      : this._(
+          key: key,
+          value: "Host",
+          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          color: MColor.grey30,
+          valueColor: MColor.primary700,
+          textStyle: MTextStyle.microMedium,
+        );
+
+  const MBadge.cohost({Key? key})
+      : this._(
+          key: key,
+          value: "Co-host",
+          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          color: MColor.grey30,
+          valueColor: MColor.primary700,
+          textStyle: MTextStyle.microMedium,
         );
 
   const MBadge.small({Key? key})
@@ -66,6 +93,7 @@ class MBadge extends StatelessWidget {
     this.width,
     this.padding,
     this.constraints,
+    this.showLoader = false,
   });
 
   @override
@@ -88,6 +116,10 @@ class MBadge extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (showLoader)
+                  Assets.images.loading.image(
+                    color: valueColor ?? colorScheme.onError,
+                  ),
                 _buildText(value!, colorScheme),
                 if (viewCount != null) ...[
                   const SizedBox(width: 6),

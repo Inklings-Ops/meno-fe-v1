@@ -15,6 +15,7 @@ class MPrimaryButton extends MButton {
     required super.onPressed,
     this.disabled = false,
     this.loading = false,
+    super.style,
   });
 
   const MPrimaryButton.icon({
@@ -25,12 +26,13 @@ class MPrimaryButton extends MButton {
     required super.onPressed,
     this.loading = false,
     this.disabled = false,
+    super.style,
   }) : super.icon();
 
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return ElevatedButton(
-      style: MButtonStyle.of(context)?.primary?.override(),
+      style: MButtonStyle.of(context)?.primary?.override(style),
       onPressed: (loading || disabled) ? null : onPressed,
       child: loading ? const MLoadingIndicator.four(width: 56) : child,
     );

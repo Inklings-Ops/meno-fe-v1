@@ -15,7 +15,7 @@ class MImageSourceModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return MModal(
       title: "Choose Artwork",
-      content: Column(
+      builder: (context) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [

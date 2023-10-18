@@ -10,10 +10,7 @@ class AddCohostModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return MModal(
       title: "Add Co-host",
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
-      ),
-      content: SingleChildScrollView(
+      builder: (context) => SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

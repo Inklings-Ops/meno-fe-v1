@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../application/broadcast_form/broadcast_form_notifier.dart';
@@ -33,8 +32,9 @@ class CreateBroadcastPage extends HookConsumerWidget {
         actionTitle: "Cancel",
         action: context.back,
       ),
-      isScrollable: true,
-      body: const CreateBroadcastForm(),
+      body: const SingleChildScrollView(
+        child: CreateBroadcastForm(),
+      ),
     );
   }
 }

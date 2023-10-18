@@ -15,40 +15,41 @@ class EmailVerificationPage extends HookConsumerWidget {
     return MScaffold(
       appBar: MAppBar.primary(title: "Verify Your Email"),
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-      isScrollable: true,
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const MText(
-              "OTP verification",
-              style: MTextStyle.heading2Medium,
-            ),
-            MSize.verticalSpaceSmall,
-            const Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: "Enter the 4-digit code we just sent to "),
-                  TextSpan(
-                    text: "jimhalpert26@gmail.com ",
-                    style: MTextStyle.bodyBold,
-                  ),
-                  TextSpan(text: "to continue."),
-                ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const MText(
+                "OTP verification",
+                style: MTextStyle.heading2Medium,
               ),
-              style: MTextStyle.bodyRegular,
-            ),
-            MSize.verticalSpaceXXLarge,
-            const MOtpField(),
-            24.verticalSpace,
-            const AuthRedirectionText(
-              title: "Didn’t receive code?",
-              buttonText: "Send again",
-            ),
-            MSize.verticalSpaceXXLarge,
-            MPrimaryButton(label: "Continue", onPressed: () {}),
-          ],
+              MSize.verticalSpaceSmall,
+              const Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: "Enter the 4-digit code we just sent to "),
+                    TextSpan(
+                      text: "jimhalpert26@gmail.com ",
+                      style: MTextStyle.bodyBold,
+                    ),
+                    TextSpan(text: "to continue."),
+                  ],
+                ),
+                style: MTextStyle.bodyRegular,
+              ),
+              MSize.verticalSpaceXXLarge,
+              const MOtpField(),
+              24.verticalSpace,
+              const AuthRedirectionText(
+                title: "Didn’t receive code?",
+                buttonText: "Send again",
+              ),
+              MSize.verticalSpaceXXLarge,
+              MPrimaryButton(label: "Continue", onPressed: () {}),
+            ],
+          ),
         ),
       ),
     );

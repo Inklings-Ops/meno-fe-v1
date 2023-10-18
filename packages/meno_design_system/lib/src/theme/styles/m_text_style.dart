@@ -69,6 +69,13 @@ class MTextStyle extends TextStyle {
     fontFamily: _fontFamily,
   );
 
+  static const MTextStyle heading3Medium = MTextStyle._(
+    fontSize: 20.0,
+    height: 28.0 / 20.0,
+    fontWeight: FontWeight.w500,
+    fontFamily: _fontFamily,
+  );
+
   // Subheading
   static const MTextStyle subheadingBold = MTextStyle._(
     fontSize: 16.0,

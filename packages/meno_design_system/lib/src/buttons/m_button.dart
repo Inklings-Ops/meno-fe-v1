@@ -11,12 +11,14 @@ abstract class MButton extends StatelessWidget {
   final Widget? icon;
   final MButtonIconPlacement iconPlacement;
   final VoidCallback? onPressed;
+  final ButtonStyle? style;
 
   const MButton({
     Key? key,
     required String label,
     required VoidCallback? onPressed,
-  }) : this._(key: key, label: label, onPressed: onPressed);
+    ButtonStyle? style,
+  }) : this._(key: key, label: label, onPressed: onPressed, style: style);
 
   const MButton.icon({
     Key? key,
@@ -24,12 +26,14 @@ abstract class MButton extends StatelessWidget {
     required Widget icon,
     MButtonIconPlacement iconPlacement = MButtonIconPlacement.left,
     required VoidCallback? onPressed,
+    ButtonStyle? style,
   }) : this._(
           key: key,
           onPressed: onPressed,
           label: label,
           icon: icon,
           iconPlacement: iconPlacement,
+          style: style,
         );
 
   const MButton._({
@@ -38,6 +42,7 @@ abstract class MButton extends StatelessWidget {
     this.icon,
     this.iconPlacement = MButtonIconPlacement.left,
     required this.onPressed,
+    this.style,
   });
 
   @override

@@ -58,9 +58,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         title: "Log in",
         implyLeading: widget.implyLeading,
       ),
-      isScrollable: true,
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 56),
-      body: LoginForm(isPasswordOnly: widget.isPasswordOnly),
+      body: SingleChildScrollView(
+        child: LoginForm(isPasswordOnly: widget.isPasswordOnly),
+      ),
     );
   }
 

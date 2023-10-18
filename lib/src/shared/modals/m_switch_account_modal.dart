@@ -126,7 +126,7 @@ class _SwitchAccountModal1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return MModal(
       title: "Switch Account",
-      content: Column(
+      builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           MPrimaryButton(
@@ -159,7 +159,7 @@ class _SwitchAccountModal2 extends ConsumerWidget {
 
     return MModal(
       title: "Switch Account",
-      content: Column(
+      builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           for (UserCredentials credentials in allCredentials) ...[

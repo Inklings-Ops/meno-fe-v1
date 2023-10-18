@@ -15,6 +15,7 @@ class MSecondaryButton extends MButton {
     this.borderColor,
     this.foregroundColor,
     this.borderRadius,
+    super.style,
   });
 
   const MSecondaryButton.icon({
@@ -27,6 +28,7 @@ class MSecondaryButton extends MButton {
     this.borderColor,
     this.foregroundColor,
     this.borderRadius,
+    super.style,
   }) : super.icon();
 
   @override
