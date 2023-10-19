@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_internal.dart';
-import 'package:meno_design_system/src/theme/styles/m_card_styles.dart';
-import 'package:meno_design_system/src/theme/styles/m_otp_field_style.dart';
 
 class MTheme {
   static ThemeData get dark => createTheme(brightness: Brightness.dark);
@@ -12,167 +9,46 @@ class MTheme {
   MTheme._();
 
   static ThemeData createTheme({required Brightness brightness}) {
-    final buttonStyles = MButtonStyle.$default(brightness: brightness);
-    final colorScheme = MColorScheme.$default(brightness);
-    final appBarStyle = MAppBarStyles.$default(colorScheme: colorScheme);
-    return raw(
-      brightness: brightness,
-      buttonStyles: buttonStyles,
-      colorScheme: colorScheme,
-      appBarStyle: appBarStyle,
-      cardStyles: MCardStyles.$default(colorScheme: colorScheme),
-    );
+    return raw(colorScheme: MColorScheme.$default(brightness));
   }
 
   static ThemeData raw({
-    required Brightness brightness,
-    required MButtonStyle buttonStyles,
     required MColorScheme colorScheme,
-    required MAppBarStyles appBarStyle,
-    required MCardStyles cardStyles,
   }) {
-    final isLight = brightness == Brightness.light;
+    final buttonStyles = MButtonStyles.$default(colorScheme: colorScheme);
+    final globalStyles = MGlobalStyles.$default(colorScheme: colorScheme);
+    final navStyles = MNavigationStyles.$default(colorScheme: colorScheme);
+    final modalStyles = MModalStyles.$default(colorScheme: colorScheme);
+    final cardStyles = MCardStyles.$default(colorScheme: colorScheme);
 
     return ThemeData(
-      cardTheme: CardTheme(
-        color: cardStyles.backgroundColor,
-      ),
-      colorScheme: ColorScheme(
-        brightness: brightness,
-        primary: colorScheme.primary!,
-        onPrimary: colorScheme.onPrimary!,
-        onPrimaryContainer: colorScheme.onPrimaryContainer,
-        primaryContainer: colorScheme.primaryContainer,
-        secondary: colorScheme.secondary!,
-        onSecondary: colorScheme.onSecondary!,
-        secondaryContainer: colorScheme.secondaryContainer,
-        onSecondaryContainer: colorScheme.onSecondaryContainer,
-        tertiary: colorScheme.tertiary,
-        onTertiary: colorScheme.onTertiary,
-        tertiaryContainer: colorScheme.tertiaryContainer,
-        onTertiaryContainer: colorScheme.onTertiaryContainer,
-        error: colorScheme.error!,
-        onError: colorScheme.onError!,
-        errorContainer: colorScheme.errorContainer,
-        onErrorContainer: colorScheme.onErrorContainer,
-        background: colorScheme.background!,
-        onBackground: colorScheme.onBackground!,
-        surface: colorScheme.surface!,
-        onSurface: colorScheme.onSurface!,
-        surfaceTint: colorScheme.surfaceTint,
-        inverseSurface: colorScheme.inverseSurface,
-        onInverseSurface: colorScheme.onInverseSurface,
-        inversePrimary: colorScheme.inversePrimary,
-        outline: colorScheme.outline,
-        outlineVariant: colorScheme.outlineVariant,
-        scrim: colorScheme.scrim,
-        shadow: colorScheme.shadow,
-      ),
-      dividerTheme: DividerThemeData(
-        color: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
-        thickness: 1,
-      ),
-      dividerColor: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        backgroundColor:
-            MInternal.resolve(isLight, MColor.white, MColor.primary700),
-        unselectedItemColor:
-            MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
-        selectedItemColor:
-            MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
-        unselectedIconTheme: IconThemeData(
-          color: MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
-          size: 20,
-        ),
-        selectedIconTheme: IconThemeData(
-          color:
-              MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
-          size: 20,
-        ),
-        unselectedLabelStyle: MTextStyle.microMedium.copyWith(
-          height: 1,
-          color: MInternal.resolve(isLight, MColor.grey70, MColor.grey50),
-        ),
-        selectedLabelStyle: MTextStyle.microMedium.copyWith(
-          height: 1,
-          color:
-              MInternal.resolve(isLight, MColor.primary300, MColor.primary75),
-        ),
-      ),
-      scaffoldBackgroundColor:
-          MInternal.resolve(isLight, MColor.white, MColor.primary700),
-      appBarTheme: AppBarTheme(
-        elevation: 0.0,
-        scrolledUnderElevation: 0.0,
-        backgroundColor: colorScheme.background,
-        titleSpacing: 0,
-        titleTextStyle: MTextStyle.bodyMedium.copyWith(
-          color: colorScheme.onBackground,
-        ),
-        actionsIconTheme: appBarStyle.iconTheme,
-      ),
-      iconTheme: IconThemeData(color: colorScheme.primary, size: 24.0),
+      cardTheme: cardStyles.cardTheme,
+      colorScheme: colorScheme.getColorScheme,
       elevatedButtonTheme: buttonStyles.elevatedButtonTheme,
       outlinedButtonTheme: buttonStyles.outlinedButtonTheme,
       textButtonTheme: buttonStyles.textButtonTheme,
-      filledButtonTheme: buttonStyles.filledButtonTheme,
+      dividerTheme: globalStyles.dividerTheme,
+      dividerColor: globalStyles.dividerColor,
+      scaffoldBackgroundColor: colorScheme.background,
+      bottomNavigationBarTheme: navStyles.bottomNavigationBarTheme,
+      appBarTheme: navStyles.appBarTheme,
+      tabBarTheme: navStyles.tabBarTheme,
+      iconTheme: IconThemeData(color: colorScheme.onBackground, size: 24.0),
       fontFamily: FontFamily.sFProDisplay,
-      disabledColor:
-          MInternal.resolve(isLight, MColor.grey30, MColor.primaryAlt),
+      disabledColor: colorScheme.disabled,
       useMaterial3: true,
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: colorScheme.error,
-        contentTextStyle: MTextStyle.captionRegular,
-        insetPadding: const EdgeInsets.all(16),
-        behavior: SnackBarBehavior.floating,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
-      ),
-      checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        side: const BorderSide(width: 1, color: MColor.grey50),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      bottomSheetTheme: BottomSheetThemeData(
-        dragHandleSize: const Size(32, 4),
-        showDragHandle: true,
-        dragHandleColor: MInternal.resolve(
-          isLight,
-          MColor.grey30,
-          MColor.grey400,
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(MCore.xxLarge),
-          ),
-        ),
-        backgroundColor: MInternal.resolve(
-          isLight,
-          MColor.white,
-          MColor.primary700,
-        ),
-        modalBackgroundColor: MInternal.resolve(
-          isLight,
-          MColor.white,
-          MColor.primary700,
-        ),
-      ),
-      tabBarTheme: TabBarTheme(
-        labelStyle: MTextStyle.captionMedium,
-        indicatorColor: colorScheme.primary,
-        indicatorSize: TabBarIndicatorSize.tab,
-        labelPadding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-      ),
+      snackBarTheme: globalStyles.snackBarTheme,
+      checkboxTheme: globalStyles.checkboxTheme,
+      bottomSheetTheme: modalStyles.bottomSheetTheme,
       extensions: [
         buttonStyles,
+        globalStyles,
         colorScheme,
-        appBarStyle,
         cardStyles,
-        MOtpFieldStyles.$default(brightness: brightness),
-        MTextFieldStyle.$default(brightness: brightness),
+        navStyles,
+        modalStyles,
+        MOtpFieldStyles.$default(colorScheme: colorScheme),
+        MTextFieldStyle.$default(colorScheme: colorScheme),
       ],
     );
   }

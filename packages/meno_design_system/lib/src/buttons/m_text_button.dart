@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/theme/styles/m_button_style.dart';
-
-import 'm_button.dart';
-import 'm_button_icon_placement.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MTextButton extends MButton {
   const MTextButton({
     super.key,
     required super.label,
     required super.onPressed,
+    super.style,
   });
 
   const MTextButton.icon({
@@ -17,12 +15,13 @@ class MTextButton extends MButton {
     required super.icon,
     super.iconPlacement = MButtonIconPlacement.left,
     required super.onPressed,
+    super.style,
   }) : super.icon();
 
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return TextButton(
-      style: MButtonStyle.of(context)?.text?.override(),
+      style: style ?? MButtonStyles.of(context)?.text,
       onPressed: onPressed,
       child: child,
     );

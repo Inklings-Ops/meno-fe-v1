@@ -13,8 +13,10 @@ class MGoogleButton extends StatelessWidget {
       label: title,
       icon: Assets.images.google.svg(),
       onPressed: onPressed,
-      borderColor: MColor.grey50,
-      foregroundColor: MColorScheme.of(context)!.onBackground,
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(width: 1.50, color: MColor.grey50),
+        foregroundColor: MColorScheme.of(context)!.onBackground,
+      ),
     );
   }
 }

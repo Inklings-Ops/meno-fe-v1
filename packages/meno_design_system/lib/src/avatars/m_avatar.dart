@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_internal.dart';
 
 class MAvatar extends StatelessWidget {
   final double radius;
@@ -23,13 +22,7 @@ class MAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final bool isLight = theme.brightness == Brightness.light;
-    final Color color = MInternal.resolve(
-      isLight,
-      MColor.grey20,
-      MColor.primaryAlt,
-    );
+    final MColorScheme colorScheme = MColorScheme.of(context)!;
 
     final bool hasUrl = url != null;
     final bool hasFile = file != null;
@@ -40,7 +33,7 @@ class MAvatar extends StatelessWidget {
 
     final SizedBox artwork = SizedBox(
       height: radius * 0.7,
-      child: isLight
+      child: colorScheme.brightness == Brightness.light
           ? Assets.images.logoDark.svg()
           : Assets.images.logoLight.svg(),
     );
@@ -48,7 +41,7 @@ class MAvatar extends StatelessWidget {
     final Icon icon = Icon(
       MIcons.user_circle,
       size: radius,
-      color: isLight ? MColor.primary700 : MColor.white,
+      color: colorScheme.onInversePrimary,
     );
 
     if (!hasFile && !hasUrl) {
@@ -67,7 +60,7 @@ class MAvatar extends StatelessWidget {
       radius: radius,
       foregroundImage: foregroundImage,
       backgroundImage: backgroundImage,
-      backgroundColor: color,
+      backgroundColor: colorScheme.surfaceShade,
       child: placeholder,
     );
   }

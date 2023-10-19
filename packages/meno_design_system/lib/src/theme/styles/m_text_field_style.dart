@@ -40,9 +40,8 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     this.borderError,
   });
 
-  factory MTextFieldStyle.$default({required Brightness brightness}) {
-    final isLight = brightness == Brightness.light;
-    final defaultColor = resolve(isLight, MColor.black, MColor.white);
+  factory MTextFieldStyle.$default({required MColorScheme colorScheme}) {
+    final isLight = colorScheme.brightness == Brightness.light;
 
     return MTextFieldStyle(
       textStyle: MTextStyle.captionRegular,
@@ -50,16 +49,15 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       hintTextStyle: MTextStyle.captionRegular,
       labelTextStyle: MTextStyle.captionMedium,
       counterTextStyle: MTextStyle.microMedium,
-      iconColor: defaultColor,
-      fillColor: resolve(isLight, MColor.white, MColor.primary700),
-      fillColorDisabled: resolve(isLight, MColor.grey30, MColor.primary600),
+      iconColor: colorScheme.onBackground,
+      fillColor: colorScheme.background,
+      fillColorDisabled: colorScheme.disabledContainer,
       counterBgColor: resolve(isLight, MColor.primary50, MColor.counter),
       counterTextColor: resolve(isLight, MColor.primary300, MColor.primary60),
-      counterBgColorDisabled:
-          resolve(isLight, MColor.grey30, MColor.primary600),
-      counterTextColorDisabled: resolve(isLight, MColor.grey500, MColor.grey50),
-      textColor: resolve(isLight, MColor.black, MColor.white),
-      errorColor: resolve(isLight, MColor.error300, MColor.error75),
+      counterBgColorDisabled: colorScheme.disabledContainer,
+      counterTextColorDisabled: colorScheme.disabled,
+      textColor: colorScheme.onBackground,
+      errorColor: colorScheme.error,
       border: const OutlineInputBorder(
         borderRadius: MDimensions.mediumBorderRadius,
         borderSide: BorderSide(color: MColor.grey50, width: 1.0),
@@ -70,10 +68,7 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       ),
       borderError: OutlineInputBorder(
         borderRadius: MDimensions.mediumBorderRadius,
-        borderSide: BorderSide(
-          color: resolve(isLight, MColor.error300, MColor.error75),
-          width: 2.0,
-        ),
+        borderSide: BorderSide(color: colorScheme.error!, width: 2.0),
       ),
     );
   }

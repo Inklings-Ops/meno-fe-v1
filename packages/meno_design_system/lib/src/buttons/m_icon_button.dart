@@ -28,7 +28,7 @@ class MIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
     final VisualDensity visualDensity = theme.visualDensity;
     final double effectiveSize = theme.iconTheme.size ?? size;
     final BoxConstraints constraints = visualDensity.effectiveConstraints(

@@ -64,7 +64,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MTextFieldStyle.of(context)!;
+    final MTextFieldStyle styles = MTextFieldStyle.of(context)!;
 
     final bool hasFocus = widget.focusNode?.hasFocus == true;
 
@@ -224,7 +224,7 @@ class _Counter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MTextFieldStyle.of(context)!;
+    final MTextFieldStyle styles = MTextFieldStyle.of(context)!;
 
     final backgroundColor = (enabled && !hasError)
         ? styles.counterBgColor
@@ -277,7 +277,7 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MTextFieldStyle.of(context)!;
+    final MTextFieldStyle styles = MTextFieldStyle.of(context)!;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

@@ -12,6 +12,7 @@ class MColor extends Color {
   static const MColor counter = MColor._(0xFF2A213C);
   static const MColor newBadgeLight = MColor._(0xFFF4EEFF);
   static const MColor newBadgeDark = MColor._(0xFF2A213C);
+  static const MColor tint = MColor._(0xFFF6F7FB);
 
   // Primary
   static const MColor primary50 = MColor._(0xFFF4EEFF);

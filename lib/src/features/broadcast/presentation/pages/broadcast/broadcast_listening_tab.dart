@@ -40,7 +40,6 @@ class BroadcastListeningTab extends HookWidget {
                   builder: (context) => const BroadcastListenersModal(),
                 ),
                 // TODO: Handle button theme
-                style: MButtonStyle.of(context)!.primary!.override(),
               ),
             ],
           ),

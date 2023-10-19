@@ -34,7 +34,11 @@ class CohostListTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: MSecondaryButton(
               label: "Add as Co-host",
-              borderRadius: 8,
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               onPressed: () {},
             ),
           ),

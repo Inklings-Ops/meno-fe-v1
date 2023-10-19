@@ -60,6 +60,10 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
     );
   }
 
+  CardTheme get cardTheme {
+    return CardTheme(color: backgroundColor);
+  }
+
   static MCardStyles? of(BuildContext context) {
     return Theme.of(context).extension<MCardStyles>();
   }

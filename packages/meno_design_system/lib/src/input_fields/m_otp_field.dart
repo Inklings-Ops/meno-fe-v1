@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/m_dimensions.dart';
-import 'package:meno_design_system/src/theme/styles/m_otp_field_style.dart';
-import 'package:meno_design_system/src/theme/styles/m_text_style.dart';
 import 'package:pinput/pinput.dart';
+
+import '../m_dimensions.dart';
+import '../theme/styles/m_otp_field_style.dart';
+import '../theme/styles/m_text_style.dart';
 
 class MOtpField extends StatelessWidget {
   final TextEditingController? controller;
@@ -26,7 +27,7 @@ class MOtpField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MOtpFieldStyles.of(context);
+    final MOtpFieldStyles? styles = MOtpFieldStyles.of(context);
 
     final defaultPinTheme = PinTheme(
       constraints: const BoxConstraints(maxHeight: 88, maxWidth: 88),

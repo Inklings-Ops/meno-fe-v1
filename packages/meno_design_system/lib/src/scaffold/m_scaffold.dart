@@ -4,7 +4,6 @@ class MScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? body;
   final EdgeInsetsGeometry? padding;
-  // final bool isScrollable;
   final ScrollController? scrollController;
 
   const MScaffold({
@@ -12,7 +11,6 @@ class MScaffold extends StatelessWidget {
     this.appBar,
     this.body,
     this.padding,
-    // this.isScrollable = false,
     this.scrollController,
   });
 
@@ -21,8 +19,6 @@ class MScaffold extends StatelessWidget {
         appBar: appBar,
         body: Padding(
           padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
-          // physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
-          // controller: scrollController,
           child: body,
         ),
       );

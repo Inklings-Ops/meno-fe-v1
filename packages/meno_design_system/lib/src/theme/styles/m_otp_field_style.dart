@@ -22,23 +22,17 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
     this.borderError,
   });
 
-  factory MOtpFieldStyles.$default({required Brightness brightness}) {
-    final isLight = brightness == Brightness.light;
-
+  factory MOtpFieldStyles.$default({required MColorScheme colorScheme}) {
     return MOtpFieldStyles(
       textStyle: MTextStyle.captionRegular,
-      fillColor: resolve(isLight, MColor.white, MColor.primary700),
-      fillColorDisabled: resolve(isLight, MColor.grey30, MColor.primary600),
-      textColor: resolve(isLight, MColor.black, MColor.white),
-      errorColor: resolve(isLight, MColor.error300, MColor.error75),
+      fillColor: colorScheme.background,
+      fillColorDisabled: colorScheme.disabledContainer,
+      textColor: colorScheme.onBackground,
+      errorColor: colorScheme.error,
       border: Border.all(color: MColor.grey50, width: 1),
-      borderFocused: getBorder(isLight, MColor.primary300, MColor.primary75),
-      borderError: getBorder(isLight, MColor.error300, MColor.error75),
+      borderFocused: Border.all(color: colorScheme.outline!, width: 2),
+      borderError: Border.all(color: colorScheme.error!, width: 2),
     );
-  }
-
-  static Border getBorder(bool isLight, MColor lightValue, MColor darkValue) {
-    return Border.all(color: resolve(isLight, lightValue, darkValue), width: 2);
   }
 
   static MOtpFieldStyles? of(BuildContext context) {

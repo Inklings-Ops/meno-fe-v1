@@ -27,7 +27,6 @@ class MAppBar extends _AppBar {
     List<Widget>? actions,
   }) = _HomeAppBar;
 
-
   const MAppBar._({
     super.key,
     required super.title,
@@ -41,7 +40,6 @@ class MAppBar extends _AppBar {
 
 abstract class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-
   final List<Widget>? actions;
   final bool centerTitle;
   final VoidCallback? onBackPressed;
@@ -102,12 +100,12 @@ class _PrimaryAppBarImpl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MAppBarStyles.of(context)!;
+    final colorScheme = MColorScheme.of(context)!;
+    final styles = MNavigationStyles.of(context)!;
     final colorFilter = ColorFilter.mode(styles.accentColor!, BlendMode.srcIn);
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: styles.backgroundColor,
       flexibleSpace: SizedBox(
         height: 120 + MediaQuery.viewPaddingOf(context).top,
         child: Stack(
@@ -124,15 +122,14 @@ class _PrimaryAppBarImpl extends StatelessWidget {
                   if (implyLeading) ...[
                     MBackButton.withText(
                       title: backText,
-                      iconColor: styles.textColor,
+                      iconColor: colorScheme.onBackground,
                       textStyle: styles.actionTextStyle,
                     ),
                     const SizedBox(height: 16),
                   ],
                   MText(
                     title,
-                    style: styles.textStyle,
-                    color: styles.textColor,
+                    color: colorScheme.onBackground,
                   ),
                 ],
               ),

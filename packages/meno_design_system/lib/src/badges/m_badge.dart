@@ -15,6 +15,30 @@ class MBadge extends StatelessWidget {
   final BoxConstraints? constraints;
   final bool showLoader;
 
+  const MBadge.cohost({Key? key})
+      : this._(
+          key: key,
+          value: "Co-host",
+          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          color: MColor.grey30,
+          valueColor: MColor.primary700,
+          textStyle: MTextStyle.microMedium,
+        );
+
+  const MBadge.host({Key? key})
+      : this._(
+          key: key,
+          value: "Host",
+          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          color: MColor.grey30,
+          valueColor: MColor.primary700,
+          textStyle: MTextStyle.microMedium,
+        );
+
   const MBadge.large({Key? key, required String value})
       : this._(
           key: key,
@@ -49,30 +73,6 @@ class MBadge extends StatelessWidget {
           valueColor: MColorScheme.of(context)?.primary,
         );
 
-  const MBadge.host({Key? key})
-      : this._(
-          key: key,
-          value: "Host",
-          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          color: MColor.grey30,
-          valueColor: MColor.primary700,
-          textStyle: MTextStyle.microMedium,
-        );
-
-  const MBadge.cohost({Key? key})
-      : this._(
-          key: key,
-          value: "Co-host",
-          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          color: MColor.grey30,
-          valueColor: MColor.primary700,
-          textStyle: MTextStyle.microMedium,
-        );
-
   const MBadge.small({Key? key})
       : this._(
           key: key,
@@ -100,6 +100,27 @@ class MBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final MColorScheme colorScheme = MColorScheme.of(context)!;
 
+    Widget? child;
+
+    if (value != null) {
+      child = Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showLoader)
+            Assets.images.loading.image(
+              color: valueColor ?? colorScheme.onError,
+            ),
+          _buildText(value!, colorScheme),
+          if (viewCount != null) ...[
+            const SizedBox(width: 6),
+            _buildText(viewCount!, colorScheme),
+          ],
+        ],
+      );
+    }
+
     return Container(
       height: height,
       width: width,
@@ -109,24 +130,7 @@ class MBadge extends StatelessWidget {
         color: color ?? colorScheme.error,
         borderRadius: borderRadius,
       ),
-      child: value == null
-          ? null
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (showLoader)
-                  Assets.images.loading.image(
-                    color: valueColor ?? colorScheme.onError,
-                  ),
-                _buildText(value!, colorScheme),
-                if (viewCount != null) ...[
-                  const SizedBox(width: 6),
-                  _buildText(viewCount!, colorScheme),
-                ],
-              ],
-            ),
+      child: child,
     );
   }
 

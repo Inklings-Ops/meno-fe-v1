@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/theme/styles/m_button_style.dart';
-
-import '../loading_indicator/m_loading_indicator.dart';
-import 'm_button.dart';
-import 'm_button_icon_placement.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MPrimaryButton extends MButton {
   final bool loading;
@@ -32,7 +28,7 @@ class MPrimaryButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return ElevatedButton(
-      style: MButtonStyle.of(context)?.primary?.override(style),
+      style: style ?? MButtonStyles.of(context)?.primary,
       onPressed: (loading || disabled) ? null : onPressed,
       child: loading ? const MLoadingIndicator.four(width: 56) : child,
     );
