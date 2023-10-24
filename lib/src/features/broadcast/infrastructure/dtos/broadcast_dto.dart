@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/broadcast_status.dart';
-import 'broadcast_creator_dto.dart';
+import 'participant_dto.dart';
 
 part 'broadcast_dto.freezed.dart';
 part 'broadcast_dto.g.dart';
@@ -19,7 +19,7 @@ class BroadcastDto with _$BroadcastDto {
     String? description,
     String? broadcastToken,
     BroadcastStatus? status,
-    required BroadcastCreatorDto creator,
+    required ParticipantDto creator,
     String? imageId,
     String? imageUrl,
     String? timeZone,

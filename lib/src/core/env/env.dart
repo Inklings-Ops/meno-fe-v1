@@ -9,4 +9,7 @@ abstract class Env {
 
   @EnviedField(varName: 'BIBLE_API_URL')
   static final String bibleApiUrl = _Env.bibleApiUrl;
+
+  @EnviedField(varName: 'MENO_LIVEKIT_URL')
+  static final String menoLiveKitUrl = _Env.menoLiveKitUrl;
 }

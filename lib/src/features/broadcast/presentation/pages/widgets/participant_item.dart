@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 
-class CoHostItem extends StatelessWidget {
-  final User? user;
+import '../../../domain/domain.dart';
+
+class ParticipantItem extends StatelessWidget {
+  final Participant? participant;
   final VoidCallback? onTap;
   final bool isCohost;
-  const CoHostItem({super.key, this.user, this.onTap, this.isCohost = false});
+  final bool isForAddCohost;
+
+  const ParticipantItem({
+    super.key,
+    this.participant,
+    this.onTap,
+    this.isCohost = false,
+    this.isForAddCohost = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final MColorScheme colorScheme = MColorScheme.of(context)!;
 
-    final bool hasUser = user != null;
+    final bool hasUser = participant != null;
 
     return InkWell(
       onTap: onTap,
-      child: SizedBox(
-        width: 76,
+      child: SizedBox.fromSize(
+        size: const Size.fromWidth(76),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -27,7 +36,7 @@ class CoHostItem extends StatelessWidget {
               children: [
                 MAvatar(
                   radius: 24,
-                  url: user?.imageUrl,
+                  url: participant?.imageUrl,
                   child: hasUser
                       ? null
                       : Icon(
@@ -36,7 +45,7 @@ class CoHostItem extends StatelessWidget {
                           size: 16,
                         ),
                 ),
-                if (hasUser)
+                if (isForAddCohost)
                   Positioned(
                     left: 30,
                     top: 30,
@@ -60,10 +69,12 @@ class CoHostItem extends StatelessWidget {
               ],
             ),
             MSize.verticalSpaceSmall,
-            MText(
-              hasUser ? user!.fullName.get()! : "Add Co-host",
-              style: MTextStyle.microMedium,
-              color: hasUser ? null : MColor.grey50,
+            Flexible(
+              child: MText(
+                hasUser ? participant!.fullName : "Add Co-host",
+                style: MTextStyle.microMedium,
+                color: hasUser ? null : MColor.grey50,
+              ),
             ),
             if (isCohost) ...[
               MSize.verticalSpaceMicro,

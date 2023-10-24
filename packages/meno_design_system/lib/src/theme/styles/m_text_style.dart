@@ -7,7 +7,7 @@ import '../../gen/fonts.gen.dart';
 class MTextStyle extends TextStyle {
   const MTextStyle._({
     super.fontSize,
-    // super.height,
+    super.height,
     super.fontWeight,
     super.fontFamily,
   });
@@ -151,7 +151,7 @@ class MTextStyle extends TextStyle {
 
   static const MTextStyle microMedium = MTextStyle._(
     fontSize: 12.0,
-    // height: 1.0,
+    height: 1.0,
     fontWeight: FontWeight.w500,
     fontFamily: _fontFamily,
   );

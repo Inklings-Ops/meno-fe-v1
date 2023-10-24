@@ -1,5 +1,13 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../dependency_injector/injector.dart';
+
+part 'media_service.g.dart';
+
+@riverpod
+MediaService mediaService(MediaServiceRef ref) => di<MediaService>();
 
 @lazySingleton
 class MediaService {

@@ -47,15 +47,37 @@ class MBadge extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 16.0, minWidth: 17.0),
         );
 
-  const MBadge.live({Key? key, String? count})
+  const MBadge.live({Key? key, String? count, bool showLoader = false})
       : this._(
           key: key,
           value: "LIVE",
           viewCount: count,
-          height: 20,
-          showLoader: true,
-          constraints: const BoxConstraints(minHeight: 20.0),
-          padding: const EdgeInsets.fromLTRB(4, 0, 8, 0),
+          height: 18,
+          showLoader: showLoader,
+          constraints: const BoxConstraints(minHeight: 18.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+        );
+
+  MBadge.offAir(BuildContext context, {Key? key})
+      : this._(
+          key: key,
+          value: "OFF-AIR",
+          height: 18,
+          constraints: const BoxConstraints(minHeight: 18.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          color: MColorScheme.of(context)?.disabledContainer,
+          valueColor: MColorScheme.of(context)?.onDisabled,
+        );
+
+  MBadge.reconnecting(BuildContext context, {Key? key})
+      : this._(
+          key: key,
+          value: "RECONNECTING",
+          height: 18,
+          constraints: const BoxConstraints(minHeight: 18.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          color: MColorScheme.of(context)?.errorContainer,
+          valueColor: MColorScheme.of(context)?.onError,
         );
 
   MBadge.newBadge(BuildContext context, {Key? key})

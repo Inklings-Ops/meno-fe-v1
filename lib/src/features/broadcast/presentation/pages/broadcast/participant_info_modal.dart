@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class ListenerInfoModal extends StatelessWidget {
-  const ListenerInfoModal({super.key});
+import '../../../domain/domain.dart';
+
+class ParticipantInfoModal extends StatelessWidget {
+  final Participant participant;
+  const ParticipantInfoModal({super.key, required this.participant});
 
   @override
   Widget build(BuildContext context) {
@@ -13,23 +16,23 @@ class ListenerInfoModal extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const MAvatar(radius: 36),
+          MAvatar(radius: 36, url: participant.imageUrl),
           MSize.verticalSpaceLarge,
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 MText(
-                  "Bayo Daini",
+                  participant.fullName,
                   style: MTextStyle.heading3Medium,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (isCohost) ...[
                   MSize.horizontalSpaceSmall,
-                  MBadge.cohost(),
+                  const MBadge.cohost(),
                 ]
               ],
             ),

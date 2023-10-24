@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 
 import '../../../services/network_service.dart';
 import '../domain/domain.dart';
 import 'datasources/broadcast_remote_datasource.dart';
 import 'mapper/broadcast_mapper.dart';
 import 'responses/broadcast_error.dart';
-import 'responses/broadcast_response.dart';
 
 @LazySingleton(as: IBroadcastFacade)
 class BroadcastFacade implements IBroadcastFacade {
@@ -104,29 +104,42 @@ class BroadcastFacade implements IBroadcastFacade {
   Future<Either<BroadcastException, Broadcast>> startBroadcast({
     required BroadcastId broadcastId,
   }) async {
-    // TODO: implement startBroadcast
-    throw UnimplementedError();
+    if (!(await _network.isConnected)) {
+      return left(const BroadcastException.networkError());
+    }
+
+    try {
+      final response = await _remote.startBroadcast(broadcastId: broadcastId);
+      final Broadcast broadcast = _mapper.broadcastToDomain(response.data!)!;
+      return right(broadcast);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
   }
 
   BroadcastException _getError(DioException e) {
-    String? result;
-    final response = BroadcastResponse.fromJson(e.response!.data, (_) => null);
+    Logger().w("RESPONSE => ${e.response?.data}");
 
-    if (response.error.runtimeType == String) {
-      return BroadcastException.message(response.message!);
+    if (e.response?.data["error"].runtimeType == String) {
+      Logger().w("RESPONSE MESSAGE => ${e.response?.data["message"]}");
+      return BroadcastException.message(e.response?.data["message"]);
     }
 
     final error = BroadcastError.fromJson(e.response!.data['error']);
-    if (error.props.isNotEmpty) {
-      for (var i = 0; i < error.props.length; i++) {
-        result = error.props[i].toString();
-      }
+    Logger().w("ERROR => $error");
+    String? result;
+
+    for (String? prop in error.props) {
+      result ??= prop;
     }
 
     if (result != null) {
       return BroadcastException.message(result);
-    } else {
-      return const BroadcastException.serverError();
     }
+
+    return const BroadcastException.serverError();
   }
 }

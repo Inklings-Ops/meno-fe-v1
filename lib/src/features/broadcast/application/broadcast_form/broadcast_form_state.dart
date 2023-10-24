@@ -1,4 +1,4 @@
-part of 'broadcast_form_notifier.dart';
+part of 'broadcast_form.dart';
 
 @freezed
 class BroadcastFormState with _$BroadcastFormState {

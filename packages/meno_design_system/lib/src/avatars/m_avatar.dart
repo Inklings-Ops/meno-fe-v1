@@ -31,6 +31,8 @@ class MAvatar extends StatelessWidget {
     ImageProvider<Object>? foregroundImage;
     Widget? placeholder;
 
+    final int maxHeight = (radius * 2).toInt();
+
     final SizedBox artwork = SizedBox(
       height: radius * 0.7,
       child: colorScheme.brightness == Brightness.light
@@ -49,7 +51,11 @@ class MAvatar extends StatelessWidget {
     }
 
     if (hasUrl && !hasFile) {
-      foregroundImage = CachedNetworkImageProvider(url!);
+      foregroundImage = CachedNetworkImageProvider(
+        url!,
+        maxHeight: maxHeight,
+        maxWidth: maxHeight,
+      );
     }
 
     if (hasFile) {

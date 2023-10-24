@@ -6,18 +6,6 @@ part of 'broadcast_error.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BroadcastError _$BroadcastErrorFromJson(Map<String, dynamic> json) =>
-    BroadcastError(
-      title: json['title'] as String?,
-      description: json['description'] as String?,
-      startTime: json['startTime'] as String?,
-      timeZone: json['timeZone'] as String?,
-      cohosts: json['cohosts'] as String?,
-      image: json['image'] as String?,
-      mimetype: json['mimetype'] as String?,
-      size: json['size'] as String?,
-    );
-
 Map<String, dynamic> _$BroadcastErrorToJson(BroadcastError instance) {
   final val = <String, dynamic>{};
 
@@ -35,5 +23,31 @@ Map<String, dynamic> _$BroadcastErrorToJson(BroadcastError instance) {
   writeNotNull('image', instance.image);
   writeNotNull('mimetype', instance.mimetype);
   writeNotNull('size', instance.size);
+  val['props'] = instance.props;
+  val['hasError'] = instance.hasError;
   return val;
 }
+
+_$_BroadcastError _$$_BroadcastErrorFromJson(Map<String, dynamic> json) =>
+    _$_BroadcastError(
+      title: json['title'] as String?,
+      description: json['description'] as String?,
+      startTime: json['startTime'] as String?,
+      timeZone: json['timeZone'] as String?,
+      cohosts: json['cohosts'] as String?,
+      image: json['image'] as String?,
+      mimetype: json['mimetype'] as String?,
+      size: json['size'] as String?,
+    );
+
+Map<String, dynamic> _$$_BroadcastErrorToJson(_$_BroadcastError instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'description': instance.description,
+      'startTime': instance.startTime,
+      'timeZone': instance.timeZone,
+      'cohosts': instance.cohosts,
+      'image': instance.image,
+      'mimetype': instance.mimetype,
+      'size': instance.size,
+    };

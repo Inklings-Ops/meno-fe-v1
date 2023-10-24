@@ -1,35 +1,32 @@
-import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'broadcast_error.freezed.dart';
 part 'broadcast_error.g.dart';
 
-@JsonSerializable(explicitToJson: true, includeIfNull: false)
-class BroadcastError extends Equatable {
-  final String? title;
-  final String? description;
-  final String? startTime;
-  final String? timeZone;
-  final String? cohosts;
-  final String? image;
-  final String? mimetype;
-  final String? size;
+@freezed
+@JsonSerializable(
+  explicitToJson: true,
+  includeIfNull: false,
+  createFactory: false,
+)
+class BroadcastError with _$BroadcastError {
+  factory BroadcastError({
+    String? title,
+    String? description,
+    String? startTime,
+    String? timeZone,
+    String? cohosts,
+    String? image,
+    String? mimetype,
+    String? size,
+  }) = _BroadcastError;
 
-  const BroadcastError({
-    this.title,
-    this.description,
-    this.startTime,
-    this.timeZone,
-    this.cohosts,
-    this.image,
-    this.mimetype,
-    this.size,
-  });
+  BroadcastError._();
 
   factory BroadcastError.fromJson(Map<String, dynamic> json) =>
       _$BroadcastErrorFromJson(json);
 
-  @override
-  List<Object?> get props => [
+  List<String?> get props => [
         title,
         description,
         startTime,
@@ -40,5 +37,16 @@ class BroadcastError extends Equatable {
         size,
       ];
 
-  Map<String, dynamic> toJson() => _$BroadcastErrorToJson(this);
+  bool get hasError {
+    return [
+      title,
+      description,
+      startTime,
+      timeZone,
+      cohosts,
+      image,
+      mimetype,
+      size,
+    ].any((prop) => prop != null);
+  }
 }

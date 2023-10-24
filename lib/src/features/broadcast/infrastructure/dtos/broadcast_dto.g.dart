@@ -44,8 +44,7 @@ _$_BroadcastDto _$$_BroadcastDtoFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
       broadcastToken: json['broadcastToken'] as String?,
       status: $enumDecodeNullable(_$BroadcastStatusEnumMap, json['status']),
-      creator:
-          BroadcastCreatorDto.fromJson(json['creator'] as Map<String, dynamic>),
+      creator: ParticipantDto.fromJson(json['creator'] as Map<String, dynamic>),
       imageId: json['imageId'] as String?,
       imageUrl: json['imageUrl'] as String?,
       timeZone: json['timeZone'] as String?,

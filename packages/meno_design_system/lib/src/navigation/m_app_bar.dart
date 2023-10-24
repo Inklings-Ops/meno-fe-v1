@@ -106,6 +106,7 @@ class _PrimaryAppBarImpl extends StatelessWidget {
 
     return AppBar(
       automaticallyImplyLeading: false,
+      backgroundColor: colorScheme.primary,
       flexibleSpace: SizedBox(
         height: 120 + MediaQuery.viewPaddingOf(context).top,
         child: Stack(
@@ -122,14 +123,15 @@ class _PrimaryAppBarImpl extends StatelessWidget {
                   if (implyLeading) ...[
                     MBackButton.withText(
                       title: backText,
-                      iconColor: colorScheme.onBackground,
+                      iconColor: colorScheme.onPrimary,
                       textStyle: styles.actionTextStyle,
                     ),
                     const SizedBox(height: 16),
                   ],
                   MText(
                     title,
-                    color: colorScheme.onBackground,
+                    style: MTextStyle.heading2Bold,
+                    color: colorScheme.onPrimary,
                   ),
                 ],
               ),

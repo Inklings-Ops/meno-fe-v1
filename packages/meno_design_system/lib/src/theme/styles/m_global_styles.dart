@@ -26,7 +26,7 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
       snackBarTheme: const SnackBarThemeData(
         contentTextStyle: MTextStyle.captionRegular,
         insetPadding: EdgeInsets.all(16),
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),

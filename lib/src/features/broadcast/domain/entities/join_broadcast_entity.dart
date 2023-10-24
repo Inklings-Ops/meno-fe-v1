@@ -7,4 +7,8 @@ class JoinBroadcastEntity with _$JoinBroadcastEntity {
   factory JoinBroadcastEntity({
     required String broadcastToken,
   }) = _JoinBroadcastEntity;
+
+  factory JoinBroadcastEntity.empty() {
+    return JoinBroadcastEntity(broadcastToken: "");
+  }
 }

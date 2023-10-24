@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'broadcast_creator.dart';
+part of 'participant.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,29 +15,36 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$BroadcastCreator {
+mixin _$Participant {
   String get id => throw _privateConstructorUsedError;
   String get fullName => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
+  bool get isCreator => throw _privateConstructorUsedError;
+  bool get isCohost => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $BroadcastCreatorCopyWith<BroadcastCreator> get copyWith =>
+  $ParticipantCopyWith<Participant> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $BroadcastCreatorCopyWith<$Res> {
-  factory $BroadcastCreatorCopyWith(
-          BroadcastCreator value, $Res Function(BroadcastCreator) then) =
-      _$BroadcastCreatorCopyWithImpl<$Res, BroadcastCreator>;
+abstract class $ParticipantCopyWith<$Res> {
+  factory $ParticipantCopyWith(
+          Participant value, $Res Function(Participant) then) =
+      _$ParticipantCopyWithImpl<$Res, Participant>;
   @useResult
-  $Res call({String id, String fullName, String? imageUrl});
+  $Res call(
+      {String id,
+      String fullName,
+      String? imageUrl,
+      bool isCreator,
+      bool isCohost});
 }
 
 /// @nodoc
-class _$BroadcastCreatorCopyWithImpl<$Res, $Val extends BroadcastCreator>
-    implements $BroadcastCreatorCopyWith<$Res> {
-  _$BroadcastCreatorCopyWithImpl(this._value, this._then);
+class _$ParticipantCopyWithImpl<$Res, $Val extends Participant>
+    implements $ParticipantCopyWith<$Res> {
+  _$ParticipantCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -50,6 +57,8 @@ class _$BroadcastCreatorCopyWithImpl<$Res, $Val extends BroadcastCreator>
     Object? id = null,
     Object? fullName = null,
     Object? imageUrl = freezed,
+    Object? isCreator = null,
+    Object? isCohost = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -64,27 +73,40 @@ class _$BroadcastCreatorCopyWithImpl<$Res, $Val extends BroadcastCreator>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      isCreator: null == isCreator
+          ? _value.isCreator
+          : isCreator // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isCohost: null == isCohost
+          ? _value.isCohost
+          : isCohost // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_BroadcastCreatorCopyWith<$Res>
-    implements $BroadcastCreatorCopyWith<$Res> {
-  factory _$$_BroadcastCreatorCopyWith(
-          _$_BroadcastCreator value, $Res Function(_$_BroadcastCreator) then) =
-      __$$_BroadcastCreatorCopyWithImpl<$Res>;
+abstract class _$$_ParticipantCopyWith<$Res>
+    implements $ParticipantCopyWith<$Res> {
+  factory _$$_ParticipantCopyWith(
+          _$_Participant value, $Res Function(_$_Participant) then) =
+      __$$_ParticipantCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String fullName, String? imageUrl});
+  $Res call(
+      {String id,
+      String fullName,
+      String? imageUrl,
+      bool isCreator,
+      bool isCohost});
 }
 
 /// @nodoc
-class __$$_BroadcastCreatorCopyWithImpl<$Res>
-    extends _$BroadcastCreatorCopyWithImpl<$Res, _$_BroadcastCreator>
-    implements _$$_BroadcastCreatorCopyWith<$Res> {
-  __$$_BroadcastCreatorCopyWithImpl(
-      _$_BroadcastCreator _value, $Res Function(_$_BroadcastCreator) _then)
+class __$$_ParticipantCopyWithImpl<$Res>
+    extends _$ParticipantCopyWithImpl<$Res, _$_Participant>
+    implements _$$_ParticipantCopyWith<$Res> {
+  __$$_ParticipantCopyWithImpl(
+      _$_Participant _value, $Res Function(_$_Participant) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -93,8 +115,10 @@ class __$$_BroadcastCreatorCopyWithImpl<$Res>
     Object? id = null,
     Object? fullName = null,
     Object? imageUrl = freezed,
+    Object? isCreator = null,
+    Object? isCohost = null,
   }) {
-    return _then(_$_BroadcastCreator(
+    return _then(_$_Participant(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -107,15 +131,27 @@ class __$$_BroadcastCreatorCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      isCreator: null == isCreator
+          ? _value.isCreator
+          : isCreator // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isCohost: null == isCohost
+          ? _value.isCohost
+          : isCohost // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
 /// @nodoc
 
-class _$_BroadcastCreator implements _BroadcastCreator {
-  const _$_BroadcastCreator(
-      {required this.id, required this.fullName, this.imageUrl});
+class _$_Participant implements _Participant {
+  const _$_Participant(
+      {required this.id,
+      required this.fullName,
+      this.imageUrl,
+      this.isCreator = false,
+      this.isCohost = false});
 
   @override
   final String id;
@@ -123,39 +159,52 @@ class _$_BroadcastCreator implements _BroadcastCreator {
   final String fullName;
   @override
   final String? imageUrl;
+  @override
+  @JsonKey()
+  final bool isCreator;
+  @override
+  @JsonKey()
+  final bool isCohost;
 
   @override
   String toString() {
-    return 'BroadcastCreator(id: $id, fullName: $fullName, imageUrl: $imageUrl)';
+    return 'Participant(id: $id, fullName: $fullName, imageUrl: $imageUrl, isCreator: $isCreator, isCohost: $isCohost)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_BroadcastCreator &&
+            other is _$_Participant &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            (identical(other.isCreator, isCreator) ||
+                other.isCreator == isCreator) &&
+            (identical(other.isCohost, isCohost) ||
+                other.isCohost == isCohost));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, fullName, imageUrl);
+  int get hashCode =>
+      Object.hash(runtimeType, id, fullName, imageUrl, isCreator, isCohost);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_BroadcastCreatorCopyWith<_$_BroadcastCreator> get copyWith =>
-      __$$_BroadcastCreatorCopyWithImpl<_$_BroadcastCreator>(this, _$identity);
+  _$$_ParticipantCopyWith<_$_Participant> get copyWith =>
+      __$$_ParticipantCopyWithImpl<_$_Participant>(this, _$identity);
 }
 
-abstract class _BroadcastCreator implements BroadcastCreator {
-  const factory _BroadcastCreator(
+abstract class _Participant implements Participant {
+  const factory _Participant(
       {required final String id,
       required final String fullName,
-      final String? imageUrl}) = _$_BroadcastCreator;
+      final String? imageUrl,
+      final bool isCreator,
+      final bool isCohost}) = _$_Participant;
 
   @override
   String get id;
@@ -164,7 +213,11 @@ abstract class _BroadcastCreator implements BroadcastCreator {
   @override
   String? get imageUrl;
   @override
+  bool get isCreator;
+  @override
+  bool get isCohost;
+  @override
   @JsonKey(ignore: true)
-  _$$_BroadcastCreatorCopyWith<_$_BroadcastCreator> get copyWith =>
+  _$$_ParticipantCopyWith<_$_Participant> get copyWith =>
       throw _privateConstructorUsedError;
 }

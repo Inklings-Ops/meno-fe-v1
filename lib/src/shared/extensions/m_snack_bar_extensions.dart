@@ -11,12 +11,14 @@ extension MSnackBarExtensions on BuildContext {
   void clearSnackBars() => ScaffoldMessenger.of(this).clearSnackBars();
 
   MMessenger _showErrorSnackBar(String message) {
+    final MColorScheme? colorScheme = MColorScheme.of(this);
     return ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
+        backgroundColor: colorScheme?.error,
         content: MText(
           message,
           style: MTextStyle.captionRegular,
-          color: MColorScheme.of(this)?.onError,
+          color: colorScheme?.onError,
         ),
       ),
     );
@@ -35,9 +37,15 @@ extension MSnackBarExtensions on BuildContext {
     );
   }
 
-  MMessenger showBroadcastFormError(BroadcastException exception) {
+  MMessenger showBroadcastError(dynamic exception) {
     return _showErrorSnackBar(
-      exception.maybeMap(orElse: () => '', message: (value) => value.message),
+      (exception as BroadcastException).maybeMap(
+        orElse: () => '',
+        message: (value) => value.message,
+        networkError: (_) => MErrorMessages.networkError,
+        serverError: (_) => MErrorMessages.serverError,
+        timeOutError: (_) => MErrorMessages.timeOutError,
+      ),
     );
   }
 

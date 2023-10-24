@@ -21,7 +21,7 @@ mixin _$Broadcast {
   IBroadcastDescription? get description => throw _privateConstructorUsedError;
   String? get broadcastToken => throw _privateConstructorUsedError;
   BroadcastStatus? get status => throw _privateConstructorUsedError;
-  BroadcastCreator get creator => throw _privateConstructorUsedError;
+  Participant get creator => throw _privateConstructorUsedError;
   String? get imageId => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get timeZone => throw _privateConstructorUsedError;
@@ -46,7 +46,7 @@ abstract class $BroadcastCopyWith<$Res> {
       IBroadcastDescription? description,
       String? broadcastToken,
       BroadcastStatus? status,
-      BroadcastCreator creator,
+      Participant creator,
       String? imageId,
       String? imageUrl,
       String? timeZone,
@@ -55,7 +55,7 @@ abstract class $BroadcastCopyWith<$Res> {
       DateTime? createdAt,
       dynamic deleted});
 
-  $BroadcastCreatorCopyWith<$Res> get creator;
+  $ParticipantCopyWith<$Res> get creator;
 }
 
 /// @nodoc
@@ -109,7 +109,7 @@ class _$BroadcastCopyWithImpl<$Res, $Val extends Broadcast>
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
-              as BroadcastCreator,
+              as Participant,
       imageId: freezed == imageId
           ? _value.imageId
           : imageId // ignore: cast_nullable_to_non_nullable
@@ -143,8 +143,8 @@ class _$BroadcastCopyWithImpl<$Res, $Val extends Broadcast>
 
   @override
   @pragma('vm:prefer-inline')
-  $BroadcastCreatorCopyWith<$Res> get creator {
-    return $BroadcastCreatorCopyWith<$Res>(_value.creator, (value) {
+  $ParticipantCopyWith<$Res> get creator {
+    return $ParticipantCopyWith<$Res>(_value.creator, (value) {
       return _then(_value.copyWith(creator: value) as $Val);
     });
   }
@@ -163,7 +163,7 @@ abstract class _$$_BroadcastCopyWith<$Res> implements $BroadcastCopyWith<$Res> {
       IBroadcastDescription? description,
       String? broadcastToken,
       BroadcastStatus? status,
-      BroadcastCreator creator,
+      Participant creator,
       String? imageId,
       String? imageUrl,
       String? timeZone,
@@ -173,7 +173,7 @@ abstract class _$$_BroadcastCopyWith<$Res> implements $BroadcastCopyWith<$Res> {
       dynamic deleted});
 
   @override
-  $BroadcastCreatorCopyWith<$Res> get creator;
+  $ParticipantCopyWith<$Res> get creator;
 }
 
 /// @nodoc
@@ -225,7 +225,7 @@ class __$$_BroadcastCopyWithImpl<$Res>
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
-              as BroadcastCreator,
+              as Participant,
       imageId: freezed == imageId
           ? _value.imageId
           : imageId // ignore: cast_nullable_to_non_nullable
@@ -287,7 +287,7 @@ class _$_Broadcast implements _Broadcast {
   @override
   final BroadcastStatus? status;
   @override
-  final BroadcastCreator creator;
+  final Participant creator;
   @override
   final String? imageId;
   @override
@@ -365,7 +365,7 @@ abstract class _Broadcast implements Broadcast {
       final IBroadcastDescription? description,
       final String? broadcastToken,
       final BroadcastStatus? status,
-      required final BroadcastCreator creator,
+      required final Participant creator,
       final String? imageId,
       final String? imageUrl,
       final String? timeZone,
@@ -385,7 +385,7 @@ abstract class _Broadcast implements Broadcast {
   @override
   BroadcastStatus? get status;
   @override
-  BroadcastCreator get creator;
+  Participant get creator;
   @override
   String? get imageId;
   @override

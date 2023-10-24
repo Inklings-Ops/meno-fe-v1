@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../inputs/inputs.dart';
-import 'broadcast_creator.dart';
+import 'participant.dart';
 import 'broadcast_status.dart';
 
 part 'broadcast.freezed.dart';
@@ -17,7 +17,7 @@ class Broadcast with _$Broadcast {
     IBroadcastDescription? description,
     BroadcastToken? broadcastToken,
     BroadcastStatus? status,
-    required BroadcastCreator creator,
+    required Participant creator,
     String? imageId,
     String? imageUrl,
     String? timeZone,
@@ -26,4 +26,12 @@ class Broadcast with _$Broadcast {
     DateTime? createdAt,
     dynamic deleted,
   }) = _Broadcast;
+
+  factory Broadcast.empty() {
+    return Broadcast(
+      id: "",
+      title: IBroadcastTitle(""),
+      creator: Participant.empty(),
+    );
+  }
 }

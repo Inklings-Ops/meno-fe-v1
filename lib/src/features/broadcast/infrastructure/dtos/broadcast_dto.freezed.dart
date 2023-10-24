@@ -25,7 +25,7 @@ mixin _$BroadcastDto {
   String? get description => throw _privateConstructorUsedError;
   String? get broadcastToken => throw _privateConstructorUsedError;
   BroadcastStatus? get status => throw _privateConstructorUsedError;
-  BroadcastCreatorDto get creator => throw _privateConstructorUsedError;
+  ParticipantDto get creator => throw _privateConstructorUsedError;
   String? get imageId => throw _privateConstructorUsedError;
   String? get imageUrl => throw _privateConstructorUsedError;
   String? get timeZone => throw _privateConstructorUsedError;
@@ -52,7 +52,7 @@ abstract class $BroadcastDtoCopyWith<$Res> {
       String? description,
       String? broadcastToken,
       BroadcastStatus? status,
-      BroadcastCreatorDto creator,
+      ParticipantDto creator,
       String? imageId,
       String? imageUrl,
       String? timeZone,
@@ -61,7 +61,7 @@ abstract class $BroadcastDtoCopyWith<$Res> {
       DateTime? createdAt,
       dynamic deleted});
 
-  $BroadcastCreatorDtoCopyWith<$Res> get creator;
+  $ParticipantDtoCopyWith<$Res> get creator;
 }
 
 /// @nodoc
@@ -115,7 +115,7 @@ class _$BroadcastDtoCopyWithImpl<$Res, $Val extends BroadcastDto>
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
-              as BroadcastCreatorDto,
+              as ParticipantDto,
       imageId: freezed == imageId
           ? _value.imageId
           : imageId // ignore: cast_nullable_to_non_nullable
@@ -149,8 +149,8 @@ class _$BroadcastDtoCopyWithImpl<$Res, $Val extends BroadcastDto>
 
   @override
   @pragma('vm:prefer-inline')
-  $BroadcastCreatorDtoCopyWith<$Res> get creator {
-    return $BroadcastCreatorDtoCopyWith<$Res>(_value.creator, (value) {
+  $ParticipantDtoCopyWith<$Res> get creator {
+    return $ParticipantDtoCopyWith<$Res>(_value.creator, (value) {
       return _then(_value.copyWith(creator: value) as $Val);
     });
   }
@@ -170,7 +170,7 @@ abstract class _$$_BroadcastDtoCopyWith<$Res>
       String? description,
       String? broadcastToken,
       BroadcastStatus? status,
-      BroadcastCreatorDto creator,
+      ParticipantDto creator,
       String? imageId,
       String? imageUrl,
       String? timeZone,
@@ -180,7 +180,7 @@ abstract class _$$_BroadcastDtoCopyWith<$Res>
       dynamic deleted});
 
   @override
-  $BroadcastCreatorDtoCopyWith<$Res> get creator;
+  $ParticipantDtoCopyWith<$Res> get creator;
 }
 
 /// @nodoc
@@ -232,7 +232,7 @@ class __$$_BroadcastDtoCopyWithImpl<$Res>
       creator: null == creator
           ? _value.creator
           : creator // ignore: cast_nullable_to_non_nullable
-              as BroadcastCreatorDto,
+              as ParticipantDto,
       imageId: freezed == imageId
           ? _value.imageId
           : imageId // ignore: cast_nullable_to_non_nullable
@@ -297,7 +297,7 @@ class _$_BroadcastDto implements _BroadcastDto {
   @override
   final BroadcastStatus? status;
   @override
-  final BroadcastCreatorDto creator;
+  final ParticipantDto creator;
   @override
   final String? imageId;
   @override
@@ -383,7 +383,7 @@ abstract class _BroadcastDto implements BroadcastDto {
       final String? description,
       final String? broadcastToken,
       final BroadcastStatus? status,
-      required final BroadcastCreatorDto creator,
+      required final ParticipantDto creator,
       final String? imageId,
       final String? imageUrl,
       final String? timeZone,
@@ -406,7 +406,7 @@ abstract class _BroadcastDto implements BroadcastDto {
   @override
   BroadcastStatus? get status;
   @override
-  BroadcastCreatorDto get creator;
+  ParticipantDto get creator;
   @override
   String? get imageId;
   @override

@@ -3,8 +3,13 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
   file_selector_windows
   flutter_secure_storage_windows
+  flutter_webrtc
+  flutter_window_close
+  livekit_client
+  permission_handler_windows
   smart_auth
 )
 

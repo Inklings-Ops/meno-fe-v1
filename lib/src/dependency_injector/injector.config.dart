@@ -14,30 +14,29 @@ import 'package:image_picker/image_picker.dart' as _i7;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i8;
-import 'package:shared_preferences/shared_preferences.dart' as _i13;
+import 'package:shared_preferences/shared_preferences.dart' as _i14;
 
-import '../features/auth/application/auth/auth_notifier.dart' as _i20;
-import '../features/auth/domain/domain.dart' as _i15;
-import '../features/auth/infrastructure/auth_facade.dart' as _i16;
+import '../features/auth/application/auth/auth_notifier.dart' as _i21;
+import '../features/auth/domain/domain.dart' as _i16;
+import '../features/auth/infrastructure/auth_facade.dart' as _i17;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
-    as _i14;
+    as _i15;
 import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart'
     as _i4;
 import '../features/auth/infrastructure/mapper/auth_mapper.dart' as _i3;
-import '../features/broadcast/application/broadcast_form/broadcast_form_notifier.dart'
-    as _i21;
-import '../features/broadcast/domain/domain.dart' as _i17;
-import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i18;
+import '../features/broadcast/domain/domain.dart' as _i18;
+import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i19;
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart'
     as _i6;
 import '../features/broadcast/infrastructure/mapper/broadcast_mapper.dart'
     as _i5;
 import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
-    as _i19;
+    as _i20;
 import '../services/jwt_service.dart' as _i9;
 import '../services/media_service.dart' as _i10;
 import '../services/network_service.dart' as _i11;
-import '../services/secure_storage_service.dart' as _i12;
+import '../services/permissions_service.dart' as _i12;
+import '../services/secure_storage_service.dart' as _i13;
 import 'register_module.dart' as _i22;
 
 extension GetItInjectableX on _i1.GetIt {
@@ -66,39 +65,42 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i10.MediaService(gh<_i7.ImagePicker>()));
     gh.factory<_i11.NetworkService>(
         () => _i11.NetworkService(gh<_i8.InternetConnectionChecker>()));
-    gh.lazySingleton<_i12.SecureStorageService>(
-        () => _i12.SecureStorageService());
-    await gh.factoryAsync<_i13.SharedPreferences>(
+    await gh.factoryAsync<_i12.PermissionsService>(
+      () {
+        final i = _i12.PermissionsService();
+        return i.checkPermissions().then((_) => i);
+      },
+      preResolve: true,
+    );
+    gh.lazySingleton<_i13.SecureStorageService>(
+        () => _i13.SecureStorageService());
+    await gh.factoryAsync<_i14.SharedPreferences>(
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.factory<_i14.AuthLocalDatasource>(() =>
-        _i14.AuthLocalDatasource(storage: gh<_i12.SecureStorageService>()));
-    gh.lazySingleton<_i15.IAuthFacade>(() => _i16.AuthFacade(
+    gh.factory<_i15.AuthLocalDatasource>(() =>
+        _i15.AuthLocalDatasource(storage: gh<_i13.SecureStorageService>()));
+    gh.lazySingleton<_i16.IAuthFacade>(() => _i17.AuthFacade(
           authMapper: gh<_i3.AuthMapper>(),
           remoteDatasource: gh<_i4.AuthRemoteDatasource>(),
-          localDatasource: gh<_i14.AuthLocalDatasource>(),
+          localDatasource: gh<_i15.AuthLocalDatasource>(),
           networkService: gh<_i11.NetworkService>(),
           jwtService: gh<_i9.JWTService>(),
         ));
-    gh.lazySingleton<_i17.IBroadcastFacade>(() => _i18.BroadcastFacade(
+    gh.lazySingleton<_i18.IBroadcastFacade>(() => _i19.BroadcastFacade(
           mapper: gh<_i5.BroadcastMapper>(),
           remote: gh<_i6.BroadcastRemoteDatasource>(),
           network: gh<_i11.NetworkService>(),
         ));
-    gh.factory<_i19.OnboardingLocalDatasource>(() =>
-        _i19.OnboardingLocalDatasource(storage: gh<_i13.SharedPreferences>()));
-    await gh.factoryAsync<_i20.AuthNotifier>(
+    gh.factory<_i20.OnboardingLocalDatasource>(() =>
+        _i20.OnboardingLocalDatasource(storage: gh<_i14.SharedPreferences>()));
+    await gh.factoryAsync<_i21.AuthNotifier>(
       () {
-        final i = _i20.AuthNotifier(gh<_i15.IAuthFacade>());
+        final i = _i21.AuthNotifier(gh<_i16.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,
     );
-    gh.factory<_i21.BroadcastFormNotifier>(() => _i21.BroadcastFormNotifier(
-          gh<_i17.IBroadcastFacade>(),
-          gh<_i10.MediaService>(),
-        ));
     return this;
   }
 }

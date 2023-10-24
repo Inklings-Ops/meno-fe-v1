@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/services/socket_service/socket_service.dart';
 
-import '../widgets/co_host_item.dart';
-import 'broadcast_listeners_modal.dart';
-import 'listener_info_modal.dart';
+import 'broadcast_participant_list.dart';
+import 'broadcast_participants_modal.dart';
 
-class BroadcastListeningTab extends HookWidget {
+class BroadcastListeningTab extends HookConsumerWidget {
   const BroadcastListeningTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final participants = ref.watch(liveParticipantsProvider);
+    final numberOfParticipants = participants.length.toString();
     return Column(
       children: [
         24.verticalSpace,
@@ -19,11 +21,14 @@ class BroadcastListeningTab extends HookWidget {
           height: 34,
           child: Row(
             children: [
-              const Row(
+              Row(
                 children: [
-                  Icon(MIcons.hearing, size: 16),
+                  const Icon(MIcons.hearing, size: 16),
                   MSize.horizontalSpaceSmall,
-                  MText("23", style: MTextStyle.captionMedium),
+                  MText(
+                    numberOfParticipants,
+                    style: MTextStyle.captionMedium,
+                  ),
                 ],
               ),
               const Spacer(),
@@ -37,7 +42,7 @@ class BroadcastListeningTab extends HookWidget {
                   constraints: BoxConstraints(
                     maxHeight: MediaQuery.sizeOf(context).height * 0.9,
                   ),
-                  builder: (context) => const BroadcastListenersModal(),
+                  builder: (context) => const BroadcastParticipantsModal(),
                 ),
                 // TODO: Handle button theme
               ),
@@ -45,28 +50,7 @@ class BroadcastListeningTab extends HookWidget {
           ),
         ),
         MSize.verticalSpaceLarge,
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: MCore.small,
-              mainAxisSpacing: 24,
-              childAspectRatio: 80 / 90,
-            ),
-            itemCount: 16,
-            itemBuilder: (context, index) {
-              return CoHostItem(
-                isCohost: index == 0,
-                onTap: () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => const ListenerInfoModal(),
-                ),
-              );
-            },
-          ),
-        ),
+        const Expanded(child: BroadcastParticipantList()),
       ],
     );
   }

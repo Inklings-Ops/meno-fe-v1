@@ -1,3 +1,3 @@
 export 'broadcast.dart';
-export 'broadcast_creator.dart';
+export 'participant.dart';
 export 'join_broadcast_entity.dart';

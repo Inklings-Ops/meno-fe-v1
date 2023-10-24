@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../widgets/co_host_item.dart';
+import '../widgets/participant_item.dart';
 import 'add_cohost_modal.dart';
 
 class CoHostSection extends StatelessWidget {
@@ -13,7 +13,7 @@ class CoHostSection extends StatelessWidget {
       maxHeight: 72,
       child: Row(
         children: [
-          CoHostItem(
+          ParticipantItem(
             onTap: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
