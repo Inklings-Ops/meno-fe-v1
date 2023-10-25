@@ -11,9 +11,13 @@ class PasswordRulesWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final MColorScheme colorScheme = MColorScheme.of(context)!;
     final state = ref.watch(passwordRuleProvider);
-    final password = ref.watch(
-      passwordProvider(ref.watch(registerFormProvider).passwordValue),
+
+    final passwordValue = ref.watch(
+      registerFormNotifierProvider.select((value) => value.passwordValue),
     );
+
+    final password = ref.watch(passwordProvider(passwordValue));
+
     final length = state.rules.length;
 
     return Visibility(

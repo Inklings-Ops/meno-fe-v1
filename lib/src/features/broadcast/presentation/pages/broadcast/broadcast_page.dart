@@ -1,6 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast/broadcast_notifier.dart';
@@ -12,7 +12,6 @@ import 'chat_tab.dart';
 import 'live_bible_tab.dart';
 import 'notes_tab.dart';
 
-@RoutePage()
 class BroadcastPage extends StatefulHookConsumerWidget {
   const BroadcastPage({super.key});
 
@@ -39,7 +38,7 @@ class _BroadcastPageState extends ConsumerState<BroadcastPage>
         () => null,
         (either) => either.fold(
           (l) => context.showBroadcastError(l),
-          (r) => context.router.replaceAll([const MLayoutRoute()]),
+          (r) => context.go(Routes.layout),
         ),
       );
     });

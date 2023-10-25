@@ -3,42 +3,44 @@ import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/isolates/m_isolates.dart';
 import '../../../../dependency_injector/injector.dart';
 import '../../domain/domain.dart';
 
 part 'auth_notifier.freezed.dart';
+part 'auth_notifier.g.dart';
 part 'auth_state.dart';
 
-/// Provider that retrieves a list of all user credentials.
-final allCredentialsProvider = Provider(
-  (ref) => ref.watch(authProvider).credentials.values.toList(),
-);
+@riverpod
+List<UserCredentials> allCredentials(AllCredentialsRef ref) {
+  return ref.watch(authProvider).credentials.values.toList();
+}
 
-/// Provider that manages the authentication state.
-final authProvider = StateNotifierProvider<AuthNotifier, AuthState>(
-  (ref) => di<AuthNotifier>(),
-);
+@riverpod
+IAuthFacade authFacade(AuthFacadeRef ref) => di<IAuthFacade>();
 
-/// Provider that checks if the user has only one account.
-final hasOneAccountProvider = Provider(
-  (ref) => ref.watch(allCredentialsProvider).length == 1,
-);
+@riverpod
+bool hasOneAccount(HasOneAccountRef ref) {
+  return ref.watch(allCredentialsProvider).length == 1;
+}
 
-/// Provider that retrieves the user data from the authentication state.
-final userProvider = Provider((ref) => ref.watch(authProvider).user);
+@riverpod
+User user(UserRef ref) => ref.watch(authProvider).user;
 
-/// Provider that retrieves the user token from the authentication state.
-final userTokenProvider = Provider((ref) => ref.watch(authProvider).token);
+@riverpod
+UserToken? userToken(UserTokenRef ref) => ref.watch(authProvider).token;
+
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  return di<AuthNotifier>();
+});
 
 @Injectable()
 class AuthNotifier extends StateNotifier<AuthState> {
   final IAuthFacade _facade;
-
   AuthNotifier(this._facade) : super(AuthState.initial());
 
-  /// Checks the authentication status and updates the state accordingly.
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
     RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
@@ -78,18 +80,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Performs a partial logout by clearing the token and keeping the user data.
   Future<void> partialLogout() async {
     await _facade.partialLogout();
-    state = state.copyWith(token: "");
+    state = state.copyWith(
+      token: "",
+      status: AuthStatus.partiallyAuthenticated,
+    );
   }
 
   /// Switches the user account and updates the authentication state.
   Future<void> switchAccount(UserCredentials credentials) async {
     state = state.copyWith(loading: true, option: none());
 
-    final result = await _facade.switchAccount(credentials);
+    final r = await _facade.switchAccount(credentials);
 
     state = state.copyWith(
       loading: false,
-      option: some(result),
+      option: some(r),
       status: AuthStatus.authenticated,
       user: credentials.user,
       token: credentials.token!,

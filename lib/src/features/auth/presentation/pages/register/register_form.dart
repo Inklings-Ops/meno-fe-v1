@@ -1,6 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -15,33 +15,62 @@ class RegisterForm extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final FocusScopeNode focusScope = useFocusScopeNode();
-    final FocusNode fullNameFocusNode = useFocusNode();
-    final FocusNode emailFocusNode = useFocusNode();
-    final FocusNode passwordFocusNode = useFocusNode();
 
-    final RegisterFormState state = ref.watch(registerFormProvider);
+    final bool hasOnboarded = useMemoized(
+      ref.watch(onboardingProvider).isOnboarded,
+      [ref],
+    );
+
+    final formState = ref.watch(registerFormNotifierProvider);
+    final formNotifier = ref.watch(registerFormNotifierProvider.notifier);
 
     return Form(
       child: Builder(
         builder: (formContext) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _FullName(focusNode: fullNameFocusNode),
+            MTextFormField(
+              label: "Full Name",
+              hint: "Jim Halpert",
+              prefixIcon: MIcons.user,
+              focusNode: focusScope,
+              enabled: !formState.loading,
+              onChanged: formNotifier.fullNameChanged,
+              validator: formNotifier.validateFullName,
+            ),
             24.verticalSpace,
-            _Email(focusNode: emailFocusNode),
+            MTextFormField(
+              label: "Email Address",
+              hint: "example@gmail.com",
+              prefixIcon: MIcons.mail,
+              focusNode: focusScope,
+              keyboardType: TextInputType.emailAddress,
+              enabled: !formState.loading,
+              onChanged: formNotifier.emailChanged,
+              validator: formNotifier.validateEmail,
+            ),
             24.verticalSpace,
-            _Password(focusNode: passwordFocusNode),
+            MTextFormField(
+              label: "Be Secure",
+              hint: "Enter your password",
+              prefixIcon: MIcons.key,
+              isPassword: true,
+              focusNode: focusScope,
+              enabled: !formState.loading,
+              onChanged: formNotifier.passwordChanged,
+              validator: formNotifier.validatePassword,
+            ),
             const PasswordRulesWidget(),
             MSize.verticalSpaceLarge,
             const RememberMeCheckboxTile(),
             MSize.verticalSpaceXXLarge,
             MPrimaryButton(
               label: "Create Your Account",
-              loading: state.loading,
+              loading: formState.loading,
               onPressed: () {
                 focusScope.unfocus();
                 if (Form.of(formContext).validate()) {
-                  ref.read(registerFormProvider.notifier).registerPressed();
+                  formNotifier.registerPressed();
                 }
               },
             ),
@@ -50,86 +79,25 @@ class RegisterForm extends HookConsumerWidget {
             24.verticalSpace,
             const MGoogleButton(),
             44.verticalSpace,
-            const _LoginButton(),
+            AuthRedirectionText(
+              title: "Already have an account?",
+              buttonText: "Log in",
+              onPressed: () {
+                if (hasOnboarded) {
+                  context.push(Routes.login);
+                } else {
+                  context.replaceNamed(
+                    Routes.login,
+                    queryParameters: {
+                      "implyLeading": context.canPop().toString(),
+                    },
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
     );
   }
-}
-
-class _Email extends ConsumerWidget {
-  final FocusNode focusNode;
-  const _Email({Key? key, required this.focusNode}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) => MTextFormField(
-        label: "Email Address",
-        hint: "example@gmail.com",
-        prefixIcon: MIcons.mail,
-        focusNode: focusNode,
-        keyboardType: TextInputType.emailAddress,
-        enabled: !ref.watch(registerFormProvider).loading,
-        onChanged: ref.watch(registerFormProvider.notifier).emailChanged,
-        validator: ref.watch(registerFormProvider.notifier).validateEmail,
-      );
-}
-
-class _FullName extends ConsumerWidget {
-  final FocusNode focusNode;
-  const _FullName({Key? key, required this.focusNode}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) => MTextFormField(
-        label: "Full Name",
-        hint: "Jim Halpert",
-        prefixIcon: MIcons.user,
-        focusNode: focusNode,
-        enabled: !ref.watch(registerFormProvider).loading,
-        onChanged: ref.watch(registerFormProvider.notifier).fullNameChanged,
-        validator: ref.watch(registerFormProvider.notifier).validateFullName,
-      );
-}
-
-class _LoginButton extends HookConsumerWidget {
-  const _LoginButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool hasOnboarded = useMemoized(
-      ref.watch(onboardingProvider).isOnboarded,
-      [ref],
-    );
-
-    return AuthRedirectionText(
-      title: "Already have an account?",
-      buttonText: "Log in",
-      onPressed: () {
-        if (hasOnboarded) {
-          context.navigateTo(LoginRoute());
-        } else {
-          context.replaceRoute(
-            LoginRoute(implyLeading: context.router.canNavigateBack),
-          );
-        }
-      },
-    );
-  }
-}
-
-class _Password extends ConsumerWidget {
-  final FocusNode focusNode;
-  const _Password({Key? key, required this.focusNode}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) => MTextFormField(
-        label: "Be Secure",
-        hint: "Enter your password",
-        prefixIcon: MIcons.key,
-        isPassword: true,
-        focusNode: focusNode,
-        enabled: !ref.watch(registerFormProvider).loading,
-        onChanged: ref.watch(registerFormProvider.notifier).passwordChanged,
-        validator: ref.watch(registerFormProvider.notifier).validatePassword,
-      );
 }

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../router/router.dart';
@@ -11,10 +11,8 @@ import '../widgets/meno_logo.dart';
 import '../widgets/onboarding_body.dart';
 import '../widgets/onboarding_indicator.dart';
 
-@RoutePage()
 class OnboardingPage extends HookWidget {
   final ValueChanged<bool>? onBoarded;
-
   const OnboardingPage({super.key, this.onBoarded});
 
   @override
@@ -68,7 +66,7 @@ class OnboardingPage extends HookWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: MPrimaryButton(
                 label: "Get started",
-                onPressed: () => context.navigateTo(const RegisterRoute()),
+                onPressed: () => context.push(Routes.register),
               ),
             ),
             MSize.verticalSpaceLarge,
@@ -76,10 +74,10 @@ class OnboardingPage extends HookWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: MSecondaryButton(
                 label: "Login",
-                onPressed: () {
-                  onBoarded?.call(true);
-                  context.navigateTo(LoginRoute(implyLeading: true));
-                },
+                onPressed: () => context.pushNamed(
+                  Routes.login,
+                  queryParameters: {"implyLeading": "true"},
+                ),
               ),
             ),
           ],

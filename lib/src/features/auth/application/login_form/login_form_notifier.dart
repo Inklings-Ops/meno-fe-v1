@@ -1,25 +1,19 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../dependency_injector/injector.dart';
+import '../../../onboarding/onboarding.dart';
 import '../../domain/domain.dart';
+import '../auth/auth_notifier.dart';
 
+part 'login_form_notifier.freezed.dart';
+part 'login_form_notifier.g.dart';
 part 'login_form_state.dart';
-part 'login_notifier.freezed.dart';
 
-/// A state notifier provider for the login form.
-final loginFormProvider =
-    StateNotifierProvider.autoDispose<LoginFormNotifier, LoginFormState>(
-  (ref) => LoginFormNotifier(di<IAuthFacade>()),
-);
-
-class LoginFormNotifier extends StateNotifier<LoginFormState> {
-  /// The auth facade dependency.
-  final IAuthFacade _authFacade;
-
-  /// Creates a new `LoginFormNotifier` object.
-  LoginFormNotifier(this._authFacade) : super(LoginFormState.initial());
+@riverpod
+class LoginFormNotifier extends _$LoginFormNotifier {
+  @override
+  LoginFormState build() => LoginFormState.initial();
 
   /// Updates the user's email address.
   ///
@@ -48,9 +42,19 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
       state = state.copyWith(loading: true, option: none());
 
       /// Calls the `login()` method on the `_authFacade` object to attempt to log the user in.
-      final Either<AuthException, Unit> result = await _authFacade.login(
-        email: state.email,
-        password: state.password,
+      final result = await ref.read(authFacadeProvider).login(
+            email: state.email,
+            password: state.password,
+          );
+
+      result.fold(
+        (l) => null,
+        (r) async {
+          if (ref.read(onboardingProvider).isOnboarded() == false) {
+            await ref.read(onboardingProvider).onboardingCompleted();
+          }
+          await ref.read(authProvider.notifier).checkAuthenticated();
+        },
       );
 
       /// Updates the state with the result of the login attempt.
@@ -105,11 +109,5 @@ class LoginFormNotifier extends StateNotifier<LoginFormState> {
       ),
       (_) => null,
     );
-  }
-
-  @override
-  void dispose() {
-    state = LoginFormState.initial();
-    super.dispose();
   }
 }

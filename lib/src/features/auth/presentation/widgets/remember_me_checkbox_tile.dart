@@ -9,15 +9,20 @@ class RememberMeCheckboxTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final rememberMe = ref.watch(registerFormNotifierProvider.select(
+      (value) => value.rememberMe,
+    ));
+
+    final notifier = ref.watch(registerFormNotifierProvider.notifier);
+
     return Row(
       children: [
         SizedBox(
           height: 20,
           width: 20,
           child: Checkbox(
-            value: ref.watch(registerFormProvider).rememberMe,
-            onChanged:
-                ref.watch(registerFormProvider.notifier).onRememberMeChanged,
+            value: rememberMe,
+            onChanged: notifier.onRememberMeChanged,
           ),
         ),
         10.horizontalSpace,

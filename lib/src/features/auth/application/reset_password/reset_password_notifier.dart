@@ -1,15 +1,18 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/domain.dart';
+import '../auth/auth_notifier.dart';
 
 part 'reset_password_notifier.freezed.dart';
+part 'reset_password_notifier.g.dart';
 part 'reset_password_state.dart';
 
-class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
-  final IAuthFacade _authFacade;
-  ResetPasswordNotifier(this._authFacade) : super(ResetPasswordState.initial());
+@riverpod
+class ResetPasswordNotifier extends _$ResetPasswordNotifier {
+  @override
+  ResetPasswordState build() => ResetPasswordState.initial();
 
   /// Updates the user's email address.
   ///
@@ -48,8 +51,8 @@ class ResetPasswordNotifier extends StateNotifier<ResetPasswordState> {
     if (isEmailValid) {
       state = state.copyWith(loading: true, option: none());
 
-      final Either<AuthException, Unit> result =
-          await _authFacade.forgotPassword(state.email);
+      final result =
+          await ref.read(authFacadeProvider).forgotPassword(state.email);
 
       state = state.copyWith(loading: false, option: some(result));
     }

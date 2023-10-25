@@ -1,10 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
 
-@RoutePage()
 class ResetPasswordSuccessPage extends StatelessWidget {
   const ResetPasswordSuccessPage({super.key});
 
@@ -34,7 +33,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
             48.verticalSpace,
             MPrimaryButton(
               label: "Go Back to Log In",
-              onPressed: () => context.router.replaceAll([LoginRoute()]),
+              onPressed: () => context.go(Routes.login),
             ),
           ],
         ),

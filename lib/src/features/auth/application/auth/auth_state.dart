@@ -47,4 +47,6 @@ class AuthState with _$AuthState {
       status: AuthStatus.unauthenticated,
     );
   }
+
+ 
 }

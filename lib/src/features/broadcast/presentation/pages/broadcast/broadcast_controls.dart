@@ -1,6 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/presentation/pages/broadcast/broadcaster_info_modal.dart';
@@ -95,13 +95,13 @@ class StartStopButton extends ConsumerWidget {
       backgroundColor = colorScheme.error;
     }
 
-    void stop() async {
-      final router = context.router;
-      final confirmed = await context.showEndBroadcastAlert();
-      if (confirmed == true) {
-        ref.read(broadcastNotifierProvider.notifier).endPressed();
-        router.replaceAll([const MLayoutRoute()]);
-      }
+    Future<void> stop() {
+      return context.showEndBroadcastAlert().then((value) {
+        if (value == true) {
+          ref.read(broadcastNotifierProvider.notifier).endPressed();
+          context.go(Routes.layout);
+        }
+      });
     }
 
     void start() => ref.read(broadcastNotifierProvider.notifier).startPressed();

@@ -1,8 +1,6 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-@RoutePage()
 class DiscoverPage extends StatelessWidget {
   const DiscoverPage({super.key});
 
@@ -14,7 +12,6 @@ class DiscoverPage extends StatelessWidget {
   }
 }
 
-@RoutePage()
 class NotesPage extends StatelessWidget {
   const NotesPage({super.key});
 
@@ -26,7 +23,6 @@ class NotesPage extends StatelessWidget {
   }
 }
 
-@RoutePage()
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 

@@ -1,5 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -9,7 +9,6 @@ import '../../widgets/widgets.dart';
 
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-@RoutePage()
 class CreateNewPasswordPage extends ConsumerWidget {
   const CreateNewPasswordPage({super.key});
 
@@ -49,9 +48,7 @@ class CreateNewPasswordPage extends ConsumerWidget {
               MSize.verticalSpaceXXLarge,
               MPrimaryButton(
                 label: "Reset Password",
-                onPressed: () {
-                  context.navigateTo(const ResetPasswordSuccessRoute());
-                },
+                onPressed: () => context.push(Routes.resetPasswordSuccess),
               ),
             ],
           ),

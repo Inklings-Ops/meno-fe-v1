@@ -1,5 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -8,7 +8,6 @@ import '../../../auth/application/application.dart';
 import '../../application/broadcast/broadcast_notifier.dart';
 import '../../domain/domain.dart';
 
-@RoutePage()
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
@@ -27,10 +26,6 @@ class HomePage extends ConsumerWidget {
               icon: const Icon(MIcons.log_out),
               loading: ref.watch(authProvider).loading,
               onPressed: () {
-                context.router.pushAndPopUntil(
-                  LoginRoute(isPasswordOnly: true),
-                  predicate: (route) => false,
-                );
                 ref.read(authProvider.notifier).partialLogout();
               },
             ),
@@ -55,7 +50,7 @@ class LiveActivityCard extends ConsumerWidget {
       Status.offAir => const SizedBox.shrink(),
       Status.reconnecting => const SizedBox(),
       Status.live => InkWell(
-          onTap: () => context.router.navigate(const BroadcastRoute()),
+          onTap: () => context.push(Routes.broadcast),
           child: Card(
             margin: const EdgeInsets.symmetric(vertical: 16),
             child: Padding(

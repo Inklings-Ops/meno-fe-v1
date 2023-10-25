@@ -6,7 +6,7 @@ part of 'broadcast_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$broadcastStatusHash() => r'd64b7aad2ba8233677741a561c9145ccf6471165';
+String _$broadcastStatusHash() => r'8964c634436b82a3633d4ece3bc8c14d20e26292';
 
 /// See also [broadcastStatus].
 @ProviderFor(broadcastStatus)
@@ -21,7 +21,7 @@ final broadcastStatusProvider = AutoDisposeProvider<Status>.internal(
 );
 
 typedef BroadcastStatusRef = AutoDisposeProviderRef<Status>;
-String _$broadcastNotifierHash() => r'9f2f54eae4fcb983e51d83b7e1791573f341a790';
+String _$broadcastNotifierHash() => r'9ca2561b38a183d9e2f5101d43d11a9a8db9b84a';
 
 /// See also [BroadcastNotifier].
 @ProviderFor(BroadcastNotifier)

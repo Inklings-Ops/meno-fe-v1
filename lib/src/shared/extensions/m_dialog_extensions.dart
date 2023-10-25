@@ -1,5 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 extension MDialogX on BuildContext {
@@ -20,7 +20,7 @@ extension MDialogX on BuildContext {
         actions: [
           MTextButton(
             label: "Cancel",
-            onPressed: () => context.popRoute(false),
+            onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
               fixedSize: const Size.fromHeight(40),
@@ -31,7 +31,7 @@ extension MDialogX on BuildContext {
           ),
           MDangerButton(
             label: "End Broadcast",
-            onPressed: () => context.popRoute(true),
+            onPressed: () => context.pop(true),
             style: TextButton.styleFrom(
               backgroundColor: colorScheme.error,
               foregroundColor: colorScheme.onError,

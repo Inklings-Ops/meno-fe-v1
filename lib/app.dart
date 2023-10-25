@@ -1,15 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:figma_layout_grid/figma_layout_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/services/socket_service/socket_service.dart';
+import 'package:meno_fe_v1/src/features/auth/application/application.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-
-import 'src/features/auth/application/application.dart';
-import 'src/features/onboarding/onboarding.dart';
-import 'src/router/router.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
   const MenoApp({super.key});
@@ -19,33 +15,18 @@ class MenoApp extends ConsumerStatefulWidget {
 }
 
 class _MenoAppState extends ConsumerState<MenoApp> {
-  final _mRouter = MRouter();
-
   @override
   Widget build(BuildContext context) {
-    final authStatus = ref.watch(authProvider).status;
+    ref.watch(authProvider);
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       theme: MTheme.light,
       darkTheme: MTheme.dark,
       debugShowCheckedModeBanner: false,
-      routerConfig: _mRouter.config(
-        deepLinkBuilder: (deepLink) async {
-          if (!ref.read(onboardingProvider).isOnboarded()) {
-            return DeepLink([OnboardingRoute()]);
-          } else {
-            switch (authStatus) {
-              case AuthStatus.partiallyAuthenticated:
-                return DeepLink([LoginRoute(isPasswordOnly: true)]);
-              case AuthStatus.authenticated:
-                ref.watch(socketServiceProvider.notifier);
-                return DeepLink.defaultPath;
-              default:
-                return DeepLink([LoginRoute()]);
-            }
-          }
-        },
-      ),
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      routeInformationProvider: router.routeInformationProvider,
       builder: (context, child) {
         final isLight = Theme.of(context).brightness == Brightness.light;
         final color = isLight ? MColor.white : MColor.primary700;

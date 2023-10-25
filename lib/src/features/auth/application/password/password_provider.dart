@@ -1,13 +1,15 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/domain.dart';
 import '../../infrastructure/infrastructure.dart';
 
-final passwordRuleProvider = Provider.autoDispose((ref) {
-  return PasswordRule(rules: passwordStrengthRules, color: MColor.black);
-});
+part 'password_provider.g.dart';
 
-final passwordProvider = Provider.family<IPassword, String>((ref, password) {
-  return IPassword(password);
-});
+@riverpod
+PasswordRule passwordRule(PasswordRuleRef ref) {
+  return PasswordRule(rules: passwordStrengthRules, color: MColor.black);
+}
+
+@riverpod
+IPassword password(PasswordRef ref, String input) => IPassword(input);

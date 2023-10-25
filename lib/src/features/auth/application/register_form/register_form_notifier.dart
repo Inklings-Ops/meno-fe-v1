@@ -1,31 +1,19 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../dependency_injector/injector.dart';
+import '../../../onboarding/onboarding.dart';
 import '../../domain/domain.dart';
+import '../auth/auth_notifier.dart';
 
 part 'register_form_notifier.freezed.dart';
+part 'register_form_notifier.g.dart';
 part 'register_form_state.dart';
 
-/// A state notifier provider for the registration form.
-final registerFormProvider =
-    StateNotifierProvider.autoDispose<RegisterFormNotifier, RegisterFormState>(
-  (ref) => RegisterFormNotifier(di<IAuthFacade>()),
-);
-
-class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
-  /// The auth facade dependency.
-  final IAuthFacade _authFacade;
-
-  /// Creates a new `RegisterFormNotifier` object.
-  RegisterFormNotifier(this._authFacade) : super(RegisterFormState.initial());
-
+@riverpod
+class RegisterFormNotifier extends _$RegisterFormNotifier {
   @override
-  void dispose() {
-    state = RegisterFormState.initial();
-    super.dispose();
-  }
+  RegisterFormState build() => RegisterFormState.initial();
 
   /// Updates the user's email address.
   ///
@@ -89,10 +77,18 @@ class RegisterFormNotifier extends StateNotifier<RegisterFormState> {
 
       /// Calls the `register()` method on the `_authFacade` object to attempt
       /// to register the new user.
-      final Either<AuthException, Unit> result = await _authFacade.register(
-        fullName: state.fullName,
-        email: state.email,
-        password: state.password,
+      final result = await ref.read(authFacadeProvider).register(
+            fullName: state.fullName,
+            email: state.email,
+            password: state.password,
+          );
+
+      result.fold(
+        (l) => null,
+        (r) async {
+          await ref.read(onboardingProvider).onboardingCompleted();
+          await ref.read(authProvider.notifier).checkAuthenticated();
+        },
       );
 
       /// Updates the state with the result of the registration attempt.
