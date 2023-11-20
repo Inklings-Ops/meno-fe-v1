@@ -1,0 +1,1 @@
+enum BroadcastStatus { active, inactive }

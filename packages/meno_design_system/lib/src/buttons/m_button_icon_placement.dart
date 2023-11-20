@@ -1,0 +1,1 @@
+enum MButtonIconPlacement { left, right }
