@@ -115,7 +115,7 @@ class RegisterFormNotifier extends _$RegisterFormNotifier {
       result.fold(
         (l) => null,
         (r) async {
-          await ref.read(onboardingProvider).onboardingCompleted();
+          await ref.read(onboardingProvider).completeOnboarding;
           await ref.read(authProvider.notifier).checkAuthenticated();
         },
       );

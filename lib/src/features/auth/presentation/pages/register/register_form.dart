@@ -7,6 +7,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/auth/application/application.dart';
 
 import '../../../../../router/router.dart';
+import '../../../../onboarding/onboarding.dart';
 import '../../../domain/domain.dart';
 import '../../hooks/input_hooks.dart';
 import '../../widgets/widgets.dart';
@@ -25,7 +26,7 @@ class RegisterForm extends HookConsumerWidget {
     IPassword password = usePassword();
     final passwordFocusNode = useFocusNode();
 
-    final isOnboarded = ref.watch(authProvider.select((v) => v.isOnboarded));
+    final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
 
     final register = useState<Future<dynamic>?>(null);
 

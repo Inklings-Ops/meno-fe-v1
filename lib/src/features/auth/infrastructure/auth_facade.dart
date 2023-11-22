@@ -112,7 +112,7 @@ class AuthFacade implements IAuthFacade {
   bool isTokenExpired(String token) => _jwt.isExpired(token);
 
   @override
-  Future<Either<AuthException, UserCredentials>> login({
+  Future<Either<AuthException, Unit>> login({
     required IEmail email,
     required IPassword password,
   }) async {
@@ -135,7 +135,7 @@ class AuthFacade implements IAuthFacade {
       await _local.storeCurrentToken(userCredentialsDto.token!);
       await _local.storeCurrentUser(userCredentialsDto.user);
 
-      return right(_authMapper.userCredentialsToDomain(userCredentialsDto)!);
+      return right(unit);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
         case 400:

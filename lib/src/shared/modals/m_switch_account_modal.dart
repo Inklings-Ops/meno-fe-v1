@@ -49,9 +49,9 @@ class _AccountListTile extends ConsumerWidget {
   final UserCredentials credentials;
 
   const _AccountListTile({
-    Key? key,
+    super.key,
     required this.credentials,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,7 +85,7 @@ class _AccountListTile extends ConsumerWidget {
 }
 
 class _AddAccountTile extends ConsumerWidget {
-  const _AddAccountTile({Key? key}) : super(key: key);
+  const _AddAccountTile({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -142,7 +142,7 @@ class _SwitchAccountModal1 extends ConsumerWidget {
             label: "Create New Account",
             onPressed: () {
               context.pop();
-              context.go(Routes.register);
+              context.go(Routes.registerWithoutLeading);
             },
           ),
         ],
@@ -152,7 +152,7 @@ class _SwitchAccountModal1 extends ConsumerWidget {
 }
 
 class _SwitchAccountModal2 extends ConsumerWidget {
-  const _SwitchAccountModal2({Key? key}) : super(key: key);
+  const _SwitchAccountModal2({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

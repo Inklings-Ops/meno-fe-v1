@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/auth/application/application.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../dependency_injector/injector.dart';
 import '../../../services/secure_storage_service.dart';
@@ -49,10 +50,11 @@ class ProfilePage extends ConsumerWidget {
             MDangerButton.icon(
               label: "Clear Cache",
               icon: const Icon(MIcons.log_out),
-              onPressed: () async {
-                await di<SecureStorageService>().deleteAll();
-                await ref.read(authProvider.notifier).checkAuthenticated();
-              },
+              onPressed: () async => Future.wait([
+                di<SecureStorageService>().deleteAll(),
+                di<SharedPreferences>().clear(),
+                ref.read(authProvider.notifier).checkAuthenticated(),
+              ]),
             ),
           ],
         ),

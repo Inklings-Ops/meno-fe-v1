@@ -4,8 +4,7 @@
 // InjectableConfigGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_lambdas
-// ignore_for_file: lines_longer_than_80_chars
+// ignore_for_file: type=lint
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
@@ -110,16 +109,12 @@ extension GetItInjectableX on _i1.GetIt {
           network: gh<_i13.NetworkService>(),
         ));
     gh.factory<_i24.OnboardingLocalDatasource>(() =>
-        _i24.OnboardingLocalDatasource(
-            storage: gh<_i17.SecureStorageService>()));
+        _i24.OnboardingLocalDatasource(storage: gh<_i18.SharedPreferences>()));
     gh.factory<_i25.ProfileLocalDatasource>(() =>
         _i25.ProfileLocalDatasource(storage: gh<_i17.SecureStorageService>()));
     await gh.factoryAsync<_i26.AuthNotifier>(
       () {
-        final i = _i26.AuthNotifier(
-          gh<_i20.IAuthFacade>(),
-          gh<_i24.OnboardingLocalDatasource>(),
-        );
+        final i = _i26.AuthNotifier(gh<_i20.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,

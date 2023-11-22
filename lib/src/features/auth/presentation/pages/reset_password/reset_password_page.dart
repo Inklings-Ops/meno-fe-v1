@@ -36,7 +36,7 @@ class ResetPasswordPage extends StatelessWidget {
               MCore.xxLarge.verticalSpace,
               MPrimaryButton(
                 label: "Send Instructions",
-                onPressed: () => context.push(Routes.resetPasswordOtp),
+                onPressed: () => context.push(Routes.resetPwdOtp),
               ),
             ],
           ),

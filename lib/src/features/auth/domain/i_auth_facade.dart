@@ -47,7 +47,7 @@ abstract class IAuthFacade {
   /// Logs the user in with their email address and password.
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
-  Future<Either<AuthException, UserCredentials>> login({
+  Future<Either<AuthException, Unit>> login({
     required IEmail email,
     required IPassword password,
   });

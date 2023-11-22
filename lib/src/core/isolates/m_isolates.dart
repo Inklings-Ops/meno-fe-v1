@@ -1,7 +1,6 @@
 import 'dart:isolate';
 
 import 'package:flutter/services.dart';
-import 'package:meno_fe_v1/src/features/onboarding/infrastructure/onboarding_local_datasource.dart';
 
 import '../../features/auth/domain/domain.dart';
 import '../../features/auth/infrastructure/datasources/auth_local_datasource.dart';
@@ -13,7 +12,6 @@ class MIsolates {
 
   static final _storage = SecureStorageService();
   static final _auth = AuthLocalDatasource(storage: _storage);
-  static final _onBoarding = OnboardingLocalDatasource(storage: _storage);
 
   MIsolates._();
 
@@ -45,8 +43,6 @@ class MIsolates {
     return userToken;
   }
 
-  static Future<bool> _getIsOnboarded() => _onBoarding.isOnboarded();
-
   static Future<List<dynamic>> _authIsolate(RootIsolateToken token) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
 
@@ -54,7 +50,6 @@ class MIsolates {
       _getCurrentUser(),
       _getCurrentUserToken(),
       _getAllUserCredentials(),
-      _getIsOnboarded(),
     ]);
 
     return result;

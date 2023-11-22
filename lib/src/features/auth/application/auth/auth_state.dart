@@ -14,22 +14,22 @@ class AuthState with _$AuthState {
   /// hold authentication-related exceptions or success values.
   factory AuthState({
     /// The authentication status.
-    AuthStatus? status,
+    required AuthStatus status,
 
     /// The user information.
-    User? user,
+    required User user,
 
     /// The authentication token.
-    UserToken? token,
+     UserToken? token,
 
     /// User credentials.
-    Map<String, UserCredentials>? credentials,
+    required Map<String, UserCredentials> credentials,
 
     /// Loading state indicator.
-    bool? loading,
+    required bool loading,
 
     /// Exception or success option
-    Option<Either<AuthException, Unit>>? option,
+    required Option<Either<AuthException, Unit>> option,
   }) = _AuthState;
 
   /// Creates an initial [AuthState].

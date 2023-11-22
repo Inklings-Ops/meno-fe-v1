@@ -2,9 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../onboarding/onboarding.dart';
 import '../../domain/domain.dart';
-import '../auth/auth_notifier.dart';
 
 part 'login_form_notifier.freezed.dart';
 part 'login_form_notifier.g.dart';

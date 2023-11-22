@@ -47,7 +47,7 @@ class CreateNewPasswordPage extends ConsumerWidget {
                 MCore.xxLarge.verticalSpace,
                 MPrimaryButton(
                   label: "Reset Password",
-                  onPressed: () => context.push(Routes.resetPasswordSuccess),
+                  onPressed: () => context.push(Routes.resetPwdSuccess),
                 ),
               ],
             ),

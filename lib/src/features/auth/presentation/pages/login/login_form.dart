@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_provider.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
@@ -18,13 +19,13 @@ class LoginForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOnboarded = ref.watch(authProvider.select((v) => v.isOnboarded));
+    final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
 
     final user = ref.watch(authProvider.select((v) => v.user));
 
     final isLoading = ref.watch(authProvider.select((v) => v.loading));
 
-    final email = useState<IEmail>(isPasswordOnly ? user!.email : IEmail(""));
+    final email = useState<IEmail>(isPasswordOnly ? user.email : IEmail(""));
     final emailFocusNode = useFocusNode();
 
     final password = useState<IPassword>(IPassword("", isLogin: true));
@@ -95,8 +96,8 @@ class LoginForm extends HookConsumerWidget {
                 if (Form.of(formContext).validate()) {
                   FocusScope.of(context).unfocus();
                   ref.read(authProvider.notifier).login(
-                        email: email.value,
-                        password: password.value,
+                        email.value,
+                        password.value,
                       );
                 }
               },
@@ -111,9 +112,9 @@ class LoginForm extends HookConsumerWidget {
               buttonText: "Create an account",
               onPressed: () {
                 if (isOnboarded) {
-                  context.push("/register?implyLeading=true");
+                  context.push(Routes.registerWithLeading);
                 } else {
-                  context.replace("/register?implyLeading=true");
+                  context.replace(Routes.registerWithLeading);
                 }
               },
             ),

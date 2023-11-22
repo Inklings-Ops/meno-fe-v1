@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/auth/application/auth/auth_notifier.dart';
@@ -37,14 +36,23 @@ final _profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
 
 @Riverpod(keepAlive: true, dependencies: [SocketService])
 GoRouter router(RouterRef ref) {
-  final AuthStatus status = ref.watch(authProvider).status;
-  final isOnboarded = ref.watch(authProvider).isOnboarded;
+  final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
+
+  final status = ref.watch(authProvider).status;
+  final isUnAuth = status == AuthStatus.unauthenticated;
+  final isPartiallyAuth = status == AuthStatus.partiallyAuthenticated;
+
+  ref.listen(onboardingProvider, (previous, next) {
+    if (previous?.isOnboarded != next.isOnboarded) {
+      ref.invalidateSelf();
+    }
+  });
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: !isOnboarded ? Routes.onboarding : Routes.home,
+    initialLocation: isOnboarded ? Routes.home : Routes.onboarding,
     debugLogDiagnostics: true,
-    refreshListenable: ref.watch(authProvider),
+    refreshListenable: ref.watch(authProvider.notifier).listener,
     routes: <RouteBase>[
       GoRoute(
         path: Routes.onboarding,
@@ -82,7 +90,9 @@ GoRouter router(RouterRef ref) {
         builder: (context, state) {
           final implyLeading = state.uri.queryParameters["implyLeading"];
 
-          return RegisterPage(implyLeading: implyLeading == "true");
+          return RegisterPage(
+            implyLeading: implyLeading == "true" ? true : false,
+          );
         },
       ),
       GoRoute(
@@ -91,13 +101,13 @@ GoRouter router(RouterRef ref) {
         builder: (context, state) => const ResetPasswordPage(),
       ),
       GoRoute(
-        path: Routes.resetPasswordOtp,
-        name: Routes.resetPasswordOtp,
+        path: Routes.resetPwdOtp,
+        name: Routes.resetPwdOtp,
         builder: (context, state) => const ResetPasswordOtpVerificationPage(),
       ),
       GoRoute(
-        path: Routes.resetPasswordSuccess,
-        name: Routes.resetPasswordSuccess,
+        path: Routes.resetPwdSuccess,
+        name: Routes.resetPwdSuccess,
         builder: (context, state) => const ResetPasswordSuccessPage(),
       ),
       GoRoute(
@@ -197,52 +207,27 @@ GoRouter router(RouterRef ref) {
       ),
     ],
     redirect: (context, state) {
-      final isOnboarding = state.matchedLocation == Routes.onboarding;
       final isRegister = state.matchedLocation == Routes.register;
       final isResetPassword = state.matchedLocation == Routes.resetPassword;
-      final isPartialLogin = state.matchedLocation == Routes.partialLogin;
+      final isRPasswordOtp = state.matchedLocation == Routes.resetPwdOtp;
+      final isResetSuccess = state.matchedLocation == Routes.resetPwdSuccess;
+      final isVerification = state.matchedLocation == Routes.emailVerification;
       final isLogin = state.matchedLocation == Routes.login;
-      final isHome = state.matchedLocation == Routes.home;
 
-      String? route;
+      if (isRegister) return Routes.registerWithLeading;
+      if (isResetPassword) return Routes.resetPassword;
+      if (isRPasswordOtp) return Routes.resetPwdOtp;
+      if (isResetSuccess) return Routes.resetPwdSuccess;
+      if (isVerification) return Routes.emailVerification;
 
-      // Check if the user is new and hasn't seen the onboarding
       if (!isOnboarded) {
-        route = Routes.onboarding;
+        if (isLogin) return Routes.loginWithLeading;
+        return null;
+      } else {
+        if (isPartiallyAuth) return Routes.partialLogin;
+        if (isUnAuth) return Routes.login;
+        return null;
       }
-
-      // Handle other redirect scenarios
-      if (isRegister) {
-        route = Routes.registerWithLeading;
-      }
-
-      if (isResetPassword) {
-        route = Routes.resetPassword;
-      }
-
-      if (!isOnboarded && isLogin) {
-        route = Routes.loginWithLeading;
-      }
-
-      switch (status) {
-        case AuthStatus.unauthenticated:
-          Logger().w("unauthenticated");
-          route = Routes.login;
-          break;
-        case AuthStatus.partiallyAuthenticated:
-          Logger().w("partiallyAuthenticated");
-          route = Routes.partialLogin;
-          break;
-        case AuthStatus.authenticated:
-          Logger().w("authenticated");
-          route = Routes.home;
-          break;
-        default:
-          Logger().w("default");
-          route = null;
-      }
-
-      return route;
     },
   );
 }
@@ -256,12 +241,13 @@ class Routes {
   static const String partialLogin = "/login?isPasswordOnly=true";
   static const String returnLogin = "/returnLogin";
   static const String register = "/register";
+  static const String registerWithoutLeading = "/register?implyLeading=false";
   static const String registerWithLeading = "/register?implyLeading=true";
   static const String emailVerification = "/emailVerification";
   static const String loading = "/loading";
   static const String resetPassword = "/resetPassword";
-  static const String resetPasswordOtp = "/resetPasswordOtp";
-  static const String resetPasswordSuccess = "/resetPasswordSuccess";
+  static const String resetPwdOtp = "/resetPasswordOtp";
+  static const String resetPwdSuccess = "/resetPasswordSuccess";
   static const String createNewPassword = "/createNewPassword";
   static const String broadcast = "/broadcast";
   static const String createBroadcast = "/createBroadcast";
