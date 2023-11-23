@@ -49,6 +49,7 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   flutter_screenutil: ^5.9.0
   flutter_native_splash: ^2.3.5
+  firebase_core: ^2.23.0
 
 dev_dependencies:
   flutter_test:
