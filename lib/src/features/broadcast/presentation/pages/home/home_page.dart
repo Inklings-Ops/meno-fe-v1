@@ -4,7 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../services/socket/socket_service.dart';
+import '../../../application/broadcast/broadcast_notifier.dart';
 import '../../../application/broadcast_list/broadcast_list_provider.dart';
+import '../../../domain/domain.dart';
 import 'home_app_bar.dart';
 import 'live_activity_card.dart';
 import 'live_for_you.dart';
@@ -23,6 +25,9 @@ class HomePage extends ConsumerWidget {
       ]);
     }
 
+    final status = ref.watch(broadcastNotifierProvider.select((v) => v.status));
+
+
     return MScaffold(
       appBar: const HomeAppBar(),
       padding: EdgeInsets.zero,
@@ -32,8 +37,12 @@ class HomePage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // SizedBox(height: 24),
-              const LiveActivityCard(),
+              if (status == Status.streaming) ...[
+                24.verticalSpace,
+                const LiveActivityCard(),
+                MCore.xxLarge.verticalSpace,
+              ] else
+                24.verticalSpace,
               const LiveForYou(),
               const NowLive(),
               const RecentlyLive(),

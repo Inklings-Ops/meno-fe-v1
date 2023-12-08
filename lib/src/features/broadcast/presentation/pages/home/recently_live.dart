@@ -43,14 +43,14 @@ class _BuildColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        20.verticalSpace,
+        MCore.xxxLarge.verticalSpace,
         MHeader(
           title: "Recently Live",
           actionTitle: "See all",
           action: () => context.push(Routes.recentlyLive),
         ),
         24.verticalSpace,
-        LimitedBox(maxHeight: 206, child: child),
+        LimitedBox(maxHeight: 176, child: child),
       ],
     );
   }

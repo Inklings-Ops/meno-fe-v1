@@ -10,8 +10,8 @@ import 'src/dependency_injector/injector.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await configureDependencies();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await configureDependencies();
   // await di<SharedPreferences>().clear();
   // await di<SecureStorageService>().deleteAll();
   runApp(const ProviderScope(child: MenoApp()));

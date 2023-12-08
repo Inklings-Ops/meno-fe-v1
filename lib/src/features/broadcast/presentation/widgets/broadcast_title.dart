@@ -5,7 +5,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastTitle extends ConsumerWidget {
   final String title;
-  const BroadcastTitle({Key? key, required this.title}) : super(key: key);
+  const BroadcastTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

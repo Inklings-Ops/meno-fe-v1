@@ -23,7 +23,7 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
         side: BorderSide(width: 1, color: colorScheme.outlineVariant1!),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      snackBarTheme:  SnackBarThemeData(
+      snackBarTheme:  const SnackBarThemeData(
         contentTextStyle: MTextStyle.captionRegular,
         insetPadding: EdgeInsets.all(16),
         behavior: SnackBarBehavior.fixed,

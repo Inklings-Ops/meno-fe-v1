@@ -78,6 +78,7 @@ class SocketService extends _$SocketService {
     );
 
     socketGlobalListeners();
+    getLiveBroadcasts();
   }
 
   dynamic socketGlobalListeners() {

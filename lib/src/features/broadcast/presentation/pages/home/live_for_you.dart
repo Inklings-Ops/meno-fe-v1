@@ -12,7 +12,6 @@ class LiveForYou extends StatelessWidget {
     return Column(
       children: [
         const MHeader(title: "Live For You ✨"),
-        MCore.large.verticalSpace,
         Container(
           height: 112.h,
           padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,

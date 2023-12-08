@@ -11,4 +11,5 @@ class MKeys {
   static const String currentUserTokenKey = "_current_user_token_";
   static const String userTokenKey = "_user_token_";
   static const String onboardingKey = "_onboarding_";
+  static const String fcmToken = "_fcm_Token";
 }

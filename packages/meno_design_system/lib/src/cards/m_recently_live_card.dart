@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_decorations.dart';
 
 import '../m_size.dart';
 
@@ -110,12 +110,15 @@ class _Container extends StatelessWidget {
 
     return Container(
       width: 176,
-      height: 206,
-      padding: const EdgeInsets.all(MCore.large),
-      decoration: BoxDecoration(
+      height: 176,
+      padding: const EdgeInsets.all(14.0),
+      decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        boxShadow: MDecorations.cardShadow,
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+            SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

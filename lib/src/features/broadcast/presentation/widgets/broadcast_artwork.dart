@@ -5,7 +5,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastArtwork extends ConsumerWidget {
   final String? imageUrl;
-  const BroadcastArtwork({Key? key, this.imageUrl}) : super(key: key);
+  const BroadcastArtwork({super.key, this.imageUrl});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

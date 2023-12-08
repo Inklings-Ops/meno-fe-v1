@@ -47,10 +47,9 @@ class _BuildListView extends StatelessWidget {
   final IndexedWidgetBuilder itemBuilder;
 
   const _BuildListView({
-    Key? key,
     required this.itemCount,
     required this.itemBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +66,7 @@ class _BuildListView extends StatelessWidget {
 
 class _LoadedList extends StatelessWidget {
   final List<Broadcast?> broadcasts;
-  const _LoadedList({Key? key, required this.broadcasts}) : super(key: key);
+  const _LoadedList({required this.broadcasts});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +87,7 @@ class _LoadedList extends StatelessWidget {
 }
 
 class _LoadingList extends StatelessWidget {
-  const _LoadingList({Key? key}) : super(key: key);
+  const _LoadingList();
 
   @override
   Widget build(BuildContext context) {

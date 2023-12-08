@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'm_text_style.dart';
 
 class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
   final MTextStyle? textStyle;

@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/broadcast/broadcast_notifier.dart';
 import '../../../application/stream/stream_notifier.dart';
 import '../../../domain/domain.dart';
 
@@ -19,9 +19,7 @@ class LiveActivityCard extends HookConsumerWidget {
       (value) => value.broadcast.broadcast,
     ));
 
-    final status = ref.watch(broadcastNotifierProvider.select((v) => v.status));
 
-    if (status == Status.streaming) {
       return ActivityCard(
         broadcast: streamBroadcast,
         onTap: () => context.go(Routes.broadcast),
@@ -33,10 +31,8 @@ class LiveActivityCard extends HookConsumerWidget {
             context.go(Routes.home);
           }
         }),
-      );
-    }
-
-    return const SizedBox();
+    );
+   
   }
 }
 
@@ -63,7 +59,12 @@ class ActivityCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Card(
-        margin: const EdgeInsets.all(16).r,
+        margin: const EdgeInsets.symmetric(horizontal: 16).r,
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+            SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(14).r,
           child: Row(

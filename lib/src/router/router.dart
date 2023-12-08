@@ -19,6 +19,7 @@ import '../features/broadcast/presentation/pages/home/home_page.dart';
 import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
 import '../features/broadcast/presentation/pages/stream/stream_page.dart';
 import '../features/chat/presentation/pages/chat_page.dart';
+import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/onboarding.dart';
 import '../layout/presentation/pages/m_layout.dart';
 import '../layout/presentation/pages/pages.dart';
@@ -27,7 +28,7 @@ import '../shared/pages/loading_page.dart';
 
 part 'router.g.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final _discoverNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'discover');
@@ -49,10 +50,10 @@ GoRouter router(RouterRef ref) {
   });
 
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
+    navigatorKey: rootNavigatorKey,
     initialLocation: isOnboarded ? Routes.home : Routes.onboarding,
     debugLogDiagnostics: true,
-    refreshListenable: ref.watch(authProvider.notifier).listener,
+    // refreshListenable: ref.watch(authProvider.notifier).listener,
     routes: <RouteBase>[
       GoRoute(
         path: Routes.onboarding,
@@ -62,13 +63,13 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: Routes.createBroadcast,
         name: Routes.createBroadcast,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const CreateBroadcastPage(),
       ),
       GoRoute(
         path: Routes.broadcast,
         name: Routes.broadcast,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const BroadcastPage(),
       ),
       GoRoute(
@@ -113,7 +114,7 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: Routes.createNewPassword,
         name: Routes.createNewPassword,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const CreateNewPasswordPage(),
       ),
       GoRoute(
@@ -124,40 +125,46 @@ GoRouter router(RouterRef ref) {
       GoRoute(
         path: Routes.loading,
         name: Routes.loading,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const LoadingPage(),
       ),
       GoRoute(
         path: Routes.stream,
         name: Routes.stream,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const StreamPage(),
       ),
       GoRoute(
         path: Routes.recentlyLive,
         name: Routes.recentlyLive,
         builder: (context, state) => const RecentlyLivePage(),
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
       ),
       GoRoute(
         path: Routes.details,
         name: Routes.details,
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
           final broadcast = (state.extra) as Broadcast;
           return DetailsPage(broadcast: broadcast);
         },
       ),
       GoRoute(
+        path: Routes.notifications,
+        name: Routes.notifications,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const NotificationsPage(),
+      ),
+      GoRoute(
         path: "/chat",
         name: "/chat",
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const ChatPage(),
       ),
       GoRoute(
         path: "/bible",
         name: "/bible",
-        parentNavigatorKey: _rootNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const BiblePage(),
       ),
       StatefulShellRoute.indexedStack(
@@ -258,4 +265,5 @@ class Routes {
   static const String profile = "/profile";
   static const String recentlyLive = "/recentlyLive";
   static const String details = "/details";
+  static const String notifications = "/notifications";
 }

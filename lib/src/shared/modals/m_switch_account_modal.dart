@@ -49,7 +49,6 @@ class _AccountListTile extends ConsumerWidget {
   final UserCredentials credentials;
 
   const _AccountListTile({
-    super.key,
     required this.credentials,
   });
 
@@ -85,7 +84,7 @@ class _AccountListTile extends ConsumerWidget {
 }
 
 class _AddAccountTile extends ConsumerWidget {
-  const _AddAccountTile({super.key});
+  const _AddAccountTile();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -152,7 +151,7 @@ class _SwitchAccountModal1 extends ConsumerWidget {
 }
 
 class _SwitchAccountModal2 extends ConsumerWidget {
-  const _SwitchAccountModal2({super.key});
+  const _SwitchAccountModal2();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

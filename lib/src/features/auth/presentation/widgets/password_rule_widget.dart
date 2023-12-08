@@ -52,10 +52,9 @@ class _RuleItem extends StatelessWidget {
 
   final String? value;
   const _RuleItem({
-    Key? key,
     required this.rule,
     required this.value,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,11 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     return MAppBar.home(
       title: user.fullName.get()!,
       actions: [
-        MIconButton(icon: const Icon(MIcons.bell), size: 18.r),
+        MIconButton(
+          icon: const Icon(MIcons.bell),
+          size: 18.r,
+          onPressed: () => context.push(Routes.notifications),
+        ),
         24.horizontalSpace,
         InkWell(
           onTap: () => context.go(Routes.profile),

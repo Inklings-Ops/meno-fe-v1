@@ -7,10 +7,10 @@ class LiveStreamScaffold extends HookWidget {
   final List<Widget> tabs;
   final List<Widget> tabViews;
   const LiveStreamScaffold({
-    Key? key,
+    super.key,
     required this.tabs,
     required this.tabViews,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
