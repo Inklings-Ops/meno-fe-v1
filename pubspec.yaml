@@ -53,6 +53,7 @@ dependencies:
   figma_squircle: ^0.5.3
   firebase_messaging: ^14.7.6
   flutter_local_notifications: ^16.2.0
+  readmore: ^2.2.0
 
 dev_dependencies:
   flutter_test:

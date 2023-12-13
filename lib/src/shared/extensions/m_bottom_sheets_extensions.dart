@@ -24,7 +24,11 @@ extension MBottomSheetsX on BuildContext {
   }
 
   Future showSwitchAccountSheet() =>
-      showModal(const MSwitchAccountModal(), isScrollControlled: true);
+      showModal(
+        const MSwitchAccountModal(),
+        isScrollControlled: true,
+        useRootNavigator: true,
+      );
 
 
 
