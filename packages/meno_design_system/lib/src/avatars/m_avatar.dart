@@ -50,14 +50,17 @@ class MAvatar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: CircleAvatar(
-        radius: radius + 1.50,
+        radius: radius,
         backgroundColor: colorScheme.outlineVariant3,
-        child: CircleAvatar(
-          radius: radius,
-          foregroundImage: foregroundImage,
-          backgroundImage: backgroundImage,
-          backgroundColor: colorScheme.surfaceShade,
-          child: placeholder,
+        child: Padding(
+          padding: const EdgeInsets.all(1.50),
+          child: CircleAvatar(
+            radius: radius,
+            foregroundImage: foregroundImage,
+            backgroundImage: backgroundImage,
+            backgroundColor: colorScheme.surfaceShade,
+            child: placeholder,
+          ),
         ),
       ),
     );

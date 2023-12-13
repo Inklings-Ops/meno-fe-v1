@@ -35,6 +35,8 @@ export 'src/navigation/m_bottom_navigation_bar.dart';
 export 'src/navigation/m_header.dart';
 export 'src/placeholders/m_placeholder.dart';
 export 'src/scaffold/m_scaffold.dart';
+export 'src/tags/m_tag.dart';
+export 'src/text/m_read_more_text.dart';
 export 'src/text/m_text.dart';
 export 'src/theme/m_color.dart';
 export 'src/theme/m_color_scheme.dart';

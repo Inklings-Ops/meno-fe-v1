@@ -53,7 +53,15 @@ Future<void> editProfile(EditProfileRef ref) async {
 @riverpod
 Future<Profile?> profile(ProfileRef ref, UserID id) async {
   RootIsolateToken token = RootIsolateToken.instance!;
-  final result = Isolate.run(() => _getProfile(token, id));
+  final result = await Isolate.run(() => _getProfile(token, id));
+  return result;
+}
+
+@riverpod
+Future<Profile?> myProfile(MyProfileRef ref) async {
+  RootIsolateToken token = RootIsolateToken.instance!;
+  final id = ref.read(userProvider).id;
+  final result = await Isolate.run(() => _getProfile(token, id));
   return result;
 }
 

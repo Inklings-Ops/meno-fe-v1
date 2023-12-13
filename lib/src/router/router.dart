@@ -21,6 +21,7 @@ import '../features/broadcast/presentation/pages/stream/stream_page.dart';
 import '../features/chat/presentation/pages/chat_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/onboarding.dart';
+import '../features/profile/presentation/pages/profile_page.dart';
 import '../layout/presentation/pages/m_layout.dart';
 import '../layout/presentation/pages/pages.dart';
 import '../services/socket/socket_service.dart';
