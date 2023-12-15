@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/broadcast_list_provider.dart';
+import 'package:meno_fe_v1/src/features/profile/application/application.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../features/auth/application/auth/auth_notifier.dart';
@@ -19,6 +21,7 @@ import '../features/broadcast/presentation/pages/home/home_page.dart';
 import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
 import '../features/broadcast/presentation/pages/stream/stream_page.dart';
 import '../features/chat/presentation/pages/chat_page.dart';
+import '../features/notifications/application/notifications_notifier.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/onboarding.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
@@ -31,12 +34,7 @@ part 'router.g.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
-final _discoverNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'discover');
-final _notesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'notes');
-final _profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
-
-@Riverpod(keepAlive: true, dependencies: [SocketService])
+@Riverpod(keepAlive: true, dependencies: [SocketService, NotificationsNotifier])
 GoRouter router(RouterRef ref) {
   final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
 
@@ -47,6 +45,19 @@ GoRouter router(RouterRef ref) {
   ref.listen(onboardingProvider, (previous, next) {
     if (previous?.isOnboarded != next.isOnboarded) {
       ref.invalidateSelf();
+    }
+  });
+
+  ref.listen(authProvider, (previous, next) {
+    if (previous?.token != next.token) {
+      ref.invalidateSelf();
+      ref.invalidate(socketServiceProvider);
+      ref.invalidate(recentBroadcastsProvider);
+      ref.invalidate(myProfileProvider);
+      ref.read(myProfileProvider.future);
+      ref.invalidate(notificationsNotifierProvider);
+      ref.read(notificationsNotifierProvider.notifier).getNotifications();
+      // ref.invalidate(sortNotificationsProvider);
     }
   });
 
@@ -172,7 +183,6 @@ GoRouter router(RouterRef ref) {
         builder: (context, state, shell) => MLayout(shell: shell),
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
-            navigatorKey: _homeNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.home,
@@ -182,7 +192,6 @@ GoRouter router(RouterRef ref) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _discoverNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.discover,
@@ -192,7 +201,6 @@ GoRouter router(RouterRef ref) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _notesNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.notes,
@@ -202,7 +210,6 @@ GoRouter router(RouterRef ref) {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _profileNavigatorKey,
             routes: <RouteBase>[
               GoRoute(
                 path: Routes.profile,

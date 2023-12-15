@@ -143,9 +143,16 @@ class BroadcastNotifier extends _$BroadcastNotifier {
         ref.watch(socketServiceProvider.notifier).startBroadcast(r.id);
         ref.read(timerNotifierProvider.notifier).reset();
 
-        // state = state.copyWith(status: Status.live);
+        state = state.copyWith(status: Status.live);
       },
     );
+  }
+
+  void _clearAll() {
+    ref.read(liveKitNotifierProvider.notifier).dispose();
+    ref.read(socketServiceProvider.notifier).endBroadcast(state.broadcast.id);
+    ref.watch(timerNotifierProvider.notifier).stop();
+    state = BroadcastState.empty();
   }
 
   void setStatus(Status status) => state = state.copyWith(status: status);

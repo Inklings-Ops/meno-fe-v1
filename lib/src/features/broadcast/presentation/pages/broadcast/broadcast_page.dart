@@ -47,19 +47,22 @@ class BroadcastPage extends HookConsumerWidget {
       );
     });
 
-    return const LiveStreamScaffold(
-      tabs: [
-        Tab(text: "Broadcast"),
-        Tab(text: "Chats"),
-        Tab(text: "Live Bible"),
-        Tab(text: "Notes"),
-      ],
-      tabViews: [
-        BroadcastTab(),
-        ChatTab(),
-        LiveBibleTab(),
-        NotesTab(),
-      ],
+    return const PopScope(
+      canPop: false,
+      child: LiveStreamScaffold(
+        tabs: [
+          Tab(text: "Broadcast"),
+          Tab(text: "Chats"),
+          Tab(text: "Live Bible"),
+          Tab(text: "Notes"),
+        ],
+        tabViews: [
+          BroadcastTab(),
+          ChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
+      ),
     );
   }
 }

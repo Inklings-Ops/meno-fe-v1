@@ -136,6 +136,7 @@ class _BroadcastArtwork extends StatelessWidget {
           maxHeight: 240,
           maxWidth: 240,
         ),
+        fit: BoxFit.cover,
       );
     }
 

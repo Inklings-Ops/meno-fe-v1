@@ -1,9 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
+import '../../domain/entities/notification.dart';
+
 class SubscribeNotificationCard extends StatelessWidget {
-  const SubscribeNotificationCard({super.key});
+  const SubscribeNotificationCard({super.key, required this.notification});
+
+  final Notification notification;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,7 @@ class SubscribeNotificationCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const MAvatar(radius: 24),
+          MAvatar(radius: 24, url: notification.content.subscriberImageUrl),
           MCore.small.horizontalSpace,
           Expanded(
             child: Column(
@@ -27,7 +31,7 @@ class SubscribeNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MText(
-                  "Kelechi Oguike just subscribed to you",
+                  "${notification.content.subscriberName} just subscribed to you",
                   style: styles.nTitleTextStyle,
                   maxLines: 2,
                 ),

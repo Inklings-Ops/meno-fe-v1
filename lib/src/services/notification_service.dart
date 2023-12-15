@@ -26,10 +26,10 @@ class NotificationService {
 
   @PostConstruct(preResolve: true)
   Future initialize() async {
-    await getToken();
-    await _firebaseMessaging.requestPermission();
-    await initPushNotifications();
-    // await initLocalNotifications();
+    // await getToken();
+    // await _firebaseMessaging.requestPermission();
+    // await initPushNotifications();
+    // // await initLocalNotifications();
   }
 
   Future initLocalNotifications() async {

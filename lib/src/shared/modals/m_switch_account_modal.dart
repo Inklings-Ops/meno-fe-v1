@@ -49,12 +49,11 @@ class _AccountListTile extends ConsumerWidget {
   final UserCredentials credentials;
 
   const _AccountListTile({
-    required this.credentials,
+    super.key, required this.credentials
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = MTextTheme.of(this);
 
     final currentUser = ref.watch(userProvider);
     final userAccount = credentials.user;
@@ -75,7 +74,7 @@ class _AccountListTile extends ConsumerWidget {
           MCore.large.horizontalSpace,
           MText(
             userAccount.fullName.get()!,
-            style: textTheme?.bodyRegular,
+            style: MTextStyle.bodyRegular,
           ),
         ],
       ),

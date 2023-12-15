@@ -24,6 +24,8 @@ class SocketEvent {
   static const String newBroadcast = 'newBroadcast';
   static const String getLiveBroadcasts = 'getLiveBroadcasts';
 
+  static const String notification = 'notification';
+
   // deprecated
   static const String newBroadcastListener = 'newBroadcastListener';
   static const String numberOfLiveListeners = 'numberOfLiveListeners';

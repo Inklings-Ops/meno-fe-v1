@@ -1,10 +1,15 @@
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/shared/helpers/date_helpers.dart';
+
+import '../../domain/entities/notification.dart';
 
 class LiveNotificationCard extends StatelessWidget {
-  const LiveNotificationCard({super.key});
+  const LiveNotificationCard({super.key, required this.notification});
+
+  final Notification notification;
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +37,13 @@ class LiveNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MText(
-                  "The Upper Room Fellowship published: Inferno: Wild Fire (Acts 19:20)",
+                  notification.content.title!,
                   style: styles.nTitleTextStyle,
                   maxLines: 4,
                 ),
                 14.verticalSpace,
                 MText(
-                  "Just now",
+                  DateHelpers.calculateTimeAgo(notification.createdAt),
                   style: styles.nSubtitleTextStyle,
                   color: styles.nSubtitleColor,
                 ),
@@ -52,9 +57,12 @@ class LiveNotificationCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12).r,
               border: Border.all(),
-              // image: DecorationImage(
-              //   image: AssetImage(Assets.images.celebrate.path),
-              // ),
+              image: notification.content.imageUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(notification.content.imageUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
             child: Center(child: MPlaceholder(dimension: 30.r)),
           ),

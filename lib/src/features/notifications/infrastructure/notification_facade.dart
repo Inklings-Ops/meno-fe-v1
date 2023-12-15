@@ -32,9 +32,14 @@ class NotificationFacade implements INotificationFacade {
     }
 
     try {
+      List<Notification?> sortedList = [];
       final response = await _remote.getNotifications(page: page, size: size);
       final list = _mapper.dataToDomain(response.data)!.notifications;
-      return right(list);
+      if (list.isNotEmpty) {
+        sortedList = list.toList()
+          ..sort((a, b) => b!.createdAt.compareTo(a!.createdAt));
+      }
+      return right(sortedList);
     } on DioException catch (e) {
       return left(NotificationException.message(e.message ?? "Error"));
     }

@@ -89,6 +89,7 @@ class SocketService extends _$SocketService {
     socket?.on(SocketEvent.endedBroadcast, onEndedBroadcast);
     socket?.on(SocketEvent.newBroadcastListener, onNewBroadcastListener);
     socket?.on(SocketEvent.numberOfLiveListeners, onNumberOfLiveBroadcasts);
+    socket?.on(SocketEvent.notification, onNotification);
   }
 
   dynamic onConnect(_) {
@@ -235,6 +236,10 @@ class SocketService extends _$SocketService {
   dynamic onNumberOfLiveBroadcasts(dynamic data) {
     final int numberOfParticipants = jsonDecode(jsonEncode(data));
     state = state.copyWith(numberOfParticipants: numberOfParticipants);
+  }
+
+  dynamic onNotification(dynamic data) {
+    Logger().w(data);
   }
 }
 

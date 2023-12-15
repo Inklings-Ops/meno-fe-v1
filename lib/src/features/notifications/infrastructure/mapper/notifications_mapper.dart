@@ -12,7 +12,22 @@ class NotificationsMapper {
   Notification? notificationToDomain(NotificationDto? dto) {
     if (dto == null) return null;
     return Notification(
-      content: contentToDomain(dto.content)!,
+      content: NotificationContent(
+        subscriberId: dto.content.subscriberId,
+        subscriberImageUrl: dto.content.subscriberImageUrl,
+        subscriberName: dto.content.subscriberName,
+        subscriptionId: dto.content.subscriptionId,
+        broadcastCreator: dto.content.broadcastCreator,
+        broadcastId: dto.content.broadcastId,
+        broadcastImageUrl: dto.content.broadcastImageUrl,
+        broadcastTitle: dto.content.broadcastTitle,
+        cohostFullName: dto.content.cohostFullName,
+        cohostId: dto.content.cohostId,
+        cohostImageUrl: dto.content.cohostImageUrl,
+        id: dto.content.id,
+        imageUrl: dto.content.imageUrl,
+        title: dto.content.title,
+      ),
       createdAt: dto.createdAt,
       id: dto.id,
       read: dto.read,
@@ -23,63 +38,26 @@ class NotificationsMapper {
   NotificationDto? notificationToDto(Notification? entity) {
     if (entity == null) return null;
     return NotificationDto(
-      content: contentToDto(entity.content)!,
+      content: NotificationContentDto(
+        subscriberId: entity.content.subscriberId,
+        subscriberImageUrl: entity.content.subscriberImageUrl,
+        subscriberName: entity.content.subscriberName,
+        subscriptionId: entity.content.subscriptionId,
+        broadcastCreator: entity.content.broadcastCreator,
+        broadcastId: entity.content.broadcastId,
+        broadcastImageUrl: entity.content.broadcastImageUrl,
+        broadcastTitle: entity.content.broadcastTitle,
+        cohostFullName: entity.content.cohostFullName,
+        cohostId: entity.content.cohostId,
+        cohostImageUrl: entity.content.cohostImageUrl,
+        id: entity.content.id,
+        imageUrl: entity.content.imageUrl,
+        title: entity.content.title,
+      ),
       createdAt: entity.createdAt,
       id: entity.id,
       read: entity.read,
       type: entity.type,
-    );
-  }
-
-  NotificationContent? contentToDomain(NotificationContentDto? dto) {
-    if (dto == null) return null;
-    return dto.map(
-      userSubscribed: (e) => NotificationContent.userSubscribed(
-        subscriberId: e.subscriberId,
-        subscriberImageUrl: e.subscriberImageUrl,
-        subscriberName: e.subscriberName,
-        subscriptionId: e.subscriptionId,
-      ),
-      addedAsCoHost: (e) => NotificationContent.addedAsCoHost(
-        broadcastCreator: e.broadcastCreator,
-        broadcastId: e.broadcastId,
-        broadcastImageUrl: e.broadcastImageUrl,
-        broadcastTitle: e.broadcastTitle,
-        cohostFullName: e.cohostFullName,
-        cohostId: e.cohostId,
-        cohostImageUrl: e.cohostImageUrl,
-      ),
-      liveBroadcastStarted: (e) => NotificationContent.liveBroadcastStarted(
-        id: e.id,
-        imageUrl: e.imageUrl,
-        title: e.title,
-      ),
-    );
-  }
-
-  NotificationContentDto? contentToDto(NotificationContent? entity) {
-    if (entity == null) return null;
-    return entity.map(
-      userSubscribed: (e) => NotificationContentDto.userSubscribed(
-        subscriberId: e.subscriberId,
-        subscriberImageUrl: e.subscriberImageUrl,
-        subscriberName: e.subscriberName,
-        subscriptionId: e.subscriptionId,
-      ),
-      addedAsCoHost: (e) => NotificationContentDto.addedAsCoHost(
-        broadcastCreator: e.broadcastCreator,
-        broadcastId: e.broadcastId,
-        broadcastImageUrl: e.broadcastImageUrl,
-        broadcastTitle: e.broadcastTitle,
-        cohostFullName: e.cohostFullName,
-        cohostId: e.cohostId,
-        cohostImageUrl: e.cohostImageUrl,
-      ),
-      liveBroadcastStarted: (e) => NotificationContentDto.liveBroadcastStarted(
-        id: e.id,
-        imageUrl: e.imageUrl,
-        title: e.title,
-      ),
     );
   }
 

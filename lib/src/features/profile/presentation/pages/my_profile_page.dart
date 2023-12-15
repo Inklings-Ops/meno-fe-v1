@@ -50,6 +50,7 @@ class _Content extends HookWidget {
         ),
       ],
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0).r,

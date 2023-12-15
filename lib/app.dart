@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/application/application.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
@@ -16,7 +15,6 @@ class MenoApp extends ConsumerStatefulWidget {
 class _MenoAppState extends ConsumerState<MenoApp> {
   @override
   Widget build(BuildContext context) {
-    ref.watch(authProvider);
     final router = ref.watch(routerProvider);
 
     return ScreenUtilInit(
