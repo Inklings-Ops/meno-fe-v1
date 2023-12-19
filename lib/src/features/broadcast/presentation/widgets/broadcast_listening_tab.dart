@@ -9,12 +9,12 @@ import '../widgets/broadcast_participant_list.dart';
 import '../widgets/broadcast_participants_modal.dart';
 
 class BroadcastListeningTab extends ConsumerWidget {
-  const BroadcastListeningTab({super.key});
+  const BroadcastListeningTab({super.key, required this.broadcastId});
+  final String broadcastId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participants = ref.watch(liveParticipantsProvider);
-    final numberOfParticipants = participants.length.toString();
+    final participants = ref.watch(getParticipantsProvider(broadcastId));
 
     return Column(
       children: [
@@ -28,13 +28,19 @@ class BroadcastListeningTab extends ConsumerWidget {
                 children: [
                   Icon(MIcons.hearing, size: 16.r),
                   MCore.small.horizontalSpace,
-                  MText(numberOfParticipants, style: MTextStyle.captionMedium),
+                  switch (participants) {
+                    AsyncData(:final value) => MText(
+                        "${value.length}",
+                        style: MTextStyle.captionMedium,
+                      ),
+                    _ => const MText("0", style: MTextStyle.captionMedium),
+                  },
                 ],
               ),
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal(
-                  const BroadcastParticipantsModal(),
+                  BroadcastParticipantsModal(broadcastId: broadcastId),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: 0.9.sh),
                 ),
@@ -43,7 +49,7 @@ class BroadcastListeningTab extends ConsumerWidget {
           ),
         ),
         MCore.large.verticalSpace,
-        const Expanded(child: BroadcastParticipantList()),
+        Expanded(child: BroadcastParticipantList(broadcastId: broadcastId)),
       ],
     );
   }

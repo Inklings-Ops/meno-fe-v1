@@ -19,20 +19,18 @@ class LiveActivityCard extends HookConsumerWidget {
       (value) => value.broadcast.broadcast,
     ));
 
-
-      return ActivityCard(
-        broadcast: streamBroadcast,
-        onTap: () => context.go(Routes.broadcast),
-        badgeTitle: "Now Streaming",
-        actionTitle: "Leave",
-        action: () => context.showLeaveBroadcastDialog().then((value) {
-          if (value == true) {
-            ref.read(streamNotifierProvider.notifier).leaveBroadcast();
-            context.go(Routes.home);
-          }
-        }),
+    return ActivityCard(
+      broadcast: streamBroadcast,
+      onTap: () => context.go(Routes.broadcast),
+      badgeTitle: "Now Streaming",
+      actionTitle: "Leave",
+      action: () => context.showLeaveBroadcastDialog().then((value) {
+        if (value == true) {
+          ref.read(streamNotifierProvider.notifier).leaveBroadcast();
+          context.go(Routes.home);
+        }
+      }),
     );
-   
   }
 }
 

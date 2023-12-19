@@ -214,7 +214,9 @@ GoRouter router(RouterRef ref) {
               GoRoute(
                 path: Routes.profile,
                 name: Routes.profile,
-                builder: (context, state) => const ProfilePage(),
+                builder: (context, state) => ProfilePage(
+                  id: state.extra as String?,
+                ),
               ),
             ],
           ),

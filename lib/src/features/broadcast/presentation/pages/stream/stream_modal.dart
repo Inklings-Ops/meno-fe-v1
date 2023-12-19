@@ -25,7 +25,7 @@ class StreamModal extends ConsumerWidget {
           (l) => context.showBroadcastError(l),
           (r) {
             Navigator.pop(context);
-            context.go(Routes.stream);
+            context.push(Routes.stream);
           },
         ),
       );

@@ -118,6 +118,7 @@ class _Container extends StatelessWidget {
     return Container(
       width: 176,
       height: 176,
+      padding: const EdgeInsets.all(14),
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
         shadows: MDecorations.cardShadow,

@@ -7,7 +7,8 @@ import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/broadcast
 import '../../../../services/socket/socket_service.dart';
 
 class BroadcastParticipantsModal extends ConsumerWidget {
-  const BroadcastParticipantsModal({super.key});
+  const BroadcastParticipantsModal({super.key, required this.broadcastId});
+  final String broadcastId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,8 +27,8 @@ class BroadcastParticipantsModal extends ConsumerWidget {
             hint: "Search",
           ),
           MCore.large.verticalSpace,
-          const Expanded(
-            child: BroadcastParticipantList(),
+          Expanded(
+            child: BroadcastParticipantList(broadcastId: broadcastId),
           ),
         ],
       ),

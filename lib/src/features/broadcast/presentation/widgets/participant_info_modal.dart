@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 
 import '../../domain/domain.dart';
 
@@ -10,7 +12,7 @@ class ParticipantInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bool isCohost = true;
+    bool isCohost = false;
 
     return MModal(
       builder: (context) => Column(
@@ -31,10 +33,10 @@ class ParticipantInfoModal extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (isCohost) ...[
-                  MCore.small.horizontalSpace,
-                  const MBadge.cohost(),
-                ]
+                // if (isCohost) ...[
+                //   MCore.small.horizontalSpace,
+                //   const MBadge.cohost(),
+                // ]
               ],
             ),
           ),
@@ -54,9 +56,16 @@ class ParticipantInfoModal extends StatelessWidget {
           ),
           MCore.small.verticalSpace,
           MTextButton(
-            label: "Remove as Co-host",
-            onPressed: () {},
+            label: "View account",
+            onPressed: () => context.push(
+              Routes.profile,
+              extra: participant.id,
+            ),
           ),
+          // MTextButton(
+          //   label: "Remove as Co-host",
+          //   onPressed: () {},
+          // ),
         ],
       ),
     );

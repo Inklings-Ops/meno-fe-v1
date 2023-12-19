@@ -20,8 +20,9 @@ class MBadge extends StatelessWidget {
       : this._(
           key: key,
           value: "Co-host",
-          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          height: 20.0,
+          width: 60.0,
+          // padding: const EdgeInsets.all(8),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           color: MColor.grey30,
           valueColor: MColor.primary700,
@@ -44,8 +45,8 @@ class MBadge extends StatelessWidget {
       : this._(
           key: key,
           value: value,
-          padding: const EdgeInsets.fromLTRB(4.5, 2, 4.5, 2),
-          constraints: const BoxConstraints(minHeight: 16.0, minWidth: 17.0),
+          // padding: const EdgeInsets.fromLTRB(4.5, 2, 4.5, 2),
+          constraints: const BoxConstraints(minHeight: 16.0, minWidth: 16.0),
         );
 
   const MBadge.live({

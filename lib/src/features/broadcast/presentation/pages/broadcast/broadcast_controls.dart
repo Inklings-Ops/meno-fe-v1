@@ -5,7 +5,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../../../services/live_kit_service.dart';
 import '../../../../../services/socket/socket_service.dart';
 import '../../../application/broadcast/broadcast_notifier.dart';
 import '../../../domain/domain.dart';
@@ -85,7 +84,7 @@ class MuteButton extends HookConsumerWidget {
           : () async {
               isMuted.value = !isMuted.value;
               await ref
-                  .read(liveKitNotifierProvider.notifier)
+                  .read(broadcastNotifierProvider.notifier)
                   .setMute(!isMuted.value);
             },
     );

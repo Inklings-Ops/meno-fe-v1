@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:livekit_client/livekit_client.dart';
+import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/env/env.dart';
@@ -9,6 +10,12 @@ import '../features/broadcast/application/timer/timer_notifier.dart';
 import '../features/broadcast/domain/domain.dart';
 
 part 'live_kit_service.g.dart';
+
+@riverpod
+Stream<RoomEvent> liveKitEventStream(LiveKitEventStreamRef ref) {
+  final listener = ref.watch(liveKitNotifierProvider.notifier).listener;
+  return listener.emitter.streamCtrl.stream;
+}
 
 @riverpod
 EventsListener<RoomEvent> liveKitEvent(LiveKitEventRef ref) {
@@ -28,8 +35,12 @@ EventsListener<RoomEvent> liveKitEvent(LiveKitEventRef ref) {
     })
     ..on<RoomReconnectedEvent>((e) => bNotifier.setStatus(Status.live))
     ..on<RoomReconnectingEvent>((e) => bNotifier.setStatus(Status.reconnecting))
-    ..on<ParticipantConnectedEvent>((e) {})
-    ..on<ParticipantDisconnectedEvent>((e) {});
+    ..on<ParticipantConnectedEvent>((e) {
+      Logger().e("Participant Connected: $e");
+    })
+    ..on<ParticipantDisconnectedEvent>((e) {
+      Logger().e("Participant Disconnected: $e");
+    });
 
   return listener;
 }
@@ -42,7 +53,7 @@ class LiveKitNotifier extends _$LiveKitNotifier {
   @override
   AsyncValue<Room> build() {
     room = Room();
-    listener = room.createListener(synchronized: true);
+    listener = room.createListener();
 
     ref.watch(liveKitEventProvider);
 
@@ -70,7 +81,8 @@ class LiveKitNotifier extends _$LiveKitNotifier {
 
   Future<void> dispose() async {
     room.removeListener(() {});
-    await Future.wait([leave(), listener.dispose(), room.dispose()]);
+    await leave();
+    await Future.wait([listener.dispose(), room.dispose()]);
   }
 
   Future<void> leave() => room.disconnect();

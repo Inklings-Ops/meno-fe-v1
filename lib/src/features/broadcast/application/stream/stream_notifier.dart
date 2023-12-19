@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../services/live_kit_service.dart';
@@ -34,6 +35,9 @@ class StreamNotifier extends _$StreamNotifier {
         await liveKitNotifier.stream(r.broadcastToken);
         ref.read(socketServiceProvider.notifier).joinBroadcast(r.broadcast.id);
         state = state.copyWith(status: Status.streaming, loading: false);
+        // ref.listen(liveKitEventStreamProvider, (previous, next) {
+        //   Logger().w("From Broadcast Notifier: $next");
+        // });
       },
     );
   }
@@ -41,9 +45,12 @@ class StreamNotifier extends _$StreamNotifier {
   Future<void> leaveBroadcast() async {
     state = state.copyWith(loading: true, onLeave: none());
 
-    await liveKitNotifier.dispose();
+    await liveKitNotifier.leave();
     streamNotifier.leaveBroadcast(state.broadcast.broadcast.id);
 
     state = StreamState.initial();
+    await liveKitNotifier.dispose();
   }
+
+  void dispose() => state = StreamState.initial();
 }

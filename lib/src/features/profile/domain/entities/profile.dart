@@ -15,5 +15,6 @@ class Profile with _$Profile {
     UserStats? stats,
     bool? isSubscribedToUser,
     bool? verified,
-  }) = _$User;
+  }) = _Profile;
 }
+

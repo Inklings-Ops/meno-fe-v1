@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../broadcast/count_down_dialog.dart';
+import 'package:meno_fe_v1/src/services/live_kit_service.dart';
 
 class LiveForYou extends StatelessWidget {
   const LiveForYou({super.key});
@@ -48,23 +48,18 @@ class LiveForYou extends StatelessWidget {
   }
 }
 
-class DiscoverButton extends StatelessWidget {
+class DiscoverButton extends ConsumerWidget {
   const DiscoverButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       height: 32.h,
       width: 112.w,
       child: MSecondaryButton(
         label: "Discover",
         // onPressed: () => context.push("/chat"),
-        onPressed: () => showDialog(
-          context: context,
-          barrierDismissible: false,
-          barrierColor: Colors.black87,
-          builder: (context) => const CountDownDialog(),
-        ),
+        onPressed: () => ref.read(liveKitNotifierProvider.notifier).dispose(),
         style: OutlinedButton.styleFrom(
           textStyle: MTextStyle.microMedium,
           padding: EdgeInsets.zero.r,

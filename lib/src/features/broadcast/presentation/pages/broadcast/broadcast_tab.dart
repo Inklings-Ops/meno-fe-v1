@@ -72,7 +72,7 @@ class BroadcastTab extends HookConsumerWidget {
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    const BroadcastListeningTab(),
+                      BroadcastListeningTab(broadcastId: broadcast.id),
                     BroadcastAboutTab(description: broadcast.description),
                   ],
                 ),

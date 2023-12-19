@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 import 'my_profile_page.dart';
 
@@ -10,7 +11,14 @@ class ProfilePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (id != null) {
-      return const Scaffold();
+      return Scaffold(
+        body: Center(
+          child: Text(
+            id!,
+            style: MTextStyle.heading1Bold,
+          ),
+        ),
+      );
     } else {
       return const MyProfilePage();
     }

@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:livekit_client/livekit_client.dart' hide Participant;
-import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../../../../services/live_kit_service.dart';
 import '../../../application/stream/stream_notifier.dart';
 import '../../widgets/broadcast_about_tab.dart';
 import '../../widgets/broadcast_artwork.dart';
@@ -21,20 +18,6 @@ class StreamTab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(liveKitEventProvider, (previous, next) {
-      next.on<RoomDisconnectedEvent>((event) {
-        Logger().w("From Stream Tab");
-        Logger().w(event);
-        if (event.reason != null) {
-          Logger().w('Room disconnected: reason => ${event.reason}');
-        }
-        // context.showErrorSnackBar(
-        //   "${broadcast.creator.fullName} ended the broadcast",
-        // );
-        // ref.read(liveKitNotifierProvider.notifier).dispose();
-        // context.go(Routes.home);
-      });
-    });
 
     final tabController = useTabController(initialLength: 2);
 
@@ -85,7 +68,7 @@ class StreamTab extends HookConsumerWidget {
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    const BroadcastListeningTab(),
+                    BroadcastListeningTab(broadcastId: broadcast.id),
                     BroadcastAboutTab(description: broadcast.description),
                   ],
                 ),

@@ -44,6 +44,10 @@ class $AssetsImagesGen {
   AssetGenImage get highVoltage =>
       const AssetGenImage('assets/images/high voltage.png');
 
+  /// File path: assets/images/ic_launcher.png
+  AssetGenImage get icLauncher =>
+      const AssetGenImage('assets/images/ic_launcher.png');
+
   /// File path: assets/images/live_for_you.png
   AssetGenImage get liveForYou =>
       const AssetGenImage('assets/images/live_for_you.png');
@@ -126,6 +130,7 @@ class $AssetsImagesGen {
         geometricLines,
         google,
         highVoltage,
+        icLauncher,
         liveForYou,
         loading,
         logoDark,

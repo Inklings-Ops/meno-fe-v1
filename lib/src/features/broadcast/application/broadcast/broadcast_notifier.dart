@@ -57,7 +57,12 @@ Status broadcastStatus(BroadcastStatusRef ref) {
 @riverpod
 class BroadcastNotifier extends _$BroadcastNotifier {
   @override
-  BroadcastState build() => BroadcastState.empty();
+  BroadcastState build() {
+    return BroadcastState.empty();
+  }
+
+
+
 
   Future<void> createPressed() async {
     final broadcastForm = ref.read(broadcastFormNotifierProvider);
@@ -124,7 +129,7 @@ class BroadcastNotifier extends _$BroadcastNotifier {
   Future<void> dispose() async {
     state = BroadcastState.empty();
     ref.watch(timerNotifierProvider.notifier).reset();
-    await ref.read(liveKitNotifierProvider.notifier).dispose();
+    // await ref.read(liveKitNotifierProvider.notifier).dispose();
   }
 
   Future<void> startPressed() async {
@@ -144,6 +149,10 @@ class BroadcastNotifier extends _$BroadcastNotifier {
         ref.read(timerNotifierProvider.notifier).reset();
 
         state = state.copyWith(status: Status.live);
+
+        ref.listen(liveKitEventStreamProvider, (previous, next) {
+          Logger().w("From Broadcast Notifier: $next");
+        });
       },
     );
   }
@@ -156,4 +165,8 @@ class BroadcastNotifier extends _$BroadcastNotifier {
   }
 
   void setStatus(Status status) => state = state.copyWith(status: status);
+
+  Future<void> setMute(bool value) {
+    return ref.watch(liveKitNotifierProvider.notifier).setMute(value);
+  }
 }

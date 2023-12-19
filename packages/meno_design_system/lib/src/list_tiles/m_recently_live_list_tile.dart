@@ -62,7 +62,9 @@ class MRecentlyLiveListTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.cover),
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 placeholder: (context, url) => const MShimmer(borderRadius: 12),

@@ -54,6 +54,7 @@ class LeaveButton extends ConsumerWidget {
     Future<void> leave() {
       return context.showLeaveBroadcastDialog().then((value) {
         if (value == true) {
+          Navigator.pop(context);
           ref.read(streamNotifierProvider.notifier).leaveBroadcast();
         }
       });

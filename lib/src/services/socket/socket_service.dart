@@ -15,6 +15,7 @@ import '../../dependency_injector/injector.dart';
 import '../../features/broadcast/domain/domain.dart';
 import '../../features/broadcast/infrastructure/dtos/dtos.dart';
 import '../../features/broadcast/infrastructure/mapper/broadcast_mapper.dart';
+import '../../features/notifications/application/notifications_notifier.dart';
 import '../../shared/m_keys.dart';
 import '../secure_storage_service.dart';
 import 'socket_event.dart';
@@ -187,7 +188,10 @@ class SocketService extends _$SocketService {
     return socket?.emitWithAck(
       SocketEvent.leaveBroadcast,
       {"broadcastId": broadcastId},
-      ack: (data) => state = state.copyWith(isStreaming: false, loading: false),
+      ack: (data) {
+        state = state.copyWith(isStreaming: false, loading: false);
+        ref.invalidate(getParticipantsProvider);
+      },
     );
   }
 
@@ -221,25 +225,15 @@ class SocketService extends _$SocketService {
   }
 
   dynamic onNewBroadcastListener(dynamic data) {
-    _log.i('New Broadcast Listener... => $data');
-    final dto = ParticipantDto.fromJson(data);
-    final newParticipant = Participant(
-      id: dto.id,
-      fullName: dto.fullName,
-      imageUrl: dto.imageUrl,
-    );
-    final participants = List<Participant?>.from(state.participants);
-    participants.add(newParticipant);
-    state = state.copyWith(participants: participants);
+    ref.invalidate(getParticipantsProvider);
   }
 
   dynamic onNumberOfLiveBroadcasts(dynamic data) {
-    final int numberOfParticipants = jsonDecode(jsonEncode(data));
-    state = state.copyWith(numberOfParticipants: numberOfParticipants);
+    ref.invalidate(getParticipantsProvider);
   }
 
-  dynamic onNotification(dynamic data) {
-    Logger().w(data);
+  dynamic onNotification(dynamic data) async {
+    await ref.read(notificationsNotifierProvider.notifier).getNotifications();
   }
 }
 

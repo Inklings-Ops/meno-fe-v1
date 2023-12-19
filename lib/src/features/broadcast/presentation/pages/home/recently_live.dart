@@ -14,7 +14,7 @@ class RecentlyLive extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final broadcasts = ref.watch(recentBroadcastsProvider(limit: 8));
+    final broadcasts = ref.watch(recentBroadcastsProvider());
 
     if (broadcasts.isLoading) {
       return const _BuildColumn(child: _SkeletonList());

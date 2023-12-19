@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
-
 class ExpandButton extends StatelessWidget {
   final VoidCallback? onTap;
   const ExpandButton({super.key, this.onTap});
@@ -25,13 +23,14 @@ class ExpandButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(MCore.circle),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               MIcons.expand_01,
               size: 16,
               color: colorScheme.onDisabledContainer,
             ),
-            MSize.horizontalSpaceSmall,
             MText(
               "Expand",
               style: MTextStyle.captionMedium,

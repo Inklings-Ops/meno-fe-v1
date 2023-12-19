@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -50,7 +51,7 @@ class _BuildColumn extends StatelessWidget {
         MCore.xxxLarge.verticalSpace,
         MHeader(title: "Now Live", actionTitle: "See all", action: () {}),
         24.verticalSpace,
-        LimitedBox(maxHeight: 176.h, child: child),
+        LimitedBox(maxHeight: 184.h, child: child),
       ],
     );
   }
@@ -62,16 +63,21 @@ class _LiveCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participants = ref.watch(getParticipantsProvider(broadcast.id));
+    final number = useState<int>(0);
+
+    ref.listen(socketServiceProvider, (previous, next) {
+      if (previous != next) {
+        ref.read(getParticipantsProvider(broadcast.id)).whenOrNull(
+              data: (data) => number.value = data.length,
+            );
+      }
+    });
 
     return MCard.live(
       title: broadcast.title.get()!,
       host: broadcast.creator!.fullName,
       imageUrl: broadcast.imageUrl,
-      liveCount: switch (participants) {
-        AsyncData(:final value) => value.length - 1,
-        _ => 0
-      },
+      liveCount: number.value,
       onTap: () => context.showModal(
         isScrollControlled: true,
         useRootNavigator: true,
