@@ -38,7 +38,7 @@ class _PublishingInProgressModal extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const MText(
-          "Publishing broadcast",
+          'Publishing broadcast',
           style: MTextStyle.heading2Bold,
           textAlign: TextAlign.center,
         ),
@@ -58,12 +58,12 @@ class _PublishingInProgressModal extends StatelessWidget {
         32.verticalSpace,
         MCore.small.verticalSpace,
         const MText(
-          "23 people tuned in!",
+          '23 people tuned in!',
           style: MTextStyle.captionRegular,
           textAlign: TextAlign.center,
         ),
         80.verticalSpace,
-        MSecondaryButton(label: "Cancel", onPressed: onPressed),
+        MSecondaryButton(label: 'Cancel', onPressed: onPressed),
       ],
     );
   }
@@ -81,7 +81,7 @@ class _SuccessModal extends StatelessWidget {
         Assets.images.onboarding1.image(height: 193.h),
         24.verticalSpace,
         const MText(
-          "Broadcast Published!",
+          'Broadcast Published!',
           style: MTextStyle.heading2Regular,
           textAlign: TextAlign.center,
         ),
@@ -89,14 +89,14 @@ class _SuccessModal extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
           child: const MText(
-            "Now you and other people can go back and listen to this broadcast.",
+            'Now you and other people can go back and listen to this broadcast.',
             style: MTextStyle.captionRegular,
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
         ),
         40.verticalSpace,
-        MPrimaryButton(label: "Go to Profile", onPressed: () {}),
+        MPrimaryButton(label: 'Go to Profile', onPressed: () {}),
       ],
     );
   }

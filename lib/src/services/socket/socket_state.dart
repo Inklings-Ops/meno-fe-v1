@@ -3,8 +3,6 @@ part of 'socket_service.dart';
 @freezed
 class SocketState with _$SocketState {
   factory SocketState({
-    required bool isLive,
-    required bool isStreaming,
     required bool loading,
     required Broadcast liveBroadcast,
     required JoinBroadcastEntity joinedBroadcast,
@@ -17,8 +15,6 @@ class SocketState with _$SocketState {
 
   factory SocketState.initial({bool loading = false}) {
     return SocketState(
-      isLive: false,
-      isStreaming: false,
       loading: loading,
       liveBroadcast: Broadcast.empty(),
       joinedBroadcast: JoinBroadcastEntity.empty(),

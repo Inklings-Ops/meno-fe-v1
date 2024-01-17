@@ -23,7 +23,7 @@ class BroadcastAboutTab extends StatelessWidget {
               Icon(MIcons.menu_03, size: 16.r),
               MCore.small.horizontalSpace,
               const MText(
-                "About Broadcast",
+                'About Broadcast',
                 style: MTextStyle.subheadingMedium,
               ),
             ],

@@ -14,7 +14,7 @@ class CreateNewPasswordPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MScaffold(
-      appBar: MAppBar.primary(title: ("Create New Password")),
+      appBar: MAppBar.primary(title: ('Create New Password')),
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
@@ -26,27 +26,27 @@ class CreateNewPasswordPage extends ConsumerWidget {
                 UserAccountDetails(user: ref.watch(userProvider)),
                 MCore.small.verticalSpace,
                 const MText(
-                  "Set up new password to continue your experience",
+                  'Set up new password to continue your experience',
                   maxLines: 2,
                   style: MTextStyle.captionMedium,
                 ),
                 MCore.xxLarge.verticalSpace,
                 const MTextFormField(
-                  label: "Password",
+                  label: 'Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
-                  hint: "Enter your password",
+                  hint: 'Enter your password',
                 ),
                 24.verticalSpace,
                 const MTextFormField(
-                  label: "Confirm Password",
+                  label: 'Confirm Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
-                  hint: "Enter your password",
+                  hint: 'Enter your password',
                 ),
                 MCore.xxLarge.verticalSpace,
                 MPrimaryButton(
-                  label: "Reset Password",
+                  label: 'Reset Password',
                   onPressed: () => context.push(Routes.resetPwdSuccess),
                 ),
               ],

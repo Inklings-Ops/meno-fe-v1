@@ -15,7 +15,7 @@ class CountDownDialog extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           MText(
-            "Going Live in...",
+            'Going Live in...',
             style: MTextStyle.heading2Medium,
             color: colorScheme.onPrimary,
           ),
@@ -29,13 +29,13 @@ class CountDownDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MText(
-                    "3",
+                    '3',
                     style: MTextStyle.countDown,
                     color: colorScheme.onPrimary,
                   ),
                   MCore.large.verticalSpace,
                   MText(
-                    "Skip",
+                    'Skip',
                     style: MTextStyle.bodyMedium,
                     color: colorScheme.onPrimary,
                   ),

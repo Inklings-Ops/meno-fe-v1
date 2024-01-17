@@ -63,14 +63,29 @@ class AuthFacade implements IAuthFacade {
   Future<bool> get isVerified => throw UnimplementedError();
 
   @override
-  Future<User?> get user async {
-    final UserDto? userDto = await _local.getCurrentUser();
+  Future<User> get user async {
+    final UserDto? userDto = await _local.getCurrentUser;
     final User? userDomain = _authMapper.userToDomain(userDto);
-    return userDomain;
+    return userDomain ?? User.empty();
   }
 
   @override
-  Future<UserToken?> get userToken => _local.getCurrentUserToken();
+  Future<UserToken?> get userToken => _local.getCurrentUserToken;
+
+  @override
+  Future<Map<String, UserCredentials>?> get allUserCredentials async {
+    final map = await _local.getAllUserCredentials;
+    if (map != null) {
+      final userCredentialsMap = map.map((key, value) {
+        final userCredentials = _authMapper.userCredentialsToDomain(value)!;
+        return MapEntry(key, userCredentials);
+      });
+
+      return userCredentialsMap;
+    }
+    return null;
+  }
+
 
   @override
   Future<Either<AuthException, Unit>> changePassword({
@@ -89,7 +104,7 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<Map<String, UserCredentials>?> getAllUserCredentials() async {
-    final fromLocal = await _local.getAllUserCredentials();
+    final fromLocal = await _local.getAllUserCredentials;
 
     if (fromLocal != null) {
       final userCredentialsMap = fromLocal.map((key, value) {

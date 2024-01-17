@@ -23,7 +23,7 @@ class ScripturePicker extends StatelessWidget {
               children: [
                 _buildContainer(
                   colorScheme: colorScheme,
-                  content: "1 Thessalonians 1:13",
+                  content: '1 Thessalonians 1:13',
                   onTap: () => context.showModal(
                     const BibleBooksModal(),
                     isScrollControlled: true,
@@ -32,7 +32,7 @@ class ScripturePicker extends StatelessWidget {
                 MCore.small.horizontalSpace,
                 _buildContainer(
                   colorScheme: colorScheme,
-                  content: "NLT",
+                  content: 'NLT',
                   onTap: () => context.showModal(
                     const BibleTranslationsModal(),
                     isScrollControlled: true,
@@ -89,10 +89,10 @@ class BibleBooksModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MModal(
-      title: "Bible Books",
+      title: 'Bible Books',
       builder: (context) => ListView(
         children: const [
-          BookWidget(bookName: "Genesis"),
+          BookWidget(bookName: 'Genesis'),
         ],
       ),
     );
@@ -105,10 +105,10 @@ class BibleTranslationsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MModal(
-      title: "Bible Translations",
+      title: 'Bible Translations',
       builder: (context) => ListView(
         children: const [
-          TranslationWidget(name: "NLT"),
+          TranslationWidget(name: 'NLT'),
         ],
       ),
     );

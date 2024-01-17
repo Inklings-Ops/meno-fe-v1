@@ -88,12 +88,12 @@ GoRouter router(RouterRef ref) {
         path: Routes.login,
         name: Routes.login,
         builder: (context, state) {
-          final isPasswordOnly = state.uri.queryParameters["isPasswordOnly"];
-          final implyLeading = state.uri.queryParameters["implyLeading"];
+          final isPasswordOnly = state.uri.queryParameters['isPasswordOnly'];
+          final implyLeading = state.uri.queryParameters['implyLeading'];
 
           return LoginPage(
-            implyLeading: implyLeading == "true" ? true : false,
-            isPasswordOnly: isPasswordOnly == "true" ? true : false,
+            implyLeading: implyLeading == 'true' ? true : false,
+            isPasswordOnly: isPasswordOnly == 'true' ? true : false,
           );
         },
       ),
@@ -101,10 +101,10 @@ GoRouter router(RouterRef ref) {
         path: Routes.register,
         name: Routes.register,
         builder: (context, state) {
-          final implyLeading = state.uri.queryParameters["implyLeading"];
+          final implyLeading = state.uri.queryParameters['implyLeading'];
 
           return RegisterPage(
-            implyLeading: implyLeading == "true" ? true : false,
+            implyLeading: implyLeading == 'true' ? true : false,
           );
         },
       ),
@@ -168,14 +168,14 @@ GoRouter router(RouterRef ref) {
         builder: (context, state) => const NotificationsPage(),
       ),
       GoRoute(
-        path: "/chat",
-        name: "/chat",
+        path: '/chat',
+        name: '/chat',
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const ChatPage(),
       ),
       GoRoute(
-        path: "/bible",
-        name: "/bible",
+        path: '/bible',
+        name: '/bible',
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const BiblePage(),
       ),
@@ -252,28 +252,28 @@ GoRouter router(RouterRef ref) {
 class Routes {
   Routes._();
 
-  static const String onboarding = "/onboarding";
-  static const String login = "/login";
-  static const String loginWithLeading = "/login?implyLeading=true";
-  static const String partialLogin = "/login?isPasswordOnly=true";
-  static const String returnLogin = "/returnLogin";
-  static const String register = "/register";
-  static const String registerWithoutLeading = "/register?implyLeading=false";
-  static const String registerWithLeading = "/register?implyLeading=true";
-  static const String emailVerification = "/emailVerification";
-  static const String loading = "/loading";
-  static const String resetPassword = "/resetPassword";
-  static const String resetPwdOtp = "/resetPasswordOtp";
-  static const String resetPwdSuccess = "/resetPasswordSuccess";
-  static const String createNewPassword = "/createNewPassword";
-  static const String broadcast = "/broadcast";
-  static const String createBroadcast = "/createBroadcast";
-  static const String stream = "/stream";
-  static const String home = "/home";
-  static const String discover = "/discover";
-  static const String notes = "/notes";
-  static const String profile = "/profile";
-  static const String recentlyLive = "/recentlyLive";
-  static const String details = "/details";
-  static const String notifications = "/notifications";
+  static const String onboarding = '/onboarding';
+  static const String login = '/login';
+  static const String loginWithLeading = '/login?implyLeading=true';
+  static const String partialLogin = '/login?isPasswordOnly=true';
+  static const String returnLogin = '/returnLogin';
+  static const String register = '/register';
+  static const String registerWithoutLeading = '/register?implyLeading=false';
+  static const String registerWithLeading = '/register?implyLeading=true';
+  static const String emailVerification = '/emailVerification';
+  static const String loading = '/loading';
+  static const String resetPassword = '/resetPassword';
+  static const String resetPwdOtp = '/resetPasswordOtp';
+  static const String resetPwdSuccess = '/resetPasswordSuccess';
+  static const String createNewPassword = '/createNewPassword';
+  static const String broadcast = '/broadcast';
+  static const String createBroadcast = '/createBroadcast';
+  static const String stream = '/stream';
+  static const String home = '/home';
+  static const String discover = '/discover';
+  static const String notes = '/notes';
+  static const String profile = '/profile';
+  static const String recentlyLive = '/recentlyLive';
+  static const String details = '/details';
+  static const String notifications = '/notifications';
 }

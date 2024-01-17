@@ -2,9 +2,10 @@ import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../services/live_kit_service.dart';
+import '../../../../services/live_kit/live_kit_service.dart';
 import '../../../../services/socket/socket_service.dart';
 import '../../domain/domain.dart';
 import '../broadcast_form/broadcast_form_notifier.dart';
@@ -15,54 +16,24 @@ part 'broadcast_notifier.freezed.dart';
 part 'broadcast_notifier.g.dart';
 part 'broadcast_state.dart';
 
-// TODO: add dispose method and inside it set broadcast in the state to empty and dispose of livekit
-
 @riverpod
-Status broadcastStatus(BroadcastStatusRef ref) {
-  final notifier = ref.read(broadcastNotifierProvider.notifier);
-  Status status = ref.watch(broadcastNotifierProvider).status;
-
-  ref.listen(liveKitEventProvider, (previous, next) {
-    next.on((event) {
-      switch (event.runtimeType) {
-        case RoomDisconnectedEvent:
-          notifier.setStatus(Status.offAir);
-          ref.watch(timerNotifierProvider.notifier).stop();
-          break;
-        case RoomReconnectingEvent:
-          notifier.setStatus(Status.reconnecting);
-          break;
-        case RoomReconnectedEvent:
-          notifier.setStatus(Status.live);
-          ref.watch(timerNotifierProvider.notifier).start();
-          break;
-        case ParticipantConnectedEvent:
-          Logger().w((event as ParticipantConnectedEvent).participant);
-          break;
-        case LocalTrackPublishedEvent:
-          Logger().w("LocalTrackPublishedEvent");
-          Logger().w((event as LocalTrackPublishedEvent).participant);
-          Logger().w("LocalTrackPublishedEvent");
-          notifier.setStatus(Status.live);
-          break;
-        default:
-          notifier.setStatus(Status.offAir);
-      }
-    });
-  });
-
-  return status;
+Future<void> mute(MuteRef ref, bool value) async {
+  return await ref.watch(liveKitNotifierProvider.notifier).setMute(value);
 }
 
 @riverpod
 class BroadcastNotifier extends _$BroadcastNotifier {
   @override
   BroadcastState build() {
+    ref.listen(eventProvider, (_, next) {
+      next.event.whenOrNull(
+        isOffAir: () => ref.read(timerNotifierProvider.notifier).stop(),
+        isReconnecting: () => ref.read(timerNotifierProvider.notifier).stop(),
+        isLive: () => ref.read(timerNotifierProvider.notifier).start(),
+      );
+    });
     return BroadcastState.empty();
   }
-
-
-
 
   Future<void> createPressed() async {
     final broadcastForm = ref.read(broadcastFormNotifierProvider);
@@ -70,13 +41,15 @@ class BroadcastNotifier extends _$BroadcastNotifier {
     if (broadcastForm.title.isValid()) {
       state = state.copyWith(loading: true, onDeleted: none());
 
-      final result = await ref.read(broadcastFacadeProvider).createBroadcast(
-            title: broadcastForm.title,
-            description: broadcastForm.description,
-            artwork: broadcastForm.artwork,
-            cohosts: broadcastForm.cohosts?.map((e) => e.id).toList(),
-            timeZone: 'Africa/Abidjan',
-          );
+      ref.invalidate(timerNotifierProvider);
+
+      final result = await ref.read(createBroadcastProvider(
+        title: broadcastForm.title,
+        description: broadcastForm.description,
+        artwork: broadcastForm.artwork,
+        cohosts: broadcastForm.cohosts?.map((e) => e.id).toList(),
+        timeZone: 'Africa/Abidjan',
+      ));
 
       state = state.copyWith(
         loading: false,
@@ -85,13 +58,10 @@ class BroadcastNotifier extends _$BroadcastNotifier {
         onCreated: some(result),
         broadcast: result.foldRight(Broadcast.empty(), (r, p) => r),
       );
-      ref.read(timerNotifierProvider.notifier).reset();
+
+      Logger().f(result.foldRight(Broadcast.empty(), (r, p) => r));
     } else {
-      state = state.copyWith(
-        loading: false,
-        showError: true,
-        onCreated: none(),
-      );
+      state = state.copyWith(loading: false, onCreated: none());
     }
   }
 
@@ -111,25 +81,26 @@ class BroadcastNotifier extends _$BroadcastNotifier {
   }
 
   Future<void> endPressed() async {
-    state = state.copyWith(loading: true);
-    ref.read(liveKitNotifierProvider.notifier).dispose();
-    ref.read(socketServiceProvider.notifier).endBroadcast(state.broadcast.id);
-    ref.watch(timerNotifierProvider.notifier).stop();
-
-    state = state.copyWith(
-      loading: false,
-      status: Status.offAir,
-      onDeleted: none(),
-      onCreated: none(),
-      onStarted: none(),
-      onEnded: some(unit),
-    );
+    try {
+      await ref.read(liveKitNotifierProvider.notifier).leave();
+    } finally {
+      ref.read(socketServiceProvider.notifier).endBroadcast(state.broadcast.id);
+      ref.watch(timerNotifierProvider.notifier).stop();
+      state = state.copyWith(
+        loading: false,
+        status: Status.offAir,
+        onDeleted: none(),
+        onCreated: none(),
+        onStarted: none(),
+        onEnded: some(unit),
+      );
+    }
   }
 
-  Future<void> dispose() async {
-    state = BroadcastState.empty();
-    ref.watch(timerNotifierProvider.notifier).reset();
-    // await ref.read(liveKitNotifierProvider.notifier).dispose();
+  void dispose() {
+    ref.invalidate(liveKitNotifierProvider);
+    ref.invalidate(timerNotifierProvider);
+    ref.invalidateSelf();
   }
 
   Future<void> startPressed() async {
@@ -141,32 +112,30 @@ class BroadcastNotifier extends _$BroadcastNotifier {
 
     return result.fold(
       (l) => state = state.copyWith(loading: false, onStarted: some(result)),
-      (r) {
-        state = state.copyWith(
-            loading: false, onStarted: some(result), broadcast: r);
-        ref.watch(liveKitNotifierProvider.notifier).connect(r.broadcastToken!);
-        ref.watch(socketServiceProvider.notifier).startBroadcast(r.id);
-        ref.read(timerNotifierProvider.notifier).reset();
+      (r) async {
+        await ref
+            .read(liveKitNotifierProvider.notifier)
+            .broadcast(r.broadcastToken!);
 
-        state = state.copyWith(status: Status.live);
-
-        ref.listen(liveKitEventStreamProvider, (previous, next) {
-          Logger().w("From Broadcast Notifier: $next");
-        });
+        ref.watch(liveKitNotifierProvider).when(
+              data: (data) {
+                ref.read(socketServiceProvider.notifier).startBroadcast(r.id);
+                ref.read(timerNotifierProvider.notifier).start();
+                state = state.copyWith(
+                  status: Status.live,
+                  loading: false,
+                  onStarted: some(result),
+                  broadcast: r,
+                );
+              },
+              error: (err, stack) {
+                state = state.copyWith(loading: false, onStarted: some(result));
+              },
+              loading: () => state = state.copyWith(loading: true),
+            );
       },
     );
   }
 
-  void _clearAll() {
-    ref.read(liveKitNotifierProvider.notifier).dispose();
-    ref.read(socketServiceProvider.notifier).endBroadcast(state.broadcast.id);
-    ref.watch(timerNotifierProvider.notifier).stop();
-    state = BroadcastState.empty();
-  }
-
   void setStatus(Status status) => state = state.copyWith(status: status);
-
-  Future<void> setMute(bool value) {
-    return ref.watch(liveKitNotifierProvider.notifier).setMute(value);
-  }
 }

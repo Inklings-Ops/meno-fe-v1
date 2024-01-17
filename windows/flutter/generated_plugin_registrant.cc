@@ -11,7 +11,6 @@
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
 #include <flutter_webrtc/flutter_web_r_t_c_plugin.h>
-#include <flutter_window_close/flutter_window_close_plugin.h>
 #include <livekit_client/live_kit_plugin.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
 #include <smart_auth/smart_auth_plugin.h>
@@ -27,8 +26,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
   FlutterWebRTCPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterWebRTCPlugin"));
-  FlutterWindowClosePluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterWindowClosePlugin"));
   LiveKitPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("LiveKitPlugin"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(

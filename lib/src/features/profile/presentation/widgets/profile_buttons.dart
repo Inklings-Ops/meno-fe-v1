@@ -17,7 +17,7 @@ class ProfileButtons extends StatelessWidget {
           children: [
             Expanded(
               child: MPrimaryButton.icon(
-                label: "Edit profile",
+                label: 'Edit profile',
                 icon: const Icon(MIcons.edit_05),
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -30,7 +30,7 @@ class ProfileButtons extends StatelessWidget {
             MCore.large.horizontalSpace,
             Expanded(
               child: MSecondaryButton.icon(
-                label: "Share profile",
+                label: 'Share profile',
                 icon: Icon(
                   MIcons.share,
                   color: colorScheme.onBackground,

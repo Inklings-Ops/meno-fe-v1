@@ -31,13 +31,13 @@ class SubscribeNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MText(
-                  "${notification.content.subscriberName} just subscribed to you",
+                  '${notification.content.subscriberName} just subscribed to you',
                   style: styles.nTitleTextStyle,
                   maxLines: 2,
                 ),
                 MCore.small.verticalSpace,
                 MText(
-                  "3 days ago",
+                  '3 days ago',
                   style: styles.nSubtitleTextStyle,
                   color: styles.nSubtitleColor,
                 ),

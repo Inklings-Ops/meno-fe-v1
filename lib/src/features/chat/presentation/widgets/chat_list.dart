@@ -44,7 +44,7 @@ class ChatList extends HookConsumerWidget {
   Future<dynamic> showMyChatOptions(BuildContext context) {
     return context.showModal(
       MModal(
-        title: "My Comment",
+        title: 'My Comment',
         builder: (context) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
@@ -52,13 +52,13 @@ class ChatList extends HookConsumerWidget {
             MCore.small.verticalSpace,
             MModalListTile(
               leading: const Icon(MIcons.edit_05),
-              title: "Edit",
+              title: 'Edit',
               onTap: () {},
             ),
             MCore.large.verticalSpace,
             MModalListTile(
               leading: const Icon(MIcons.trash),
-              title: "Delete",
+              title: 'Delete',
               onTap: () => context.showDeleteCommentDialog(),
               titleColor: MColorScheme.of(context)!.error,
             ),
@@ -82,7 +82,7 @@ class ChatList extends HookConsumerWidget {
             MModalListTile(
               // TODO: Add flag
               leading: const Icon(Icons.flag),
-              title: "Report",
+              title: 'Report',
               onTap: () {},
             ),
             MCore.large.verticalSpace,

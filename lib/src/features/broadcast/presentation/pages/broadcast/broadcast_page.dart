@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/services/live_kit/live_kit_service.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
@@ -17,7 +19,7 @@ class BroadcastPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listenManual(broadcastNotifierProvider, (previous, next) {
+    ref.listen(broadcastNotifierProvider, (previous, next) {
       next.onStarted.fold(
         () => null,
         (either) => either.fold(
@@ -47,15 +49,24 @@ class BroadcastPage extends HookConsumerWidget {
       );
     });
 
+    ref.watch(liveKitNotifierProvider).when(
+          data: (data) {
+            final listener = data.createListener();
+            listener.listen((p0) => Logger().w(p0));
+            listener.on((p0) => Logger().f(p0));
+          },
+          error: (err, stack) => Logger().e(err),
+          loading: () => null,
+        );
 
     return const PopScope(
       canPop: false,
       child: LiveStreamScaffold(
         tabs: [
-          Tab(text: "Broadcast"),
-          Tab(text: "Chats"),
-          Tab(text: "Live Bible"),
-          Tab(text: "Notes"),
+          Tab(text: 'Broadcast'),
+          Tab(text: 'Chats'),
+          Tab(text: 'Live Bible'),
+          Tab(text: 'Notes'),
         ],
         tabViews: [
           BroadcastTab(),

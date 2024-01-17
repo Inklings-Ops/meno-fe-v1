@@ -21,9 +21,9 @@ class LiveActivityCard extends HookConsumerWidget {
 
     return ActivityCard(
       broadcast: streamBroadcast,
-      onTap: () => context.go(Routes.broadcast),
-      badgeTitle: "Now Streaming",
-      actionTitle: "Leave",
+      onTap: () => context.push(Routes.stream),
+      badgeTitle: 'Now Streaming',
+      actionTitle: 'Leave',
       action: () => context.showLeaveBroadcastDialog().then((value) {
         if (value == true) {
           ref.read(streamNotifierProvider.notifier).leaveBroadcast();

@@ -62,8 +62,8 @@ class BroadcastTab extends HookConsumerWidget {
                 constraints: const BoxConstraints(maxHeight: 32).r,
                 child: TabBar.secondary(
                   tabs: const [
-                    Tab(text: "Listening"),
-                    Tab(text: "About"),
+                    Tab(text: 'Listening'),
+                    Tab(text: 'About'),
                   ],
                   controller: tabController,
                 ),
@@ -72,7 +72,7 @@ class BroadcastTab extends HookConsumerWidget {
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                      BroadcastListeningTab(broadcastId: broadcast.id),
+                    BroadcastListeningTab(broadcastId: broadcast.id),
                     BroadcastAboutTab(description: broadcast.description),
                   ],
                 ),

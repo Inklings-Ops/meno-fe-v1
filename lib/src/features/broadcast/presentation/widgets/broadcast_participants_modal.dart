@@ -16,15 +16,15 @@ class BroadcastParticipantsModal extends ConsumerWidget {
     final numberOfParticipants = participants.length;
 
     return MModal(
-      title: "Listening (${numberOfParticipants.toString()})",
+      title: 'Listening (${numberOfParticipants.toString()})',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const MTextFormField(
-            label: "Search",
+            label: 'Search',
             prefixIcon: MIcons.search,
             showLabel: false,
-            hint: "Search",
+            hint: 'Search',
           ),
           MCore.large.verticalSpace,
           Expanded(

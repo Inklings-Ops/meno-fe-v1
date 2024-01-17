@@ -30,8 +30,8 @@ class CreateBroadcastPage extends ConsumerWidget {
         child: Align(
           alignment: Alignment.bottomLeft,
           child: MHeader(
-            title: "Go Live Now",
-            actionTitle: "Cancel",
+            title: 'Go Live Now',
+            actionTitle: 'Cancel',
             action: context.pop,
           ),
         ),

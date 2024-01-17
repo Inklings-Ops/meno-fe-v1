@@ -41,7 +41,7 @@ class NotificationFacade implements INotificationFacade {
       }
       return right(sortedList);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? "Error"));
+      return left(NotificationException.message(e.message ?? 'Error'));
     }
   }
 
@@ -57,7 +57,7 @@ class NotificationFacade implements INotificationFacade {
       await _remote.deleteNotification(id);
       return right(unit);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? "Error"));
+      return left(NotificationException.message(e.message ?? 'Error'));
     }
   }
 
@@ -73,7 +73,7 @@ class NotificationFacade implements INotificationFacade {
       await _remote.updateNotification(id);
       return right(unit);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? "Error"));
+      return left(NotificationException.message(e.message ?? 'Error'));
     }
   }
 }

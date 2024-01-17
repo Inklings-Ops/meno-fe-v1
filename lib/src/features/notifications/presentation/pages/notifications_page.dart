@@ -29,7 +29,7 @@ class NotificationsPage extends HookConsumerWidget {
 }
 
 class _Content extends StatelessWidget {
-  const _Content({super.key, required this.notifications});
+  const _Content({required this.notifications});
   final Map<NotificationCategory, List<Notification?>> notifications;
 
   @override
@@ -46,19 +46,19 @@ class _Content extends StatelessWidget {
             delegate: SliverChildListDelegate([
               if (today?.isNotEmpty ?? false) ...[
                 24.verticalSpace,
-                const MText("Today", style: MTextStyle.captionMedium),
+                const MText('Today', style: MTextStyle.captionMedium),
                 MCore.large.verticalSpace,
                 NotificationList(notifications: today!),
               ],
               if (thisWeek?.isNotEmpty ?? false) ...[
                 MCore.xxLarge.verticalSpace,
-                const MText("This Week", style: MTextStyle.captionMedium),
+                const MText('This Week', style: MTextStyle.captionMedium),
                 MCore.large.verticalSpace,
                 NotificationList(notifications: thisWeek!),
               ],
               if (older?.isNotEmpty ?? false) ...[
                 MCore.xxLarge.verticalSpace,
-                const MText("Older", style: MTextStyle.captionMedium),
+                const MText('Older', style: MTextStyle.captionMedium),
                 MCore.large.verticalSpace,
                 NotificationList(notifications: older!),
               ],
@@ -113,7 +113,7 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: MCore.small).r,
-            child: const MHeader(title: "Notifications"),
+            child: const MHeader(title: 'Notifications'),
           ),
         ],
       ),

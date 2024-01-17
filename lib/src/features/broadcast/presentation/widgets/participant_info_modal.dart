@@ -42,7 +42,7 @@ class ParticipantInfoModal extends StatelessWidget {
           ),
           MCore.micro.verticalSpace,
           const MText(
-            "Teacher | Software Developer | Christian Social Innovator",
+            'Teacher | Software Developer | Christian Social Innovator',
             style: MTextStyle.subheadingRegular,
             textAlign: TextAlign.center,
             maxLines: 2,
@@ -50,13 +50,13 @@ class ParticipantInfoModal extends StatelessWidget {
           ),
           MCore.large.verticalSpace,
           MPrimaryButton.icon(
-            label: "Subscribed",
+            label: 'Subscribed',
             icon: const Icon(MIcons.user_check),
             onPressed: () {},
           ),
           MCore.small.verticalSpace,
           MTextButton(
-            label: "View account",
+            label: 'View account',
             onPressed: () => context.push(
               Routes.profile,
               extra: participant.id,

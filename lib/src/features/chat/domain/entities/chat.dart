@@ -17,12 +17,12 @@ class Chat with _$Chat {
 
   factory Chat.empty() {
     return Chat(
-      id: "",
-      content: IChatContent(""),
+      id: '',
+      content: IChatContent(''),
       createdAt: DateTime.now(),
       updatedAt:  null,
-      senderId: "",
-      broadcastId: "",
+      senderId: '',
+      broadcastId: '',
     );
   }
 }

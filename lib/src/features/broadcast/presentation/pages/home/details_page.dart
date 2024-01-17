@@ -46,7 +46,7 @@ class DetailsPage extends StatelessWidget {
             _Creator(name: broadcast.fullName!),
             MCore.large.verticalSpace,
             MPrimaryButton.icon(
-              label: "Restream",
+              label: 'Restream',
               icon: const Icon(MIcons.play_arrow),
               onPressed: () {},
             ),
@@ -83,27 +83,27 @@ class DetailsPageOptionsModal extends StatelessWidget {
           24.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.user),
-            title: "Go to Profile",
+            title: 'Go to Profile',
           ),
           MCore.small.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.user_minus_01),
-            title: "Unsubscribe",
+            title: 'Unsubscribe',
           ),
           MCore.small.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.access_time),
-            title: "Listen Later",
+            title: 'Listen Later',
           ),
           MCore.small.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.share),
-            title: "Share",
+            title: 'Share',
           ),
           MCore.small.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.link_02),
-            title: "Copy Link",
+            title: 'Copy Link',
           ),
           24.verticalSpace,
         ],
@@ -196,7 +196,7 @@ class _Description extends StatelessWidget {
           children: [
             Icon(MIcons.menu_03, size: 16.r),
             MCore.small.horizontalSpace,
-            const MText("About Broadcast", style: MTextStyle.subheadingMedium),
+            const MText('About Broadcast', style: MTextStyle.subheadingMedium),
           ],
         ),
         MCore.large.verticalSpace,

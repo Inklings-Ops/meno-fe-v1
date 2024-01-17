@@ -40,11 +40,11 @@ class _Converter<T> implements JsonConverter<T?, Map<String, dynamic>> {
       return null;
     }
 
-    if (json["error"] != null) {
-      return  json["error"] as T?;
+    if (json['error'] != null) {
+      return  json['error'] as T?;
     }
 
-    return json["data"] as T?;
+    return json['data'] as T?;
   }
 
   @override

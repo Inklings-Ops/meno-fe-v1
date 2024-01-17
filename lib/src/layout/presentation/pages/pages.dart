@@ -7,7 +7,7 @@ class DiscoverPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: MText("Discover")),
+      body: Center(child: MText('Discover')),
     );
   }
 }
@@ -18,7 +18,7 @@ class NotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: MText("Notes")),
+      body: Center(child: MText('Notes')),
     );
   }
 }

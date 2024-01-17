@@ -6,6 +6,8 @@ import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/core/broadcast/meno_event.dart';
+import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as socket_io;
@@ -18,7 +20,7 @@ import '../../features/broadcast/infrastructure/mapper/broadcast_mapper.dart';
 import '../../features/notifications/application/notifications_notifier.dart';
 import '../../shared/m_keys.dart';
 import '../secure_storage_service.dart';
-import 'socket_event.dart';
+import 'event_names.dart';
 
 part 'socket_service.freezed.dart';
 part 'socket_service.g.dart';
@@ -32,8 +34,8 @@ Future<List<Participant?>> getParticipants(
   final notifier = ref.read(socketServiceProvider.notifier);
 
   final data = await notifier.emit(
-    SocketEvent.getBroadcastListeners,
-    requestData: {"broadcastId": broadcastId},
+    sEGetBroadcastListeners,
+    requestData: {'broadcastId': broadcastId},
   );
 
   final res = (jsonDecode(jsonEncode(data))['data']);
@@ -72,25 +74,24 @@ class SocketService extends _$SocketService {
     socket = socket_io.io(
       Env.menoApiUrl,
       socket_io.OptionBuilder()
-          .setTransports(["websocket"])
-          .setQuery({"token": token})
+          .setTransports(['websocket'])
+          .setQuery({'token': token})
           .enableAutoConnect()
           .build(),
     );
 
     socketGlobalListeners();
-    getLiveBroadcasts();
   }
 
   dynamic socketGlobalListeners() {
-    socket?.on(SocketEvent.connect, onConnect);
-    socket?.on(SocketEvent.disconnect, onDisconnect);
-    socket?.on(SocketEvent.error, onSocketError);
-    socket?.on(SocketEvent.newBroadcast, onNewBroadcast);
-    socket?.on(SocketEvent.endedBroadcast, onEndedBroadcast);
-    socket?.on(SocketEvent.newBroadcastListener, onNewBroadcastListener);
-    socket?.on(SocketEvent.numberOfLiveListeners, onNumberOfLiveBroadcasts);
-    socket?.on(SocketEvent.notification, onNotification);
+    socket?.on(sEConnect, onConnect);
+    socket?.on(sEDisconnect, onDisconnect);
+    socket?.on(sEError, onSocketError);
+    socket?.on(sENewBroadcast, onNewBroadcast);
+    socket?.on(sEEndedBroadcast, onEndedBroadcast);
+    socket?.on(sENewBroadcastListener, onNewBroadcastListener);
+    socket?.on(sENumberOfLiveListeners, onNumberOfLiveListeners);
+    socket?.on(sENotification, onNotification);
   }
 
   dynamic onConnect(_) {
@@ -98,7 +99,10 @@ class SocketService extends _$SocketService {
     getLiveBroadcasts();
   }
 
-  dynamic onDisconnect(_) => _log.i('Socket Disconnected');
+  dynamic onDisconnect(_) {
+    _log.i('Socket Disconnected');
+    ref.invalidateSelf();
+  }
 
   dynamic onSocketError(msg) => _log.i('Socket Error: ${msg.toString()}');
 
@@ -122,33 +126,38 @@ class SocketService extends _$SocketService {
     return completer.future;
   }
 
+  /// Ends a currently live [Broadcast].
   void endBroadcast(String broadcastId) {
     if (socket == null || !socket!.connected) {
       return;
     }
 
     return socket?.emitWithAck(
-      SocketEvent.endBroadcast,
-      {"broadcastId": broadcastId},
-      ack: (data) => state = SocketState.initial(),
+      sEEndBroadcast,
+      {'broadcastId': broadcastId},
+      ack: (_) {},
     );
   }
 
+  /// Gets all the [Broadcast]s that are currently live.
   dynamic getLiveBroadcasts() {
+    state = state.copyWith(loading: true);
+
     if (socket == null || !socket!.connected) {
-      state = state.copyWith(loading: true);
+      state = state.copyWith(loading: false);
       return;
     }
 
     return socket?.emitWithAck(
-      SocketEvent.getLiveBroadcasts,
+      sEGetLiveBroadcasts,
       {},
       ack: (data) async {
-        final userId = (await di<IAuthFacade>().user)!.id;
+        final userId = (await di<IAuthFacade>().user).id;
 
         if (state.liveBroadcasts.isEmpty) {
-          state = state.copyWith(loading: true);
+          state = state.copyWith(loading: false);
         }
+
         final res = (jsonDecode(jsonEncode(data))['data']);
         if (res != null) {
           final list = (res as List);
@@ -164,6 +173,7 @@ class SocketService extends _$SocketService {
     );
   }
 
+  /// Call to join a currently live [Broadcast].
   void joinBroadcast(String broadcastId) {
     state = state.copyWith(loading: true);
 
@@ -173,9 +183,12 @@ class SocketService extends _$SocketService {
     }
 
     return socket?.emitWithAck(
-      SocketEvent.joinBroadcast,
-      {"broadcastId": broadcastId},
-      ack: (data) => state = state.copyWith(isStreaming: true, loading: false),
+      sEJoinBroadcast,
+      {'broadcastId': broadcastId},
+      ack: (_) {
+        state = state.copyWith(loading: false);
+        ref.read(eventProvider.notifier).emit(const IsStreamingEvent());
+      },
     );
   }
 
@@ -186,10 +199,11 @@ class SocketService extends _$SocketService {
     }
 
     return socket?.emitWithAck(
-      SocketEvent.leaveBroadcast,
-      {"broadcastId": broadcastId},
+      sELeaveBroadcast,
+      {'broadcastId': broadcastId},
       ack: (data) {
-        state = state.copyWith(isStreaming: false, loading: false);
+        state = state.copyWith(loading: false);
+        ref.read(eventProvider.notifier).emit(const LeaveBroadcastEvent());
         ref.invalidate(getParticipantsProvider);
       },
     );
@@ -202,16 +216,19 @@ class SocketService extends _$SocketService {
     }
 
     return socket?.emitWithAck(
-      SocketEvent.startedBroadcast,
-      {"broadcastId": broadcastId},
-      ack: (data) => state = state.copyWith(isLive: true, loading: false),
+      sEStartedBroadcast,
+      {'broadcastId': broadcastId},
+      ack: (_) {
+        ref.read(eventProvider.notifier).emit(const IsLiveEvent());
+        state = state.copyWith(loading: false);
+      },
     );
   }
 
   dynamic onNewBroadcast(dynamic data) {
-    final Map<String, dynamic> decodedData = jsonDecode(jsonEncode(data));
-    final BroadcastDto dto = BroadcastDto.fromJson(decodedData);
-    final Broadcast? broadcast = _mapper.broadcastToDomain(dto);
+    final decodedData = jsonDecode(jsonEncode(data));
+    final dto = BroadcastDto.fromJson(decodedData);
+    final broadcast = _mapper.broadcastToDomain(dto);
 
     final liveBroadcasts = List<Broadcast?>.from(state.liveBroadcasts);
     liveBroadcasts.add(broadcast);
@@ -221,16 +238,14 @@ class SocketService extends _$SocketService {
 
   dynamic onEndedBroadcast(dynamic data) {
     getLiveBroadcasts();
-    state = state.copyWith(liveBroadcast: Broadcast.empty());
+
+    ref.read(eventProvider.notifier).emit(const EndedBroadcastEvent());
+    state = state.copyWith(liveBroadcast: Broadcast.empty(), loading: false);
   }
 
-  dynamic onNewBroadcastListener(dynamic data) {
-    ref.invalidate(getParticipantsProvider);
-  }
+  dynamic onNewBroadcastListener(dynamic data) {}
 
-  dynamic onNumberOfLiveBroadcasts(dynamic data) {
-    ref.invalidate(getParticipantsProvider);
-  }
+  dynamic onNumberOfLiveListeners(_) => ref.invalidate(getParticipantsProvider);
 
   dynamic onNotification(dynamic data) async {
     await ref.read(notificationsNotifierProvider.notifier).getNotifications();

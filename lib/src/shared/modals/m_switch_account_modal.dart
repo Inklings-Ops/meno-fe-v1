@@ -49,7 +49,7 @@ class _AccountListTile extends ConsumerWidget {
   final UserCredentials credentials;
 
   const _AccountListTile({
-    super.key, required this.credentials
+    required this.credentials
   });
 
   @override
@@ -105,7 +105,7 @@ class _AddAccountTile extends ConsumerWidget {
             MCore.medium.horizontalSpace,
             Expanded(
               child: MText(
-                "Add Account",
+                'Add Account',
                 style: MTextTheme.of(context)?.bodyMedium,
                 color: colorScheme.primary,
               ),
@@ -123,13 +123,13 @@ class _SwitchAccountModal1 extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MModal(
-      title: "Switch Account",
+      title: 'Switch Account',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           MPrimaryButton(
-            label: "Log in to Existing Account",
+            label: 'Log in to Existing Account',
             onPressed: () {
               context.pop();
               ref.read(authProvider.notifier).logout();
@@ -137,7 +137,7 @@ class _SwitchAccountModal1 extends ConsumerWidget {
             },
           ),
           MTextButton(
-            label: "Create New Account",
+            label: 'Create New Account',
             onPressed: () {
               context.pop();
               context.go(Routes.registerWithoutLeading);
@@ -158,7 +158,7 @@ class _SwitchAccountModal2 extends ConsumerWidget {
         ref.watch(allCredentialsProvider);
 
     return MModal(
-      title: "Switch Account",
+      title: 'Switch Account',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [

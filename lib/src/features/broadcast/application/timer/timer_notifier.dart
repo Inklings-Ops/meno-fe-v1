@@ -28,6 +28,19 @@ class TimerNotifier extends _$TimerNotifier {
     state = TimerState.initial();
   }
 
+  void set([DateTime? startTime]) {
+    if (startTime == null) return;
+
+    final duration = DateTime.now().difference(startTime).abs();
+    state = state.copyWith(
+      elapsedTime: duration,
+      hours: _calculateTime(duration, _Unit.hrs),
+      minutes: _calculateTime(duration, _Unit.mins),
+      seconds: _calculateTime(duration, _Unit.secs),
+      timeAgo: DateHelpers.getTimeAgo(duration), // If applicable
+    );
+  }
+
   void start() {
     if (_timer != null) {
       return;

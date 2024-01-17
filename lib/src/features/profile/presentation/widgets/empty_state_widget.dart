@@ -25,7 +25,7 @@ class EmptyStateWidget extends StatelessWidget {
         children: [
           Assets.images.liveForYou.image(height: 120.r, width: 120.r),
           MText(
-            title ?? "No broadcasts published yet",
+            title ?? 'No broadcasts published yet',
             style: MTextStyle.captionMedium,
             textAlign: TextAlign.center,
           ),
@@ -33,7 +33,7 @@ class EmptyStateWidget extends StatelessWidget {
           SizedBox(
             height: 32.h,
             child: MSecondaryButton.icon(
-              label: "View $actionTitle",
+              label: 'View $actionTitle',
               icon: Icon(
                 MIcons.share,
                 color: colorScheme.onBackground,

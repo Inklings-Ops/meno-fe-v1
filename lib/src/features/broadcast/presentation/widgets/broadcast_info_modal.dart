@@ -58,25 +58,25 @@ class BroadcastInfoModal extends ConsumerWidget {
           if (!isBroadcasting) ...[
             const MModalListTile(
               leading: Icon(MIcons.arrow_narrow_down_left),
-              title: "Minimize Stream",
+              title: 'Minimize Stream',
             ),
             const MModalListTile(
               leading: Icon(MIcons.user_minus_01),
-              title: "Unsubscribe",
+              title: 'Unsubscribe',
             ),
           ],
           const MModalListTile(
             leading: Icon(MIcons.share),
-            title: "Share",
+            title: 'Share',
           ),
           const MModalListTile(
             leading: Icon(MIcons.link_02),
-            title: "Copy Link",
+            title: 'Copy Link',
           ),
           if (broadcastState.status == Status.offAir && isBroadcasting)
             MModalListTile(
               leading: Icon(MIcons.trash, color: colorScheme.error),
-              title: "Delete Broadcast",
+              title: 'Delete Broadcast',
               titleColor: colorScheme.error,
               onTap: () {
                 final id = ref.read(broadcastNotifierProvider).broadcast.id;

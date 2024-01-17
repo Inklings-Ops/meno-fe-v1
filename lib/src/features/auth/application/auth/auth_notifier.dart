@@ -1,12 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../core/isolates/m_isolates.dart';
 import '../../../../dependency_injector/injector.dart';
 import '../../domain/domain.dart';
 
@@ -49,24 +47,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Checks the authentication status and updates the state accordingly.
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
-    RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
-    final List<dynamic> results = await MIsolates.authResult(rootIsolateToken);
-
-    final User currentUser = results[0] ?? User.empty();
-    final UserToken? currentToken = results[1] as UserToken?;
-    final Map<String, UserCredentials> credentials = results[2] ?? {};
-
-    final isPartiallyAuthenticated = await _facade.isPartiallyAuthenticated;
-    final isAuthenticated = await _facade.isAuthenticated;
+    final (
+      isPartiallyAuthenticated,
+      isAuthenticated,
+      currentUser,
+      currentToken,
+      credentials
+    ) = await (
+      _facade.isPartiallyAuthenticated,
+      _facade.isAuthenticated,
+      _facade.user,
+      _facade.userToken,
+      _facade.allUserCredentials,
+    ).wait;
 
     AuthStatus status = AuthStatus.unauthenticated;
     UserToken? token;
 
     if (isAuthenticated) {
-      status = AuthStatus.authenticated;
       token = currentToken;
+      status = AuthStatus.authenticated;
     } else if (isPartiallyAuthenticated) {
-      token = null;
       status = AuthStatus.partiallyAuthenticated;
     }
 
@@ -75,7 +76,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       option: none(),
       status: status,
       user: currentUser,
-      credentials: credentials,
+      credentials: credentials ?? {},
       token: token,
     );
   }

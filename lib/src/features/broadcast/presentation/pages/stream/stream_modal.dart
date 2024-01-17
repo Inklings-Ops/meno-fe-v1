@@ -24,7 +24,7 @@ class StreamModal extends ConsumerWidget {
         (a) => a.fold(
           (l) => context.showBroadcastError(l),
           (r) {
-            Navigator.pop(context);
+            context.pop();
             context.push(Routes.stream);
           },
         ),
@@ -32,7 +32,7 @@ class StreamModal extends ConsumerWidget {
     });
 
     return MModal(
-      title: "Stream",
+      title: 'Stream',
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.22,
         minChildSize: 0.22,
@@ -50,9 +50,9 @@ class StreamModal extends ConsumerWidget {
                 _DescriptionSection(broadcast: broadcast),
                 24.verticalSpace,
                 MHeader(
-                  title: "Recent Broadcasts",
+                  title: 'Recent Broadcasts',
                   action: () {},
-                  actionTitle: "See all",
+                  actionTitle: 'See all',
                   showSideBorder: false,
                   padding: EdgeInsets.zero,
                 )
@@ -93,7 +93,7 @@ class _ActionButtons extends ConsumerWidget {
         children: [
           Expanded(
             child: MPrimaryButton(
-              label: "Join",
+              label: 'Join',
               onPressed: () => notifier.joinBroadcast(broadcast.id),
               loading: streamLoading || socketLoading,
               style: ElevatedButton.styleFrom(shape: shape),
@@ -102,7 +102,7 @@ class _ActionButtons extends ConsumerWidget {
           MCore.small.horizontalSpace,
           Expanded(
             child: MSecondaryButton(
-              label: "Share",
+              label: 'Share',
               onPressed: () {},
               style: OutlinedButton.styleFrom(
                 shape: shape,
@@ -177,7 +177,7 @@ class _DescriptionSection extends StatelessWidget {
           children: [
             Icon(MIcons.menu_03, size: 16.r),
             MCore.small.horizontalSpace,
-            const MText("Description", style: MTextStyle.subheadingMedium),
+            const MText('Description', style: MTextStyle.subheadingMedium),
           ],
         ),
         MCore.large.verticalSpace,

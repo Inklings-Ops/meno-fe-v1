@@ -12,19 +12,19 @@ abstract class NotificationRemoteDatasource {
   factory NotificationRemoteDatasource(Dio dio, {String baseUrl}) =
       _NotificationRemoteDatasource;
 
-  @GET("/api/v1/notifications")
+  @GET('/api/v1/notifications')
   Future<NotificationResponse> getNotifications({
-    @Query("page") int? page,
-    @Query("size") int? size,
+    @Query('page') int? page,
+    @Query('size') int? size,
   });
 
-  @PUT("/api/v1/notifications/{notificationId}")
+  @PUT('/api/v1/notifications/{notificationId}')
   Future<NotificationResponse> updateNotification(
-    @Path("notificationId") String notificationId,
+    @Path('notificationId') String notificationId,
   );
 
-  @DELETE("/api/v1/notifications/{notificationId}")
+  @DELETE('/api/v1/notifications/{notificationId}')
   Future<NotificationResponse> deleteNotification(
-    @Path("notificationId") String notificationId,
+    @Path('notificationId') String notificationId,
   );
 }

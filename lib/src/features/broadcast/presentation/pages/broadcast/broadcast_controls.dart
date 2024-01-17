@@ -3,9 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/core/broadcast/meno_event.dart';
+import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../../../services/socket/socket_service.dart';
 import '../../../application/broadcast/broadcast_notifier.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_info_modal.dart';
@@ -64,29 +65,43 @@ class MuteButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = MColorScheme.of(context)!;
-
     final isMuted = useState(false);
 
-    final status = ref.watch(broadcastStatusProvider);
-    final isLive = status == Status.live;
+    final menoEvent = ref.watch(eventProvider).event;
+
+    if (menoEvent == const IsLiveEvent()) {
+      return Microphone(
+        isMuted: isMuted.value,
+        onTap: () {
+          isMuted.value = !isMuted.value;
+          ref.read(muteProvider(!isMuted.value));
+        },
+      );
+    }
+
+    return const Microphone(isMuted: true);
+  }
+}
+
+class Microphone extends StatelessWidget {
+  final bool isMuted;
+
+  final VoidCallback? onTap;
+  const Microphone({super.key, this.isMuted = true, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = MColorScheme.of(context)!;
 
     return MIconButton(
-      icon: isMuted.value
+      icon: isMuted
           ? const Icon(MIcons.microphone_off)
           : const Icon(MIcons.microphone),
       color: colorScheme.primary,
       isFilled: true,
       iconSize: 20,
       fillColor: colorScheme.primary?.withOpacity(0.1),
-      onPressed: !isLive
-          ? null
-          : () async {
-              isMuted.value = !isMuted.value;
-              await ref
-                  .read(broadcastNotifierProvider.notifier)
-                  .setMute(!isMuted.value);
-            },
+      onPressed: onTap,
     );
   }
 }
@@ -99,13 +114,13 @@ class StartStopButton extends ConsumerWidget {
     final colorScheme = MColorScheme.of(context)!;
     final foregroundColor = colorScheme.onBackground;
 
-    String label = "Start Broadcasting";
+    String label = 'Start Broadcasting';
     MColor? backgroundColor = colorScheme.primary;
 
-    final isLive = ref.watch(socketServiceProvider).isLive;
+    final menoEvent = ref.watch(eventProvider).event;
 
-    if (isLive) {
-      label = "Stop Broadcasting";
+    if (menoEvent == const IsLiveEvent()) {
+      label = 'Stop Broadcasting';
       backgroundColor = colorScheme.error;
     }
 
@@ -121,7 +136,7 @@ class StartStopButton extends ConsumerWidget {
 
     return MPrimaryButton(
       label: label,
-      onPressed: isLive ? stop : start,
+      onPressed: menoEvent == const IsLiveEvent() ? stop : start,
       loading: ref.watch(broadcastNotifierProvider).loading,
       style: ElevatedButton.styleFrom(
         foregroundColor: foregroundColor,

@@ -45,8 +45,8 @@ class _BuildColumn extends StatelessWidget {
       children: [
         MCore.xxxLarge.verticalSpace,
         MHeader(
-          title: "Recently Live",
-          actionTitle: "See all",
+          title: 'Recently Live',
+          actionTitle: 'See all',
           action: () => context.push(Routes.recentlyLive),
         ),
         24.verticalSpace,

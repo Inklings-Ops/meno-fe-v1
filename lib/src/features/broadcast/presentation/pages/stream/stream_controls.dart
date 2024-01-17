@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../application/stream/stream_notifier.dart';
@@ -51,17 +54,19 @@ class LeaveButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = MColorScheme.of(context)!;
 
-    Future<void> leave() {
-      return context.showLeaveBroadcastDialog().then((value) {
+    Future<void> leave() async {
+      return await context.showLeaveBroadcastDialog().then((value) {
         if (value == true) {
-          Navigator.pop(context);
-          ref.read(streamNotifierProvider.notifier).leaveBroadcast();
+          ref
+              .read(streamNotifierProvider.notifier)
+              .leaveBroadcast()
+              .whenComplete(() => context.go(Routes.home));
         }
       });
     }
 
     return MPrimaryButton(
-      label: "Leave Broadcast",
+      label: 'Leave Broadcast',
       onPressed: leave,
       loading: ref.watch(streamNotifierProvider.select((v) => v.loading)),
       style: ElevatedButton.styleFrom(

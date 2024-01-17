@@ -21,10 +21,13 @@ abstract class IAuthFacade {
   Future<bool> get isVerified;
 
   /// Gets the current user.
-  Future<User?> get user;
+  Future<User> get user;
 
   /// Gets the user's token.
   Future<UserToken?> get userToken;
+
+  /// Gets the user's token.
+  Future<Map<String, UserCredentials>?> get allUserCredentials;
 
   Future<Either<AuthException, Unit>> changePassword({
     required IPassword currentPassword,

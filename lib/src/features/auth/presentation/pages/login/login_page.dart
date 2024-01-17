@@ -25,7 +25,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) => MScaffold(
         appBar: MAppBar.primary(
-          title: "Log in",
+          title: 'Log in',
           implyLeading: widget.implyLeading,
         ),
         body: SingleChildScrollView(

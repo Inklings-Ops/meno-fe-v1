@@ -13,10 +13,10 @@ class AccountUpgradeSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
         child: Row(
           children: [
-            MTag(title: "FREE ACCOUNT", height: 24.r),
+            MTag(title: 'FREE ACCOUNT', height: 24.r),
             MCore.large.horizontalSpace,
             MTextButton(
-              label: "Upgrade to Premium",
+              label: 'Upgrade to Premium',
               onPressed: () {},
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

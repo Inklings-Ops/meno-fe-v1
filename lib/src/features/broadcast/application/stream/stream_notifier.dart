@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/features/broadcast/application/timer/timer_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../services/live_kit_service.dart';
+import '../../../../services/live_kit/live_kit_service.dart';
 import '../../../../services/socket/socket_service.dart';
 import '../../domain/domain.dart';
 import '../broadcast_providers.dart';
@@ -15,42 +16,65 @@ part 'stream_state.dart';
 @riverpod
 class StreamNotifier extends _$StreamNotifier {
   @override
-  StreamState build() => StreamState.initial();
+  StreamState build() {
+    return StreamState.initial();
+  }
 
-  SocketService get streamNotifier => ref.read(socketServiceProvider.notifier);
+  SocketService get socket => ref.read(socketServiceProvider.notifier);
   IBroadcastFacade get broadcastNotifier => ref.read(broadcastFacadeProvider);
-  LiveKitNotifier get liveKitNotifier =>
-      ref.read(liveKitNotifierProvider.notifier);
 
   Future<void> joinBroadcast(String broadcastId) async {
     state = state.copyWith(loading: true, onJoined: none());
 
-    final Either<BroadcastException, JoinBroadcastEntity> result =
+    final result =
         await broadcastNotifier.joinBroadcast(broadcastId: broadcastId);
 
     result.fold(
       (l) => state = state.copyWith(loading: false, onJoined: some(result)),
       (r) async {
+        Logger().w(r);
         state = state.copyWith(onJoined: some(result), broadcast: r);
-        await liveKitNotifier.stream(r.broadcastToken);
-        ref.read(socketServiceProvider.notifier).joinBroadcast(r.broadcast.id);
-        state = state.copyWith(status: Status.streaming, loading: false);
-        // ref.listen(liveKitEventStreamProvider, (previous, next) {
-        //   Logger().w("From Broadcast Notifier: $next");
-        // });
+        await ref
+            .read(liveKitNotifierProvider.notifier)
+            .broadcast(r.broadcastToken);
+
+        ref.watch(liveKitNotifierProvider).when(
+              data: (data) {
+                Logger().w(r);
+                ref
+                    .read(socketServiceProvider.notifier)
+                    .joinBroadcast(r.broadcast.id);
+                ref
+                    .read(timerNotifierProvider.notifier)
+                    .set(r.broadcast.startTime);
+                ref.read(timerNotifierProvider.notifier).start();
+                state = state.copyWith(loading: false);
+                Logger().w(r);
+              },
+              error: (err, stack) {
+                state = state.copyWith(loading: false, onJoined: some(result));
+              },
+              loading: () => state = state.copyWith(loading: true),
+            );
       },
     );
   }
 
+// TODO: Handle the scenario where someone leaves the broadcast abruptly and cannot join again. Suggest that LiveKit talks something about if someone joins a room with the same SID the old one gets kicked out
   Future<void> leaveBroadcast() async {
     state = state.copyWith(loading: true, onLeave: none());
 
-    await liveKitNotifier.leave();
-    streamNotifier.leaveBroadcast(state.broadcast.broadcast.id);
-
-    state = StreamState.initial();
-    await liveKitNotifier.dispose();
+    try {
+      await ref.read(liveKitNotifierProvider.notifier).leave();
+    } finally {
+      socket.leaveBroadcast(state.broadcast.broadcast.id);
+      ref.invalidate(timerNotifierProvider);
+      ref.invalidateSelf();
+    }
   }
 
-  void dispose() => state = StreamState.initial();
+  Future<void> dispose() async {
+    await ref.read(liveKitNotifierProvider.notifier).dispose();
+    state = StreamState.initial();
+  }
 }

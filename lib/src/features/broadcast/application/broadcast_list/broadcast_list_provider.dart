@@ -13,14 +13,14 @@ Future<List<Broadcast?>> recentBroadcasts(
 }) async {
   const AsyncValue.loading();
 
-  final today = DateTime.now();
-  final twoDaysAgo = today.subtract(const Duration(days: 2));
+  // final today = DateTime.now();
+  // final twoDaysAgo = today.subtract(const Duration(days: 2));
 
   final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
         size: limit,
-        orderBy: "DESC",
-        sortBy: "startTime",
-        endTimeGT: twoDaysAgo.toIso8601String(),
+        orderBy: 'DESC',
+        sortBy: 'startTime',
+        // endTimeGT: twoDaysAgo.toIso8601String(),
       );
 
   return result.fold((l) => [], (List<Broadcast?> r) => r);
@@ -38,8 +38,8 @@ Future<List<Broadcast?>> myRecentBroadcasts(
 
   final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
         size: limit,
-        orderBy: "DESC",
-        sortBy: "startTime",
+        orderBy: 'DESC',
+        sortBy: 'startTime',
         endTimeGT: twoDaysAgo.toIso8601String(),
         creatorId: ref.read(userProvider).id,
       );
@@ -60,8 +60,8 @@ class BroadcastList extends _$BroadcastList {
 
     final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
           size: limit,
-          orderBy: "DESC",
-          sortBy: "startTime",
+          orderBy: 'DESC',
+          sortBy: 'startTime',
           endTimeGT: twoDaysAgo.toIso8601String(),
         );
 

@@ -16,7 +16,7 @@ class BroadcastTimer extends ConsumerWidget {
     final colorScheme = MColorScheme.of(context)!;
 
     final elapsedTime = ref.watch(timerNotifierProvider.select((value) {
-      return "${value.hours}:${value.minutes}:${value.seconds}";
+      return '${value.hours}:${value.minutes}:${value.seconds}';
     }));
 
     final timeAgo = ref.watch(timerNotifierProvider.select((v) => v.timeAgo));

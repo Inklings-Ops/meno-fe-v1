@@ -105,10 +105,10 @@ class CustomContent extends HookWidget {
                   vertical: 6,
                 ).r,
                 tabs: const [
-                  Tab(text: "Recent broadcasts"),
-                  Tab(text: "All broadcasts"),
-                  Tab(text: "Favorites"),
-                  Tab(text: "Recordings"),
+                  Tab(text: 'Recent broadcasts'),
+                  Tab(text: 'All broadcasts'),
+                  Tab(text: 'Favorites'),
+                  Tab(text: 'Recordings'),
                 ],
               ),
             ),
@@ -150,9 +150,9 @@ class CustomContent extends HookWidget {
             controller: tabController,
             children: [
               const ProfileRecentBroadcastsTab(),
-              EmptyStateWidget(actionTitle: "Broadcasts", action: () {}),
-              EmptyStateWidget(actionTitle: "Favorites", action: () {}),
-              EmptyStateWidget(actionTitle: "Recordings", action: () {}),
+              EmptyStateWidget(actionTitle: 'Broadcasts', action: () {}),
+              EmptyStateWidget(actionTitle: 'Favorites', action: () {}),
+              EmptyStateWidget(actionTitle: 'Recordings', action: () {}),
             ],
           ),
         ),
@@ -172,12 +172,12 @@ class ProfileBio extends StatelessWidget {
     );
 
     return ReadMoreText(
-      bio?.get() ?? "No bio",
+      bio?.get() ?? 'No bio',
       style: MTextStyle.captionRegular.copyWith(height: 1.3.h),
       trimLines: 3,
       trimMode: TrimMode.Line,
-      trimExpandedText: "\nless",
-      trimCollapsedText: "\nmore",
+      trimExpandedText: '\nless',
+      trimCollapsedText: '\nmore',
       moreStyle: style,
       lessStyle: style,
     );

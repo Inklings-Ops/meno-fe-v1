@@ -18,11 +18,11 @@ class VerseWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(MCore.circle),
             color: colorScheme.primaryContainer,
           ),
-          child: const MText("Rom 1:1", style: MTextStyle.microMedium),
+          child: const MText('Rom 1:1', style: MTextStyle.microMedium),
         ),
         MCore.micro.verticalSpace,
         const MText(
-          "This letter is from Paul, a slave of Christ Jesus, chosen by God to be an apostle and sent out to preach his Good News.",
+          'This letter is from Paul, a slave of Christ Jesus, chosen by God to be an apostle and sent out to preach his Good News.',
           style: MTextStyle.bodyRegular,
         ),
         MCore.medium.verticalSpace,

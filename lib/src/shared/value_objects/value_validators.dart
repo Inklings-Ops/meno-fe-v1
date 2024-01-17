@@ -43,7 +43,7 @@ ValidationResult validatePassword(String input) {
     return left(ValueFailure.empty(input));
   } else {
     const pRegEx =
-        r"""^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[@$!%*?&]).{8,}$""";
+        r'''^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[@$!%*?&]).{8,}$''';
     if (RegExp(pRegEx).hasMatch(input)) {
       return right(input);
     } else {

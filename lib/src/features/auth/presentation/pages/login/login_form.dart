@@ -25,10 +25,10 @@ class LoginForm extends HookConsumerWidget {
 
     final isLoading = ref.watch(authProvider.select((v) => v.loading));
 
-    final email = useState<IEmail>(isPasswordOnly ? user.email : IEmail(""));
+    final email = useState<IEmail>(isPasswordOnly ? user.email : IEmail(''));
     final emailFocusNode = useFocusNode();
 
-    final password = useState<IPassword>(IPassword("", isLogin: true));
+    final password = useState<IPassword>(IPassword('', isLogin: true));
     final passwordFocusNode = useFocusNode();
 
     return Form(
@@ -44,8 +44,8 @@ class LoginForm extends HookConsumerWidget {
               MCore.xxLarge.verticalSpace,
             ] else ...[
               MTextFormField(
-                label: "Email Address",
-                hint: "example@gmail.com",
+                label: 'Email Address',
+                hint: 'example@gmail.com',
                 prefixIcon: MIcons.mail,
                 keyboardType: TextInputType.emailAddress,
                 enabled: !isLoading,
@@ -62,8 +62,8 @@ class LoginForm extends HookConsumerWidget {
               24.verticalSpace,
             ],
             MTextFormField(
-              label: "Be Secure",
-              hint: "Enter your password",
+              label: 'Be Secure',
+              hint: 'Enter your password',
               prefixIcon: MIcons.key,
               isPassword: true,
               enabled: !isLoading,
@@ -83,14 +83,14 @@ class LoginForm extends HookConsumerWidget {
               child: InkWell(
                 onTap: () => context.push(Routes.resetPassword),
                 child: const MText(
-                  "Forgot Password?",
+                  'Forgot Password?',
                   style: MTextStyle.captionMedium,
                 ),
               ),
             ),
             MCore.xxLarge.verticalSpace,
             MPrimaryButton(
-              label: "Log In",
+              label: 'Log In',
               loading: isLoading,
               onPressed: () {
                 if (Form.of(formContext).validate()) {
@@ -103,13 +103,13 @@ class LoginForm extends HookConsumerWidget {
               },
             ),
             24.verticalSpace,
-            const GoogleDivider(title: "Login with Google"),
+            const GoogleDivider(title: 'Login with Google'),
             24.verticalSpace,
             MGoogleButton(onPressed: () {}),
             149.verticalSpace,
             AuthRedirectionText(
-              title: "Don’t have an account?",
-              buttonText: "Create an account",
+              title: 'Don’t have an account?',
+              buttonText: 'Create an account',
               onPressed: () {
                 if (isOnboarded) {
                   context.push(Routes.registerWithLeading);

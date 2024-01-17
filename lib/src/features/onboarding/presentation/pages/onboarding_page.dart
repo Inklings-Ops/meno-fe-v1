@@ -71,7 +71,7 @@ class OnboardingPage extends HookConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                 child: MPrimaryButton(
-                  label: "Get started",
+                  label: 'Get started',
                   onPressed: () => context.push(Routes.registerWithLeading),
                 ),
               ),
@@ -79,7 +79,7 @@ class OnboardingPage extends HookConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                 child: MSecondaryButton(
-                  label: "Login",
+                  label: 'Login',
                   onPressed: () async {
                     final router = GoRouter.of(context);
                     await ref.read(onboardingProvider).completeOnboarding;

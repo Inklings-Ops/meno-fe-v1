@@ -31,8 +31,8 @@ class RegisterPage extends ConsumerWidget {
 
     return MScaffold(
       appBar: MAppBar.primary(
-        title: "New Account",
-        backText: "Go back",
+        title: 'New Account',
+        backText: 'Go back',
         implyLeading: implyLeading,
       ),
       body: SingleChildScrollView(

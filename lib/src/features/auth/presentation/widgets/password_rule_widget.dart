@@ -66,12 +66,12 @@ class _RuleItem extends StatelessWidget {
     final ruleColor = !rule['rule'](value) ? unsetColor : setColor;
 
     return Visibility(
-      visible: !rule["rule"](value),
+      visible: !rule['rule'](value),
       child: SizedBox(
         height: 18.h,
         width: 1.sw,
         child: MText(
-          rule["name"] ?? "",
+          rule['name'] ?? '',
           style: MTextStyle.captionRegular,
           color: value == null ? MColor.black : ruleColor,
         ),

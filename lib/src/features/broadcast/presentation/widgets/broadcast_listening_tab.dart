@@ -30,10 +30,10 @@ class BroadcastListeningTab extends ConsumerWidget {
                   MCore.small.horizontalSpace,
                   switch (participants) {
                     AsyncData(:final value) => MText(
-                        "${value.length}",
+                        '${value.length}',
                         style: MTextStyle.captionMedium,
                       ),
-                    _ => const MText("0", style: MTextStyle.captionMedium),
+                    _ => const MText('0', style: MTextStyle.captionMedium),
                   },
                 ],
               ),

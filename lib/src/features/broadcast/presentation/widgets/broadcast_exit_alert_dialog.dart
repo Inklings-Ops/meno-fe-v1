@@ -11,10 +11,10 @@ class BroadcastExitAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
 
-    String label = isBroadcasting ? "Stop Broadcasting?" : "Leave Broadcast?";
+    String label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
     String content = isBroadcasting
-        ? "Do you want to end this live broadcast?"
-        : "Do you want to leave this live broadcast?";
+        ? 'Do you want to end this live broadcast?'
+        : 'Do you want to leave this live broadcast?';
 
     return AlertDialog(
       title: MText(label, style: MTextStyle.heading2Regular),
@@ -24,7 +24,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
         SizedBox.fromSize(
           size: Size(85.w, 40.h),
           child: MTextButton(
-            label: "Cancel",
+            label: 'Cancel',
             onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
@@ -37,7 +37,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
         SizedBox(
           height: 40.h,
           child: MDangerButton(
-            label: isBroadcasting ? "Stop" : "Leave",
+            label: isBroadcasting ? 'Stop' : 'Leave',
             onPressed: () => context.pop(true),
             style: TextButton.styleFrom(
               backgroundColor: colorScheme.error,

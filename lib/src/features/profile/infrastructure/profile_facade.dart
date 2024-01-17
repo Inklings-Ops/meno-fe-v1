@@ -88,8 +88,8 @@ class ProfileFacade implements IProfileFacade {
   }
 
   AuthException _getError(DioException e) {
-    if (e.response?.data["error"].runtimeType == String) {
-      return AuthException.message(e.response?.data["message"]);
+    if (e.response?.data['error'].runtimeType == String) {
+      return AuthException.message(e.response?.data['message']);
     }
 
     final error = AuthError.fromJson(e.response!.data['error']);

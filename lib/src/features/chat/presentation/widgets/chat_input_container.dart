@@ -36,7 +36,7 @@ class ChatInputContainer extends HookConsumerWidget {
         content: IChatContent(textController.text),
         createdAt: time,
         senderId: senderId,
-        broadcastId: "broadcastId",
+        broadcastId: 'broadcastId',
       );
       ref.read(chatNotifierProvider.notifier).post(chat);
       scrollController.animateTo(
@@ -67,7 +67,7 @@ class ChatInputContainer extends HookConsumerWidget {
                     controller: textController,
                     decoration: const InputDecoration(
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      hintText: "Type your comment here...",
+                      hintText: 'Type your comment here...',
                     ),
                   ),
                 ),

@@ -31,7 +31,7 @@ class ProfileRecentBroadcastsTab extends ConsumerWidget {
           children: [
             Icon(Icons.refresh, size: 40.r),
             const MText(
-              "Reload ",
+              'Reload ',
               style: MTextStyle.captionMedium,
               textAlign: TextAlign.center,
             ),
@@ -41,7 +41,7 @@ class ProfileRecentBroadcastsTab extends ConsumerWidget {
     }
 
     if (broadcasts.hasValue && broadcasts.value!.isEmpty) {
-      return EmptyStateWidget(actionTitle: "Broadcasts", action: () {});
+      return EmptyStateWidget(actionTitle: 'Broadcasts', action: () {});
     }
 
     return _LoadedList(broadcasts: broadcasts.value!);

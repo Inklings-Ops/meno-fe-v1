@@ -40,7 +40,7 @@ class CreateBroadcastForm extends HookConsumerWidget {
             ),
             MCore.large.verticalSpace,
             MTextFormField(
-              label: "Broadcast Title",
+              label: 'Broadcast Title',
               hint: "Jim Halpert's live audio",
               required: true,
               enabled: !isLoading,
@@ -50,8 +50,8 @@ class CreateBroadcastForm extends HookConsumerWidget {
             ),
             24.verticalSpace,
             MTextArea(
-              label: "About Broadcast",
-              hint: "Enter a brief description",
+              label: 'About Broadcast',
+              hint: 'Enter a brief description',
               maxLines: 5,
               maxLength: 244,
               keyboardType: TextInputType.text,
@@ -64,14 +64,14 @@ class CreateBroadcastForm extends HookConsumerWidget {
             const CoHostSection(),
             24.verticalSpace,
             const CreateBroadcastListItem(
-              leadingText: "Remaining time today",
-              subtitleText: "Your daily broadcast time will reset in 24hrs",
-              trailing: MText("0hr 30min", style: MTextStyle.captionRegular),
+              leadingText: 'Remaining time today',
+              subtitleText: 'Your daily broadcast time will reset in 24hrs',
+              trailing: MText('0hr 30min', style: MTextStyle.captionRegular),
             ),
             24.verticalSpace,
             CreateBroadcastListItem(
-              leadingText: "Enable recording",
-              subtitleText: "Record your broadcast to listen back to later",
+              leadingText: 'Enable recording',
+              subtitleText: 'Record your broadcast to listen back to later',
               trailing: SizedBox(
                 width: 48.w,
                 child: Switch(
@@ -82,7 +82,7 @@ class CreateBroadcastForm extends HookConsumerWidget {
             ),
             24.verticalSpace,
             MPrimaryButton(
-              label: "Start Broadcast",
+              label: 'Start Broadcast',
               loading: isLoading,
               onPressed: () {
                 context.clearSnackBars();
@@ -119,12 +119,12 @@ class _Avatar extends StatelessWidget {
     return Column(
       children: [
         MAvatar(radius: 48.r, file: file),
-        MTextButton(label: "Change Artwork", onPressed: onPressed),
+        MTextButton(label: 'Change Artwork', onPressed: onPressed),
         Center(
           child: SizedBox(
             width: 167.w,
             child: const MText(
-              "JPG or PNG accepted. Max size 10mb.",
+              'JPG or PNG accepted. Max size 10mb.',
               maxLines: 2,
               style: MTextStyle.microRegular,
               textAlign: TextAlign.center,

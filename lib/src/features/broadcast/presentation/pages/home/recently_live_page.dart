@@ -17,7 +17,7 @@ class RecentlyLivePage extends ConsumerWidget {
     final broadcasts = ref.watch(recentBroadcastsProvider());
 
     return MScaffold(
-      appBar: MAppBar.secondary(title: "Recently Live", centerTitle: true),
+      appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
       padding: EdgeInsets.zero,
       body: RefreshIndicator.adaptive(
         onRefresh: () async => await ref.refresh(recentBroadcastsProvider()),
@@ -29,7 +29,7 @@ class RecentlyLivePage extends ConsumerWidget {
               _LoadedList(broadcasts: broadcasts.value!),
             MCore.large.verticalSpace,
             MText(
-              "You’ve reached the end 🎉",
+              'You’ve reached the end 🎉',
               style: MTextStyle.captionRegular,
               color: colorScheme.onBackgroundVariant,
               textAlign: TextAlign.center,

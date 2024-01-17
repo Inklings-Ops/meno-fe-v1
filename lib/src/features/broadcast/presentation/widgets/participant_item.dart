@@ -72,14 +72,14 @@ class ParticipantItem extends StatelessWidget {
             MCore.small.verticalSpace,
             Flexible(
               child: MText(
-                hasUser ? participant!.fullName : "Add Co-host",
+                hasUser ? participant!.fullName : 'Add Co-host',
                 style: MTextStyle.microMedium,
                 color: hasUser ? null : MColor.grey50,
               ),
             ),
             if (isCohost) ...[
               MCore.micro.verticalSpace,
-              const MText("Co-host", style: MTextStyle.nanoRegular),
+              const MText('Co-host', style: MTextStyle.nanoRegular),
             ],
           ],
         ),

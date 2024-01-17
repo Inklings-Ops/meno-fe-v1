@@ -14,14 +14,11 @@ import 'src/dependency_injector/injector.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseMessaging.instance.requestPermission(provisional: true);
+  await FirebaseMessaging.instance.requestPermission();
   await handleFCMToken();
   await setupFlutterNotifications();
   showFlutterNotification(message);
-  Logger().i('Handling a background message ${message.messageId}');
 }
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,5 +31,6 @@ Future<void> main() async {
   await configureDependencies();
   // await di<SharedPreferences>().clear();
   // await di<SecureStorageService>().deleteAll();
+
   runApp(const ProviderScope(child: MenoApp()));
 }

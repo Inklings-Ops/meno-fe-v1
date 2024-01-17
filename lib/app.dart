@@ -28,7 +28,8 @@ class _MenoAppState extends ConsumerState<MenoApp> {
         debugShowCheckedModeBanner: false,
         routerConfig: router,
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1.sp)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(1.sp)),
           child: LayoutGrid(
             builder: (context) => child!,
             rowsParams: const RowsParams(height: 8),

@@ -18,11 +18,11 @@ class ProfileStats extends StatelessWidget {
       child: Row(
         children: [
           2.horizontalSpace,
-          ProfileStatItem(title: "Broadcasts", count: stats?.broadcasts),
+          ProfileStatItem(title: 'Broadcasts', count: stats?.broadcasts),
           MCore.large.horizontalSpace,
-          ProfileStatItem(title: "Subscribers", count: stats?.subscribers),
+          ProfileStatItem(title: 'Subscribers', count: stats?.subscribers),
           MCore.large.horizontalSpace,
-          ProfileStatItem(title: "Subscriptions", count: stats?.subscriptions),
+          ProfileStatItem(title: 'Subscriptions', count: stats?.subscriptions),
           2.horizontalSpace,
         ],
       ),

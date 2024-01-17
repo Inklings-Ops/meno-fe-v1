@@ -20,7 +20,7 @@ abstract class BroadcastRemoteDatasource {
     String baseUrl,
   }) = _BroadcastRemoteDatasource;
 
-  @POST("/api/v1/broadcasts")
+  @POST('/api/v1/broadcasts')
   @MultiPart()
   Future<BroadcastResponse<BroadcastDto?>> createBroadcast({
     @Part() required String title,
@@ -30,15 +30,15 @@ abstract class BroadcastRemoteDatasource {
     @Part(name: 'image', contentType: 'image/png') File? image,
   });
 
-  @DELETE("/api/v1/broadcasts/{broadcastId}")
+  @DELETE('/api/v1/broadcasts/{broadcastId}')
   Future<BroadcastResponse> deleteBroadcast({
-    @Path("broadcastId") required String broadcastId,
+    @Path('broadcastId') required String broadcastId,
   });
 
-  @PUT("/api/v1/broadcasts/{broadcastId}")
+  @PUT('/api/v1/broadcasts/{broadcastId}')
   @MultiPart()
   Future<BroadcastResponse<BroadcastDto?>> editBroadcast({
-    @Path("broadcastId") required String broadcastId,
+    @Path('broadcastId') required String broadcastId,
     @Part() String? title,
     @Part() String? description,
     @Part() String? timeZone,
@@ -46,64 +46,64 @@ abstract class BroadcastRemoteDatasource {
     @Part() File? image,
   });
 
-  @POST("/api/v1/broadcasts/{broadcastId}/join")
+  @POST('/api/v1/broadcasts/{broadcastId}/join')
   Future<BroadcastResponse<JoinBroadcastDto?>> joinBroadcast({
-    @Path("broadcastId") required String broadcastId,
+    @Path('broadcastId') required String broadcastId,
   });
 
-  @PUT("/api/v1/broadcasts/{broadcastId}/start")
+  @PUT('/api/v1/broadcasts/{broadcastId}/start')
   Future<BroadcastResponse<BroadcastDto?>> startBroadcast({
-    @Path("broadcastId") required String broadcastId,
+    @Path('broadcastId') required String broadcastId,
   });
 
-  @GET("/api/v1/broadcasts/")
+  @GET('/api/v1/broadcasts/')
   Future<BroadcastResponse<BroadcastListDto?>> getBroadcasts({
     /// Status of the broadcast
     /// Example : active or inactive
-    @Query("status") String? status,
+    @Query('status') String? status,
 
     /// Adds an extra field to each broadcast response with the number of listeners that tuned in
     /// Example : totalListeners
-    @Query("include") String? include,
+    @Query('include') String? include,
 
     /// Returns only broadcasts of accounts the logged In user is subscribed to
-    @Query("onlySubscriptions") bool? onlySubscriptions,
+    @Query('onlySubscriptions') bool? onlySubscriptions,
 
     /// Searches for broadcasts and creators that match that keyword
-    @Query("keywords") String? keywords,
+    @Query('keywords') String? keywords,
 
     /// Return only broadcasts created by a specific user
-    @Query("creatorId") String? creatorId,
+    @Query('creatorId') String? creatorId,
 
     /// Sort by a specific broadcast field
-    @Query("sortBy") String? sortBy,
+    @Query('sortBy') String? sortBy,
 
     /// Order by a specific broadcast field
     /// Example : ASC or DESC
-    @Query("orderBy") String? orderBy,
+    @Query('orderBy') String? orderBy,
 
     /// Used for pagination
-    @Query("page") int? page,
+    @Query('page') int? page,
 
     /// Used for pagination
-    @Query("size") int? size,
+    @Query('size') int? size,
 
     /// Greater than end time
-    @Query("endTime[gt]") String? endTimeGT,
+    @Query('endTime[gt]') String? endTimeGT,
 
     /// Less than end time
-    @Query("endTime[lt]") String? endTimeLT,
+    @Query('endTime[lt]') String? endTimeLT,
 
     /// Equal to end time
-    @Query("endTime[eq]") String? endTimeEQ,
+    @Query('endTime[eq]') String? endTimeEQ,
 
     /// Greater than start time
-    @Query("startTime[gt]") String? startTimeGT,
+    @Query('startTime[gt]') String? startTimeGT,
 
     /// Less than start time
-    @Query("startTime[lt]") String? startTimeLT,
+    @Query('startTime[lt]') String? startTimeLT,
 
     /// Equal to start time
-    @Query("startTime[eq]") String? startTimeEQ,
+    @Query('startTime[eq]') String? startTimeEQ,
   });
 }

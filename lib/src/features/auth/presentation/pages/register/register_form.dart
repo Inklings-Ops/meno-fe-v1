@@ -40,8 +40,8 @@ class RegisterForm extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MTextFormField(
-              label: "Full Name",
-              hint: "Jim Halpert",
+              label: 'Full Name',
+              hint: 'Jim Halpert',
               prefixIcon: MIcons.user,
               focusNode: nameFocusNode,
               enabled: !isLoading,
@@ -53,8 +53,8 @@ class RegisterForm extends HookConsumerWidget {
             ),
             24.verticalSpace,
             MTextFormField(
-              label: "Email Address",
-              hint: "example@gmail.com",
+              label: 'Email Address',
+              hint: 'example@gmail.com',
               prefixIcon: MIcons.mail,
               focusNode: emailFocusNode,
               keyboardType: TextInputType.emailAddress,
@@ -70,8 +70,8 @@ class RegisterForm extends HookConsumerWidget {
             ),
             24.verticalSpace,
             MTextFormField(
-              label: "Be Secure",
-              hint: "Enter your password",
+              label: 'Be Secure',
+              hint: 'Enter your password',
               prefixIcon: MIcons.key,
               isPassword: true,
               focusNode: passwordFocusNode,
@@ -90,7 +90,7 @@ class RegisterForm extends HookConsumerWidget {
             const RememberMeCheckboxTile(),
             MCore.xxLarge.verticalSpace,
             MPrimaryButton(
-              label: "Create Your Account",
+              label: 'Create Your Account',
               loading: isLoading,
               onPressed: () {
                 FocusScope.of(context).unfocus();
@@ -104,18 +104,18 @@ class RegisterForm extends HookConsumerWidget {
               },
             ),
             MCore.xxLarge.verticalSpace,
-            const GoogleDivider(title: "Create account with Google"),
+            const GoogleDivider(title: 'Create account with Google'),
             24.verticalSpace,
             const MGoogleButton(),
             44.verticalSpace,
             AuthRedirectionText(
-              title: "Already have an account?",
-              buttonText: "Log in",
+              title: 'Already have an account?',
+              buttonText: 'Log in',
               onPressed: () {
                 if (isOnboarded) {
                   context.replace(Routes.login);
                 } else {
-                  context.replace("/login?implyLeading=true");
+                  context.replace('/login?implyLeading=true');
                 }
               },
             ),

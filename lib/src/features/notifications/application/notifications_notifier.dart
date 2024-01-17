@@ -4,16 +4,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/entities/notification.dart';
 import 'notification_providers.dart';
 
-part "notifications_notifier.g.dart";
+part 'notifications_notifier.g.dart';
 
 enum NotificationCategory { today, thisWeek, older, none }
 
 extension NotificationCategoryX on NotificationCategory {
   String get toName => switch (this) {
-        NotificationCategory.none => "None",
-        NotificationCategory.today => "Today",
-        NotificationCategory.older => "Older",
-        NotificationCategory.thisWeek => "This Week",
+        NotificationCategory.none => 'None',
+        NotificationCategory.today => 'Today',
+        NotificationCategory.older => 'Older',
+        NotificationCategory.thisWeek => 'This Week',
       };
 }
 

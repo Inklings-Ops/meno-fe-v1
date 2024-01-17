@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/services/live_kit_service.dart';
 
 class LiveForYou extends StatelessWidget {
   const LiveForYou({super.key});
@@ -11,7 +11,7 @@ class LiveForYou extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const MHeader(title: "Live For You ✨"),
+        const MHeader(title: 'Live For You ✨'),
         Container(
           height: 112.h,
           padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
@@ -24,7 +24,7 @@ class LiveForYou extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     MText(
-                      "Hello there! You are not subscribed to any broadcasts yet.",
+                      'Hello there! You are not subscribed to any broadcasts yet.',
                       maxLines: 2,
                       style: MTextStyle.captionRegular,
                       color: MColorScheme.of(context)?.onDisabledContainer,
@@ -57,9 +57,8 @@ class DiscoverButton extends ConsumerWidget {
       height: 32.h,
       width: 112.w,
       child: MSecondaryButton(
-        label: "Discover",
-        // onPressed: () => context.push("/chat"),
-        onPressed: () => ref.read(liveKitNotifierProvider.notifier).dispose(),
+        label: 'Discover',
+        onPressed: () => context.push('/chat'),
         style: OutlinedButton.styleFrom(
           textStyle: MTextStyle.microMedium,
           padding: EdgeInsets.zero.r,

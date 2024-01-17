@@ -61,7 +61,7 @@ class _MLayoutState extends ConsumerState<MLayout> {
     FirebaseMessaging.onMessage.listen(showFlutterNotification);
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      context.go(Routes.notifications);
+      context.push(Routes.notifications);
     });
     handleFCMToken();
   }

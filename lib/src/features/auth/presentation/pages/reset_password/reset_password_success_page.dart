@@ -18,7 +18,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
           Assets.images.success.image(height: 240.r, width: 240.r),
           48.verticalSpace,
           const MText(
-            "Success!",
+            'Success!',
             textAlign: TextAlign.center,
             style: MTextStyle.heading2Bold,
           ),
@@ -26,7 +26,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
             child: const MText(
-              "Your password has been reset, Jim. Phew! That was a close one.",
+              'Your password has been reset, Jim. Phew! That was a close one.',
               textAlign: TextAlign.center,
               maxLines: 3,
               style: MTextStyle.bodyRegular,
@@ -34,7 +34,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
           ),
           48.verticalSpace,
           MPrimaryButton(
-            label: "Go Back to Log In",
+            label: 'Go Back to Log In',
             onPressed: () => context.go(Routes.login),
           ),
         ],

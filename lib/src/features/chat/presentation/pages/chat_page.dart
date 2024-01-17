@@ -17,7 +17,7 @@ class ChatPage extends HookWidget {
     return MScaffold(
       padding: EdgeInsets.zero,
       resizeToAvoidBottomInset: true,
-      appBar: MAppBar.secondary(title: "Chat"),
+      appBar: MAppBar.secondary(title: 'Chat'),
       body: LayoutBuilder(builder: (context, constraints) {
         return Column(
           children: [

@@ -25,7 +25,7 @@ class UserAccountDetails extends ConsumerWidget {
                   : MainAxisAlignment.center,
               children: [
                 const MText(
-                  "Welcome back,",
+                  'Welcome back,',
                   style: MTextStyle.subheadingMedium,
                 ),
                 MText(
@@ -45,7 +45,7 @@ class UserAccountDetails extends ConsumerWidget {
                 if (action != null) ...[
                   MCore.micro.verticalSpace,
                   MText(
-                    "Switch account",
+                    'Switch account',
                     style: MTextStyle.captionMedium,
                     color: MColorScheme.of(context)?.primary,
                   ),

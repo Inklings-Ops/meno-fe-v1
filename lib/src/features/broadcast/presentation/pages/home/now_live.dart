@@ -49,7 +49,7 @@ class _BuildColumn extends StatelessWidget {
     return Column(
       children: [
         MCore.xxxLarge.verticalSpace,
-        MHeader(title: "Now Live", actionTitle: "See all", action: () {}),
+        MHeader(title: 'Now Live', actionTitle: 'See all', action: () {}),
         24.verticalSpace,
         LimitedBox(maxHeight: 184.h, child: child),
       ],

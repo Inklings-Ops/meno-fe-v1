@@ -11,17 +11,17 @@ class DeleteCommentAlertDialog extends StatelessWidget {
     final colorScheme = MColorScheme.of(context)!;
 
     return AlertDialog(
-      title: const MText("Delete Comment?", style: MTextStyle.heading2Regular),
+      title: const MText('Delete Comment?', style: MTextStyle.heading2Regular),
       contentPadding: const EdgeInsets.all(24).r,
       content: const MText(
-        "Delete your comment permanently?",
+        'Delete your comment permanently?',
         style: MTextStyle.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
           size: Size(85.w, 40.h),
           child: MTextButton(
-            label: "Cancel",
+            label: 'Cancel',
             onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
@@ -34,7 +34,7 @@ class DeleteCommentAlertDialog extends StatelessWidget {
         SizedBox(
           height: 40.h,
           child: MDangerButton(
-            label: "Delete",
+            label: 'Delete',
             onPressed: () => context.pop(true),
             style: TextButton.styleFrom(
               backgroundColor: colorScheme.error,

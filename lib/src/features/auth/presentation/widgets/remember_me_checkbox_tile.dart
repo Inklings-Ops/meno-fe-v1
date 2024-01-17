@@ -27,7 +27,7 @@ class RememberMeCheckboxTile extends ConsumerWidget {
           ),
         ),
         10.horizontalSpace,
-        const MText("Remember me", style: MTextStyle.captionMedium),
+        const MText('Remember me', style: MTextStyle.captionMedium),
       ],
     );
   }

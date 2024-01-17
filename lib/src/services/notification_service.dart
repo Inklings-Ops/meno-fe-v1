@@ -63,7 +63,7 @@ void showFlutterNotification(RemoteMessage message) {
           channel.id,
           channel.name,
           channelDescription: channel.description,
-          icon: "@drawable/ic_stat_ic_notification",
+          icon: '@drawable/ic_stat_ic_notification',
         ),
       ),
     );
