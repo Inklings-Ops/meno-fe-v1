@@ -15,7 +15,7 @@ class IFullName extends ValueObject<String> {
   /// Creates a new `IFullName` object.
   factory IFullName(String input) {
     final finalInput = toBeginningOfSentenceCase(input);
-    return IFullName._(validateNotEmpty(finalInput!));
+    return IFullName._(validateNotEmpty(finalInput));
   }
 
   /// Creates a new `IFullName` object with the specified value.

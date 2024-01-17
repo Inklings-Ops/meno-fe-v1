@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:livekit_client/livekit_client.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

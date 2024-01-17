@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/services/live_kit/live_kit_service.dart';
 import '../../widgets/chat_tab.dart';
 import '../../widgets/live_bible_tab.dart';
 import '../../widgets/live_scaffold.dart';

@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 
-import '../../application/broadcast/broadcast_notifier.dart';
 import '../../domain/domain.dart';
 
 class BroadcastStatusWidget extends ConsumerWidget {

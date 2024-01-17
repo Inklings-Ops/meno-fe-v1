@@ -1,14 +1,9 @@
-import 'package:logger/logger.dart';
-import 'package:logger/logger.dart';
-import 'package:logger/logger.dart';
-import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/broadcast/domain/entities/status.dart';
 
 import 'meno_event.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/core/broadcast/meno_event.dart';
 
 part 'meno_state.dart';
 part 'meno_event_provider.freezed.dart';
