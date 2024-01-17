@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
 
 import 'app.dart';
@@ -22,15 +21,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
   if (!kIsWeb) {
     await setupFlutterNotifications();
   }
   await configureDependencies();
-  // await di<SharedPreferences>().clear();
-  // await di<SecureStorageService>().deleteAll();
 
   runApp(const ProviderScope(child: MenoApp()));
 }

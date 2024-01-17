@@ -25,8 +25,8 @@ import '../features/notifications/application/notifications_notifier.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/onboarding.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
-import '../layout/presentation/pages/m_layout.dart';
-import '../layout/presentation/pages/pages.dart';
+import '../layout/m_layout.dart';
+import '../layout/pages.dart';
 import '../services/socket/socket_service.dart';
 import '../shared/pages/loading_page.dart';
 

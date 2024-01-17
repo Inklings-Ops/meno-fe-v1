@@ -5,9 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
 
-import '../../../router/router.dart';
-import '../../../services/socket/socket_service.dart';
-import '../../../shared/constants/m_bottom_navigation_bar_items.dart';
+import '../router/router.dart';
+import '../services/socket/socket_service.dart';
+import '../shared/constants/m_bottom_navigation_bar_items.dart';
 
 class MLayout extends StatefulHookConsumerWidget {
   final StatefulNavigationShell shell;
