@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
 import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
@@ -73,7 +72,7 @@ void showFlutterNotification(RemoteMessage message) {
 Future<void> handleFCMToken() async {
   const storage = FlutterSecureStorage();
   final fcmToken = await FirebaseMessaging.instance.getToken();
-  Logger().w(fcmToken);
+  // Logger().w(fcmToken);
   await storage.write(key: MKeys.fcmToken, value: fcmToken);
 }
 

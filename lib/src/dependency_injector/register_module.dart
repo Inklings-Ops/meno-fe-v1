@@ -34,9 +34,7 @@ abstract class RegisterModule {
   }
 
   @lazySingleton
-  InternetConnectionChecker get connectionChecker {
-    return InternetConnectionChecker.createInstance();
-  }
+  InternetConnectionChecker get internetChecker => InternetConnectionChecker();
 
   @lazySingleton
   ImagePicker get imagePicker => ImagePicker();

@@ -2,13 +2,20 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:meno_fe_v1/src/features/network/application/network_cubit.dart';
+import 'package:meno_fe_v1/src/features/network/domain/i_network_facade.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
 import 'firebase_options.dart';
 import 'src/dependency_injector/injector.dart';
+import 'src/features/auth/domain/i_auth_facade.dart';
+import 'src/features/broadcast/domain/i_broadcast_facade.dart';
+import 'src/features/notifications/domain/i_notification_facade.dart';
+import 'src/features/profile/domain/i_profile_facade.dart';
 import 'src/services/notification_service.dart';
 
 Future<void> main() async {
@@ -36,7 +43,23 @@ Future<void> main() async {
   await configureDependencies();
 
   // Runs the app within a ProviderScope to manage state using providers.
-  runApp(const ProviderScope(child: MenoApp()));
+  runApp(
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(create: (context) => di<IAuthFacade>()),
+        RepositoryProvider(create: (context) => di<IBroadcastFacade>()),
+        RepositoryProvider(create: (context) => di<INetworkFacade>()),
+        RepositoryProvider(create: (context) => di<INotificationFacade>()),
+        RepositoryProvider(create: (context) => di<IProfileFacade>()),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => di<NetworkCubit>()),
+        ],
+        child: const ProviderScope(child: MenoApp()),
+      ),
+    ),
+  );
 }
 
 // Entry point for handling background messages from Firebase Cloud Messaging.

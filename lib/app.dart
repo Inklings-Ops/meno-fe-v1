@@ -1,13 +1,17 @@
-import 'package:figma_layout_grid/figma_layout_grid.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
+import 'package:meno_fe_v1/src/shared/extensions/m_toast_extensions.dart';
+
+import 'src/features/network/application/network_cubit.dart';
+import 'src/features/network/domain/network_status.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
   const MenoApp({super.key});
-
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MenoAppState();
 }
@@ -15,6 +19,7 @@ class MenoApp extends ConsumerStatefulWidget {
 class _MenoAppState extends ConsumerState<MenoApp> {
   @override
   Widget build(BuildContext context) {
+    final toastBuilder = FToastBuilder();
     final router = ref.watch(routerProvider);
 
     return ScreenUtilInit(
@@ -27,16 +32,45 @@ class _MenoAppState extends ConsumerState<MenoApp> {
         darkTheme: MTheme.dark,
         debugShowCheckedModeBanner: false,
         routerConfig: router,
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: TextScaler.linear(1.sp)),
-          child: LayoutGrid(
-            builder: (context) => child!,
-            rowsParams: const RowsParams(height: 8),
-            columnsParams: const ColumnsParams(count: 4, gutter: 8, margin: 16),
-          ),
-        ),
+        builder: (context, child) {
+          child = toastBuilder(context, child);
+
+          return MediaQuery(
+            data: context.getDirtyData,
+            child: Overlay(
+              initialEntries: [
+                OverlayEntry(
+                  builder: (context) {
+                    return BlocListener<NetworkCubit, NetworkState>(
+                      bloc: context.read<NetworkCubit>(),
+                      listenWhen: (p, c) => p.status != c.status,
+                      listener: (context, state) {
+                        FToast toast = FToast().init(context);
+                        switch (state.status) {
+                          case NetworkStatus.disconnected:
+                            context.showNetworkError(toast);
+                            break;
+                          case NetworkStatus.connected:
+                            context.showNetworkSuccess(toast);
+                            context.closeAllToasts;
+                            break;
+                        }
+                      },
+                      child: child,
+                    );
+                  },                                                  
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
+  }
+}
+
+extension MediaQueryX on BuildContext {
+  MediaQueryData get getDirtyData {
+    return MediaQuery.of(this).copyWith(textScaler: TextScaler.linear(1.sp));
   }
 }
