@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_provider.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
+import '../../../../onboarding/application/onboarding_cubit.dart';
 import '../../../application/application.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/widgets.dart';
@@ -19,8 +20,8 @@ class LoginForm extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
-
+    final isOnboarded =
+        context.read<OnboardingCubit>().state == OnboardingState.completed;
     final user = ref.watch(authProvider.select((v) => v.user));
 
     final isLoading = ref.watch(authProvider.select((v) => v.loading));

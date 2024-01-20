@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meno_fe_v1/src/shared/pages/start_up/startup_page.dart';
 
 import '../features/auth/presentation/pages/login/login_page.dart';
 import '../features/auth/presentation/pages/register/email_verification_page.dart';
@@ -22,7 +23,6 @@ import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
 import '../shared/layout/m_layout.dart';
 import '../shared/layout/pages.dart';
-import '../shared/pages/startup_page.dart';
 import 'm_routes.dart';
 
 class MRouter {
@@ -36,12 +36,12 @@ class MRouter {
       GoRoute(
         path: MRoutes.startup,
         name: MRoutes.startup,
-        builder: (context, state) => const StartupPage(),
+        builder: (context, gState) => const StartupPage(),
       ),
       GoRoute(
         path: MRoutes.onboarding,
         name: MRoutes.onboarding,
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, gState) => const OnboardingPage(),
       ),
       GoRoute(
         path: MRoutes.createBroadcast,

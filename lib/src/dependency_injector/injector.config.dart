@@ -19,7 +19,9 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i12;
 import 'package:shared_preferences/shared_preferences.dart' as _i22;
 
-import '../features/auth/application/auth/auth_notifier.dart' as _i36;
+import '../features/auth/application/auth/auth_notifier.dart' as _i41;
+import '../features/auth/application/bloc/auth/auth_bloc.dart' as _i40;
+import '../features/auth/application/bloc/login/login_cubit.dart' as _i34;
 import '../features/auth/domain/domain.dart' as _i24;
 import '../features/auth/infrastructure/auth_facade.dart' as _i25;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
@@ -35,7 +37,7 @@ import '../features/broadcast/infrastructure/mapper/broadcast_list_mapper.dart'
     as _i5;
 import '../features/broadcast/infrastructure/mapper/broadcast_mapper.dart'
     as _i6;
-import '../features/network/application/network_cubit.dart' as _i32;
+import '../features/network/application/network_cubit.dart' as _i35;
 import '../features/network/domain/i_network_facade.dart' as _i28;
 import '../features/network/infrastructure/network_facade.dart' as _i29;
 import '../features/notifications/domain/i_notification_facade.dart' as _i30;
@@ -45,22 +47,25 @@ import '../features/notifications/infrastructure/mapper/notifications_mapper.dar
     as _i17;
 import '../features/notifications/infrastructure/notification_facade.dart'
     as _i31;
+import '../features/onboarding/application/onboarding_cubit.dart' as _i37;
+import '../features/onboarding/domain/i_onboarding_facade.dart' as _i32;
+import '../features/onboarding/infrastructure/onboarding_facade.dart' as _i33;
 import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
-    as _i34;
-import '../features/profile/domain/domain.dart' as _i37;
+    as _i38;
+import '../features/profile/domain/domain.dart' as _i42;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
-    as _i35;
+    as _i39;
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart'
     as _i20;
 import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i19;
-import '../features/profile/infrastructure/profile_facade.dart' as _i38;
+import '../features/profile/infrastructure/profile_facade.dart' as _i43;
 import '../services/jwt_service.dart' as _i13;
 import '../services/media_service.dart' as _i14;
 import '../services/network_service.dart' as _i15;
-import '../services/notification_service.dart' as _i33;
+import '../services/notification_service.dart' as _i36;
 import '../services/permissions_service.dart' as _i18;
 import '../services/secure_storage_service.dart' as _i21;
-import 'register_module.dart' as _i39;
+import 'register_module.dart' as _i44;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -134,13 +139,15 @@ extension GetItInjectableX on _i1.GetIt {
           remoteDatasource: gh<_i16.NotificationRemoteDatasource>(),
           networkService: gh<_i15.NetworkService>(),
         ));
-    gh.lazySingleton<_i32.NetworkCubit>(() => _i32.NetworkCubit(
-          facade: gh<_i28.INetworkFacade>(),
-          // checker: gh<_i12.InternetConnectionChecker>(),
-        ));
-    await gh.factoryAsync<_i33.NotificationService>(
+    gh.factory<_i32.IOnboardingFacade>(
+        () => _i33.OnboardingFacade(storage: gh<_i22.SharedPreferences>()));
+    gh.lazySingleton<_i34.LoginCubit>(
+        () => _i34.LoginCubit(facade: gh<_i24.IAuthFacade>()));
+    gh.lazySingleton<_i35.NetworkCubit>(
+        () => _i35.NetworkCubit(facade: gh<_i28.INetworkFacade>()));
+    await gh.factoryAsync<_i36.NotificationService>(
       () {
-        final i = _i33.NotificationService(
+        final i = _i36.NotificationService(
           firebaseMessaging: gh<_i8.FirebaseMessaging>(),
           storageService: gh<_i21.SecureStorageService>(),
           localNotifications: gh<_i9.FlutterLocalNotificationsPlugin>(),
@@ -149,25 +156,29 @@ extension GetItInjectableX on _i1.GetIt {
       },
       preResolve: true,
     );
-    gh.factory<_i34.OnboardingLocalDatasource>(() =>
-        _i34.OnboardingLocalDatasource(storage: gh<_i22.SharedPreferences>()));
-    gh.factory<_i35.ProfileLocalDatasource>(() =>
-        _i35.ProfileLocalDatasource(storage: gh<_i21.SecureStorageService>()));
-    await gh.factoryAsync<_i36.AuthNotifier>(
+    gh.lazySingleton<_i37.OnboardingCubit>(
+        () => _i37.OnboardingCubit(facade: gh<_i32.IOnboardingFacade>()));
+    gh.factory<_i38.OnboardingLocalDatasource>(() =>
+        _i38.OnboardingLocalDatasource(storage: gh<_i22.SharedPreferences>()));
+    gh.factory<_i39.ProfileLocalDatasource>(() =>
+        _i39.ProfileLocalDatasource(storage: gh<_i21.SecureStorageService>()));
+    gh.lazySingleton<_i40.AuthBloc>(
+        () => _i40.AuthBloc(facade: gh<_i24.IAuthFacade>()));
+    await gh.factoryAsync<_i41.AuthNotifier>(
       () {
-        final i = _i36.AuthNotifier(gh<_i24.IAuthFacade>());
+        final i = _i41.AuthNotifier(gh<_i24.IAuthFacade>());
         return i.checkAuthenticated().then((_) => i);
       },
       preResolve: true,
     );
-    gh.lazySingleton<_i37.IProfileFacade>(() => _i38.ProfileFacade(
+    gh.lazySingleton<_i42.IProfileFacade>(() => _i43.ProfileFacade(
           authMapper: gh<_i19.ProfileMapper>(),
           remote: gh<_i20.ProfileRemoteDatasource>(),
-          local: gh<_i35.ProfileLocalDatasource>(),
+          local: gh<_i39.ProfileLocalDatasource>(),
           network: gh<_i15.NetworkService>(),
         ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i39.RegisterModule {}
+class _$RegisterModule extends _i44.RegisterModule {}

@@ -77,6 +77,15 @@ class AuthLocalDatasource {
     return token;
   }
 
+
+  Future<UserCredentialsDto?> getUserCredentials() async {
+    final jsonString = await _storage.read(MKeys.allUserCredentialsKey);
+    if (jsonString == null) {
+      return null;
+    }
+    return UserCredentialsDto.fromJson(jsonDecode(jsonString));
+  }
+
   Future<UserCredentialsDto?> getUserCredentialById(String id) async {
     final credentialMap = await getAllUserCredentials;
     return credentialMap?[id];

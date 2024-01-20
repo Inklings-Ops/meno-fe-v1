@@ -6,6 +6,9 @@ import 'inputs/inputs.dart';
 
 /// Meno Authentication Facade
 abstract class IAuthFacade {
+  Stream<User?> get userChanges;
+
+  Stream<UserToken?> get tokenChanges;
   /// Checks whether the user is currently authenticated or logged in.
   ///
   /// In this case, both the `UserToken` and `User` details must securely saved.

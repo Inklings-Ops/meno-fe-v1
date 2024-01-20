@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/m_toast_extensions.dart';
 
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/network/domain/network_status.dart';
+import 'src/router/m_router.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
   const MenoApp({super.key});
@@ -20,7 +20,7 @@ class _MenoAppState extends ConsumerState<MenoApp> {
   @override
   Widget build(BuildContext context) {
     final toastBuilder = FToastBuilder();
-    final router = ref.watch(routerProvider);
+    final mRouter = MRouter();
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -31,7 +31,7 @@ class _MenoAppState extends ConsumerState<MenoApp> {
         theme: MTheme.light,
         darkTheme: MTheme.dark,
         debugShowCheckedModeBanner: false,
-        routerConfig: router,
+        routerConfig: mRouter.router,
         builder: (context, child) {
           child = toastBuilder(context, child);
 

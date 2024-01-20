@@ -25,9 +25,9 @@ import '../features/notifications/application/notifications_notifier.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/onboarding.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
+import '../services/socket/socket_service.dart';
 import '../shared/layout/m_layout.dart';
 import '../shared/layout/pages.dart';
-import '../services/socket/socket_service.dart';
 import '../shared/pages/loading_page.dart';
 
 part 'router.g.dart';
@@ -36,17 +36,9 @@ final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
 @Riverpod(keepAlive: true, dependencies: [SocketService, NotificationsNotifier])
 GoRouter router(RouterRef ref) {
-  final isOnboarded = ref.watch(onboardingProvider).isOnboarded;
-
   final status = ref.watch(authProvider).status;
   final isUnAuth = status == AuthStatus.unauthenticated;
   final isPartiallyAuth = status == AuthStatus.partiallyAuthenticated;
-
-  ref.listen(onboardingProvider, (previous, next) {
-    if (previous?.isOnboarded != next.isOnboarded) {
-      ref.invalidateSelf();
-    }
-  });
 
   ref.listen(authProvider, (previous, next) {
     if (previous?.token != next.token) {
@@ -63,7 +55,7 @@ GoRouter router(RouterRef ref) {
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    initialLocation: isOnboarded ? Routes.home : Routes.onboarding,
+    initialLocation: Routes.onboarding,
     debugLogDiagnostics: true,
     // refreshListenable: ref.watch(authProvider.notifier).listener,
     routes: <RouteBase>[
@@ -237,14 +229,9 @@ GoRouter router(RouterRef ref) {
       if (isResetSuccess) return Routes.resetPwdSuccess;
       if (isVerification) return Routes.emailVerification;
 
-      if (!isOnboarded) {
-        if (isLogin) return Routes.loginWithLeading;
-        return null;
-      } else {
-        if (isPartiallyAuth) return Routes.partialLogin;
-        if (isUnAuth) return Routes.login;
-        return null;
-      }
+      if (isPartiallyAuth) return Routes.partialLogin;
+      if (isUnAuth) return Routes.login;
+      return null;
     },
   );
 }

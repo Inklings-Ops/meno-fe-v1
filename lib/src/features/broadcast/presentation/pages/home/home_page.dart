@@ -17,6 +17,8 @@ import 'recently_live.dart';
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
+  static Page<void> page() => const MaterialPage<void>(child: HomePage());
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Future<void> onRefresh() {

@@ -32,7 +32,22 @@ class AuthFacade implements IAuthFacade {
         _remote = remoteDatasource,
         _local = localDatasource,
         _network = networkService,
-        _jwt = jwtService;
+        _jwt = jwtService {
+    _retrieveAndCheckToken();
+  }
+
+  final _userController = StreamController<User?>.broadcast();
+  final _tokenController = StreamController<UserToken?>.broadcast();
+
+  Future<void> _retrieveAndCheckToken() async {
+    final token = await userToken;
+
+    if (token != null && !isTokenExpired(token)) {
+      _tokenController.add(token);
+    } else {
+      _tokenController.add(null);
+    }
+  }
 
   @override
   Future<bool> get isAuthenticated async {
@@ -86,7 +101,6 @@ class AuthFacade implements IAuthFacade {
     return null;
   }
 
-
   @override
   Future<Either<AuthException, Unit>> changePassword({
     required IPassword currentPassword,
@@ -131,24 +145,27 @@ class AuthFacade implements IAuthFacade {
     required IEmail email,
     required IPassword password,
   }) async {
-    final String emailValue = email.get()!;
-    final String passwordValue = password.get()!;
+    final emailValue = email.get()!;
+    final passwordValue = password.get()!;
 
     if (!(await _network.isConnected)) {
       return left(const AuthException.networkError());
     }
 
     try {
-      final AuthResponse<UserCredentialsDto> response = await _remote.login(
+      final response = await _remote.login(
         email: emailValue,
         password: passwordValue,
       );
 
-      final UserCredentialsDto userCredentialsDto = response.data!;
+      final credentials = response.data!;
 
-      await _local.storeAllUserCredentials(userCredentialsDto);
-      await _local.storeCurrentToken(userCredentialsDto.token!);
-      await _local.storeCurrentUser(userCredentialsDto.user);
+      await _local.storeAllUserCredentials(credentials);
+      await _local.storeCurrentToken(credentials.token!);
+      await _local.storeCurrentUser(credentials.user);
+
+      _tokenController.add(credentials.token);
+      _userController.add(_authMapper.userToDomain(credentials.user));
 
       return right(unit);
     } on DioException catch (e) {
@@ -166,7 +183,10 @@ class AuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<void> logout() => _local.deleteCurrentUserCredentials();
+  Future<void> logout() async {
+    await _local.deleteCurrentUserCredentials();
+    _userController.add(null);
+  }
 
   @override
   Future<void> partialLogout() => _local.deleteCurrentUserToken();
@@ -198,11 +218,11 @@ class AuthFacade implements IAuthFacade {
         image: avatarValue,
       );
 
-      final UserCredentialsDto userCredentialsDto = response.data!;
+      final UserCredentialsDto credentials = response.data!;
 
-      await _local.storeAllUserCredentials(userCredentialsDto);
-      await _local.storeCurrentToken(userCredentialsDto.token!);
-      await _local.storeCurrentUser(userCredentialsDto.user);
+      await _local.storeAllUserCredentials(credentials);
+      await _local.storeCurrentToken(credentials.token!);
+      await _local.storeCurrentUser(credentials.user);
 
       return right(unit);
     } on DioException catch (e) {
@@ -327,4 +347,10 @@ class AuthFacade implements IAuthFacade {
       return left(const AuthException.timeOutError());
     }
   }
+
+  @override
+  Stream<User?> get userChanges => _userController.stream;
+
+  @override
+  Stream<UserToken?> get tokenChanges => _tokenController.stream;
 }
