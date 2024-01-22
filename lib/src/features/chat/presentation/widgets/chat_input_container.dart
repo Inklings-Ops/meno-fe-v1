@@ -4,10 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/application/application.dart';
 import 'package:meno_fe_v1/src/features/chat/application/chat_notifier.dart';
 import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
+import '../../../auth/application/auth_old/auth_notifier.dart';
 import 'reactions.dart';
 
 class ChatInputContainer extends HookConsumerWidget {

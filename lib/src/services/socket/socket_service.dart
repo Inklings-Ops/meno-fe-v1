@@ -69,7 +69,7 @@ class SocketService extends _$SocketService {
 
   Future<void> initialize() async {
     final SecureStorageService storage = SecureStorageService();
-    final String? token = await storage.read(MKeys.currentUserTokenKey);
+    final String? token = await storage.read(MKeys.authUserTokenKey);
 
     socket = socket_io.io(
       Env.menoApiUrl,

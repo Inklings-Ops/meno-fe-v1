@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/broadcast_list_provider.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
@@ -17,7 +16,6 @@ class ProfileRecentBroadcastsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final broadcasts = ref.watch(myRecentBroadcastsProvider(limit: 8));
 
-    Logger().w(broadcasts);
 
     if (broadcasts.isLoading) {
       return const _LoadingList();

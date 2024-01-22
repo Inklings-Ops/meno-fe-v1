@@ -1,59 +1,35 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:injectable/injectable.dart';
 
-import '../../../../dependency_injector/injector.dart';
-import '../../../onboarding/onboarding.dart';
 import '../../domain/domain.dart';
-import '../../infrastructure/auth_facade.dart';
-import '../auth/auth_notifier.dart';
 
-part 'register_form_notifier.freezed.dart';
-part 'register_form_notifier.g.dart';
-part 'register_form_state.dart';
+part 'register_cubit.freezed.dart';
+part 'register_state.dart';
 
-@riverpod
-Future<dynamic> register(
-  RegisterRef ref, {
-  required IFullName fullName,
-  required IEmail email,
-  required IPassword password,
-}) async {
-  final isFullNameValid = fullName.isValid();
-  final isEmailValid = email.isValid();
-  final isPasswordValid = password.isValid();
+/// A [Cubit] responsible for managing the registration state.
+@lazySingleton
+class RegisterCubit extends Cubit<RegisterState> {
+  final IAuthFacade _facade;
+  RegisterCubit({required IAuthFacade facade})
+      : _facade = facade,
+        super(RegisterState.initial());
 
-  if (isFullNameValid && isEmailValid && isPasswordValid) {
-    const AsyncValue.loading();
-
-    final result = await di<AuthFacade>().register(
-      fullName: fullName,
-      email: email,
-      password: password,
-    );
-
-    return result.fold(
-      (l) => AsyncError(l, StackTrace.current),
-      (r) => AsyncData(r),
-    );
+  /// Checks if the full name, email and password are valid.
+  bool get isValid {
+    return state.fullName.isValid() &&
+        state.email.isValid() &&
+        state.password.isValid();
   }
-}
-
-@riverpod
-class RegisterFormNotifier extends _$RegisterFormNotifier {
-  @override
-  RegisterFormState build() => RegisterFormState.initial();
 
   /// Updates the user's email address.
   ///
   /// Args:
   ///   email: The user's new email address.
   void emailChanged(String email) {
-    /// Creates a new `IEmail` object from the given email address.
-    final IEmail iEmail = IEmail(email);
-
     /// Updates the state with the new email address and clears the `option`.
-    state = state.copyWith(email: iEmail, option: none());
+    emit(state.copyWith(email: IEmail(email), option: none()));
   }
 
   /// Updates the user's full name
@@ -61,15 +37,12 @@ class RegisterFormNotifier extends _$RegisterFormNotifier {
   /// Args:
   ///   email: The user's new full name
   void fullNameChanged(String value) {
-    /// Creates a new `IFullName` object from the given full name
-    final IFullName iFullName = IFullName(value);
-
     /// Updates the state with the new full name and clears the `option`.
-    state = state.copyWith(fullName: iFullName, option: none());
+    emit(state.copyWith(fullName: IFullName(value), option: none()));
   }
 
   void onRememberMeChanged(bool? value) {
-    state = state.copyWith(rememberMe: value ?? state.rememberMe);
+    emit(state.copyWith(rememberMe: value ?? state.rememberMe));
   }
 
   /// Updates the user's password.
@@ -77,15 +50,12 @@ class RegisterFormNotifier extends _$RegisterFormNotifier {
   /// Args:
   ///   password: The user's new password.
   void passwordChanged(String value) {
-    /// Creates a new `IPassword` object from the given password.
-    final IPassword iPassword = IPassword(value);
-
     /// Updates the state with the new password and clears the `option`.
-    state = state.copyWith(
-      password: iPassword,
+    emit(state.copyWith(
+      password: IPassword(value),
       option: none(),
       passwordValue: value,
-    );
+    ));
   }
 
   /// Initiates the registration process.
@@ -93,34 +63,22 @@ class RegisterFormNotifier extends _$RegisterFormNotifier {
   /// Returns:
   ///   A `Future` that completes when the registration process is finished.
   Future<void> registerPressed() async {
-    /// Checks if the full name, email and password are valid.
-    final isFullNameValid = state.fullName.isValid();
-    final isEmailValid = state.email.isValid();
-    final isPasswordValid = state.password.isValid();
-
     /// If the full name, email and password are valid, attempt to register
     /// the new user.
-    if (isFullNameValid && isEmailValid && isPasswordValid) {
+    if (isValid) {
       /// Updates the state to indicate that the login process is in progress.
-      state = state.copyWith(loading: true, option: none());
+      emit(state.copyWith(loading: true, option: none()));
 
       /// Calls the `register()` method on the `_authFacade` object to attempt
       /// to register the new user.
-      final result = await ref.read(authFacadeProvider).register(
-            fullName: state.fullName,
-            email: state.email,
-            password: state.password,
-          );
-
-      result.fold(
-        (l) => null,
-        (r) async {
-          await ref.read(authProvider.notifier).checkAuthenticated();
-        },
+      final result = await _facade.register(
+        fullName: state.fullName,
+        email: state.email,
+        password: state.password,
       );
 
       /// Updates the state with the result of the registration attempt.
-      state = state.copyWith(loading: false, option: some(result));
+      emit(state.copyWith(loading: false, option: some(result)));
     }
   }
 
@@ -152,9 +110,7 @@ class RegisterFormNotifier extends _$RegisterFormNotifier {
   ///   An error message if the full name is `null` and `null` if the full name is valid.
   String? validateFullName(String? value) {
     return state.fullName.value.fold(
-      (error) => error.mapOrNull(
-        empty: (_) => 'Full Name is required',
-      ),
+      (error) => error.mapOrNull(empty: (_) => 'Full Name is required'),
       (_) => null,
     );
   }

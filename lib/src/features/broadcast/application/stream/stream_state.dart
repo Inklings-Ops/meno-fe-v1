@@ -1,4 +1,4 @@
-part of "stream_notifier.dart";
+part of 'stream_notifier.dart';
 
 @freezed
 class StreamState with _$StreamState {

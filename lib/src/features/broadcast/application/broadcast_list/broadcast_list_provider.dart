@@ -1,4 +1,4 @@
-import 'package:meno_fe_v1/src/features/auth/application/auth/auth_notifier.dart';
+import 'package:meno_fe_v1/src/features/auth/application/auth_old/auth_notifier.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

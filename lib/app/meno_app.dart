@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/extensions/m_toast_extensions.dart';
+import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
 
-import 'src/features/network/application/network_cubit.dart';
-import 'src/features/network/domain/network_status.dart';
-import 'src/router/m_router.dart';
+import '../src/features/network/application/network_cubit.dart';
+import '../src/router/m_router.dart';
+import 'meno_wrapper.dart';
 
 class MenoApp extends ConsumerStatefulWidget {
   const MenoApp({super.key});
@@ -17,10 +16,12 @@ class MenoApp extends ConsumerStatefulWidget {
 }
 
 class _MenoAppState extends ConsumerState<MenoApp> {
+  late final AppLifecycleListener _listener;
+
   @override
   Widget build(BuildContext context) {
     final toastBuilder = FToastBuilder();
-    final mRouter = MRouter();
+    final router = di<MRouter>().router;
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -31,7 +32,7 @@ class _MenoAppState extends ConsumerState<MenoApp> {
         theme: MTheme.light,
         darkTheme: MTheme.dark,
         debugShowCheckedModeBanner: false,
-        routerConfig: mRouter.router,
+        routerConfig: router,
         builder: (context, child) {
           child = toastBuilder(context, child);
 
@@ -40,25 +41,10 @@ class _MenoAppState extends ConsumerState<MenoApp> {
             child: Overlay(
               initialEntries: [
                 OverlayEntry(
-                  builder: (context) {
-                    return BlocListener<NetworkCubit, NetworkState>(
-                      bloc: context.read<NetworkCubit>(),
-                      listenWhen: (p, c) => p.status != c.status,
-                      listener: (context, state) {
-                        FToast toast = FToast().init(context);
-                        switch (state.status) {
-                          case NetworkStatus.disconnected:
-                            context.showNetworkError(toast);
-                            break;
-                          case NetworkStatus.connected:
-                            context.showNetworkSuccess(toast);
-                            context.closeAllToasts;
-                            break;
-                        }
-                      },
-                      child: child,
-                    );
-                  },                                                  
+                  builder: (context) => MenoWrapper(
+                    router: router,
+                    child: child,
+                  ),
                 ),
               ],
             ),
@@ -66,6 +52,37 @@ class _MenoAppState extends ConsumerState<MenoApp> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Do not forget to dispose the listener
+    _listener.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the AppLifecycleListener class and pass callbacks
+    _listener = AppLifecycleListener(onStateChange: _onStateChanged);
+  }
+
+  // Listen to the app lifecycle state changes
+  void _onStateChanged(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+        di<NetworkCubit>().close();
+        break;
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+        if (di<NetworkCubit>().isClosed) {
+          di<NetworkCubit>();
+        }
+        break;
+    }
   }
 }
 

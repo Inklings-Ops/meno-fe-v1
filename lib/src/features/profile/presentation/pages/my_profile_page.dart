@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/auth/application/auth/auth_bloc.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/broadcast_list_provider.dart';
 import 'package:meno_fe_v1/src/features/profile/domain/entities/profile.dart';
@@ -85,8 +87,11 @@ class CustomContent extends HookWidget {
           ),
           actions: [
             MIconButton(
-              icon: const Icon(MIcons.settings),
+              icon: const Icon(MIcons.log_out),
               color: colorScheme.primary,
+              onPressed: () => context.read<AuthBloc>().add(
+                    const AuthLogoutRequested(),
+                  ),
             ),
             MCore.large.horizontalSpace,
           ],

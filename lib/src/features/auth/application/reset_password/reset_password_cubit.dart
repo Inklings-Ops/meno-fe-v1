@@ -1,29 +1,40 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/domain.dart';
-import '../auth/auth_notifier.dart';
 
-part 'reset_password_notifier.freezed.dart';
-part 'reset_password_notifier.g.dart';
+part 'reset_password_cubit.freezed.dart';
 part 'reset_password_state.dart';
 
-@riverpod
-class ResetPasswordNotifier extends _$ResetPasswordNotifier {
-  @override
-  ResetPasswordState build() => ResetPasswordState.initial();
+/// A [Cubit] responsible for managing the password recovery state.
+@lazySingleton
+class ResetPasswordCubit extends Cubit<ResetPasswordState> {
+  final IAuthFacade _facade;
+  ResetPasswordCubit({required IAuthFacade facade})
+      : _facade = facade,
+        super(ResetPasswordState.initial());
+
+  bool get isValid => state.email.isValid();
 
   /// Updates the user's email address.
   ///
   /// Args:
   ///   email: The user's new email address.
   void emailChanged(String email) {
-    /// Creates a new `IEmail` object from the given email address.
-    final IEmail iEmail = IEmail(email);
-
     /// Updates the state with the new email address and clears the `option`.
-    state = state.copyWith(email: iEmail, option: none());
+    emit(state.copyWith(email: IEmail(email), option: none()));
+  }
+
+  Future<void> onForgotPasswordPressed() async {
+    if (isValid) {
+      emit(state.copyWith(loading: true, option: none()));
+
+      final result = await _facade.forgotPassword(state.email);
+
+      emit(state.copyWith(loading: false, option: some(result)));
+    }
   }
 
   /// Validates an email address.
@@ -43,18 +54,5 @@ class ResetPasswordNotifier extends _$ResetPasswordNotifier {
       ),
       (_) => null,
     );
-  }
-
-  Future<void> onForgotPasswordPressed() async {
-    final isEmailValid = state.email.isValid();
-
-    if (isEmailValid) {
-      state = state.copyWith(loading: true, option: none());
-
-      final result =
-          await ref.read(authFacadeProvider).forgotPassword(state.email);
-
-      state = state.copyWith(loading: false, option: some(result));
-    }
   }
 }

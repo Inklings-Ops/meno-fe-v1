@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';import 'package:path_provider/path_provider.dart';
 
-import 'app.dart';
+import 'app/app.dart';
 import 'firebase_options.dart';
 import 'src/dependency_injector/injector.dart';
-import 'src/features/auth/application/bloc/auth/auth_bloc.dart';
-import 'src/features/auth/application/bloc/login/login_cubit.dart';
+import 'src/features/auth/application/application.dart';
 import 'src/features/auth/domain/i_auth_facade.dart';
 import 'src/features/broadcast/domain/i_broadcast_facade.dart';
 import 'src/features/network/application/network_cubit.dart';
@@ -54,7 +52,7 @@ Future<void> main() async {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider(create: (context) => di<IOnboardingFacade>()),
-        RepositoryProvider(create: (context) => di<IAuthFacade>()),
+        RepositoryProvider(create: (context) => di<IAuthFacade>()..init),
         RepositoryProvider(create: (context) => di<IBroadcastFacade>()),
         RepositoryProvider(create: (context) => di<INetworkFacade>()),
         RepositoryProvider(create: (context) => di<INotificationFacade>()),
@@ -62,9 +60,9 @@ Future<void> main() async {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => di<OnboardingCubit>()..init()),
+          BlocProvider(create: (context) => di<OnboardingCubit>()),
           BlocProvider(create: (context) => di<AuthBloc>()),
-          BlocProvider(create: (context) => di<LoginCubit>()),
+          BlocProvider(create: (context) => di<AccountCubit>()..init),
           BlocProvider(create: (context) => di<NetworkCubit>()),
         ],
         child: const ProviderScope(child: MenoApp()),

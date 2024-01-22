@@ -25,7 +25,6 @@ class _MLayoutState extends ConsumerState<MLayout> {
   final _fcm = FirebaseMessaging.instance;
 
   String? initialMessage;
-  bool _resolved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +53,6 @@ class _MLayoutState extends ConsumerState<MLayout> {
     super.initState();
 
     _fcm.getInitialMessage().then((value) => setState(() {
-          _resolved = true;
           initialMessage = value?.data.toString();
         }));
 

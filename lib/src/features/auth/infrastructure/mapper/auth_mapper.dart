@@ -38,17 +38,17 @@ class AuthMapper {
     );
   }
 
-  UserCredentialsDto? userCredentialsToDto(UserCredentials? domain) {
+  UserCredentialDto? userCredentialsToDto(UserCredential? domain) {
     if (domain == null) return null;
-    return UserCredentialsDto(
+    return UserCredentialDto(
       user: userToDto(domain.user)!,
       token: domain.token,
     );
   }
 
-  UserCredentials? userCredentialsToDomain(UserCredentialsDto? dto) {
+  UserCredential? userCredentialsToDomain(UserCredentialDto? dto) {
     if (dto == null) return null;
-    return UserCredentials(
+    return UserCredential(
       user: userToDomain(dto.user)!,
       token: dto.token,
     );

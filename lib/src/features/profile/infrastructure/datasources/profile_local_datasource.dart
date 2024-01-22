@@ -17,17 +17,17 @@ class ProfileLocalDatasource {
       : _storage = storage;
 
   Future<ProfileDto?> getProfile() async {
-    final String? jsonString = await _storage.read(MKeys.currentProfileKey);
+    final String? jsonString = await _storage.read(MKeys.authUserProfileKey);
     if (jsonString == null) {
       return null;
     }
     return ProfileDto.fromJson(jsonDecode(jsonString));
   }
 
-  Future<bool> get hasUser => _storage.hasKey(MKeys.currentProfileKey);
+  Future<bool> get hasUser => _storage.hasKey(MKeys.authUserProfileKey);
 
   Future<void> storeProfile(ProfileDto dto) async {
     final String encodedString = jsonEncode(dto.toJson());
-    await _storage.write(MKeys.currentProfileKey, value: encodedString);
+    await _storage.write(MKeys.authUserProfileKey, value: encodedString);
   }
 }

@@ -33,7 +33,7 @@ class AuthTokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final token = await SecureStorageService().read(MKeys.currentUserTokenKey);
+    final token = await SecureStorageService().read(MKeys.authUserTokenKey);
 
     if (token != null) {
       options.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';

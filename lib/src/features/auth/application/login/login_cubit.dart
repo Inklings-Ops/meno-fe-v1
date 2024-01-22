@@ -1,20 +1,27 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/domain.dart';
+import '../../../onboarding/onboarding.dart';
+import '../../domain/domain.dart';
 
 part 'login_cubit.freezed.dart';
 part 'login_state.dart';
 
+/// A [Cubit] responsible for managing the login state.
 @lazySingleton
 class LoginCubit extends Cubit<LoginState> {
   final IAuthFacade _facade;
+  final IOnboardingFacade _onboardingFacade;
 
   LoginCubit({
     required IAuthFacade facade,
+    required IOnboardingFacade onboardingFacade,
   })  : _facade = facade,
+        _onboardingFacade = onboardingFacade,
         super(LoginState.initial());
 
   /// Updates the user's email address.
@@ -22,11 +29,8 @@ class LoginCubit extends Cubit<LoginState> {
   /// Args:
   ///   email: The user's new email address.
   void emailChanged(String email) {
-    /// Creates a new `IEmail` object from the given email address.
-    final IEmail iEmail = IEmail(email);
-
     /// Updates the state with the new email address and clears the `option`.
-    emit(state.copyWith(email: iEmail, option: none()));
+    emit(state.copyWith(email: IEmail(email), option: none()));
   }
 
   /// Initiates the login process.
@@ -44,13 +48,13 @@ class LoginCubit extends Cubit<LoginState> {
     emit(state.copyWith(loading: true, option: none()));
 
     // Calls the `login()` method on the `_authFacade` object to attempt to log the user in.
-    final result = await _facade.login(
-      email: state.email,
-      password: state.password,
+    await _facade.login(email: state.email, password: state.password).then(
+      (result) {
+        // Updates the state with the result of the login attempt.
+        emit(state.copyWith(option: some(result), loading: false));
+        unawaited(_onboardingFacade.completeOnboarding);
+      },
     );
-
-    // Updates the state with the result of the login attempt.
-    emit(state.copyWith(option: some(result), loading: false));
   }
 
   /// Updates the user's password.
@@ -58,11 +62,13 @@ class LoginCubit extends Cubit<LoginState> {
   /// Args:
   ///   password: The user's new password.
   void passwordChanged(String password) {
-    /// Creates a new `IPassword` object from the given password and the `isLogin` flag.
-    final IPassword iPassword = IPassword(password, isLogin: true);
-
     /// Updates the state with the new password and clears the `option`.
-    emit(state.copyWith(password: iPassword, option: none()));
+    emit(
+      state.copyWith(
+        password: IPassword(password, isLogin: true),
+        option: none(),
+      ),
+    );
   }
 
   /// Validates an email address.

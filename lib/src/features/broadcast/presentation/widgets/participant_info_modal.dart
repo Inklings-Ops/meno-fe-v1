@@ -12,8 +12,6 @@ class ParticipantInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isCohost = false;
-
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,

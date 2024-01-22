@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/timer/timer_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -32,7 +31,6 @@ class StreamNotifier extends _$StreamNotifier {
     result.fold(
       (l) => state = state.copyWith(loading: false, onJoined: some(result)),
       (r) async {
-        Logger().w(r);
         state = state.copyWith(onJoined: some(result), broadcast: r);
         await ref
             .read(liveKitNotifierProvider.notifier)
@@ -40,7 +38,6 @@ class StreamNotifier extends _$StreamNotifier {
 
         ref.watch(liveKitNotifierProvider).when(
               data: (data) {
-                Logger().w(r);
                 ref
                     .read(socketServiceProvider.notifier)
                     .joinBroadcast(r.broadcast.id);
@@ -49,7 +46,6 @@ class StreamNotifier extends _$StreamNotifier {
                     .set(r.broadcast.startTime);
                 ref.read(timerNotifierProvider.notifier).start();
                 state = state.copyWith(loading: false);
-                Logger().w(r);
               },
               error: (err, stack) {
                 state = state.copyWith(loading: false, onJoined: some(result));

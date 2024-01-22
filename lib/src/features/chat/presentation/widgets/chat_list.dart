@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../auth/application/application.dart';
+import '../../../auth/application/auth_old/auth_notifier.dart';
 import '../../application/chat_notifier.dart';
 import '../../domain/domain.dart';
 import 'chat_bubble.dart';

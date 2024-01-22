@@ -1,7 +1,6 @@
 import 'dart:isolate';
 
 import 'package:flutter/services.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/services/jwt_service.dart';
 
 import '../../features/auth/domain/domain.dart';
@@ -21,7 +20,7 @@ class MIsolates {
     return Isolate.run(() => _authIsolate(rootIsolateToken));
   }
 
-  static Future<Map<String, UserCredentials>?> _getAllUserCredentials() async {
+  static Future<Map<String, UserCredential>?> _getAllUserCredentials() async {
     final map = await _auth.getAllUserCredentials;
     if (map != null) {
       final userCredentialsMap = map.map((key, value) {
@@ -45,15 +44,12 @@ class MIsolates {
     final jwt = JWTService();
 
     if (userToken == null) {
-      Logger().w('FROM AUTH ISOLATE => TOKEN IS NULL');
       return null;
     }
 
     if (jwt.isExpired(userToken)) {
-      Logger().w('FROM AUTH ISOLATE => TOKEN IS EXPIRED');
       return null;
     } else {
-      Logger().w('FROM AUTH ISOLATE => TOKEN IS AVAILABLE');
       return userToken;
     }
   }

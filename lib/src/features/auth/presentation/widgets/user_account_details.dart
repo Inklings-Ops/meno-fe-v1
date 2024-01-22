@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
+import '../../application/application.dart';
 import '../../domain/domain.dart';
 
-class UserAccountDetails extends ConsumerWidget {
-  final User user;
+class UserAccountDetails extends StatelessWidget {
   final VoidCallback? action;
-  const UserAccountDetails({super.key, required this.user, this.action});
+  const UserAccountDetails({super.key, this.action});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) => state.maybeMap(
+        orElse: () => const SizedBox(),
+        authenticated: (v) => _Widget(action: action, user: v.credentials.user),
+        partiallyAuthenticated: (v) => _Widget(
+          action: action,
+          user: v.credentials.user,
+        ),
+      ),
+    );
+  }
+}
+
+class _Widget extends StatelessWidget {
+  const _Widget({
+    super.key,
+    required this.action,
+    required this.user,
+  });
+
+  final VoidCallback? action;
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 74.h,
       child: Row(

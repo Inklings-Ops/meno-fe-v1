@@ -13,13 +13,15 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   /// Constructs the [OnboardingCubit] with the provided [IOnboardingFacade].
   OnboardingCubit({required IOnboardingFacade facade})
       : _facade = facade,
-        super(OnboardingState.notCompleted);
+        super(OnboardingState.notCompleted) {
+    init();
+  }
 
   /// Clears the onboarding cache asynchronously.
   ///
   /// Emits [OnboardingState.notCompleted] after clearing the cache.
   Future<void> clearCache() async {
-    await _facade.clearCache.whenComplete(
+    return await _facade.clearCache.whenComplete(
       () => emit(OnboardingState.notCompleted),
     );
   }
@@ -28,7 +30,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   ///
   /// Emits [OnboardingState.completed] after completing onboarding.
   Future<void> complete() async {
-    await _facade.completeOnboarding.whenComplete(
+    return await _facade.completeOnboarding.whenComplete(
       () => emit(OnboardingState.completed),
     );
   }
@@ -39,9 +41,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   /// otherwise, it emits [OnboardingState.notCompleted].
   void init() {
     if (_facade.isOnboarded) {
-      emit(OnboardingState.completed);
+      return emit(OnboardingState.completed);
     } else {
-      emit(OnboardingState.notCompleted);
+      return emit(OnboardingState.notCompleted);
     }
   }
 }

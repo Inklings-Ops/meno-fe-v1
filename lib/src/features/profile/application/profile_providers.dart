@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/clients/m_clients.dart';
 import '../../../core/env/env.dart';
 import '../../../dependency_injector/injector.dart';
-import '../../auth/application/application.dart';
+import '../../auth/application/auth_old/auth_notifier.dart';
 import '../../auth/domain/domain.dart';
 import '../domain/domain.dart';
 import '../infrastructure/infrastructure.dart';

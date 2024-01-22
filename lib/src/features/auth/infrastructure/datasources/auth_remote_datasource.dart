@@ -31,7 +31,7 @@ abstract class AuthRemoteDatasource {
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signin/google')
-  Future<AuthResponse<UserCredentialsDto>> googleLogin(
+  Future<AuthResponse<UserCredentialDto>> googleLogin(
     @Field() String idToken,
   );
 
@@ -39,7 +39,7 @@ abstract class AuthRemoteDatasource {
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signup/google')
-  Future<AuthResponse<UserCredentialsDto>> googleRegister(
+  Future<AuthResponse<UserCredentialDto>> googleRegister(
     @Field() String idToken,
   );
 
@@ -47,7 +47,7 @@ abstract class AuthRemoteDatasource {
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signin')
-  Future<AuthResponse<UserCredentialsDto>> login({
+  Future<AuthResponse<UserCredentialDto>> login({
     @Field() required String email,
     @Field() required String password,
   });
@@ -57,7 +57,7 @@ abstract class AuthRemoteDatasource {
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signup')
   @MultiPart()
-  Future<AuthResponse<UserCredentialsDto>> register({
+  Future<AuthResponse<UserCredentialDto>> register({
     @Part() required String fullName,
     @Part() required String email,
     @Part() required String password,

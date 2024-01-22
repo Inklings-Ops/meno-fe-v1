@@ -4,42 +4,47 @@ import 'entities/entities.dart';
 import 'exceptions/auth_exception.dart';
 import 'inputs/inputs.dart';
 
-/// Meno Authentication Facade
+// Manages authentication processes, acting as a gateway between the application and authentication services.
+//
+// Implements the IAuthFacade interface, providing methods for:
+// - Initializing authentication
+// - Retrieving user credentials, token, and information
+// - Handling login, registration, logout, password reset, account switching, and OTP/email verification
+//
+// Relies on:
+// - AuthMapper: Converts data between domain models and data source models.
+// - AuthRemoteDatasource: Interacts with remote authentication services.
+// - AuthLocalDatasource: Manages local storage of authentication data.
+// - NetworkService: Checks network connectivity.
+// - JWTService: Handles JWT token operations.
+//
+// Registers as a singleton using the `@LazySingleton` annotation.
 abstract class IAuthFacade {
-  Stream<User?> get userChanges;
+  /// Initializes the facade by retrieving the store user credential from
+  /// the secure local storage and passing it on to the required stream
+  /// controllers for use
+  Future<void> get init;
 
-  Stream<UserToken?> get tokenChanges;
-  /// Checks whether the user is currently authenticated or logged in.
+  /// A stream of the authenticated [UserCredential]
   ///
-  /// In this case, both the `UserToken` and `User` details must securely saved.
-  Future<bool> get isAuthenticated;
-
-  /// Checks whether the user is currently partially authenticated or logged in.
-  ///
-  /// In this case, just the `User` details are securely saved and the token is
-  /// removed.
-  Future<bool> get isPartiallyAuthenticated;
+  /// Provides a way to easy listen on for any changes made on the user's
+  /// account
+  Stream<UserCredential?> get userChanges;
 
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
 
-  /// Gets the current user.
+  /// Gets the currently authenticated user.
   Future<User> get user;
 
-  /// Gets the user's token.
+  /// Gets the authenticated user's token.
   Future<UserToken?> get userToken;
 
+  /// Gets the authenticated user's credential.
+  Future<UserCredential?> get credential;
+
   /// Gets the user's token.
-  Future<Map<String, UserCredentials>?> get allUserCredentials;
-
-  Future<Either<AuthException, Unit>> changePassword({
-    required IPassword currentPassword,
-    required IPassword newPassword,
-  });
-
-  Future<Either<AuthException, Unit>> forgotPassword(IEmail email);
-
-  Future<Map<String, UserCredentials>?> getAllUserCredentials();
+  Future<Map<String, UserCredential>?> get allCredentials;
 
   /// Signs the user in with Google.
   ///
@@ -77,6 +82,13 @@ abstract class IAuthFacade {
     IAvatar? avatar,
   });
 
+  Future<Either<AuthException, Unit>> changePassword({
+    required IPassword currentPassword,
+    required IPassword newPassword,
+  });
+
+  Future<Either<AuthException, Unit>> forgotPassword(IEmail email);
+
   Future<Either<AuthException, Unit>> requestOtp({
     required IEmail email,
     required String type,
@@ -88,10 +100,8 @@ abstract class IAuthFacade {
     required IPassword newPassword,
   });
 
-  Future<Either<AuthException, Unit>> switchAccount(
-      UserCredentials credentials);
+  Future<Either<AuthException, Unit>> switchAccount(UserCredential credentials);
 
-  
   Future<Either<AuthException, Unit>> verifyEmailAddress({
     required IEmail email,
     required String code,

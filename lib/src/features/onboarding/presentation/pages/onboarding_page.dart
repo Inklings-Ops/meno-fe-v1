@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../router/router.dart';
-import '../../application/onboarding_cubit.dart';
 import '../../infrastructure/onboarding_items.dart';
 import '../widgets/meno_logo.dart';
 import '../widgets/onboarding_body.dart';
@@ -19,9 +17,6 @@ class OnboardingPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the OnboardingCubit using context.read
-    final bloc = context.read<OnboardingCubit>();
-
     // Timer and state management using hooks
     late Timer? timer;
     final pageController = usePageController();
@@ -47,7 +42,7 @@ class OnboardingPage extends HookWidget {
 
       // Cleanup the timer when the widget is disposed
       return () {
-        timer?.cancel;
+        timer?.cancel();
       };
     });
 
@@ -79,11 +74,7 @@ class OnboardingPage extends HookWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                 child: MPrimaryButton(
                   label: 'Get started',
-                  onPressed: () {
-                    // Mark onboarding as complete and navigate to registration
-                    bloc.complete();
-                    context.push(Routes.registerWithLeading);
-                  },
+                  onPressed: () => context.push(Routes.registerWithLeading),
                 ),
               ),
               MCore.large.verticalSpace,
@@ -91,11 +82,7 @@ class OnboardingPage extends HookWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                 child: MSecondaryButton(
                   label: 'Login',
-                  onPressed: () {
-                    // Mark onboarding as complete and navigate to login
-                    bloc.complete();
-                    context.push(Routes.loginWithLeading);
-                  },
+                  onPressed: () => context.push(Routes.loginWithLeading),
                 ),
               ),
             ],

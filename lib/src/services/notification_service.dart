@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
 import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
-
 /// Create a [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel channel;
 
@@ -72,7 +71,6 @@ void showFlutterNotification(RemoteMessage message) {
 Future<void> handleFCMToken() async {
   const storage = FlutterSecureStorage();
   final fcmToken = await FirebaseMessaging.instance.getToken();
-  // Logger().w(fcmToken);
   await storage.write(key: MKeys.fcmToken, value: fcmToken);
 }
 
@@ -80,15 +78,12 @@ Future<void> handleFCMToken() async {
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging;
   final SecureStorageService _storageService;
-  final FlutterLocalNotificationsPlugin _localNotifications;
 
   NotificationService({
     required FirebaseMessaging firebaseMessaging,
     required SecureStorageService storageService,
-    required FlutterLocalNotificationsPlugin localNotifications,
   })  : _firebaseMessaging = firebaseMessaging,
-        _storageService = storageService,
-        _localNotifications = localNotifications;
+        _storageService = storageService;
 
   @PostConstruct(preResolve: true)
   Future initialize() async {
@@ -96,4 +91,9 @@ class NotificationService {
   }
 
   Future<String?> get fcmToken => _firebaseMessaging.getToken();
+
+  Future<void> storeToken() async {
+    final token = await _firebaseMessaging.getToken();
+    await _storageService.write(MKeys.fcmToken, value: token);
+  }
 }

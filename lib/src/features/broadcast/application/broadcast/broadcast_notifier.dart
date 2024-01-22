@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -58,7 +57,6 @@ class BroadcastNotifier extends _$BroadcastNotifier {
         broadcast: result.foldRight(Broadcast.empty(), (r, p) => r),
       );
 
-      Logger().f(result.foldRight(Broadcast.empty(), (r, p) => r));
     } else {
       state = state.copyWith(loading: false, onCreated: none());
     }

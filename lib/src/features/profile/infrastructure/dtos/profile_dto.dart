@@ -17,7 +17,6 @@ class ProfileDto with _$ProfileDto {
     required String fullName,
     String? bio,
     String? imageUrl,
-    // ignore: invalid_annotation_target
     @JsonKey(name: '_count') UserStatsDto? stats,
     bool? isSubscribedToUser,
     bool? verified,

@@ -47,29 +47,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /// Checks the authentication status and updates the state accordingly.
   @PostConstruct(preResolve: true)
   Future<void> checkAuthenticated() async {
-    final (
-      isPartiallyAuthenticated,
-      isAuthenticated,
-      currentUser,
-      currentToken,
-      credentials
-    ) = await (
-      _facade.isPartiallyAuthenticated,
-      _facade.isAuthenticated,
+    final (currentUser,  credentials) = await (
       _facade.user,
-      _facade.userToken,
-      _facade.allUserCredentials,
+      _facade.allCredentials,
     ).wait;
 
     AuthStatus status = AuthStatus.unauthenticated;
     UserToken? token;
-
-    if (isAuthenticated) {
-      token = currentToken;
-      status = AuthStatus.authenticated;
-    } else if (isPartiallyAuthenticated) {
-      status = AuthStatus.partiallyAuthenticated;
-    }
 
     state = state.copyWith(
       loading: false,
@@ -97,7 +81,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Switches the user account and updates the authentication state.
-  Future<void> switchAccount(UserCredentials credentials) async {
+  Future<void> switchAccount(UserCredential credentials) async {
     state = state.copyWith(loading: true, option: none());
 
     final result = await _facade.switchAccount(credentials);

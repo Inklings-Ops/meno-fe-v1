@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../domain/entities/notification.dart';
@@ -29,7 +28,6 @@ Map<NotificationCategory, List<Notification?>> sortNotifications(
       final category = getCategory(notification!.createdAt);
       grouped.putIfAbsent(category, () => []).add(notification);
     }
-    Logger().w(grouped);
     return grouped;
   } else {
     return {NotificationCategory.none: []};

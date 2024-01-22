@@ -4,7 +4,7 @@ import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/bro
 import 'package:meno_fe_v1/src/features/profile/application/application.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../features/auth/application/auth/auth_notifier.dart';
+import '../features/auth/application/auth_old/auth_notifier.dart';
 import '../features/auth/presentation/pages/login/login_page.dart';
 import '../features/auth/presentation/pages/register/email_verification_page.dart';
 import '../features/auth/presentation/pages/register/register_page.dart';
@@ -221,7 +221,7 @@ GoRouter router(RouterRef ref) {
       final isRPasswordOtp = state.matchedLocation == Routes.resetPwdOtp;
       final isResetSuccess = state.matchedLocation == Routes.resetPwdSuccess;
       final isVerification = state.matchedLocation == Routes.emailVerification;
-      final isLogin = state.matchedLocation == Routes.login;
+      // final isLogin = state.matchedLocation == Routes.login;
 
       if (isRegister) return Routes.registerWithLeading;
       if (isResetPassword) return Routes.resetPassword;

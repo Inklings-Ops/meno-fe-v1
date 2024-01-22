@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_cubit.dart';
 import 'package:meno_fe_v1/src/shared/pages/start_up/startup_page.dart';
 
+import '../features/auth/application/application.dart';
 import '../features/auth/presentation/pages/login/login_page.dart';
 import '../features/auth/presentation/pages/register/email_verification_page.dart';
 import '../features/auth/presentation/pages/register/register_page.dart';
@@ -25,13 +28,54 @@ import '../shared/layout/m_layout.dart';
 import '../shared/layout/pages.dart';
 import 'm_routes.dart';
 
+@Injectable()
 class MRouter {
-  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+  final AuthBloc authBloc;
+  final OnboardingCubit onboardingCubit;
+
+  MRouter({required this.authBloc, required this.onboardingCubit});
+
+  final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
   late final router = GoRouter(
-    navigatorKey: rootNavigatorKey,
-    initialLocation: MRoutes.startup,
+    navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
+    // redirect: (context, state) {
+    //   // final isUnAuth = authBloc.state.status == AuthStatus.unauthenticated;
+    //   // final isPartiallyAuth =
+    //   //     authBloc.state.status == AuthStatus.partiallyAuthenticated;
+
+    //   // final isRegister = state.matchedLocation == Routes.register;
+    //   // final isResetPassword = state.matchedLocation == Routes.resetPassword;
+    //   // final isRPasswordOtp = state.matchedLocation == Routes.resetPwdOtp;
+    //   // final isResetSuccess = state.matchedLocation == Routes.resetPwdSuccess;
+    //   // final isVerification = state.matchedLocation == Routes.emailVerification;
+    //   // final isLogin = state.matchedLocation == Routes.login;
+
+    //   // if (isRegister) return Routes.registerWithLeading;
+    //   // if (isResetPassword) return Routes.resetPassword;
+    //   // if (isRPasswordOtp) return Routes.resetPwdOtp;
+    //   // if (isResetSuccess) return Routes.resetPwdSuccess;
+    //   // if (isVerification) return Routes.emailVerification;
+
+    //   // if (onboardingCubit.state == OnboardingState.notCompleted) {
+    //   //   if (isLogin) return Routes.loginWithLeading;
+    //   //   return null;
+    //   // } else {
+    //   //   if (isPartiallyAuth) return Routes.partialLogin;
+    //   //   if (isUnAuth) return Routes.login;
+    //   //   return null;
+    //   // }
+    //   // switch (authBloc.state.status) {
+    //   //   case AuthStatus.partiallyAuthenticated:
+    //   //     return Routes.partialLogin;
+    //   //   case AuthStatus.unauthenticated:
+    //   //     return Routes.login;
+    //   //   case AuthStatus.authenticated:
+    //   //   default:
+    //   //     return null;
+    //   // }
+    // },
     routes: [
       GoRoute(
         path: MRoutes.startup,
@@ -46,13 +90,13 @@ class MRouter {
       GoRoute(
         path: MRoutes.createBroadcast,
         name: MRoutes.createBroadcast,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CreateBroadcastPage(),
       ),
       GoRoute(
         path: MRoutes.broadcast,
         name: MRoutes.broadcast,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BroadcastPage(),
       ),
       GoRoute(
@@ -97,7 +141,7 @@ class MRouter {
       GoRoute(
         path: MRoutes.createNewPassword,
         name: MRoutes.createNewPassword,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CreateNewPasswordPage(),
       ),
       GoRoute(
@@ -108,19 +152,19 @@ class MRouter {
       GoRoute(
         path: MRoutes.stream,
         name: MRoutes.stream,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const StreamPage(),
       ),
       GoRoute(
         path: MRoutes.recentlyLive,
         name: MRoutes.recentlyLive,
         builder: (context, state) => const RecentlyLivePage(),
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
       ),
       GoRoute(
         path: MRoutes.details,
         name: MRoutes.details,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final broadcast = (state.extra) as Broadcast;
           return DetailsPage(broadcast: broadcast);
@@ -129,19 +173,19 @@ class MRouter {
       GoRoute(
         path: MRoutes.notifications,
         name: MRoutes.notifications,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsPage(),
       ),
       GoRoute(
         path: MRoutes.chat,
         name: MRoutes.chat,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ChatPage(),
       ),
       GoRoute(
         path: MRoutes.bible,
         name: MRoutes.bible,
-        parentNavigatorKey: rootNavigatorKey,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BiblePage(),
       ),
       StatefulShellRoute.indexedStack(

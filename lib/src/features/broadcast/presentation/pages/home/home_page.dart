@@ -6,7 +6,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 
 import '../../../../../services/socket/socket_service.dart';
-import '../../../application/broadcast/broadcast_notifier.dart';
 import '../../../application/broadcast_list/broadcast_list_provider.dart';
 import 'home_app_bar.dart';
 import 'live_activity_card.dart';
@@ -28,7 +27,6 @@ class HomePage extends HookConsumerWidget {
       ]);
     }
 
-    final status = ref.watch(broadcastNotifierProvider.select((v) => v.status));
 
     final isStreaming = useState(false);
 
