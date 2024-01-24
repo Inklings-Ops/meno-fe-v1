@@ -1,44 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/broadcast/application/recently_live_list/recently_live_list_bloc.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/broadcast_list/broadcast_list_provider.dart';
 import '../../../domain/domain.dart';
 
-class RecentlyLivePage extends ConsumerWidget {
+class RecentlyLivePage extends StatefulWidget {
   const RecentlyLivePage({super.key});
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = MColorScheme.of(context)!;
 
-    final broadcasts = ref.watch(recentBroadcastsProvider());
+  @override
+  State<RecentlyLivePage> createState() => _RecentlyLivePageState();
+}
+
+class _RecentlyLivePageState extends State<RecentlyLivePage> {
+  final scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<RecentlyLiveListBloc>();
+    final colorScheme = MColorScheme.of(context)!;
 
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
       padding: EdgeInsets.zero,
       body: RefreshIndicator.adaptive(
-        onRefresh: () async => await ref.refresh(recentBroadcastsProvider()),
+        onRefresh: () async => bloc.add(const RecentlyLiveListEvent.fetch()),
         child: ListView(
+          controller: scrollController,
           children: [
-            if (broadcasts.isLoading)
-              const _LoadingList()
-            else if (broadcasts.hasValue)
-              _LoadedList(broadcasts: broadcasts.value!),
-            MCore.large.verticalSpace,
-            MText(
-              'You’ve reached the end 🎉',
-              style: MTextStyle.captionRegular,
-              color: colorScheme.onBackgroundVariant,
-              textAlign: TextAlign.center,
+            BlocBuilder<RecentlyLiveListBloc, RecentlyLiveListState>(
+              bloc: bloc,
+              builder: (context, state) => state.maybeWhen(
+                orElse: () => const SizedBox(),
+                loading: () => const _LoadingList(),
+                loadingMore: (broadcasts) => Column(
+                  children: [
+                    _LoadedList(broadcasts: broadcasts),
+                    const Align(child: MLoadingIndicator.box()),
+                  ],
+                ),
+                success: (broadcasts) => _LoadedList(broadcasts: broadcasts),
+                successLast: (broadcasts) => Column(
+                  children: [
+                    _LoadedList(broadcasts: broadcasts),
+                    MCore.large.verticalSpace,
+                    MText(
+                      'You’ve reached the end 🎉',
+                      style: MTextStyle.captionRegular,
+                      color: colorScheme.onBackgroundVariant,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             ),
             53.verticalSpace,
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    final bloc = context.read<RecentlyLiveListBloc>();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 300) {
+        bloc.add(const RecentlyLiveListEvent.fetchMore());
+      }
+    });
+    super.initState();
   }
 }
 
