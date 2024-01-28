@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/domain.dart';
 import 'user_dto.dart';
 
 part 'user_credential_dto.freezed.dart';
@@ -25,4 +26,13 @@ class UserCredentialDto with _$UserCredentialDto {
   /// Converts the `UserCredentialDto` object to a JSON map.
   @override
   Map<String, dynamic> toJson() => _$UserCredentialDtoToJson(this);
+}
+
+extension UserCredentialDtoToDomain on UserCredentialDto {
+  UserCredential get toDomain {
+    return UserCredential(
+      user: user.toDomain,
+      token: token,
+    );
+  }
 }

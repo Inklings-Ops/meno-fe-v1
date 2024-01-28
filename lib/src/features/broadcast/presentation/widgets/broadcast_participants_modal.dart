@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/broadcast_participant_list.dart';
 
-import '../../../../services/socket/socket_service.dart';
+import 'broadcast_participant_list.dart';
+ 
 
-class BroadcastParticipantsModal extends ConsumerWidget {
+class BroadcastParticipantsModal extends StatelessWidget {
   const BroadcastParticipantsModal({super.key, required this.broadcastId});
   final String broadcastId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final participants = ref.watch(liveParticipantsProvider);
-    final numberOfParticipants = participants.length;
+  Widget build(BuildContext context) {
 
     return MModal(
-      title: 'Listening (${numberOfParticipants.toString()})',
+      title: 'Listening (${0.toString()})',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [

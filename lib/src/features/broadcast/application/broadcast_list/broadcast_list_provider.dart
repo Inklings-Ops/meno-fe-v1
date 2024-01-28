@@ -1,4 +1,3 @@
-import 'package:meno_fe_v1/src/features/auth/application/auth_old/auth_notifier.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -41,7 +40,6 @@ Future<List<Broadcast?>> myRecentBroadcasts(
         orderBy: 'DESC',
         sortBy: 'startTime',
         endTimeGT: twoDaysAgo.toIso8601String(),
-        creatorId: ref.read(userProvider).id,
       );
 
   return result.fold((l) => [], (List<Broadcast?> r) => r);

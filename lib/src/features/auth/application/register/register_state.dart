@@ -18,7 +18,7 @@ class RegisterState with _$RegisterState {
     required bool loading,
 
     /// The result of the last registration attempt.
-    required Option<Either<AuthException, Unit>> option,
+    required Option<Either<AuthException, UserCredential>> option,
     required bool rememberMe,
   }) = _RegisterState;
 

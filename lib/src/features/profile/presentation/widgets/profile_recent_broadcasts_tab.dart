@@ -5,8 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/broadcast_list_provider.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
 
+import '../../../../router/router.dart';
 import 'empty_state_widget.dart';
 
 class ProfileRecentBroadcastsTab extends ConsumerWidget {

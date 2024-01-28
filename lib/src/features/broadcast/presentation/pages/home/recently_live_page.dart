@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/recently_live_list/recently_live_list_bloc.dart';
 
 import '../../../../../router/router.dart';
+import '../../../application/recently_live/recently_live_cubit.dart';
 import '../../../domain/domain.dart';
 
 class RecentlyLivePage extends StatefulWidget {
@@ -20,18 +20,18 @@ class _RecentlyLivePageState extends State<RecentlyLivePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<RecentlyLiveListBloc>();
+    final bloc = context.read<RecentlyLiveCubit>();
     final colorScheme = MColorScheme.of(context)!;
 
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
       padding: EdgeInsets.zero,
       body: RefreshIndicator.adaptive(
-        onRefresh: () async => bloc.add(const RecentlyLiveListEvent.fetch()),
+        onRefresh: () async => bloc.fetch(),
         child: ListView(
           controller: scrollController,
           children: [
-            BlocBuilder<RecentlyLiveListBloc, RecentlyLiveListState>(
+            BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
               bloc: bloc,
               builder: (context, state) => state.maybeWhen(
                 orElse: () => const SizedBox(),
@@ -72,11 +72,11 @@ class _RecentlyLivePageState extends State<RecentlyLivePage> {
 
   @override
   void initState() {
-    final bloc = context.read<RecentlyLiveListBloc>();
+    final bloc = context.read<RecentlyLiveCubit>();
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 300) {
-        bloc.add(const RecentlyLiveListEvent.fetchMore());
+        bloc.fetchMore();
       }
     });
     super.initState();

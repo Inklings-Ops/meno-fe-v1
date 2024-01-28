@@ -7,7 +7,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/chat/application/chat_notifier.dart';
 import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
-import '../../../auth/application/auth_old/auth_notifier.dart';
 import 'reactions.dart';
 
 class ChatInputContainer extends HookConsumerWidget {
@@ -30,7 +29,7 @@ class ChatInputContainer extends HookConsumerWidget {
 
     void onSubmit() {
       final time = DateTime.now();
-      final senderId = ref.read(userProvider).id;
+      const senderId = 'ref.read(userProvider).id';
       final chat = Chat(
         id: time.toIso8601String(),
         content: IChatContent(textController.text),

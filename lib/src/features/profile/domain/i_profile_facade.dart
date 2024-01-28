@@ -5,7 +5,6 @@ import 'domain.dart';
 
 abstract class IProfileFacade {
   Future<Either<AuthException, Unit>> editProfile({
-    required UserID id,
     IFullName? fullName,
     IBio? bio,
     IAvatar? avatar,

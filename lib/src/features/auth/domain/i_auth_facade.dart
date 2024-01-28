@@ -23,13 +23,21 @@ abstract class IAuthFacade {
   /// Initializes the facade by retrieving the store user credential from
   /// the secure local storage and passing it on to the required stream
   /// controllers for use
-  Future<void> get init;
+  Future<void> init();
 
   /// A stream of the authenticated [UserCredential]
   ///
   /// Provides a way to easy listen on for any changes made on the user's
   /// account
   Stream<UserCredential?> get userChanges;
+
+
+  /// A stream of the authenticated [UserToken]
+  ///
+  /// Provides a way to easy listen on for any changes made on the user's token
+  /// from the [UserCredential]
+  Stream<UserToken?> get tokenChanges;
+
 
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
@@ -58,7 +66,7 @@ abstract class IAuthFacade {
   /// Logs the user in with their email address and password.
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
-  Future<Either<AuthException, Unit>> login({
+  Future<Either<AuthException, UserCredential>> login({
     required IEmail email,
     required IPassword password,
   });
@@ -66,15 +74,10 @@ abstract class IAuthFacade {
   /// Logs the user out.
   Future<void> logout();
 
-  /// Performs a partial logout, which means that the user's token is invalidated but their account data is still stored on the local device.
-  ///
-  /// This is useful for cases where the user wants to switch to a different account without having to completely log out.
-  Future<void> partialLogout();
-
   /// Registers a new user with Meno.
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
-  Future<Either<AuthException, Unit>> register({
+  Future<Either<AuthException, UserCredential>> register({
     required IFullName fullName,
     required IEmail email,
     required IPassword password,
@@ -106,4 +109,5 @@ abstract class IAuthFacade {
     required IEmail email,
     required String code,
   });
+
 }

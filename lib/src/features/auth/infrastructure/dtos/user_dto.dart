@@ -2,6 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/domain.dart';
+
 part 'user_dto.freezed.dart';
 part 'user_dto.g.dart';
 
@@ -50,4 +52,20 @@ sealed class UserDto with _$UserDto {
   /// Converts the `UserDto` object to a JSON map.
   @override
   Map<String, dynamic> toJson() => _$UserDtoToJson(this);
+}
+
+extension UserDtoToDomain on UserDto {
+  User get toDomain {
+    return User(
+      id: id,
+      email: IEmail(email),
+      fullName: IFullName(fullName),
+      bio: bio == null ? null : IBio(bio!),
+      deleted: deleted,
+      emailAccountType: emailAccountType,
+      imageId: imageId,
+      imageUrl: imageUrl,
+      verified: verified,
+    );
+  }
 }

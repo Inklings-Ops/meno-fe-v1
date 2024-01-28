@@ -42,6 +42,7 @@ abstract class RegisterModule {
   @preResolve
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
 
+
   @lazySingleton
   ProfileRemoteDatasource get profileRemoteDatasource {
     return ProfileRemoteDatasource(dio, baseUrl: Env.menoApiUrl);

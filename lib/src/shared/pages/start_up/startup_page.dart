@@ -24,15 +24,13 @@ class _StartupPageState extends State<StartupPage> {
 
         if (onboardingCubit.state == OnboardingState.notCompleted) {
           return context.go(Routes.onboarding);
-        }
-        else {
+        } else {
           authBloc.state.when(
             authenticated: (_) => context.go(Routes.home),
             unauthenticated: () => context.go(Routes.login),
             partiallyAuthenticated: (user) => context.go(Routes.partialLogin),
           );
         }
-        
       }
     });
     super.initState();

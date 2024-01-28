@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'my_profile_page.dart';
+import '../widgets/my_profile_page.dart';
 
 class ProfilePage extends HookConsumerWidget {
   final String? id;

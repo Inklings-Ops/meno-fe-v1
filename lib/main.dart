@@ -6,32 +6,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';import 'package:path_provider/path_provider.dart';
 
 import 'app/app.dart';
 import 'firebase_options.dart';
 import 'src/dependency_injector/injector.dart';
 import 'src/features/auth/application/application.dart';
-import 'src/features/auth/domain/i_auth_facade.dart';
-import 'src/features/broadcast/domain/i_broadcast_facade.dart';
+import 'src/features/broadcast/application/broadcast/broadcast_bloc.dart';
+import 'src/features/broadcast/application/broadcast_form/broadcast_form_cubit.dart';
+import 'src/features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart';
+import 'src/features/broadcast/application/live_participants/live_participants_cubit.dart';
+import 'src/features/broadcast/application/recently_live/recently_live_cubit.dart';
+import 'src/features/broadcast/application/stream/stream_bloc.dart';
+import 'src/features/broadcast/application/timer/cubit/timer_cubit.dart';
 import 'src/features/network/application/network_cubit.dart';
-import 'src/features/network/domain/i_network_facade.dart';
-import 'src/features/notifications/domain/i_notification_facade.dart';
 import 'src/features/onboarding/onboarding.dart';
-import 'src/features/profile/domain/i_profile_facade.dart';
+import 'src/features/profile/application/application.dart';
+import 'src/services/live_kit/bloc/live_kit_bloc.dart';
+import 'src/services/meno/meno_bloc.dart';
 import 'src/services/notification_service.dart';
+import 'src/services/socket/bloc/socket_bloc.dart';
 
 Future<void> main() async {
-  // Ensures that Flutter bindings are initialized before proceeding.
   WidgetsFlutterBinding.ensureInitialized();
 
   // Sets the preferred orientation to portrait mode only.
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  // Initializes storage for hydrated blocs.
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
-  );
 
   // Initializes Firebase app with default options for the current platform.
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -45,28 +44,27 @@ Future<void> main() async {
   // Configures app-wide dependencies (implementation details not shown).
   await configureDependencies();
 
-  // await di<IOnboardingFacade>().clearCache;
-
-  // Runs the app within a ProviderScope to manage state using providers.
   runApp(
-    MultiRepositoryProvider(
+    MultiBlocProvider(
       providers: [
-        RepositoryProvider(create: (context) => di<IOnboardingFacade>()),
-        RepositoryProvider(create: (context) => di<IAuthFacade>()..init),
-        RepositoryProvider(create: (context) => di<IBroadcastFacade>()),
-        RepositoryProvider(create: (context) => di<INetworkFacade>()),
-        RepositoryProvider(create: (context) => di<INotificationFacade>()),
-        RepositoryProvider(create: (context) => di<IProfileFacade>()),
+        BlocProvider(create: (context) => di<NetworkCubit>()),
+        BlocProvider(create: (context) => di<OnboardingCubit>()),
+        BlocProvider(create: (context) => di<AuthBloc>()),
+        BlocProvider(create: (context) => di<SocketBloc>()),
+        BlocProvider(create: (context) => di<AccountCubit>()..init),
+        BlocProvider(create: (context) => di<MyProfileBloc>()),
+        BlocProvider(create: (context) => di<ProfileFormCubit>()),
+        BlocProvider(create: (context) => di<MenoBloc>()),
+        BlocProvider(create: (context) => di<LiveKitBloc>()),
+        BlocProvider(create: (context) => di<TimerCubit>()),
+        BlocProvider(create: (context) => di<BroadcastFormCubit>()),
+        BlocProvider(create: (context) => di<StreamBloc>()),
+        BlocProvider(create: (context) => di<BroadcastBloc>()),
+        BlocProvider(create: (context) => di<RecentlyLiveCubit>()),
+        BlocProvider(create: (context) => di<LiveBroadcastsBloc>()),
+        BlocProvider(create: (context) => di<LiveParticipantsCubit>()),
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => di<OnboardingCubit>()),
-          BlocProvider(create: (context) => di<AuthBloc>()),
-          BlocProvider(create: (context) => di<AccountCubit>()..init),
-          BlocProvider(create: (context) => di<NetworkCubit>()),
-        ],
-        child: const ProviderScope(child: MenoApp()),
-      ),
+      child: const ProviderScope(child: MenoApp()),
     ),
   );
 }

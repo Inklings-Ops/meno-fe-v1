@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
+import 'package:meno_fe_v1/src/features/network/application/network_cubit.dart';
 
-import '../src/features/network/application/network_cubit.dart';
 import '../src/router/m_router.dart';
 import 'meno_wrapper.dart';
 
-class MenoApp extends ConsumerStatefulWidget {
+class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MenoAppState();
+  State<StatefulWidget> createState() => _MenoAppState();
 }
 
-class _MenoAppState extends ConsumerState<MenoApp> {
+class _MenoAppState extends State<MenoApp> {
   late final AppLifecycleListener _listener;
+
+  final toastBuilder = FToastBuilder();
+  final router = di<MRouter>().router;
 
   @override
   Widget build(BuildContext context) {
-    final toastBuilder = FToastBuilder();
-    final router = di<MRouter>().router;
-
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,

@@ -14,7 +14,7 @@ class LoginState with _$LoginState {
     required bool loading,
 
     /// The result of the last login attempt.
-    required Option<Either<AuthException, Unit>> option,
+    required Option<Either<AuthException, UserCredential>> option,
   }) = _LoginState;
 
   /// Creates a new `LoginFormState` object with the initial values.

@@ -43,7 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
 
     // Initializes the authentication facade by retrieving the user's
     // credentials stored in the secure local storage
-    _facade.init;
+    _facade.init();
 
     // Subscribe to user credential changes
     _userSubscription = _facade.userChanges.listen(

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/core/broadcast/meno_event.dart';
-import 'package:meno_fe_v1/src/core/broadcast/meno_event_provider.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../application/broadcast/broadcast_notifier.dart';
+import '../../../../../services/meno/meno_bloc.dart';
+import '../../../application/broadcast/broadcast_bloc.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_info_modal.dart';
 
 class BroadcastControls extends StatelessWidget {
-  final Broadcast broadcast;
-  const BroadcastControls({super.key, required this.broadcast});
+  const BroadcastControls({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,7 @@ class BroadcastControls extends StatelessWidget {
           MCore.small.horizontalSpace,
           const StartStopButton(),
           MCore.small.horizontalSpace,
-          MoreOptionsButton(broadcast: broadcast),
+          const MoreOptionsButton(),
         ],
       ),
     );
@@ -34,8 +31,7 @@ class BroadcastControls extends StatelessWidget {
 }
 
 class MoreOptionsButton extends StatelessWidget {
-  final Broadcast broadcast;
-  const MoreOptionsButton({super.key, required this.broadcast});
+  const MoreOptionsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +39,10 @@ class MoreOptionsButton extends StatelessWidget {
 
     return IconButton.outlined(
       onPressed: () => context.showModal(
-        BroadcastInfoModal(broadcast: broadcast, isBroadcasting: true),
+        BlocSelector<BroadcastBloc, BroadcastState, Broadcast>(
+          selector: (state) => state.broadcast,
+          builder: (context, state) => BroadcastInfoModal(broadcast: state),
+        ),
         isScrollControlled: true,
       ),
       icon: const Icon(MIcons.dots_horizontal),
@@ -60,91 +59,76 @@ class MoreOptionsButton extends StatelessWidget {
   }
 }
 
-class MuteButton extends HookConsumerWidget {
+class MuteButton extends StatelessWidget {
   const MuteButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isMuted = useState(false);
-
-    final menoEvent = ref.watch(eventProvider).event;
-
-    if (menoEvent == const IsLiveEvent()) {
-      return Microphone(
-        isMuted: isMuted.value,
-        onTap: () {
-          isMuted.value = !isMuted.value;
-          ref.read(muteProvider(!isMuted.value));
-        },
-      );
-    }
-
-    return const Microphone(isMuted: true);
-  }
-}
-
-class Microphone extends StatelessWidget {
-  final bool isMuted;
-
-  final VoidCallback? onTap;
-  const Microphone({super.key, this.isMuted = true, this.onTap});
-
-  @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final bloc = context.read<BroadcastBloc>();
 
-    return MIconButton(
-      icon: isMuted
-          ? const Icon(MIcons.microphone_off)
-          : const Icon(MIcons.microphone),
-      color: colorScheme.primary,
-      isFilled: true,
-      iconSize: 20,
-      fillColor: colorScheme.primary?.withOpacity(0.1),
-      onPressed: onTap,
+    return BlocBuilder<MenoBloc, MenoState>(
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const MMicrophoneButton(),
+        live: () => BlocSelector<BroadcastBloc, BroadcastState, bool>(
+          selector: (state) => state.isMute,
+          builder: (context, isMute) => MMicrophoneButton(
+            isMuted: isMute,
+            onTap: () => bloc.add(BroadcastEvent.mute(!isMute)),
+          ),
+        ),
+      ),
     );
   }
 }
 
-class StartStopButton extends ConsumerWidget {
+class StartStopButton extends StatelessWidget {
   const StartStopButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final broadcastBloc = context.read<BroadcastBloc>();
+
     final colorScheme = MColorScheme.of(context)!;
     final foregroundColor = colorScheme.onBackground;
 
-    String label = 'Start Broadcasting';
-    MColor? backgroundColor = colorScheme.primary;
+    final baseButtonStyle = ElevatedButton.styleFrom(
+      foregroundColor: foregroundColor,
+      backgroundColor: colorScheme.primary?.withOpacity(0.1),
+      fixedSize: Size(160.w, 40.h),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.all(Radius.circular(MCore.circle)).r,
+      ),
+    );
 
-    final menoEvent = ref.watch(eventProvider).event;
-
-    if (menoEvent == const IsLiveEvent()) {
-      label = 'Stop Broadcasting';
-      backgroundColor = colorScheme.error;
-    }
+    final stopButtonStyle = baseButtonStyle.copyWith(
+      backgroundColor: MaterialStatePropertyAll(colorScheme.error),
+    );
 
     Future<void> stop() {
       return context.showEndBroadcastDialog().then((value) {
-        if (value == true) {
-          ref.read(broadcastNotifierProvider.notifier).endPressed();
-        }
+        if (value != true) return;
+        return broadcastBloc.add(const BroadcastEvent.start());
       });
     }
 
-    void start() => ref.read(broadcastNotifierProvider.notifier).startPressed();
-
-    return MPrimaryButton(
-      label: label,
-      onPressed: menoEvent == const IsLiveEvent() ? stop : start,
-      loading: ref.watch(broadcastNotifierProvider).loading,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor?.withOpacity(0.1),
-        fixedSize: Size(160.w, 40.h),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(MCore.circle)).r,
+    return BlocBuilder<MenoBloc, MenoState>(
+      bloc: context.watch<MenoBloc>(),
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => MPrimaryButton(
+          label: 'Start Broadcasting',
+          onPressed: () => broadcastBloc.add(const BroadcastEvent.start()),
+          style: baseButtonStyle,
+        ),
+        live: () => BlocSelector<BroadcastBloc, BroadcastState, bool>(
+          bloc: broadcastBloc,
+          selector: (state) => state.loading,
+          builder: (context, loading) => MPrimaryButton(
+            label: 'Stop Broadcasting',
+            onPressed: stop,
+            loading: loading,
+            style: stopButtonStyle,
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -7,7 +8,8 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/stream/stream_notifier.dart';
+import '../../../../../services/meno/meno_bloc.dart';
+import '../../../application/stream/stream_bloc.dart';
 import '../../../domain/domain.dart';
 
 class LiveActivityCard extends HookConsumerWidget {
@@ -15,21 +17,27 @@ class LiveActivityCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final streamBroadcast = ref.watch(streamNotifierProvider.select(
-      (value) => value.broadcast.broadcast,
-    ));
+    final bloc = context.watch<StreamBloc>();
 
-    return ActivityCard(
-      broadcast: streamBroadcast,
-      onTap: () => context.push(Routes.stream),
-      badgeTitle: 'Now Streaming',
-      actionTitle: 'Leave',
-      action: () => context.showLeaveBroadcastDialog().then((value) {
-        if (value == true) {
-          ref.read(streamNotifierProvider.notifier).leaveBroadcast();
-          context.go(Routes.home);
-        }
-      }),
+    return BlocListener<MenoBloc, MenoState>(
+      listener: (context, state) {},
+      child: BlocBuilder<StreamBloc, StreamState>(
+        bloc: context.watch<StreamBloc>(),
+        builder: (context, state) {
+          return ActivityCard(
+            broadcast: bloc.state.joinBroadcast.broadcast,
+            onTap: () => context.push(Routes.stream),
+            badgeTitle: 'Now Streaming',
+            actionTitle: 'Leave',
+            action: () => context.showLeaveBroadcastDialog().then((value) {
+              if (value == true) {
+                bloc.add(const StreamEvent.leave());
+                context.go(Routes.home);
+              }
+            }),
+          );
+        },
+      ),
     );
   }
 }

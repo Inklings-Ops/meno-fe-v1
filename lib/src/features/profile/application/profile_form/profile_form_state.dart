@@ -1,11 +1,14 @@
-part of 'profile_form_notifier.dart';
+part of 'profile_form_cubit.dart';
 
 @freezed
 class ProfileFormState with _$ProfileFormState {
   factory ProfileFormState({
-    IFullName? fullName,
-    IBio? bio,
-    IAvatar? avatar,
+    required IFullName? fullName,
+    required IBio? bio,
+    required IAvatar? avatar,
+    required bool loading,
+    required bool hasChanges,
+    required Option<Either<AuthException, Unit>> onEdited,
   }) = _ProfileFormState;
 
   factory ProfileFormState.initial() {
@@ -13,6 +16,9 @@ class ProfileFormState with _$ProfileFormState {
       fullName: null,
       bio: null,
       avatar: null,
+      loading: false,
+      hasChanges: false,
+      onEdited: none(),
     );
   }
 }

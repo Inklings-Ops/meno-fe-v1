@@ -21,8 +21,6 @@ class MenoWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.watch<AuthBloc>();
-
     return MultiBlocListener(
       listeners: [
         BlocListener<NetworkCubit, NetworkState>(
@@ -42,11 +40,10 @@ class MenoWrapper extends StatelessWidget {
           },
         ),
         BlocListener<AuthBloc, AuthState>(
-          bloc: authBloc,
           listenWhen: (p, c) => p != c,
           listener: (context, state) {
-            state.when(
-              authenticated: (_) => router.go(Routes.home),
+            state.whenOrNull(
+              // authenticated: (_) => router.go(Routes.home),
               unauthenticated: () => router.go(Routes.login),
               partiallyAuthenticated: (_) => router.go(Routes.partialLogin),
             );

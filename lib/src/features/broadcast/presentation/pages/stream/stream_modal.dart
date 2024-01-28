@@ -1,62 +1,62 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/stream/stream_notifier.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/services/socket/socket_service.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
+import '../../../application/stream/stream_bloc.dart';
 import '../../../domain/domain.dart';
 
-class StreamModal extends ConsumerWidget {
+class StreamModal extends StatelessWidget {
   final Broadcast broadcast;
 
   const StreamModal({super.key, required this.broadcast});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(streamNotifierProvider, (previous, next) {
-      next.onJoined.fold(
-        () => null,
-        (a) => a.fold(
-          (l) => context.showBroadcastError(l),
-          (r) {
-            context.pop();
-            context.push(Routes.stream);
-          },
-        ),
-      );
-    });
-
-    return MModal(
-      title: 'Stream',
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.22,
-        minChildSize: 0.22,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) => Scaffold(
-          body: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _TopSection(broadcast: broadcast),
-                24.verticalSpace,
-                _DescriptionSection(broadcast: broadcast),
-                24.verticalSpace,
-                MHeader(
-                  title: 'Recent Broadcasts',
-                  action: () {},
-                  actionTitle: 'See all',
-                  showSideBorder: false,
-                  padding: EdgeInsets.zero,
-                )
-              ],
+  Widget build(BuildContext context) {
+    return BlocListener<StreamBloc, StreamState>(
+      listenWhen: (p, c) => p.onJoined != c.onJoined,
+      listener: (context, state) {
+        state.onJoined.fold(
+          () => null,
+          (a) => a.fold(
+            (l) => context.showBroadcastError(l),
+            (r) => context
+              ..pop()
+              ..push(Routes.stream),
+          ),
+        );
+      },
+      child: MModal(
+        title: 'Stream',
+        builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.22,
+          minChildSize: 0.22,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) => Scaffold(
+            body: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _TopSection(broadcast: broadcast),
+                  24.verticalSpace,
+                  _DescriptionSection(broadcast: broadcast),
+                  24.verticalSpace,
+                  MHeader(
+                    title: 'Recent Broadcasts',
+                    action: () {},
+                    actionTitle: 'See all',
+                    showSideBorder: false,
+                    padding: EdgeInsets.zero,
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -65,38 +65,35 @@ class StreamModal extends ConsumerWidget {
   }
 }
 
-class _ActionButtons extends ConsumerWidget {
+class _ActionButtons extends StatelessWidget {
   final Broadcast broadcast;
   const _ActionButtons({required this.broadcast});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
 
     final shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8).r,
     );
 
-    final notifier = ref.read(streamNotifierProvider.notifier);
-
-    final streamLoading = ref.watch(streamNotifierProvider.select(
-      (value) => value.loading,
-    ));
-
-    final socketLoading = ref.watch(socketServiceProvider.select(
-      (value) => value.loading,
-    ));
+   
+    final bloc = context.read<StreamBloc>();
 
     return SizedBox(
       height: 32.h,
       child: Row(
         children: [
           Expanded(
-            child: MPrimaryButton(
-              label: 'Join',
-              onPressed: () => notifier.joinBroadcast(broadcast.id),
-              loading: streamLoading || socketLoading,
-              style: ElevatedButton.styleFrom(shape: shape),
+            child: BlocBuilder<StreamBloc, StreamState>(
+              bloc: bloc,
+              buildWhen: (p, c) => p.loading != c.loading,
+              builder: (context, state) => MPrimaryButton(
+                label: 'Join',
+                onPressed: () => bloc.add(StreamEvent.join(broadcast.id)),
+                loading: state.loading,
+                style: ElevatedButton.styleFrom(shape: shape),
+              ),
             ),
           ),
           MCore.small.horizontalSpace,

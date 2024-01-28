@@ -75,6 +75,7 @@ class ParticipantItem extends StatelessWidget {
                 hasUser ? participant!.fullName : 'Add Co-host',
                 style: MTextStyle.microMedium,
                 color: hasUser ? null : MColor.grey50,
+                textAlign: TextAlign.center,
               ),
             ),
             if (isCohost) ...[

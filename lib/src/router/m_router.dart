@@ -26,7 +26,7 @@ import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
 import '../shared/layout/m_layout.dart';
 import '../shared/layout/pages.dart';
-import 'm_routes.dart';
+import 'routes.dart';
 
 @Injectable()
 class MRouter {
@@ -78,30 +78,30 @@ class MRouter {
     // },
     routes: [
       GoRoute(
-        path: MRoutes.startup,
-        name: MRoutes.startup,
+        path: Routes.startup,
+        name: Routes.startup,
         builder: (context, gState) => const StartupPage(),
       ),
       GoRoute(
-        path: MRoutes.onboarding,
-        name: MRoutes.onboarding,
+        path: Routes.onboarding,
+        name: Routes.onboarding,
         builder: (context, gState) => const OnboardingPage(),
       ),
       GoRoute(
-        path: MRoutes.createBroadcast,
-        name: MRoutes.createBroadcast,
+        path: Routes.createBroadcast,
+        name: Routes.createBroadcast,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CreateBroadcastPage(),
       ),
       GoRoute(
-        path: MRoutes.broadcast,
-        name: MRoutes.broadcast,
+        path: Routes.broadcast,
+        name: Routes.broadcast,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BroadcastPage(),
       ),
       GoRoute(
-        path: MRoutes.login,
-        name: MRoutes.login,
+        path: Routes.login,
+        name: Routes.login,
         builder: (context, state) {
           final isPasswordOnly = state.uri.queryParameters['isPasswordOnly'];
           final implyLeading = state.uri.queryParameters['implyLeading'];
@@ -113,8 +113,8 @@ class MRouter {
         },
       ),
       GoRoute(
-        path: MRoutes.register,
-        name: MRoutes.register,
+        path: Routes.register,
+        name: Routes.register,
         builder: (context, state) {
           final implyLeading = state.uri.queryParameters['implyLeading'];
 
@@ -124,46 +124,46 @@ class MRouter {
         },
       ),
       GoRoute(
-        path: MRoutes.resetPassword,
-        name: MRoutes.resetPassword,
+        path: Routes.resetPassword,
+        name: Routes.resetPassword,
         builder: (context, state) => const ResetPasswordPage(),
       ),
       GoRoute(
-        path: MRoutes.resetPwdOtp,
-        name: MRoutes.resetPwdOtp,
+        path: Routes.resetPwdOtp,
+        name: Routes.resetPwdOtp,
         builder: (context, state) => const ResetPasswordOtpVerificationPage(),
       ),
       GoRoute(
-        path: MRoutes.resetPwdSuccess,
-        name: MRoutes.resetPwdSuccess,
+        path: Routes.resetPwdSuccess,
+        name: Routes.resetPwdSuccess,
         builder: (context, state) => const ResetPasswordSuccessPage(),
       ),
       GoRoute(
-        path: MRoutes.createNewPassword,
-        name: MRoutes.createNewPassword,
+        path: Routes.createNewPassword,
+        name: Routes.createNewPassword,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CreateNewPasswordPage(),
       ),
       GoRoute(
-        path: MRoutes.emailVerification,
-        name: MRoutes.emailVerification,
+        path: Routes.emailVerification,
+        name: Routes.emailVerification,
         builder: (context, state) => const EmailVerificationPage(),
       ),
       GoRoute(
-        path: MRoutes.stream,
-        name: MRoutes.stream,
+        path: Routes.stream,
+        name: Routes.stream,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const StreamPage(),
       ),
       GoRoute(
-        path: MRoutes.recentlyLive,
-        name: MRoutes.recentlyLive,
+        path: Routes.recentlyLive,
+        name: Routes.recentlyLive,
         builder: (context, state) => const RecentlyLivePage(),
         parentNavigatorKey: _rootNavigatorKey,
       ),
       GoRoute(
-        path: MRoutes.details,
-        name: MRoutes.details,
+        path: Routes.details,
+        name: Routes.details,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final broadcast = (state.extra) as Broadcast;
@@ -171,20 +171,20 @@ class MRouter {
         },
       ),
       GoRoute(
-        path: MRoutes.notifications,
-        name: MRoutes.notifications,
+        path: Routes.notifications,
+        name: Routes.notifications,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsPage(),
       ),
       GoRoute(
-        path: MRoutes.chat,
-        name: MRoutes.chat,
+        path: Routes.chat,
+        name: Routes.chat,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ChatPage(),
       ),
       GoRoute(
-        path: MRoutes.bible,
-        name: MRoutes.bible,
+        path: Routes.bible,
+        name: Routes.bible,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BiblePage(),
       ),
@@ -194,8 +194,8 @@ class MRouter {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: MRoutes.home,
-                name: MRoutes.home,
+                path: Routes.home,
+                name: Routes.home,
                 builder: (context, state) => const HomePage(),
               ),
             ],
@@ -203,8 +203,8 @@ class MRouter {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: MRoutes.discover,
-                name: MRoutes.discover,
+                path: Routes.discover,
+                name: Routes.discover,
                 builder: (context, state) => const DiscoverPage(),
               ),
             ],
@@ -212,8 +212,8 @@ class MRouter {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: MRoutes.notes,
-                name: MRoutes.notes,
+                path: Routes.notes,
+                name: Routes.notes,
                 builder: (context, state) => const NotesPage(),
               ),
             ],
@@ -221,8 +221,8 @@ class MRouter {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: MRoutes.profile,
-                name: MRoutes.profile,
+                path: Routes.profile,
+                name: Routes.profile,
                 builder: (context, state) => ProfilePage(
                   id: state.extra as String?,
                 ),

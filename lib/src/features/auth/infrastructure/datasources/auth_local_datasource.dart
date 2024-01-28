@@ -24,9 +24,6 @@ class AuthLocalDatasource {
   Future<void> deleteCurrentUserCredential() =>
       _storage.delete(MKeys.authUserCredentialKey);
 
-  Future<void> deleteCurrentUserToken() =>
-      _storage.delete(MKeys.authUserTokenKey);
-
   Future<Map<String, UserCredentialDto>?> get getAllUserCredentials async {
     final encodedString = await _storage.read(MKeys.allUserCredentialsKey);
 
@@ -77,14 +74,5 @@ class AuthLocalDatasource {
 
     final encodedString = jsonEncode(credentialsMap);
     await _storage.write(MKeys.allUserCredentialsKey, value: encodedString);
-  }
-
-  Future<void> storeCurrentToken(UserToken token) async {
-    await _storage.write(MKeys.authUserTokenKey, value: token);
-  }
-
-  Future<void> storeCurrentUser(UserDto dto) async {
-    final encodedString = jsonEncode(dto.toJson());
-    await _storage.write(MKeys.authUserKey, value: encodedString);
   }
 }

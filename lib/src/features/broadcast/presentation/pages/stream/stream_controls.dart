@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../application/stream/stream_notifier.dart';
+import '../../../application/stream/stream_bloc.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_info_modal.dart';
 
@@ -27,7 +25,7 @@ class StreamControls extends StatelessWidget {
           MCore.small.horizontalSpace,
           IconButton.outlined(
             onPressed: () => context.showModal(
-              BroadcastInfoModal(broadcast: broadcast),
+              BroadcastInfoModal(broadcast: broadcast, isStreaming: true),
               isScrollControlled: true,
             ),
             icon: const Icon(MIcons.dots_horizontal),
@@ -46,35 +44,37 @@ class StreamControls extends StatelessWidget {
   }
 }
 
-class LeaveButton extends ConsumerWidget {
+class LeaveButton extends StatelessWidget {
   const LeaveButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
+
+    final bloc = context.read<StreamBloc>();
 
     Future<void> leave() async {
       return await context.showLeaveBroadcastDialog().then((value) {
         if (value == true) {
-          ref
-              .read(streamNotifierProvider.notifier)
-              .leaveBroadcast()
-              .whenComplete(() => context.go(Routes.home));
+          bloc.add(const StreamEvent.leave());
         }
       });
     }
 
-    return MPrimaryButton(
-      label: 'Leave Broadcast',
-      onPressed: leave,
-      loading: ref.watch(streamNotifierProvider.select((v) => v.loading)),
-      style: ElevatedButton.styleFrom(
-        foregroundColor: colorScheme.onBackground,
-        backgroundColor: colorScheme.error?.withOpacity(0.5),
-        fixedSize: Size(160.w, 40.h),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MCore.circle.r),
+    return BlocSelector<StreamBloc, StreamState, bool>(
+      selector: (state) => state.loading,
+      builder: (context, loading) => MPrimaryButton(
+        label: 'Leave Broadcast',
+        onPressed: leave,
+        loading: loading,
+        style: ElevatedButton.styleFrom(
+          foregroundColor: colorScheme.onBackground,
+          backgroundColor: colorScheme.error?.withOpacity(0.5),
+          fixedSize: Size(160.w, 40.h),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(MCore.circle.r),
+          ),
         ),
       ),
     );

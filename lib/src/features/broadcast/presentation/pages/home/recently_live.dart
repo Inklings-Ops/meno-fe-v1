@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/recently_live_list/recently_live_list_bloc.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_list_widget.dart';
 
@@ -14,20 +12,22 @@ class RecentlyLive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RecentlyLiveListBloc, RecentlyLiveListState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        loading: () => const _BuildColumn(child: _SkeletonList()),
-        success: (broadcasts) => _BuildColumn(
-          child: BroadcastListWidget(
-            itemCount: 6,
-            itemBuilder: (context, i) => _RecentlyLiveCard(
-              broadcast: broadcasts[i]!,
-            ),
-          ),
-        ),
-      ),
-    );
+    return SizedBox();
+    // return BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
+    //   bloc: context.read<RecentlyLiveCubit>()..fetch(),
+    //   builder: (context, state) => state.maybeWhen(
+    //     orElse: () => const SizedBox(),
+    //     loading: () => const _BuildColumn(child: _SkeletonList()),
+    //     success: (broadcasts) => _BuildColumn(
+    //       child: BroadcastListWidget(
+    //         itemCount: 6,
+    //         itemBuilder: (context, i) => _RecentlyLiveCard(
+    //           broadcast: broadcasts[i]!,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 

@@ -9,6 +9,7 @@ export 'src/buttons/m_danger_button.dart';
 export 'src/buttons/m_expand_button.dart';
 export 'src/buttons/m_google_button.dart';
 export 'src/buttons/m_icon_button.dart';
+export 'src/buttons/m_microphone_button.dart';
 export 'src/buttons/m_primary_button.dart';
 export 'src/buttons/m_secondary_button.dart';
 export 'src/buttons/m_success_button.dart';
