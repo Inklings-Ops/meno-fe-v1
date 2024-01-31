@@ -126,9 +126,10 @@ class _BroadcastListeningTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<BroadcastBloc, BroadcastState, String>(
-      selector: (state) => state.broadcast.id,
-      builder: (context, id) => BroadcastListeningTab(broadcastId: id),
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) => BroadcastListeningTab(
+        broadcast: state.broadcast,
+      ),
     );
   }
 }

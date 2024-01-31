@@ -24,6 +24,7 @@ const String sEJoinBroadcast = 'joinBroadcast';
 const String sELeaveBroadcast = 'leaveBroadcast';
 const String sEGetLiveBroadcast = 'getLiveBroadcast';
 const String sEGetBroadcastListeners = 'getBroadcastListeners';
+const String sEGetNumberOfBroadcastListeners = 'getNumberOfBroadcastListeners';
 const String sENewBroadcast = 'newBroadcast';
 const String sEGetLiveBroadcasts = 'getLiveBroadcasts';
 

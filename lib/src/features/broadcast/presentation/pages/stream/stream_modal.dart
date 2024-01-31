@@ -7,6 +7,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
+import '../../../../../services/meno/meno_bloc.dart';
 import '../../../application/stream/stream_bloc.dart';
 import '../../../domain/domain.dart';
 
@@ -92,6 +93,7 @@ class _ActionButtons extends StatelessWidget {
                 label: 'Join',
                 onPressed: () => bloc.add(StreamEvent.join(broadcast.id)),
                 loading: state.loading,
+                disabled: context.read<MenoBloc>().state is! MOffAir,
                 style: ElevatedButton.styleFrom(shape: shape),
               ),
             ),

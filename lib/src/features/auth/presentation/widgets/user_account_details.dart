@@ -26,11 +26,7 @@ class UserAccountDetails extends StatelessWidget {
 }
 
 class _Widget extends StatelessWidget {
-  const _Widget({
-    super.key,
-    required this.action,
-    required this.user,
-  });
+  const _Widget({required this.action, required this.user});
 
   final VoidCallback? action;
   final User user;

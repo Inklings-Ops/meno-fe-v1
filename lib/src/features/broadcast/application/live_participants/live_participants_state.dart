@@ -1,4 +1,4 @@
-part of 'live_participants_cubit.dart';
+part of 'live_participants_bloc.dart';
 
 @freezed
 class LiveParticipantsState with _$LiveParticipantsState {

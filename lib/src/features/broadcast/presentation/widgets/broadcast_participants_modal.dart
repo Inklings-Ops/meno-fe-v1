@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
+import '../../domain/domain.dart';
 import 'broadcast_participant_list.dart';
  
 
 class BroadcastParticipantsModal extends StatelessWidget {
-  const BroadcastParticipantsModal({super.key, required this.broadcastId});
-  final String broadcastId;
+  const BroadcastParticipantsModal({super.key, required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
           ),
           MCore.large.verticalSpace,
           Expanded(
-            child: BroadcastParticipantList(broadcastId: broadcastId),
+            child: BroadcastParticipantList(broadcast: broadcast),
           ),
         ],
       ),

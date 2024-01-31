@@ -12,7 +12,7 @@ import '../../../application/broadcast_form/broadcast_form_cubit.dart';
 import 'co_host_section.dart';
 import 'create_broadcast_list_item.dart';
 
-class CreateBroadcastForm extends StatelessWidget {
+class CreateBroadcastForm extends HookWidget {
   const CreateBroadcastForm({super.key});
 
   @override
@@ -43,7 +43,7 @@ class CreateBroadcastForm extends StatelessWidget {
               MCore.large.verticalSpace,
               const _BroadcastTitle(),
               24.verticalSpace,
-              _RecordSwitch(descController),
+              _BroadcastDescription(descController),
               24.verticalSpace,
               const CoHostSection(),
               24.verticalSpace,
@@ -54,8 +54,6 @@ class CreateBroadcastForm extends StatelessWidget {
               ),
               24.verticalSpace,
               const _RecordToggleSwitch(),
-              24.verticalSpace,
-              const _CreateButton(),
               24.verticalSpace,
             ],
           ),
@@ -115,7 +113,7 @@ class _BroadcastTitle extends StatelessWidget {
       bloc: bloc,
       buildWhen: (p, c) => p.title != c.title,
       builder: (context, state) => MTextFormField(
-        label: 'Broadcast Title',
+        label: 'Broadcast title',
         hint: "Jim Halpert's live audio",
         required: true,
         enabled: !state.loading,
@@ -127,35 +125,11 @@ class _BroadcastTitle extends StatelessWidget {
   }
 }
 
-class _CreateButton extends StatelessWidget {
-  const _CreateButton();
 
-  @override
-  Widget build(BuildContext context) {
-    final bloc = context.read<BroadcastFormCubit>();
-
-    return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
-      bloc: bloc,
-      buildWhen: (p, c) => p.shouldRecord != c.shouldRecord,
-      builder: (context, state) => MPrimaryButton(
-        label: 'Start Broadcast',
-        loading: state.loading,
-        onPressed: () {
-          context.clearSnackBars();
-          FocusScope.of(context).unfocus();
-          if (bloc.isValid) {
-            bloc.create();
-          }
-        },
-      ),
-    );
-  }
-}
-
-class _RecordSwitch extends StatelessWidget {
+class _BroadcastDescription extends StatelessWidget {
   final TextEditingController controller;
 
-  const _RecordSwitch(this.controller);
+  const _BroadcastDescription(this.controller);
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +138,8 @@ class _RecordSwitch extends StatelessWidget {
     return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
       bloc: bloc,
       buildWhen: (p, c) => p.description != c.description,
-      builder: (context, state) => MTextFormField(
-        label: 'About Broadcast',
+      builder: (context, state) => MTextArea(
+        label: 'About broadcast',
         hint: 'Enter a brief description',
         maxLines: 5,
         maxLength: 244,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
@@ -59,21 +60,27 @@ class MoreOptionsButton extends StatelessWidget {
   }
 }
 
-class MuteButton extends StatelessWidget {
+class MuteButton extends HookWidget {
   const MuteButton({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMuted = useState(false);
+
     final bloc = context.read<BroadcastBloc>();
 
     return BlocBuilder<MenoBloc, MenoState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const MMicrophoneButton(),
-        live: () => BlocSelector<BroadcastBloc, BroadcastState, bool>(
-          selector: (state) => state.isMute,
-          builder: (context, isMute) => MMicrophoneButton(
-            isMuted: isMute,
-            onTap: () => bloc.add(BroadcastEvent.mute(!isMute)),
+        live: (_) => BlocBuilder<BroadcastBloc, BroadcastState>(
+          bloc: bloc,
+          buildWhen: (p, c) => p.isMuted != c.isMuted,
+          builder: (context, state) => MMicrophoneButton(
+            isMuted: isMuted.value,
+            onTap: () {
+              isMuted.value = !isMuted.value;
+              bloc.add(BroadcastEvent.mute(!isMuted.value));
+            },
           ),
         ),
       ),
@@ -81,56 +88,60 @@ class MuteButton extends StatelessWidget {
   }
 }
 
-class StartStopButton extends StatelessWidget {
+class StartStopButton extends HookWidget {
   const StartStopButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final broadcastBloc = context.read<BroadcastBloc>();
-
     final colorScheme = MColorScheme.of(context)!;
-    final foregroundColor = colorScheme.onBackground;
 
-    final baseButtonStyle = ElevatedButton.styleFrom(
-      foregroundColor: foregroundColor,
-      backgroundColor: colorScheme.primary?.withOpacity(0.1),
-      fixedSize: Size(160.w, 40.h),
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(MCore.circle)).r,
-      ),
-    );
+    final label = useState('Start broadcasting');
+    final backgroundColor = useState(colorScheme.primary);
 
-    final stopButtonStyle = baseButtonStyle.copyWith(
-      backgroundColor: MaterialStatePropertyAll(colorScheme.error),
-    );
+    final broadcastBloc = context.read<BroadcastBloc>();
 
     Future<void> stop() {
       return context.showEndBroadcastDialog().then((value) {
         if (value != true) return;
-        return broadcastBloc.add(const BroadcastEvent.start());
+        return broadcastBloc.add(const BroadcastEvent.end());
       });
     }
 
-    return BlocBuilder<MenoBloc, MenoState>(
-      bloc: context.watch<MenoBloc>(),
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => MPrimaryButton(
-          label: 'Start Broadcasting',
-          onPressed: () => broadcastBloc.add(const BroadcastEvent.start()),
-          style: baseButtonStyle,
-        ),
-        live: () => BlocSelector<BroadcastBloc, BroadcastState, bool>(
+    void start() => broadcastBloc.add(const BroadcastEvent.start());
+
+    return BlocConsumer<MenoBloc, MenoState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          live: (broadcast) {
+            label.value = 'Stop Broadcasting';
+            backgroundColor.value = colorScheme.error;
+          },
+        );
+      },
+      builder: (context, mState) {
+        final isLive = mState is MLive;
+
+        return BlocBuilder<BroadcastBloc, BroadcastState>(
           bloc: broadcastBloc,
-          selector: (state) => state.loading,
-          builder: (context, loading) => MPrimaryButton(
-            label: 'Stop Broadcasting',
-            onPressed: stop,
-            loading: loading,
-            style: stopButtonStyle,
+          buildWhen: (p, c) => p.loading != c.loading,
+          builder: (context, state) => MPrimaryButton(
+            label: label.value,
+            onPressed: isLive ? stop : start,
+            loading: state.loading,
+            style: ElevatedButton.styleFrom(
+              foregroundColor: colorScheme.onBackground,
+              backgroundColor: backgroundColor.value?.withOpacity(0.1),
+              fixedSize: Size(160.w, 40.h),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
+              shape: RoundedRectangleBorder(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(MCore.circle),
+                ).r,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

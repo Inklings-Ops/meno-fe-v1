@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/broadcast/application/recently_live/recently_live_cubit.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../auth/application/application.dart';
@@ -20,15 +21,16 @@ class MyProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<MyProfileBloc>();
+    final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
 
     Future<void> onRefresh() async {
       Future myProfile = bloc.stream.first;
       bloc.add(const MyProfileEvent.fetch());
 
-      // Future recentlyLive = recentlyLiveBloc.stream.first;
-      // recentlyLiveBloc.add(const RecentlyLiveEvent.fetch());
+      Future recentlyLive = recentlyLiveCubit.stream.first;
+      recentlyLiveCubit.fetch();
 
-      await Future.wait([myProfile]);
+      await Future.wait([myProfile, recentlyLive]);
     }
 
     return BlocListener<ProfileFormCubit, ProfileFormState>(

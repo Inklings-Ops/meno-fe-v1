@@ -10,6 +10,7 @@ class MAvatar extends StatelessWidget {
   final File? file;
   final Widget? child;
   final VoidCallback? onTap;
+  final bool hasBorder;
 
   const MAvatar({
     super.key,
@@ -18,6 +19,7 @@ class MAvatar extends StatelessWidget {
     this.file,
     this.child,
     this.onTap,
+    this.hasBorder = true,
   });
 
   @override
@@ -47,22 +49,26 @@ class MAvatar extends StatelessWidget {
       backgroundImage = FileImage(file!);
     }
 
+    Widget avatar = CircleAvatar(
+      radius: radius,
+      foregroundImage: foregroundImage,
+      backgroundImage: backgroundImage,
+      backgroundColor: colorScheme.surfaceShade,
+      child: placeholder,
+    );
+
     return GestureDetector(
       onTap: onTap,
-      child: CircleAvatar(
-        radius: radius,
-        backgroundColor: colorScheme.outlineVariant3,
-        child: Padding(
-          padding: const EdgeInsets.all(1.50),
-          child: CircleAvatar(
-            radius: radius,
-            foregroundImage: foregroundImage,
-            backgroundImage: backgroundImage,
-            backgroundColor: colorScheme.surfaceShade,
-            child: placeholder,
-          ),
-        ),
-      ),
+      child: !hasBorder
+          ? avatar
+          : CircleAvatar(
+              radius: radius,
+              backgroundColor: colorScheme.outlineVariant3,
+              child: Padding(
+                padding: const EdgeInsets.all(1.50),
+                child: avatar,
+              ),
+            ),
     );
   }
 }

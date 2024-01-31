@@ -4,13 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../application/live_participants/live_participants_cubit.dart';
+import '../../application/live_participants/live_participants_bloc.dart';
+import '../../domain/domain.dart';
 import '../widgets/broadcast_participant_list.dart';
 import '../widgets/broadcast_participants_modal.dart';
 
 class BroadcastListeningTab extends StatelessWidget {
-  const BroadcastListeningTab({super.key, required this.broadcastId});
-  final String broadcastId;
+  const BroadcastListeningTab({super.key, required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class BroadcastListeningTab extends StatelessWidget {
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal(
-                  BroadcastParticipantsModal(broadcastId: broadcastId),
+                  BroadcastParticipantsModal(broadcast: broadcast),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: 0.9.sh),
                 ),
@@ -35,7 +36,7 @@ class BroadcastListeningTab extends StatelessWidget {
           ),
         ),
         MCore.large.verticalSpace,
-        Expanded(child: BroadcastParticipantList(broadcastId: broadcastId)),
+        Expanded(child: BroadcastParticipantList(broadcast: broadcast)),
       ],
     );
   }
@@ -46,8 +47,8 @@ class _NumberOfParticipants extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<LiveParticipantsCubit, LiveParticipantsState, int>(
-      selector: (state) => state.participants.length,
+    return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
+      selector: (state) => state.numberOfParticipants,
       builder: (context, length) => Row(
         children: [
           Icon(MIcons.hearing, size: 16.r),

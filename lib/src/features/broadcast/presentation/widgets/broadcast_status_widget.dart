@@ -10,15 +10,13 @@ class BroadcastStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isStreaming) return const MBadge.live();
-
-    return BlocConsumer<MenoBloc, MenoState>(
+    return BlocBuilder<MenoBloc, MenoState>(
+      bloc: context.read<MenoBloc>(),
       buildWhen: (p, c) => p != c,
-      listener: (context, state) {},
       builder: (context, state) => state.maybeWhen(
-        live: () => const MBadge.live(),
-        reconnecting: () => MBadge.reconnecting(context),
-        streaming: () => const MBadge.live(),
+        live: (_) => const MBadge.live(),
+        reconnecting: (_) => MBadge.reconnecting(context),
+        streaming: (_) => const MBadge.live(),
         orElse: () => MBadge.offAir(context),
       ),
     );

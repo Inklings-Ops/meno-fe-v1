@@ -60,15 +60,18 @@ class StreamTab extends HookWidget {
                     margin: const EdgeInsets.fromLTRB(16, 8, 16, 0).r,
                     constraints: const BoxConstraints(maxHeight: 32).r,
                     child: TabBar.secondary(
-                      tabs: const [Tab(text: 'Listening'), Tab(text: 'About')],
                       controller: tabController,
+                      tabs: const [
+                        Tab(text: 'Listening'),
+                        Tab(text: 'About'),
+                      ],
                     ),
                   ),
                   Expanded(
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        BroadcastListeningTab(broadcastId: broadcast.id),
+                        BroadcastListeningTab(broadcast: broadcast),
                         BroadcastAboutTab(
                           description: broadcast.description?.get(),
                         ),

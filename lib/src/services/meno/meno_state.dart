@@ -17,30 +17,30 @@ class MenoState with _$MenoState {
   /// Emitted when the [LiveKitService] [RoomReconnectedEvent] and
   /// [LocalTrackPublishedEvent] events are emitted
   @Implements<MSignalEvent>()
-  const factory MenoState.live() = MenoLive;
+  const factory MenoState.live(Broadcast broadcast) = MLive;
 
   /// When a broadcast is trying to reconnect
   /// Emitted when the [LiveKitService] [RoomReconnectingEvent] is emitted
   @Implements<MSignalEvent>()
-  const factory MenoState.reconnecting() = MenoReconnecting;
+  const factory MenoState.reconnecting(Broadcast broadcast) = MReconnecting;
 
   /// When a broadcast is streaming a live broadcast
   /// Emitted when the [LiveKitService] [RoomDisconnectedEvent] is emitted
   @Implements<MSignalEvent>()
-  const factory MenoState.streaming() = MenoStreaming;
+  const factory MenoState.streaming(Broadcast broadcast) = MStreaming;
 
   /// When a broadcast is disconnected
   /// Emitted when the [LiveKitService] [RoomDisconnectedEvent] is emitted
   @Implements<MSignalEvent>()
-  const factory MenoState.offAir() = MenoOffAir;
+  const factory MenoState.offAir() = MOffAir;
 
   /// When a live [Broadcast] has just been ended by a [Participant].
   /// Emitted by [endedBroadcast] websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
-  const factory MenoState.endedBroadcast() = EndedBroadcast;
+  const factory MenoState.endedBroadcast() = MEndedBroadcast;
 
   /// When a [Participant] leaves a live [Broadcast] that the [Participant] has joined.
   /// Emitted by [leaveBroadcast] websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
-  const factory MenoState.leaveBroadcast() = LeaveBroadcast;
+  const factory MenoState.leaveBroadcast() = MLeaveBroadcast;
 }

@@ -5,7 +5,7 @@ class BroadcastState with _$BroadcastState {
   const factory BroadcastState({
     required Broadcast broadcast,
     required bool loading,
-    required bool isMute,
+    required bool isMuted,
     required String? liveKitError,
     required Option<Either<BroadcastException, Broadcast>> onStarted,
     required Option<Either<BroadcastException, Unit>> onDeleted,
@@ -16,7 +16,7 @@ class BroadcastState with _$BroadcastState {
     return BroadcastState(
       broadcast: Broadcast.empty(),
       loading: false,
-      isMute: false,
+      isMuted: false,
       liveKitError: null,
       onStarted: none(),
       onDeleted: none(),

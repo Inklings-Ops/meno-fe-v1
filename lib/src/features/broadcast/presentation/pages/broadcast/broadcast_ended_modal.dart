@@ -7,7 +7,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
 import '../../../application/broadcast/broadcast_bloc.dart';
-import '../../../application/live_participants/live_participants_cubit.dart';
+import '../../../application/live_participants/live_participants_bloc.dart';
 import '../../widgets/broadcast_artwork.dart';
 import 'broadcast_timer.dart';
 
@@ -50,7 +50,7 @@ class BroadcastEndedModal extends HookWidget {
             // TODO: implement avatars of listeners
             const SizedBox(height: 32),
             MCore.small.verticalSpace,
-            BlocSelector<LiveParticipantsCubit, LiveParticipantsState, int>(
+            BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
               selector: (state) => state.participants.length,
               builder: (context, numberOfParticipants) => MText(
                 '$numberOfParticipants people tuned in!',

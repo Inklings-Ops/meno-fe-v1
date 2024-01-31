@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/services/meno/meno_bloc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../../core/env/env.dart';
 import '../../features/auth/domain/domain.dart';
+import 'event_names.dart';
 
 @injectable
 class SocketService extends Object with Disposable {
@@ -16,84 +19,69 @@ class SocketService extends Object with Disposable {
 
   late StreamSubscription<UserToken?> _tokenChanges;
 
-  SocketService({required IAuthFacade facade})
-      : _facade = facade,
-        super() {
-    socket = io.io(
-      Env.menoApiUrl,
-      io.OptionBuilder()
-          .setTransports(['websocket'])
-          .disableAutoConnect()
-          .build(),
-    );
-  }
+  final _numberOfLiveParticipantsController = StreamController<int>();
+  // Stream<int> get numberOfLiveParticipantsStream {
+  //   return _numberOfLiveParticipantsController.stream;
+  // }
+
+  SocketService({required IAuthFacade facade}) : _facade = facade;
 
   @PostConstruct(preResolve: true)
-  Future<void> initialize([Function? addListeners]) async {
-    final token = (await _facade.credential)?.token;
+  Future<void> initialize() async {
+    _tokenChanges = _facade.tokenChanges.listen((token) {
+      socket = io.io(
+        Env.menoApiUrl,
+        io.OptionBuilder()
+            .setTransports(['websocket'])
+            .setQuery({'token': token})
+            .enableAutoConnect()
+            .build(),
+      );
 
-    if (token != null) {
-      socket.io.options?['token'] = {'token': token};
-      socket.connect();
-      socket.onConnect((data) => getLiveBroadcasts());
-    }
-
-    _responseChanges = response.stream.listen((event) {
-      Logger().w(event);
+      setupListeners();
     });
   }
 
-  //
-  final completer = Completer<dynamic>();
-  Future<dynamic> emitWithAck(
-    String event, [
-    Map<String, dynamic> data = const {},
-  ]) async {
-    try {
-      if (socket.connected == false) {
-        Logger().w('Socket is not connected. Unable to emit $event');
-        return null;
-      }
-
-      socket.emitWithAck(event, data, ack: completer.complete);
-
-      return await completer.future;
-    } catch (error) {
-      Logger().w('Error during emitWithAck: $error');
-      return null;
-    }
-  }
-  //
-  // void emitWithAck(
-  //   String event, [
-  //   Map<String, dynamic> data = const {},
-  //   Function(dynamic)? ack,
-  // ]) =>
-  //     socket.emitWithAck(event, data, ack: ack);
-
-  // void on(String event, Function(dynamic) callback) {
-  //   socket.on(event, callback);
-  // }
-
-  late StreamSubscription<dynamic> _responseChanges;
-
-  final response = StreamController<dynamic>();
-  StreamSink<dynamic> get sink => response.sink;
-
-  void getLiveBroadcasts() {
-    sink.add('GETTING LIVE BROADCASTS');
-
-    socket.emitWithAck(
-      "startedBroadcasts",
-      {"broadcastId": "b9bf9aaa-5e13-4ca3-9606-324a9100d9f1"},
-      ack: sink.add,
+  void setupListeners() {
+    socket.on('connect', onConnect);
+    socket.on(
+      sEEndedBroadcast,
+      (_) => MenoBloc().add(const MenoStateChanged(MenoState.endedBroadcast())),
     );
+    socket.on(sENumberOfLiveListeners, (data) {
+      final number = jsonDecode(jsonEncode(data));
+      _numberOfLiveParticipantsController.add(number);
+    });
+  }
 
-    sink.add('DONE');
+  dynamic onConnect(_) => Logger().i('Socket Connected');
+
+  void emitWithAck(
+    String event,
+    Map<String, dynamic> data, {
+    Function(dynamic)? ack,
+  }) {
+    return socket.emitWithAck(event, data, ack: ack);
+  }
+
+  void on(String event, Function(dynamic) callback) {
+    return socket.on(event, callback);
+  }
+
+  Stream<int> liveBroadcastParticipants(String broadcastId) {
+    socket.emitWithAck(
+      sEGetNumberOfBroadcastListeners,
+      {'broadcastId': broadcastId},
+      ack: (data) {
+        final number = jsonDecode(jsonEncode(data))['data'];
+        _numberOfLiveParticipantsController.add(number);
+      },
+    );
+    return _numberOfLiveParticipantsController.stream;
   }
 
   @override
-  FutureOr onDispose() async {
-    await _tokenChanges.cancel();
+  FutureOr onDispose() {
+    _tokenChanges.cancel();
   }
 }

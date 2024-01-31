@@ -45,8 +45,11 @@ class CreateBroadcastListItem extends StatelessWidget {
             ),
           ),
         ),
-        MCore.micro.verticalSpace,
-        MText(subtitleText, style: MTextStyle.captionRegular),
+        6.verticalSpace,
+        SizedBox(
+          height: 18.h,
+          child: MText(subtitleText, style: MTextStyle.captionRegular),
+        ),
       ],
     );
   }

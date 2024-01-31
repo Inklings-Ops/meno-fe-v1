@@ -30,7 +30,10 @@ class StreamPage extends StatelessWidget {
         BlocListener<MenoBloc, MenoState>(
           listener: (context, state) {
             state.whenOrNull(
-              endedBroadcast: () => context.go(Routes.home),
+              endedBroadcast: () {
+                context.go(Routes.home);
+                context.read<StreamBloc>().close();
+              },
             );
           },
         ),

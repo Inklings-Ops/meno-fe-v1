@@ -43,7 +43,7 @@ class MenoWrapper extends StatelessWidget {
           listenWhen: (p, c) => p != c,
           listener: (context, state) {
             state.whenOrNull(
-              // authenticated: (_) => router.go(Routes.home),
+              authenticated: (_) => router.go(Routes.home),
               unauthenticated: () => router.go(Routes.login),
               partiallyAuthenticated: (_) => router.go(Routes.partialLogin),
             );

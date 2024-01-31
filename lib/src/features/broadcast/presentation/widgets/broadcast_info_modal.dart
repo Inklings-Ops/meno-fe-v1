@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 
 import '../../../../services/meno/meno_bloc.dart';
 import '../../application/broadcast/broadcast_bloc.dart';
@@ -54,10 +55,11 @@ class BroadcastInfoModal extends StatelessWidget {
             ),
           ),
           24.verticalSpace,
-          if (!isStreaming) ...[
-            const MModalListTile(
-              leading: Icon(MIcons.arrow_narrow_down_left),
+          if (isStreaming) ...[
+            MModalListTile(
+              leading: const Icon(MIcons.arrow_narrow_down_left),
               title: 'Minimize Stream',
+              onTap: () => context.go(Routes.home),
             ),
             const MModalListTile(
               leading: Icon(MIcons.user_minus_01),
@@ -72,11 +74,11 @@ class BroadcastInfoModal extends StatelessWidget {
             leading: Icon(MIcons.link_02),
             title: 'Copy Link',
           ),
-          if (isStreaming)
+          if (!isStreaming)
             BlocBuilder<MenoBloc, MenoState>(
               builder: (context, state) => state.maybeWhen(
                 orElse: () => const SizedBox(),
-                live: () => MModalListTile(
+                live: (_) => MModalListTile(
                   leading: Icon(MIcons.trash, color: colorScheme.error),
                   title: 'Delete Broadcast',
                   titleColor: colorScheme.error,

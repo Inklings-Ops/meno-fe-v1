@@ -1,78 +1,56 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:livekit_client/livekit_client.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../core/broadcast/meno_event.dart';
 import '../../core/env/env.dart';
 
-part 'live_kit_service.g.dart';
-part 'live_kit_service.freezed.dart';
-part 'live_kit_state.dart';
+export 'package:livekit_client/livekit_client.dart';
 
-@riverpod
-Future<Room> liveKit(LiveKitRef ref, String token, [bool? isHost]) async {
-  final options = FastConnectOptions(
-    microphone: TrackOption(enabled: isHost ?? true),
-  );
+@lazySingleton
+class LiveKitService extends Object with Disposable {
+  late Room room;
+  late EventsListener<RoomEvent> listener;
 
-  try {
-    final room = Room();
+  Future<void> _connect(String broadcastToken, [bool isHost = true]) async {
+    // Create a new room
+    room = Room();
 
-    await room.connect(
-      Env.menoLiveKitUrl,
-      token,
-      fastConnectOptions: options,
-    );
-    return room;
-  } catch (e) {
-    final error = e.toString();
-    throw PlatformException(code: error, message: error);
-  }
-}
+    // Set a Listener for the Room Events before connecting
+    listener = room.createListener(synchronized: true);
 
-@riverpod
-class LiveKitNotifier extends _$LiveKitNotifier {
-  @override
-  FutureOr<Room> build() async {
-    ref.onDispose(dispose);
-    return Room();
-  }
-
-  Future<void> _connect(String token, [bool isHost = true]) async {
-    state = const AsyncValue.loading();
     final options = FastConnectOptions(
       microphone: TrackOption(enabled: isHost),
     );
 
-    state = await AsyncValue.guard<Room>(() async {
-      final room = Room();
-
+    try {
+      // Try to connect to the room
+      // This will throw an Exception if it fails for any reason.
       await room.connect(
         Env.menoLiveKitUrl,
-        token,
+        broadcastToken,
         fastConnectOptions: options,
       );
-      return room;
-    });
+    } catch (e) {
+      throw PlatformException(code: 'live-kit-error', message: e.toString());
+    }
   }
 
-  Future<void> broadcast(String token) async => await _connect(token);
+  Future<void> broadcast(String broadcastToken) => _connect(broadcastToken);
 
-  Future<void> stream(String token) async => await _connect(token, false);
+  Future<void> stream(String broadcastToken) => _connect(broadcastToken, false);
 
-  Future<void> setMute(bool value) async {
-    if (!state.hasValue || state.hasError) return;
-    await state.value!.localParticipant!.setMicrophoneEnabled(value);
+  Future<void> disconnect() => room.disconnect();
+
+  Future<void> mute(bool enabled) async {
+    await room.localParticipant?.setMicrophoneEnabled(enabled);
   }
 
-  Future<void> dispose() async {
-    if (!state.hasValue || state.hasError) return;
-    await state.value!.disconnect();
-    await state.value!.dispose();
+  @override
+  FutureOr onDispose() async {
+    listener.dispose();
+    room.dispose();
   }
-
-  Future<void> leave() async => await state.value!.disconnect();
 }

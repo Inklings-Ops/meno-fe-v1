@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../../application/timer/cubit/timer_cubit.dart';
+import '../../../application/timer/timer_cubit.dart';
 
 class BroadcastTimer extends StatelessWidget {
   final bool showTimeAgo;

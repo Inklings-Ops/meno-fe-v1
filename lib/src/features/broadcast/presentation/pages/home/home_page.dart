@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../../../../services/meno/meno_bloc.dart';
 import '../../../application/live_broadcasts/live_broadcasts_bloc.dart';
 import '../../../application/recently_live/recently_live_cubit.dart';
 import 'home_app_bar.dart';
@@ -45,15 +44,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               24.verticalSpace,
-              BlocBuilder<MenoBloc, MenoState>(
-                builder: (context, state) => state.maybeWhen(
-                  orElse: () => const SizedBox(),
-                  streaming: () => Padding(
-                    padding: const EdgeInsets.only(bottom: MCore.xxLarge).r,
-                    child: const LiveActivityCard(),
-                  ),
-                ),
-              ),
+              const LiveActivityCard(),
               const LiveForYou(),
               const NowLive(),
               const RecentlyLive(),

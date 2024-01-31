@@ -14,17 +14,15 @@ import 'src/features/auth/application/application.dart';
 import 'src/features/broadcast/application/broadcast/broadcast_bloc.dart';
 import 'src/features/broadcast/application/broadcast_form/broadcast_form_cubit.dart';
 import 'src/features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart';
-import 'src/features/broadcast/application/live_participants/live_participants_cubit.dart';
+import 'src/features/broadcast/application/live_participants/live_participants_bloc.dart';
 import 'src/features/broadcast/application/recently_live/recently_live_cubit.dart';
 import 'src/features/broadcast/application/stream/stream_bloc.dart';
-import 'src/features/broadcast/application/timer/cubit/timer_cubit.dart';
+import 'src/features/broadcast/application/timer/timer_cubit.dart';
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
-import 'src/services/live_kit/bloc/live_kit_bloc.dart';
 import 'src/services/meno/meno_bloc.dart';
 import 'src/services/notification_service.dart';
-import 'src/services/socket/bloc/socket_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,19 +48,17 @@ Future<void> main() async {
         BlocProvider(create: (context) => di<NetworkCubit>()),
         BlocProvider(create: (context) => di<OnboardingCubit>()),
         BlocProvider(create: (context) => di<AuthBloc>()),
-        BlocProvider(create: (context) => di<SocketBloc>()),
         BlocProvider(create: (context) => di<AccountCubit>()..init),
         BlocProvider(create: (context) => di<MyProfileBloc>()),
         BlocProvider(create: (context) => di<ProfileFormCubit>()),
         BlocProvider(create: (context) => di<MenoBloc>()),
-        BlocProvider(create: (context) => di<LiveKitBloc>()),
         BlocProvider(create: (context) => di<TimerCubit>()),
         BlocProvider(create: (context) => di<BroadcastFormCubit>()),
         BlocProvider(create: (context) => di<StreamBloc>()),
         BlocProvider(create: (context) => di<BroadcastBloc>()),
         BlocProvider(create: (context) => di<RecentlyLiveCubit>()),
         BlocProvider(create: (context) => di<LiveBroadcastsBloc>()),
-        BlocProvider(create: (context) => di<LiveParticipantsCubit>()),
+        BlocProvider(create: (context) => di<LiveParticipantsBloc>()),
       ],
       child: const ProviderScope(child: MenoApp()),
     ),

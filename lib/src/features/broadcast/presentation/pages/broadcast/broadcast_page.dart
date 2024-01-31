@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/live_participants/live_participants_cubit.dart';
+import 'package:meno_fe_v1/src/features/broadcast/application/live_participants/live_participants_bloc.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../../../router/router.dart';
@@ -29,7 +29,9 @@ class BroadcastPage extends StatelessWidget {
           () => null,
           (either) => either.fold(
             (l) => context.showBroadcastError(l),
-            (r) => context.read<LiveParticipantsCubit>().fetch(r.id),
+            (r) {
+              context.read<LiveParticipantsBloc>().add(FetchParticipants(r.id));
+            },
           ),
         );
 

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../../shared/helpers/date_helpers.dart';
+import '../../../../shared/helpers/date_helpers.dart';
 
 part 'timer_cubit.freezed.dart';
 part 'timer_state.dart';

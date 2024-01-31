@@ -1,4 +1,4 @@
-part of "timer_notifier.dart";
+part of 'timer_cubit.dart';
 
 @freezed
 class TimerState with _$TimerState {
@@ -12,9 +12,9 @@ class TimerState with _$TimerState {
   }) = _TimerState;
 
   factory TimerState.initial() => TimerState(
-        hours: "00",
-        minutes: "00",
-        seconds: "00",
+        hours: '00',
+        minutes: '00',
+        seconds: '00',
         elapsedTime: Duration.zero,
         isRunning: false,
         timeAgo: null,

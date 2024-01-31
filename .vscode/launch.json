@@ -7,7 +7,7 @@
         {
             "name": "meno_fe_v1",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
         },
         {
             "name": "meno_fe_v1 (profile mode)",
