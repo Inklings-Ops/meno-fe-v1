@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 
+import '../infrastructure/responses/note_list_response.dart';
 import 'entities/folder.dart';
 import 'entities/note.dart';
 import 'exceptions/note_exception.dart';
@@ -8,7 +9,7 @@ import 'inputs/i_note_content.dart';
 import 'inputs/i_note_title.dart';
 
 abstract class INoteFacade {
-  Future<Either<NoteException, List<Note?>>> getAllNotes({
+  Future<Either<NoteException, NoteListResponse>> getAllNotes({
     String? keywords,
     String? noteId,
     bool? pinned,
