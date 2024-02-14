@@ -10,6 +10,7 @@ part 'note.freezed.dart';
 @freezed
 class Note with _$Note {
   factory Note({
+    int? dbId,
     required String id,
     required INoteTitle title,
     required INoteContent content,

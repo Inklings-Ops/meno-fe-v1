@@ -1,21 +1,25 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:objectbox/objectbox.dart';
 
 import '../../domain/domain.dart';
 
- 
 part 'folder_dto.freezed.dart';
 part 'folder_dto.g.dart';
 
-@freezed
+@Freezed(addImplicitFinal: false)
 @JsonSerializable(explicitToJson: true, createFactory: false)
 class FolderDto with _$FolderDto {
+  @Entity(realClass: FolderDto)
   factory FolderDto({
-    required String id,
+    @Id() int? dbId,
+    @Unique() required String id,
     required String title,
     int? numberOfNotes,
     bool? pinned,
-    DateTime? createdAt,
+    @Property(type: PropertyType.date) DateTime? createdAt,
   }) = _FolderDto;
+
+  FolderDto._();
 
   factory FolderDto.fromJson(Map<String, dynamic> json) =>
       _$FolderDtoFromJson(json);
@@ -27,6 +31,7 @@ class FolderDto with _$FolderDto {
 extension FolderDtoToDomain on FolderDto {
   Folder get toDomain {
     return Folder(
+      dbId: dbId,
       id: id,
       title: IFolderTitle(title),
       numberOfNotes: numberOfNotes,
@@ -39,6 +44,7 @@ extension FolderDtoToDomain on FolderDto {
 extension FolderToDto on Folder {
   FolderDto get toDto {
     return FolderDto(
+      dbId: dbId,
       id: id,
       title: title.get()!,
       numberOfNotes: numberOfNotes,

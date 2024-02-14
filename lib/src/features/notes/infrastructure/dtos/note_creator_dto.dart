@@ -1,19 +1,23 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:objectbox/objectbox.dart';
 
 import '../../domain/domain.dart';
-
 
 part 'note_creator_dto.freezed.dart';
 part 'note_creator_dto.g.dart';
 
-@freezed
+@Freezed(addImplicitFinal: false)
 @JsonSerializable(explicitToJson: true, createFactory: false)
 class NoteCreatorDto with _$NoteCreatorDto {
+  @Entity(realClass: NoteCreatorDto)
   factory NoteCreatorDto({
-    required String id,
+    @Id() int? dbId,
+    @Unique() required String id,
     required String fullName,
     required String imageUrl,
   }) = _NoteCreatorDto;
+
+  NoteCreatorDto._();
 
   factory NoteCreatorDto.fromJson(Map<String, dynamic> json) =>
       _$NoteCreatorDtoFromJson(json);
@@ -25,6 +29,7 @@ class NoteCreatorDto with _$NoteCreatorDto {
 extension NoteCreatorDtoToDomain on NoteCreatorDto {
   NoteCreator get toDomain {
     return NoteCreator(
+      dbId: dbId,
       id: id,
       fullName: fullName,
       imageUrl: fullName,
@@ -35,6 +40,7 @@ extension NoteCreatorDtoToDomain on NoteCreatorDto {
 extension NoteCreatorToDto on NoteCreator {
   NoteCreatorDto get toDto {
     return NoteCreatorDto(
+      dbId: dbId,
       id: id,
       fullName: fullName,
       imageUrl: fullName,
