@@ -52,7 +52,7 @@ class BroadcastTab extends HookWidget {
           child: Column(
             children: [
               Container(
-                margin: const EdgeInsets.fromLTRB(16, 8, 16, 0).r,
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).r,
                 constraints: const BoxConstraints(maxHeight: 32).r,
                 child: TabBar.secondary(
                   controller: tabController,

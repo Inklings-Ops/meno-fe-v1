@@ -11,6 +11,8 @@ class ChatMapper {
       updatedAt: dto.updatedAt,
       senderId: dto.senderId,
       broadcastId: dto.broadcastId,
+      fullName: dto.fullName,
+      imageUrl: dto.imageUrl,
     );
   }
 
@@ -23,6 +25,8 @@ class ChatMapper {
       updatedAt: domain.updatedAt,
       senderId: domain.senderId,
       broadcastId: domain.broadcastId,
+      fullName: domain.fullName,
+      imageUrl: domain.imageUrl,
     );
   }
 }

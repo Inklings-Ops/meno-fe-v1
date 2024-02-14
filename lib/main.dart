@@ -18,6 +18,7 @@ import 'src/features/broadcast/application/live_participants/live_participants_b
 import 'src/features/broadcast/application/recently_live/recently_live_cubit.dart';
 import 'src/features/broadcast/application/stream/stream_bloc.dart';
 import 'src/features/broadcast/application/timer/timer_cubit.dart';
+import 'src/features/chat/application/chat_bloc.dart';
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
@@ -56,6 +57,7 @@ Future<void> main() async {
         BlocProvider(create: (context) => di<BroadcastFormCubit>()),
         BlocProvider(create: (context) => di<StreamBloc>()),
         BlocProvider(create: (context) => di<BroadcastBloc>()),
+        BlocProvider(create: (context) => di<ChatBloc>()),
         BlocProvider(create: (context) => di<RecentlyLiveCubit>()),
         BlocProvider(create: (context) => di<LiveBroadcastsBloc>()),
         BlocProvider(create: (context) => di<LiveParticipantsBloc>()),

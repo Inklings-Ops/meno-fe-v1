@@ -12,6 +12,8 @@ class Chat with _$Chat {
     required DateTime createdAt,
     DateTime? updatedAt,
     required String senderId,
+    required String fullName,
+    String? imageUrl,
     required String broadcastId,
   }) = _Chat;
 
@@ -23,6 +25,8 @@ class Chat with _$Chat {
       updatedAt:  null,
       senderId: '',
       broadcastId: '',
+      fullName: '',
+      imageUrl: '',
     );
   }
 }

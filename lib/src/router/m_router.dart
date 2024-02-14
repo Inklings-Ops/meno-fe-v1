@@ -20,7 +20,6 @@ import '../features/broadcast/presentation/pages/home/details_page.dart';
 import '../features/broadcast/presentation/pages/home/home_page.dart';
 import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
 import '../features/broadcast/presentation/pages/stream/stream_page.dart';
-import '../features/chat/presentation/pages/chat_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
@@ -176,12 +175,12 @@ class MRouter {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsPage(),
       ),
-      GoRoute(
-        path: Routes.chat,
-        name: Routes.chat,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const ChatPage(),
-      ),
+      // GoRoute(
+      //   path: Routes.chat,
+      //   name: Routes.chat,
+      //   parentNavigatorKey: _rootNavigatorKey,
+      //   builder: (context, state) => const ChatPage(),
+      // ),
       GoRoute(
         path: Routes.bible,
         name: Routes.bible,

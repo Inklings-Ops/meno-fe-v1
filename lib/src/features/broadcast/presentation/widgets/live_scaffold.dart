@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -6,6 +7,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 class LiveStreamScaffold extends HookWidget {
   final List<Widget> tabs;
   final List<Widget> tabViews;
+
   const LiveStreamScaffold({
     super.key,
     required this.tabs,
@@ -14,7 +16,18 @@ class LiveStreamScaffold extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TabController tabController = useTabController(initialLength: 4);
+    final tabController = useTabController(initialLength: 4);
+
+    final isBottomZero = MediaQuery.viewInsetsOf(context).bottom == 0;
+
+    useEffect(() {
+      tabController.addListener(() {
+        if (!isBottomZero && tabController.indexIsChanging) {
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        }
+      });
+      return null;
+    }, [isBottomZero]);
 
     return MScaffold(
       padding: EdgeInsets.zero,
