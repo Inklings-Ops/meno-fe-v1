@@ -20,7 +20,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
 import 'package:shared_preferences/shared_preferences.dart' as _i24;
 
 import '../features/auth/application/account/account_cubit.dart' as _i49;
-import '../features/auth/application/application.dart' as _i61;
+import '../features/auth/application/application.dart' as _i59;
 import '../features/auth/application/auth/auth_bloc.dart' as _i50;
 import '../features/auth/application/login/login_cubit.dart' as _i37;
 import '../features/auth/application/register/register_cubit.dart' as _i45;
@@ -38,9 +38,9 @@ import '../features/broadcast/application/broadcast/broadcast_bloc.dart'
 import '../features/broadcast/application/broadcast_form/broadcast_form_cubit.dart'
     as _i52;
 import '../features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart'
-    as _i58;
+    as _i56;
 import '../features/broadcast/application/live_participants/live_participants_bloc.dart'
-    as _i59;
+    as _i57;
 import '../features/broadcast/application/recently_live/recently_live_cubit.dart'
     as _i44;
 import '../features/broadcast/application/stream/stream_bloc.dart' as _i48;
@@ -70,18 +70,18 @@ import '../features/onboarding/infrastructure/onboarding_facade.dart' as _i36;
 import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
     as _i42;
 import '../features/onboarding/onboarding.dart' as _i38;
-import '../features/profile/application/profile/my_profile_bloc.dart' as _i62;
+import '../features/profile/application/profile/my_profile_bloc.dart' as _i60;
 import '../features/profile/application/profile_form/profile_form_cubit.dart'
-    as _i64;
-import '../features/profile/domain/domain.dart' as _i56;
+    as _i62;
+import '../features/profile/domain/domain.dart' as _i54;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
     as _i43;
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart'
     as _i22;
 import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i21;
-import '../features/profile/infrastructure/profile_facade.dart' as _i57;
-import '../features/profile/profile.dart' as _i63;
-import '../router/m_router.dart' as _i60;
+import '../features/profile/infrastructure/profile_facade.dart' as _i55;
+import '../features/profile/profile.dart' as _i61;
+import '../router/m_router.dart' as _i58;
 import '../services/jwt_service.dart' as _i13;
 import '../services/live_kit/live_kit_service.dart' as _i14;
 import '../services/media_service.dart' as _i15;
@@ -91,7 +91,7 @@ import '../services/notification_service.dart' as _i40;
 import '../services/permissions_service.dart' as _i20;
 import '../services/secure_storage_service.dart' as _i23;
 import '../services/socket/socket_service.dart' as _i47;
-import 'register_module.dart' as _i65;
+import 'register_module.dart' as _i63;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -239,27 +239,27 @@ extension GetItInjectableX on _i1.GetIt {
           facade: gh<_i27.IAuthFacade>(),
           socket: gh<_i47.SocketService>(),
         )..init());
-    gh.lazySingleton<_i56.IProfileFacade>(() => _i57.ProfileFacade(
+    gh.lazySingleton<_i54.IProfileFacade>(() => _i55.ProfileFacade(
           remote: gh<_i22.ProfileRemoteDatasource>(),
           local: gh<_i43.ProfileLocalDatasource>(),
           network: gh<_i17.NetworkService>(),
         ));
-    gh.lazySingleton<_i58.LiveBroadcastsBloc>(
-        () => _i58.LiveBroadcastsBloc(socket: gh<_i47.SocketService>()));
-    gh.lazySingleton<_i59.LiveParticipantsBloc>(
-        () => _i59.LiveParticipantsBloc(socket: gh<_i47.SocketService>()));
-    gh.factory<_i60.MRouter>(() => _i60.MRouter(
-          authBloc: gh<_i61.AuthBloc>(),
+    gh.lazySingleton<_i56.LiveBroadcastsBloc>(
+        () => _i56.LiveBroadcastsBloc(socket: gh<_i47.SocketService>()));
+    gh.lazySingleton<_i57.LiveParticipantsBloc>(
+        () => _i57.LiveParticipantsBloc(socket: gh<_i47.SocketService>()));
+    gh.factory<_i58.MRouter>(() => _i58.MRouter(
+          authBloc: gh<_i59.AuthBloc>(),
           onboardingCubit: gh<_i41.OnboardingCubit>(),
         ));
-    gh.lazySingleton<_i62.MyProfileBloc>(
-        () => _i62.MyProfileBloc(facade: gh<_i63.IProfileFacade>()));
-    gh.lazySingleton<_i64.ProfileFormCubit>(() => _i64.ProfileFormCubit(
-          facade: gh<_i56.IProfileFacade>(),
+    gh.lazySingleton<_i60.MyProfileBloc>(
+        () => _i60.MyProfileBloc(facade: gh<_i61.IProfileFacade>()));
+    gh.lazySingleton<_i62.ProfileFormCubit>(() => _i62.ProfileFormCubit(
+          facade: gh<_i54.IProfileFacade>(),
           media: gh<_i15.MediaService>(),
         ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i65.RegisterModule {}
+class _$RegisterModule extends _i63.RegisterModule {}
