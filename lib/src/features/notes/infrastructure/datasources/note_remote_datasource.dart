@@ -38,6 +38,7 @@ abstract class NoteRemoteDatasource {
     @Path('noteId') required String noteId,
     @Part() String? title,
     @Part() String? content,
+    @Part() bool? pinned,
   });
 
   @DELETE('/api/v1/notes/{noteId}')
@@ -72,12 +73,22 @@ abstract class NoteRemoteDatasource {
   });
 
   @GET('/api/v1/folders/{folderId}')
-  Future<NoteResponse<FolderDto?>> getFolder(@Path('folderId') String folderId);
+  Future<NoteResponse<FolderDto?>> getFolder({
+    @Path('folderId') required String folderId,
+    @Query('includeNotes') bool? includeNotes,
+    @Query('keywords') String? keywords,
+    @Query('pinned') bool? pinned,
+    @Query('sortBy') String? sortBy = 'createdAt',
+    @Query('orderBy') String? orderBy = 'DESC',
+    @Query('page') int? page = 1,
+    @Query('size') int? size = 1,
+  });
 
   @PUT('/api/v1/folders/{folderId}')
   Future<NoteResponse<FolderDto?>> updateFolder({
     @Path('folderId') required String folderId,
     @Part() String? title,
+    @Part() bool? pinned,
   });
 
   @DELETE('/api/v1/folders/{folderId}')

@@ -14,12 +14,12 @@ class NoteDto with _$NoteDto {
   @Entity(realClass: NoteDto)
   factory NoteDto({
     @Id() int? dbId,
-    @Unique() required String id,
+    @Unique() String? id,
     required String title,
     required String content,
-    required bool pinned,
-    @Property(type: PropertyType.date) required DateTime createdAt,
-    @Property(type: PropertyType.date) required DateTime updatedAt,
+    bool? pinned,
+    @Property(type: PropertyType.date) DateTime? createdAt,
+    @Property(type: PropertyType.date) DateTime? updatedAt,
     @_FToOneConverter() required ToOne<FolderDto> folder,
     @_CToOneConverter() required ToOne<NoteCreatorDto> creator,
   }) = _NoteDto;
@@ -34,19 +34,19 @@ class NoteDto with _$NoteDto {
 }
 
 extension NoteDtoToDomain on NoteDto {
-  // Note get toDomain {
-  //   return Note(
-  //     dbId: dbId,
-  //     id: id,
-  //     title: INoteTitle(title),
-  //     content: INoteContent(content),
-  //     pinned: pinned,
-  //     createdAt: createdAt,
-  //     updatedAt: updatedAt,
-  //     // folder: folder.target!.toDomain,
-  //     // creator: creator.toDomain,
-  //   );
-  // }
+  Note get toDomain {
+    return Note(
+      dbId: dbId,
+      id: id,
+      title: INoteTitle(title),
+      content: INoteContent(content),
+      pinned: pinned,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      folder: folder.target!.toDomain,
+      creator: creator.target!.toDomain,
+    );
+  }
 }
 
 extension NoteToDto on Note {
@@ -59,7 +59,7 @@ extension NoteToDto on Note {
   //     pinned: pinned,
   //     createdAt: createdAt,
   //     updatedAt: updatedAt,
-  //     folder: folder.toDto,
+  //     folder: folder,
   //     creator: creator.toDto,
   //   );
   // }

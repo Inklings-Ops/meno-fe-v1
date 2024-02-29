@@ -12,14 +12,17 @@ class NoteLocalDatasource {
       : _objectbox = objectbox;
 
   Future<List<NoteDto?>> getAllNotes() async {
-    final store = _objectbox.store;
-    final noteBox = store.box<NoteDto?>();
+    final noteBox = _objectbox.store.box<NoteDto?>();
     return noteBox.getAll();
   }
 
+  Future<List<FolderDto?>> getAllFolders() async {
+    final folderBox = _objectbox.store.box<FolderDto?>();
+    return folderBox.getAll();
+  }
+
   Future<NoteDto?> getNote(String id) async {
-    final store = _objectbox.store;
-    final noteBox = store.box<NoteDto?>();
+    final noteBox = _objectbox.store.box<NoteDto?>();
 
     final builder = noteBox.query(NoteDto_.id.equals(id));
 
@@ -29,15 +32,24 @@ class NoteLocalDatasource {
     return note;
   }
 
+  Future<FolderDto?> getFolder(String id) async {
+    final folderBox = _objectbox.store.box<FolderDto?>();
+
+    final builder = folderBox.query(FolderDto_.id.equals(id));
+
+    Query<FolderDto?> query = builder.build();
+    final folder = query.findFirst();
+
+    return folder;
+  }
+
   Future<void> storeNote(NoteDto note) async {
-    final store = _objectbox.store;
-    final noteBox = store.box<NoteDto?>();
+    final noteBox = _objectbox.store.box<NoteDto?>();
     noteBox.put(note);
   }
 
   Future<void> storeAllNotes(List<NoteDto> notes) async {
-    final store = _objectbox.store;
-    final noteBox = store.box<NoteDto?>();
+    final noteBox = _objectbox.store.box<NoteDto?>();
 
     try {
       const batchSize = 10000;
@@ -51,5 +63,17 @@ class NoteLocalDatasource {
     } on ObjectBoxException catch (e) {
       throw ObjectBoxException(e.message);
     }
+  }
+
+  Future<int> deleteFolder(String folderId) {
+    final folderBox = _objectbox.store.box<FolderDto?>();
+    final builder = folderBox.query(FolderDto_.id.equals(folderId));
+    return builder.build().removeAsync();
+  }
+
+  Future<int> deleteNote(String noteId) {
+    final noteBox = _objectbox.store.box<NoteDto?>();
+    final builder = noteBox.query(NoteDto_.id.equals(noteId));
+    return builder.build().removeAsync();
   }
 }

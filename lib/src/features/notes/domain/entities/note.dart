@@ -11,12 +11,12 @@ part 'note.freezed.dart';
 class Note with _$Note {
   factory Note({
     int? dbId,
-    required String id,
+    String? id,
     required INoteTitle title,
     required INoteContent content,
-    required bool pinned,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    bool? pinned,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     required Folder folder,
     required NoteCreator creator,
   }) = _Note;
