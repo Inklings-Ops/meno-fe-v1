@@ -20,6 +20,7 @@ import '../features/broadcast/presentation/pages/home/details_page.dart';
 import '../features/broadcast/presentation/pages/home/home_page.dart';
 import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
 import '../features/broadcast/presentation/pages/stream/stream_page.dart';
+import '../features/notes/presentation/pages/notes_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';

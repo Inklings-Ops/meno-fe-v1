@@ -57,6 +57,8 @@ import '../features/chat/application/chat_bloc.dart' as _i56;
 import '../features/network/application/network_cubit.dart' as _i41;
 import '../features/network/domain/i_network_facade.dart' as _i33;
 import '../features/network/infrastructure/network_facade.dart' as _i34;
+import '../features/notes/application/note_form/note_form_cubit.dart' as _i68;
+import '../features/notes/application/note_list/note_list_bloc.dart' as _i69;
 import '../features/notes/domain/domain.dart' as _i57;
 import '../features/notes/infrastructure/datasources/datasources.dart' as _i59;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
@@ -79,7 +81,7 @@ import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
 import '../features/onboarding/onboarding.dart' as _i40;
 import '../features/profile/application/profile/my_profile_bloc.dart' as _i66;
 import '../features/profile/application/profile_form/profile_form_cubit.dart'
-    as _i68;
+    as _i70;
 import '../features/profile/domain/domain.dart' as _i60;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
     as _i46;
@@ -99,7 +101,7 @@ import '../services/objectbox_service.dart' as _i21;
 import '../services/permissions_service.dart' as _i22;
 import '../services/secure_storage_service.dart' as _i25;
 import '../services/socket/socket_service.dart' as _i50;
-import 'register_module.dart' as _i69;
+import 'register_module.dart' as _i71;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -275,7 +277,11 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.lazySingleton<_i66.MyProfileBloc>(
         () => _i66.MyProfileBloc(facade: gh<_i67.IProfileFacade>()));
-    gh.lazySingleton<_i68.ProfileFormCubit>(() => _i68.ProfileFormCubit(
+    gh.lazySingleton<_i68.NoteFormCubit>(
+        () => _i68.NoteFormCubit(facade: gh<_i57.INoteFacade>()));
+    gh.lazySingleton<_i69.NoteListBloc>(
+        () => _i69.NoteListBloc(facade: gh<_i57.INoteFacade>()));
+    gh.lazySingleton<_i70.ProfileFormCubit>(() => _i70.ProfileFormCubit(
           facade: gh<_i60.IProfileFacade>(),
           media: gh<_i15.MediaService>(),
         ));
@@ -283,4 +289,4 @@ extension GetItInjectableX on _i1.GetIt {
   }
 }
 
-class _$RegisterModule extends _i69.RegisterModule {}
+class _$RegisterModule extends _i71.RegisterModule {}
