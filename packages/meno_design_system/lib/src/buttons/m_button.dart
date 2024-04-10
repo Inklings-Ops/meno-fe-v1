@@ -78,7 +78,9 @@ class _MButtonWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = MediaQuery.textScaleFactorOf(context);
+    final scale = MediaQuery.textScaleFactorOf(context);
+    // final scale = MediaQuery.textScalerOf(context).scale(1);
+
     final gap = SizedBox(
       width: scale <= 1 ? 8 : lerpDouble(8, 4, math.min(scale - 1, 1))!,
     );

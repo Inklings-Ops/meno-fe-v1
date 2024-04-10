@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../domain/onboard.dart';
+import '../../domain/onboarding_entity.dart';
 import 'onboarding_subtitle.dart';
 import 'onboarding_title.dart';
 
 class OnboardingBody extends StatelessWidget {
-  final Onboard onboard;
+  final OnboardingEntity onboard;
   const OnboardingBody(this.onboard, {super.key});
 
   @override

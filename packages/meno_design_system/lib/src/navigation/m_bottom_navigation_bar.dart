@@ -51,12 +51,12 @@ class MBottomNavigationBar extends StatefulWidget {
 
   /// Creates an [MBottomNavigationBar] widget.
   const MBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.items,
     this.onTap,
     this.customItem,
-  }) : super(key: key);
+  });
 
   @override
   State<MBottomNavigationBar> createState() => _MBottomNavigationBarState();

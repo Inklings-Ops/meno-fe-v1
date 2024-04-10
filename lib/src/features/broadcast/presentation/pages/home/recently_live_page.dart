@@ -1,44 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/broadcast_list/broadcast_list_provider.dart';
+import '../../../application/recently_live/recently_live_cubit.dart';
 import '../../../domain/domain.dart';
 
-class RecentlyLivePage extends ConsumerWidget {
+class RecentlyLivePage extends StatefulWidget {
   const RecentlyLivePage({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<RecentlyLivePage> createState() => _RecentlyLivePageState();
+}
+
+class _RecentlyLivePageState extends State<RecentlyLivePage> {
+  final scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<RecentlyLiveCubit>();
     final colorScheme = MColorScheme.of(context)!;
 
-    final broadcasts = ref.watch(recentBroadcastsProvider());
-
     return MScaffold(
-      appBar: MAppBar.secondary(title: "Recently Live", centerTitle: true),
+      appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
       padding: EdgeInsets.zero,
       body: RefreshIndicator.adaptive(
-        onRefresh: () async => await ref.refresh(recentBroadcastsProvider()),
+        onRefresh: () async => bloc.fetch(),
         child: ListView(
+          controller: scrollController,
           children: [
-            if (broadcasts.isLoading)
-              const _LoadingList()
-            else if (broadcasts.hasValue)
-              _LoadedList(broadcasts: broadcasts.value!),
-            MCore.large.verticalSpace,
-            MText(
-              "You’ve reached the end 🎉",
-              style: MTextStyle.captionRegular,
-              color: colorScheme.onBackgroundVariant,
-              textAlign: TextAlign.center,
+            BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
+              bloc: bloc,
+              builder: (context, state) => state.maybeWhen(
+                orElse: () => const SizedBox(),
+                loading: () => const _LoadingList(),
+                loadingMore: (broadcasts) => Column(
+                  children: [
+                    _LoadedList(broadcasts: broadcasts),
+                    const Align(child: MLoadingIndicator.box()),
+                  ],
+                ),
+                success: (broadcasts) => _LoadedList(broadcasts: broadcasts),
+                successLast: (broadcasts) => Column(
+                  children: [
+                    _LoadedList(broadcasts: broadcasts),
+                    MCore.large.verticalSpace,
+                    MText(
+                      'You’ve reached the end 🎉',
+                      style: MTextStyle.captionRegular,
+                      color: colorScheme.onBackgroundVariant,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             ),
             53.verticalSpace,
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    final bloc = context.read<RecentlyLiveCubit>();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 300) {
+        bloc.fetchMore();
+      }
+    });
+    super.initState();
   }
 }
 
@@ -47,10 +88,9 @@ class _BuildListView extends StatelessWidget {
   final IndexedWidgetBuilder itemBuilder;
 
   const _BuildListView({
-    Key? key,
     required this.itemCount,
     required this.itemBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +107,7 @@ class _BuildListView extends StatelessWidget {
 
 class _LoadedList extends StatelessWidget {
   final List<Broadcast?> broadcasts;
-  const _LoadedList({Key? key, required this.broadcasts}) : super(key: key);
+  const _LoadedList({required this.broadcasts});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +128,7 @@ class _LoadedList extends StatelessWidget {
 }
 
 class _LoadingList extends StatelessWidget {
-  const _LoadingList({Key? key}) : super(key: key);
+  const _LoadingList();
 
   @override
   Widget build(BuildContext context) {

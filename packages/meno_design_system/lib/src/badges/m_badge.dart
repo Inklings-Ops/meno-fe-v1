@@ -14,13 +14,15 @@ class MBadge extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final BoxConstraints? constraints;
   final bool showLoader;
+  final bool showBorder;
 
   const MBadge.cohost({Key? key})
       : this._(
           key: key,
           value: "Co-host",
-          constraints: const BoxConstraints(minHeight: 20.0, maxWidth: 59.0),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          height: 20.0,
+          width: 60.0,
+          // padding: const EdgeInsets.all(8),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           color: MColor.grey30,
           valueColor: MColor.primary700,
@@ -43,11 +45,16 @@ class MBadge extends StatelessWidget {
       : this._(
           key: key,
           value: value,
-          padding: const EdgeInsets.fromLTRB(4.5, 2, 4.5, 2),
-          constraints: const BoxConstraints(minHeight: 16.0, minWidth: 17.0),
+          // padding: const EdgeInsets.fromLTRB(4.5, 2, 4.5, 2),
+          constraints: const BoxConstraints(minHeight: 16.0, minWidth: 16.0),
         );
 
-  const MBadge.live({Key? key, String? count, bool showLoader = false})
+  const MBadge.live({
+    Key? key,
+    String? count,
+    bool showLoader = false,
+    bool showBorder = false,
+  })
       : this._(
           key: key,
           value: "LIVE",
@@ -55,7 +62,8 @@ class MBadge extends StatelessWidget {
           height: 18,
           showLoader: showLoader,
           constraints: const BoxConstraints(minHeight: 18.0),
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+          padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
+          showBorder: showBorder,
         );
 
   MBadge.offAir(BuildContext context, {Key? key})
@@ -116,6 +124,7 @@ class MBadge extends StatelessWidget {
     this.padding,
     this.constraints,
     this.showLoader = false,
+    this.showBorder = false,
   });
 
   @override
@@ -148,9 +157,14 @@ class MBadge extends StatelessWidget {
       width: width,
       padding: padding,
       constraints: constraints,
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: color ?? colorScheme.error,
-        borderRadius: borderRadius,
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius ?? BorderRadius.zero,
+          side: showBorder
+              ? BorderSide(width: 1.0, color: valueColor ?? Colors.white)
+              : BorderSide.none,
+        ),
       ),
       child: child,
     );
@@ -160,7 +174,7 @@ class MBadge extends StatelessWidget {
     return MText(
       content,
       textAlign: TextAlign.center,
-      style: textStyle,
+      style: textStyle?.copyWith(letterSpacing: 0.5),
       color: valueColor ?? colorScheme.onError,
     );
   }

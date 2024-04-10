@@ -18,36 +18,36 @@ abstract class AuthRemoteDatasource {
   factory AuthRemoteDatasource(Dio dio, {String baseUrl}) =
       _AuthRemoteDatasource;
 
-  @POST("/api/v1/users/password/change")
+  @POST('/api/v1/users/password/change')
   Future<AuthResponse> changePassword({
     @Field() required String currentPassword,
     @Field() required String newPassword,
   });
 
-  @POST("/api/v1/users/password/forgot")
+  @POST('/api/v1/users/password/forgot')
   Future<AuthResponse> forgotPassword(@Field() String email);
 
   /// Signs in the user using Google.
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
-  @POST("/api/v1/users/signin/google")
-  Future<AuthResponse<UserCredentialsDto>> googleLogin(
+  @POST('/api/v1/users/signin/google')
+  Future<AuthResponse<UserCredentialDto>> googleLogin(
     @Field() String idToken,
   );
 
   /// Registers the user using Google.
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
-  @POST("/api/v1/users/signup/google")
-  Future<AuthResponse<UserCredentialsDto>> googleRegister(
+  @POST('/api/v1/users/signup/google')
+  Future<AuthResponse<UserCredentialDto>> googleRegister(
     @Field() String idToken,
   );
 
   /// Signs in the user using their email address and password.
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
-  @POST("/api/v1/users/signin")
-  Future<AuthResponse<UserCredentialsDto>> login({
+  @POST('/api/v1/users/signin')
+  Future<AuthResponse<UserCredentialDto>> login({
     @Field() required String email,
     @Field() required String password,
   });
@@ -55,9 +55,9 @@ abstract class AuthRemoteDatasource {
   /// Registers the user.
   ///
   /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
-  @POST("/api/v1/users/signup")
+  @POST('/api/v1/users/signup')
   @MultiPart()
-  Future<AuthResponse<UserCredentialsDto>> register({
+  Future<AuthResponse<UserCredentialDto>> register({
     @Part() required String fullName,
     @Part() required String email,
     @Part() required String password,
@@ -65,20 +65,20 @@ abstract class AuthRemoteDatasource {
     @Part(name: 'image', contentType: 'image/png') File? image,
   });
 
-  @POST("/api/v1/users/otp")
+  @POST('/api/v1/users/otp')
   Future<AuthResponse> requestOtp({
     @Field() required String email,
     @Field() required String type,
   });
 
-  @POST("/api/v1/users/password/reset")
+  @POST('/api/v1/users/password/reset')
   Future<AuthResponse> resetPassword({
     @Field() required String email,
     @Field() required String code,
     @Field() required String newPassword,
   });
 
-  @POST("/api/v1/users/email/verify")
+  @POST('/api/v1/users/email/verify')
   Future<AuthResponse> verifyEmailAddress({
     @Field() required String email,
     @Field() required String code,

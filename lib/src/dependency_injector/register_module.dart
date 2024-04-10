@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
@@ -9,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/clients/m_clients.dart';
 import '../core/env/env.dart';
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart';
+import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart';
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart';
 
 final Dio dio = MClients.dioClient(Env.menoApiUrl);
@@ -26,9 +29,12 @@ abstract class RegisterModule {
   }
 
   @lazySingleton
-  InternetConnectionChecker get connectionChecker {
-    return InternetConnectionChecker.createInstance();
+  NotificationRemoteDatasource get notificationRemoteDatasource {
+    return NotificationRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
   }
+
+  @lazySingleton
+  InternetConnectionChecker get internetChecker => InternetConnectionChecker();
 
   @lazySingleton
   ImagePicker get imagePicker => ImagePicker();
@@ -36,10 +42,18 @@ abstract class RegisterModule {
   @preResolve
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
 
+
   @lazySingleton
   ProfileRemoteDatasource get profileRemoteDatasource {
     return ProfileRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
   }
+
+  @lazySingleton
+  FirebaseMessaging get fcm => FirebaseMessaging.instance;
+
+  @lazySingleton
+  FlutterLocalNotificationsPlugin get localNotifications =>
+      FlutterLocalNotificationsPlugin();
 
   @lazySingleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage(

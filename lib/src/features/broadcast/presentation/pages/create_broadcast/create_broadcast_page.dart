@@ -1,42 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../../../../router/router.dart';
-import '../../../application/broadcast/broadcast_notifier.dart';
+import '../../../application/broadcast_form/broadcast_form_cubit.dart';
 import 'create_broadcast_form.dart';
 
-class CreateBroadcastPage extends ConsumerWidget {
+class CreateBroadcastPage extends StatelessWidget {
   const CreateBroadcastPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(broadcastNotifierProvider, (previous, next) {
-      next.onCreated.fold(
-        () => null,
-        (either) => either.fold(
-          (l) => context.showBroadcastError(l),
-          (r) => context.replace(Routes.broadcast),
-        ),
-      );
-    });
-
+  Widget build(BuildContext context) {
     return MScaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight.r),
         child: Align(
           alignment: Alignment.bottomLeft,
           child: MHeader(
-            title: "Go Live Now",
-            actionTitle: "Cancel",
+            title: 'Go Live Now',
+            actionTitle: 'Cancel',
             action: context.pop,
           ),
         ),
       ),
-      body: const SingleChildScrollView(child: CreateBroadcastForm()),
+      body: const SingleChildScrollView(
+        child: CreateBroadcastForm(),
+      ),
+      persistentFooterButtons: const [_CreateButton()],
+    );
+  }
+}
+
+class _CreateButton extends StatelessWidget {
+  const _CreateButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<BroadcastFormCubit>();
+
+    return Container(
+      height: 77.h,
+      padding: const EdgeInsets.symmetric(horizontal: MCore.small).r,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
+            bloc: bloc,
+            buildWhen: (p, c) => p.loading != c.loading,
+            builder: (context, state) => MPrimaryButton(
+              label: 'Start Broadcast',
+              loading: state.loading,
+              onPressed: () {
+                context.clearSnackBars();
+                FocusScope.of(context).unfocus();
+                if (bloc.isValid) {
+                  bloc.create();
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 
+import '../../features/auth/infrastructure/infrastructure.dart';
 import '../../services/secure_storage_service.dart';
 import '../../shared/m_keys.dart';
 
@@ -33,9 +35,13 @@ class AuthTokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final token = await SecureStorageService().read(MKeys.currentUserTokenKey);
+    final storage = SecureStorageService();
+    final jsonString = await storage.read(MKeys.authUserCredentialKey);
 
-    if (token != null) {
+    if (jsonString != null) {
+      final credential = UserCredentialDto.fromJson(jsonDecode(jsonString));
+      final token = credential.token;
+
       options.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
     }
 

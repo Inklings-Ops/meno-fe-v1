@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -37,18 +38,22 @@ class MLiveCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           _Container(
             children: [
               MAvatar(radius: 44, url: imageUrl),
               MSize.verticalSpaceMedium,
-              MText(
-                title,
-                style: styles.titleStyle,
-                color: styles.titleColor,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              SizedBox(
+                height: 24,
+                child: MText(
+                  title,
+                  style: styles.titleStyle,
+                  color: styles.titleColor,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               MSize.verticalSpaceMicro,
               MText(
@@ -62,9 +67,9 @@ class MLiveCard extends StatelessWidget {
             ],
           ),
           Positioned(
-            left: 10.0,
             top: 8.0,
-            child: MBadge.live(count: count),
+            left: 16.0,
+            child: MBadge.live(count: count, showBorder: true),
           )
         ],
       ),
@@ -78,20 +83,24 @@ class MLiveCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Stack(
+      clipBehavior: Clip.none,
       children: [
         _Container(
           children: [
             MShimmer(shape: BoxShape.circle, height: 88, width: 88),
             MSize.verticalSpaceMedium,
-            MShimmer(height: 24),
+            MShimmer(height: 24, width: 144),
             MSize.verticalSpaceMicro,
             MShimmer(height: 14, width: 80),
           ],
         ),
         Positioned(
-          left: 10.0,
           top: 8.0,
-          child: MShimmer(child: MBadge.live()),
+          left: 16.0,
+          child: MShimmer(
+            borderRadius: MCore.circle,
+            child: MBadge.live(count: "00K", showBorder: true),
+          ),
         )
       ],
     );
@@ -107,17 +116,21 @@ class _Container extends StatelessWidget {
     final styles = MCardStyles.of(context)!;
 
     return Container(
-      padding: const EdgeInsets.all(MCore.large),
-      decoration: BoxDecoration(
+      width: 176,
+      height: 176,
+      padding: const EdgeInsets.all(14),
+      decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        boxShadow: MDecorations.cardShadow,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(MCore.large),
+        shadows: MDecorations.cardShadow,
+        shape: const SmoothRectangleBorder(
+          borderRadius: SmoothBorderRadius.all(
+            SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+          ),
         ),
       ),
       child: SizedBox(
         width: 144,
-        height: 176,
+        height: 144,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -6,6 +6,8 @@ class MScaffold extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final ScrollController? scrollController;
   final bool? resizeToAvoidBottomInset;
+  final Widget? bottomNavigationBar;
+  final List<Widget>? persistentFooterButtons;
 
   const MScaffold({
     super.key,
@@ -14,6 +16,8 @@ class MScaffold extends StatelessWidget {
     this.padding,
     this.scrollController,
     this.resizeToAvoidBottomInset,
+    this.bottomNavigationBar,
+    this.persistentFooterButtons,
   });
 
   @override
@@ -24,5 +28,7 @@ class MScaffold extends StatelessWidget {
           padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
           child: body,
         ),
+        bottomNavigationBar: bottomNavigationBar,
+        persistentFooterButtons: persistentFooterButtons,
       );
 }

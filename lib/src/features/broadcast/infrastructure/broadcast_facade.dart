@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast_list_entity.dart';
 
 import '../../../services/network_service.dart';
@@ -194,15 +193,12 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   BroadcastException _getError(DioException e) {
-    Logger().w("RESPONSE => ${e.response?.data}");
 
-    if (e.response?.data["error"].runtimeType == String) {
-      Logger().w("RESPONSE MESSAGE => ${e.response?.data["message"]}");
-      return BroadcastException.message(e.response?.data["message"]);
+    if (e.response?.data['error'].runtimeType == String) {
+      return BroadcastException.message(e.response?.data['message']);
     }
 
     final error = BroadcastError.fromJson(e.response!.data['error']);
-    Logger().w("ERROR => $error");
     String? result;
 
     for (String? prop in error.props) {

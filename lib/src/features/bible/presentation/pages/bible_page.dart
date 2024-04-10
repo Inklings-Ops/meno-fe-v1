@@ -10,7 +10,7 @@ class BiblePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MScaffold(
-      appBar: MAppBar.secondary(title: "Bible", centerTitle: true),
+      appBar: MAppBar.secondary(title: 'Bible', centerTitle: true),
       body: Column(
         children: [
           const ScripturePicker(),

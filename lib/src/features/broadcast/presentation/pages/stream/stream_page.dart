@@ -1,59 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:livekit_client/livekit_client.dart';
-import 'package:logger/logger.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 
-import '../../../../../services/live_kit_service.dart';
-import '../../../application/stream/stream_notifier.dart';
-import '../../widgets/chat_tab.dart';
+import '../../../../../services/meno/meno_bloc.dart';
+import '../../../../chat/presentation/widgets/chat_input_container.dart';
+import '../../../../chat/presentation/widgets/chat_list.dart';
+import '../../../application/stream/stream_bloc.dart';
 import '../../widgets/live_bible_tab.dart';
 import '../../widgets/live_scaffold.dart';
 import '../../widgets/notes_tab.dart';
 import 'stream_tab.dart';
 
-class StreamPage extends ConsumerWidget {
+class StreamPage extends StatelessWidget {
   const StreamPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(streamNotifierProvider, (previous, next) {
-      next.onLeave.fold(
-        () => null,
-        (either) => either.fold(
-          (l) => context.showBroadcastError(l),
-          (r) => null,
+  Widget build(BuildContext context) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<StreamBloc, StreamState>(
+          listenWhen: (p, c) => p.onLeave != c.onLeave,
+          listener: (context, state) {
+            state.onLeave.fold(
+              () => null,
+              (_) => context.go(Routes.home),
+            );
+          },
         ),
-      );
-    });
-
-    ref.listen(liveKitEventProvider, (previous, next) {
-      next.on<RoomDisconnectedEvent>((event) {
-        Logger().w(event);
-        if (event.reason != null) {
-          Logger().w('Room disconnected: reason => ${event.reason}');
-        }
-        // context.showErrorSnackBar(
-        //   "${broadcast.creator.fullName} ended the broadcast",
-        // );
-        // ref.read(liveKitNotifierProvider.notifier).dispose();
-        // context.go(Routes.home);
-      });
-    });
-
-    return const LiveStreamScaffold(
-      tabs: [
-        Tab(text: "Broadcast"),
-        Tab(text: "Chats"),
-        Tab(text: "Live Bible"),
-        Tab(text: "Notes"),
+        BlocListener<MenoBloc, MenoState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              endedBroadcast: () {
+                context.go(Routes.home);
+                context.read<StreamBloc>().close();
+              },
+            );
+          },
+        ),
       ],
-      tabViews: [
-        StreamTab(),
-        ChatTab(),
-        LiveBibleTab(),
-        NotesTab(),
-      ],
+      child: const LiveStreamScaffold(
+        tabs: [
+          Tab(text: 'Broadcast'),
+          Tab(text: 'Chats'),
+          Tab(text: 'Live Bible'),
+          Tab(text: 'Notes'),
+        ],
+        tabViews: [
+          StreamTab(),
+          _ChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChatTab extends HookWidget {
+  const _ChatTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final scrollController = useScrollController();
+
+    return BlocBuilder<StreamBloc, StreamState>(
+      builder: (context, state) => LayoutBuilder(
+        builder: (context, constraints) => Column(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ChatList(
+                  broadcastId: state.joinBroadcast.broadcast.id,
+                  controller: scrollController,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 52.h,
+              width: constraints.maxWidth,
+              child: ChatInputContainer(
+                broadcastId: state.joinBroadcast.broadcast.id,
+                scrollController: scrollController,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

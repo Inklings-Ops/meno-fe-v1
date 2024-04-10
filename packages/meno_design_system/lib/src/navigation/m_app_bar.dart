@@ -232,7 +232,7 @@ class _HomeAppBarImpl extends StatelessWidget {
       flexibleSpace: Container(
         alignment: Alignment.bottomCenter,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           height: 56,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

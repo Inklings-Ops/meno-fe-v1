@@ -1,54 +1,51 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
 
 import '../../../services/network_service.dart';
 import '../../auth/domain/domain.dart';
-import '../../auth/infrastructure/responses/auth_response.dart';
 import '../domain/domain.dart';
 import 'datasources/profile_local_datasource.dart';
 import 'datasources/profile_remote_datasource.dart';
-import 'mapper/profile_mapper.dart';
 
 @LazySingleton(as: IProfileFacade)
 class ProfileFacade implements IProfileFacade {
-  final ProfileMapper _authMapper;
   final ProfileRemoteDatasource _remote;
   final ProfileLocalDatasource _local;
   final NetworkService _network;
 
   ProfileFacade({
-    required ProfileMapper authMapper,
     required ProfileRemoteDatasource remote,
     required ProfileLocalDatasource local,
     required NetworkService network,
-  })  : _authMapper = authMapper,
-        _remote = remote,
+  })  : _remote = remote,
         _local = local,
         _network = network;
 
   @override
   Future<Either<AuthException, Unit>> editProfile({
-    required UserID id,
     IFullName? fullName,
     IBio? bio,
     IAvatar? avatar,
   }) async {
-    final String? fullNameValue = fullName?.get()!;
-    final String? bioValue = bio?.get();
-    final File? avatarValue = avatar?.get();
+    final fullNameValue = fullName?.get()!;
+    final bioValue = bio?.get();
+    final avatarValue = avatar?.get();
 
-    if (!(await _network.isConnected)) {
-      return left(const AuthException.networkError());
-    }
+    final (credentials, hasNetwork) = await (
+      _local.getUserCredential(),
+      _network.isConnected,
+    ).wait;
+
+    if (hasNetwork) return left(const AuthException.networkError());
 
     try {
-      final AuthResponse<ProfileDto> response = await _remote.editProfile(
-        userId: id,
+      final response = await _remote.editProfile(
+        userId: credentials!.user.id,
         fullName: fullNameValue,
         bio: bioValue,
         image: avatarValue,
@@ -72,13 +69,11 @@ class ProfileFacade implements IProfileFacade {
     }
 
     try {
-      final AuthResponse<ProfileDto> response = await _remote.getProfile(id);
+      final response = await _remote.getProfile(id);
 
       await _local.storeProfile(response.data!);
 
-      final Profile? profile = _authMapper.toDomain(response.data);
-
-      return right(profile!);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
@@ -88,8 +83,8 @@ class ProfileFacade implements IProfileFacade {
   }
 
   AuthException _getError(DioException e) {
-    if (e.response?.data["error"].runtimeType == String) {
-      return AuthException.message(e.response?.data["message"]);
+    if (e.response?.data['error'].runtimeType == String) {
+      return AuthException.message(e.response?.data['message']);
     }
 
     final error = AuthError.fromJson(e.response!.data['error']);
@@ -108,21 +103,28 @@ class ProfileFacade implements IProfileFacade {
 
   @override
   Future<Either<AuthException, Profile?>> getAuthProfile() async {
-    final result = await _local.getProfile();
+    final (credentials, hasNetwork, hasProfile) = await (
+      _local.getUserCredential(),
+      _network.isConnected,
+      _local.hasLocalProfile,
+    ).wait;
 
-    if (!(await _network.isConnected)) {
-      final Profile? profile = _authMapper.toDomain(result);
-      return right(profile);
+    if (!hasNetwork && !hasProfile) {
+      Logger().w('DOING NOTHING');
+      return left(const AuthException.networkError());
+    }
+
+    if (!hasNetwork && hasProfile) {
+      Logger().w('DOING LOCAL');
+      final dto = await _local.getProfile();
+      return right(dto?.toDomain);
     }
 
     try {
-      final response = await _remote.getProfile(result!.id);
+      Logger().w('DOING REMOTE');
+      final response = await _remote.getProfile(credentials!.user.id);
 
-      await _local.storeProfile(response.data!);
-
-      final Profile? profile = _authMapper.toDomain(response.data);
-
-      return right(profile);
+      return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);

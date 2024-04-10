@@ -13,7 +13,7 @@ class JoinBroadcastEntity with _$JoinBroadcastEntity {
 
   factory JoinBroadcastEntity.empty() {
     return JoinBroadcastEntity(
-      broadcastToken: "",
+      broadcastToken: '',
       broadcast: Broadcast.empty(),
     );
   }

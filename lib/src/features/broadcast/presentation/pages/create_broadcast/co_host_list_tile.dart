@@ -19,13 +19,13 @@ class CohostListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const MText(
-                  "Celebration Church International",
+                  'Celebration Church International',
                   style: MTextStyle.captionMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
                 3.verticalSpace,
-                const MText("30K Subscribers", style: MTextStyle.microRegular),
+                const MText('30K Subscribers', style: MTextStyle.microRegular),
               ],
             ),
           ),
@@ -33,7 +33,7 @@ class CohostListTile extends StatelessWidget {
           SizedBox(
             height: 32.h,
             child: MSecondaryButton(
-              label: "Add as Co-host",
+              label: 'Add as Co-host',
               style: OutlinedButton.styleFrom(
                 textStyle: MTextStyle.microMedium,
                 padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,

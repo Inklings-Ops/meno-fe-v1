@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../application/broadcast/broadcast_notifier.dart';
-import '../../domain/domain.dart';
+import '../../../../services/meno/meno_bloc.dart';
 
-class BroadcastStatusWidget extends ConsumerWidget {
-  final bool isBroadcasting;
-  const BroadcastStatusWidget({super.key, this.isBroadcasting = true});
+class BroadcastStatusWidget extends StatelessWidget {
+  final bool isStreaming;
+  const BroadcastStatusWidget({super.key, this.isStreaming = false});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!isBroadcasting) {
-      return const MBadge.live();
-    }
-
-    return switch (ref.watch(broadcastStatusProvider)) {
-      Status.live => const MBadge.live(),
-      Status.offAir => MBadge.offAir(context),
-      Status.reconnecting => MBadge.reconnecting(context),
-      _ => const SizedBox(),
-    };
+  Widget build(BuildContext context) {
+    return BlocBuilder<MenoBloc, MenoState>(
+      bloc: context.read<MenoBloc>(),
+      buildWhen: (p, c) => p != c,
+      builder: (context, state) => state.maybeWhen(
+        live: (_) => const MBadge.live(),
+        reconnecting: (_) => MBadge.reconnecting(context),
+        streaming: (_) => const MBadge.live(),
+        orElse: () => MBadge.offAir(context),
+      ),
+    );
   }
 }

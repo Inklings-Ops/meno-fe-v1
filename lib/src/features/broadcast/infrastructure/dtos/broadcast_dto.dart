@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/domain.dart';
 import '../../domain/entities/broadcast_status.dart';
 import 'participant_dto.dart';
 
@@ -37,4 +38,29 @@ class BroadcastDto with _$BroadcastDto {
 
   @override
   Map<String, dynamic> toJson() => _$BroadcastDtoToJson(this);
+}
+
+extension BroadcastDtoToDomain on BroadcastDto {
+  Broadcast get toDomain {
+    return Broadcast(
+      id: id,
+      title: IBroadcastTitle(title),
+      description: IBroadcastDescription(description),
+      creator: creator != null
+          ? Participant(id: creator!.id, fullName: creator!.fullName)
+          : null,
+      fullName: fullName,
+      broadcastToken: broadcastToken,
+      createdAt: createdAt,
+      deleted: deleted,
+      endTime: endTime,
+      imageId: imageId,
+      imageUrl: imageUrl,
+      startTime: startTime,
+      status: status,
+      timeZone: timeZone,
+      liveListeners: liveListeners,
+      totalListeners: totalListeners,
+    );
+  }
 }

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../domain/domain.dart';
-
 class BroadcastAboutTab extends StatelessWidget {
-  final IBroadcastDescription? description;
+  final String? description;
   const BroadcastAboutTab({super.key, required this.description});
 
   @override
@@ -23,15 +21,15 @@ class BroadcastAboutTab extends StatelessWidget {
               Icon(MIcons.menu_03, size: 16.r),
               MCore.small.horizontalSpace,
               const MText(
-                "About Broadcast",
+                'About Broadcast',
                 style: MTextStyle.subheadingMedium,
               ),
             ],
           ),
           MCore.large.verticalSpace,
-          if (description?.get() != null)
+          if (description != null)
             MText(
-              description!.get()!,
+              description!,
               color: MColorScheme.of(context)!.onDisabledContainer,
             ),
         ],

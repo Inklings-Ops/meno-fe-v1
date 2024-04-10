@@ -1,106 +1,131 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/application/application.dart';
-import 'package:meno_fe_v1/src/features/chat/application/chat_notifier.dart';
-import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
+import '../../../auth/application/application.dart';
+import '../../application/chat_bloc.dart';
 import 'reactions.dart';
 
-class ChatInputContainer extends HookConsumerWidget {
+class ChatInputContainer extends HookWidget {
+  final String broadcastId;
   final ScrollController scrollController;
-  const ChatInputContainer({super.key, required this.scrollController});
+
+  const ChatInputContainer({
+    super.key,
+    required this.broadcastId,
+    required this.scrollController,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
 
-    final textController = useTextEditingController();
-    final isSendVisible = useState(textController.text.isNotEmpty);
+    final bloc = context.read<ChatBloc>();
+
+    final contentController = useTextEditingController();
+    final isSendVisible = useState(contentController.text.isNotEmpty);
 
     useEffect(() {
-      textController.addListener(() {
-        isSendVisible.value = textController.text.isNotEmpty;
+      contentController.addListener(() {
+        isSendVisible.value = contentController.text.isNotEmpty;
       });
       return null;
-    }, [textController.text]);
-
-    void onSubmit() {
-      final time = DateTime.now();
-      final senderId = ref.read(userProvider).id;
-      final chat = Chat(
-        id: time.toIso8601String(),
-        content: IChatContent(textController.text),
-        createdAt: time,
-        senderId: senderId,
-        broadcastId: "broadcastId",
-      );
-      ref.read(chatNotifierProvider.notifier).post(chat);
-      scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      textController.clear();
-    }
+    }, [contentController.text]);
 
     final isReactionsVisible = useState<bool>(false);
 
-    return Stack(
-      clipBehavior: Clip.none,
-      fit: StackFit.passthrough,
-      children: [
-        if (isReactionsVisible.value) const ReactionButton(),
-        Container(
-          alignment: Alignment.topCenter,
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8).r,
-          child: Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 40.h,
-                  child: TextFormField(
-                    style: MTextStyle.captionRegular,
-                    controller: textController,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                      hintText: "Type your comment here...",
+    return BlocListener<ChatBloc, ChatState>(
+      listenWhen: (p, c) => p.onSend != c.onSend,
+      listener: (context, state) {
+        state.onSend.fold(() => null, (a) {
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        });
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        fit: StackFit.passthrough,
+        children: [
+          if (isReactionsVisible.value) const ReactionButton(),
+          Container(
+            alignment: Alignment.topCenter,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8).r,
+            child: Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 40.h,
+                    child: TextFormField(
+                      style: MTextStyle.captionRegular,
+                      controller: contentController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ).r,
+                        hintText: 'Type your comment here...',
+                      ),
                     ),
                   ),
                 ),
-              ),
-              MCore.large.horizontalSpace,
-              MIconButton(
-                size: 40.r,
-                iconSize: 20.r,
-                icon: const Icon(Icons.face),
-                isFilled: true,
-                fillColor: colorScheme.outlineVariant2,
-                onPressed: () =>
-                    isReactionsVisible.value = !isReactionsVisible.value,
-              ),
-              if (isSendVisible.value) ...[
-                MCore.small.horizontalSpace,
+                MCore.large.horizontalSpace,
                 MIconButton(
-                  icon: const Icon(MIcons.send),
-                  isFilled: true,
-                  fillColor: colorScheme.primary,
-                  color: colorScheme.onPrimary,
                   size: 40.r,
                   iconSize: 20.r,
-                  onPressed: onSubmit,
+                  icon: const Icon(Icons.face),
+                  isFilled: true,
+                  fillColor: colorScheme.outlineVariant2,
+                  onPressed: () =>
+                      isReactionsVisible.value = !isReactionsVisible.value,
                 ),
+                if (isSendVisible.value) ...[
+                  MCore.small.horizontalSpace,
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) => state.maybeWhen(
+                      orElse: () => const SizedBox(),
+                      authenticated: (credentials) => MIconButton(
+                        icon: const Icon(MIcons.send),
+                        isFilled: true,
+                        fillColor: colorScheme.primary,
+                        color: colorScheme.onPrimary,
+                        size: 40.r,
+                        iconSize: 20.r,
+                        onPressed: () {
+                          bloc.add(
+                            ChatEvent.sendMessage(
+                              content: contentController.text,
+                              broadcastId: broadcastId,
+                            ),
+                          );
+                          scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                          contentController.clear();
+                          ChatEvent.getMessages(broadcastId);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
+
+/*
+scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );*/
 
 class ReactionButton extends StatelessWidget {
   const ReactionButton({super.key});

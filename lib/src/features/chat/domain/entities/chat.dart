@@ -12,17 +12,21 @@ class Chat with _$Chat {
     required DateTime createdAt,
     DateTime? updatedAt,
     required String senderId,
+    required String fullName,
+    String? imageUrl,
     required String broadcastId,
   }) = _Chat;
 
   factory Chat.empty() {
     return Chat(
-      id: "",
-      content: IChatContent(""),
+      id: '',
+      content: IChatContent(''),
       createdAt: DateTime.now(),
       updatedAt:  null,
-      senderId: "",
-      broadcastId: "",
+      senderId: '',
+      broadcastId: '',
+      fullName: '',
+      imageUrl: '',
     );
   }
 }

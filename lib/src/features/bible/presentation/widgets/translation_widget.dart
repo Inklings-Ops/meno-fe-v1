@@ -13,7 +13,7 @@ class TranslationWidget extends StatelessWidget {
     return ListTile(
       title: MText(name),
       titleTextStyle: MTextStyle.bodyMedium,
-      subtitle: const MText("New Living Translation"),
+      subtitle: const MText('New Living Translation'),
       subtitleTextStyle: MTextStyle.microRegular,
       contentPadding: const EdgeInsets.symmetric(horizontal: 24),
       tileColor: colorScheme.outlineVariant2,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
@@ -17,26 +18,13 @@ class AuthLocalDatasource {
   AuthLocalDatasource({required SecureStorageService storage})
       : _storage = storage;
 
-  Future<bool> get hasAllUserCredentials {
-    return _storage.hasKey(MKeys.allUserCredentialsKey);
-  }
-
-  Future<bool> get hasToken => _storage.hasKey(MKeys.currentUserTokenKey);
-
-  Future<bool> get hasUser => _storage.hasKey(MKeys.currentUserKey);
-
   /// Deletes all auth data from the local storage.
   Future<void> deleteAll() => _storage.deleteAll();
 
-  Future<void> deleteCurrentUserCredentials() => Future.wait([
-        _storage.delete(MKeys.currentUserKey),
-        _storage.delete(MKeys.currentUserTokenKey),
-      ]);
+  Future<void> deleteCurrentUserCredential() =>
+      _storage.delete(MKeys.authUserCredentialKey);
 
-  Future<void> deleteCurrentUserToken() =>
-      _storage.delete(MKeys.currentUserTokenKey);
-
-  Future<Map<String, UserCredentialsDto>?> getAllUserCredentials() async {
+  Future<Map<String, UserCredentialDto>?> get getAllUserCredentials async {
     final encodedString = await _storage.read(MKeys.allUserCredentialsKey);
 
     if (encodedString != null) {
@@ -44,7 +32,7 @@ class AuthLocalDatasource {
       final userCredentialsMap = decodedMap.map(
         (key, value) => MapEntry(
           key,
-          UserCredentialsDto.fromJson(value as Map<String, dynamic>),
+          UserCredentialDto.fromJson(value as Map<String, dynamic>),
         ),
       );
       return userCredentialsMap;
@@ -52,41 +40,39 @@ class AuthLocalDatasource {
     return null;
   }
 
-  Future<UserDto?> getCurrentUser() async {
-    final String? jsonString = await _storage.read(MKeys.currentUserKey);
-    if (jsonString == null) {
-      return null;
-    }
-    return UserDto.fromJson(jsonDecode(jsonString));
+  Future<UserDto?> get getCurrentUser async {
+    final credential = await getUserCredential();
+    return credential?.user;
   }
 
-  Future<UserToken?> getCurrentUserToken() async {
-    final String? token = await _storage.read(MKeys.currentUserTokenKey);
-    if (token == null) {
-      return null;
-    }
-    return token;
+  Future<UserToken?> get getCurrentUserToken async {
+    final credential = await getUserCredential();
+    return credential?.token;
   }
 
-  Future<UserCredentialsDto?> getUserCredentialById(String id) async {
-    final credentialMap = await getAllUserCredentials();
+  Future<UserCredentialDto?> getUserCredential() async {
+    final jsonString = await _storage.read(MKeys.authUserCredentialKey);
+
+    if (jsonString == null) return null;
+
+    return UserCredentialDto.fromJson(jsonDecode(jsonString));
+  }
+
+  Future<UserCredentialDto?> getUserCredentialById(String id) async {
+    final credentialMap = await getAllUserCredentials;
     return credentialMap?[id];
   }
 
-  Future<void> storeAllUserCredentials(UserCredentialsDto dto) async {
-    final credentialsMap = await getAllUserCredentials() ?? {};
+  Future<void> storeAuthUserCredentials(UserCredentialDto dto) async {
+    final encodedString = jsonEncode(dto.toJson());
+    await _storage.write(MKeys.authUserCredentialKey, value: encodedString);
+  }
+
+  Future<void> storeAllUserCredentials(UserCredentialDto dto) async {
+    final credentialsMap = await getAllUserCredentials ?? {};
     credentialsMap[dto.user.id] = dto;
 
     final encodedString = jsonEncode(credentialsMap);
     await _storage.write(MKeys.allUserCredentialsKey, value: encodedString);
-  }
-
-  Future<void> storeCurrentToken(UserToken token) async {
-    await _storage.write(MKeys.currentUserTokenKey, value: token);
-  }
-
-  Future<void> storeCurrentUser(UserDto dto) async {
-    final String encodedString = jsonEncode(dto.toJson());
-    await _storage.write(MKeys.currentUserKey, value: encodedString);
   }
 }

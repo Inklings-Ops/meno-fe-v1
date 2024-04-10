@@ -16,11 +16,30 @@ Future<List<Broadcast?>> recentBroadcasts(
   // final twoDaysAgo = today.subtract(const Duration(days: 2));
 
   final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
-        // endTimeGT: twoDaysAgo.toIso8601String(),
-        // endTimeLT: today.toIso8601String(),
-        orderBy: "ASC",
-        sortBy: "endTime",
         size: limit,
+        orderBy: 'DESC',
+        sortBy: 'startTime',
+        // endTimeGT: twoDaysAgo.toIso8601String(),
+      );
+
+  return result.fold((l) => [], (List<Broadcast?> r) => r);
+}
+
+@riverpod
+Future<List<Broadcast?>> myRecentBroadcasts(
+  MyRecentBroadcastsRef ref, {
+  int? limit,
+}) async {
+  const AsyncValue.loading();
+
+  final today = DateTime.now();
+  final twoDaysAgo = today.subtract(const Duration(days: 2));
+
+  final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
+        size: limit,
+        orderBy: 'DESC',
+        sortBy: 'startTime',
+        endTimeGT: twoDaysAgo.toIso8601String(),
       );
 
   return result.fold((l) => [], (List<Broadcast?> r) => r);
@@ -29,9 +48,7 @@ Future<List<Broadcast?>> recentBroadcasts(
 @riverpod
 class BroadcastList extends _$BroadcastList {
   @override
-  AsyncValue<List<Broadcast?>> build() => const AsyncValue.data([]);
-
-  IBroadcastFacade get _facade => ref.read(broadcastFacadeProvider);
+  Future<List<Broadcast?>> build() async => [];
 
   Future<void> recentBroadcasts([int? limit]) async {
     state = const AsyncValue.loading();
@@ -39,11 +56,12 @@ class BroadcastList extends _$BroadcastList {
     final today = DateTime.now();
     final twoDaysAgo = today.subtract(const Duration(days: 2));
 
-    final result = await _facade.getBroadcasts(
-      endTimeGT: twoDaysAgo.toIso8601String(),
-      endTimeLT: today.toIso8601String(),
-      size: limit,
-    );
+    final result = await ref.read(broadcastFacadeProvider).getBroadcasts(
+          size: limit,
+          orderBy: 'DESC',
+          sortBy: 'startTime',
+          endTimeGT: twoDaysAgo.toIso8601String(),
+        );
 
     state = result.fold(
       (l) => AsyncValue.error(l, StackTrace.current),

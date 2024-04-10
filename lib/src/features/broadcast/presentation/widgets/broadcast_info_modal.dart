@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 
-import '../../application/broadcast/broadcast_notifier.dart';
+import '../../../../services/meno/meno_bloc.dart';
+import '../../application/broadcast/broadcast_bloc.dart';
 import '../../domain/domain.dart';
 import 'broadcast_status_widget.dart';
 
-class BroadcastInfoModal extends ConsumerWidget {
-  final bool isBroadcasting;
+class BroadcastInfoModal extends StatelessWidget {
+  final bool isStreaming;
   final Broadcast broadcast;
 
   const BroadcastInfoModal({
     super.key,
     required this.broadcast,
-    this.isBroadcasting = false,
+    this.isStreaming = false,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
-
-    final broadcastState = ref.watch(broadcastNotifierProvider);
 
     return MModal(
       builder: (context) => Column(
@@ -55,34 +55,39 @@ class BroadcastInfoModal extends ConsumerWidget {
             ),
           ),
           24.verticalSpace,
-          if (!isBroadcasting) ...[
-            const MModalListTile(
-              leading: Icon(MIcons.arrow_narrow_down_left),
-              title: "Minimize Stream",
+          if (isStreaming) ...[
+            MModalListTile(
+              leading: const Icon(MIcons.arrow_narrow_down_left),
+              title: 'Minimize Stream',
+              onTap: () => context.go(Routes.home),
             ),
             const MModalListTile(
               leading: Icon(MIcons.user_minus_01),
-              title: "Unsubscribe",
+              title: 'Unsubscribe',
             ),
           ],
           const MModalListTile(
             leading: Icon(MIcons.share),
-            title: "Share",
+            title: 'Share',
           ),
           const MModalListTile(
             leading: Icon(MIcons.link_02),
-            title: "Copy Link",
+            title: 'Copy Link',
           ),
-          if (broadcastState.status == Status.offAir && isBroadcasting)
-            MModalListTile(
-              leading: Icon(MIcons.trash, color: colorScheme.error),
-              title: "Delete Broadcast",
-              titleColor: colorScheme.error,
-              onTap: () {
-                final id = ref.read(broadcastNotifierProvider).broadcast.id;
-                ref.read(broadcastNotifierProvider.notifier).deletePressed(id);
-                context.pop();
-              },
+          if (!isStreaming)
+            BlocBuilder<MenoBloc, MenoState>(
+              builder: (context, state) => state.maybeWhen(
+                orElse: () => const SizedBox(),
+                live: (_) => MModalListTile(
+                  leading: Icon(MIcons.trash, color: colorScheme.error),
+                  title: 'Delete Broadcast',
+                  titleColor: colorScheme.error,
+                  onTap: () => context
+                    ..read<BroadcastBloc>()
+                        .add(BroadcastEvent.delete(broadcast.id))
+                    ..pop(),
+                ),
+              ),
             ),
           24.verticalSpace,
         ],

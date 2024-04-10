@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -38,9 +39,11 @@ class MRecentlyLiveListTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      shape: SmoothRectangleBorder(
         side: BorderSide(color: colorScheme.outlineVariant1!, width: 1),
+        borderRadius: const SmoothBorderRadius.all(
+          SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+        ),
       ),
       minLeadingWidth: 12,
       leading: SizedBox(
@@ -59,7 +62,9 @@ class MRecentlyLiveListTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                        image: imageProvider, fit: BoxFit.cover),
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 placeholder: (context, url) => const MShimmer(borderRadius: 12),
@@ -106,9 +111,11 @@ class _Skeleton extends StatelessWidget {
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      shape: SmoothRectangleBorder(
         side: BorderSide(color: colorScheme.outlineVariant1!, width: 1),
+        borderRadius: const SmoothBorderRadius.all(
+          SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+        ),
       ),
       minLeadingWidth: 12,
       leading: const MShimmer(borderRadius: 12, width: 79, height: 68),

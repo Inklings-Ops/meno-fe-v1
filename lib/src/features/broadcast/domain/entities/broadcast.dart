@@ -32,8 +32,8 @@ class Broadcast with _$Broadcast {
 
   factory Broadcast.empty() {
     return Broadcast(
-      id: "",
-      title: IBroadcastTitle(""),
+      id: '',
+      title: IBroadcastTitle(''),
       creator: Participant.empty(),
     );
   }

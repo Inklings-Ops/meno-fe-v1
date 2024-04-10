@@ -183,7 +183,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
       keyboardType: widget.keyboardType,
       obscureText: obscureText && widget.isPassword,
       textInputAction: widget.textInputAction,
-      maxLength: 244,
+      maxLength: widget.maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       onChanged: widget.onChanged,
       obscuringCharacter: "*",

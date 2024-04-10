@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/application.dart';
 import '../../widgets/widgets.dart';
 
-class CreateNewPasswordPage extends ConsumerWidget {
+class CreateNewPasswordPage extends StatelessWidget {
   const CreateNewPasswordPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MScaffold(
-      appBar: MAppBar.primary(title: ("Create New Password")),
+      appBar: MAppBar.primary(title: ('Create New Password')),
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
@@ -23,30 +21,30 @@ class CreateNewPasswordPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 24.verticalSpace,
-                UserAccountDetails(user: ref.watch(userProvider)),
+                const UserAccountDetails(),
                 MCore.small.verticalSpace,
                 const MText(
-                  "Set up new password to continue your experience",
+                  'Set up new password to continue your experience',
                   maxLines: 2,
                   style: MTextStyle.captionMedium,
                 ),
                 MCore.xxLarge.verticalSpace,
                 const MTextFormField(
-                  label: "Password",
+                  label: 'Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
-                  hint: "Enter your password",
+                  hint: 'Enter your password',
                 ),
                 24.verticalSpace,
                 const MTextFormField(
-                  label: "Confirm Password",
+                  label: 'Confirm Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
-                  hint: "Enter your password",
+                  hint: 'Enter your password',
                 ),
                 MCore.xxLarge.verticalSpace,
                 MPrimaryButton(
-                  label: "Reset Password",
+                  label: 'Reset Password',
                   onPressed: () => context.push(Routes.resetPwdSuccess),
                 ),
               ],

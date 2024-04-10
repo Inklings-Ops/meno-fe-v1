@@ -12,7 +12,7 @@ class AddCohostModal extends StatelessWidget {
     final colorScheme = MColorScheme.of(context)!;
 
     return MModal(
-      title: "Add Co-host",
+      title: 'Add Co-host',
       builder: (context) => SingleChildScrollView(
         padding: MediaQuery.viewInsetsOf(context).r,
         child: Column(
@@ -20,10 +20,10 @@ class AddCohostModal extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const MTextFormField(
-              label: "Search",
+              label: 'Search',
               prefixIcon: MIcons.search,
               showLabel: false,
-              hint: "Search",
+              hint: 'Search',
             ),
             MCore.large.verticalSpace,
             Row(
@@ -37,7 +37,7 @@ class AddCohostModal extends StatelessWidget {
                 ),
                 MCore.micro.horizontalSpace,
                 MText(
-                  "Select not more than 1 co-host",
+                  'Select not more than 1 co-host',
                   color: colorScheme.onBackgroundVariant,
                 ),
               ],
@@ -46,7 +46,7 @@ class AddCohostModal extends StatelessWidget {
             const CohostListTile(),
             24.verticalSpace,
             MCore.large.verticalSpace,
-            MPrimaryButton(label: "Done", onPressed: () {}),
+            MPrimaryButton(label: 'Done', onPressed: () {}),
           ],
         ),
       ),

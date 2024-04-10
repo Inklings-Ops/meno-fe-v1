@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 import '../../../../../router/router.dart';
-import '../../../application/broadcast_list/broadcast_list_provider.dart';
+import '../../../application/recently_live/recently_live_cubit.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_list_widget.dart';
 
-class RecentlyLive extends ConsumerWidget {
+class RecentlyLive extends StatelessWidget {
   const RecentlyLive({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final broadcasts = ref.watch(recentBroadcastsProvider(limit: 8));
-
-    if (broadcasts.isLoading) {
-      return const _BuildColumn(child: _SkeletonList());
-    }
-
-    if (broadcasts.hasValue && broadcasts.value?.isNotEmpty == true) {
-      return _BuildColumn(
-        child: BroadcastListWidget(
-          itemCount: broadcasts.value!.length,
-          itemBuilder: (context, i) => _RecentlyLiveCard(
-            broadcast: broadcasts.value![i]!,
+  Widget build(BuildContext context) {
+    return BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
+      bloc: context.read<RecentlyLiveCubit>()..fetch(),
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        loading: () => const _BuildColumn(child: _SkeletonList()),
+        success: (broadcasts) => _BuildColumn(
+          child: BroadcastListWidget(
+            itemCount: 6,
+            itemBuilder: (context, i) => _RecentlyLiveCard(
+              broadcast: broadcasts[i]!,
+            ),
           ),
         ),
-      );
-    }
-
-    return const SizedBox();
+      ),
+    );
   }
 }
 
@@ -43,26 +40,26 @@ class _BuildColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        20.verticalSpace,
+        MCore.xxxLarge.verticalSpace,
         MHeader(
-          title: "Recently Live",
-          actionTitle: "See all",
+          title: 'Recently Live',
+          actionTitle: 'See all',
           action: () => context.push(Routes.recentlyLive),
         ),
         24.verticalSpace,
-        LimitedBox(maxHeight: 206, child: child),
+        LimitedBox(maxHeight: 176, child: child),
       ],
     );
   }
 }
 
-class _RecentlyLiveCard extends HookConsumerWidget {
+class _RecentlyLiveCard extends StatelessWidget {
   final Broadcast broadcast;
 
   const _RecentlyLiveCard({required this.broadcast});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MCard.recentlyLive(
       title: broadcast.title.get()!,
       host: broadcast.fullName,

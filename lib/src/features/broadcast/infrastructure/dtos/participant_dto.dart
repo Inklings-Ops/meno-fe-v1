@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/domain.dart';
+
 part 'participant_dto.freezed.dart';
 part 'participant_dto.g.dart';
 
@@ -23,4 +25,15 @@ class ParticipantDto with _$ParticipantDto {
 
   @override
   Map<String, dynamic> toJson() => _$ParticipantDtoToJson(this);
+}
+
+
+extension ParticipantDtoToDomain on ParticipantDto {
+  Participant get toDomain => Participant(
+        id: id,
+        fullName: fullName,
+        imageUrl: imageUrl,
+        isCreator: isCreator,
+        isCohost: isCohost,
+      );
 }

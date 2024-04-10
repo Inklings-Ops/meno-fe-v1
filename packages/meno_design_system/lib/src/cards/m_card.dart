@@ -25,12 +25,12 @@ class MCard extends MStyledCard {
   }) = _RecentlyLiveCard;
 
   const MCard._({
-    Key? key,
+    super.key,
     required super.child,
     required super.title,
     super.subtitle,
     super.onTap,
-  }) : super(key: key);
+  });
 }
 
 class _LiveCard extends MCard {

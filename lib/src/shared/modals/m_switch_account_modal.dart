@@ -1,82 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
+
 
 import '../../features/auth/application/application.dart';
 import '../../features/auth/domain/domain.dart';
 import '../../router/router.dart';
 
-class MSwitchAccountModal extends HookConsumerWidget {
+class MSwitchAccountModal extends StatelessWidget {
   const MSwitchAccountModal({super.key});
 
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool hasOneAccount = ref.watch(hasOneAccountProvider);
+  Widget build(BuildContext context) {
 
-    Future<void>? dialog;
-
-    ref.listen(authProvider, (previous, next) {
-      if (next.loading && dialog == null) {
-        dialog = context.showLoadingDialog();
-      }
-
-      next.option.fold(
-        () => null,
-        (either) => either.fold(
-          (failure) => failure.mapOrNull(
-            userTokenExpired: (_) {
-              // TODO: Show snackbar
-              context.go(Routes.login);
-            },
+    return BlocConsumer<AccountCubit, AccountState>(
+      listener: (context, state) {
+        state.option.fold(
+          () => null,
+          (either) => either.fold(
+            (failure) => failure.mapOrNull(
+              userTokenExpired: (_) => context.go(Routes.login),
+            ),
+            (r) => null,
           ),
-          (r) => dialog = null,
-        ),
-      );
-    });
-
-    if (hasOneAccount) {
-      return const _SwitchAccountModal1();
-    } else {
-      return const _SwitchAccountModal2();
-    }
+        );
+      },
+      builder: (context, state) {
+        if (state.allCredentials.length == 1) {
+          return const _SwitchAccountModal1();
+        } else {
+          return const _SwitchAccountModal2();
+        }
+      },
+    );
   }
 }
 
-class _AccountListTile extends ConsumerWidget {
-  final UserCredentials credentials;
+class _AccountListTile extends StatelessWidget {
+  final UserCredential credentials;
 
-  const _AccountListTile({
-    super.key,
-    required this.credentials,
-  });
+  const _AccountListTile({required this.credentials});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = MTextTheme.of(this);
+  Widget build(BuildContext context) {
 
-    final currentUser = ref.watch(userProvider);
-    final userAccount = credentials.user;
-    final key = ObjectKey(userAccount);
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) => state.maybeMap(
+        orElse: () => const SizedBox(),
+        authenticated: (v) => buildRadioTile(context, v.credentials),
+        partiallyAuthenticated: (v) => buildRadioTile(context, v.credentials),
+      ),
+    );
+  }
 
-    return RadioListTile<User>(
-      key: key,
-      value: userAccount,
-      groupValue: currentUser,
-      onChanged: (_) =>
-          ref.read(authProvider.notifier).switchAccount(credentials),
+  Widget buildRadioTile(BuildContext context, UserCredential auth) {
+    final user = credentials.user;
+    return RadioListTile<UserCredential>(
+      key: ObjectKey(auth),
+      value: credentials,
+      groupValue: auth,
+      onChanged: (value) {
+        context.read<AccountCubit>().switchAccount(value);
+        context.pop();
+      },
       controlAffinity: ListTileControlAffinity.trailing,
       contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
       dense: true,
       title: Row(
         children: [
-          MAvatar(radius: 20, url: userAccount.imageUrl),
+          MAvatar(radius: 20, url: user.imageUrl),
           MCore.large.horizontalSpace,
           MText(
-            userAccount.fullName.get()!,
-            style: textTheme?.bodyRegular,
+            user.fullName.get()!,
+            style: MTextStyle.bodyRegular,
           ),
         ],
       ),
@@ -84,17 +83,17 @@ class _AccountListTile extends ConsumerWidget {
   }
 }
 
-class _AddAccountTile extends ConsumerWidget {
-  const _AddAccountTile({super.key});
+class _AddAccountTile extends StatelessWidget {
+  const _AddAccountTile();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
 
     return InkWell(
       onTap: () {
         context.pop();
-        ref.read(authProvider.notifier).logout();
+        context.read<AuthBloc>().add(const AuthLogoutRequested());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -107,7 +106,7 @@ class _AddAccountTile extends ConsumerWidget {
             MCore.medium.horizontalSpace,
             Expanded(
               child: MText(
-                "Add Account",
+                'Add Account',
                 style: MTextTheme.of(context)?.bodyMedium,
                 color: colorScheme.primary,
               ),
@@ -119,27 +118,27 @@ class _AddAccountTile extends ConsumerWidget {
   }
 }
 
-class _SwitchAccountModal1 extends ConsumerWidget {
+class _SwitchAccountModal1 extends StatelessWidget {
   const _SwitchAccountModal1();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MModal(
-      title: "Switch Account",
+      title: 'Switch Account',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           MPrimaryButton(
-            label: "Log in to Existing Account",
+            label: 'Log in to Existing Account',
             onPressed: () {
               context.pop();
-              ref.read(authProvider.notifier).logout();
-              context.goNamed(Routes.login);
+              context.read<AuthBloc>().add(const AuthLogoutRequested());
+              context.go(Routes.login);
             },
           ),
           MTextButton(
-            label: "Create New Account",
+            label: 'Create New Account',
             onPressed: () {
               context.pop();
               context.go(Routes.registerWithoutLeading);
@@ -151,25 +150,24 @@ class _SwitchAccountModal1 extends ConsumerWidget {
   }
 }
 
-class _SwitchAccountModal2 extends ConsumerWidget {
-  const _SwitchAccountModal2({super.key});
+class _SwitchAccountModal2 extends StatelessWidget {
+  const _SwitchAccountModal2();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<UserCredentials> allCredentials =
-        ref.watch(allCredentialsProvider);
-
-    return MModal(
-      title: "Switch Account",
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (UserCredentials credentials in allCredentials) ...[
-            _AccountListTile(credentials: credentials)
+  Widget build(BuildContext context) {
+    return BlocBuilder<AccountCubit, AccountState>(
+      builder: (context, state) => MModal(
+        title: 'Switch Account',
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...state.allCredentials.map(
+              (credentials) => _AccountListTile(credentials: credentials),
+            ),
+            const SizedBox(height: 24),
+            const _AddAccountTile(),
           ],
-          const SizedBox(height: 24),
-          const _AddAccountTile(),
-        ],
+        ),
       ),
     );
   }

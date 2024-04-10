@@ -1,24 +1,22 @@
-part of "stream_notifier.dart";
+part of 'stream_bloc.dart';
 
 @freezed
 class StreamState with _$StreamState {
   factory StreamState({
-    required JoinBroadcastEntity broadcast,
-    required Status status,
+    required JoinBroadcastEntity joinBroadcast,
     required bool loading,
-    required bool showError,
+    required String? liveKitError,
     required Option<Either<BroadcastException, JoinBroadcastEntity>> onJoined,
-    required Option<Either<BroadcastException, Unit>> onLeave,
+    required Option<Unit> onLeave,
   }) = _StreamState;
 
   factory StreamState.initial() {
     return StreamState(
-      broadcast: JoinBroadcastEntity.empty(),
-      status: Status.offAir,
+      joinBroadcast: JoinBroadcastEntity.empty(),
       loading: false,
-      showError: false,
       onJoined: none(),
       onLeave: none(),
+      liveKitError: null,
     );
   }
 }

@@ -1,45 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../../application/timer/timer_notifier.dart';
+import '../../../application/timer/timer_cubit.dart';
 
-class BroadcastTimer extends ConsumerWidget {
+class BroadcastTimer extends StatelessWidget {
   final bool showTimeAgo;
   final MTextStyle? textStyle;
 
   const BroadcastTimer({super.key, this.showTimeAgo = true, this.textStyle});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
 
-    final elapsedTime = ref.watch(timerNotifierProvider.select((value) {
-      return "${value.hours}:${value.minutes}:${value.seconds}";
-    }));
+    return BlocBuilder<TimerCubit, TimerState>(
+      bloc: context.watch<TimerCubit>(),
+      buildWhen: (p, c) => p != c,
+      builder: (context, state) {
+        final elapsedTime = '${state.hours}:${state.minutes}:${state.seconds}';
 
-    final timeAgo = ref.watch(timerNotifierProvider.select((v) => v.timeAgo));
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        MText(
-          elapsedTime,
-          style: textStyle ?? MTextStyle.captionRegular,
-          color: colorScheme.onDisabledContainer,
-        ),
-        if (timeAgo != null && showTimeAgo) ...[
-          MCore.small.horizontalSpace,
-          const MDot(),
-          MCore.small.horizontalSpace,
-          MText(
-            timeAgo,
-            style: MTextStyle.captionRegular,
-            color: colorScheme.onDisabledContainer,
-          ),
-        ],
-      ],
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            MText(
+              elapsedTime,
+              style: textStyle ?? MTextStyle.captionRegular,
+              color: colorScheme.onDisabledContainer,
+            ),
+            if (state.timeAgo != null && showTimeAgo) ...[
+              MCore.small.horizontalSpace,
+              const MDot(),
+              MCore.small.horizontalSpace,
+              MText(
+                state.timeAgo!,
+                style: MTextStyle.captionRegular,
+                color: colorScheme.onDisabledContainer,
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }
