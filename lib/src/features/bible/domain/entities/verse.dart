@@ -5,18 +5,15 @@ part 'verse.freezed.dart';
 @freezed
 class Verse with _$Verse {
   const factory Verse({
-    String? bookId,
-    String? bookName,
-    int? chapter,
-    String? text,
-    int? verse,
+    int? id,
+    required String bookName,
+    required int book,
+    required int chapter,
+    required int verse,
+    required String text,
+    String? reference,
+    String? translation,
+    required bool isHighlighted,
+    required int highlightColor,
   }) = _Verse;
-
-  factory Verse.empty() => const Verse(
-        bookId: 'Gen',
-        bookName: 'Genesis',
-        chapter: 1,
-        text: '',
-        verse: 1,
-      );
 }

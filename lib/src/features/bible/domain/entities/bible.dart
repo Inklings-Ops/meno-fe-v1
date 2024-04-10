@@ -2,15 +2,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'verse.dart';
 
-part 'chapter.freezed.dart';
+part 'bible.freezed.dart';
 
 @freezed
-class Chapter with _$Chapter {
-  const factory Chapter({
+class Bible with _$Bible {
+  factory Bible({
     required int id,
-    required String bookName,
-    required int book,
     required String translation,
     required List<Verse> verses,
-  }) = _Chapter;
+  }) = _Bible;
 }
