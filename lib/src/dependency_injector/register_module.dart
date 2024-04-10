@@ -11,8 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/clients/m_clients.dart';
 import '../core/env/env.dart';
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart';
+import '../features/notes/infrastructure/datasources/note_remote_datasource.dart';
 import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart';
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart';
+import '../services/objectbox_service.dart';
 
 final Dio dio = MClients.dioClient(Env.menoApiUrl);
 
@@ -34,6 +36,11 @@ abstract class RegisterModule {
   }
 
   @lazySingleton
+  NoteRemoteDatasource get noteRemoteDatasource {
+    return NoteRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
+  }
+
+  @lazySingleton
   InternetConnectionChecker get internetChecker => InternetConnectionChecker();
 
   @lazySingleton
@@ -41,7 +48,6 @@ abstract class RegisterModule {
 
   @preResolve
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
-
 
   @lazySingleton
   ProfileRemoteDatasource get profileRemoteDatasource {
@@ -59,4 +65,7 @@ abstract class RegisterModule {
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
         aOptions: AndroidOptions(encryptedSharedPreferences: true),
       );
+
+  @preResolve
+  Future<ObjectBoxService> get obj => ObjectBoxService.create();
 }

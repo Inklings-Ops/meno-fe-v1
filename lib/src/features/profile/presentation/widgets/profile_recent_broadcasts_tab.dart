@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_list/broadcast_list_provider.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
 import '../../../../router/router.dart';
@@ -14,35 +13,34 @@ class ProfileRecentBroadcastsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final broadcasts = ref.watch(myRecentBroadcastsProvider(limit: 8));
+    final List<Broadcast?> broadcasts = [];
 
+    // if (broadcasts.isLoading) {
+    //   return const _LoadingList();
+    // }
 
-    if (broadcasts.isLoading) {
-      return const _LoadingList();
-    }
+    // if (broadcasts.hasError && !broadcasts.isLoading) {
+    // return Container(
+    //   margin: const EdgeInsets.only(top: 40).r,
+    //   child: Column(
+    //     crossAxisAlignment: CrossAxisAlignment.center,
+    //     children: [
+    //       Icon(Icons.refresh, size: 40.r),
+    //       const MText(
+    //         'Reload ',
+    //         style: MTextStyle.captionMedium,
+    //         textAlign: TextAlign.center,
+    //       ),
+    //     ],
+    //   ),
+    // );
+    // }
 
-    if (broadcasts.hasError && !broadcasts.isLoading) {
-      return Container(
-        margin: const EdgeInsets.only(top: 40).r,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.refresh, size: 40.r),
-            const MText(
-              'Reload ',
-              style: MTextStyle.captionMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (broadcasts.hasValue && broadcasts.value!.isEmpty) {
+    if (broadcasts.isEmpty) {
       return EmptyStateWidget(actionTitle: 'Broadcasts', action: () {});
     }
 
-    return _LoadedList(broadcasts: broadcasts.value!);
+    return _LoadedList(broadcasts: broadcasts);
   }
 }
 

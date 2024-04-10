@@ -60,6 +60,8 @@ dependencies:
   path_provider: ^2.1.2
   fluttertoast: ^8.2.4
   flow_builder: ^0.0.10
+  objectbox_flutter_libs: ^2.5.0
+  objectbox: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +79,7 @@ dev_dependencies:
   matcher: ^0.12.16
   go_router_builder: ^2.3.3
   build_verify: ^3.1.0
+  objectbox_generator: ^2.5.0
 
 # flutter_gen:
 #   output: lib/core/gen/
