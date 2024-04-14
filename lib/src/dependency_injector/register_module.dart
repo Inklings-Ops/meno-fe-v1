@@ -5,11 +5,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:meno_fe_v1/src/features/auth/infrastructure/datasources/auth_remote_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/clients/m_clients.dart';
 import '../core/env/env.dart';
+import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart';
+import '../features/bible/infrastructure/datasources/remote/bible_remote_datasource.dart';
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart';
 import '../features/notes/infrastructure/datasources/note_remote_datasource.dart';
 import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart';
@@ -38,6 +39,11 @@ abstract class RegisterModule {
   @lazySingleton
   NoteRemoteDatasource get noteRemoteDatasource {
     return NoteRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
+  }
+
+  @lazySingleton
+  BibleRemoteDatasource get bibleRemoteDatasource {
+    return BibleRemoteDatasource(dio, baseUrl: Env.bibleApiUrl);
   }
 
   @lazySingleton

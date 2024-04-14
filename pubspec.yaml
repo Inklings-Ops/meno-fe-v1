@@ -107,6 +107,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/json/books.json
+    - assets/json/kjv.json
   
   fonts:
     - family: MIcons
