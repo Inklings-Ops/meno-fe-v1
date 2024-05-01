@@ -10,7 +10,6 @@ import '../../../../../router/router.dart';
 import '../../../../broadcast/application/recently_live/recently_live_cubit.dart';
 import '../../../../onboarding/application/onboarding_cubit.dart';
 import '../../../../profile/application/application.dart';
-import '../../../application/auth/auth_bloc.dart';
 import '../../../application/login/login_cubit.dart';
 import '../../widgets/widgets.dart';
 
@@ -83,12 +82,6 @@ class _Email extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<LoginCubit>();
 
-    final userEmail = context.select(
-      (AuthBloc b) => b.state.mapOrNull(
-        authenticated: (v) => v.credentials.user.email.get(),
-      ),
-    );
-
     return BlocBuilder<LoginCubit, LoginState>(
       buildWhen: (p, c) => p.email != c.email,
       builder: (context, state) => MTextFormField(
@@ -97,7 +90,7 @@ class _Email extends StatelessWidget {
         prefixIcon: MIcons.mail,
         keyboardType: TextInputType.emailAddress,
         enabled: !state.loading,
-        onChanged: (v) => bloc.emailChanged(isPasswordOnly ? userEmail! : v),
+        onChanged: isPasswordOnly ? null : (v) => bloc.emailChanged(v),
         validator: bloc.validateEmail,
       ),
     );
