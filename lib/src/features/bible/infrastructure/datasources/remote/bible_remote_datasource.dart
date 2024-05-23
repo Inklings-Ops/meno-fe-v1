@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 
 import '../../../../../core/env/env.dart';
 import '../../dtos/dtos.dart';
+import '../data_helper.dart';
 import 'bible_response.dart';
-
 
 class BibleRemoteDatasource {
   final Dio _dio;
   final String _baseUrl;
 
-  BibleRemoteDatasource(Dio dio, {
+  BibleRemoteDatasource(
+    Dio dio, {
     required String baseUrl,
   })  : _dio = dio,
         _baseUrl = baseUrl;
@@ -18,14 +19,20 @@ class BibleRemoteDatasource {
   Future<BibleResponse<List<TranslationDto>>> getTranslations() async {
     try {
       final response = await _dio.get('$_baseUrl/api/translations');
-      final bibleResponse = BibleResponse.fromJson(
-        response.data,
-        (p0) => (p0 as List<dynamic>)
-            .cast<Map<String, dynamic>>()
-            .map(TranslationDto.fromJson)
-            .toList(),
-      );
-      return bibleResponse;
+      // final bibleResponse = BibleResponse.fromJson(
+      //   response.data,
+      //   (p0) => (p0 as List<dynamic>)
+      //       .cast<Map<String, dynamic>>()
+      //       .map(TranslationDto.fromJson)
+      //       .toList(),
+      // );
+
+      final data = response.data as Map<String, dynamic>;
+
+      final List<String> stringList = data['data'].cast<String>();
+
+      final translations = stringList.map(handleFullTranslations).toList();
+      return BibleResponse<List<TranslationDto>>(data: translations);
     } on Exception catch (e) {
       throw Exception(e);
     }
@@ -34,10 +41,10 @@ class BibleRemoteDatasource {
   Future<List<VerseDto>> downloadBible(String translation) async {
     RootIsolateToken token = RootIsolateToken.instance!;
     final result = await _compute(token, translation);
-    return result.data;
+    return result;
   }
 
-  static Future<BibleResponse<List<VerseDto>>> _compute(
+  static Future<List<VerseDto>> _compute(
     RootIsolateToken token,
     String translation,
   ) async {
@@ -48,14 +55,15 @@ class BibleRemoteDatasource {
 
     try {
       final response = await dio.get(uri);
+
       final bibleResponse = BibleResponse.fromJson(
         response.data,
         (p0) => (p0 as List<dynamic>)
-            .map((v) => VerseDto.fromJson(v)
-                .copyWith(id: v['index'], translation: translation))
+            .map((v) => VerseDto.fromJson(v).copyWith(id: v['index']))
             .toList(),
       );
-      return bibleResponse;
+
+      return bibleResponse.data;
     } on Exception catch (e) {
       throw Exception(e);
     }

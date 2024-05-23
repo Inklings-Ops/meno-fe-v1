@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 import '../modals/m_switch_account_modal.dart';
 
@@ -13,23 +14,21 @@ extension MBottomSheetsX on BuildContext {
   }) {
     return showModalBottomSheet(
       context: this,
-      builder: (context) => child,
+      builder: (context) => Material(child: child),
       constraints: constraints,
+      backgroundColor: MColorScheme.of(this)?.background,
       isScrollControlled: isScrollControlled,
       useRootNavigator: useRootNavigator,
       isDismissible: isDismissible,
       enableDrag: enableDrag,
       showDragHandle: true,
+      useSafeArea: true,
     );
   }
 
-  Future showSwitchAccountSheet() =>
-      showModal(
+  Future showSwitchAccountSheet() => showModal(
         const MSwitchAccountModal(),
         isScrollControlled: true,
         useRootNavigator: true,
       );
-
-
-
 }

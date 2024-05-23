@@ -10,8 +10,8 @@ part 'bible_dto.freezed.dart';
 class BibleDto with _$BibleDto {
   @Entity(realClass: BibleDto)
   factory BibleDto({
-    @Id(assignable: true) required int id,
-    required String translation,
+    @Id() int? id,
+    @Unique() required String translation,
     required ToMany<VerseDto> verses,
   }) = _BibleDto;
 }

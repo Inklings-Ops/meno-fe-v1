@@ -10,7 +10,6 @@ class Verse with _$Verse {
     required String bookName,
     required int chapter,
     required String text,
-    required String translation,
     required int verse,
   }) = _Verse;
 }

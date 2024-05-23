@@ -8,8 +8,8 @@ part 'chapter_dto.freezed.dart';
 @freezed
 class ChapterDto with _$ChapterDto {
   factory ChapterDto({
-    required int id,
-    required String reference,
+    int? id,
+    required String book,
     required List<VerseDto> verses,
   }) = _ChapterDto;
 }
@@ -18,7 +18,7 @@ extension ChapterDtoX on ChapterDto {
   Chapter get toDomain {
     return Chapter(
       id: id,
-      reference: reference,
+      book: book,
       verses: verses.map((verse) => verse.toDomain).toList(),
     );
   }

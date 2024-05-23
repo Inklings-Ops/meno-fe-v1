@@ -12,7 +12,7 @@ class TranslationDto with _$TranslationDto {
   @Entity(realClass: TranslationDto)
   factory TranslationDto({
     @Id(assignable: true) int? id,
-    String? name,
+    required String name,
     required String abbreviation,
   }) = _TranslationDto;
 

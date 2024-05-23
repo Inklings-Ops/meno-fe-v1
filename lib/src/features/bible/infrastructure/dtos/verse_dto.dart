@@ -16,14 +16,8 @@ class VerseDto with _$VerseDto {
     @JsonKey(name: 'book_name') required String bookName,
     required int chapter,
     required String text,
-    @JsonKey(name: 'translation_id') required String translation,
     required int verse,
   }) = _VerseDto;
-
-  VerseDto._();
-
-  @Unique()
-  String get uniqueIdentifier => '$book-$chapter-$verse-$translation';
 
   factory VerseDto.fromJson(Map<String, dynamic> json) =>
       _$VerseDtoFromJson(json);
@@ -40,7 +34,6 @@ extension VerseDtoX on VerseDto {
       bookName: bookName,
       chapter: chapter,
       text: text,
-      translation: translation,
       verse: verse,
     );
   }

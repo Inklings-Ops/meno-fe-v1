@@ -7,11 +7,15 @@ import 'exceptions/exceptions.dart';
 /// for interacting with a Bible API. It contains methods to retrieve books of the Bible,
 /// translations available, and individual chapters and verses.
 abstract class IBibleFacade {
+  bool get isBibleEmpty;
+
   /// A Map of the Bible books to each of their individual chapters.
   Map<String, int> get books;
 
   /// A list of [Translation] objects representing all available translations of the Bible
-  Future<Either<BibleException, List<Translation>>> get translations;
+  Future<List<Translation>> get onlineTranslations;
+
+  List<Translation> get offlineTranslations;
 
   /// Retrieves a [Chapter] object representing the specified chapter of a book in a given translation.
   ///
@@ -51,5 +55,10 @@ abstract class IBibleFacade {
 
   /// Calls the remote data source to download the full Bible data if there is an update available,
   /// or if prompted by the user.
-  Future<Either<BibleException, Unit>> sync([String translation]);
+  Future<Either<BibleException, Unit>> sync([
+    String translation = 'kjv',
+    bool update = true,
+  ]);
+
+  Future<Either<BibleException, Unit>> syncFallback();
 }

@@ -7,8 +7,8 @@ part 'chapter.freezed.dart';
 @freezed
 class Chapter with _$Chapter {
   const factory Chapter({
-    required int id,
-    required String reference,
+    int? id,
+    required String book,
     required List<Verse> verses,
   }) = _Chapter;
 }

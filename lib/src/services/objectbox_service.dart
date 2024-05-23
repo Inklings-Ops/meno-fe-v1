@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:flutter/services.dart';
@@ -10,27 +11,52 @@ import '../features/bible/infrastructure/dtos/dtos.dart';
 class ObjectBoxService {
   late final Store store;
 
+  late Box<BibleDto> _bibleBox;
+  Box<BibleDto> get bibleBox => _bibleBox;
+
+  late Box<VerseDto> _verseBox;
+  Box<VerseDto> get verseBox => _verseBox;
+
   ObjectBoxService._create(this.store) {
-    // Add any additional setup code, e.g. build queries.
-
-    // store.box<VerseDto>().removeAll();
-
-    // Future.delayed(const Duration(seconds: 1), () async {
-    //   await storeBible(1, 'kjv');
-    // });
+    _bibleBox = store.box<BibleDto>();
+    _verseBox = store.box<VerseDto>();
   }
 
   /// Create an instance of ObjectBox to use throughout the app.
   static Future<ObjectBoxService> create() async {
     final docsDir = await getApplicationDocumentsDirectory();
-    final store = await openStore(directory: p.join(docsDir.path, 'meno'));
-    return ObjectBoxService._create(store);
+    var directory = p.join(docsDir.path, 'meno');
+
+    late Store newStore;
+
+    if (Store.isOpen(directory)) {
+      newStore = Store.attach(getObjectBoxModel(), directory);
+    } else {
+      newStore = await openStore(directory: directory);
+    }
+
+    return ObjectBoxService._create(newStore);
   }
 
-  Future<void> storeBible(int id, List<VerseDto> verses) async {
-    RootIsolateToken token = RootIsolateToken.instance!;
-    final box = store.box<VerseDto>();
-    await Isolate.run(() => _storeInObjectBoxIsolate(token, verses, box));
+  bool get isBibleEmpty => _bibleBox.isEmpty();
+
+  Future<void> storeBibleWithoutIsolate(
+      List<VerseDto> verses, String translation) async {
+    try {
+      const batchSize = 10000;
+      final totalItems = verses.length;
+
+      for (var i = 0; i < totalItems; i += batchSize) {
+        final end = (i + batchSize < totalItems) ? i + batchSize : totalItems;
+        final batch = verses.sublist(i, end);
+        await _verseBox.putManyAsync(batch);
+      }
+
+      final allVerses = ToMany<VerseDto>(items: _verseBox.getAll());
+      bibleBox.put(BibleDto(translation: translation, verses: allVerses));
+    } on ObjectBoxException catch (_) {
+      // print(e.message);
+    }
   }
 
   Future<void> storeTranslations(
@@ -44,21 +70,55 @@ class ObjectBoxService {
 
   static Future<void> _storeInObjectBoxIsolate<T>(
     RootIsolateToken token,
-    List<T> list,
+    T object,
     Box<T> box,
   ) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-    try {
-      const batchSize = 10000;
-      final totalItems = list.length;
 
-      for (var i = 0; i < totalItems; i += batchSize) {
-        final end = (i + batchSize < totalItems) ? i + batchSize : totalItems;
-        final batch = list.sublist(i, end);
-        await box.putManyAsync(batch);
+    try {
+      if (T is List<T>) {
+        const batchSize = 10000;
+        final totalItems = (object as List<T>).length;
+
+        for (var i = 0; i < totalItems; i += batchSize) {
+          final end = (i + batchSize < totalItems) ? i + batchSize : totalItems;
+          final batch = object.sublist(i, end);
+          await box.putManyAsync(batch);
+        }
+      } else {
+        await box.putAsync(object);
       }
     } on ObjectBoxException catch (_) {
       // print(e.message);
     }
   }
+
+  // static Future<void> _storeIsolate(
+  //   RootIsolateToken token,
+  //   List<VerseDto> verses,
+  //   String translation,
+  // ) async {
+  //   BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+
+  //   final store = Store(getObjectBoxModel());
+
+  //   final verseBox = store.box<VerseDto>();
+  //   final bibleBox = store.box<BibleDto>();
+
+  //   try {
+  //     const batchSize = 10000;
+  //     final totalItems = verses.length;
+
+  //     for (var i = 0; i < totalItems; i += batchSize) {
+  //       final end = (i + batchSize < totalItems) ? i + batchSize : totalItems;
+  //       final batch = verses.sublist(i, end);
+  //       await verseBox.putManyAsync(batch);
+  //     }
+
+  //     final allVerses = ToMany<VerseDto>(items: verseBox.getAll());
+  //     // bibleBox.put(BibleDto(translation: translation, verses: allVerses));
+  //   } on ObjectBoxException catch (_) {
+  //     // print(e.message);
+  //   }
+  // }
 }
