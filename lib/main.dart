@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
 import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
@@ -34,6 +35,9 @@ import 'src/services/notification_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Flutter Downloader for downloading the Bible translations
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+
   // Sets the preferred orientation to portrait mode only.
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -48,6 +52,9 @@ Future<void> main() async {
 
   // Configures app-wide dependencies (implementation details not shown).
   await configureDependencies();
+
+  // di<ObjectBoxService>().bibleBox.removeAll();
+  // di<ObjectBoxService>().verseBox.removeAll();
 
   runApp(
     MultiBlocProvider(

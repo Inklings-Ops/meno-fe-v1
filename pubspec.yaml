@@ -64,6 +64,8 @@ dependencies:
   objectbox: ^2.5.0
   bloc: ^8.1.4
   scroll_to_index: ^3.0.1
+  rxdart: ^0.27.7
+  flutter_downloader: ^1.11.7
 
 dev_dependencies:
   flutter_test:
