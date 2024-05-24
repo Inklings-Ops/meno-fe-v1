@@ -64,7 +64,7 @@ Future<void> main() async {
         ),
         BlocProvider(create: (_) => di<ScripturePickerCubit>()),
         BlocProvider(create: (_) => di<TranslationsCubit>()..initialize()),
-        BlocProvider(create: (_) => di<VersesCubit>()..initialize()),
+        BlocProvider(create: (_) => di<VersesCubit>()),
         BlocProvider(create: (_) => di<NetworkCubit>()),
         BlocProvider(create: (_) => di<OnboardingCubit>()),
         BlocProvider(create: (_) => di<AuthBloc>()),

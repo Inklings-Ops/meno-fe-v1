@@ -17,7 +17,9 @@ class VerseDto with _$VerseDto {
     required int chapter,
     required String text,
     required int verse,
+    String? translation,
   }) = _VerseDto;
+
 
   factory VerseDto.fromJson(Map<String, dynamic> json) =>
       _$VerseDtoFromJson(json);
@@ -35,6 +37,7 @@ extension VerseDtoX on VerseDto {
       chapter: chapter,
       text: text,
       verse: verse,
+      translation: translation,
     );
   }
 }

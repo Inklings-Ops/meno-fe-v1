@@ -11,5 +11,6 @@ class Verse with _$Verse {
     required int chapter,
     required String text,
     required int verse,
+    String? translation,
   }) = _Verse;
 }

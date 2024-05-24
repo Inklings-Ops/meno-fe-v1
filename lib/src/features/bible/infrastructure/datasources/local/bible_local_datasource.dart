@@ -5,6 +5,7 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../../../objectbox.g.dart';
 import '../../../../../services/objectbox_service.dart';
@@ -105,21 +106,32 @@ class BibleLocalDatasource {
     required int chapter,
     required String translation,
   }) {
+    // final verseBox = _objectBox.verseBox;
+    // QueryBuilder<VerseDto> builder = verseBox.query(
+    //   VerseDto_.bookName.equals(book) &
+    //       VerseDto_.chapter.equals(chapter) &
+    //       VerseDto_.translation.equals(translation),
+    // );
+
+    // builder.backlinkMany(
+    //   BibleDto_.verses,
+    //   BibleDto_.translation.equals(translation),
+    // );
+
+    // Query<VerseDto> query = builder.order(VerseDto_.verse).build();
+    // List<VerseDto> verses = query.find();
+    // query.close();
+    // return verses;
+
     final verseBox = _objectBox.verseBox;
-    QueryBuilder<VerseDto> builder = verseBox.query(
-      VerseDto_.bookName.equals(book) & VerseDto_.chapter.equals(chapter),
+    final builder = verseBox.query(
+      VerseDto_.translation.equals(translation) &
+          VerseDto_.bookName.equals(book) &
+          VerseDto_.chapter.equals(chapter),
     );
-
-    builder.backlinkMany(
-      BibleDto_.verses,
-      BibleDto_.translation.equals(translation),
-    );
-
-    Query<VerseDto> query = builder.build();
-    List<VerseDto> verses = query.find();
-    query.close();
-
-    return verses;
+    final verseDtos = builder.order(VerseDto_.verse).build().find();
+    Logger().w(verseDtos[0]);
+    return verseDtos;
   }
 
   VerseDto? getVerse({
@@ -128,18 +140,13 @@ class BibleLocalDatasource {
     required int verse,
     required String translation,
   }) {
-    final bibleBox = _objectBox.bibleBox;
-
-    final builder = bibleBox.query(BibleDto_.translation.equals(translation));
-    builder.linkMany(
-      BibleDto_.verses,
-      VerseDto_.verse.equals(verse) &
-          VerseDto_.book.equals(book) &
+    final verseBox = _objectBox.verseBox;
+    final builder = verseBox.query(
+      VerseDto_.translation.equals(translation) &
+          VerseDto_.bookName.equals(book) &
           VerseDto_.chapter.equals(chapter),
     );
-    final bibleDto = builder.build().findFirst()!;
-    final verseDto = bibleDto.verses.first;
-
+    final verseDto = builder.build().find().first;
     return verseDto;
   }
 
@@ -163,11 +170,11 @@ class BibleLocalDatasource {
   }
 
   Future<void> storeBible(List<VerseDto> verses, String translation) {
-    return _objectBox.storeBibleWithoutIsolate(verses, translation);
+    return _objectBox.storeBible(verses, translation);
   }
 
-  Future<void> storeTranslations(int id, List<TranslationDto> translations) {
-    return _objectBox.storeTranslations(id, translations);
+  Future<void> storeTranslations(List<TranslationDto> translations) {
+    return _objectBox.storeTranslations(translations);
   }
 
   Future<List<VerseDto>> loadFallbackBible() async {

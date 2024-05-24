@@ -37,8 +37,8 @@ import '../features/bible/application/bible/bible_bloc.dart' as _i62;
 import '../features/bible/application/scripture_picker/scripture_picker_cubit.dart'
     as _i63;
 import '../features/bible/application/translations/translations_cubit.dart'
-    as _i65;
-import '../features/bible/application/verses/verses_cubit.dart' as _i64;
+    as _i64;
+import '../features/bible/application/verses/verses_cubit.dart' as _i65;
 import '../features/bible/domain/domain.dart' as _i36;
 import '../features/bible/infrastructure/bible_facade.dart' as _i37;
 import '../features/bible/infrastructure/datasources/datasources.dart' as _i38;
@@ -272,10 +272,10 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i62.BibleBloc(facade: gh<_i36.IBibleFacade>()));
     gh.factory<_i63.ScripturePickerCubit>(
         () => _i63.ScripturePickerCubit(facade: gh<_i36.IBibleFacade>()));
-    gh.factory<_i64.VersesCubit>(
-        () => _i64.VersesCubit(facade: gh<_i36.IBibleFacade>()));
-    gh.factory<_i65.TranslationsCubit>(
-        () => _i65.TranslationsCubit(facade: gh<_i36.IBibleFacade>()));
+    gh.factory<_i64.TranslationsCubit>(
+        () => _i64.TranslationsCubit(facade: gh<_i36.IBibleFacade>()));
+    gh.factory<_i65.VersesCubit>(
+        () => _i65.VersesCubit(facade: gh<_i36.IBibleFacade>()));
     gh.lazySingleton<_i66.ProfileFormCubit>(() => _i66.ProfileFormCubit(
           facade: gh<_i55.IProfileFacade>(),
           media: gh<_i41.MediaService>(),

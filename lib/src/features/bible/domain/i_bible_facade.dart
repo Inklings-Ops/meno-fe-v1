@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 
 import 'entities/entities.dart';
 import 'exceptions/exceptions.dart';
@@ -55,10 +56,11 @@ abstract class IBibleFacade {
 
   /// Calls the remote data source to download the full Bible data if there is an update available,
   /// or if prompted by the user.
-  Future<Either<BibleException, Unit>> sync([
-    String translation = 'kjv',
-    bool update = true,
-  ]);
+  Future<Either<BibleException, Translation>> sync({
+    required String translation ,
+    void Function(int, int)? onProgress,
+    CancelToken cancel,
+  });
 
   Future<Either<BibleException, Unit>> syncFallback();
 }

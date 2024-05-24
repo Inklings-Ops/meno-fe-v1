@@ -14,12 +14,10 @@ class VersesCubit extends Cubit<VersesState> {
 
   final IBibleFacade _facade;
 
-  void initialize() async => getVerses();
-
   void getVerses({
-    String book = 'Genesis',
-    int chapter = 1,
-    String translation = 'kjv',
+    required String book,
+    required int chapter,
+    required String translation,
   }) {
     final verses = _facade.getVerses(
       book: book,

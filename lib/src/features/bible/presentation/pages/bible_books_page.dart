@@ -39,7 +39,7 @@ class BibleBooksPage extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, i) => BookWidget(
               bookName: books[i].key,
-              onTap: () => bloc.add(BibleEvent.bookChanged(books[i].key)),
+              onTap: () {},
             ),
             separatorBuilder: (context, i) => 10.verticalSpace,
             itemCount: booksLength,

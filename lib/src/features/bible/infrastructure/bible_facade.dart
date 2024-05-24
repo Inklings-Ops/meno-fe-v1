@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 
 import '../../../services/network_service.dart';
@@ -96,11 +98,12 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  Future<Either<BibleException, Unit>> sync([
-    String translation = 'kjv',
-    bool update = true,
-  ]) async {
-    Logger().w('Bible about to download');
+  Future<Either<BibleException, Translation>> sync({
+    required String translation ,
+    void Function(int, int)? onProgress,
+    CancelToken? cancel,
+  }) async {
+    Logger().w('Bible about to download $translation');
     final isConnected = await _network.isConnected;
 
     if (!isConnected) {
@@ -108,12 +111,19 @@ class BibleFacade implements IBibleFacade {
       return left(const BibleException.networkError());
     } else {
       try {
-        Logger().w('Bible downloading');
+        Logger().w('Bible downloading $translation');
 
-        final verseDtos = await _remote.downloadBible(translation);
+        final verseDtos = await _remote.downloadBible(
+          translation,
+          onProgress: onProgress,
+          cancel: cancel,
+        );
         await _local.storeBible(verseDtos, translation);
 
-        return right(unit);
+        final translationDomain = handleFullTranslations(translation).toDomain;
+
+        Logger().w('Bible downloaded ${verseDtos.first}');
+        return right(translationDomain);
       } on Exception catch (e) {
         return left(BibleException.message(e.toString()));
       }

@@ -41,6 +41,12 @@ class MTheme {
       checkboxTheme: globalStyles.checkboxTheme,
       bottomSheetTheme: modalStyles.bottomSheetTheme,
       listTileTheme: ListTileThemeData(textColor: colorScheme.onBackground),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        linearMinHeight: 4,
+        linearTrackColor: colorScheme.background,
+        circularTrackColor: colorScheme.background,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         border: textInputStyles.border,
         focusedBorder: textInputStyles.borderFocused,

@@ -9,7 +9,7 @@ class BibleState with _$BibleState {
     required String translation,
     required List<Verse> verses,
     required List<Translation> translations,
-    required Option<Either<BibleException, Unit>> downloadOption,
+    required Option<Either<BibleException, Translation>> downloadOption,
     required bool loading,
     required String reference,
   }) = _BibleState;

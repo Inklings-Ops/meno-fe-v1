@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../../core/env/env.dart';
 import '../../dtos/dtos.dart';
@@ -38,49 +39,98 @@ class BibleRemoteDatasource {
     }
   }
 
-  Future<List<VerseDto>> downloadBible(String translation) async {
-    RootIsolateToken token = RootIsolateToken.instance!;
-    final result = await _compute(token, translation);
-    return result;
+  List<VerseDto> parseVerses(dynamic data, String translation) {
+    Logger().d('STARTING PARSING $translation BIBLE');
+    final response = BibleResponse.fromJson(
+      data,
+      (p0) => (p0 as List<dynamic>)
+          .map((v) => VerseDto.fromJson(v).copyWith(translation: translation))
+          .toList(),
+    );
+    Logger().d('FINISHED PARSING $translation BIBLE');
+    return response.data;
   }
 
-  static Future<List<VerseDto>> _compute(
-    RootIsolateToken token,
-    String translation,
-  ) async {
-    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-
-    final dio = Dio();
-    final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
+  Future<List<VerseDto>> downloadBible(
+    String translation, {
+    void Function(int, int)? onProgress,
+    CancelToken? cancel,
+  }) async {
+    Logger().d('ENTERING DOWNLOAD METHOD');
 
     try {
-      final response = await dio.get(uri);
+      Logger().d('STARTING DOWNLOAD OF $translation BIBLE');
 
-      final bibleResponse = BibleResponse.fromJson(
-        response.data,
-        (p0) => (p0 as List<dynamic>)
-            .map((v) => VerseDto.fromJson(v).copyWith(id: v['index']))
-            .toList(),
+      final dio = Dio();
+      final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
+
+      final response = await dio.get(
+        uri,
+        onReceiveProgress: onProgress,
+        cancelToken: cancel,
       );
 
-      return bibleResponse.data;
-    } on Exception catch (e) {
-      throw Exception(e);
+      Logger().d(response);
+      Logger().d('FINISHED DOWNLOADING $translation BIBLE => ${response.data}');
+      return compute((m) => parseVerses(m, translation), response.data);
+    } on DioException catch (e) {
+      Logger().e('ERROR INN DOWNLOAD METHOD => ${e.message}');
+      if (e.message == null) {
+        throw Exception('Unknown error');
+      } else {
+        throw Exception(e.message);
+      }
     }
   }
+
+  // static Future<List<VerseDto>> _compute(
+  //   RootIsolateToken token,
+  //   String translation,
+  //   void Function(int, int)? onReceiveProgress,
+  // ) async {
+  //   Logger().d('INSIDE DOWNLOAD ISOLATE');
+
+  //   BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+
+  // final dio = Dio();
+  // final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
+
+  //   try {
+  //     Logger().d('TRYING TO DOWNLOAD $translation FROM ISOLATE');
+
+  //     final response = await dio.get(uri, onReceiveProgress: onReceiveProgress);
+
+  // final bibleResponse = BibleResponse.fromJson(
+  //   response.data,
+  //   (p0) => (p0 as List<dynamic>).map((v) {
+  //     return VerseDto.fromJson(v).copyWith(
+  //       id: v['index'],
+  //       translation: translation,
+  //     );
+  //   }).toList(),
+  // );
+
+  //     Logger().d('DONE DOWNLOADING $translation FROM ISOLATE');
+
+  //     return bibleResponse.data;
+  //   } on Exception catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 }
 
-BibleResponse deserializeBibleResponsedynamic(
-  Map<String, dynamic> json,
-) {
-  return BibleResponse.fromJson(
-    json,
-    (p0) => (p0 as List<dynamic>)
-        .map((v) => VerseDto.fromJson(v).copyWith(id: v['index']))
-        .toList(),
-  );
-}
 
-dynamic serializeVerses(BibleResponse<List<VerseDto>> object) {
-  return object.toJson((p0) => p0.map((e) => e.toJson()).toList());
-}
+// BibleResponse deserializeBibleResponsedynamic(
+//   Map<String, dynamic> json,
+// ) {
+//   return BibleResponse.fromJson(
+//     json,
+//     (p0) => (p0 as List<dynamic>)
+//         .map((v) => VerseDto.fromJson(v).copyWith(id: v['index']))
+//         .toList(),
+//   );
+// }
+
+// dynamic serializeVerses(BibleResponse<List<VerseDto>> object) {
+//   return object.toJson((p0) => p0.map((e) => e.toJson()).toList());
+// }
