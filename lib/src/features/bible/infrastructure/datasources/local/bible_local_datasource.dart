@@ -5,7 +5,6 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 
 import '../../../../../../objectbox.g.dart';
 import '../../../../../services/objectbox_service.dart';
@@ -130,7 +129,6 @@ class BibleLocalDatasource {
           VerseDto_.chapter.equals(chapter),
     );
     final verseDtos = builder.order(VerseDto_.verse).build().find();
-    Logger().w(verseDtos[0]);
     return verseDtos;
   }
 

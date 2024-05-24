@@ -50,6 +50,7 @@ class _ScriptureTranslation extends StatelessWidget {
           onTap: () => context.showModal(
             const BibleTranslationsModal(),
             isScrollControlled: true,
+            useRootNavigator: true,
           ),
         );
       },
@@ -69,6 +70,7 @@ class _ScriptureReference extends StatelessWidget {
         onTap: () => context.showModal(
           const BibleBooksModal(),
           isScrollControlled: true,
+          useRootNavigator: true,
         ),
       ),
     );
