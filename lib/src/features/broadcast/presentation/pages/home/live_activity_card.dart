@@ -25,7 +25,7 @@ class LiveActivityCard extends HookConsumerWidget {
       context.showLeaveBroadcastDialog().then((value) {
         if (value == true) {
           bloc.add(const StreamEvent.leave());
-          bloc.close();
+          bloc.dispose();
           context.go(Routes.home);
         }
       });

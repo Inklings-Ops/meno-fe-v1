@@ -35,7 +35,7 @@ class StreamPage extends StatelessWidget {
             state.whenOrNull(
               endedBroadcast: () {
                 context.go(Routes.home);
-                context.read<StreamBloc>().close();
+                context.read<StreamBloc>().dispose();
               },
             );
           },
