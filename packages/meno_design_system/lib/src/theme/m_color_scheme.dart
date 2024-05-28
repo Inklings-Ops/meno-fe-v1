@@ -183,7 +183,7 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
       disabledContainer:
           MInternal.resolve(isLight, MColor.grey30, MColor.primary600),
       onDisabledContainer:
-          MInternal.resolve(isLight, MColor.grey500, MColor.grey10),
+          MInternal.resolve(isLight, MColor.grey500, MColor.grey200),
       background: MInternal.resolve(isLight, MColor.white, MColor.primary700),
       onBackground: MInternal.resolve(isLight, MColor.black, MColor.white),
       onBackgroundProminent:
@@ -454,8 +454,6 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
       onError: onError!,
       errorContainer: errorContainer,
       onErrorContainer: onErrorContainer,
-      background: background!,
-      onBackground: onBackground!,
       surface: surface!,
       onSurface: onSurface!,
       surfaceTint: surfaceTint,

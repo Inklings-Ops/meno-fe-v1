@@ -29,6 +29,7 @@ export 'src/loading_indicator/m_shimmer.dart';
 export 'src/m_core.dart';
 export 'src/m_dimensions.dart';
 export 'src/modals/m_image_source_modal.dart';
+export 'src/modals/m_modal_title_bar.dart';
 export 'src/modals/m_modal.dart';
 export 'src/modals/m_user_info_modal.dart';
 export 'src/navigation/m_app_bar.dart';

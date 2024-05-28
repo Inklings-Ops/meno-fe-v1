@@ -22,7 +22,7 @@ class BroadcastEndedModal extends HookWidget {
     return PopScope(
       canPop: canPop.value,
       onPopInvoked: (_) {
-        broadcastBloc.close();
+        broadcastBloc.dispose();
         context.go(Routes.home);
         canPop.value = true;
       },

@@ -42,11 +42,10 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     _socket.on(sEEndedBroadcast, (_) => _emit(const MEndedBroadcast()));
   }
 
-  @override
-  Future<void> close() async {
+ 
+  Future<void> dispose() async {
     await _timer.close();
     await _liveKit.onDispose();
-    super.close();
   }
 
   void _emit(MenoState state) => _menoBloc.add(MenoStateChanged(state));

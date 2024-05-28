@@ -7,9 +7,8 @@ part 'chapter.freezed.dart';
 @freezed
 class Chapter with _$Chapter {
   const factory Chapter({
-    required String reference,
+    int? id,
+    required String book,
     required List<Verse> verses,
   }) = _Chapter;
-
-  factory Chapter.empty() => const Chapter(reference: 'Genesis 1', verses: []);
 }

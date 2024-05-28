@@ -16,8 +16,9 @@ class MIconButton extends StatelessWidget {
   final Color? fillColor;
   final bool isFilled;
   final VoidCallback? onPressed;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final BoxConstraints? constraints;
+  final bool isDisabled;
 
   const MIconButton({
     super.key,
@@ -28,13 +29,15 @@ class MIconButton extends StatelessWidget {
     this.onPressed,
     this.isFilled = false,
     this.fillColor,
-    this.padding = const EdgeInsets.all(8),
+    this.padding,
     this.constraints,
+    this.isDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    // final colors = MColorScheme.of(context)!;
     final VisualDensity visualDensity = theme.visualDensity;
     final double effectiveSize = theme.iconTheme.size ?? size;
     final BoxConstraints boxConstraints = visualDensity.effectiveConstraints(
@@ -43,8 +46,11 @@ class MIconButton extends StatelessWidget {
 
     return InkResponse(
       radius: math.max(Material.defaultSplashRadius, (size)),
-      onTap: onPressed,
+      onTap: isDisabled ? null : onPressed,
       child: Container(
+        height: size,
+        width: size,
+        alignment: Alignment.center,
         constraints: constraints ?? boxConstraints,
         decoration: BoxDecoration(
           shape: BoxShape.circle,

@@ -40,42 +40,6 @@ class MRouter {
   late final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    // redirect: (context, state) {
-    //   // final isUnAuth = authBloc.state.status == AuthStatus.unauthenticated;
-    //   // final isPartiallyAuth =
-    //   //     authBloc.state.status == AuthStatus.partiallyAuthenticated;
-
-    //   // final isRegister = state.matchedLocation == Routes.register;
-    //   // final isResetPassword = state.matchedLocation == Routes.resetPassword;
-    //   // final isRPasswordOtp = state.matchedLocation == Routes.resetPwdOtp;
-    //   // final isResetSuccess = state.matchedLocation == Routes.resetPwdSuccess;
-    //   // final isVerification = state.matchedLocation == Routes.emailVerification;
-    //   // final isLogin = state.matchedLocation == Routes.login;
-
-    //   // if (isRegister) return Routes.registerWithLeading;
-    //   // if (isResetPassword) return Routes.resetPassword;
-    //   // if (isRPasswordOtp) return Routes.resetPwdOtp;
-    //   // if (isResetSuccess) return Routes.resetPwdSuccess;
-    //   // if (isVerification) return Routes.emailVerification;
-
-    //   // if (onboardingCubit.state == OnboardingState.notCompleted) {
-    //   //   if (isLogin) return Routes.loginWithLeading;
-    //   //   return null;
-    //   // } else {
-    //   //   if (isPartiallyAuth) return Routes.partialLogin;
-    //   //   if (isUnAuth) return Routes.login;
-    //   //   return null;
-    //   // }
-    //   // switch (authBloc.state.status) {
-    //   //   case AuthStatus.partiallyAuthenticated:
-    //   //     return Routes.partialLogin;
-    //   //   case AuthStatus.unauthenticated:
-    //   //     return Routes.login;
-    //   //   case AuthStatus.authenticated:
-    //   //   default:
-    //   //     return null;
-    //   // }
-    // },
     routes: [
       GoRoute(
         path: Routes.startup,

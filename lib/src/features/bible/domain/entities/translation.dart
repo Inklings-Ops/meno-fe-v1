@@ -5,8 +5,8 @@ part 'translation.freezed.dart';
 @freezed
 class Translation with _$Translation {
   const factory Translation({
-    String? name,
+    int? id,
+    required String name,
+    required String abbreviation,
   }) = _Translation;
-
-  factory Translation.empty() => const Translation(name: 'kjv');
 }

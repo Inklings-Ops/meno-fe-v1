@@ -47,11 +47,9 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     _socket.on(sEEndedBroadcast, (_) => _emit(const MEndedBroadcast()));
   }
 
-  @override
-  Future<void> close() async {
+  Future<void> dispose() async {
     await _liveKit.onDispose();
     await _timer.close();
-    return super.close();
   }
 
   void _onInitialize(event, emit) {

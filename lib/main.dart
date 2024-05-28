@@ -5,12 +5,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
+import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
 
 import 'app/app.dart';
 import 'firebase_options.dart';
 import 'src/dependency_injector/injector.dart';
 import 'src/features/auth/application/application.dart';
+import 'src/features/bible/application/bible/bible_bloc.dart';
+import 'src/features/bible/application/translations/translations_cubit.dart';
 import 'src/features/broadcast/application/broadcast/broadcast_bloc.dart';
 import 'src/features/broadcast/application/broadcast_form/broadcast_form_cubit.dart';
 import 'src/features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart';
@@ -30,6 +35,9 @@ import 'src/services/notification_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Flutter Downloader for downloading the Bible translations
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+
   // Sets the preferred orientation to portrait mode only.
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -45,26 +53,35 @@ Future<void> main() async {
   // Configures app-wide dependencies (implementation details not shown).
   await configureDependencies();
 
+  // di<ObjectBoxService>().bibleBox.removeAll();
+  // di<ObjectBoxService>().verseBox.removeAll();
+
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => di<NetworkCubit>()),
-        BlocProvider(create: (context) => di<OnboardingCubit>()),
-        BlocProvider(create: (context) => di<AuthBloc>()),
-        BlocProvider(create: (context) => di<AccountCubit>()..init),
-        BlocProvider(create: (context) => di<MyProfileBloc>()),
-        BlocProvider(create: (context) => di<ProfileFormCubit>()),
-        BlocProvider(create: (context) => di<MenoBloc>()),
-        BlocProvider(create: (context) => di<TimerCubit>()),
-        BlocProvider(create: (context) => di<BroadcastFormCubit>()),
-        BlocProvider(create: (context) => di<StreamBloc>()),
-        BlocProvider(create: (context) => di<BroadcastBloc>()),
-        BlocProvider(create: (context) => di<ChatBloc>()),
-        BlocProvider(create: (context) => di<RecentlyLiveCubit>()),
-        BlocProvider(create: (context) => di<LiveBroadcastsBloc>()),
-        BlocProvider(create: (context) => di<LiveParticipantsBloc>()),
-        BlocProvider(create: (context) => di<NoteFormCubit>()),
-        BlocProvider(create: (context) => di<NoteListBloc>()),
+        BlocProvider(
+          create: (_) => di<BibleBloc>()..add(const BibleEvent.initialize()),
+        ),
+        BlocProvider(create: (_) => di<ScripturePickerCubit>()),
+        BlocProvider(create: (_) => di<TranslationsCubit>()..initialize()),
+        BlocProvider(create: (_) => di<VersesCubit>()),
+        BlocProvider(create: (_) => di<NetworkCubit>()),
+        BlocProvider(create: (_) => di<OnboardingCubit>()),
+        BlocProvider(create: (_) => di<AuthBloc>()),
+        BlocProvider(create: (_) => di<AccountCubit>()..init),
+        BlocProvider(create: (_) => di<MyProfileBloc>()),
+        BlocProvider(create: (_) => di<ProfileFormCubit>()),
+        BlocProvider(create: (_) => di<MenoBloc>()),
+        BlocProvider(create: (_) => di<TimerCubit>()),
+        BlocProvider(create: (_) => di<BroadcastFormCubit>()),
+        BlocProvider(create: (_) => di<StreamBloc>()),
+        BlocProvider(create: (_) => di<BroadcastBloc>()),
+        BlocProvider(create: (_) => di<ChatBloc>()),
+        BlocProvider(create: (_) => di<RecentlyLiveCubit>()),
+        BlocProvider(create: (_) => di<LiveBroadcastsBloc>()),
+        BlocProvider(create: (_) => di<LiveParticipantsBloc>()),
+        BlocProvider(create: (_) => di<NoteFormCubit>()),
+        BlocProvider(create: (_) => di<NoteListBloc>()),
       ],
       child: const ProviderScope(child: MenoApp()),
     ),
