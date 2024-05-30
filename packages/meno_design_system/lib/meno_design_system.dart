@@ -35,6 +35,7 @@ export 'src/modals/m_user_info_modal.dart';
 export 'src/navigation/m_app_bar.dart';
 export 'src/navigation/m_bottom_navigation_bar.dart';
 export 'src/navigation/m_header.dart';
+export 'src/navigation/m_tab_bar_view.dart';
 export 'src/placeholders/m_placeholder.dart';
 export 'src/scaffold/m_scaffold.dart';
 export 'src/tags/m_tag.dart';
