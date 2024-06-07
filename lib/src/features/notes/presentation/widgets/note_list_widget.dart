@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/widgets/empty_note_list_widget.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/widgets/note_card.dart';
+import 'package:meno_fe_v1/src/router/routes.dart';
+
+class NoteListWidget extends StatelessWidget {
+  const NoteListWidget({
+    super.key,
+    this.onNoteTap,
+    this.showAddButton = false,
+  });
+
+  final VoidCallback? onNoteTap;
+  final bool showAddButton;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.watch<NoteListBloc>();
+
+    return BlocListener<NoteFormCubit, NoteFormState>(
+      listenWhen: (p, c) => p.option != c.option,
+      listener: (context, state) {
+        state.option.fold(
+          () {},
+          (either) => either.fold(
+            (l) => null,
+            (newNote) => bloc.add(NoteListEvent.updateNotesList(newNote)),
+          ),
+        );
+      },
+      child: BlocBuilder<NoteListBloc, NoteListState>(
+        bloc: bloc,
+        buildWhen: (p, c) => p != c,
+        builder: (context, state) => state.maybeWhen(
+          orElse: () => const EmptyNoteListWidget(),
+          loading: () => const MLoadingIndicator.box(),
+          success: (notes) => ListView.separated(
+            primary: false,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: MCore.large).r,
+            itemCount: notes.length,
+            separatorBuilder: (context, index) => MCore.large.verticalSpace,
+            itemBuilder: (context, index) => NoteCard(
+              note: notes[index]!,
+              showAddButton: showAddButton,
+              onTap: onNoteTap ??
+                  () => context.push(
+                        Routes.newNote,
+                        extra: {'note': notes[index]},
+                      ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

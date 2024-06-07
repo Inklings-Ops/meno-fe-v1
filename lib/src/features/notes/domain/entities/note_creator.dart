@@ -8,6 +8,14 @@ class NoteCreator with _$NoteCreator {
     int? dbId,
     required String id,
     required String fullName,
-    required String imageUrl,
+    required String email,
+    String? imageUrl,
   }) = _NoteCreator;
+
+  factory NoteCreator.empty() => NoteCreator(
+        id: '',
+        fullName: '',
+        imageUrl: '',
+        email: '',
+      );
 }

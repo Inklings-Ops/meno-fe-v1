@@ -15,9 +15,38 @@ class NoteListBloc extends Bloc<NoteListEvent, NoteListState> {
       : _facade = facade,
         super(const NoteListState.empty()) {
     on<_GetAllNotes>(_onGetAllNotes);
+    on<_UpdateNotesList>(_onUpdateNotesList);
+    on<_DeleteNote>(_onDeleteNote);
   }
 
-  Future<void> _onGetAllNotes(event, emit) async {
+  bool get hasNotes {
+    if (state is _Success) {
+      return (state as _Success).notes.isNotEmpty;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> _onUpdateNotesList(
+    _UpdateNotesList event,
+    Emitter<NoteListState> emit,
+  ) async {
+    if (state is _Success) {
+      final currentState = state as _Success;
+      final notes = currentState.notes;
+      final index = notes.indexWhere((note) => note?.id == event.newNote.id);
+      if (index != -1) {
+        final updatedNotes = [...notes];
+        updatedNotes[index] = event.newNote;
+        emit(_Success(updatedNotes));
+      }
+    }
+  }
+
+  Future<void> _onGetAllNotes(
+    _GetAllNotes event,
+    Emitter<NoteListState> emit,
+  ) async {
     emit(const _Loading());
 
     final result = await _facade.getAllNotes();
@@ -25,6 +54,25 @@ class NoteListBloc extends Bloc<NoteListEvent, NoteListState> {
     return result.fold(
       (failure) => emit(const _Failure()),
       (notes) => notes.isEmpty ? emit(const _Empty()) : emit(_Success(notes)),
+    );
+  }
+
+  Future<void> _onDeleteNote(
+    _DeleteNote event,
+    Emitter<NoteListState> emit,
+  ) async {
+    final result = await _facade.deleteNote(event.note.id!);
+
+    return result.fold(
+      (failure) => emit(const _Failure()),
+      (_) {
+        if (state is _Success) {
+          final notes = (state as _Success).notes;
+          final updatedNotes =
+              notes.where((note) => note?.id != event.note.id).toList();
+          emit(_Success(updatedNotes));
+        }
+      },
     );
   }
 }

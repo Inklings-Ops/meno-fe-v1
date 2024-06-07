@@ -9,7 +9,7 @@ part 'note.freezed.dart';
 
 @freezed
 class Note with _$Note {
-  factory Note({
+  const factory Note({
     int? dbId,
     String? id,
     required INoteTitle title,
@@ -17,7 +17,15 @@ class Note with _$Note {
     bool? pinned,
     DateTime? createdAt,
     DateTime? updatedAt,
-    required Folder folder,
+    Folder? folder,
     required NoteCreator creator,
   }) = _Note;
+
+  factory Note.empty() {
+    return Note(
+      title: INoteTitle(''),
+      content: INoteContent(''),
+      creator: NoteCreator.empty(),
+    );
+  }
 }

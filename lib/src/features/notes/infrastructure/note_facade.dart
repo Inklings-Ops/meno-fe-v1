@@ -81,7 +81,7 @@ class NoteFacade implements INoteFacade {
         );
 
         // TODO: Need to know if we need to save the Note offline first
-        await _local.storeNote(response.data!);
+        // await _local.storeNote(response.data!);
 
         return right(response.data!.toDomain);
       } on DioException catch (e) {
@@ -123,7 +123,7 @@ class NoteFacade implements INoteFacade {
       try {
         await Future.wait([
           _remote.deleteNote(noteId),
-          _local.deleteNote(noteId),
+          // _local.deleteNote(noteId),
         ]);
         return right(unit);
       } on DioException catch (e) {
@@ -144,7 +144,7 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
       final folderDtos = await _local.getAllFolders();
@@ -161,7 +161,7 @@ class NoteFacade implements INoteFacade {
           page: page,
           size: size,
         );
-        final dtos = response.data!.notes;
+        final dtos = response.data!.folders;
         final folders = dtos.map((e) => e?.toDomain).toList();
         return right(folders);
       } on DioException catch (e) {
@@ -182,7 +182,7 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
       final noteDtos = await _local.getAllNotes();
@@ -200,6 +200,7 @@ class NoteFacade implements INoteFacade {
           size: size,
         );
         final dtos = response.data!.notes;
+
         final notes = dtos.map((e) => e?.toDomain).toList();
         return right(notes);
       } on DioException catch (e) {
@@ -221,7 +222,7 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
       final folderDto = await _local.getFolder(folderId);
@@ -306,11 +307,12 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      final dto = await _local.getFolder(id);
-      final titleValue = title?.get() ?? dto!.title;
-      final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
-      final folder = updatedDto!.toDomain;
-      return right(folder);
+      // final dto = await _local.getFolder(id);
+      // final titleValue = title?.get() ?? dto!.title;
+      // final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
+      // final folder = updatedDto!.toDomain;
+      // return right(folder);
+      return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.updateFolder(
@@ -339,17 +341,17 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      final dto = await _local.getNote(id);
-      final titleValue = title?.get() ?? dto!.title;
-      final contentValue = content?.get() ?? dto!.content;
+      // final dto = await _local.getNote(id);
+      // final titleValue = title?.get() ?? dto!.title;
+      // final contentValue = content?.get() ?? dto!.content;
 
-      final updatedDto = dto?.copyWith(
-        title: titleValue,
-        content: contentValue,
-        pinned: pinned,
-      );
-      final note = updatedDto!.toDomain;
-      return right(note);
+      // final updatedDto = dto?.copyWith(
+      //   title: titleValue,
+      //   content: contentValue,
+      //   pinned: pinned,
+      // );
+      // final note = updatedDto!.toDomain;
+      return right(Note.empty());
     } else {
       try {
         final response = await _remote.updateNote(
@@ -369,5 +371,11 @@ class NoteFacade implements INoteFacade {
         }
       }
     }
+  }
+
+  @override
+  Future<void> saveNoteLocally(Note note) async {
+    final dto = note.toDto;
+    await _local.storeNote(dto);
   }
 }

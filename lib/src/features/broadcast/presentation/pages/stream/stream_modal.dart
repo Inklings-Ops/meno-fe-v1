@@ -51,10 +51,15 @@ class StreamModal extends StatelessWidget {
                   24.verticalSpace,
                   MHeader(
                     title: 'Recent Broadcasts',
-                    action: () {},
-                    actionTitle: 'See all',
                     showSideBorder: false,
                     padding: EdgeInsets.zero,
+                    action: InkWell(
+                      onTap: () {},
+                      child: MText(
+                        'See all',
+                        color: MColorScheme.of(context)!.onBackgroundVariant,
+                      ),
+                    ),
                   )
                 ],
               ),

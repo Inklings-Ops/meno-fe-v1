@@ -20,7 +20,7 @@ class NoteDto with _$NoteDto {
     bool? pinned,
     @Property(type: PropertyType.date) DateTime? createdAt,
     @Property(type: PropertyType.date) DateTime? updatedAt,
-    @_FToOneConverter() required ToOne<FolderDto> folder,
+    @_FToOneConverter() required ToOne<FolderDto?> folder,
     @_CToOneConverter() required ToOne<NoteCreatorDto> creator,
   }) = _NoteDto;
 
@@ -43,38 +43,38 @@ extension NoteDtoToDomain on NoteDto {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: folder.target!.toDomain,
+      folder: folder.target?.toDomain,
       creator: creator.target!.toDomain,
     );
   }
 }
 
-extension NoteToDto on Note {
-  // NoteDto get toDomain {
-  //   return NoteDto(
-  //     dbId: dbId,
-  //     id: id,
-  //     title: title.get()!,
-  //     content: content.get()!,
-  //     pinned: pinned,
-  //     createdAt: createdAt,
-  //     updatedAt: updatedAt,
-  //     folder: folder,
-  //     creator: creator.toDto,
-  //   );
-  // }
+extension NoteDomainToDto on Note {
+  NoteDto get toDto {
+    return NoteDto(
+      dbId: dbId,
+      id: id,
+      title: title.get()!,
+      content: content.get()!,
+      pinned: pinned,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      folder: ToOne(target: folder?.toDto),
+      creator: ToOne(target: creator.toDto),
+    );
+  }
 }
 
 class _FToOneConverter
-    implements JsonConverter<ToOne<FolderDto>, Map<String, dynamic>?> {
+    implements JsonConverter<ToOne<FolderDto?>, Map<String, dynamic>?> {
   const _FToOneConverter();
 
   @override
-  ToOne<FolderDto> fromJson(Map<String, dynamic>? json) =>
-      ToOne<FolderDto>(target: json == null ? null : FolderDto.fromJson(json));
+  ToOne<FolderDto?> fromJson(Map<String, dynamic>? json) =>
+      ToOne<FolderDto?>(target: json == null ? null : FolderDto.fromJson(json));
 
   @override
-  Map<String, dynamic>? toJson(ToOne<FolderDto> rel) => rel.target?.toJson();
+  Map<String, dynamic>? toJson(ToOne<FolderDto?> rel) => rel.target?.toJson();
 }
 
 class _CToOneConverter
