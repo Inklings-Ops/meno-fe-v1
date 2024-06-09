@@ -43,8 +43,13 @@ class _BuildColumn extends StatelessWidget {
         MCore.xxxLarge.verticalSpace,
         MHeader(
           title: 'Recently Live',
-          actionTitle: 'See all',
-          action: () => context.push(Routes.recentlyLive),
+          action: InkWell(
+            onTap: () => context.push(Routes.recentlyLive),
+            child: MText(
+              'See all',
+              color: MColorScheme.of(context)!.onBackgroundVariant,
+            ),
+          ),
         ),
         24.verticalSpace,
         LimitedBox(maxHeight: 176, child: child),

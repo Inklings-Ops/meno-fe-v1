@@ -34,6 +34,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/flame.png
   AssetGenImage get flame => const AssetGenImage('assets/images/flame.png');
 
+  /// File path: assets/images/folder.png
+  AssetGenImage get folder => const AssetGenImage('assets/images/folder.png');
+
   /// File path: assets/images/geometric lines.svg
   String get geometricLines => 'assets/images/geometric lines.svg';
 
@@ -71,6 +74,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/meno-white.png
   AssetGenImage get menoWhite =>
       const AssetGenImage('assets/images/meno-white.png');
+
+  /// File path: assets/images/new-file.png
+  AssetGenImage get newFile =>
+      const AssetGenImage('assets/images/new-file.png');
 
   /// File path: assets/images/onboarding-1.png
   AssetGenImage get onboarding1 =>
@@ -127,6 +134,7 @@ class $AssetsImagesGen {
         facebook,
         fingerSnap,
         flame,
+        folder,
         geometricLines,
         google,
         highVoltage,
@@ -138,6 +146,7 @@ class $AssetsImagesGen {
         logo,
         menoPurple,
         menoWhite,
+        newFile,
         onboarding1,
         onboarding2,
         onboarding3,
@@ -174,11 +183,9 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size = null});
+  const AssetGenImage(this._assetName);
 
   final String _assetName;
-
-  final Size? size;
 
   Image image({
     Key? key,

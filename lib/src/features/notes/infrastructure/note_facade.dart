@@ -23,7 +23,7 @@ class NoteFacade implements INoteFacade {
         _remote = remote;
 
   @override
-  Future<Either<NoteException, Unit>> addNoteToFolder({
+  Future<Either<NoteException, Note>> addNoteToFolder({
     required String noteId,
     required String folderId,
   }) async {
@@ -31,8 +31,12 @@ class NoteFacade implements INoteFacade {
       return left(const NoteException.networkError());
     } else {
       try {
-        await _remote.addNoteToFolder(noteId: noteId, folderId: folderId);
-        return right(unit);
+        final response = await _remote.addNoteToFolder(
+          noteId: noteId,
+          folderId: folderId,
+        );
+
+        return right(response.data!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
           return left(NoteException.message(e.message!));
@@ -81,7 +85,7 @@ class NoteFacade implements INoteFacade {
         );
 
         // TODO: Need to know if we need to save the Note offline first
-        await _local.storeNote(response.data!);
+        // await _local.storeNote(response.data!);
 
         return right(response.data!.toDomain);
       } on DioException catch (e) {
@@ -102,7 +106,7 @@ class NoteFacade implements INoteFacade {
       try {
         await Future.wait([
           _remote.deleteFolder(folderId),
-          _local.deleteFolder(folderId),
+          // _local.deleteFolder(folderId),
         ]);
         return right(unit);
       } on DioException catch (e) {
@@ -123,7 +127,7 @@ class NoteFacade implements INoteFacade {
       try {
         await Future.wait([
           _remote.deleteNote(noteId),
-          _local.deleteNote(noteId),
+          // _local.deleteNote(noteId),
         ]);
         return right(unit);
       } on DioException catch (e) {
@@ -144,12 +148,13 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
-      final folderDtos = await _local.getAllFolders();
-      final folders = folderDtos.map((e) => e?.toDomain).toList();
-      return right(folders);
+      // final folderDtos = await _local.getAllFolders();
+      // final folders = folderDtos.map((e) => e?.toDomain).toList();
+      // return right(folders);
+      return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.getAllFolders(
@@ -161,7 +166,7 @@ class NoteFacade implements INoteFacade {
           page: page,
           size: size,
         );
-        final dtos = response.data!.notes;
+        final dtos = response.data!.folders;
         final folders = dtos.map((e) => e?.toDomain).toList();
         return right(folders);
       } on DioException catch (e) {
@@ -182,12 +187,13 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
-      final noteDtos = await _local.getAllNotes();
-      final notes = noteDtos.map((e) => e?.toDomain).toList();
-      return right(notes);
+      // final noteDtos = await _local.getAllNotes();
+      // final notes = noteDtos.map((e) => e?.toDomain).toList();
+      // return right(notes);
+      return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.getAllNotes(
@@ -200,6 +206,7 @@ class NoteFacade implements INoteFacade {
           size: size,
         );
         final dtos = response.data!.notes;
+
         final notes = dtos.map((e) => e?.toDomain).toList();
         return right(notes);
       } on DioException catch (e) {
@@ -213,25 +220,24 @@ class NoteFacade implements INoteFacade {
   }
 
   @override
-  Future<Either<NoteException, Folder?>> readFolder({
+  Future<Either<NoteException, Folder?>> getFolderWithNotes({
     required String folderId,
-    bool includeNotes = true,
     String? keywords,
     bool? pinned,
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 1,
+    int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
-      final folderDto = await _local.getFolder(folderId);
-      final folder = folderDto?.toDomain;
-      return right(folder);
+      // final folderDto = await _local.getFolder(folderId);
+      // final folder = folderDto?.toDomain;
+      // return right(folder);
+      return left(const NoteException.networkError());
     } else {
       try {
-        final response = await _remote.getFolder(
+        final response = await _remote.getFolderWithNotes(
           folderId: folderId,
-          includeNotes: includeNotes,
           keywords: keywords,
           pinned: pinned,
           sortBy: sortBy,
@@ -239,9 +245,41 @@ class NoteFacade implements INoteFacade {
           page: page,
           size: size,
         );
-        final dto = response.data;
-        final folder = dto?.toDomain;
-        return right(folder);
+        final folderResponse = response.data;
+        final folder = folderResponse!.folder.copyWith(
+          notes: folderResponse.notes,
+        );
+        return right(folder.toDomain);
+      } on DioException catch (e) {
+        if (e.message != null) {
+          return left(NoteException.message(e.message!));
+        } else {
+          return left(const NoteException.unknownError());
+        }
+      }
+    }
+  }
+
+  @override
+  Future<Either<NoteException, Folder?>> getFolder({
+    required String folderId,
+    String? keywords,
+    bool? pinned,
+  }) async {
+    if (!(await _network.isConnected)) {
+      // final folderDto = await _local.getFolder(folderId);
+      // final folder = folderDto?.toDomain;
+      // return right(folder);
+      return left(const NoteException.networkError());
+    } else {
+      try {
+        final response = await _remote.getFolder(
+          folderId: folderId,
+          keywords: keywords,
+          pinned: pinned,
+        );
+        final folderResponse = response.data;
+        return right(folderResponse!.folder.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
           return left(NoteException.message(e.message!));
@@ -255,9 +293,10 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, Note?>> readNote(String noteId) async {
     if (!(await _network.isConnected)) {
-      final noteDto = await _local.getNote(noteId);
-      final note = noteDto?.toDomain;
-      return right(note);
+      // final noteDto = await _local.getNote(noteId);
+      // final note = noteDto?.toDomain;
+      // return right(note);
+      return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.getNote(noteId);
@@ -306,11 +345,12 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      final dto = await _local.getFolder(id);
-      final titleValue = title?.get() ?? dto!.title;
-      final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
-      final folder = updatedDto!.toDomain;
-      return right(folder);
+      // final dto = await _local.getFolder(id);
+      // final titleValue = title?.get() ?? dto!.title;
+      // final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
+      // final folder = updatedDto!.toDomain;
+      // return right(folder);
+      return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.updateFolder(
@@ -339,17 +379,17 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      final dto = await _local.getNote(id);
-      final titleValue = title?.get() ?? dto!.title;
-      final contentValue = content?.get() ?? dto!.content;
+      // final dto = await _local.getNote(id);
+      // final titleValue = title?.get() ?? dto!.title;
+      // final contentValue = content?.get() ?? dto!.content;
 
-      final updatedDto = dto?.copyWith(
-        title: titleValue,
-        content: contentValue,
-        pinned: pinned,
-      );
-      final note = updatedDto!.toDomain;
-      return right(note);
+      // final updatedDto = dto?.copyWith(
+      //   title: titleValue,
+      //   content: contentValue,
+      //   pinned: pinned,
+      // );
+      // final note = updatedDto!.toDomain;
+      return right(Note.empty());
     } else {
       try {
         final response = await _remote.updateNote(
@@ -369,5 +409,11 @@ class NoteFacade implements INoteFacade {
         }
       }
     }
+  }
+
+  @override
+  Future<void> saveNoteLocally(Note note) async {
+    final dto = note.toDto;
+    await _local.storeNote(dto);
   }
 }

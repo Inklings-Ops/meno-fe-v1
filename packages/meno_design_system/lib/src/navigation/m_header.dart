@@ -5,20 +5,21 @@ import '../m_size.dart';
 
 class MHeader extends StatelessWidget {
   final String title;
-  final String? actionTitle;
-  final VoidCallback? action;
+  // final String? actionTitle;
+  // final VoidCallback? action;
+  final Widget? action;
   final bool showSideBorder;
   final EdgeInsetsGeometry? padding;
 
   const MHeader({
     super.key,
     required this.title,
-    this.actionTitle,
+    // this.actionTitle,
+    // this.action,
     this.action,
     this.showSideBorder = true,
     this.padding,
-  }) : assert((action != null && actionTitle != null) ||
-            (action == null && actionTitle == null));
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,14 +42,15 @@ class MHeader extends StatelessWidget {
           ],
           MText(title, style: MTextStyle.heading3Bold),
           const Spacer(),
-          if (actionTitle != null && action != null)
-            InkWell(
-              onTap: action,
-              child: MText(
-                actionTitle!,
-                color: colorScheme.onBackgroundVariant,
-              ),
-            ),
+          if (action != null) action!
+          // if (actionTitle != null && action != null)
+            // InkWell(
+            //   onTap: action,
+            //   child: MText(
+            //     actionTitle!,
+            //     color: colorScheme.onBackgroundVariant,
+            //   ),
+            // ),
         ],
       ),
     );

@@ -9,6 +9,8 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
 import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
 
 import 'app/app.dart';
 import 'firebase_options.dart';
@@ -31,6 +33,7 @@ import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
 import 'src/services/meno/meno_bloc.dart';
 import 'src/services/notification_service.dart';
+import 'src/services/objectbox_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,7 +84,15 @@ Future<void> main() async {
         BlocProvider(create: (_) => di<LiveBroadcastsBloc>()),
         BlocProvider(create: (_) => di<LiveParticipantsBloc>()),
         BlocProvider(create: (_) => di<NoteFormCubit>()),
-        BlocProvider(create: (_) => di<NoteListBloc>()),
+        BlocProvider(
+          create: (_) =>
+              di<NoteListBloc>()..add(const NoteListEvent.getAllNotes()),
+        ),
+        BlocProvider(create: (_) => di<FolderFormCubit>()),
+        BlocProvider(
+          create: (_) =>
+              di<FolderListBloc>()..add(const FolderListEvent.getAllFolders()),
+        ),
       ],
       child: const ProviderScope(child: MenoApp()),
     ),

@@ -14,7 +14,8 @@ class NoteCreatorDto with _$NoteCreatorDto {
     @Id() int? dbId,
     @Unique() required String id,
     required String fullName,
-    required String imageUrl,
+    required String email,
+   String? imageUrl,
   }) = _NoteCreatorDto;
 
   NoteCreatorDto._();
@@ -33,6 +34,7 @@ extension NoteCreatorDtoToDomain on NoteCreatorDto {
       id: id,
       fullName: fullName,
       imageUrl: fullName,
+      email:email,
     );
   }
 }
@@ -44,6 +46,7 @@ extension NoteCreatorToDto on NoteCreator {
       id: id,
       fullName: fullName,
       imageUrl: fullName,
+      email:email,
     );
   }
 }

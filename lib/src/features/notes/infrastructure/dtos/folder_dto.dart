@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 
 import '../../domain/domain.dart';
+import 'note_dto.dart';
 
 part 'folder_dto.freezed.dart';
 part 'folder_dto.g.dart';
@@ -17,6 +18,7 @@ class FolderDto with _$FolderDto {
     int? numberOfNotes,
     bool? pinned,
     @Property(type: PropertyType.date) DateTime? createdAt,
+    List<NoteDto?>? notes,
   }) = _FolderDto;
 
   FolderDto._();
@@ -37,6 +39,7 @@ extension FolderDtoToDomain on FolderDto {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
+      notes: notes?.map((e) => e?.toDomain).toList(),
     );
   }
 }
@@ -50,6 +53,7 @@ extension FolderToDto on Folder {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
+      notes: notes?.map((e) => e?.toDto).toList(),
     );
   }
 }

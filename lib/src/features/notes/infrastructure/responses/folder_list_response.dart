@@ -9,7 +9,7 @@ part 'folder_list_response.g.dart';
 @JsonSerializable(explicitToJson: true, createFactory: false)
 class FolderListResponse with _$FolderListResponse {
   factory FolderListResponse({
-    required List<FolderDto?> notes,
+    required List<FolderDto?> folders,
     required int totalPages,
     required int currentPage,
     required int totalItems,

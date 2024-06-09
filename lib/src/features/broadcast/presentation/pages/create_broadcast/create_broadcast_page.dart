@@ -20,8 +20,13 @@ class CreateBroadcastPage extends StatelessWidget {
           alignment: Alignment.bottomLeft,
           child: MHeader(
             title: 'Go Live Now',
-            actionTitle: 'Cancel',
-            action: context.pop,
+            action: InkWell(
+              onTap: context.pop,
+              child: MText(
+                'Cancel',
+                color: MColorScheme.of(context)!.onBackgroundVariant,
+              ),
+            ),
           ),
         ),
       ),
