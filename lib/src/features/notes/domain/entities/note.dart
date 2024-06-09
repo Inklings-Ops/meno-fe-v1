@@ -18,7 +18,7 @@ class Note with _$Note {
     DateTime? createdAt,
     DateTime? updatedAt,
     Folder? folder,
-    required NoteCreator creator,
+    NoteCreator? creator,
   }) = _Note;
 
   factory Note.empty() {

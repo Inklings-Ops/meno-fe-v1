@@ -9,7 +9,7 @@ class IFolderTitle extends ValueObject<String> {
   final IFolderTitleResult value;
 
   factory IFolderTitle(String input) {
-    final finalInput = input.toLowerCase().trim();
+    final finalInput = input.trim();
     return IFolderTitle._(validateNotEmpty(finalInput));
   }
 

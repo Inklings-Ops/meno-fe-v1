@@ -18,10 +18,10 @@ class NoteDto with _$NoteDto {
     required String title,
     required String content,
     bool? pinned,
+    FolderDto? folder,
+    NoteCreatorDto? creator,
     @Property(type: PropertyType.date) DateTime? createdAt,
     @Property(type: PropertyType.date) DateTime? updatedAt,
-    @_FToOneConverter() required ToOne<FolderDto?> folder,
-    @_CToOneConverter() required ToOne<NoteCreatorDto> creator,
   }) = _NoteDto;
 
   factory NoteDto.fromJson(Map<String, dynamic> json) =>
@@ -43,8 +43,8 @@ extension NoteDtoToDomain on NoteDto {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: folder.target?.toDomain,
-      creator: creator.target!.toDomain,
+      folder: folder?.toDomain,
+      creator: creator?.toDomain,
     );
   }
 }
@@ -59,34 +59,34 @@ extension NoteDomainToDto on Note {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: ToOne(target: folder?.toDto),
-      creator: ToOne(target: creator.toDto),
+      folder:  folder?.toDto,
+      creator:  creator?.toDto,
     );
   }
 }
 
-class _FToOneConverter
-    implements JsonConverter<ToOne<FolderDto?>, Map<String, dynamic>?> {
-  const _FToOneConverter();
+// class _FToOneConverter
+//     implements JsonConverter<ToOne<FolderDto>, Map<String, dynamic>?> {
+//   const _FToOneConverter();
 
-  @override
-  ToOne<FolderDto?> fromJson(Map<String, dynamic>? json) =>
-      ToOne<FolderDto?>(target: json == null ? null : FolderDto.fromJson(json));
+//   @override
+//   ToOne<FolderDto> fromJson(Map<String, dynamic>? json) =>
+//       ToOne<FolderDto>(target: json == null ? null : FolderDto.fromJson(json));
 
-  @override
-  Map<String, dynamic>? toJson(ToOne<FolderDto?> rel) => rel.target?.toJson();
-}
+//   @override
+//   Map<String, dynamic>? toJson(ToOne<FolderDto> rel) => rel.target?.toJson();
+// }
 
-class _CToOneConverter
-    implements JsonConverter<ToOne<NoteCreatorDto>, Map<String, dynamic>?> {
-  const _CToOneConverter();
+// class _CToOneConverter
+//     implements JsonConverter<ToOne<NoteCreatorDto?>, Map<String, dynamic>?> {
+//   const _CToOneConverter();
 
-  @override
-  ToOne<NoteCreatorDto> fromJson(Map<String, dynamic>? json) =>
-      ToOne<NoteCreatorDto>(
-          target: json == null ? null : NoteCreatorDto.fromJson(json));
+//   @override
+//   ToOne<NoteCreatorDto> fromJson(Map<String, dynamic>? json) =>
+//       ToOne<NoteCreatorDto>(
+//           target: json == null ? null : NoteCreatorDto.fromJson(json));
 
-  @override
-  Map<String, dynamic>? toJson(ToOne<NoteCreatorDto> rel) =>
-      rel.target?.toJson();
-}
+//   @override
+//   Map<String, dynamic>? toJson(ToOne<NoteCreatorDto?> rel) =>
+//       rel.target?.toJson();
+// }

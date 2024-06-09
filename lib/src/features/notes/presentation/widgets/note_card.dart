@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
@@ -17,12 +18,14 @@ class NoteCard extends StatelessWidget {
     required this.onTap,
     this.showAddButton = false,
     this.selected = false,
+    this.folder,
   });
 
   final Note note;
   final VoidCallback onTap;
   final bool showAddButton;
   final bool selected;
+  final Folder? folder;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,8 @@ class NoteCard extends StatelessWidget {
 
     final formattedDate = DateFormat('d MMM yyyy').format(note.createdAt!);
     final formattedTime = DateFormat('h:mm a').format(note.createdAt!);
+
+    final noteFolder = note.folder ?? folder;
 
     return ConstrainedBox(
       constraints: const BoxConstraints.tightForFinite(),
@@ -50,6 +55,7 @@ class NoteCard extends StatelessWidget {
             padding: const EdgeInsets.all(MCore.large).r,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
                   child: Column(
@@ -63,11 +69,15 @@ class NoteCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       MCore.small.verticalSpace,
-                      if (note.folder != null) ...[
-                        MTag(
-                          title: note.folder!.title.get()!,
-                          style: MTextStyle.microMedium,
-                          height: 20.h,
+                      if (noteFolder != null) ...[
+                        Row(
+                          children: [
+                            MTag(
+                              title: noteFolder.title.get()!,
+                              style: MTextStyle.microMedium,
+                              height: 20.h,
+                            ),
+                          ],
                         ),
                         MCore.small.verticalSpace,
                       ],
@@ -106,14 +116,12 @@ class NoteCard extends StatelessWidget {
                   SizedBox.square(
                     dimension: 16.r,
                     child: Icon(
-                      selected
-                          ? Icons.remove_circle_outline
-                          : MIcons.plus_circle,
+                      selected ? Icons.check_circle : MIcons.plus_circle,
                       size: 20.r,
                     ),
                   )
                 else
-                  _MoreButton(note: note),
+                  _MoreButton(note: note.copyWith(folder: folder)),
               ],
             ),
           ),
@@ -140,10 +148,13 @@ class _MoreButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         color: colors.onDisabledContainer,
         iconSize: 20.r,
-        onPressed: () => context.showModal(
-          NoteCardOptionsModal(note: note),
-          useRootNavigator: true,
-        ),
+        onPressed: () {
+          Logger().w(note);
+          context.showModal(
+            NoteCardOptionsModal(note: note),
+            useRootNavigator: true,
+          );
+        },
       ),
     );
   }

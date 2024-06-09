@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../dtos/dtos.dart';
+import '../responses/folder_response.dart';
+import '../responses/folder_with_notes_response.dart';
 import '../responses/responses.dart';
 
 part 'note_remote_datasource.g.dart';
@@ -45,7 +47,7 @@ abstract class NoteRemoteDatasource {
   Future<NoteResponse> deleteNote(@Path('noteId') String noteId);
 
   @PUT('/api/v1/notes/{noteId}/folders/{folderId}')
-  Future<NoteResponse> addNoteToFolder({
+  Future<NoteResponse<NoteDto?>> addNoteToFolder({
     @Path('noteId') required String noteId,
     @Path('folderId') required String folderId,
   });
@@ -73,9 +75,17 @@ abstract class NoteRemoteDatasource {
   });
 
   @GET('/api/v1/folders/{folderId}')
-  Future<NoteResponse<FolderDto?>> getFolder({
+  Future<NoteResponse<FolderResponse>> getFolder({
     @Path('folderId') required String folderId,
-    @Query('includeNotes') bool? includeNotes,
+    @Query('includeNotes') bool includeNotes = false,
+    @Query('keywords') String? keywords,
+    @Query('pinned') bool? pinned,
+  });
+
+  @GET('/api/v1/folders/{folderId}')
+  Future<NoteResponse<FolderWithNotesResponse>> getFolderWithNotes({
+    @Path('folderId') required String folderId,
+    @Query('includeNotes') bool includeNotes = true,
     @Query('keywords') String? keywords,
     @Query('pinned') bool? pinned,
     @Query('sortBy') String? sortBy = 'createdAt',

@@ -47,6 +47,7 @@ class NotesPage extends HookWidget {
           _ => null,
         },
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
               Container(
@@ -91,23 +92,31 @@ class _AddNewNoteActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<NoteListBloc>();
-
-    if (!bloc.hasNotes) return const SizedBox();
-
+ 
     final colors = MColorScheme.of(context)!;
-    return InkWell(
-      onTap: () => context.push(Routes.newNote),
-      child: Row(
-        children: [
-          Icon(MIcons.plus, size: 22.r, color: colors.primary),
-          MCore.micro.horizontalSpace,
-          MText(
-            'Add New Note',
-            style: MTextStyle.captionMedium,
-            color: colors.primary,
-          ),
-        ],
+
+    return BlocBuilder<NoteListBloc, NoteListState>(
+      buildWhen: (p, c) => p != c,
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        success: (notes) {
+          if (notes.isEmpty) return const SizedBox();
+
+          return InkWell(
+            onTap: () => context.push(Routes.newNote),
+            child: Row(
+              children: [
+                Icon(MIcons.plus, size: 22.r, color: colors.primary),
+                MCore.micro.horizontalSpace,
+                MText(
+                  'Add New Note',
+                  style: MTextStyle.captionMedium,
+                  color: colors.primary,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -118,27 +127,34 @@ class _AddNewFolderActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<FolderListBloc>();
-
-    if (!bloc.hasFolders) return const SizedBox();
-
     final colors = MColorScheme.of(context)!;
-    return InkWell(
-      onTap: () => context.showModal(
-        const CreateFolderModal(),
-        isScrollControlled: true,
-        useRootNavigator: true,
-      ),
-      child: Row(
-        children: [
-          Icon(MIcons.plus, size: 22.r, color: colors.primary),
-          MCore.micro.horizontalSpace,
-          MText(
-            'Add New Folder',
-            style: MTextStyle.captionMedium,
-            color: colors.primary,
-          ),
-        ],
+
+    return BlocBuilder<FolderListBloc, FolderListState>(
+      buildWhen: (p, c) => p != c,
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        success: (folders) {
+          if (folders.isEmpty) return const SizedBox();
+
+          return InkWell(
+            onTap: () => context.showModal(
+              const CreateFolderModal(),
+              isScrollControlled: true,
+              useRootNavigator: true,
+            ),
+            child: Row(
+              children: [
+                Icon(MIcons.plus, size: 22.r, color: colors.primary),
+                MCore.micro.horizontalSpace,
+                MText(
+                  'Add New Folder',
+                  style: MTextStyle.captionMedium,
+                  color: colors.primary,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -54,6 +54,7 @@ class NoteFormCubit extends Cubit<NoteFormState> {
       emit(state.copyWith(
         option: some(result),
         loading: false,
+        initialNote: result.fold((_) => null, (note) => note),
       ));
     }
   }

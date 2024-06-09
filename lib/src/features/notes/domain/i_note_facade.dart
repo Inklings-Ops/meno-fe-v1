@@ -34,7 +34,7 @@ abstract class INoteFacade {
 
   Future<Either<NoteException, Unit>> deleteNote(String noteId);
 
-  Future<Either<NoteException, Unit>> addNoteToFolder({
+  Future<Either<NoteException, Note>> addNoteToFolder({
     required String noteId,
     required String folderId,
   });
@@ -56,9 +56,14 @@ abstract class INoteFacade {
 
   Future<Either<NoteException, Folder>> createFolder(IFolderTitle title);
 
-  Future<Either<NoteException, Folder?>> readFolder({
+  Future<Either<NoteException, Folder?>> getFolder({
     required String folderId,
-    bool includeNotes = true,
+    String? keywords,
+    bool? pinned,
+  });
+
+  Future<Either<NoteException, Folder?>> getFolderWithNotes({
+    required String folderId,
     String? keywords,
     bool? pinned,
     String? sortBy,

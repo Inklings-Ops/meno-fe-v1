@@ -18,15 +18,22 @@ class NoteCardOptionsModal extends StatelessWidget {
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MModalListTile(
-            leading: const Icon(MIcons.plus),
-            title: 'Add to Folder',
-            onTap: () => context.showModal(
-              const AddToFolderModal(),
-              useRootNavigator: true,
-              isScrollControlled: true,
+          if (note.folder != null)
+            MModalListTile(
+              leading: const Icon(MIcons.plus),
+              title: 'Remove from Folder',
+              onTap: () => context.showRemoveNoteFromFolderDialog(note),
+            )
+          else
+            MModalListTile(
+              leading: const Icon(MIcons.plus),
+              title: 'Add to Folder',
+              onTap: () => context.showModal(
+                AddToFolderModal(note: note),
+                useRootNavigator: true,
+                isScrollControlled: true,
+              ),
             ),
-          ),
           MCore.small.verticalSpace,
           const MModalListTile(
             leading: Icon(MIcons.share),

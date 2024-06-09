@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
 
-
-class DeleteNoteAlertDialog extends StatelessWidget {
-  const DeleteNoteAlertDialog({
+class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
+  const DeleteNoteFromFolderAlertDialog({
     super.key,
     required this.onDelete,
     this.onCancel,
@@ -22,11 +21,11 @@ class DeleteNoteAlertDialog extends StatelessWidget {
     final bloc = context.watch<NoteListBloc>();
 
     return AlertDialog(
-      title: const MText('Delete Note?', style: MTextStyle.heading2Regular),
+      title: const MText('Remove Note?', style: MTextStyle.heading2Regular),
       contentPadding: const EdgeInsets.all(24).r,
-      content: const MText(
-        'Do want to delete this note?',
-        style: MTextStyle.captionRegular,
+      content: MText(
+        'Do you want to remove this note from this folder?',
+        style: MTextStyle.captionRegular.copyWith(height: 1.4),
       ),
       actions: [
         SizedBox.fromSize(
@@ -46,17 +45,19 @@ class DeleteNoteAlertDialog extends StatelessWidget {
           height: 40.h,
           child: bloc.state == const NoteListState.loading()
               ? const MLoadingIndicator.four()
-              :  MDangerButton(
-            label: 'Delete',
-            onPressed: onDelete,
-            style: TextButton.styleFrom(
-              backgroundColor: colorScheme.error,
-              foregroundColor: colorScheme.onError,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(const Radius.circular(8).r),
-              ),
-            ),
-          ),
+              : MDangerButton(
+                  label: 'Remove',
+                  onPressed: onDelete,
+                  style: TextButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        const Radius.circular(8).r,
+                      ),
+                    ),
+                  ),
+                ),
         ),
       ],
     );

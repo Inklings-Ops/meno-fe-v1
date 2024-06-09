@@ -21,7 +21,7 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   final InputBorder? borderFocused;
   final InputBorder? borderDisabled;
   final InputBorder? borderError;
-
+ 
   MTextFieldStyle({
     this.textStyle,
     this.errorTextStyle,
@@ -41,7 +41,7 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     this.borderFocused,
     this.borderDisabled,
     this.borderError,
-  });
+   });
 
   factory MTextFieldStyle.$default({required MColorScheme colorScheme}) {
     final isLight = colorScheme.brightness == Brightness.light;
