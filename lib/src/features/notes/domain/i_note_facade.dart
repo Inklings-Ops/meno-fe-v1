@@ -12,10 +12,10 @@ abstract class INoteFacade {
     String? keywords,
     String? noteId,
     bool? pinned,
-    String? sortBy = 'createdAt',
-    String? orderBy = 'DESC',
-    int? page = 1,
-    int? size = 1,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
   });
 
   Future<Either<NoteException, Note>> createNote({
@@ -34,7 +34,7 @@ abstract class INoteFacade {
 
   Future<Either<NoteException, Unit>> deleteNote(String noteId);
 
-  Future<Either<NoteException, Unit>> addNoteToFolder({
+  Future<Either<NoteException, Note>> addNoteToFolder({
     required String noteId,
     required String folderId,
   });
@@ -48,23 +48,28 @@ abstract class INoteFacade {
     String? title,
     String? folderId,
     bool? pinned,
-    String? sortBy = 'createdAt',
-    String? orderBy = 'DESC',
-    int? page = 1,
-    int? size = 1,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
   });
 
   Future<Either<NoteException, Folder>> createFolder(IFolderTitle title);
 
-  Future<Either<NoteException, Folder?>> readFolder({
+  Future<Either<NoteException, Folder?>> getFolder({
     required String folderId,
-    bool includeNotes = true,
     String? keywords,
     bool? pinned,
-    String? sortBy = 'createdAt',
-    String? orderBy = 'DESC',
-    int? page = 1,
-    int? size = 1,
+  });
+
+  Future<Either<NoteException, Folder?>> getFolderWithNotes({
+    required String folderId,
+    String? keywords,
+    bool? pinned,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
   });
 
   Future<Either<NoteException, Folder>> updateFolder({
@@ -74,4 +79,6 @@ abstract class INoteFacade {
   });
 
   Future<Either<NoteException, Unit>> deleteFolder(String folderId);
+
+  Future<void> saveNoteLocally(Note note);
 }

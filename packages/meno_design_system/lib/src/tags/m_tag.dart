@@ -6,12 +6,12 @@ class MTag extends StatelessWidget {
     super.key,
     required this.title,
     this.style = MTextStyle.captionMedium,
-    this.height,
+    this.height = 20.0,
   });
 
   final String title;
   final MTextStyle? style;
-  final double? height;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +19,24 @@ class MTag extends StatelessWidget {
 
     return Container(
       height: height,
+      constraints: BoxConstraints(minHeight: height, maxHeight: height),
       padding: const EdgeInsets.symmetric(horizontal: MCore.small),
-      alignment: Alignment.center,
+      alignment: Alignment.centerLeft,
+
       decoration: ShapeDecoration(
         color: colorScheme.inActiveContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MCore.micro),
         ),
       ),
-      child: MText(
-        title,
-        style: style,
-        color: colorScheme.onInActiveContainer,
+      child: SizedBox(
+        child: Center(
+          child: MText(
+            title,
+            style: style,
+            color: colorScheme.onInActiveContainer,          
+          ),
+        ),
       ),
     );
   }

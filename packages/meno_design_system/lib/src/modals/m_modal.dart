@@ -29,7 +29,7 @@ class MModal extends StatelessWidget {
               ),
             ),
           Padding(
-            padding: EdgeInsets.only(top: title != null ? 48 : 8),
+            padding: EdgeInsets.only(top: title != null ? 48 : 0, bottom: 8),
             child: builder(context),
           ),
         ],

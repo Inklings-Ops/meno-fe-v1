@@ -94,8 +94,13 @@ class _BuildColumn extends StatelessWidget {
         MCore.xxxLarge.verticalSpace,
         MHeader(
           title: 'Now Live',
-          actionTitle: showSeeAllButton ? 'See all' : null,
-          action: showSeeAllButton ? () {} : null,
+          action: InkWell(
+            onTap:showSeeAllButton? () {} : null,
+            child: MText(
+              'See all',
+              color: MColorScheme.of(context)!.onBackgroundVariant,
+            ),
+          ),
         ),
         24.verticalSpace,
         LimitedBox(maxHeight: 184.h, child: child),

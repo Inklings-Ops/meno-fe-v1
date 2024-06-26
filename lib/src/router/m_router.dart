@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
+import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/pages/new_note_page.dart';
 import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_cubit.dart';
 import 'package:meno_fe_v1/src/shared/pages/start_up/startup_page.dart';
 
@@ -20,6 +27,7 @@ import '../features/broadcast/presentation/pages/home/details_page.dart';
 import '../features/broadcast/presentation/pages/home/home_page.dart';
 import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
 import '../features/broadcast/presentation/pages/stream/stream_page.dart';
+import '../features/notes/presentation/pages/folder_page.dart';
 import '../features/notes/presentation/pages/notes_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
@@ -40,6 +48,7 @@ class MRouter {
   late final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
+    // extraCodec: const MExtraCodec(),
     routes: [
       GoRoute(
         path: Routes.startup,
@@ -140,12 +149,31 @@ class MRouter {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const NotificationsPage(),
       ),
-      // GoRoute(
-      //   path: Routes.chat,
-      //   name: Routes.chat,
-      //   parentNavigatorKey: _rootNavigatorKey,
-      //   builder: (context, state) => const ChatPage(),
-      // ),
+      GoRoute(
+        path: Routes.newNote,
+        name: Routes.newNote,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>?;
+          return NewNotePage(note: data?['note'] as Note?);
+        },
+      ),
+      GoRoute(
+        path: Routes.folder,
+        name: Routes.folder,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>?;
+          final folder = data?['folder'] as Folder;
+          return BlocProvider(
+            create: (_) => FolderCubit(
+              facade: di<INoteFacade>(),
+              folder: folder,
+            )..getAllNotes(),
+            child: FolderPage(folder: folder),
+          );
+        },
+      ),
       GoRoute(
         path: Routes.bible,
         name: Routes.bible,
@@ -197,4 +225,55 @@ class MRouter {
       ),
     ],
   );
+}
+
+class NoteRouteData {
+  final Note? data;
+  NoteRouteData({this.data});
+  @override
+  String toString() => 'NoteRouteData(data: $data)';
+}
+
+class MExtraCodec extends Codec<Object?, Object?> {
+  const MExtraCodec();
+  @override
+  Converter<Object?, Object?> get decoder => const _NoteCodecDecoder();
+
+  @override
+  Converter<Object?, Object?> get encoder => const _NoteCodecEncoder();
+}
+
+class _NoteCodecDecoder extends Converter<Object?, Object?> {
+  const _NoteCodecDecoder();
+
+  @override
+  Object? convert(Object? input) {
+    if (input == null) {
+      return null;
+    }
+
+    final List<Object?> inputAsList = input as List<Object?>;
+    if (inputAsList[0] == 'NoteRouteData') {
+      return NoteRouteData(data: inputAsList[1] as Note?);
+    }
+
+    throw FormatException('Unable to parse input: $input');
+  }
+}
+
+class _NoteCodecEncoder extends Converter<Object?, Object?> {
+  const _NoteCodecEncoder();
+
+  @override
+  Object? convert(Object? input) {
+    if (input == null) {
+      return null;
+    }
+    switch (input) {
+      case NoteRouteData _:
+        return <Object?>['NoteRouteData', input.data];
+      default:
+        throw FormatException('Cannot encode type ${input.runtimeType}');
+    }
+  }
 }

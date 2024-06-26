@@ -3,6 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../dtos/dtos.dart';
+import '../responses/folder_response.dart';
+import '../responses/folder_with_notes_response.dart';
 import '../responses/responses.dart';
 
 part 'note_remote_datasource.g.dart';
@@ -26,26 +28,26 @@ abstract class NoteRemoteDatasource {
 
   @POST('/api/v1/notes')
   Future<NoteResponse<NoteDto?>> createNote({
-    @Part() required String title,
-    @Part() required String content,
+    @Field() required String title,
+    @Field() required String content,
   });
 
   @GET('/api/v1/notes/{noteId}')
   Future<NoteResponse<NoteDto?>> getNote(@Path('noteId') String noteId);
 
-  @GET('/api/v1/notes/{noteId}')
+  @PUT('/api/v1/notes/{noteId}')
   Future<NoteResponse<NoteDto?>> updateNote({
     @Path('noteId') required String noteId,
-    @Part() String? title,
-    @Part() String? content,
-    @Part() bool? pinned,
+    @Field() String? title,
+    @Field() String? content,
+    @Field() bool? pinned,
   });
 
   @DELETE('/api/v1/notes/{noteId}')
   Future<NoteResponse> deleteNote(@Path('noteId') String noteId);
 
   @PUT('/api/v1/notes/{noteId}/folders/{folderId}')
-  Future<NoteResponse> addNoteToFolder({
+  Future<NoteResponse<NoteDto?>> addNoteToFolder({
     @Path('noteId') required String noteId,
     @Path('folderId') required String folderId,
   });
@@ -69,13 +71,21 @@ abstract class NoteRemoteDatasource {
 
   @POST('/api/v1/folders')
   Future<NoteResponse<FolderDto?>> createFolder({
-    @Part() required String title,
+    @Field() required String title,
   });
 
   @GET('/api/v1/folders/{folderId}')
-  Future<NoteResponse<FolderDto?>> getFolder({
+  Future<NoteResponse<FolderResponse>> getFolder({
     @Path('folderId') required String folderId,
-    @Query('includeNotes') bool? includeNotes,
+    @Query('includeNotes') bool includeNotes = false,
+    @Query('keywords') String? keywords,
+    @Query('pinned') bool? pinned,
+  });
+
+  @GET('/api/v1/folders/{folderId}')
+  Future<NoteResponse<FolderWithNotesResponse>> getFolderWithNotes({
+    @Path('folderId') required String folderId,
+    @Query('includeNotes') bool includeNotes = true,
     @Query('keywords') String? keywords,
     @Query('pinned') bool? pinned,
     @Query('sortBy') String? sortBy = 'createdAt',
@@ -87,8 +97,8 @@ abstract class NoteRemoteDatasource {
   @PUT('/api/v1/folders/{folderId}')
   Future<NoteResponse<FolderDto?>> updateFolder({
     @Path('folderId') required String folderId,
-    @Part() String? title,
-    @Part() bool? pinned,
+    @Field() String? title,
+    @Field() bool? pinned,
   });
 
   @DELETE('/api/v1/folders/{folderId}')

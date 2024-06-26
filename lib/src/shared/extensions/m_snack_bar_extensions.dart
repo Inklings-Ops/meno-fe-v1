@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
 
 import '../../features/auth/domain/domain.dart';
 import '../../features/broadcast/domain/domain.dart';
@@ -12,7 +13,7 @@ extension MSnackBarExtensions on BuildContext {
   void clearSnackBars() => ScaffoldMessenger.of(this).clearSnackBars();
 
   MMessenger showErrorSnackBar(String message) {
-    final  colorScheme = MColorScheme.of(this);
+    final colorScheme = MColorScheme.of(this);
     return ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         backgroundColor: colorScheme?.error,
@@ -68,6 +69,18 @@ extension MSnackBarExtensions on BuildContext {
       exception.maybeMap(
         orElse: () => '',
         emailAlreadyInUse: (_) => MErrorMessages.emailAlreadyInUse,
+        networkError: (_) => MErrorMessages.networkError,
+        serverError: (_) => MErrorMessages.serverError,
+        timeOutError: (_) => MErrorMessages.timeOutError,
+        unknownError: (_) => MErrorMessages.unknownError,
+      ),
+    );
+  }
+
+  MMessenger showNoteError(NoteException exception) {
+    return showErrorSnackBar(
+      exception.maybeMap(
+        orElse: () => '',
         networkError: (_) => MErrorMessages.networkError,
         serverError: (_) => MErrorMessages.serverError,
         timeOutError: (_) => MErrorMessages.timeOutError,

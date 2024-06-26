@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../inputs/i_folder_title.dart';
+import 'note.dart';
 
 part 'folder.freezed.dart';
 
@@ -13,5 +14,9 @@ class Folder with _$Folder {
     int? numberOfNotes,
     bool? pinned,
     DateTime? createdAt,
+    List<Note?>? notes,
   }) = _Folder;
+
+  factory Folder.empty() => Folder(id: '', title: IFolderTitle(''));
+  
 }

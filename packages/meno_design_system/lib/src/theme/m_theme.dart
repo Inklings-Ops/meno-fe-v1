@@ -52,10 +52,19 @@ class MTheme {
         focusedBorder: textInputStyles.borderFocused,
         enabledBorder: textInputStyles.border,
         errorBorder: textInputStyles.borderError,
+        disabledBorder: textInputStyles.borderDisabled,
         filled: true,
         iconColor: textInputStyles.iconColor,
       ),
       textTheme: textTheme.globalTextTheme.apply(fontSizeFactor: 1),
+      chipTheme: const ChipThemeData(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        labelPadding: EdgeInsets.zero,
+        side: BorderSide.none,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+        ),
+      ),
       extensions: [
         buttonStyles,
         globalStyles,

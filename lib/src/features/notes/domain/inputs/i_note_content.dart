@@ -9,8 +9,7 @@ class INoteContent extends ValueObject<String> {
   final INoteContentResult value;
 
   factory INoteContent(String input) {
-    final finalInput = input.toLowerCase().trim();
-    return INoteContent._(validateNotEmpty(finalInput));
+    return INoteContent._(validateNotEmpty(input));
   }
 
   /// Creates a new `INoteContent` object with the specified value.

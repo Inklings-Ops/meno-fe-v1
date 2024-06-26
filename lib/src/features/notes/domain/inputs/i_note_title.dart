@@ -9,8 +9,7 @@ class INoteTitle extends ValueObject<String> {
   final INoteTitleResult value;
 
   factory INoteTitle(String input) {
-    final finalInput = input.toLowerCase().trim();
-    return INoteTitle._(validateNotEmpty(finalInput));
+    return INoteTitle._(validateNotEmpty(input));
   }
 
   /// Creates a new `INoteTitle` object with the specified value.

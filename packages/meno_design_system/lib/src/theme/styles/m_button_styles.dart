@@ -132,6 +132,11 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
             pressedValue: colorScheme.onErrorContainer!,
             disabledValue: colorScheme.onDisabled,
           ),
+          shape: MInternal.all(
+            const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
         ),
       ),
     );

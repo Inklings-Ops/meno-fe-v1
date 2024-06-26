@@ -33,30 +33,28 @@ class MModalListTile extends StatelessWidget {
       height: showDivider ? 56.0 : null,
       child: Column(
         children: [
-          SizedBox(
-            height: 40,
-            child: ListTile(
-              onTap: onTap,
-              title: title != null
-                  ? MText(
-                      title!,
-                      style: MTextStyle.bodyRegular,
-                      color: titleColor,
-                    )
-                  : null,
-              minLeadingWidth: MCore.medium,
-              leading: IconTheme(
-                data: iconTheme,
-                child: SizedBox.square(dimension: 24, child: leading),
-              ),
-              trailing: SizedBox.square(
-                dimension: 24,
-                child: trailing != null
-                    ? IconTheme(data: iconTheme, child: Icon(trailing))
-                    : null,
-              ),
-              contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+          ListTile(
+            onTap: onTap,
+            minTileHeight: 40,
+            title: title != null
+                ? MText(
+                    title!,
+                    style: MTextStyle.bodyRegular,
+                    color: titleColor,
+                  )
+                : null,
+            minLeadingWidth: MCore.medium,
+            leading: IconTheme(
+              data: iconTheme,
+              child: SizedBox.square(dimension: 24, child: leading),
             ),
+            trailing: SizedBox.square(
+              dimension: 24,
+              child: trailing != null
+                  ? IconTheme(data: iconTheme, child: Icon(trailing))
+                  : null,
+            ),
+            contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           ),
           if (showDivider)
             const MDivider(bottomSpace: MCore.small, topSpace: MCore.small),
