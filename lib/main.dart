@@ -28,7 +28,7 @@ import 'src/features/broadcast/application/timer/timer_cubit.dart';
 import 'src/features/chat/application/chat_bloc.dart';
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/notes/application/note_form/note_form_cubit.dart';
-import 'src/features/notes/application/note_list/notes_bloc.dart';
+import 'src/features/notes/application/notes/notes_bloc.dart';
 import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
 import 'src/services/meno/meno_bloc.dart';

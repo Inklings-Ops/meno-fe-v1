@@ -6,7 +6,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 

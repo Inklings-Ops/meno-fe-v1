@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart' hide Assets;
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder_modal.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';

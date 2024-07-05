@@ -75,7 +75,7 @@ import '../features/notes/application/folder_form/folder_form_cubit.dart'
 import '../features/notes/application/folder_list/folder_list_bloc.dart'
     as _i81;
 import '../features/notes/application/note_form/note_form_cubit.dart' as _i77;
-import '../features/notes/application/note_list/notes_bloc.dart' as _i78;
+import '../features/notes/application/notes/notes_bloc.dart' as _i78;
 import '../features/notes/domain/domain.dart' as _i66;
 import '../features/notes/infrastructure/datasources/datasources.dart' as _i68;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
