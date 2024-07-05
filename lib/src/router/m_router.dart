@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/pages/new_note_page.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/pages/note_editor_page.dart';
 import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_cubit.dart';
+import 'package:meno_fe_v1/src/features/settings/presentation/page/settings_page.dart';
 import 'package:meno_fe_v1/src/shared/pages/start_up/startup_page.dart';
 
 import '../features/auth/application/application.dart';
@@ -150,12 +152,15 @@ class MRouter {
         builder: (context, state) => const NotificationsPage(),
       ),
       GoRoute(
-        path: Routes.newNote,
-        name: Routes.newNote,
+        path: Routes.noteEditor,
+        name: Routes.noteEditor,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>?;
-          return NewNotePage(note: data?['note'] as Note?);
+          return BlocProvider.value(
+            value: di<NoteFormCubit>(param1: data?['note'] as Note?),
+            child: NoteEditorPage(note: data?['note'] as Note?),
+          );
         },
       ),
       GoRoute(
@@ -179,6 +184,12 @@ class MRouter {
         name: Routes.bible,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const BiblePage(),
+      ),
+      GoRoute(
+        path: Routes.settings,
+        name: Routes.settings,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SettingsPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => MLayout(shell: shell),

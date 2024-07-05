@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 
 class NoteWidget extends StatelessWidget {
   const NoteWidget({super.key, this.onTap, this.selected = false});
@@ -15,7 +15,7 @@ class NoteWidget extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     final background = selected ? colors.primary : colors.inActiveContainer;
-    final foreground = selected?  colors.onPrimary: colors.onInActiveContainer;
+    final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
 
     return InkWell(
       onTap: onTap,
@@ -37,12 +37,9 @@ class NoteWidget extends StatelessWidget {
               style: MTextStyle.captionMedium,
               color: foreground,
             ),
-            BlocBuilder<NoteListBloc, NoteListState>(
+            BlocBuilder<NotesBloc, NotesState>(
               builder: (context, state) => MText(
-                state.maybeWhen(
-                  orElse: () => '0',
-                  success: (notes) => notes.length.toString(),
-                ),
+                state.notes.length.toString(),
                 style: MTextStyle.heading2Medium,
                 color: foreground,
               ),

@@ -4,24 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
+import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../widgets/m_notes_back_button.dart';
 
-class NewNotePage extends StatefulWidget {
-  const NewNotePage({super.key, this.note});
+class NoteEditorPage extends StatefulWidget {
+  const NoteEditorPage({super.key, this.note});
 
   final Note? note;
 
   @override
-  State<NewNotePage> createState() => _NewNotePageState();
+  State<NoteEditorPage> createState() => _NoteEditorPageState();
 }
 
-class _NewNotePageState extends State<NewNotePage> {
+class _NoteEditorPageState extends State<NoteEditorPage> {
   QuillController controller = QuillController.basic();
+  FocusNode quillFocusNode = FocusNode();
+  final scrollController = ScrollController();
 
   @override
   void didChangeDependencies() {
@@ -36,11 +39,6 @@ class _NewNotePageState extends State<NewNotePage> {
   @override
   void initState() {
     super.initState();
-
-    if (widget.note != null) {
-      context.read<NoteFormCubit>().init(widget.note!);
-    }
-
     controller.addListener(() {
       final content = jsonEncode(controller.document.toDelta().toJson());
       context.read<NoteFormCubit>().contentChanged(content);
@@ -50,18 +48,16 @@ class _NewNotePageState extends State<NewNotePage> {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final bloc = context.watch<NoteFormCubit>();
-
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        if (widget.note?.title == bloc.state.title ||
-            widget.note?.content == bloc.state.content) {
-          return;
-        } else {
-          context.read<NoteFormCubit>().onSubmit();
-          context.pop();
-        }
+    return BlocListener<NoteFormCubit, NoteFormState>(
+      listenWhen: (p, c) => p.option != c.option,
+      listener: (context, state) {
+        state.option.fold(
+          () {},
+          (either) => either.fold(
+            (exception) => context.showNoteError(exception),
+            (_) => context.read<NotesBloc>().add(const NotesEvent.getNotes()),
+          ),
+        );
       },
       child: Scaffold(
         appBar: AppBar(
@@ -95,9 +91,12 @@ class _NewNotePageState extends State<NewNotePage> {
               _TitleField(initialNote: widget.note),
               MCore.large.verticalSpace,
               Expanded(
-                child: QuillEditor.basic(
+                child: QuillEditor(
+                  focusNode: quillFocusNode,
+                  scrollController: scrollController,
                   configurations: QuillEditorConfigurations(
                     controller: controller,
+                    expands: true,
                     sharedConfigurations: const QuillSharedConfigurations(
                       locale: Locale('de'),
                     ),
@@ -169,6 +168,7 @@ class _TitleField extends StatelessWidget {
       style: MTextStyle.heading3Bold,
       initialValue: initialNote?.title.get(),
       onChanged: context.watch<NoteFormCubit>().titleChanged,
+      textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
         border: InputBorder.none,
         errorBorder: InputBorder.none,

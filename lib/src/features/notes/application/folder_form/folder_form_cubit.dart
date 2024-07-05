@@ -24,7 +24,7 @@ class FolderFormCubit extends Cubit<FolderFormState> {
   }
 
   void titleChanged(String title) {
-    emit(state.copyWith(title: IFolderTitle(title)));
+    emit(state.copyWith(title: FolderTitle(title)));
   }
 
   Future<void> onSubmit() async {

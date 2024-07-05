@@ -75,7 +75,7 @@ import '../features/notes/application/folder_form/folder_form_cubit.dart'
 import '../features/notes/application/folder_list/folder_list_bloc.dart'
     as _i81;
 import '../features/notes/application/note_form/note_form_cubit.dart' as _i77;
-import '../features/notes/application/note_list/note_list_bloc.dart' as _i78;
+import '../features/notes/application/note_list/notes_bloc.dart' as _i78;
 import '../features/notes/domain/domain.dart' as _i66;
 import '../features/notes/infrastructure/datasources/datasources.dart' as _i68;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
@@ -231,7 +231,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i46.NetworkCubit>(
         () => _i46.NetworkCubit(facade: gh<_i38.INetworkFacade>()));
     gh.factory<_i47.NoteLocalDatasource>(
-        () => _i47.NoteLocalDatasource(objectbox: gh<_i22.ObjectBoxService>()));
+        () => _i47.NoteLocalDatasource(pref: gh<_i27.SharedPreferences>()));
     await gh.factoryAsync<_i48.NotificationService>(
       () {
         final i = _i48.NotificationService(
@@ -317,10 +317,16 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.lazySingleton<_i75.MyProfileBloc>(
         () => _i75.MyProfileBloc(facade: gh<_i76.IProfileFacade>()));
-    gh.lazySingleton<_i77.NoteFormCubit>(
-        () => _i77.NoteFormCubit(facade: gh<_i66.INoteFacade>()));
-    gh.lazySingleton<_i78.NoteListBloc>(
-        () => _i78.NoteListBloc(facade: gh<_i66.INoteFacade>()));
+    gh.factoryParam<_i77.NoteFormCubit, _i66.Note?, dynamic>((
+      initialNote,
+      _,
+    ) =>
+        _i77.NoteFormCubit(
+          facade: gh<_i66.INoteFacade>(),
+          initialNote: initialNote,
+        ));
+    gh.lazySingleton<_i78.NotesBloc>(
+        () => _i78.NotesBloc(facade: gh<_i66.INoteFacade>()));
     gh.lazySingleton<_i79.ProfileFormCubit>(() => _i79.ProfileFormCubit(
           facade: gh<_i69.IProfileFacade>(),
           media: gh<_i16.MediaService>(),

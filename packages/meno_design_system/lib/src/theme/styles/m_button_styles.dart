@@ -10,6 +10,8 @@ ButtonStyle get _baseButtonStyle => ButtonStyle(
       fixedSize: MInternal.all(const Size.fromHeight(MCore.xxxLarge)),
       padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
       shadowColor: MInternal.all(MColor.shadow),
+      visualDensity: VisualDensity.compact,
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       shape: MInternal.all(
         const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(MCore.medium)),

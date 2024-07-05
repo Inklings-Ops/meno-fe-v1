@@ -3,9 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'entities/folder.dart';
 import 'entities/note.dart';
 import 'exceptions/note_exception.dart';
-import 'inputs/i_folder_title.dart';
-import 'inputs/i_note_content.dart';
-import 'inputs/i_note_title.dart';
+import 'value_objects/folder_title.dart';
 
 abstract class INoteFacade {
   Future<Either<NoteException, List<Note?>>> getAllNotes({
@@ -18,21 +16,16 @@ abstract class INoteFacade {
     int? size,
   });
 
-  Future<Either<NoteException, Note>> createNote({
-    required INoteTitle title,
-    required INoteContent content,
-  });
+  Future<Either<NoteException, Note>> createNote(Note note);
 
   Future<Either<NoteException, Note?>> readNote(String noteId);
 
   Future<Either<NoteException, Note>> updateNote({
-    required String id,
-    INoteTitle? title,
-    INoteContent? content,
+    required Note note,
     bool? pinned,
   });
 
-  Future<Either<NoteException, Unit>> deleteNote(String noteId);
+  Future<Either<NoteException, Unit>> deleteNote(Note note);
 
   Future<Either<NoteException, Note>> addNoteToFolder({
     required String noteId,
@@ -54,7 +47,7 @@ abstract class INoteFacade {
     int? size,
   });
 
-  Future<Either<NoteException, Folder>> createFolder(IFolderTitle title);
+  Future<Either<NoteException, Folder>> createFolder(FolderTitle title);
 
   Future<Either<NoteException, Folder?>> getFolder({
     required String folderId,
@@ -74,7 +67,7 @@ abstract class INoteFacade {
 
   Future<Either<NoteException, Folder>> updateFolder({
     required String id,
-    IFolderTitle? title,
+    FolderTitle? title,
     bool? pinned,
   });
 

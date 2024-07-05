@@ -52,6 +52,7 @@ extension MSnackBarExtensions on BuildContext {
     );
   }
 
+
   MMessenger showBibleError(dynamic exception) {
     return showErrorSnackBar(
       (exception as BibleException).maybeMap(

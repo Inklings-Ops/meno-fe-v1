@@ -27,6 +27,13 @@ abstract class ValueObject<T> {
   /// Returns a bool after validating the current type
   bool isValid() => value.isRight();
 
+  Either<ValueFailure<dynamic>, Unit> get failureOrUnit {
+    return value.fold(
+      (l) => left(l),
+      (r) => right(unit),
+    );
+  }
+
   @override
   String toString() => 'Value($value)';
 }

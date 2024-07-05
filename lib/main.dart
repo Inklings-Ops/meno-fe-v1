@@ -28,12 +28,11 @@ import 'src/features/broadcast/application/timer/timer_cubit.dart';
 import 'src/features/chat/application/chat_bloc.dart';
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/notes/application/note_form/note_form_cubit.dart';
-import 'src/features/notes/application/note_list/note_list_bloc.dart';
+import 'src/features/notes/application/note_list/notes_bloc.dart';
 import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
 import 'src/services/meno/meno_bloc.dart';
 import 'src/services/notification_service.dart';
-import 'src/services/objectbox_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,7 +85,7 @@ Future<void> main() async {
         BlocProvider(create: (_) => di<NoteFormCubit>()),
         BlocProvider(
           create: (_) =>
-              di<NoteListBloc>()..add(const NoteListEvent.getAllNotes()),
+              di<NotesBloc>()..add(const NotesEvent.getNotes()),
         ),
         BlocProvider(create: (_) => di<FolderFormCubit>()),
         BlocProvider(

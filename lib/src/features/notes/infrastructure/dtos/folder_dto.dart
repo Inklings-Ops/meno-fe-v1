@@ -35,7 +35,7 @@ extension FolderDtoToDomain on FolderDto {
     return Folder(
       dbId: dbId,
       id: id,
-      title: IFolderTitle(title),
+      title: FolderTitle(title),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,

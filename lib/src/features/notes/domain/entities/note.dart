@@ -1,19 +1,20 @@
+import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
-import '../inputs/i_note_content.dart';
-import '../inputs/i_note_title.dart';
+import '../value_objects/note_content.dart';
+import '../value_objects/note_title.dart';
 import 'folder.dart';
 import 'note_creator.dart';
 
 part 'note.freezed.dart';
 
 @freezed
-class Note with _$Note {
+class Note with _$Note implements IEntity {
   const factory Note({
-    int? dbId,
-    String? id,
-    required INoteTitle title,
-    required INoteContent content,
+    required Uid<Note> uid,
+    required NoteTitle title,
+    required NoteContent content,
     bool? pinned,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -23,9 +24,18 @@ class Note with _$Note {
 
   factory Note.empty() {
     return Note(
-      title: INoteTitle(''),
-      content: INoteContent(''),
+      uid: Uid<Note>.fromString(''),
+      title: NoteTitle(''),
+      content: NoteContent(''),
       creator: NoteCreator.empty(),
     );
+  }
+}
+
+extension NoteExtension on Note {
+  Option<ValueFailure<dynamic>> get failureOption {
+    return title.failureOrUnit
+        .andThen(content.failureOrUnit)
+        .fold((f) => some(f), (_) => none());
   }
 }

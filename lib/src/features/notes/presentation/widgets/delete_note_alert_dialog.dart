@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
-
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 
 class DeleteNoteAlertDialog extends StatelessWidget {
   const DeleteNoteAlertDialog({
@@ -12,15 +11,12 @@ class DeleteNoteAlertDialog extends StatelessWidget {
     required this.onDelete,
     this.onCancel,
   });
-
   final VoidCallback onDelete;
   final VoidCallback? onCancel;
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
-    final bloc = context.watch<NoteListBloc>();
-
+    final bloc = context.watch<NotesBloc>();
     return AlertDialog(
       title: const MText('Delete Note?', style: MTextStyle.heading2Regular),
       contentPadding: const EdgeInsets.all(24).r,
@@ -44,7 +40,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
         ),
         SizedBox(
           height: 40.h,
-          child: bloc.state == const NoteListState.loading()
+          child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
               :  MDangerButton(
             label: 'Delete',

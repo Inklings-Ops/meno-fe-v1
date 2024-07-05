@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart' hide Assets;
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder_modal.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
@@ -20,7 +20,7 @@ class NotesPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notesBloc = context.read<NoteListBloc>();
+    final notesBloc = context.read<NotesBloc>();
     final foldersBloc = context.read<FolderListBloc>();
 
     final selectedIndex = useState(0);
@@ -42,7 +42,7 @@ class NotesPage extends HookWidget {
       ),
       body: RefreshIndicator.adaptive(
         onRefresh: () async => switch (selectedIndex.value) {
-          0 => notesBloc.add(const NoteListEvent.getAllNotes()),
+          0 => notesBloc.add(const NotesEvent.getNotes()),
           1 => foldersBloc.add(const FolderListEvent.getAllFolders()),
           _ => null,
         },
@@ -92,32 +92,28 @@ class _AddNewNoteActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
- 
     final colors = MColorScheme.of(context)!;
 
-    return BlocBuilder<NoteListBloc, NoteListState>(
+    return BlocBuilder<NotesBloc, NotesState>(
       buildWhen: (p, c) => p != c,
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        success: (notes) {
-          if (notes.isEmpty) return const SizedBox();
+      builder: (context, state) {
+        if (state.notes.isEmpty) return const SizedBox();
 
-          return InkWell(
-            onTap: () => context.push(Routes.newNote),
-            child: Row(
-              children: [
-                Icon(MIcons.plus, size: 22.r, color: colors.primary),
-                MCore.micro.horizontalSpace,
-                MText(
-                  'Add New Note',
-                  style: MTextStyle.captionMedium,
-                  color: colors.primary,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+        return InkWell(
+          onTap: () => context.push(Routes.noteEditor),
+          child: Row(
+            children: [
+              Icon(MIcons.plus, size: 22.r, color: colors.primary),
+              MCore.micro.horizontalSpace,
+              MText(
+                'Add New Note',
+                style: MTextStyle.captionMedium,
+                color: colors.primary,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

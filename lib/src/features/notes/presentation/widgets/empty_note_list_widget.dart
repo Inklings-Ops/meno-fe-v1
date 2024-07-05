@@ -54,7 +54,7 @@ class AddNewNoteButton extends StatelessWidget {
             width: 1.50.r,
           ),
         ),
-        onPressed: () => context.push(Routes.newNote),
+        onPressed: () => context.push(Routes.noteEditor),
       ),
     );
   }
