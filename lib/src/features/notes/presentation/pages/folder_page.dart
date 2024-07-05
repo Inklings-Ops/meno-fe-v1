@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder_modal.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder_widget.dart';
@@ -120,46 +118,30 @@ class FolderPage extends HookWidget {
 
 class _NotesList extends StatelessWidget {
   const _NotesList({required this.folder});
-
   final Folder folder;
-
   @override
   Widget build(BuildContext context) {
-    final folderBloc = context.read<FolderCubit>();
-    final folderListBloc = context.read<FolderListBloc>();
+    return BlocBuilder<FolderCubit, FolderState>(
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        loading: () => const MLoadingIndicator.four(),
+        success: (folder) {
+          if (folder.notes == null || folder.notes?.isEmpty == true) {
+            return EmptyFolderPageWidget(folder: folder);
+          }
 
-    return BlocListener<NoteListBloc, NoteListState>(
-      listener: (context, state) => state.whenOrNull(
-        success: (_) {
-          folderBloc.getAllNotes();
-          folderListBloc.add(
-            FolderListEvent.getFolderAndUpdateList(folder.id),
+          return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (_, i) => MCore.large.verticalSpace,
+            itemCount: folder.notes!.length,
+            itemBuilder: (context, i) => NoteCard(
+              note: folder.notes![i]!,
+              folder: folder,
+              onTap: () {},
+            ),
           );
-          return null;
         },
-      ),
-      child: BlocBuilder<FolderCubit, FolderState>(
-        builder: (context, state) => state.maybeWhen(
-          orElse: () => const SizedBox(),
-          loading: () => const MLoadingIndicator.four(),
-          success: (folder) {
-            if (folder.notes == null || folder.notes?.isEmpty == true) {
-              return EmptyFolderPageWidget(folder: folder);
-            }
-
-            return ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              separatorBuilder: (_, i) => MCore.large.verticalSpace,
-              itemCount: folder.notes!.length,
-              itemBuilder: (context, i) => NoteCard(
-                note: folder.notes![i]!,
-                folder: folder,
-                onTap: () {},
-              ),
-            );
-          },
-        ),
       ),
     );
   }

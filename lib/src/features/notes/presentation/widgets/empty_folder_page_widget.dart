@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart' hide Assets;
 import 'package:meno_fe_v1/gen/assets.gen.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
@@ -72,14 +71,14 @@ class _AllNotesModal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<NoteListBloc>();
+    final bloc = context.watch<NotesBloc>();
 
     final selectedNote = useState<Note?>(null);
 
-    return BlocListener<NoteListBloc, NoteListState>(
+    return BlocListener<NotesBloc, NotesState>(
       listenWhen: (p, c) => p != c,
       listener: (context, state) {
-        state.whenOrNull(success: (notes) => context.pop());
+        // state.whenOrNull(success: (notes) => context.pop());
       },
       child: MModal(
         title: 'Add to Folder',
@@ -89,48 +88,51 @@ class _AllNotesModal extends HookWidget {
           children: [
             MCore.large.verticalSpace,
             Expanded(
-              child: BlocBuilder<NoteListBloc, NoteListState>(
+              child: BlocBuilder<NotesBloc, NotesState>(
                 bloc: bloc,
                 buildWhen: (p, c) => p != c,
-                builder: (context, state) => state.when(
-                  failure: (_) => const NoteListFailureWidget(),
-                  loading: () => const MLoadingIndicator.box(),
-                  success: (notes) {
-                    if (notes.isEmpty) return const EmptyNoteListWidget();
+                builder: (context, state) {
+                  if (state.isLoading) return const MLoadingIndicator.box();
 
-                    final list = notes.where((e) => e?.folder == null).toList();
+                  if (!state.isLoading && state.exception != null) {
+                    return const NoteListFailureWidget();
+                  }
 
-                    return ListView.separated(
-                      primary: false,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(bottom: MCore.large).r,
-                      itemCount: list.length,
-                      separatorBuilder: (context, i) => 16.verticalSpace,
-                      itemBuilder: (context, i) => NoteCard(
-                        note: list[i]!,
-                        showAddButton: true,
-                        folder: folder,
-                        selected: selectedNote.value?.id == list[i]?.id,
-                        onTap: () {
-                          if (selectedNote.value != null) {
-                            selectedNote.value = null;
-                          } else {
-                            selectedNote.value = list[i];
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
+                  if (state.notes.isEmpty) return const EmptyNoteListWidget();
+
+                  final list =
+                      state.notes.where((e) => e?.folder == null).toList();
+
+                  return ListView.separated(
+                    primary: false,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(bottom: MCore.large).r,
+                    itemCount: list.length,
+                    separatorBuilder: (context, i) => 16.verticalSpace,
+                    itemBuilder: (context, i) => NoteCard(
+                      note: list[i]!,
+                      showAddButton: true,
+                      folder: folder,
+                      selected: selectedNote.value?.uid == list[i]?.uid,
+                      onTap: () {
+                        if (selectedNote.value != null) {
+                          selectedNote.value = null;
+                        } else {
+                          selectedNote.value = list[i];
+                        }
+                      },
+                    ),
+                  );
+                },
               ),
             ),
             if (selectedNote.value != null) ...[
               MCore.large.verticalSpace,
               MPrimaryButton(
                 label: 'Done',
-                loading: bloc.state == const NoteListState.loading(),
+                loading: bloc.state.isLoading,
                 onPressed: () => bloc.add(
-                  NoteListEvent.addToFolder(folder, selectedNote.value!),
+                  NotesEvent.addToFolder(folder, selectedNote.value!),
                 ),
               ),
             ],

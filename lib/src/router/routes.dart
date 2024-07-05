@@ -28,6 +28,7 @@ class Routes {
   static const String notifications = '/notifications';
   static const String bible = '/bible';
   static const String chat = '/chat';
-  static const String newNote = '/newNote';
+  static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
+  static const String settings = '/settings';
 }

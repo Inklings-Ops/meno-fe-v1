@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 
 class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   const DeleteNoteFromFolderAlertDialog({
@@ -18,7 +18,7 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
-    final bloc = context.watch<NoteListBloc>();
+    final bloc = context.watch<NotesBloc>();
 
     return AlertDialog(
       title: const MText('Remove Note?', style: MTextStyle.heading2Regular),
@@ -43,7 +43,7 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
         ),
         SizedBox(
           height: 40.h,
-          child: bloc.state == const NoteListState.loading()
+          child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
               : MDangerButton(
                   label: 'Remove',

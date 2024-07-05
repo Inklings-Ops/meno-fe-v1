@@ -36,14 +36,14 @@ class FolderCubit extends Cubit<FolderState> {
     emit(const _Loading());
 
     final result = await _facade.addNoteToFolder(
-      noteId: note.id!,
+      noteId: note.uid.get()!,
       folderId: folder.id,
     );
 
     return result.fold(
       (failure) => emit(_Failure(failure)),
       (note) {
-        final index = notes.indexWhere((note) => note?.id == note!.id);
+        final index = notes.indexWhere((note) => note?.uid == note!.uid);
         if (index != -1) {
           notes[index] = note;
           emit(_Success(folder.copyWith(notes: [])));

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 
 import 'empty_folder_list_widget.dart';
@@ -19,24 +18,24 @@ class AddToFolderModal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final noteListBloc = context.watch<NoteListBloc>();
+    final noteListBloc = context.watch<NotesBloc>();
     final folderListBloc = context.watch<FolderListBloc>();
 
     final selectedFolder = useState<Folder?>(null);
 
-    return BlocListener<NoteListBloc, NoteListState>(
+    return BlocListener<NotesBloc, NotesState>(
       bloc: noteListBloc,
       listenWhen: (p, c) => p != c,
       listener: (context, state) {
-        if (selectedFolder.value != null) {
-          state.whenOrNull(
-            success: (_) {
-              folderListBloc.add(const FolderListEvent.getAllFolders());
-              context.pop();
-              context.pop();
-            },
-          );
-        }
+        // if (selectedFolder.value != null) {
+        //   state.whenOrNull(
+        //     success: (_) {
+        //       folderListBloc.add(const FolderListEvent.getAllFolders());
+        //       context.pop();
+        //       context.pop();
+        //     },
+        //   );
+        // }
       },
       child: MModal(
         title: 'Add to Folder',
@@ -80,10 +79,10 @@ class AddToFolderModal extends HookWidget {
               MCore.large.verticalSpace,
               MPrimaryButton(
                 label: 'Done',
-                loading: noteListBloc.state == const NoteListState.loading(),
+                loading: noteListBloc.state.isLoading,
                 onPressed: () {
                   noteListBloc.add(
-                    NoteListEvent.addToFolder(selectedFolder.value!, note),
+                    NotesEvent.addToFolder(selectedFolder.value!, note),
                   );
                 },
               ),

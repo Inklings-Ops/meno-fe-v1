@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/note_list_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/delete_folder_alert_dialog.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/remove_note_from_folder_alert_dialog.dart';
@@ -49,7 +49,10 @@ extension MDialogX on BuildContext {
       context: this,
       builder: (context) => DeleteNoteAlertDialog(
         onDelete: () {
-          context.read<NoteListBloc>().add(NoteListEvent.deleteNote(note));
+          context.read<NotesBloc>().add(NotesEvent.deleteNote(note));
+          context
+              .read<FolderListBloc>()
+              .add(const FolderListEvent.getAllFolders());
           context.pop();
           context.pop();
         },
@@ -77,22 +80,22 @@ extension MDialogX on BuildContext {
   Future<bool?> showRemoveNoteFromFolderDialog(Note note) {
     return showDialog<bool>(
       context: this,
-      builder: (context) => BlocListener<NoteListBloc, NoteListState>(
+      builder: (context) => BlocListener<NotesBloc, NotesState>(
         listener: (context, state) {
-          state.whenOrNull(
-            success: (_) {
-              context
-                  .read<FolderListBloc>()
-                  .add(const FolderListEvent.getAllFolders());
-              context.pop();
-              context.pop();
-            },
-          );
+          // state.whenOrNull(
+          //   success: (_) {
+          //     context
+          //         .read<FolderListBloc>()
+          //         .add(const FolderListEvent.getAllFolders());
+          //     context.pop();
+          //     context.pop();
+          //   },
+          // );
         },
         child: DeleteNoteFromFolderAlertDialog(
           onDelete: () => context
-              .read<NoteListBloc>()
-              .add(NoteListEvent.removeFromFolder(note.folder!, note)),
+              .read<NotesBloc>()
+              .add(NotesEvent.removeFromFolder(note.folder!, note)),
         ),
       ),
     );

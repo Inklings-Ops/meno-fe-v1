@@ -78,7 +78,7 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
 class _TitleField extends StatelessWidget {
   const _TitleField({this.initialTitle});
 
-  final IFolderTitle? initialTitle;
+  final FolderTitle? initialTitle;
 
   @override
   Widget build(BuildContext context) {

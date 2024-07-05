@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
@@ -149,7 +148,6 @@ class _MoreButton extends StatelessWidget {
         color: colors.onDisabledContainer,
         iconSize: 20.r,
         onPressed: () {
-          Logger().w(note);
           context.showModal(
             NoteCardOptionsModal(note: note),
             useRootNavigator: true,
