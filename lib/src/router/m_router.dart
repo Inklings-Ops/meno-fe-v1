@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
+import 'package:meno_fe_v1/src/features/discover/presentation/pages/discover_page.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
@@ -35,7 +36,6 @@ import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
 import '../shared/layout/m_layout.dart';
-import '../shared/layout/pages.dart';
 import 'routes.dart';
 
 @Injectable()

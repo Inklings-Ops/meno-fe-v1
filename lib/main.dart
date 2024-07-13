@@ -9,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
 import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
+import 'package:meno_fe_v1/src/features/discover/discover.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
 
@@ -79,13 +80,19 @@ Future<void> main() async {
         BlocProvider(create: (_) => di<StreamBloc>()),
         BlocProvider(create: (_) => di<BroadcastBloc>()),
         BlocProvider(create: (_) => di<ChatBloc>()),
-        BlocProvider(create: (_) => di<RecentlyLiveCubit>()),
         BlocProvider(create: (_) => di<LiveBroadcastsBloc>()),
         BlocProvider(create: (_) => di<LiveParticipantsBloc>()),
         BlocProvider(create: (_) => di<NoteFormCubit>()),
+        BlocProvider(create: (_) => di<RecentlyLiveCubit>()..fetch()),
+        BlocProvider(create: (_) => di<SearchBloc>()),
+        BlocProvider(create: (_) => di<DAllCubit>()..init()),
+        BlocProvider(create: (_) => di<DNowLiveCubit>()..fetch(1)),
+        BlocProvider(create: (_) => di<DRecentlyLiveCubit>()..fetch(1)),
         BlocProvider(
-          create: (_) =>
-              di<NotesBloc>()..add(const NotesEvent.getNotes()),
+          create: (_) => di<FilterBloc>()..add(const FilterFetched(1)),
+        ),
+        BlocProvider(
+          create: (_) => di<NotesBloc>()..add(const NotesEvent.getNotes()),
         ),
         BlocProvider(create: (_) => di<FolderFormCubit>()),
         BlocProvider(

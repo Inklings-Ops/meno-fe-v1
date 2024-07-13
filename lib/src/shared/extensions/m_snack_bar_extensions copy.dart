@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 import '../../features/auth/domain/domain.dart';
 import '../../features/broadcast/domain/domain.dart';
@@ -40,6 +41,18 @@ extension MSnackBarExtensions on BuildContext {
   MMessenger showBroadcastFormError(dynamic exception) {
     return _showErrorSnackBar(
       (exception as BroadcastException).maybeMap(
+        orElse: () => '',
+        message: (value) => value.message,
+        networkError: (_) => MErrorMessages.networkError,
+        serverError: (_) => MErrorMessages.serverError,
+        timeOutError: (_) => MErrorMessages.timeOutError,
+      ),
+    );
+  }
+
+  MMessenger showDiscoverFormError(dynamic exception) {
+    return _showErrorSnackBar(
+      (exception as DiscoverException).maybeMap(
         orElse: () => '',
         message: (value) => value.message,
         networkError: (_) => MErrorMessages.networkError,

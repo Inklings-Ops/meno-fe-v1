@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast_list_entity.dart';
 
 import 'broadcast_dto.dart';
 
@@ -24,4 +25,15 @@ class BroadcastListDto with _$BroadcastListDto {
 
   @override
   Map<String, Object?> toJson() => _$BroadcastListDtoToJson(this);
+}
+
+extension BListX on BroadcastListDto {
+  BroadcastListEntity get toDomain {
+    return BroadcastListEntity(
+      broadcasts: broadcasts.map((b) => b?.toDomain).toList(),
+      totalItems: totalItems,
+      totalPages: totalPages,
+      currentPage: currentPage,
+    );
+  }
 }

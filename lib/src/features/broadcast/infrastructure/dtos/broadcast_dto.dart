@@ -21,6 +21,7 @@ class BroadcastDto with _$BroadcastDto {
     String? broadcastToken,
     BroadcastStatus? status,
     ParticipantDto? creator,
+    String? creatorId,
     String? fullName,
     String? imageId,
     String? imageUrl,
@@ -46,6 +47,7 @@ extension BroadcastDtoToDomain on BroadcastDto {
       id: id,
       title: IBroadcastTitle(title),
       description: IBroadcastDescription(description),
+      creatorId: creatorId,
       creator: creator != null
           ? Participant(id: creator!.id, fullName: creator!.fullName)
           : null,

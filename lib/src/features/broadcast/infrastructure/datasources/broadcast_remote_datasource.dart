@@ -88,6 +88,9 @@ abstract class BroadcastRemoteDatasource {
     /// Used for pagination
     @Query('size') int? size,
 
+    /// End time
+    @Query('endTime') String? endTime,
+
     /// Greater than end time
     @Query('endTime[gt]') String? endTimeGT,
 
@@ -95,7 +98,10 @@ abstract class BroadcastRemoteDatasource {
     @Query('endTime[lt]') String? endTimeLT,
 
     /// Equal to end time
-    @Query('endTime[eq]') String? endTimeEQ,
+    @Query('endTime=') String? endTimeEQ,
+
+    /// Start time
+    @Query('startTime') String? startTime,
 
     /// Greater than start time
     @Query('startTime[gt]') String? startTimeGT,
@@ -104,6 +110,6 @@ abstract class BroadcastRemoteDatasource {
     @Query('startTime[lt]') String? startTimeLT,
 
     /// Equal to start time
-    @Query('startTime[eq]') String? startTimeEQ,
+    @Query('startTime=') String? startTimeEQ,
   });
 }

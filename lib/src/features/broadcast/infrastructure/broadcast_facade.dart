@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast_list_entity.dart';
 
 import '../../../services/network_service.dart';
 import '../domain/domain.dart';
@@ -13,7 +12,7 @@ import 'mapper/broadcast_list_mapper.dart';
 import 'mapper/broadcast_mapper.dart';
 import 'responses/broadcast_error.dart';
 
-@LazySingleton(as: IBroadcastFacade)
+@Injectable(as: IBroadcastFacade)
 class BroadcastFacade implements IBroadcastFacade {
   final BroadcastMapper _mapper;
   final BroadcastListMapper _listMapper;
@@ -101,16 +100,16 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   @override
-  Future<Either<BroadcastException, List<Broadcast?>>> getBroadcasts({
+  Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
     String? status,
     String? include,
     bool? onlySubscriptions,
     String? keywords,
     String? creatorId,
-    String? sortBy,
-    String? orderBy,
-    int? page,
-    int? size,
+    String? sortBy = 'startTime',
+    String? orderBy = 'DESC',
+    int? page = 1,
+    int? size = 6,
     String? endTimeGT,
     String? endTimeLT,
     String? endTimeEQ,
@@ -141,7 +140,7 @@ class BroadcastFacade implements IBroadcastFacade {
         startTimeEQ: startTimeEQ,
       );
       final BroadcastListEntity data = _listMapper.toDomain(response.data!)!;
-      return right(data.broadcasts);
+      return right(data);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
@@ -193,7 +192,6 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   BroadcastException _getError(DioException e) {
-
     if (e.response?.data['error'].runtimeType == String) {
       return BroadcastException.message(e.response?.data['message']);
     }

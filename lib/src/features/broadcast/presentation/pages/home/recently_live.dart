@@ -15,7 +15,6 @@ class RecentlyLive extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
-      bloc: context.read<RecentlyLiveCubit>()..fetch(),
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         loading: () => const _BuildColumn(child: _SkeletonList()),

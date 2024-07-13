@@ -220,7 +220,9 @@ class _TopSection extends StatelessWidget {
                 const MBadge.live(),
                 6.verticalSpace,
                 MText(
-                  broadcast.creator!.fullName,
+                  broadcast.creator == null
+                      ? broadcast.fullName!
+                      : broadcast.creator!.fullName,
                   style: MTextStyle.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

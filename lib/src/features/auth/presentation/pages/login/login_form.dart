@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
@@ -27,7 +26,6 @@ class LoginForm extends StatelessWidget {
           (either) => either.fold(
             (failure) => context.showLoginError(failure),
             (success) {
-              Logger().w(success);
               context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
               context.read<RecentlyLiveCubit>().fetch();
             },

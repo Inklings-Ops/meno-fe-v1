@@ -57,12 +57,26 @@ class MTheme {
         iconColor: textInputStyles.iconColor,
       ),
       textTheme: textTheme.globalTextTheme.apply(fontSizeFactor: 1),
-      chipTheme: const ChipThemeData(
-        padding: EdgeInsets.symmetric(horizontal: 8),
+      chipTheme: ChipThemeData(
+        showCheckmark: false,
+        padding: const EdgeInsets.symmetric(
+          horizontal: MCore.large,
+          vertical: 6,
+        ),
         labelPadding: EdgeInsets.zero,
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(MCore.circle)),
+        ),
+        labelStyle: MTextStyle.captionMedium,
+        color: WidgetStateProperty.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return colorScheme.primary;
+            } else {
+              return colorScheme.inActiveContainer;
+            }
+          },
         ),
       ),
       extensions: [
