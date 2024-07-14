@@ -64,7 +64,7 @@ class _ResultList extends StatelessWidget {
 
         if (broadcast.endTime == null) {
           return MCard.live(
-            title: broadcast.title.get()!,
+            title: broadcast.title.getOr(),
             imageUrl: broadcast.imageUrl,
             host: broadcast.fullName!,
             liveCount: broadcast.totalListeners,
@@ -73,7 +73,7 @@ class _ResultList extends StatelessWidget {
         }
 
         return MCard.recentlyLive(
-          title: broadcast.title.get()!,
+          title: broadcast.title.getOr(),
           imageUrl: broadcast.imageUrl,
           host: broadcast.fullName,
           onTap: () => context.push(Routes.details, extra: broadcast),

@@ -48,7 +48,7 @@ class _NowLiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.live(
-      title: broadcast.title.get()!,
+      title: broadcast.title.getOr(),
       imageUrl: broadcast.imageUrl,
       host: broadcast.fullName!,
       liveCount: broadcast.totalListeners,
@@ -63,7 +63,7 @@ class _RecentlyLiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.recentlyLive(
-      title: broadcast.title.get()!,
+      title: broadcast.title.getOr(),
       imageUrl: broadcast.imageUrl,
       host: broadcast.fullName,
     );

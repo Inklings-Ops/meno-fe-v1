@@ -123,14 +123,14 @@ class _Grid extends HookWidget {
           final broadcast = broadcasts[i]!;
           if (isNowLive) {
             return MCard.live(
-              title: broadcast.title.get()!,
+              title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
               host: broadcast.fullName!,
               liveCount: broadcast.totalListeners,
             );
           } else {
             return MCard.recentlyLive(
-              title: broadcast.title.get()!,
+              title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
               host: broadcast.fullName!,
             );

@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../../../services/media_service.dart';
 import '../../../auth/domain/domain.dart';
@@ -25,18 +26,18 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
         super(ProfileFormState.initial());
 
   bool? get isValid =>
-      state.fullName?.isValid() == true || state.bio?.isValid() == true;
+      state.fullName?.isValid == true || state.bio?.isValid == true;
 
   void avatarChanged(bool fromGallery) async {
     final file = await _media.getImage(fromGallery: fromGallery);
     if (file != null) {
-      emit(state.copyWith(avatar: IAvatar(File(file.path)), hasChanges: true));
+      emit(state.copyWith(avatar: Avatar(File(file.path)), hasChanges: true));
     }
   }
 
   void bioChanged(String bio) {
     /// Updates the state with the new bio and clears the `option`.
-    emit(state.copyWith(bio: IBio(bio), hasChanges: true));
+    emit(state.copyWith(bio: Bio(bio), hasChanges: true));
   }
 
   Future<void> editProfile() async {
@@ -59,6 +60,6 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
 
   void fullNameChanged(String fullName) {
     /// Updates the state with the new fullName and clears the `option`.
-    emit(state.copyWith(fullName: IFullName(fullName), hasChanges: true));
+    emit(state.copyWith(fullName: SingleLineString(fullName), hasChanges: true));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../../auth/domain/domain.dart';
 import '../../profile.dart';
@@ -34,9 +35,9 @@ extension ProfileDtoToDomain on ProfileDto {
   Profile get toDomain {
     return Profile(
       id: id,
-      fullName: IFullName(fullName),
+      fullName: SingleLineString(fullName),
       imageUrl: imageUrl,
-      bio: bio == null ? null : IBio(bio!),
+      bio: bio == null ? null : Bio(bio!),
       isSubscribedToUser: isSubscribedToUser,
       stats: UserStats(
         broadcasts: stats?.broadcasts,

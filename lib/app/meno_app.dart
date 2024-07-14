@@ -18,7 +18,7 @@ class _MenoAppState extends State<MenoApp> {
   late final AppLifecycleListener _listener;
 
   final toastBuilder = FToastBuilder();
-  final router = di<MRouter>().router;
+  final routerConfig = MRouter.routerConfig;
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +31,16 @@ class _MenoAppState extends State<MenoApp> {
         theme: MTheme.light,
         darkTheme: MTheme.dark,
         debugShowCheckedModeBanner: false,
-        routerConfig: router,
+        routerDelegate: routerConfig.routerDelegate,
+        routeInformationParser: routerConfig.routeInformationParser,
+        routeInformationProvider: routerConfig.routeInformationProvider,
         builder: (context, child) {
           child = toastBuilder(context, child);
-
           return MediaQuery(
             data: context.getDirtyData,
             child: Overlay(
               initialEntries: [
-                OverlayEntry(
-                  builder: (context) => MenoWrapper(
-                    router: router,
-                    child: child,
-                  ),
-                ),
+                OverlayEntry(builder: (_) => MenoWrapper(child: child)),
               ],
             ),
           );
@@ -55,7 +51,6 @@ class _MenoAppState extends State<MenoApp> {
 
   @override
   void dispose() {
-    // Do not forget to dispose the listener
     _listener.dispose();
     super.dispose();
   }
@@ -63,11 +58,9 @@ class _MenoAppState extends State<MenoApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize the AppLifecycleListener class and pass callbacks
     _listener = AppLifecycleListener(onStateChange: _onStateChanged);
   }
 
-  // Listen to the app lifecycle state changes
   void _onStateChanged(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.detached:

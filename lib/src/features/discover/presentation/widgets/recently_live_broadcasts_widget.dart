@@ -36,7 +36,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
               itemBuilder: (context, i) {
                 final broadcast = state.broadcasts[i]!;
                 return MCard.recentlyLive(
-                  title: broadcast.title.get()!,
+                  title: broadcast.title.getOr(),
                   imageUrl: broadcast.imageUrl,
                   host: broadcast.fullName!,
                   onTap: () => context.push(Routes.details, extra: broadcast),

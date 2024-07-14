@@ -34,7 +34,7 @@ class StreamTab extends HookWidget {
                   MCore.small.verticalSpace,
                   const BroadcastTimer(),
                   MCore.small.verticalSpace,
-                  BroadcastTitle(title: broadcast.title.get()!),
+                  BroadcastTitle(title: broadcast.title.getOr()),
                   MCore.small.verticalSpace,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -73,7 +73,7 @@ class StreamTab extends HookWidget {
                       children: [
                         BroadcastListeningTab(broadcast: broadcast),
                         BroadcastAboutTab(
-                          description: broadcast.description?.get(),
+                          description: broadcast.description?.getOr(),
                         ),
                       ],
                     ),

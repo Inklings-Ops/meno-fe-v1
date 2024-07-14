@@ -34,9 +34,7 @@ class FolderListWidget extends StatelessWidget {
           },
         ),
         BlocListener<NotesBloc, NotesState>(
-          listener: (context, state) {
-            // TODO: implement listener
-          },
+          listener: (context, state) {},
         ),
       ],
       child: BlocBuilder<FolderListBloc, FolderListState>(

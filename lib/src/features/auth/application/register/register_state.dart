@@ -4,31 +4,22 @@ part of 'register_cubit.dart';
 @freezed
 class RegisterState with _$RegisterState {
   factory RegisterState({
-    /// The user's full name - First and Last names.
-    required IFullName fullName,
-
-    /// The user's email address.
-    required IEmail email,
-
-    /// The user's password.
-    required IPassword password,
-    required String passwordValue,
-
-    /// Whether or not the registration form is loading.
+    required SingleLineString fullName,
+    required Email email,
+    required Password password,
     required bool loading,
-
-    /// The result of the last registration attempt.
     required Option<Either<AuthException, UserCredential>> option,
     required bool rememberMe,
   }) = _RegisterState;
+  
+  RegisterState._();
+  bool get isFormValid => fullName.isValid && email.isValid && password.isValid;
 
-  /// Creates a new `RegisterState` object with the initial values.
   factory RegisterState.initial() {
     return RegisterState(
-      fullName: IFullName(''),
-      email: IEmail(''),
-      password: IPassword(''),
-      passwordValue: '',
+      fullName: SingleLineString(''),
+      email: Email(''),
+      password: Password(''),
       loading: false,
       option: none(),
       rememberMe: false,

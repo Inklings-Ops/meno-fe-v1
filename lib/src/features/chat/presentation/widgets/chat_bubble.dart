@@ -77,7 +77,7 @@ class ChatBubble extends StatelessWidget {
                     ),
                   ),
                   child: MText(
-                    chat.content.get()!,
+                    chat.content.getOr(),
                     style: MTextStyle.captionRegular,
                   ),
                 ),
@@ -92,8 +92,8 @@ class ChatBubble extends StatelessWidget {
   Future<dynamic> showUserInfo(BuildContext context, Profile? profile) {
     return context.showModal(
       MUserInfoModal(
-        bio: profile?.bio?.get(),
-        fullName: profile!.fullName.get()!,
+        bio: profile?.bio?.getOr(),
+        fullName: profile!.fullName.getOr(),
         imageUrl: profile.imageUrl,
         onSubscribe: () {},
         onViewAccount: () {},

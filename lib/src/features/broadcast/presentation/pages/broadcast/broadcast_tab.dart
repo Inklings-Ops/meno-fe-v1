@@ -85,7 +85,7 @@ class _BroadcastAboutTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<BroadcastBloc, BroadcastState, String?>(
-      selector: (state) => state.broadcast.description?.get(),
+      selector: (state) => state.broadcast.description?.getOr(),
       builder: (context, desc) => BroadcastAboutTab(description: desc),
     );
   }
@@ -141,7 +141,7 @@ class _BroadcastTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocSelector<BroadcastBloc, BroadcastState, String>(
       bloc: context.read<BroadcastBloc>(),
-      selector: (state) => state.broadcast.title.get()!,
+      selector: (state) => state.broadcast.title.getOr(),
       builder: (context, title) => BroadcastTitle(title: title),
     );
   }

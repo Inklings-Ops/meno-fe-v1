@@ -22,7 +22,7 @@ class TranslationsState with _$TranslationsState {
        loading: false,
       cancelDownload: false,
       downloadOption: none(),
-      selectedTranslation: Translation(
+      selectedTranslation: const Translation(
         abbreviation: 'kjv',
         name: 'King James Version',
       ),

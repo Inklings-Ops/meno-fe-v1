@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/services/meno/meno_bloc.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../../core/env/env.dart';
@@ -17,7 +18,7 @@ class SocketService extends Object with Disposable {
 
   final IAuthFacade _facade;
 
-  late StreamSubscription<UserToken?> _tokenChanges;
+  late StreamSubscription<Token?> _tokenChanges;
 
   final _numberOfLiveParticipantsController = StreamController<int>();
   // Stream<int> get numberOfLiveParticipantsStream {
@@ -33,7 +34,7 @@ class SocketService extends Object with Disposable {
         Env.menoApiUrl,
         io.OptionBuilder()
             .setTransports(['websocket'])
-            .setQuery({'token': token})
+            .setQuery({'token': token?.getOr()})
             .enableAutoConnect()
             .build(),
       );

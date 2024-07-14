@@ -35,7 +35,7 @@ class NowLiveBroadcastsWidget extends StatelessWidget {
               itemBuilder: (context, i) {
                 final broadcast = state.broadcasts[i]!;
                 return MCard.live(
-                  title: broadcast.title.get()!,
+                  title: broadcast.title.getOr(),
                   imageUrl: broadcast.imageUrl,
                   host: broadcast.fullName!,
                   liveCount: broadcast.totalListeners,

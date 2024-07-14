@@ -1,6 +1,11 @@
 class MErrorMessages {
   MErrorMessages._();
 
+  static const String emptyError = 'This field cannot be empty';
+  static const String invalidFName = 'Invalid full name';
+  static const String invalidBio = 'Invalid bio';
+  static const String invalidEmail = 'Invalid email';
+  static const String invalidPwd = 'Invalid password';
   static const String invalidEmailOrPassword = 'Invalid email or password';
   static const String networkError = 'No internet connection';
   static const String serverError = 'Server error. Try again';

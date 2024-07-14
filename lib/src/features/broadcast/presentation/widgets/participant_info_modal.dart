@@ -69,7 +69,7 @@ class ParticipantInfoModal extends HookWidget {
           ],
           if (profile.value?.bio != null) ...[
             MText(
-              profile.value!.bio!.get()!,
+              profile.value!.bio!.getOr(),
               style: MTextStyle.subheadingRegular,
               textAlign: TextAlign.center,
               maxLines: 2,

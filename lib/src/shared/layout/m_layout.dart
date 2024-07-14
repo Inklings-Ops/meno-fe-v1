@@ -2,13 +2,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../../features/auth/application/application.dart';
 import '../../router/router.dart';
-import '../constants/m_bottom_navigation_bar_items.dart';
 
 class MLayout extends StatefulWidget {
   final StatefulNavigationShell shell;
@@ -29,10 +28,12 @@ class _MLayoutState extends State<MLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
+    return BlocListener<SessionCubit, SessionState>(
       listener: (context, state) {
         state.whenOrNull(
-          authenticated: (credentials) => Logger().t('FROM M_LAYOUT!'),
+          authenticated: (user, token) {
+            context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
+          },
         );
       },
       child: Scaffold(

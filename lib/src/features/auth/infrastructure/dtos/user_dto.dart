@@ -1,8 +1,8 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 part 'user_dto.freezed.dart';
 part 'user_dto.g.dart';
@@ -57,10 +57,26 @@ sealed class UserDto with _$UserDto {
 extension UserDtoToDomain on UserDto {
   User get toDomain {
     return User(
-      id: id,
-      email: IEmail(email),
-      fullName: IFullName(fullName),
-      bio: bio == null ? null : IBio(bio!),
+      id: Uid.fromString(id),
+      email: Email(email),
+      fullName: SingleLineString(fullName),
+      bio: bio == null ? null : Bio(bio!),
+      deleted: deleted,
+      emailAccountType: emailAccountType,
+      imageId: imageId,
+      imageUrl: imageUrl,
+      verified: verified,
+    );
+  }
+}
+
+extension UserToDto on User {
+  UserDto get toDto {
+    return UserDto(
+      id: id.getOr(),
+      email: email.getOr(),
+      fullName: fullName.getOr(),
+      bio: bio?.getOr(),
       deleted: deleted,
       emailAccountType: emailAccountType,
       imageId: imageId,

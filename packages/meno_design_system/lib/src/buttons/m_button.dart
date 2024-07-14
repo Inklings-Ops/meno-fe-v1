@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -78,12 +77,9 @@ class _MButtonWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scale = MediaQuery.textScaleFactorOf(context);
-    // final scale = MediaQuery.textScalerOf(context).scale(1);
-
-    final gap = SizedBox(
-      width: scale <= 1 ? 8 : lerpDouble(8, 4, math.min(scale - 1, 1))!,
-    );
+    final scale = MediaQuery.textScalerOf(context).scale(14);
+    final effectiveScale = clampDouble(scale / 14.0, 1.0, 2.0) - 1.0;
+    final SizedBox gap = SizedBox(width: lerpDouble(8, 4, effectiveScale)!);
 
     return Row(
       mainAxisSize: MainAxisSize.min,

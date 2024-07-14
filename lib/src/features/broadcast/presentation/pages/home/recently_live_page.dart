@@ -116,7 +116,7 @@ class _LoadedList extends StatelessWidget {
       itemBuilder: (context, index) {
         final broadcast = broadcasts[index]!;
         return MRecentlyLiveListTile(
-          title: broadcast.title.get(),
+          title: broadcast.title.getOr(),
           creator: broadcast.fullName,
           endTime: broadcast.endTime,
           imageUrl: broadcast.imageUrl,

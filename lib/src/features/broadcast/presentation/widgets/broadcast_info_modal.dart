@@ -33,7 +33,7 @@ class BroadcastInfoModal extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
             child: MText(
-              broadcast.title.get()!,
+              broadcast.title.getOr(),
               style: MTextStyle.subheadingBold,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

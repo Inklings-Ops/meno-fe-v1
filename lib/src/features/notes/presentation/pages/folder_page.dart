@@ -97,8 +97,8 @@ class FolderPage extends HookWidget {
                 FolderWidget(
                   value: '$numberOfNotes notes',
                   title: isNewFolder
-                      ? updatedFolder.value.title.get()
-                      : folder.title.get(),
+                      ? updatedFolder.value.title.getOr()
+                      : folder.title.getOr(),
                   titleStyle: MTextStyle.subheadingMedium,
                   valueStyle: MTextStyle.captionMedium,
                   backgroundColor: colors.primary,

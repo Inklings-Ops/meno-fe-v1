@@ -28,7 +28,7 @@ class FolderFormCubit extends Cubit<FolderFormState> {
   }
 
   Future<void> onSubmit() async {
-    final isTitleValid = state.title.isValid();
+    final isTitleValid = state.title.isValid;
 
     if (isTitleValid) {
       emit(state.copyWith(loading: true));

@@ -78,7 +78,7 @@ class _LoadedList extends StatelessWidget {
       itemBuilder: (context, index) {
         final broadcast = broadcasts[index]!;
         return MRecentlyLiveListTile(
-          title: broadcast.title.get(),
+          title: broadcast.title.getOr(),
           creator: broadcast.fullName,
           endTime: broadcast.endTime,
           imageUrl: broadcast.imageUrl,
@@ -89,14 +89,14 @@ class _LoadedList extends StatelessWidget {
   }
 }
 
-class _LoadingList extends StatelessWidget {
-  const _LoadingList();
+// class _LoadingList extends StatelessWidget {
+//   const _LoadingList();
 
-  @override
-  Widget build(BuildContext context) {
-    return _BuildListView(
-      itemCount: 2,
-      itemBuilder: (context, _) => const MRecentlyLiveListTile(loading: true),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return _BuildListView(
+//       itemCount: 2,
+//       itemBuilder: (context, _) => const MRecentlyLiveListTile(loading: true),
+//     );
+//   }
+// }

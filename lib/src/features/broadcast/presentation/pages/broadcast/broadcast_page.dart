@@ -79,7 +79,7 @@ class BroadcastPage extends StatelessWidget {
 }
 
 class _ChatTab extends HookWidget {
-  const _ChatTab({super.key});
+  const _ChatTab();
 
   @override
   Widget build(BuildContext context) {

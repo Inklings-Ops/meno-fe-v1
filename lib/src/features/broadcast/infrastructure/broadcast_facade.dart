@@ -37,9 +37,9 @@ class BroadcastFacade implements IBroadcastFacade {
     String? timeZone,
     List<String>? cohosts,
   }) async {
-    final String broadcastTitle = title.get()!;
-    final String? broadcastDescription = description?.get();
-    final File? broadcastArtwork = artwork?.get();
+    final String broadcastTitle = title.getOr();
+    final String? broadcastDescription = description?.getOr();
+    final File? broadcastArtwork = artwork?.getOr();
 
     if (!(await _network.isConnected)) {
       return left(const BroadcastException.networkError());

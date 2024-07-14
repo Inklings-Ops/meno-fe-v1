@@ -1,16 +1,12 @@
 import 'dart:isolate';
 
 import 'package:flutter/services.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/services/jwt_service.dart';
 
-import '../../features/auth/domain/domain.dart';
-import '../../features/auth/infrastructure/datasources/auth_local_datasource.dart';
-import '../../features/auth/infrastructure/mapper/auth_mapper.dart';
 import '../../services/secure_storage_service.dart';
 
 class MIsolates {
-  static final AuthMapper _authMapper = AuthMapper();
-
   static final _storage = SecureStorageService();
   static final _auth = AuthLocalDatasource(storage: _storage);
 
@@ -24,7 +20,7 @@ class MIsolates {
     final map = await _auth.getAllUserCredentials;
     if (map != null) {
       final userCredentialsMap = map.map((key, value) {
-        final userCredentials = _authMapper.userCredentialsToDomain(value)!;
+        final userCredentials = value.toDomain;
         return MapEntry(key, userCredentials);
       });
 
@@ -35,7 +31,7 @@ class MIsolates {
 
   static Future<User?> _getCurrentUser() async {
     final userDto = await _auth.getCurrentUser;
-    final User? userDomain = _authMapper.userToDomain(userDto);
+    final userDomain = userDto?.toDomain;
     return userDomain;
   }
 

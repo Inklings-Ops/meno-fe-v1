@@ -3,12 +3,12 @@ part of 'login_cubit.dart';
 @freezed
 class LoginState with _$LoginState {
   /// Creates a new `LoginState` object.
-  const factory LoginState({
+  factory LoginState({
     /// The user's email address.
-    required IEmail email,
+    required Email email,
 
     /// The user's password.
-    required IPassword password,
+    required Password password,
 
     /// Whether or not the login form is loading.
     required bool loading,
@@ -17,11 +17,15 @@ class LoginState with _$LoginState {
     required Option<Either<AuthException, UserCredential>> option,
   }) = _LoginState;
 
+  LoginState._();
+
+  bool get isFormValid => email.isValid && password.isValid;
+
   /// Creates a new `LoginFormState` object with the initial values.
   factory LoginState.initial() {
     return LoginState(
-      email: IEmail(''),
-      password: IPassword(''),
+      email: Email(''),
+      password: Password(''),
       loading: false,
       option: none(),
     );

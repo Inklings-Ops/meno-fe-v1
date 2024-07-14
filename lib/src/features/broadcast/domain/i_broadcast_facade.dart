@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 
-import 'entities/broadcast_list_entity.dart';
 import 'entities/entities.dart';
 import 'exceptions/broadcast_exception.dart';
 import 'inputs/inputs.dart';

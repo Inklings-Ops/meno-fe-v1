@@ -1,27 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
 import 'package:meno_fe_v1/src/features/discover/presentation/pages/discover_page.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/pages/note_editor_page.dart';
-import 'package:meno_fe_v1/src/features/onboarding/application/onboarding_cubit.dart';
 import 'package:meno_fe_v1/src/features/settings/presentation/page/settings_page.dart';
-import 'package:meno_fe_v1/src/shared/pages/start_up/startup_page.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../features/auth/application/application.dart';
-import '../features/auth/presentation/pages/login/login_page.dart';
-import '../features/auth/presentation/pages/register/email_verification_page.dart';
-import '../features/auth/presentation/pages/register/register_page.dart';
-import '../features/auth/presentation/pages/reset_password/create_new_password_page.dart';
-import '../features/auth/presentation/pages/reset_password/reset_password_otp_verification_page.dart';
-import '../features/auth/presentation/pages/reset_password/reset_password_page.dart';
-import '../features/auth/presentation/pages/reset_password/reset_password_success_page.dart';
+import '../features/auth/presentation/pages/create_new_password_page.dart';
+import '../features/auth/presentation/pages/email_verification_page.dart';
+import '../features/auth/presentation/pages/login_page.dart';
+import '../features/auth/presentation/pages/register_page.dart';
+import '../features/auth/presentation/pages/reset_password_otp_verification_page.dart';
+import '../features/auth/presentation/pages/reset_password_page.dart';
+import '../features/auth/presentation/pages/reset_password_success_page.dart';
 import '../features/bible/presentation/pages/bible_page.dart';
 import '../features/broadcast/domain/entities/broadcast.dart';
 import '../features/broadcast/presentation/pages/broadcast/broadcast_page.dart';
@@ -35,32 +30,36 @@ import '../features/notes/presentation/pages/notes_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
-import '../shared/layout/m_layout.dart';
 import 'routes.dart';
 
-@Injectable()
-class MRouter {
-  final AuthBloc authBloc;
-  final OnboardingCubit onboardingCubit;
+final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-  MRouter({required this.authBloc, required this.onboardingCubit});
-
-  final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-
-  late final router = GoRouter(
+abstract class MRouter {
+  static final routerConfig = GoRouter(
     navigatorKey: _rootNavigatorKey,
-    debugLogDiagnostics: true,
-    // extraCodec: const MExtraCodec(),
+    initialLocation: Routes.home,
+    refreshListenable: di<SessionCubit>(),
+    redirect: (context, state) {
+      final status = di<SessionCubit>().state;
+      final isAllowedPath = status.allowedPaths.contains(state.fullPath);
+      if (!isAllowedPath) return status.redirectPath;
+      return null;
+    },
     routes: [
-      GoRoute(
-        path: Routes.startup,
-        name: Routes.startup,
-        builder: (context, gState) => const StartupPage(),
-      ),
+      // GoRoute(
+      //   path: Routes.startup,
+      //   name: Routes.startup,
+      //   builder: (context, gState) => const StartupPage(),
+      // ),
       GoRoute(
         path: Routes.onboarding,
         name: Routes.onboarding,
         builder: (context, gState) => const OnboardingPage(),
+      ),
+      GoRoute(
+        path: Routes.loading,
+        name: Routes.loading,
+        builder: (context, gState) => const LoadingPage(),
       ),
       GoRoute(
         path: Routes.createBroadcast,
@@ -80,7 +79,6 @@ class MRouter {
         builder: (context, state) {
           final isPasswordOnly = state.uri.queryParameters['isPasswordOnly'];
           final implyLeading = state.uri.queryParameters['implyLeading'];
-
           return LoginPage(
             implyLeading: implyLeading == 'true' ? true : false,
             isPasswordOnly: isPasswordOnly == 'true' ? true : false,
@@ -92,7 +90,6 @@ class MRouter {
         name: Routes.register,
         builder: (context, state) {
           final implyLeading = state.uri.queryParameters['implyLeading'];
-
           return RegisterPage(
             implyLeading: implyLeading == 'true' ? true : false,
           );
@@ -236,55 +233,4 @@ class MRouter {
       ),
     ],
   );
-}
-
-class NoteRouteData {
-  final Note? data;
-  NoteRouteData({this.data});
-  @override
-  String toString() => 'NoteRouteData(data: $data)';
-}
-
-class MExtraCodec extends Codec<Object?, Object?> {
-  const MExtraCodec();
-  @override
-  Converter<Object?, Object?> get decoder => const _NoteCodecDecoder();
-
-  @override
-  Converter<Object?, Object?> get encoder => const _NoteCodecEncoder();
-}
-
-class _NoteCodecDecoder extends Converter<Object?, Object?> {
-  const _NoteCodecDecoder();
-
-  @override
-  Object? convert(Object? input) {
-    if (input == null) {
-      return null;
-    }
-
-    final List<Object?> inputAsList = input as List<Object?>;
-    if (inputAsList[0] == 'NoteRouteData') {
-      return NoteRouteData(data: inputAsList[1] as Note?);
-    }
-
-    throw FormatException('Unable to parse input: $input');
-  }
-}
-
-class _NoteCodecEncoder extends Converter<Object?, Object?> {
-  const _NoteCodecEncoder();
-
-  @override
-  Object? convert(Object? input) {
-    if (input == null) {
-      return null;
-    }
-    switch (input) {
-      case NoteRouteData _:
-        return <Object?>['NoteRouteData', input.data];
-      default:
-        throw FormatException('Cannot encode type ${input.runtimeType}');
-    }
-  }
 }

@@ -49,7 +49,7 @@ extension FolderToDto on Folder {
     return FolderDto(
       dbId: dbId,
       id: id,
-      title: title.get()!,
+      title: title.getOr(),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,

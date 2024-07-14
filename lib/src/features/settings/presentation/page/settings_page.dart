@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -98,7 +100,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Logout',
                   leadingIcon: MIcons.log_out,
-                  onTap: () {},
+                  onTap: context.read<SessionCubit>().logout,
                 ),
                 SettingsListTile(
                   title: 'Delete Account',

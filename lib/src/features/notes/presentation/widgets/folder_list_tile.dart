@@ -64,7 +64,7 @@ class FolderListTile extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: MText(
-                        folder.title.get()!,
+                        folder.title.getOr(),
                         style: MTextStyle.captionMedium,
                       ),
                     ),

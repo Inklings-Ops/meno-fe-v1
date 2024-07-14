@@ -76,7 +76,7 @@ class _Avatar extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            MAvatar(radius: 48.r, file: state.artwork?.get()),
+            MAvatar(radius: 48.r, file: state.artwork?.getOr()),
             MTextButton(
               label: 'Change Artwork',
               onPressed: () => context.showModal(MImageSourceModal(

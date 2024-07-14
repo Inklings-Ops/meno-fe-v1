@@ -54,8 +54,8 @@ class BroadcastMapper {
     if (domain == null) return null;
     return BroadcastDto(
       id: domain.id,
-      title: domain.title.get()!,
-      description: domain.description?.get(),
+      title: domain.title.getOr(),
+      description: domain.description?.getOr(),
       creatorId: domain.creatorId,
       creator: participantToDto(domain.creator),
       fullName: domain.fullName,

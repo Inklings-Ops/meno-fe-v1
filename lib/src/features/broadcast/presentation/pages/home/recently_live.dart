@@ -65,7 +65,7 @@ class _RecentlyLiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.recentlyLive(
-      title: broadcast.title.get()!,
+      title: broadcast.title.getOr(),
       host: broadcast.fullName,
       imageUrl: broadcast.imageUrl,
       onTap: () => context.push(Routes.details, extra: broadcast),

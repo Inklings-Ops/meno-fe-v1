@@ -9,7 +9,7 @@ class NoteTitle extends ValueObject<String> {
   final NoteTitleResult value;
 
   factory NoteTitle(String input) {
-    return NoteTitle._(validateNotEmpty(input));
+    return NoteTitle._(validateStringNotEmpty(input));
   }
 
   /// Creates a new `INoteTitle` object with the specified value.

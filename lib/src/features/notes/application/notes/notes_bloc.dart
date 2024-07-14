@@ -36,7 +36,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     emit(state.copyWith(isLoading: true));
 
     final result = await _facade.removeNoteFromFolder(
-      noteId: event.note.uid.get()!,
+      noteId: event.note.uid.getOr(),
       folderId: event.folder.id,
     );
 
@@ -61,7 +61,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     emit(state.copyWith(isLoading: true));
 
     final result = await _facade.addNoteToFolder(
-      noteId: event.note.uid.get()!,
+      noteId: event.note.uid.getOr(),
       folderId: event.folder.id,
     );
 

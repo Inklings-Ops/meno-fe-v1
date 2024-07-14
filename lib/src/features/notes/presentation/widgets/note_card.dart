@@ -30,7 +30,7 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
 
-    final json = jsonDecode(note.content.get()!);
+    final json = jsonDecode(note.content.getOr());
     final content = Document.fromJson(json).toPlainText();
 
     final formattedDate = DateFormat('d MMM yyyy').format(note.createdAt!);
@@ -62,7 +62,7 @@ class NoteCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MText(
-                        note.title.get()!,
+                        note.title.getOr(),
                         style: MTextStyle.bodyMedium,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -72,7 +72,7 @@ class NoteCard extends StatelessWidget {
                         Row(
                           children: [
                             MTag(
-                              title: noteFolder.title.get()!,
+                              title: noteFolder.title.getOr(),
                               style: MTextStyle.microMedium,
                               height: 20.h,
                             ),

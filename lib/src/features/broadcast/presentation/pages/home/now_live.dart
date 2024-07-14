@@ -68,7 +68,7 @@ class _LiveCard extends HookWidget {
     }, [number]);
 
     return MCard.live(
-      title: broadcast.title.get()!,
+      title: broadcast.title.getOr(),
       host: broadcast.creator!.fullName,
       imageUrl: broadcast.imageUrl,
       liveCount: number.value,

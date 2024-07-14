@@ -20,7 +20,7 @@ class ChatMapper {
     if (domain == null) return null;
     return ChatDto(
       id: domain.id,
-      content: domain.content.get()!,
+      content: domain.content.getOr(),
       createdAt: domain.createdAt,
       updatedAt: domain.updatedAt,
       senderId: domain.senderId,

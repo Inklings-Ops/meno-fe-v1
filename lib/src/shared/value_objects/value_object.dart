@@ -2,14 +2,29 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'value_error.dart';
 import 'value_failure.dart';
 
+abstract class IValueObject {
+  bool get isValid;
+}
+
 @immutable
-abstract class ValueObject<T> {
+abstract class ValueObject<T> implements IValueObject {
   const ValueObject();
+
+  Either<ValueFailure<dynamic>, Unit> get failureOrUnit {
+    return value.fold(
+      (l) => left(l),
+      (r) => right(unit),
+    );
+  }
 
   @override
   int get hashCode => value.hashCode;
+
+  @override
+  bool get isValid => value.isRight();
 
   Either<ValueFailure<T>, T> get value;
 
@@ -20,19 +35,9 @@ abstract class ValueObject<T> {
   }
 
   /// Throws [UnexpectedValueError] containing the [ValueFailure]
-  T? get() => value.fold((l) => l.mapOrNull(), id);
+  T getOr() => value.fold((f) => throw ValueError.unexpectedError(f), id);
 
-  T getOrElse(T dflt) => value.getOrElse(() => dflt);
-
-  /// Returns a bool after validating the current type
-  bool isValid() => value.isRight();
-
-  Either<ValueFailure<dynamic>, Unit> get failureOrUnit {
-    return value.fold(
-      (l) => left(l),
-      (r) => right(unit),
-    );
-  }
+  T getOrE(T dflt) => value.getOrElse(() => dflt);
 
   @override
   String toString() => 'Value($value)';

@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
-
-import 'entities/entities.dart';
-import 'exceptions/auth_exception.dart';
-import 'inputs/inputs.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 // Manages authentication processes, acting as a gateway between the application and authentication services.
 //
@@ -31,13 +30,11 @@ abstract class IAuthFacade {
   /// account
   Stream<UserCredential?> get userChanges;
 
-
   /// A stream of the authenticated [UserToken]
   ///
   /// Provides a way to easy listen on for any changes made on the user's token
   /// from the [UserCredential]
-  Stream<UserToken?> get tokenChanges;
-
+  Stream<Token?> get tokenChanges;
 
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
@@ -46,10 +43,10 @@ abstract class IAuthFacade {
   Future<User> get user;
 
   /// Gets the authenticated user's token.
-  Future<UserToken?> get userToken;
+  Token? get userToken;
 
   /// Gets the authenticated user's credential.
-  Future<UserCredential?> get credential;
+  UserCredential? get credential;
 
   /// Gets the user's token.
   Future<Map<String, UserCredential>?> get allCredentials;
@@ -67,8 +64,8 @@ abstract class IAuthFacade {
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
   Future<Either<AuthException, UserCredential>> login({
-    required IEmail email,
-    required IPassword password,
+    required Email email,
+    required Password password,
   });
 
   /// Logs the user out.
@@ -78,36 +75,35 @@ abstract class IAuthFacade {
   ///
   /// Returns an `Either` value, where the left value is a `AuthException` object and the right value is a `Unit` object.
   Future<Either<AuthException, UserCredential>> register({
-    required IFullName fullName,
-    required IEmail email,
-    required IPassword password,
-    IBio? bio,
-    IAvatar? avatar,
+    required SingleLineString fullName,
+    required Email email,
+    required Password password,
+    Bio? bio,
+    Avatar? avatar,
   });
 
   Future<Either<AuthException, Unit>> changePassword({
-    required IPassword currentPassword,
-    required IPassword newPassword,
+    required Password currentPassword,
+    required Password newPassword,
   });
 
-  Future<Either<AuthException, Unit>> forgotPassword(IEmail email);
+  Future<Either<AuthException, Unit>> forgotPassword(Email email);
 
   Future<Either<AuthException, Unit>> requestOtp({
-    required IEmail email,
+    required Email email,
     required String type,
   });
 
   Future<Either<AuthException, Unit>> resetPassword({
-    required IEmail email,
+    required Email email,
     required String code,
-    required IPassword newPassword,
+    required Password newPassword,
   });
 
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential credentials);
+  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);
 
   Future<Either<AuthException, Unit>> verifyEmailAddress({
-    required IEmail email,
+    required Email email,
     required String code,
   });
-
 }
