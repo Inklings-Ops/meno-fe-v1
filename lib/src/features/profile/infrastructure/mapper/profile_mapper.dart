@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../../auth/domain/domain.dart';
 import '../../domain/domain.dart';
@@ -12,8 +13,8 @@ class ProfileMapper {
     if (dto == null) return null;
     return Profile(
       id: dto.id,
-      fullName: IFullName(dto.fullName),
-      bio: dto.bio != null ? IBio(dto.bio!) : null,
+      fullName: SingleLineString(dto.fullName),
+      bio: dto.bio != null ? Bio(dto.bio!) : null,
       verified: dto.verified,
       imageUrl: dto.imageUrl,
       isSubscribedToUser: dto.isSubscribedToUser,
@@ -30,8 +31,8 @@ class ProfileMapper {
     if (domain == null) return null;
     return ProfileDto(
       id: domain.id,
-      fullName: domain.fullName.get()!,
-      bio: domain.bio?.get(),
+      fullName: domain.fullName.getOr(),
+      bio: domain.bio?.getOr(),
       verified: domain.verified,
       imageUrl: domain.imageUrl,
       isSubscribedToUser: domain.isSubscribedToUser,

@@ -5,8 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../../../auth/application/application.dart';
 import '../../application/chat_bloc.dart';
 import 'reactions.dart';
 
@@ -82,10 +82,10 @@ class ChatInputContainer extends HookWidget {
                 ),
                 if (isSendVisible.value) ...[
                   MCore.small.horizontalSpace,
-                  BlocBuilder<AuthBloc, AuthState>(
+                  BlocBuilder<SessionCubit, SessionState>(
                     builder: (context, state) => state.maybeWhen(
                       orElse: () => const SizedBox(),
-                      authenticated: (credentials) => MIconButton(
+                      authenticated: (user, _) => MIconButton(
                         icon: const Icon(MIcons.send),
                         isFilled: true,
                         fillColor: colorScheme.primary,

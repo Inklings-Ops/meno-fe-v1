@@ -15,7 +15,6 @@ import '../../../../../shared/widgets/empty_list_widget.dart';
 import '../../../application/live_broadcasts/live_broadcasts_bloc.dart';
 import '../../../domain/domain.dart';
 import '../../widgets/broadcast_list_widget.dart';
-import '../stream/stream_modal.dart';
 
 class NowLive extends StatelessWidget {
   const NowLive({super.key});
@@ -69,15 +68,11 @@ class _LiveCard extends HookWidget {
     }, [number]);
 
     return MCard.live(
-      title: broadcast.title.get()!,
+      title: broadcast.title.getOr(),
       host: broadcast.creator!.fullName,
       imageUrl: broadcast.imageUrl,
       liveCount: number.value,
-      onTap: () => context.showModal(
-        isScrollControlled: true,
-        useRootNavigator: true,
-        StreamModal(broadcast: broadcast),
-      ),
+      onTap: () => context.showJoinLiveBroadcastModal(broadcast),
     );
   }
 }

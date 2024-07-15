@@ -15,7 +15,7 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MScaffold(
       appBar: MAppBar.secondary(
-        title: broadcast.title.get()!,
+        title: broadcast.title.getOr(),
         actions: [
           const MIconButton(icon: Icon(MIcons.star_border)),
           MCore.large.horizontalSpace,
@@ -41,7 +41,7 @@ class DetailsPage extends StatelessWidget {
             MCore.small.verticalSpace,
             _Time(endTime: broadcast.endTime, startTime: broadcast.startTime),
             MCore.micro.verticalSpace,
-            _Title(title: broadcast.title.get()!),
+            _Title(title: broadcast.title.getOr()),
             MCore.micro.verticalSpace,
             _Creator(name: broadcast.fullName!),
             MCore.large.verticalSpace,
@@ -51,7 +51,7 @@ class DetailsPage extends StatelessWidget {
               onPressed: () {},
             ),
             40.verticalSpace,
-            _Description(description: broadcast.description?.get()),
+            _Description(description: broadcast.description?.getOr()),
           ],
         ),
       ),
@@ -73,7 +73,7 @@ class DetailsPageOptionsModal extends StatelessWidget {
         children: [
           _Artwork(imageUrl: broadcast.imageUrl),
           MCore.small.verticalSpace,
-          _Title(title: broadcast.title.get()!),
+          _Title(title: broadcast.title.getOr()),
           MCore.micro.verticalSpace,
           MText(
             broadcast.fullName!,

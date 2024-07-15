@@ -24,7 +24,7 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
         _mediaService = mediaService,
         super(BroadcastFormState.initial());
 
-  bool get isValid => state.title.isValid();
+  bool get isValid => state.title.isValid;
 
   void artworkChanged(bool fromGallery) async {
     final file = await _mediaService.getImage(fromGallery: fromGallery);
@@ -44,7 +44,7 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
           title: state.title,
           description: state.description,
           artwork: state.artwork,
-          cohosts: state.cohosts?.map((e) => e.id).toList(),
+          cohosts: state.cohosts?.map((e) => e.id.getOr()).toList(),
           timeZone: 'Africa/Abidjan',
         )
         .then((r) => emit(state.copyWith(loading: false, option: some(r))));
@@ -65,7 +65,7 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   String? validateDescription(String? value) {
     return state.description?.value.fold(
       (error) => error.mapOrNull(
-        descLengthExceeded: (_) => 'Description character length exceeded',
+        lengthExceeded: (_) => 'Description character length exceeded',
       ),
       (_) => null,
     );

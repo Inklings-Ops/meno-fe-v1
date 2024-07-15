@@ -6,7 +6,7 @@ class LoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return const MScaffold(
       body: Center(
         child: MLoadingIndicator.box(),
       ),

@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
 import 'package:meno_fe_v1/src/shared/extensions/m_toast_extensions.dart';
 
-import '../src/features/auth/application/application.dart';
 import '../src/features/network/application/network_cubit.dart';
 import '../src/features/network/domain/network_status.dart';
-import '../src/router/router.dart';
 
 class MenoWrapper extends StatelessWidget {
+  const MenoWrapper({super.key, required this.child});
   final Widget? child;
-  final GoRouter router;
-
-  const MenoWrapper({
-    super.key,
-    required this.child,
-    required this.router,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +30,19 @@ class MenoWrapper extends StatelessWidget {
             }
           },
         ),
-        BlocListener<AuthBloc, AuthState>(
-          listenWhen: (p, c) => p != c,
-          listener: (context, state) {
-            state.whenOrNull(
-              authenticated: (_) => router.go(Routes.home),
-              unauthenticated: () => router.go(Routes.login),
-              partiallyAuthenticated: (credential) {
-                di<LoginCubit>().emailChanged(credential.user.email.get()!);
-                router.go(Routes.partialLogin);
-              },
-            );
-          },
-        ),
+        // BlocListener<AuthBloc, AuthState>(
+        //   listenWhen: (p, c) => p != c,
+        //   listener: (context, state) {
+        //     state.whenOrNull(
+        //       authenticated: (_) => router.go(Routes.home),
+        //       unauthenticated: () => router.go(Routes.login),
+        //       partiallyAuthenticated: (credential) {
+        //         di<LoginCubit>().emailChanged(credential.user.email.getOr());
+        //         router.go(Routes.partialLogin);
+        //       },
+        //     );
+        //   },
+        // ),
       ],
       child: child!,
     );

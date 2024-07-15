@@ -9,7 +9,7 @@ class IBroadcastTitle extends ValueObject<String> {
 
   /// Creates a new `IBroadcastTitle` object.
   factory IBroadcastTitle(String input) {
-    return IBroadcastTitle._(validateNotEmpty(input));
+    return IBroadcastTitle._(validateStringNotEmpty(input));
   }
 
   /// Creates a new `IBroadcastTitle` object with the specified value.

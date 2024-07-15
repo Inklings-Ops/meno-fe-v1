@@ -6,7 +6,7 @@ import 'package:readmore/readmore.dart';
 
 class ProfileBio extends StatelessWidget {
   const ProfileBio({super.key, required this.bio});
-  final IBio? bio;
+  final Bio? bio;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ProfileBio extends StatelessWidget {
     );
 
     return ReadMoreText(
-      bio?.get() ?? 'No bio',
+      bio?.getOr() ?? 'No bio',
       style: MTextStyle.captionRegular.copyWith(height: 1.3.h),
       trimLines: 3,
       trimMode: TrimMode.Line,

@@ -1,13 +1,14 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../auth/domain/domain.dart';
 import 'domain.dart';
 
 abstract class IProfileFacade {
   Future<Either<AuthException, Unit>> editProfile({
-    IFullName? fullName,
-    IBio? bio,
-    IAvatar? avatar,
+    SingleLineString? fullName,
+    Bio? bio,
+    Avatar? avatar,
   });
 
   /// Retrieves the user's profile with the given [UserID]

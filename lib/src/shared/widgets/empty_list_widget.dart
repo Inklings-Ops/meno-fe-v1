@@ -9,17 +9,20 @@ class EmptyListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Assets.images.liveForYou.image(height: 120.r, width: 120.r),
-        MCore.medium.verticalSpace,
-        MText(
-          title ?? 'Nothing to show here',
-          style: MTextStyle.captionMedium,
-          textAlign: TextAlign.center,
-        ),
-      ],
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Assets.images.liveForYou.image(height: 120.r, width: 120.r),
+          MCore.medium.verticalSpace,
+          MText(
+            title ?? 'Nothing to show here',
+            style: MTextStyle.captionMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

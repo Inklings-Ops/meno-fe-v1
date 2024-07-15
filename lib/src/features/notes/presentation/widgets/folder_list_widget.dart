@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/empty_folder_list_widget.dart';
 import 'package:meno_fe_v1/src/router/routes.dart';
 
@@ -34,9 +34,7 @@ class FolderListWidget extends StatelessWidget {
           },
         ),
         BlocListener<NotesBloc, NotesState>(
-          listener: (context, state) {
-            // TODO: implement listener
-          },
+          listener: (context, state) {},
         ),
       ],
       child: BlocBuilder<FolderListBloc, FolderListState>(

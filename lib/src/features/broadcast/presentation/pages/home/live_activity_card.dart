@@ -110,7 +110,7 @@ class ActivityCard extends StatelessWidget {
                         height: 24.h,
                         alignment: Alignment.centerLeft,
                         child: MText(
-                          broadcast.title.get()!,
+                          broadcast.title.getOr(),
                           style: MTextStyle.captionMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

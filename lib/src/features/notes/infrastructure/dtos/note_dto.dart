@@ -47,9 +47,9 @@ extension NoteDtoToDomain on NoteDto {
 extension NoteDomainToDto on Note {
   NoteDto get toDto {
     return NoteDto(
-      uid: uid.get()!,
-      title: title.get()!,
-      content: content.get()!,
+      uid: uid.getOr(),
+      title: title.getOr(),
+      content: content.getOr(),
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,

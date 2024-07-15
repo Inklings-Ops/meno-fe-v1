@@ -22,7 +22,8 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
         backgroundColor: colorScheme.background,
-        titleSpacing: 0,
+        // titleSpacing: 0,
+        toolbarHeight: 56,
         titleTextStyle: MTextStyle.bodyMedium,
         actionsIconTheme: IconThemeData(
           color: colorScheme.onBackground,

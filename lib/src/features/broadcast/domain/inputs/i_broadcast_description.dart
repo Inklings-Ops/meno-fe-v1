@@ -9,7 +9,7 @@ class IBroadcastDescription extends ValueObject<String?> {
 
   /// Creates a new `IBroadcastDescription` object.
   factory IBroadcastDescription(String? input) {
-    return IBroadcastDescription._(validateBroadcastDescription(input));
+    return IBroadcastDescription._(validateNullableMultiLine(input));
   }
 
   /// Creates a new `IBroadcastDescription` object with the specified value.

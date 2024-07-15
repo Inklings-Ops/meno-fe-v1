@@ -6,16 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart' hide ChangeNotifierProvider;
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
 import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
+import 'package:meno_fe_v1/src/features/discover/discover.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'app/app.dart';
 import 'firebase_options.dart';
 import 'src/dependency_injector/injector.dart';
-import 'src/features/auth/application/application.dart';
+import 'src/features/auth/auth.dart';
 import 'src/features/bible/application/bible/bible_bloc.dart';
 import 'src/features/bible/application/translations/translations_cubit.dart';
 import 'src/features/broadcast/application/broadcast/broadcast_bloc.dart';
@@ -28,11 +30,12 @@ import 'src/features/broadcast/application/timer/timer_cubit.dart';
 import 'src/features/chat/application/chat_bloc.dart';
 import 'src/features/network/application/network_cubit.dart';
 import 'src/features/notes/application/note_form/note_form_cubit.dart';
-import 'src/features/notes/application/note_list/notes_bloc.dart';
+import 'src/features/notes/application/notes/notes_bloc.dart';
 import 'src/features/onboarding/onboarding.dart';
 import 'src/features/profile/application/application.dart';
 import 'src/services/meno/meno_bloc.dart';
 import 'src/services/notification_service.dart';
+import 'src/shared/shared.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,41 +62,55 @@ Future<void> main() async {
   // di<ObjectBoxService>().verseBox.removeAll();
 
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => di<BibleBloc>()..add(const BibleEvent.initialize()),
-        ),
-        BlocProvider(create: (_) => di<ScripturePickerCubit>()),
-        BlocProvider(create: (_) => di<TranslationsCubit>()..initialize()),
-        BlocProvider(create: (_) => di<VersesCubit>()),
-        BlocProvider(create: (_) => di<NetworkCubit>()),
-        BlocProvider(create: (_) => di<OnboardingCubit>()),
-        BlocProvider(create: (_) => di<AuthBloc>()),
-        BlocProvider(create: (_) => di<AccountCubit>()..init),
-        BlocProvider(create: (_) => di<MyProfileBloc>()),
-        BlocProvider(create: (_) => di<ProfileFormCubit>()),
-        BlocProvider(create: (_) => di<MenoBloc>()),
-        BlocProvider(create: (_) => di<TimerCubit>()),
-        BlocProvider(create: (_) => di<BroadcastFormCubit>()),
-        BlocProvider(create: (_) => di<StreamBloc>()),
-        BlocProvider(create: (_) => di<BroadcastBloc>()),
-        BlocProvider(create: (_) => di<ChatBloc>()),
-        BlocProvider(create: (_) => di<RecentlyLiveCubit>()),
-        BlocProvider(create: (_) => di<LiveBroadcastsBloc>()),
-        BlocProvider(create: (_) => di<LiveParticipantsBloc>()),
-        BlocProvider(create: (_) => di<NoteFormCubit>()),
-        BlocProvider(
-          create: (_) =>
-              di<NotesBloc>()..add(const NotesEvent.getNotes()),
-        ),
-        BlocProvider(create: (_) => di<FolderFormCubit>()),
-        BlocProvider(
-          create: (_) =>
-              di<FolderListBloc>()..add(const FolderListEvent.getAllFolders()),
-        ),
-      ],
-      child: const ProviderScope(child: MenoApp()),
+    ChangeNotifierProvider(
+      create: (context) => di<SessionCubit>(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => di<BibleBloc>()..add(const BibleEvent.initialize()),
+          ),
+          BlocProvider(create: (_) => di<SessionCubit>()),
+          BlocProvider(create: (_) => di<ScripturePickerCubit>()),
+          BlocProvider(create: (_) => di<TranslationsCubit>()..initialize()),
+          BlocProvider(create: (_) => di<VersesCubit>()),
+          BlocProvider(create: (_) => di<NetworkCubit>()),
+          BlocProvider(create: (_) => di<OnboardingCubit>()),
+          // BlocProvider(create: (_) => di<AuthBloc>()),
+          BlocProvider(
+            create: (_) => di<AccountBloc>()..add(const AccountInitialized()),
+          ),
+          BlocProvider(create: (_) => di<LoginCubit>()),
+          BlocProvider(create: (_) => di<RegisterCubit>()),
+          BlocProvider(create: (_) => di<MyProfileBloc>()),
+          BlocProvider(create: (_) => di<ProfileFormCubit>()),
+          BlocProvider(create: (_) => di<MenoBloc>()),
+          BlocProvider(create: (_) => di<TimerCubit>()),
+          BlocProvider(create: (_) => di<BroadcastFormCubit>()),
+          BlocProvider(create: (_) => di<StreamBloc>()),
+          BlocProvider(create: (_) => di<BroadcastBloc>()),
+          BlocProvider(create: (_) => di<ChatBloc>()),
+          BlocProvider(create: (_) => di<LiveBroadcastsBloc>()),
+          BlocProvider(create: (_) => di<LiveParticipantsBloc>()),
+          BlocProvider(create: (_) => di<NoteFormCubit>()),
+          BlocProvider(create: (_) => di<RecentlyLiveCubit>()..fetch()),
+          BlocProvider(create: (_) => di<SearchBloc>()),
+          BlocProvider(create: (_) => di<DAllCubit>()..init()),
+          BlocProvider(create: (_) => di<DNowLiveCubit>()..fetch(1)),
+          BlocProvider(create: (_) => di<DRecentlyLiveCubit>()..fetch(1)),
+          BlocProvider(
+            create: (_) => di<FilterBloc>()..add(const FilterFetched(1)),
+          ),
+          BlocProvider(
+            create: (_) => di<NotesBloc>()..add(const NotesEvent.getNotes()),
+          ),
+          BlocProvider(create: (_) => di<FolderFormCubit>()),
+          BlocProvider(
+            create: (_) => di<FolderListBloc>()
+              ..add(const FolderListEvent.getAllFolders()),
+          ),
+        ],
+        child: const ProviderScope(child: MenoApp()),
+      ),
     ),
   );
 }

@@ -185,8 +185,8 @@ class _DescriptionSection extends StatelessWidget {
           ],
         ),
         MCore.large.verticalSpace,
-        if (broadcast.description?.get() != null)
-          MText(broadcast.description!.get()!),
+        if (broadcast.description?.getOr() != null)
+          MText(broadcast.description!.getOr()!),
       ],
     );
   }
@@ -211,7 +211,7 @@ class _TopSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
-                  broadcast.title.get()!,
+                  broadcast.title.getOr(),
                   style: MTextStyle.subheadingMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -220,7 +220,9 @@ class _TopSection extends StatelessWidget {
                 const MBadge.live(),
                 6.verticalSpace,
                 MText(
-                  broadcast.creator!.fullName,
+                  broadcast.creator == null
+                      ? broadcast.fullName!
+                      : broadcast.creator!.fullName,
                   style: MTextStyle.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

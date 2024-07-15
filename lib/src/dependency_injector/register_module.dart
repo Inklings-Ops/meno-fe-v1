@@ -12,6 +12,7 @@ import '../core/env/env.dart';
 import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart';
 import '../features/bible/infrastructure/datasources/remote/bible_remote_datasource.dart';
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart';
+import '../features/discover/discover.dart';
 import '../features/notes/infrastructure/datasources/note_remote_datasource.dart';
 import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart';
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart';
@@ -29,6 +30,11 @@ abstract class RegisterModule {
   @lazySingleton
   BroadcastRemoteDatasource get broadcastRemoteDatasource {
     return BroadcastRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
+  }
+
+  @lazySingleton
+  DiscoverRemoteDatasource get discoverRemoteDatasource {
+    return DiscoverRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
   }
 
   @lazySingleton

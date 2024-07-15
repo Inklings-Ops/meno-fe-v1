@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 import '../../domain/domain.dart';
 import 'user_dto.dart';
@@ -32,7 +33,16 @@ extension UserCredentialDtoToDomain on UserCredentialDto {
   UserCredential get toDomain {
     return UserCredential(
       user: user.toDomain,
-      token: token,
+      token: token == null ? null : Token(token!),
+    );
+  }
+}
+
+extension UserCredentialToDto on UserCredential {
+  UserCredentialDto get toDto {
+    return UserCredentialDto(
+      user: user.toDto,
+      token: token?.getOr(),
     );
   }
 }

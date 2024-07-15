@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/application/application.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../domain/domain.dart';
 
@@ -101,49 +101,53 @@ class ParticipantItem extends StatelessWidget {
 }
 
 class _HostTag extends StatelessWidget {
-  final String participantId;
-
   const _HostTag({required this.participantId});
+  final String participantId;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
-        authenticated: (credential) {
-          if (participantId == credential.user.id) {
-            return _buildTag('You');
+        authenticated: (user, _) {
+          if (participantId == user.id.getOr()) {
+            return const _Tag(title: 'You');
           } else {
-            return _buildTag('Host');
+            return const _Tag(title: 'Host');
           }
         },
       ),
     );
   }
-
-  MText _buildTag(String tag) => MText(tag, style: MTextStyle.nanoRegular);
 }
 
 class _CoHostTag extends StatelessWidget {
-  final String participantId;
-
   const _CoHostTag({required this.participantId});
+  final String participantId;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
-        authenticated: (credential) {
-          if (participantId == credential.user.id) {
-            return _buildTag('You');
+        authenticated: (user, _) {
+          if (participantId == user.id.getOr()) {
+            return const _Tag(title: 'You');
           } else {
-            return _buildTag('Co-Host');
+            return const _Tag(title: 'Co-Host');
           }
         },
       ),
     );
   }
+}
 
-  MText _buildTag(String tag) => MText(tag, style: MTextStyle.nanoRegular);
+class _Tag extends StatelessWidget {
+  const _Tag({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return MText(title, style: MTextStyle.nanoRegular);
+  }
 }

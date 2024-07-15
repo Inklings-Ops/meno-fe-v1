@@ -17,6 +17,7 @@ class Broadcast with _$Broadcast {
     IBroadcastDescription? description,
     BroadcastToken? broadcastToken,
     BroadcastStatus? status,
+    String? creatorId,
     Participant? creator,
     String? fullName,
     String? imageId,

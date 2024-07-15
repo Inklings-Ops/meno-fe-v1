@@ -3,22 +3,15 @@ part of 'reset_password_cubit.dart';
 @freezed
 class ResetPasswordState with _$ResetPasswordState {
   factory ResetPasswordState({
-    required IEmail email,
-
-    /// Whether or not to show an error message.
-    required bool showError,
-
-    /// Whether or not the login form is loading.
+    required Email email,
     required bool loading,
-
-    /// The result of the last login attempt.
     required Option<Either<AuthException, Unit>> option,
   }) = _ResetPasswordState;
-
+  ResetPasswordState._();
+  bool get isValid => email.isValid;
   factory ResetPasswordState.initial() {
     return ResetPasswordState(
-      email: IEmail(''),
-      showError: false,
+      email: Email(''),
       loading: false,
       option: none(),
     );

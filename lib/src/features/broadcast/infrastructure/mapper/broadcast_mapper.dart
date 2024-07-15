@@ -33,6 +33,7 @@ class BroadcastMapper {
       id: dto.id,
       title: IBroadcastTitle(dto.title),
       description: IBroadcastDescription(dto.description),
+      creatorId: dto.creatorId,
       creator: participantToDomain(dto.creator),
       fullName: dto.fullName,
       broadcastToken: dto.broadcastToken,
@@ -53,8 +54,9 @@ class BroadcastMapper {
     if (domain == null) return null;
     return BroadcastDto(
       id: domain.id,
-      title: domain.title.get()!,
-      description: domain.description?.get(),
+      title: domain.title.getOr(),
+      description: domain.description?.getOr(),
+      creatorId: domain.creatorId,
       creator: participantToDto(domain.creator),
       fullName: domain.fullName,
       broadcastToken: domain.broadcastToken,

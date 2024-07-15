@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 
 class NoteWidget extends StatelessWidget {
   const NoteWidget({super.key, this.onTap, this.selected = false});

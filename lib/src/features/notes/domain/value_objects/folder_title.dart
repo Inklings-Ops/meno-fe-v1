@@ -10,7 +10,7 @@ class FolderTitle extends ValueObject<String> {
 
   factory FolderTitle(String input) {
     final finalInput = input.trim();
-    return FolderTitle._(validateNotEmpty(finalInput));
+    return FolderTitle._(validateStringNotEmpty(finalInput));
   }
 
   /// Creates a new `IFolderTitle` object with the specified value.

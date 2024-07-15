@@ -9,7 +9,7 @@ class NoteContent extends ValueObject<String> {
   final NoteContentResult value;
 
   factory NoteContent(String input) {
-    return NoteContent._(validateNotEmpty(input));
+    return NoteContent._(validateStringNotEmpty(input));
   }
 
   /// Creates a new `INoteContent` object with the specified value.

@@ -31,9 +31,9 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
 
     return result.fold(
       (failure) => emit(const RecentlyLiveState.failure()),
-      (broadcasts) => broadcasts.isEmpty
+      (s) => s.broadcasts.isEmpty
           ? emit(const RecentlyLiveState.empty())
-          : emit(RecentlyLiveState.success(broadcasts)),
+          : emit(RecentlyLiveState.success(s.broadcasts)),
     );
   }
 
@@ -53,11 +53,11 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
 
       return result.fold(
         (failure) => emit(state),
-        (broadcasts) => broadcasts.isEmpty
+        (s) => s.broadcasts.isEmpty
             ? emit(RecentlyLiveState.successLast(loadedState.broadcasts))
             : emit(RecentlyLiveState.success([
                 ...loadedState.broadcasts,
-                ...broadcasts,
+                ...s.broadcasts,
               ])),
       );
     }

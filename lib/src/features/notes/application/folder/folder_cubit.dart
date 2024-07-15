@@ -36,7 +36,7 @@ class FolderCubit extends Cubit<FolderState> {
     emit(const _Loading());
 
     final result = await _facade.addNoteToFolder(
-      noteId: note.uid.get()!,
+      noteId: note.uid.getOr(),
       folderId: folder.id,
     );
 

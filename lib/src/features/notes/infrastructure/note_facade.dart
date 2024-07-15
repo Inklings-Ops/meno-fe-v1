@@ -143,7 +143,7 @@ class NoteFacade implements INoteFacade {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
-      final titleValue = title.get()!;
+      final titleValue = title.getOr();
 
       try {
         final response = await _remote.createFolder(title: titleValue);
@@ -364,7 +364,7 @@ class NoteFacade implements INoteFacade {
   }) async {
     if (!(await _network.isConnected)) {
       // final dto = await _local.getFolder(id);
-      // final titleValue = title?.get() ?? dto!.title;
+      // final titleValue = title?.getOr() ?? dto!.title;
       // final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
       // final folder = updatedDto!.toDomain;
       // return right(folder);
@@ -373,7 +373,7 @@ class NoteFacade implements INoteFacade {
       try {
         final response = await _remote.updateFolder(
           folderId: id,
-          title: title?.get(),
+          title: title?.getOr(),
           pinned: pinned,
         );
         final dto = response.data;

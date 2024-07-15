@@ -9,7 +9,7 @@ class IChatContent extends ValueObject<String> {
 
   /// Creates a new `IBroadcastTitle` object.
   factory IChatContent(String input) {
-    return IChatContent._(validateNotEmpty(input));
+    return IChatContent._(validateStringNotEmpty(input));
   }
 
   /// Creates a new `IBroadcastTitle` object with the specified value.

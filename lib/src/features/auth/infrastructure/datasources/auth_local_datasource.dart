@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../services/secure_storage_service.dart';
 import '../../../../shared/m_keys.dart';
-import '../../domain/domain.dart';
 import '../dtos/dtos.dart';
 
 /// A local data source for authentication.
@@ -45,7 +44,7 @@ class AuthLocalDatasource {
     return credential?.user;
   }
 
-  Future<UserToken?> get getCurrentUserToken async {
+  Future<String?> get getCurrentUserToken async {
     final credential = await getUserCredential();
     return credential?.token;
   }
@@ -74,5 +73,12 @@ class AuthLocalDatasource {
 
     final encodedString = jsonEncode(credentialsMap);
     await _storage.write(MKeys.allUserCredentialsKey, value: encodedString);
+  }
+
+  Future<void> storeAuthCombined(UserCredentialDto dto) async {
+    await Future.wait([
+      storeAuthUserCredentials(dto),
+      storeAllUserCredentials(dto),
+    ]);
   }
 }

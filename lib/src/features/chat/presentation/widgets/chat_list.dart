@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../../../auth/application/application.dart';
 import '../../application/chat_bloc.dart';
 import '../../domain/domain.dart';
 import 'chat_bubble.dart';
@@ -44,11 +43,11 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
-        authenticated: (credential) => GestureDetector(
-          onLongPress: credential.user.id == chat.senderId
+        authenticated: (user, _) => GestureDetector(
+          onLongPress: user.id.getOr() == chat.senderId
               ? () => showMyChatOptions(context)
               : () => showOtherChatOptions(context),
           child: ChatBubble(chat: chat),

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../application/application.dart';
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class UserAccountDetails extends StatelessWidget {
   final VoidCallback? action;
@@ -12,14 +11,11 @@ class UserAccountDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) => state.maybeMap(
+    return BlocBuilder<SessionCubit, SessionState>(
+      builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
-        authenticated: (v) => _Widget(action: action, user: v.credentials.user),
-        partiallyAuthenticated: (v) => _Widget(
-          action: action,
-          user: v.credentials.user,
-        ),
+        partiallyAuthenticated: (user) => _Widget(action: action, user: user),
+        authenticated: (user, token) => _Widget(action: action, user: user),
       ),
     );
   }
@@ -50,7 +46,7 @@ class _Widget extends StatelessWidget {
                   style: MTextStyle.subheadingMedium,
                 ),
                 MText(
-                  user.fullName.get()!,
+                  user.fullName.getOr(),
                   style: MTextStyle.heading2Medium,
                 ),
               ],

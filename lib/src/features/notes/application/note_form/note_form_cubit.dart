@@ -31,23 +31,22 @@ class NoteFormCubit extends Cubit<NoteFormState> {
   void titleChanged(String title) {
     final updatedNote = state.note.copyWith(title: NoteTitle(title));
     emit(state.copyWith(note: updatedNote, option: none()));
-    // _autoSaveNote();
+    _autoSaveNote();
   }
 
   void contentChanged(String content) {
     final updatedNote = state.note.copyWith(content: NoteContent(content));
     emit(state.copyWith(note: updatedNote, option: none()));
-    // _autoSaveNote();
+    _autoSaveNote();
   }
 
   Future<void> onSubmit() async {
     late Either<NoteException, Note> fOrS;
     emit(state.copyWith(loading: true, option: none()));
     if (state.note.failureOption.isNone()) {
-      // fOrS = state.isEditing
-      //     ? await _facade.updateNote(note: state.note)
-      //     : await _facade.createNote(state.note);
-      fOrS = await _facade.createNote(state.note);
+      fOrS = state.isEditing
+          ? await _facade.updateNote(note: state.note)
+          : await _facade.createNote(state.note);
       fOrS.fold(
         (failure) => null,
         (note) => emit(state.copyWith(note: note)),

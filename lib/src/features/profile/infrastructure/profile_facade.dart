@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../../services/network_service.dart';
 import '../../auth/domain/domain.dart';
@@ -28,13 +29,13 @@ class ProfileFacade implements IProfileFacade {
 
   @override
   Future<Either<AuthException, Unit>> editProfile({
-    IFullName? fullName,
-    IBio? bio,
-    IAvatar? avatar,
+    SingleLineString? fullName,
+    Bio? bio,
+    Avatar? avatar,
   }) async {
-    final fullNameValue = fullName?.get()!;
-    final bioValue = bio?.get();
-    final avatarValue = avatar?.get();
+    final fullNameValue = fullName?.getOr();
+    final bioValue = bio?.getOr();
+    final avatarValue = avatar?.getOr();
 
     final (credentials, hasNetwork) = await (
       _local.getUserCredential(),

@@ -99,7 +99,8 @@ class CustomContent extends HookWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                MText(profile.fullName.get()!, color: colorScheme.onBackground),
+                MText(profile.fullName.getOr(),
+                    color: colorScheme.onBackground),
                 MCore.small.horizontalSpace,
                 const Icon(MIcons.chevron_down, size: 24),
               ],

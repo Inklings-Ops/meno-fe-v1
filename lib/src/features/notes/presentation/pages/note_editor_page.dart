@@ -6,7 +6,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_list/notes_bloc.dart';
+import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
@@ -29,7 +29,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   void didChangeDependencies() {
     if (widget.note != null) {
-      final json = jsonDecode(widget.note!.content.get()!);
+      final json = jsonDecode(widget.note!.content.getOr());
       controller.document = Document.fromJson(json);
     }
 
@@ -166,7 +166,7 @@ class _TitleField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       style: MTextStyle.heading3Bold,
-      initialValue: initialNote?.title.get(),
+      initialValue: initialNote?.title.getOr(),
       onChanged: context.watch<NoteFormCubit>().titleChanged,
       textInputAction: TextInputAction.next,
       decoration: const InputDecoration(

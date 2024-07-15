@@ -101,7 +101,7 @@ class _TitleField extends StatelessWidget {
     return TextFormField(
       autofocus: true,
       style: MTextStyle.heading1Regular,
-      initialValue: initialTitle?.get(),
+      initialValue: initialTitle?.getOr(),
       textAlign: TextAlign.center,
       onChanged: bloc.titleChanged,
       enabled: !bloc.state.loading,
@@ -129,7 +129,7 @@ class _SubmitButton extends StatelessWidget {
     return MPrimaryButton(
       label: isEdit ? 'Rename Folder' : 'Create Folder',
       loading: bloc.state.loading,
-      disabled: bloc.state.loading || !bloc.state.title.isValid(),
+      disabled: bloc.state.loading || !bloc.state.title.isValid,
       onPressed: bloc.onSubmit,
     );
   }

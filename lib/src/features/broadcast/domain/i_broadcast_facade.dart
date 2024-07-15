@@ -34,7 +34,7 @@ abstract class IBroadcastFacade {
     required BroadcastId broadcastId,
   });
 
-  Future<Either<BroadcastException, List<Broadcast?>>> getBroadcasts({
+  Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
     /// Status of the broadcast
     /// Example : active or inactive
     String? status,
