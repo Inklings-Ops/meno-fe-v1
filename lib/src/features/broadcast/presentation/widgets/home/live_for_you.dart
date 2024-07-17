@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/router/router.dart';
 
 class LiveForYou extends StatelessWidget {
   const LiveForYou({super.key});
@@ -58,7 +59,7 @@ class DiscoverButton extends ConsumerWidget {
       width: 112.w,
       child: MSecondaryButton(
         label: 'Discover',
-        onPressed: () => context.push('/chat'),
+        onPressed: () => context.go(Routes.discover),
         style: OutlinedButton.styleFrom(
           textStyle: MTextStyle.microMedium,
           padding: EdgeInsets.zero.r,
