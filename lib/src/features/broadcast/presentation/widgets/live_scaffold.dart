@@ -20,11 +20,10 @@ class LiveStreamScaffold extends HookWidget {
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(48.h),
-        child: Padding(
-          padding: MediaQuery.viewPaddingOf(context),
+        preferredSize: Size.fromHeight(56.h),
+        child: SafeArea(
           child: Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 0).r,
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).r,
             constraints: const BoxConstraints(minHeight: 32).r,
             child: TabBar(controller: controller, tabs: tabs),
           ),

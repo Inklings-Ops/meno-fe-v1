@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 
@@ -25,7 +26,33 @@ class BibleFacade implements IBibleFacade {
 
   @PostConstruct(preResolve: true)
   Future<void> initialize() async {
-    Logger().w('INITIALIZING BIBLE');
+    // Logger().w('INITIALIZING BIBLE');
+    // const params = BibleIsolateParams(translation: 'kjv');
+    // final isConnected = await _network.isConnected;
+
+    // if (!_local.isBibleEmpty) {
+    //   Logger().w('ALREADY DOWNLOADED');
+    //   return;
+    // }
+
+    // if (_local.isBibleEmpty && isConnected) {
+    //   Logger().w('DOWNLOADING FROM REMOTE');
+    //   final worker = await BibleWorkerIsolate.spawn();
+    //   final verseDtos = await worker.downloadBible(params);
+    //   await _local.storeBible(verseDtos ?? [], params.translation);
+    //   return;
+    // } else {
+    //   Logger().w('DOWNLOADING FROM LOCAL JSON');
+    //   final verseDtos = await _local.loadFallbackBible();
+    //   await _local.storeBible(verseDtos, params.translation);
+    //   return;
+    // }
+  }
+
+@override
+  Future<void> init() async {
+        Logger().w('INITIALIZING BIBLE');
+    const params = BibleIsolateParams(translation: 'kjv');
     final isConnected = await _network.isConnected;
 
     if (!_local.isBibleEmpty) {
@@ -35,13 +62,14 @@ class BibleFacade implements IBibleFacade {
 
     if (_local.isBibleEmpty && isConnected) {
       Logger().w('DOWNLOADING FROM REMOTE');
-      final verseDtos = await _remote.downloadBible('kjv');
-      await _local.storeBible(verseDtos, 'kjv');
+      final worker = await BibleWorkerIsolate.spawn();
+      final verseDtos = await worker.downloadBible(params);
+      await _local.storeBible(verseDtos ?? [], params.translation);
       return;
     } else {
       Logger().w('DOWNLOADING FROM LOCAL JSON');
       final verseDtos = await _local.loadFallbackBible();
-      await _local.storeBible(verseDtos, 'kjv');
+      await _local.storeBible(verseDtos, params.translation);
       return;
     }
   }
@@ -99,7 +127,7 @@ class BibleFacade implements IBibleFacade {
 
   @override
   Future<Either<BibleException, Translation>> sync({
-    required String translation ,
+    required String translation,
     void Function(int, int)? onProgress,
     CancelToken? cancel,
   }) async {
@@ -112,17 +140,12 @@ class BibleFacade implements IBibleFacade {
     } else {
       try {
         Logger().w('Bible downloading $translation');
-
-        final verseDtos = await _remote.downloadBible(
-          translation,
-          onProgress: onProgress,
-          cancel: cancel,
+        final worker = await BibleWorkerIsolate.spawn();
+        final verseDtos = await worker.downloadBible(
+          BibleIsolateParams(translation: translation),
         );
-        await _local.storeBible(verseDtos, translation);
-
+        await _local.storeBible(verseDtos ?? [], translation);
         final translationDomain = handleFullTranslations(translation).toDomain;
-
-        Logger().w('Bible downloaded ${verseDtos.first}');
         return right(translationDomain);
       } on Exception catch (e) {
         return left(BibleException.message(e.toString()));

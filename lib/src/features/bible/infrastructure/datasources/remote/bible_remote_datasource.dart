@@ -1,8 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
-import '../../../../../core/env/env.dart';
 import '../../dtos/dtos.dart';
 import '../data_helper.dart';
 import 'bible_response.dart';
@@ -51,37 +49,37 @@ class BibleRemoteDatasource {
     return response.data;
   }
 
-  Future<List<VerseDto>> downloadBible(
-    String translation, {
-    void Function(int, int)? onProgress,
-    CancelToken? cancel,
-  }) async {
-    Logger().d('ENTERING DOWNLOAD METHOD');
+  // Future<List<VerseDto>> downloadBible(
+  //   String translation, {
+  //   void Function(int, int)? onProgress,
+  //   CancelToken? cancel,
+  // }) async {
+  //   Logger().d('ENTERING DOWNLOAD METHOD');
 
-    try {
-      Logger().d('STARTING DOWNLOAD OF $translation BIBLE');
+  //   try {
+  //     Logger().d('STARTING DOWNLOAD OF $translation BIBLE');
 
-      final dio = Dio();
-      final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
+  //     final dio = Dio();
+  //     final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
 
-      final response = await dio.get(
-        uri,
-        onReceiveProgress: onProgress,
-        cancelToken: cancel,
-      );
+  //     final response = await dio.get(
+  //       uri,
+  //       onReceiveProgress: onProgress,
+  //       cancelToken: cancel,
+  //     );
 
-      Logger().d(response);
-      Logger().d('FINISHED DOWNLOADING $translation BIBLE => ${response.data}');
-      return compute((m) => parseVerses(m, translation), response.data);
-    } on DioException catch (e) {
-      Logger().e('ERROR INN DOWNLOAD METHOD => ${e.message}');
-      if (e.message == null) {
-        throw Exception('Unknown error');
-      } else {
-        throw Exception(e.message);
-      }
-    }
-  }
+  //     Logger().d(response);
+  //     Logger().d('FINISHED DOWNLOADING $translation BIBLE => ${response.data}');
+  //     return compute((m) => parseVerses(m, translation), response.data);
+  //   } on DioException catch (e) {
+  //     Logger().e('ERROR INN DOWNLOAD METHOD => ${e.message}');
+  //     if (e.message == null) {
+  //       throw Exception('Unknown error');
+  //     } else {
+  //       throw Exception(e.message);
+  //     }
+  //   }
+  // }
 
   // static Future<List<VerseDto>> _compute(
   //   RootIsolateToken token,
