@@ -3,7 +3,6 @@ import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
 
 part 'folder_form_cubit.freezed.dart';
 part 'folder_form_state.dart';

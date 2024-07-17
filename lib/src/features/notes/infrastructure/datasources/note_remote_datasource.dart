@@ -1,11 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../dtos/dtos.dart';
-import '../responses/folder_response.dart';
-import '../responses/folder_with_notes_response.dart';
-import '../responses/responses.dart';
 
 part 'note_remote_datasource.g.dart';
 

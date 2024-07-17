@@ -53,15 +53,8 @@ class PreStreamActionButtons extends HookWidget {
 }
 
 class _JoinButton extends StatelessWidget {
-  const _JoinButton({
-    this.label = 'Join',
-    this.onJoin,
-    this.loading = false,
-    this.disabled = false,
-  });
-  final String label;
+  const _JoinButton({this.onJoin, this.loading = false});
   final bool loading;
-  final bool disabled;
   final VoidCallback? onJoin;
 
   @override
@@ -70,7 +63,6 @@ class _JoinButton extends StatelessWidget {
       label: 'Join',
       onPressed: onJoin,
       loading: loading,
-      disabled: loading || disabled,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8).r),
       ),

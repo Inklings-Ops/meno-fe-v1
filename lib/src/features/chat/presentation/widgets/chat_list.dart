@@ -108,7 +108,6 @@ class _Item extends StatelessWidget {
               )
             else
               MModalListTile(
-                // TODO: Add flag
                 leading: const Icon(Icons.flag),
                 title: 'Report',
                 onTap: () {},
