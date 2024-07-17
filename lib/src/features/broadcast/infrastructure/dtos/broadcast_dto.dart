@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 import '../../domain/domain.dart';
 import '../../domain/entities/broadcast_status.dart';
@@ -44,12 +45,38 @@ class BroadcastDto with _$BroadcastDto {
 extension BroadcastDtoToDomain on BroadcastDto {
   Broadcast get toDomain {
     return Broadcast(
-      id: id,
-      title: IBroadcastTitle(title),
-      description: IBroadcastDescription(description),
+      id: Uid<Broadcast>.fromString(id),
+      title: SingleLineString(title),
+      description: BroadcastDescription(description),
       creatorId: creatorId,
       creator: creator != null
           ? Participant(id: creator!.id, fullName: creator!.fullName)
+          : null,
+      fullName: fullName,
+      broadcastToken: broadcastToken,
+      createdAt: createdAt,
+      deleted: deleted,
+      endTime: endTime,
+      imageId: imageId,
+      imageUrl: imageUrl,
+      startTime: startTime,
+      status: status,
+      timeZone: timeZone,
+      liveListeners: liveListeners,
+      totalListeners: totalListeners,
+    );
+  }
+}
+
+extension BroadcastToDto on Broadcast {
+  BroadcastDto get toDto {
+    return BroadcastDto(
+      id: id.getOr(),
+      title: title.getOr(),
+      description: description?.getOr(),
+      creatorId: creatorId,
+      creator: creator != null
+          ? ParticipantDto(id: creator!.id, fullName: creator!.fullName)
           : null,
       fullName: fullName,
       broadcastToken: broadcastToken,

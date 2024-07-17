@@ -10,19 +10,12 @@ import '../../domain/domain.dart';
 import 'chat_bubble.dart';
 
 class ChatList extends HookConsumerWidget {
-  final String broadcastId;
+  const ChatList({super.key, required this.controller});
   final ScrollController controller;
-
-  const ChatList({
-    super.key,
-    required this.broadcastId,
-    required this.controller,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BlocBuilder<ChatBloc, ChatState>(
-      bloc: context.read<ChatBloc>()..add(ChatEvent.getMessages(broadcastId)),
       buildWhen: (p, c) => p.chats != c.chats,
       builder: (context, state) => ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: MCore.large).r,
@@ -43,13 +36,20 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final broadcast = context.select((ChatBloc bloc) => bloc.state.broadcast);
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) => GestureDetector(
-          onLongPress: user.id.getOr() == chat.senderId
-              ? () => showMyChatOptions(context)
-              : () => showOtherChatOptions(context),
+          onLongPress: () {
+            final isSender = user.id.getOr() == chat.senderId;
+            final isHost = user.id.getOr() == broadcast.creator!.id;
+            if (isSender) {
+              showOtherChatOptions(context);
+            } else {
+              showOtherChatOptions(context, isHost: isHost);
+            }
+          },
           child: ChatBubble(chat: chat),
         ),
       ),
@@ -85,7 +85,11 @@ class _Item extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showOtherChatOptions(BuildContext context) async {
+  Future<dynamic> showOtherChatOptions(
+    BuildContext context, {
+    bool isHost = false,
+  }) async {
+    final colors = MColorScheme.of(context)!;
     return context.showModal(
       isScrollControlled: true,
       MModal(
@@ -95,12 +99,20 @@ class _Item extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             MCore.small.verticalSpace,
-            MModalListTile(
-              // TODO: Add flag
-              leading: const Icon(Icons.flag),
-              title: 'Report',
-              onTap: () {},
-            ),
+            if (isHost)
+              MModalListTile(
+                leading: Icon(MIcons.trash, color: colors.error),
+                title: 'Delete',
+                onTap: () => context.read<ChatBloc>().deleteMessage(chat),
+                titleColor: colors.error,
+              )
+            else
+              MModalListTile(
+                // TODO: Add flag
+                leading: const Icon(Icons.flag),
+                title: 'Report',
+                onTap: () {},
+              ),
             MCore.large.verticalSpace,
           ],
         ),

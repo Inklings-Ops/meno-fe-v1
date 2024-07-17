@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
 import 'broadcast_dto.dart';
 
@@ -22,4 +23,22 @@ class JoinBroadcastDto with _$JoinBroadcastDto {
 
   @override
   Map<String, dynamic> toJson() => _$JoinBroadcastDtoToJson(this);
+}
+
+extension JoinBroadcastDtoToDomainX on JoinBroadcastDto {
+  JoinBroadcastEntity get toDomain {
+    return JoinBroadcastEntity(
+      broadcastToken: broadcastToken,
+      broadcast: broadcast.toDomain,
+    );
+  }
+}
+
+extension JoinBroadcastToDtoX on JoinBroadcastEntity {
+  JoinBroadcastDto get toDto {
+    return JoinBroadcastDto(
+      broadcastToken: broadcastToken,
+      broadcast: broadcast.toDto,
+    );
+  }
 }

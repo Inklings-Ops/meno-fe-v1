@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/discover/presentation/pages/discover_page.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/pages/note_editor_page.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/features/settings/presentation/page/settings_page.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
@@ -18,18 +20,10 @@ import '../features/auth/presentation/pages/reset_password_otp_verification_page
 import '../features/auth/presentation/pages/reset_password_page.dart';
 import '../features/auth/presentation/pages/reset_password_success_page.dart';
 import '../features/bible/presentation/pages/bible_page.dart';
-import '../features/broadcast/domain/entities/broadcast.dart';
-import '../features/broadcast/presentation/pages/broadcast/broadcast_page.dart';
-import '../features/broadcast/presentation/pages/create_broadcast/create_broadcast_page.dart';
-import '../features/broadcast/presentation/pages/home/details_page.dart';
-import '../features/broadcast/presentation/pages/home/home_page.dart';
-import '../features/broadcast/presentation/pages/home/recently_live_page.dart';
-import '../features/broadcast/presentation/pages/stream/stream_page.dart';
 import '../features/notes/presentation/pages/folder_page.dart';
 import '../features/notes/presentation/pages/notes_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
-import '../features/profile/presentation/pages/profile_page.dart';
 import 'routes.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -71,7 +65,10 @@ abstract class MRouter {
         path: Routes.broadcast,
         name: Routes.broadcast,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const BroadcastPage(),
+        builder: (context, state) {
+          final broadcast = state.extra as Broadcast;
+          return BroadcastPage(broadcast: broadcast);
+        },
       ),
       GoRoute(
         path: Routes.login,
@@ -153,10 +150,10 @@ abstract class MRouter {
         name: Routes.noteEditor,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>?;
+          final note = state.extra as Note?;
           return BlocProvider.value(
-            value: di<NoteFormCubit>(param1: data?['note'] as Note?),
-            child: NoteEditorPage(note: data?['note'] as Note?),
+            value: di<NoteFormCubit>(param1: note),
+            child: NoteEditorPage(note: note),
           );
         },
       ),
@@ -165,13 +162,9 @@ abstract class MRouter {
         name: Routes.folder,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final data = state.extra as Map<String, dynamic>?;
-          final folder = data?['folder'] as Folder;
+          final folder = state.extra as Folder;
           return BlocProvider(
-            create: (_) => FolderCubit(
-              facade: di<INoteFacade>(),
-              folder: folder,
-            )..getAllNotes(),
+            create: (_) => di<FolderCubit>(param1: folder),
             child: FolderPage(folder: folder),
           );
         },

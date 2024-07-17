@@ -27,10 +27,21 @@ class BroadcastListDto with _$BroadcastListDto {
   Map<String, Object?> toJson() => _$BroadcastListDtoToJson(this);
 }
 
-extension BListX on BroadcastListDto {
+extension BListToDomainX on BroadcastListDto {
   BroadcastListEntity get toDomain {
     return BroadcastListEntity(
       broadcasts: broadcasts.map((b) => b?.toDomain).toList(),
+      totalItems: totalItems,
+      totalPages: totalPages,
+      currentPage: currentPage,
+    );
+  }
+}
+
+extension BListToDtoX on BroadcastListEntity {
+  BroadcastListDto get toDto {
+    return BroadcastListDto(
+      broadcasts: broadcasts.map((b) => b?.toDto).toList(),
       totalItems: totalItems,
       totalPages: totalPages,
       currentPage: currentPage,

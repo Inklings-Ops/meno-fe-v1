@@ -54,8 +54,7 @@ class MBadge extends StatelessWidget {
     String? count,
     bool showLoader = false,
     bool showBorder = false,
-  })
-      : this._(
+  }) : this._(
           key: key,
           value: "LIVE",
           viewCount: count,
@@ -129,7 +128,7 @@ class MBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     Widget? child;
 
@@ -140,13 +139,11 @@ class MBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showLoader)
-            Assets.images.loading.image(
-              color: valueColor ?? colorScheme.onError,
-            ),
-          _buildText(value!, colorScheme),
+            Assets.images.loading.image(color: valueColor ?? colors.onError),
+          _buildText(value!, colors),
           if (viewCount != null) ...[
             const SizedBox(width: 6),
-            _buildText(viewCount!, colorScheme),
+            _buildText(viewCount!, colors),
           ],
         ],
       );
@@ -158,7 +155,7 @@ class MBadge extends StatelessWidget {
       padding: padding,
       constraints: constraints,
       decoration: ShapeDecoration(
-        color: color ?? colorScheme.error,
+        color: color ?? colors.error,
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.zero,
           side: showBorder
@@ -170,12 +167,12 @@ class MBadge extends StatelessWidget {
     );
   }
 
-  MText _buildText(String content, MColorScheme colorScheme) {
+  MText _buildText(String content, MColorScheme colors) {
     return MText(
       content,
       textAlign: TextAlign.center,
       style: textStyle?.copyWith(letterSpacing: 0.5),
-      color: valueColor ?? colorScheme.onError,
+      color: valueColor ?? colors.onError,
     );
   }
 }

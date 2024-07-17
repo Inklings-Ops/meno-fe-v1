@@ -10,19 +10,13 @@ import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder
 import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../widgets/folder_list_widget.dart';
-import '../widgets/folder_widget.dart';
-import '../widgets/note_list_widget.dart';
-import '../widgets/note_widget.dart';
+import '../widgets/note_body_widget.dart';
 
 class NotesPage extends HookWidget {
   const NotesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final notesBloc = context.read<NotesBloc>();
-    final foldersBloc = context.read<FolderListBloc>();
-
     final selectedIndex = useState(0);
 
     return MScaffold(
@@ -40,49 +34,7 @@ class NotesPage extends HookWidget {
           ),
         ),
       ),
-      body: RefreshIndicator.adaptive(
-        onRefresh: () async => switch (selectedIndex.value) {
-          0 => notesBloc.add(const NotesEvent.getNotes()),
-          1 => foldersBloc.add(const FolderListEvent.getAllFolders()),
-          _ => null,
-        },
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                width: 1.sw,
-                padding: const EdgeInsets.fromLTRB(0, 24, 0, MCore.small).r,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: NoteWidget(
-                        onTap: () => selectedIndex.value = 0,
-                        selected: selectedIndex.value == 0,
-                      ),
-                    ),
-                    MCore.small.horizontalSpace,
-                    Expanded(
-                      child: FolderWidget(
-                        onTap: () => selectedIndex.value = 1,
-                        selected: selectedIndex.value == 1,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              20.verticalSpace,
-              switch (selectedIndex.value) {
-                0 => const NoteListWidget(),
-                1 => const FolderListWidget(),
-                _ => const SizedBox(),
-              },
-            ],
-          ),
-        ),
-      ),
+      body: NoteBodyWidget(selectedIndex: selectedIndex),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/broadcast/presentation/pages/stream/stream_modal.dart';
+import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/stream/pre_stream_modal.dart';
 
 import '../modals/m_switch_account_modal.dart';
 
@@ -38,7 +38,7 @@ extension MBottomSheetsX on BuildContext {
     return showModal(
       isScrollControlled: true,
       useRootNavigator: true,
-      StreamModal(broadcast: broadcast),
+      PreStreamModal(broadcast: broadcast),
     );
   }
 }

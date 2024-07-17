@@ -12,7 +12,7 @@ abstract class IProfileFacade {
   });
 
   /// Retrieves the user's profile with the given [UserID]
-  Future<Either<AuthException, Profile>> getProfile(UserID id);
+  Future<Either<AuthException, Profile?>> getProfile(UserID id);
 
   Future<Either<AuthException, Profile?>> getAuthProfile();
 }

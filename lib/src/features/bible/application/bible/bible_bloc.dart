@@ -11,6 +11,7 @@ part 'bible_state.dart';
 
 @injectable
 class BibleBloc extends Bloc<BibleEvent, BibleState> {
+  final IBibleFacade _facade;
   BibleBloc({required IBibleFacade facade})
       : _facade = facade,
         super(BibleState.initial()) {
@@ -18,8 +19,8 @@ class BibleBloc extends Bloc<BibleEvent, BibleState> {
     on<_Initialize>(_initialize);
     on<_GetVerses>(_onGetVerses);
   }
-  final IBibleFacade _facade;
-
+  void init() => add(const BibleEvent.initialize());
+  
   List<MapEntry<String, int>> get books => _facade.books.entries.toList();
 
   _onDownload(_Download event, Emitter<BibleState> emit) async {

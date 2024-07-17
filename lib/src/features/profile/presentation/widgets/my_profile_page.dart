@@ -5,16 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/application/recently_live/recently_live_cubit.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../profile.dart';
-import '../pages/profile_bio.dart';
-import 'account_upgrade_section.dart';
-import 'empty_state_widget.dart';
-import 'profile_buttons.dart';
-import 'profile_recent_broadcasts_tab.dart';
-import 'profile_stats.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({super.key});

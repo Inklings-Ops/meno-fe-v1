@@ -11,32 +11,22 @@ import '../../application/chat_bloc.dart';
 import 'reactions.dart';
 
 class ChatInputContainer extends HookWidget {
-  final String broadcastId;
+  const ChatInputContainer({super.key, required this.scrollController});
   final ScrollController scrollController;
-
-  const ChatInputContainer({
-    super.key,
-    required this.broadcastId,
-    required this.scrollController,
-  });
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     final bloc = context.read<ChatBloc>();
-
     final contentController = useTextEditingController();
+    final isReactionsVisible = useState<bool>(false);
     final isSendVisible = useState(contentController.text.isNotEmpty);
-
     useEffect(() {
       contentController.addListener(() {
         isSendVisible.value = contentController.text.isNotEmpty;
       });
       return null;
     }, [contentController.text]);
-
-    final isReactionsVisible = useState<bool>(false);
 
     return BlocListener<ChatBloc, ChatState>(
       listenWhen: (p, c) => p.onSend != c.onSend,
@@ -76,7 +66,7 @@ class ChatInputContainer extends HookWidget {
                   iconSize: 20.r,
                   icon: const Icon(Icons.face),
                   isFilled: true,
-                  fillColor: colorScheme.outlineVariant2,
+                  fillColor: colors.outlineVariant2,
                   onPressed: () =>
                       isReactionsVisible.value = !isReactionsVisible.value,
                 ),
@@ -88,24 +78,18 @@ class ChatInputContainer extends HookWidget {
                       authenticated: (user, _) => MIconButton(
                         icon: const Icon(MIcons.send),
                         isFilled: true,
-                        fillColor: colorScheme.primary,
-                        color: colorScheme.onPrimary,
+                        fillColor: colors.primary,
+                        color: colors.onPrimary,
                         size: 40.r,
                         iconSize: 20.r,
                         onPressed: () {
-                          bloc.add(
-                            ChatEvent.sendMessage(
-                              content: contentController.text,
-                              broadcastId: broadcastId,
-                            ),
-                          );
+                          bloc.sendMessage(contentController.text);
                           scrollController.animateTo(
                             0,
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
                           );
                           contentController.clear();
-                          ChatEvent.getMessages(broadcastId);
                         },
                       ),
                     ),
@@ -132,7 +116,7 @@ class ReactionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     return Positioned(
       bottom: 60.r,
@@ -141,7 +125,7 @@ class ReactionButton extends StatelessWidget {
         height: 56.h,
         padding: const EdgeInsets.all(MCore.small).r,
         decoration: BoxDecoration(
-          color: colorScheme.background,
+          color: colors.background,
           borderRadius: BorderRadius.circular(MCore.circle).r,
         ),
         child: ListView.separated(
@@ -161,7 +145,7 @@ class ReactionButton extends StatelessWidget {
                     iconSize: 20.r,
                     icon: reactions[i].icon,
                     isFilled: true,
-                    fillColor: colorScheme.outlineVariant2,
+                    fillColor: colors.outlineVariant2,
                   ),
                 ),
               ),

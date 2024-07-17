@@ -1,41 +1,24 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'broadcast_error.dart';
 
+part 'broadcast_response.freezed.dart';
 part 'broadcast_response.g.dart';
 
-@JsonSerializable(
-  explicitToJson: true,
-  includeIfNull: false,
-  genericArgumentFactories: true,
-)
-class BroadcastResponse<T> extends Equatable {
-  final int? statusCode;
-  final String? message;
-  final BroadcastError? error;
-  final String? path;
-  final bool? status;
-  final T? data;
-
-  const BroadcastResponse({
-    this.statusCode,
-    this.message,
-    this.error,
-    this.path,
-    this.status,
-    this.data,
-  });
+@Freezed(genericArgumentFactories: true)
+class BroadcastResponse<T> with _$BroadcastResponse<T> {
+  factory BroadcastResponse({
+    int? statusCode,
+    String? message,
+    BroadcastError? error,
+    String? path,
+    bool? status,
+    T? data,
+  }) = _BroadcastResponse;
 
   factory BroadcastResponse.fromJson(
     Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
+    T Function(Object?) fromJsonT,
   ) =>
-      _$BroadcastResponseFromJson<T>(json, fromJsonT);
-
-  @override
-  List<Object?> get props => [statusCode, message, error, path, status, data];
-
-  Map<String, dynamic> toJson(Object Function(T) toJsonT) =>
-      _$BroadcastResponseToJson<T>(this, toJsonT);
+      _$BroadcastResponseFromJson(json, fromJsonT);
 }

@@ -13,13 +13,21 @@ class SearchFilterList extends StatelessWidget {
   final ValueChanged<Filter> onSelected;
   @override
   Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
     const filters = Filter.values;
     return ListView.separated(
-      itemBuilder: (context, i) => ChoiceChip(
-        label: MText(filters[i].name),
-        selected: filter == filters[i],
-        onSelected: (_) => onSelected(filters[i]),
-      ),
+      itemBuilder: (context, i) {
+        final selected = filter == filters[i];
+        return ChoiceChip(
+          label: MText(
+            filters[i].name,
+            color: selected ? colors.onPrimary : colors.onInActive,
+          ),
+          selected: selected,
+          labelStyle: MTextStyle.captionMedium,
+          onSelected: (_) => onSelected(filters[i]),
+        );
+      },
       separatorBuilder: (context, i) => MCore.large.horizontalSpace,
       itemCount: filters.length,
       scrollDirection: Axis.horizontal,

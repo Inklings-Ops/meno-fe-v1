@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../../../services/meno/meno_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class BroadcastStatusWidget extends StatelessWidget {
   final bool isStreaming;
@@ -11,13 +10,15 @@ class BroadcastStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MenoBloc, MenoState>(
-      bloc: context.read<MenoBloc>(),
-      buildWhen: (p, c) => p != c,
-      builder: (context, state) => state.maybeWhen(
-        live: (_) => const MBadge.live(),
-        reconnecting: (_) => MBadge.reconnecting(context),
-        streaming: (_) => const MBadge.live(),
-        orElse: () => MBadge.offAir(context),
+      bloc: context.watch<MenoBloc>(),
+      builder: (context, state) => state.when(
+        live: () => const MBadge.live(),
+        reconnecting: () => MBadge.reconnecting(context),
+        streaming: () => const MBadge.live(),
+        offAir: () => MBadge.offAir(context),
+        endedBroadcast: (_) => MBadge.offAir(context),
+        leaveBroadcast: () => MBadge.offAir(context),
+        leftBroadcast: (_) => const MBadge.live(),
       ),
     );
   }

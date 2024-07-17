@@ -57,9 +57,7 @@ class FolderListWidget extends StatelessWidget {
                 final folder = folders[i]!;
                 return FolderListTile(
                   folder: folder,
-                  onTap: () {
-                    context.push(Routes.folder, extra: {'folder': folder});
-                  },
+                  onTap: () => context.push(Routes.folder, extra: folder),
                 );
               },
             );

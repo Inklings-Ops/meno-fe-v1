@@ -27,9 +27,18 @@ class ParticipantDto with _$ParticipantDto {
   Map<String, dynamic> toJson() => _$ParticipantDtoToJson(this);
 }
 
-
 extension ParticipantDtoToDomain on ParticipantDto {
   Participant get toDomain => Participant(
+        id: id,
+        fullName: fullName,
+        imageUrl: imageUrl,
+        isCreator: isCreator,
+        isCohost: isCohost,
+      );
+}
+
+extension ParticipantToDto on Participant {
+  ParticipantDto get toDto => ParticipantDto(
         id: id,
         fullName: fullName,
         imageUrl: imageUrl,

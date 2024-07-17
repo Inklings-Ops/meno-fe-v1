@@ -2,25 +2,19 @@ part of 'broadcast_bloc.dart';
 
 @freezed
 class BroadcastState with _$BroadcastState {
-  const factory BroadcastState({
-    required Broadcast broadcast,
-    required bool loading,
-    required bool isMuted,
-    required String? liveKitError,
-    required Option<Either<BroadcastException, Broadcast>> onStarted,
-    required Option<Either<BroadcastException, Unit>> onDeleted,
-    required Option<Unit> onEnded,
-  }) = _BroadcastState;
+  const factory BroadcastState.loading() = BroadcastLoadInProgress;
+  const factory BroadcastState.failure(BroadcastException e) = BroadcastFailure;
 
-  factory BroadcastState.initial() {
-    return BroadcastState(
-      broadcast: Broadcast.empty(),
-      loading: false,
-      isMuted: false,
-      liveKitError: null,
-      onStarted: none(),
-      onDeleted: none(),
-      onEnded: none(),
-    );
-  }
+  // Starting the broadcast
+  const factory BroadcastState.startSuccess({
+    required Broadcast broadcast,
+    required bool muted,
+  }) = BroadcastStartSuccess;
+  const factory BroadcastState.startFailed(Object? e) = BroadcastStartFailed;
+
+  // Ending the broadcast
+  const factory BroadcastState.endSuccess() = BroadcastEndSuccess;
+
+  // Deleting the broadcast
+  const factory BroadcastState.deleteSuccess() = BroadcastDeleteSuccess;
 }

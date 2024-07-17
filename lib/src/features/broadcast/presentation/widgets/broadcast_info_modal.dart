@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 
 import '../../../../services/meno/meno_bloc.dart';
-import '../../application/broadcast/broadcast_bloc.dart';
-import '../../domain/domain.dart';
-import 'broadcast_status_widget.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
   final bool isStreaming;
@@ -22,7 +20,7 @@ class BroadcastInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     return MModal(
       builder: (context) => Column(
@@ -78,14 +76,16 @@ class BroadcastInfoModal extends StatelessWidget {
             BlocBuilder<MenoBloc, MenoState>(
               builder: (context, state) => state.maybeWhen(
                 orElse: () => const SizedBox(),
-                live: (_) => MModalListTile(
-                  leading: Icon(MIcons.trash, color: colorScheme.error),
+                live: () => MModalListTile(
+                  leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete Broadcast',
-                  titleColor: colorScheme.error,
-                  onTap: () => context
-                    ..read<BroadcastBloc>()
-                        .add(BroadcastEvent.delete(broadcast.id))
-                    ..pop(),
+                  titleColor: colors.error,
+                  onTap: () {
+                    final id = broadcast.id;
+                    context
+                      ..read<BroadcastBloc>().add(BroadcastDeleteRequested(id))
+                      ..pop();
+                  },
                 ),
               ),
             ),
