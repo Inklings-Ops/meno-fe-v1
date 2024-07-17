@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../domain/domain.dart';
-import 'broadcast_participant_list.dart';
- 
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastParticipantsModal extends StatelessWidget {
-  const BroadcastParticipantsModal({super.key, required this.broadcast});
-  final Broadcast broadcast;
+  const BroadcastParticipantsModal({super.key});
 
   @override
   Widget build(BuildContext context) {
-
+    final numberOfParticipants = context.select(
+      (LiveParticipantsBloc bloc) => bloc.state.numberOfParticipants,
+    );
     return MModal(
-      title: 'Listening (${0.toString()})',
+      title: 'Listening (${numberOfParticipants.toString()})',
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -25,8 +24,10 @@ class BroadcastParticipantsModal extends StatelessWidget {
             hint: 'Search',
           ),
           MCore.large.verticalSpace,
-          Expanded(
-            child: BroadcastParticipantList(broadcast: broadcast),
+          const Expanded(
+            child: BroadcastParticipantList(
+              padding: EdgeInsets.zero,
+            ),
           ),
         ],
       ),

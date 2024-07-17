@@ -3,6 +3,9 @@ class MErrorMessages {
 
   static const String emptyError = 'This field cannot be empty';
   static const String invalidFName = 'Invalid full name';
+  static const String invalidBUid = 'Invalid broadcast ID';
+  static const String invalidBTitle = 'Invalid broadcast title';
+  static const String invalidBDesc = 'Invalid broadcast description';
   static const String invalidBio = 'Invalid bio';
   static const String invalidEmail = 'Invalid email';
   static const String invalidPwd = 'Invalid password';

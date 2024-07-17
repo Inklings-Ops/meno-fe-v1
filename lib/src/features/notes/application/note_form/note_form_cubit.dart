@@ -4,9 +4,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 
-import '../../domain/domain.dart';
-import '../../domain/exceptions/note_exception.dart';
 
 part 'note_form_cubit.freezed.dart';
 part 'note_form_state.dart';

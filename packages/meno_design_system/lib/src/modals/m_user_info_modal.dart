@@ -4,7 +4,9 @@ import 'package:meno_design_system/meno_design_system.dart';
 import '../m_size.dart';
 
 class MUserInfoModal extends StatelessWidget {
-  final String fullName;
+  final bool loading;
+  final String? error;
+  final String? fullName;
   final String? bio;
   final String? imageUrl;
   final VoidCallback? onSubscribe;
@@ -12,11 +14,13 @@ class MUserInfoModal extends StatelessWidget {
 
   const MUserInfoModal({
     super.key,
-    required this.fullName,
+    this.fullName,
     this.bio,
     this.imageUrl,
     this.onSubscribe,
     this.onViewAccount,
+    this.loading = false,
+    this.error,
   });
 
   @override
@@ -26,33 +30,39 @@ class MUserInfoModal extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          MAvatar(radius: 36, url: imageUrl),
-          MSize.verticalSpaceLarge,
-          MText(
-            fullName,
-            style: MTextStyle.heading3Medium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          if (bio != null) ...[
-            MSize.verticalSpaceMicro,
+          if (loading)
+            const MLoadingIndicator.box()
+          else if (!loading && error != null)
+            Center(child: MText(error!))
+          else ...[
+            MAvatar(radius: 36, url: imageUrl),
+            MSize.verticalSpaceLarge,
             MText(
-              bio!,
-              style: MTextStyle.subheadingRegular,
-              maxLines: 2,
+              fullName!,
+              style: MTextStyle.heading3Medium,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
-          ],
-          MSize.verticalSpaceLarge,
-          MPrimaryButton.icon(
-            label: "Subscribe",
-            icon: const Icon(MIcons.user),
-            onPressed: onSubscribe,
-          ),
-          MSize.verticalSpaceSmall,
-          MTextButton(label: "View Account", onPressed: onViewAccount),
+            if (bio != null) ...[
+              MSize.verticalSpaceMicro,
+              MText(
+                bio!,
+                style: MTextStyle.subheadingRegular,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            MSize.verticalSpaceLarge,
+            MPrimaryButton.icon(
+              label: "Subscribe",
+              icon: const Icon(MIcons.user),
+              onPressed: onSubscribe,
+            ),
+            MSize.verticalSpaceSmall,
+            MTextButton(label: "View Account", onPressed: onViewAccount),
+          ]
         ],
       ),
     );

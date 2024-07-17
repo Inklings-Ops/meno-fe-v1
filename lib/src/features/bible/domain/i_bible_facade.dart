@@ -63,4 +63,6 @@ abstract class IBibleFacade {
   });
 
   Future<Either<BibleException, Unit>> syncFallback();
+
+  Future<void> init();
 }

@@ -1,2 +1,2 @@
-export 'entities/chat.dart';
+export 'entities/entities.dart';
 export 'inputs/inputs.dart';

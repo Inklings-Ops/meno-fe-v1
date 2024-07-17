@@ -23,10 +23,10 @@ class MHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     return Container(
-      color: colorScheme.background,
+      color: colors.background,
       height: 30,
       padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Row(
@@ -36,21 +36,25 @@ class MHeader extends StatelessWidget {
             Container(
               width: 3,
               margin: const EdgeInsets.symmetric(vertical: 2),
-              color: colorScheme.error,
+              color: colors.error,
             ),
             MSize.horizontalSpaceMicro,
           ],
-          MText(title, style: MTextStyle.heading3Bold),
+          MText(
+            title,
+            style: MTextStyle.heading3Bold,
+            color: colors.onBackground,
+          ),
           const Spacer(),
           if (action != null) action!
           // if (actionTitle != null && action != null)
-            // InkWell(
-            //   onTap: action,
-            //   child: MText(
-            //     actionTitle!,
-            //     color: colorScheme.onBackgroundVariant,
-            //   ),
-            // ),
+          // InkWell(
+          //   onTap: action,
+          //   child: MText(
+          //     actionTitle!,
+          //     color: colors.onBackgroundVariant,
+          //   ),
+          // ),
         ],
       ),
     );

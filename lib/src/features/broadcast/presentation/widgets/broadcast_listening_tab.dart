@@ -2,22 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
-import '../../application/live_participants/live_participants_bloc.dart';
-import '../../domain/domain.dart';
-import '../widgets/broadcast_participant_list.dart';
-import '../widgets/broadcast_participants_modal.dart';
 
 class BroadcastListeningTab extends StatelessWidget {
-  const BroadcastListeningTab({super.key, required this.broadcast});
-  final Broadcast broadcast;
+  const BroadcastListeningTab({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        24.verticalSpace,
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16).r,
           height: 34.h,
@@ -27,7 +22,7 @@ class BroadcastListeningTab extends StatelessWidget {
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal(
-                  BroadcastParticipantsModal(broadcast: broadcast),
+                  const BroadcastParticipantsModal(),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: 0.9.sh),
                 ),
@@ -36,7 +31,7 @@ class BroadcastListeningTab extends StatelessWidget {
           ),
         ),
         MCore.large.verticalSpace,
-        Expanded(child: BroadcastParticipantList(broadcast: broadcast)),
+        const Expanded(child: BroadcastParticipantList()),
       ],
     );
   }
@@ -49,11 +44,11 @@ class _NumberOfParticipants extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
       selector: (state) => state.numberOfParticipants,
-      builder: (context, length) => Row(
+      builder: (context, numberOfParticipants) => Row(
         children: [
           Icon(MIcons.hearing, size: 16.r),
           MCore.small.horizontalSpace,
-          MText('$length', style: MTextStyle.captionMedium),
+          MText('$numberOfParticipants', style: MTextStyle.captionMedium),
         ],
       ),
     );

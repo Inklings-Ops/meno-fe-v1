@@ -66,7 +66,7 @@ class NoteListWidget extends StatelessWidget {
     if (onNoteTap != null) {
       return onNoteTap?.call();
     } else {
-      return context.push(Routes.noteEditor, extra: {'note': note});
+      return context.push(Routes.noteEditor, extra: note);
     }
   }
 }

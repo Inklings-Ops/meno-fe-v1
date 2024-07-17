@@ -4,10 +4,10 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/media_service.dart';
-
-import '../../../auth/domain/domain.dart';
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcast_form_cubit.freezed.dart';
 part 'broadcast_form_state.dart';
@@ -16,7 +16,6 @@ part 'broadcast_form_state.dart';
 class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   final IBroadcastFacade _facade;
   final MediaService _mediaService;
-
   BroadcastFormCubit({
     required IBroadcastFacade facade,
     required MediaService mediaService,
@@ -24,34 +23,15 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
         _mediaService = mediaService,
         super(BroadcastFormState.initial());
 
-  bool get isValid => state.title.isValid;
-
   void artworkChanged(bool fromGallery) async {
     final file = await _mediaService.getImage(fromGallery: fromGallery);
     if (file != null) {
-      final IBroadcastArtwork iArtwork = IBroadcastArtwork(File(file.path));
-      emit(state.copyWith(artwork: iArtwork));
+      emit(state.copyWith(artwork: BroadcastArtwork(File(file.path))));
     }
   }
 
-  Future<void> create() async {
-    if (!isValid) return;
-
-    emit(state.copyWith(loading: true, option: none()));
-
-    return await _facade
-        .createBroadcast(
-          title: state.title,
-          description: state.description,
-          artwork: state.artwork,
-          cohosts: state.cohosts?.map((e) => e.id.getOr()).toList(),
-          timeZone: 'Africa/Abidjan',
-        )
-        .then((r) => emit(state.copyWith(loading: false, option: some(r))));
-  }
-
   void descriptionChanged(String desc) {
-    emit(state.copyWith(description: IBroadcastDescription(desc)));
+    emit(state.copyWith(description: BroadcastDescription(desc)));
   }
 
   void onRecordingChanged(bool? value) {
@@ -59,22 +39,21 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   }
 
   void titleChanged(String title) {
-    emit(state.copyWith(title: IBroadcastTitle(title)));
+    emit(state.copyWith(title: SingleLineString(title)));
   }
 
-  String? validateDescription(String? value) {
-    return state.description?.value.fold(
-      (error) => error.mapOrNull(
-        lengthExceeded: (_) => 'Description character length exceeded',
-      ),
-      (_) => null,
-    );
-  }
-
-  String? validateTitle(String? value) {
-    return state.title.value.fold(
-      (error) => error.mapOrNull(empty: (_) => 'Broadcast title is required'),
-      (_) => null,
-    );
+  Future<void> create() async {
+    late Either<BroadcastException, Broadcast> fOrB;
+    emit(state.copyWith(loading: true, option: none()));
+    if (state.title.isValid && state.description?.isValid == true) {
+      fOrB = await _facade.createBroadcast(
+        title: state.title,
+        description: state.description,
+        artwork: state.artwork,
+        cohosts: state.cohosts?.map((user) => user.id.getOr()).toList(),
+        timeZone: 'Africa/Abidjan',
+      );
+    }
+    emit(state.copyWith(loading: false, option: optionOf(fOrB)));
   }
 }

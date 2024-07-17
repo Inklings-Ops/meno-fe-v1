@@ -5,19 +5,21 @@ class MModal extends StatelessWidget {
   final WidgetBuilder builder;
   final String? title;
   final bool showCloseButton;
+  final EdgeInsetsGeometry? padding;
 
   const MModal({
     super.key,
     required this.builder,
     this.title,
     this.showCloseButton = true,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Stack(
         children: [
           if (title != null)

@@ -20,6 +20,8 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     on<FilterChanged>(_onFilterChanged);
   }
 
+  void init() => add(const FilterFetched(1));
+
   Future<void> _onFilterFetched(FilterFetched event, emit) async {
     if (state.isLoading) return;
     emit(state.copyWith(isLoading: true, exception: null, hasMore: true));

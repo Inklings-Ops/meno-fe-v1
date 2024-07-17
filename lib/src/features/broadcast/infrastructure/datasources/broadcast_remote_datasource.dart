@@ -5,7 +5,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../dtos/broadcast_list_dto.dart';
 import '../dtos/dtos.dart';
 import '../responses/broadcast_response.dart';
 

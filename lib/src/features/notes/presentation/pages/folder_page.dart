@@ -33,6 +33,11 @@ class FolderPage extends HookWidget {
             : folder.numberOfNotes) ??
         0;
 
+    useEffect(() {
+      context.read<FolderCubit>().getAllNotes();
+      return null;
+    }, const []);
+
     return RefreshIndicator(
       onRefresh: () => folderBloc.getAllNotes(),
       child: BlocListener<FolderFormCubit, FolderFormState>(
@@ -105,7 +110,7 @@ class FolderPage extends HookWidget {
                   foregroundColor: colors.onPrimary,
                   height: 88.h,
                 ),
-                72.verticalSpace,
+                24.verticalSpace,
                 _NotesList(folder: folder)
               ],
             ),

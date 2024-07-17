@@ -31,6 +31,7 @@ class DiscoverSearchBar extends StatelessWidget {
             child: SizedBox(
               height: height.h,
               child: SearchBar(
+                elevation: const WidgetStatePropertyAll(0),
                 autoFocus: autofocus,
                 onTap: onTap,
                 onChanged: onChanged,

@@ -7,12 +7,12 @@ part 'discover_response.g.dart';
 @Freezed(genericArgumentFactories: true)
 class DiscoverResponse<T> with _$DiscoverResponse<T> {
   factory DiscoverResponse({
-    required int? statusCode,
-    required String? message,
-    required BroadcastError? error,
-    required String? path,
-    required bool? status,
-    required T? data,
+    int? statusCode,
+    String? message,
+    BroadcastError? error,
+    String? path,
+    bool? status,
+    T? data,
   }) = _DiscoverResponse;
 
   factory DiscoverResponse.fromJson(

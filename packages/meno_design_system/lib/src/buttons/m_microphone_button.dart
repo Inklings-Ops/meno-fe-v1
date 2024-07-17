@@ -18,6 +18,7 @@ class MMicrophoneButton extends StatelessWidget {
       color: colorScheme.primary,
       isFilled: true,
       iconSize: 20,
+      size: 40,
       fillColor: colorScheme.primary?.withOpacity(0.1),
       onPressed: onTap,
     );

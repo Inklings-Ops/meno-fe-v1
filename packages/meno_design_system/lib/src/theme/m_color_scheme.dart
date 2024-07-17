@@ -138,7 +138,8 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
           MInternal.resolve(isLight, MColor.secondary300, MColor.secondary75),
       onSecondary:
           MInternal.resolve(isLight, MColor.white, MColor.secondary600),
-      secondaryContainer: MColor.secondary50,
+      secondaryContainer:
+          MInternal.resolve(isLight, MColor.secondary50, MColor.secondary75),
       onSecondaryContainer: MColor.secondary600,
       tertiary: MInternal.resolve(
           isLight, MColor.decorativeYellow75, MColor.decorativeYellow200),
@@ -148,9 +149,9 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
       error: MInternal.resolve(isLight, MColor.error300, MColor.error75),
       onError: MInternal.resolve(isLight, MColor.white, MColor.error600),
       errorContainer:
-          MInternal.resolve(isLight, MColor.error50, MColor.error500),
+          MInternal.resolve(isLight, MColor.error75, MColor.error500),
       onErrorContainer:
-          MInternal.resolve(isLight, MColor.error600, MColor.error50),
+          MInternal.resolve(isLight, MColor.error600, MColor.error75),
       informational: MInternal.resolve(isLight, MColor.blue300, MColor.blue75),
       onInformational: MInternal.resolve(isLight, MColor.white, MColor.blue600),
       informationalContainer:

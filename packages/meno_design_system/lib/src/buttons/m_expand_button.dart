@@ -8,8 +8,7 @@ class ExpandButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -20,7 +19,7 @@ class ExpandButton extends StatelessWidget {
           vertical: MCore.small,
         ),
         decoration: BoxDecoration(
-          color: colorScheme.outlineVariant2,
+          color: colors.inActiveContainer,
           borderRadius: BorderRadius.circular(MCore.circle),
         ),
         child: Row(
@@ -30,12 +29,12 @@ class ExpandButton extends StatelessWidget {
             Icon(
               MIcons.expand_01,
               size: 16.r,
-              color: colorScheme.onDisabledContainer,
+              color: colors.onInActiveContainer,
             ),
             MText(
               "Expand",
               style: MTextStyle.captionMedium,
-              color: colorScheme.onDisabledContainer,
+              color: colors.onInActiveContainer,
             ),
           ],
         ),

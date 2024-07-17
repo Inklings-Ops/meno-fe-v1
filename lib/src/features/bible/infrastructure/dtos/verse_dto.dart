@@ -20,9 +20,13 @@ class VerseDto with _$VerseDto {
     String? translation,
   }) = _VerseDto;
 
-
   factory VerseDto.fromJson(Map<String, dynamic> json) =>
       _$VerseDtoFromJson(json);
+
+  factory VerseDto.fromJsonWithTrans(Map<String, dynamic> json, String t) {
+    final decodedVerseDto = _$VerseDtoFromJson(json);
+    return decodedVerseDto.copyWith(translation: t);
+  }
 
   @override
   Map<String, dynamic> toJson() => _$VerseDtoToJson(this);

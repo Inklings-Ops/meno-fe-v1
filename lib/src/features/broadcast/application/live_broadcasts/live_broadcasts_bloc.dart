@@ -1,12 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
-import '../../../../services/socket/event_names.dart';
-import '../../../../services/socket/socket_response.dart';
-import '../../../../services/socket/socket_service.dart';
 import '../../domain/domain.dart';
-import '../../infrastructure/dtos/dtos.dart';
 
 part 'live_broadcasts_bloc.freezed.dart';
 part 'live_broadcasts_event.dart';
@@ -16,65 +15,67 @@ part 'live_broadcasts_state.dart';
 class LiveBroadcastsBloc
     extends Bloc<LiveBroadcastsEvent, LiveBroadcastsState> {
   final SocketService _socket;
-
+  late final StreamSubscription<SocketState> _socketStateSub;
+  late final StreamSubscription<SocketEvent> _socketEventSub;
   LiveBroadcastsBloc({required SocketService socket})
       : _socket = socket,
         super(const _Loading()) {
     on<_GetLiveBroadcasts>(_onGetLiveBroadcasts);
-    on<_UpdateOnNewBroadcast>(_onUpdateOnNewBroadcast);
-    on<_UpdateOnEndedBroadcast>(_onUpdateOnEndedBroadcast);
-    on<_FilterBroadcasts>(_onFilterBroadcasts);
+    on<_UpdateBroadcastList>(_onUpdateBroadcastList);
+    on<_NewBroadcast>(_onNewBroadcast);
+    on<_EndedBroadcast>(_onEndedBroadcast);
 
-    _socket.on(sEConnect, (_) => add(const _GetLiveBroadcasts()));
-    _socket.on(sENewBroadcast, (data) => add(_UpdateOnNewBroadcast(data)));
-    _socket.on(sEEndedBroadcast, (data) => add(_UpdateOnEndedBroadcast(data)));
+    _socketStateSub = _socket.stateStream.listen((socketState) {
+      socketState.whenOrNull(
+        liveBroadcasts: (data, error) => add(_UpdateBroadcastList(data)),
+      );
+    });
+    _socketEventSub = _socket.eventsStream.listen((socketEvent) {
+      socketEvent.whenOrNull(
+        newBroadcast: (broadcast) => add(_NewBroadcast(broadcast)),
+        endedBroadcast: (broadcast) => add(_EndedBroadcast(broadcast)),
+      );
+    });
   }
 
-  _onFilterBroadcasts(_FilterBroadcasts event, emit) {
-    final response = SocketResponse<List<Broadcast?>>.fromJson(
-      event.data,
-      (s) => (s as List).map((e) => BroadcastDto.fromJson(e).toDomain).toList(),
-    );
-
-    if (response.data?.isEmpty == true) {
-      return emit(const _Empty());
-    } else {
-      return emit(_Success(response.data!));
-    }
-  }
+  void init() => add(const _GetLiveBroadcasts());
 
   void _onGetLiveBroadcasts(_GetLiveBroadcasts event, emit) {
     emit(const _Loading());
-    _socket.emitWithAck(
-      sEGetLiveBroadcasts,
-      {},
-      ack: (data) => add(_FilterBroadcasts(data)),
-    );
+    _socket.emit(const SocketEvent.getLiveBroadcasts());
   }
 
-  _onUpdateOnNewBroadcast(_UpdateOnNewBroadcast event, emit) async {
-    final dto = BroadcastDto.fromJson(event.data);
+  _onUpdateBroadcastList(_UpdateBroadcastList event, emit) async {
+    final broadcasts = event.broadcasts;
+    broadcasts.isEmpty ? emit(const _Empty()) : emit(_Success(broadcasts));
+  }
 
+  _onNewBroadcast(_NewBroadcast event, emit) async {
     if (state is _Empty) {
-      final liveBroadcasts = List<Broadcast?>.from([]);
-      final updatedList = [dto.toDomain, ...liveBroadcasts];
-      emit(_Success(updatedList));
+      final broadcasts = List<Broadcast?>.from([]);
+      final updatedBroadcasts = [event.broadcast, ...broadcasts];
+      emit(_Success(updatedBroadcasts));
     } else if (state is _Success) {
       final success = (state as _Success);
-      final liveBroadcasts = List<Broadcast?>.from(success.broadcasts);
-      final updatedList = [dto.toDomain, ...liveBroadcasts];
-      emit(_Success(updatedList));
+      final broadcasts = List<Broadcast?>.from(success.broadcasts);
+      final updatedBroadcasts = [event.broadcast, ...broadcasts];
+      emit(_Success(updatedBroadcasts));
     }
   }
 
-  _onUpdateOnEndedBroadcast(_UpdateOnEndedBroadcast event, emit) async {
+  _onEndedBroadcast(_EndedBroadcast event, emit) async {
     if (state is _Success) {
-      final dto = BroadcastDto.fromJson(event.data);
-
       final success = (state as _Success);
-      final liveBroadcasts = List<Broadcast?>.from(success.broadcasts);
-      liveBroadcasts.removeWhere((b) => dto.id == b?.id);
-      emit(_Success(liveBroadcasts));
+      final broadcasts = List<Broadcast?>.from(success.broadcasts);
+      broadcasts.removeWhere((b) => event.broadcast.id == b?.id);
+      broadcasts.isEmpty ? emit(const _Empty()) : emit(_Success(broadcasts));
     }
+  }
+
+  @override
+  Future<void> close() async {
+    await _socketStateSub.cancel();
+    await _socketEventSub.cancel();
+    super.close();
   }
 }

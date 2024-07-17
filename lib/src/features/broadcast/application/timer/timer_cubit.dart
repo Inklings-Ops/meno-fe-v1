@@ -15,6 +15,8 @@ class TimerCubit extends Cubit<TimerState> {
 
   TimerCubit() : super(TimerState.initial());
 
+  void dispose() async => reset();
+
   @override
   Future<void> close() {
     _timer?.cancel();
@@ -25,6 +27,11 @@ class TimerCubit extends Cubit<TimerState> {
     _timer?.cancel();
     _timer = null;
     emit(TimerState.initial());
+  }
+
+  void setAndStart([DateTime? startTime]) {
+    set(startTime);
+    start();
   }
 
   void set([DateTime? startTime]) {

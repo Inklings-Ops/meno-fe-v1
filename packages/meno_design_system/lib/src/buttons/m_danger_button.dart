@@ -24,7 +24,7 @@ class MDangerButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return FilledButton(
-      style: MButtonStyles.of(context)?.danger?.merge(style),
+      style: style?.merge(MButtonStyles.of(context)!.danger!),
       onPressed: onPressed,
       child: child,
     );

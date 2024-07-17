@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 import '../../../profile/domain/domain.dart';
-import '../../domain/domain.dart';
 
 class ChatBubble extends StatelessWidget {
   final Chat chat;
@@ -13,10 +15,10 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
-    final createdAt = DateFormat.jm().format(chat.createdAt);
-
+    final bloc = context.watch<ChatBloc>();
+    final colors = MColorScheme.of(context)!;
+    final createdAt = formatDate(chat.createdAt);
+    final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
       child: Row(
@@ -37,27 +39,38 @@ class ChatBubble extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      // onTap: !isSender
-                      //     ? () => showUserInfo(context, snapshot.data)
-                      //     : null,
+                      onTap: !isHost ? () => showUserInfo(context) : null,
                       child: MText(
                         chat.fullName,
                         style: MTextStyle.microMedium,
-                        color: colorScheme.onBackgroundVariant,
+                        color: colors.onBackgroundVariant,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     MCore.micro.horizontalSpace,
+                    if (isHost) ...[
+                      MDot(
+                        dimension: 2.r,
+                        color: colors.onBackgroundVariant,
+                      ),
+                      MCore.micro.horizontalSpace,
+                      MText(
+                        'Host',
+                        style: MTextStyle.microMedium,
+                        color: colors.onBackgroundVariant,
+                      ),
+                      MCore.micro.horizontalSpace,
+                    ],
                     MDot(
                       dimension: 2.r,
-                      color: colorScheme.onBackgroundVariant,
+                      color: colors.onBackgroundVariant,
                     ),
                     MCore.micro.horizontalSpace,
                     MText(
                       createdAt,
                       style: MTextStyle.microMedium,
-                      color: colorScheme.onBackgroundVariant,
+                      color: colors.onBackgroundVariant,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -65,9 +78,11 @@ class ChatBubble extends StatelessWidget {
                 ),
                 MCore.micro.verticalSpace,
                 Container(
-                  padding: const EdgeInsets.all(12).r,
+                  padding: const EdgeInsets.all(MCore.medium).r,
                   decoration: ShapeDecoration(
-                    color: colorScheme.surfaceShade,
+                    color: isHost
+                        ? colors.secondaryContainer
+                        : colors.surfaceShade,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(20).r,
@@ -79,6 +94,9 @@ class ChatBubble extends StatelessWidget {
                   child: MText(
                     chat.content.getOr(),
                     style: MTextStyle.captionRegular,
+                    color: isHost
+                        ? colors.onSecondaryContainer
+                        : colors.onPrimaryContainer,
                   ),
                 ),
               ],
@@ -89,16 +107,57 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showUserInfo(BuildContext context, Profile? profile) {
+  Future<dynamic> showUserInfo(BuildContext context) {
     return context.showModal(
-      MUserInfoModal(
-        bio: profile?.bio?.getOr(),
-        fullName: profile!.fullName.getOr(),
-        imageUrl: profile.imageUrl,
-        onSubscribe: () {},
-        onViewAccount: () {},
-      ),
+      _UserInfoModel(senderId: chat.senderId),
       isScrollControlled: true,
     );
+  }
+}
+
+class _UserInfoModel extends HookWidget {
+  const _UserInfoModel({required this.senderId});
+  final String senderId;
+  @override
+  Widget build(BuildContext context) {
+    Future<Profile?> getInfo() {
+      return context.read<ChatBloc>().getSenderInfo(senderId);
+    }
+
+    final future = useMemoized(getInfo);
+    final snapshot = useFuture(future);
+
+    final isLoading = snapshot.connectionState == ConnectionState.waiting;
+    if (isLoading) {
+      return const MUserInfoModal(loading: true);
+    }
+    if (!isLoading && snapshot.data == null) {
+      return const MUserInfoModal(error: 'User was not found');
+    }
+    final profile = snapshot.data!;
+    return MUserInfoModal(
+      bio: profile.bio?.getOr(),
+      fullName: profile.fullName.getOr(),
+      imageUrl: profile.imageUrl,
+      onSubscribe: () {},
+      onViewAccount: () {},
+    );
+  }
+}
+
+String formatDate(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inSeconds < 60) {
+    return 'Just now';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} minutes ago';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours} hours ago';
+  } else if (difference.inDays < 7) {
+    return '${difference.inDays} days ago';
+  } else {
+    return DateFormat.jm().format(date);
   }
 }

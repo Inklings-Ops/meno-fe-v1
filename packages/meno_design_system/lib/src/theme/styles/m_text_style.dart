@@ -207,7 +207,7 @@ class MTextStyle extends TextStyle {
 
   static const MTextStyle captionRegular = MTextStyle._(
     fontSize: 14.0,
-    height: 16.0 / 14.0,
+    // height: 16.0 / 14.0,
     fontWeight: FontWeight.w400,
     fontFamily: _fontFamily,
     textBaseline: TextBaseline.alphabetic,

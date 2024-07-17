@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
@@ -9,7 +10,6 @@ import 'package:meno_fe_v1/src/features/notes/presentation/widgets/delete_folder
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/remove_note_from_folder_alert_dialog.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
 
-import '../../features/broadcast/presentation/widgets/broadcast_exit_alert_dialog.dart';
 import '../../features/chat/presentation/widgets/delete_comment_alert_dialog.dart';
 import '../../features/notes/presentation/widgets/delete_note_alert_dialog.dart';
 
@@ -24,16 +24,14 @@ extension MDialogX on BuildContext {
   Future<bool?> showEndBroadcastDialog() {
     return showDialog<bool>(
       context: this,
-      builder: (context) => const BroadcastExitAlertDialog(),
+      builder: (_) => const BroadcastExitAlertDialog(),
     );
   }
 
   Future<bool?> showLeaveBroadcastDialog() {
     return showDialog<bool>(
       context: this,
-      builder: (context) => const BroadcastExitAlertDialog(
-        isBroadcasting: false,
-      ),
+      builder: (_) => const BroadcastExitAlertDialog(isBroadcasting: false),
     );
   }
 

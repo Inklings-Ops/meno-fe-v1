@@ -1,12 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/dtos.dart';
-
-import '../../../services/network_service.dart';
-import '../domain/domain.dart';
-import '../domain/exceptions/note_exception.dart';
-import 'datasources/datasources.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
+ 
 
 @Injectable(as: INoteFacade)
 class NoteFacade implements INoteFacade {

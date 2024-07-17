@@ -1,18 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
 
 part 'folder_cubit.freezed.dart';
 part 'folder_state.dart';
 
+@injectable
 class FolderCubit extends Cubit<FolderState> {
   final INoteFacade _facade;
   FolderCubit({
     required INoteFacade facade,
-    required Folder folder,
+    @factoryParam required Folder folder,
   })  : _facade = facade,
-        super(FolderState.success(folder));        
+        super(FolderState.success(folder));
 
   Future<void> getAllNotes() async {
     if (state is _Success) {

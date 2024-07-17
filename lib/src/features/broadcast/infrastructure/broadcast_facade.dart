@@ -1,63 +1,49 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../../../services/network_service.dart';
-import '../domain/domain.dart';
-import 'datasources/broadcast_remote_datasource.dart';
-import 'mapper/broadcast_list_mapper.dart';
-import 'mapper/broadcast_mapper.dart';
-import 'responses/broadcast_error.dart';
 
 @Injectable(as: IBroadcastFacade)
 class BroadcastFacade implements IBroadcastFacade {
-  final BroadcastMapper _mapper;
-  final BroadcastListMapper _listMapper;
   final BroadcastRemoteDatasource _remote;
   final NetworkService _network;
 
   BroadcastFacade({
-    required BroadcastMapper mapper,
-    required BroadcastListMapper listMapper,
     required BroadcastRemoteDatasource remote,
     required NetworkService network,
-  })  : _mapper = mapper,
-        _listMapper = listMapper,
-        _remote = remote,
+  })  : _remote = remote,
         _network = network;
 
   @override
   Future<Either<BroadcastException, Broadcast>> createBroadcast({
-    required IBroadcastTitle title,
-    IBroadcastDescription? description,
-    IBroadcastArtwork? artwork,
+    required SingleLineString title,
+    BroadcastDescription? description,
+    BroadcastArtwork? artwork,
     String? timeZone,
     List<String>? cohosts,
   }) async {
-    final String broadcastTitle = title.getOr();
-    final String? broadcastDescription = description?.getOr();
-    final File? broadcastArtwork = artwork?.getOr();
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
 
-    if (!(await _network.isConnected)) {
-      return left(const BroadcastException.networkError());
-    }
+    final titleStr = title.value.getOrElse(() => MErrorMessages.invalidBTitle);
+    final descStr =
+        description?.value.getOrElse(() => MErrorMessages.invalidBDesc);
+    final broadcastArtwork = artwork?.value.getOrElse(() => null);
 
     try {
-      /// BroadcastResponse<BroadcastDto?>
       final response = await _remote.createBroadcast(
-        title: broadcastTitle,
-        description: broadcastDescription,
+        title: titleStr,
+        description: descStr,
         image: broadcastArtwork,
         cohosts: cohosts,
         timezone: timeZone,
       );
-
-      final Broadcast broadcast = _mapper.broadcastToDomain(response.data!)!;
-
-      return right(broadcast);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
@@ -67,16 +53,15 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   @override
-  Future<Either<BroadcastException, Unit>> deleteBroadcast({
-    required BroadcastId broadcastId,
-  }) async {
+  Future<Either<BroadcastException, Unit>> deleteBroadcast(
+    Uid<Broadcast> id,
+  ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
     try {
-      if (!(await _network.isConnected)) {
-        return left(const BroadcastException.networkError());
-      }
-
-      await _remote.deleteBroadcast(broadcastId: broadcastId);
-
+      final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
+      await _remote.deleteBroadcast(broadcastId: idStr);
       return right(unit);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -88,15 +73,38 @@ class BroadcastFacade implements IBroadcastFacade {
 
   @override
   Future<Either<BroadcastException, Broadcast>> editBroadcast({
-    required BroadcastId broadcastId,
-    IBroadcastTitle? title,
-    IBroadcastDescription? description,
-    IBroadcastArtwork? image,
+    required Uid<Broadcast> id,
+    SingleLineString? title,
+    BroadcastDescription? description,
+    BroadcastArtwork? image,
     String? timeZone,
     DateTime? startTime,
   }) async {
-    // TODO: implement editBroadcast
-    throw UnimplementedError();
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
+    final titleStr = title?.value.getOrElse(() => MErrorMessages.invalidBTitle);
+    final descStr =
+        description?.value.getOrElse(() => MErrorMessages.invalidBDesc);
+    final broadcastArtwork = image?.value.getOrElse(() => null);
+
+    try {
+      final response = await _remote.editBroadcast(
+        broadcastId: idStr,
+        title: titleStr,
+        description: descStr,
+        image: broadcastArtwork,
+        timeZone: timeZone,
+        startTime: startTime.toString(),
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
   }
 
   @override
@@ -106,10 +114,10 @@ class BroadcastFacade implements IBroadcastFacade {
     bool? onlySubscriptions,
     String? keywords,
     String? creatorId,
-    String? sortBy = 'startTime',
-    String? orderBy = 'DESC',
-    int? page = 1,
-    int? size = 6,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
     String? endTimeGT,
     String? endTimeLT,
     String? endTimeEQ,
@@ -117,9 +125,8 @@ class BroadcastFacade implements IBroadcastFacade {
     String? startTimeLT,
     String? startTimeEQ,
   }) async {
-    if (!(await _network.isConnected)) {
-      return left(const BroadcastException.networkError());
-    }
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
 
     try {
       final response = await _remote.getBroadcasts(
@@ -128,10 +135,10 @@ class BroadcastFacade implements IBroadcastFacade {
         onlySubscriptions: onlySubscriptions,
         keywords: keywords,
         creatorId: creatorId,
-        sortBy: sortBy,
-        orderBy: orderBy,
-        page: page,
-        size: size,
+        sortBy: sortBy ?? 'startTime',
+        orderBy: orderBy ?? 'DESC',
+        page: page ?? 1,
+        size: size ?? 6,
         endTimeGT: endTimeGT,
         endTimeLT: endTimeLT,
         endTimeEQ: endTimeEQ,
@@ -139,8 +146,7 @@ class BroadcastFacade implements IBroadcastFacade {
         startTimeLT: startTimeLT,
         startTimeEQ: startTimeEQ,
       );
-      final BroadcastListEntity data = _listMapper.toDomain(response.data!)!;
-      return right(data);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
@@ -150,19 +156,16 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   @override
-  Future<Either<BroadcastException, JoinBroadcastEntity>> joinBroadcast({
-    required BroadcastId broadcastId,
-  }) async {
-    if (!(await _network.isConnected)) {
-      return left(const BroadcastException.networkError());
-    }
+  Future<Either<BroadcastException, JoinBroadcastEntity>> joinBroadcast(
+    Uid<Broadcast> id,
+  ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
 
     try {
-      final response = await _remote.joinBroadcast(broadcastId: broadcastId);
-      final JoinBroadcastEntity broadcast = _mapper.joinBroadcastToDomain(
-        response.data!,
-      )!;
-      return right(broadcast);
+      final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
+      final response = await _remote.joinBroadcast(broadcastId: idStr);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
@@ -172,17 +175,16 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   @override
-  Future<Either<BroadcastException, Broadcast>> startBroadcast({
-    required BroadcastId broadcastId,
-  }) async {
-    if (!(await _network.isConnected)) {
-      return left(const BroadcastException.networkError());
-    }
+  Future<Either<BroadcastException, Broadcast>> startBroadcast(
+    Uid<Broadcast> id,
+  ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
 
     try {
-      final response = await _remote.startBroadcast(broadcastId: broadcastId);
-      final Broadcast broadcast = _mapper.broadcastToDomain(response.data!)!;
-      return right(broadcast);
+      final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
+      final response = await _remote.startBroadcast(broadcastId: idStr);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);

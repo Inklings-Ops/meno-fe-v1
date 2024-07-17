@@ -1,81 +1,76 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../../../services/socket/event_names.dart';
-import '../../../../services/socket/socket_service.dart';
-import '../../domain/domain.dart';
-import '../../infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/services.dart' hide Participant;
 
 part 'live_participants_bloc.freezed.dart';
 part 'live_participants_event.dart';
 part 'live_participants_state.dart';
 
 @lazySingleton
-class LiveParticipantsBloc
-    extends Bloc<LiveParticipantsEvent, LiveParticipantsState> {
+class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   final SocketService _socket;
-
+  late final StreamSubscription<SocketEvent> _socketEventSub;
+  late final StreamSubscription<SocketState> _socketStateSub;
   LiveParticipantsBloc({
     required SocketService socket,
   })  : _socket = socket,
         super(LiveParticipantsState.initial()) {
-    on<FetchParticipants>(_onFetch);
-    on<_UpdateAfterFetch>(_onUpdateAfterFetch);
-    on<_UpdateParticipantList>(_onNewBroadcastListener);
-    on<_UpdateParticipantNumber>(_onNumberOfLiveListeners);
-
-    _socket.on(
-      sENewBroadcastListener,
-      (data) => add(_UpdateParticipantList(data)),
-    );
-    _socket.on(
-      sENumberOfLiveListeners,
-      (data) => add(_UpdateParticipantNumber(data)),
-    );
+    _socketStateSub = _socket.stateStream.listen((socketState) {
+      socketState.whenOrNull(
+        getBroadcastListeners: (participants, _) => emit(state.copyWith(
+          participants: participants,
+        )),
+        getNumberOfBroadcastListeners: (value, _) => emit(state.copyWith(
+          numberOfParticipants: value,
+        )),
+      );
+    });
+    _socketEventSub = _socket.eventsStream.listen((socketEvent) {
+      socketEvent.whenOrNull(
+        newBroadcastListener: _onNewBroadcastListener,
+        numberOfLiveListeners: _onNumberOfLiveListeners,
+      );
+    });
   }
 
-  _onFetch(FetchParticipants event, emit) async {
-    emit(state.copyWith(loading: true, broadcastId: event.broadcastId));
-    _socket.socket.emitWithAck(
-      sEGetBroadcastListeners,
-      {'broadcastId': event.broadcastId},
-      ack: (data) => add(_UpdateAfterFetch(data)),
-    );
+  Future<void> initialize(Broadcast broadcast) async {
+    emit(state.copyWith(broadcast: broadcast, loading: true));
+    final broadcastId = broadcast.id.getOr();
+    _socket.emit(SocketEvent.getBroadcastListeners(broadcastId));
+    _socket.emit(SocketEvent.getNumberOfBroadcastListeners(broadcastId));
+    emit(state.copyWith(loading: false));
   }
 
-  _onNewBroadcastListener(_UpdateParticipantList event, emit) {
-    final decodedData = jsonDecode(jsonEncode(event.data));
-    final dto = ParticipantDto.fromJson(decodedData);
-    final participants = List<Participant?>.from(state.participants);
-    final updatedList = [...participants, dto.toDomain];
+  void _onNewBroadcastListener(Participant participant) {
+    final currentParticipants = List<Participant?>.from(state.participants);
+    final isAlreadyIn = currentParticipants.contains(participant);
+    if (isAlreadyIn) return;
+    final updatedParticipants = [...currentParticipants, participant];
+    emit(state.copyWith(participants: updatedParticipants));
+  }
+
+  void _onNumberOfLiveListeners(int value) {
+    emit(state.copyWith(numberOfParticipants: value));
+    if (state.numberOfParticipants > value) {
+      final broadcastId = state.broadcast.id.getOr();
+      _socket.emit(SocketEvent.getBroadcastListeners(broadcastId));
+    }
+  }
+
+  void participantLeft(Participant participant) {
+    final currentList = List<Participant?>.from(state.participants);
+    final updatedList = currentList.where((p) => p != participant).toList();
     emit(state.copyWith(participants: updatedList));
   }
 
-  _onNumberOfLiveListeners(_UpdateParticipantNumber event, emit) {
-    emit(state.copyWith(numberOfParticipants: event.data));
-    add(FetchParticipants(state.broadcastId!));
-  }
-
-  _onUpdateAfterFetch(_UpdateAfterFetch event, emit) async {
-    final res = event.data['data'] as List;
-
-    if (res.isEmpty) {
-      return emit(state.copyWith(
-        loading: false,
-        participants: [],
-        numberOfParticipants: 0,
-      ));
-    }
-
-    final list = res.map((b) => ParticipantDto.fromJson(b).toDomain).toList();
-
-    return emit(state.copyWith(
-      participants: list,
-      loading: false,
-      numberOfParticipants: list.length,
-    ));
+  @override
+  Future<void> close() {
+    _socketEventSub.cancel();
+    _socketStateSub.cancel();
+    return super.close();
   }
 }

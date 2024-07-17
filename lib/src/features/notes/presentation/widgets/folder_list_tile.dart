@@ -70,10 +70,13 @@ class FolderListTile extends StatelessWidget {
                     ),
                   ),
                   MCore.micro.verticalSpace,
-                  MText(
-                    '${folder.numberOfNotes ?? 0} notes',
-                    style: MTextStyle.captionRegular,
-                    color: colors.onBackgroundVariant,
+                  SizedBox(
+                    height: 18.h,
+                    child: MText(
+                      '${folder.numberOfNotes ?? 0} notes',
+                      style: MTextStyle.captionRegular,
+                      color: colors.onBackgroundVariant,
+                    ),
                   ),
                 ],
               ),

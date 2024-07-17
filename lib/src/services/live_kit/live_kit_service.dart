@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../core/env/env.dart';
 
@@ -14,7 +15,10 @@ class LiveKitService extends Object with Disposable {
   late Room room;
   late EventsListener<RoomEvent> listener;
 
-  Future<void> _connect(String broadcastToken, [bool isHost = true]) async {
+  final _events = BehaviorSubject<RoomEvent>();
+  Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
+
+  Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
     // Create a new room
     room = Room();
 
@@ -33,14 +37,22 @@ class LiveKitService extends Object with Disposable {
         broadcastToken,
         fastConnectOptions: options,
       );
+
+      _setupListener();
+
+      return room;
     } catch (e) {
       throw PlatformException(code: 'live-kit-error', message: e.toString());
     }
   }
 
-  Future<void> broadcast(String broadcastToken) => _connect(broadcastToken);
+  void _setupListener() {
+    listener.listen(_events.add);
+  }
 
-  Future<void> stream(String broadcastToken) => _connect(broadcastToken, false);
+  Future<Room> broadcast(String broadcastToken) => _connect(broadcastToken);
+
+  Future<Room> stream(String broadcastToken) => _connect(broadcastToken, false);
 
   Future<void> disconnect() => room.disconnect();
 
@@ -50,7 +62,14 @@ class LiveKitService extends Object with Disposable {
 
   @override
   FutureOr onDispose() async {
-    listener.dispose();
-    room.dispose();
+    _events.close();
+    await dispose();
+  }
+
+  Future<void> dispose() async {
+    room.removeListener(_setupListener);
+    await listener.dispose();
+    await room.dispose();
+    return;
   }
 }
