@@ -16,7 +16,6 @@ class MTabBarView extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.onPageChanged,
   });
-
   final TabController? controller;
   final List<Widget> children;
   final ScrollPhysics? physics;

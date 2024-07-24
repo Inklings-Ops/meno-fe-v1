@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../../../router/router.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class ResetPasswordSuccessPage extends StatelessWidget {
   const ResetPasswordSuccessPage({super.key});
@@ -15,24 +10,24 @@ class ResetPasswordSuccessPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.images.success.image(height: 240.r, width: 240.r),
-          48.verticalSpace,
-          const MText(
+          Assets.images.success.image(height: 240.toScale, width: 240.toScale),
+          $styles.spaces.verticalXXXLarge,
+          MText(
             'Success!',
             textAlign: TextAlign.center,
-            style: MTextStyle.heading2Bold,
+            style: $styles.text.heading2Bold,
           ),
-          MCore.small.verticalSpace,
+          $styles.spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
-            child: const MText(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
+            child: MText(
               'Your password has been reset, Jim. Phew! That was a close one.',
               textAlign: TextAlign.center,
               maxLines: 3,
-              style: MTextStyle.bodyRegular,
+              style: $styles.text.bodyRegular,
             ),
           ),
-          48.verticalSpace,
+          $styles.spaces.verticalXXXLarge,
           MPrimaryButton(
             label: 'Go Back to Log In',
             onPressed: () => context.go(Routes.login),

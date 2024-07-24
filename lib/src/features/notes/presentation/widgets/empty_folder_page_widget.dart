@@ -1,16 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart' hide Assets;
-import 'package:meno_fe_v1/gen/assets.gen.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import 'empty_note_list_widget.dart';
-import 'note_card.dart';
-import 'note_list_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class EmptyFolderPageWidget extends StatelessWidget {
   const EmptyFolderPageWidget({super.key, required this.folder});
@@ -22,33 +11,33 @@ class EmptyFolderPageWidget extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     return SizedBox(
-      width: 266.w,
-      height: 224.h,
+      width: 266.toScale,
+      height: 224.toScale,
       child: Column(
         children: [
-          Assets.images.newFile.image(height: 120.h, width: 160.w),
-          const MText(
+          Assets.images.newFile.image(height: 120.toScale, width: 160.toScale),
+           MText(
             'Let’s add some notes to this folder',
-            style: MTextStyle.bodyRegular,
+            style: $styles.text.bodyRegular,
             textAlign: TextAlign.center,
           ),
-          24.verticalSpace,
+          24.vSpace,
           SizedBox(
-            width: 155.w,
-            height: 32.h,
+            width: 155.toScale,
+            height: 32.toScale,
             child: MSecondaryButton.icon(
               label: 'Add to this Folder',
               icon: const Icon(MIcons.plus),
               style: OutlinedButton.styleFrom(
-                textStyle: MTextStyle.microMedium,
+                textStyle: $styles.text.microMedium,
                 foregroundColor: colors.onBackground,
                 iconColor: colors.onBackground,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8).r,
+                  borderRadius: $styles.radius.small,
                 ),
                 side: BorderSide(
                   color: colors.outlineVariant3!,
-                  width: 1.50.r,
+                  width: 1.50.toScale,
                 ),
               ),
               onPressed: () => context.showModal(
@@ -86,7 +75,7 @@ class _AllNotesModal extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             Expanded(
               child: BlocBuilder<NotesBloc, NotesState>(
                 bloc: bloc,
@@ -106,9 +95,9 @@ class _AllNotesModal extends HookWidget {
                   return ListView.separated(
                     primary: false,
                     shrinkWrap: true,
-                    padding: const EdgeInsets.only(bottom: MCore.large).r,
+                    padding: const EdgeInsets.only(bottom: 16).radius,
                     itemCount: list.length,
-                    separatorBuilder: (context, i) => 16.verticalSpace,
+                    separatorBuilder: (context, i) => 16.vSpace,
                     itemBuilder: (context, i) => NoteCard(
                       note: list[i]!,
                       showAddButton: true,
@@ -127,7 +116,7 @@ class _AllNotesModal extends HookWidget {
               ),
             ),
             if (selectedNote.value != null) ...[
-              MCore.large.verticalSpace,
+              $styles.spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: bloc.state.isLoading,

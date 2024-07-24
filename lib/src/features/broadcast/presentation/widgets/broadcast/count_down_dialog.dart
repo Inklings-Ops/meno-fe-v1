@@ -1,43 +1,40 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class CountDownDialog extends StatelessWidget {
   const CountDownDialog({super.key});
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return SizedBox(
-      width: 152.w,
-      height: 196.h,
+      width: 152.toScale,
+      height: 196.toScale,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           MText(
             'Going Live in...',
-            style: MTextStyle.heading2Medium,
-            color: colorScheme.onPrimary,
+            style: $styles.text.heading2Medium,
+            color: colors.onPrimary,
           ),
-          MCore.large.verticalSpace,
+          $styles.spaces.verticalLarge,
           CircleAvatar(
-            radius: 72.r,
-            backgroundColor: colorScheme.primary,
+            radius: 72.toScale,
+            backgroundColor: colors.primary,
             child: Padding(
-              padding: const EdgeInsets.all(MCore.small).r,
+              padding: EdgeInsets.all($styles.insets.small),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MText(
                     '3',
-                    style: MTextStyle.countDown,
-                    color: colorScheme.onPrimary,
+                    style: $styles.text.countDown,
+                    color: colors.onPrimary,
                   ),
-                  MCore.large.verticalSpace,
+                  $styles.spaces.verticalLarge,
                   MText(
                     'Skip',
-                    style: MTextStyle.bodyMedium,
-                    color: colorScheme.onPrimary,
+                    style: $styles.text.bodyMedium,
+                    color: colors.onPrimary,
                   ),
                 ],
               ),

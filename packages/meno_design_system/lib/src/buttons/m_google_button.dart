@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
+import 'package:meno_design_system/src/gen/assets.gen.dart';
 class MGoogleButton extends StatelessWidget {
   const MGoogleButton({super.key, required this.title, this.onPressed});
   final String title;
@@ -15,7 +14,7 @@ class MGoogleButton extends StatelessWidget {
       icon: Assets.images.google.svg(),
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        side: BorderSide(width: 1.50.r, color: colors.inActiveContainer!),
+        side: BorderSide(width: 1.50.toScale, color: colors.inActiveContainer!),
         foregroundColor: colors.onBackground,
         backgroundColor: colors.background,
       ),

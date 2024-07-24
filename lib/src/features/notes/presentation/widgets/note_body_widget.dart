@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder_list_widget.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder_widget.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/note_list_widget.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/note_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteBodyWidget extends StatelessWidget {
   const NoteBodyWidget({super.key, required this.selectedIndex});
@@ -15,6 +7,7 @@ class NoteBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final notesBloc = context.read<NotesBloc>();
     final foldersBloc = context.read<FolderListBloc>();
 
@@ -29,8 +22,8 @@ class NoteBodyWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              width: 1.sw,
-              padding: const EdgeInsets.fromLTRB(0, 24, 0, MCore.small).r,
+              width: size.width,
+              padding: const EdgeInsets.fromLTRB(0, 24, 0, 8).radius,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -41,7 +34,7 @@ class NoteBodyWidget extends StatelessWidget {
                       selected: selectedIndex.value == 0,
                     ),
                   ),
-                  MCore.small.horizontalSpace,
+                  $styles.spaces.horizontalSmall,
                   Expanded(
                     child: FolderWidget(
                       onTap: () => selectedIndex.value = 1,
@@ -51,7 +44,7 @@ class NoteBodyWidget extends StatelessWidget {
                 ],
               ),
             ),
-            20.verticalSpace,
+            20.vSpace,
             switch (selectedIndex.value) {
               0 => const NoteListWidget(),
               1 => const FolderListWidget(),

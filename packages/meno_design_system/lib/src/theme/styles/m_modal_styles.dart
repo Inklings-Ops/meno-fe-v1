@@ -1,9 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
-import '../../m_core.dart';
-import '../m_color.dart';
-import '../m_color_scheme.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MModalStyles extends ThemeExtension<MModalStyles> {
   final MColor? dragHandleColor;
@@ -16,11 +13,11 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
     this.modalBackgroundColor,
   });
 
-  factory MModalStyles.$default({required MColorScheme colorScheme}) {
+  factory MModalStyles.$default(MColorScheme colors) {
     return MModalStyles(
-      dragHandleColor: colorScheme.outlineVariant1,
-      backgroundColor: colorScheme.background,
-      modalBackgroundColor: colorScheme.background,
+      dragHandleColor: colors.outlineVariant1,
+      backgroundColor: colors.background,
+      modalBackgroundColor: colors.background,
     );
   }
 
@@ -52,19 +49,18 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
   }
 
   BottomSheetThemeData get bottomSheetTheme {
-    final Size size =
+    final size =
         WidgetsBinding.instance.platformDispatcher.views.first.physicalSize;
     return BottomSheetThemeData(
-      dragHandleSize: const Size(32, 4),
+      dragHandleSize: Size($styles.insets.xxLarge, $styles.insets.micro),
       showDragHandle: true,
       dragHandleColor: dragHandleColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(MCore.xxLarge)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32.toScale)),
       ),
       backgroundColor: backgroundColor,
       modalBackgroundColor: modalBackgroundColor,
-      constraints: BoxConstraints(maxHeight: size.height * 0.9),
+      constraints: BoxConstraints(maxHeight: size.height * 0.9).radius,
     );
   }
 

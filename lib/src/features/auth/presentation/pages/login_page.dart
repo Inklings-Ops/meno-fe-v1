@@ -1,16 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/auth/application/application.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/recently_live/recently_live_cubit.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../widgets/widgets.dart';
-
+ 
 class LoginPage extends StatelessWidget {
   final bool implyLeading;
   final bool isPasswordOnly;
@@ -40,20 +33,22 @@ class LoginPage extends StatelessWidget {
       child: MScaffold(
         appBar: MAppBar.primary(title: 'Log in', implyLeading: implyLeading),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 24).r,
+          padding: EdgeInsets.symmetric(vertical: 24.toScale),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               LoginForm(isPasswordOnly: isPasswordOnly),
-              24.verticalSpace,
+              24.vSpace,
               const GoogleDivider(title: 'Or'),
-              24.verticalSpace,
+              24.vSpace,
               const MGoogleButton(title: 'Login with Google'),
-              149.verticalSpace,
+              144.vSpace,
               AuthRedirectionText(
                 title: 'Don\'t have an account?',
                 buttonText: 'Create an account',
-                onPressed: () => context.replace(Routes.registerWithLeading),
+                onPressed: () => implyLeading
+                    ? router.replace(Routes.register, extra: true)
+                    : router.push(Routes.register, extra: true),
               )
             ],
           ),

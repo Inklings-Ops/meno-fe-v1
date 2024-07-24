@@ -9,33 +9,31 @@ class MReadMoreText extends HookWidget {
     this.style,
     this.maxLines = 3,
   });
-
   final String text;
   final TextStyle? style;
   final int maxLines;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
     final effectiveMaxLines = useState(maxLines);
     final isReadMore = useState(false);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MText(
           text,
-          style: style ?? MTextStyle.captionRegular,
+          style: style ?? $styles.text.captionRegular,
           maxLines: isReadMore.value ? null : effectiveMaxLines.value,
           overflow: isReadMore.value ? null : TextOverflow.ellipsis,
         ),
-        const SizedBox(height: MCore.micro),
+        $styles.spaces.verticalMicro,
         GestureDetector(
           onTap: () => isReadMore.value = !isReadMore.value,
           child: MText(
             isReadMore.value ? "less" : "more",
-            style: MTextStyle.captionMedium,
-            color: colorScheme.onBackgroundVariant,
+            style: $styles.text.captionMedium,
+            color: colors.onBackgroundVariant,
           ),
         ),
       ],

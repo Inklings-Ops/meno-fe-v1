@@ -1,22 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
-import '../widgets/my_profile_page.dart';
-
-class ProfilePage extends HookConsumerWidget {
+class ProfilePage extends StatelessWidget {
   final String? id;
   const ProfilePage({super.key, this.id});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (id != null) {
       return Scaffold(
         body: Center(
-          child: Text(
-            id!,
-            style: MTextStyle.heading1Bold,
-          ),
+          child: Text(id!, style: $styles.text.heading1Bold),
         ),
       );
     } else {

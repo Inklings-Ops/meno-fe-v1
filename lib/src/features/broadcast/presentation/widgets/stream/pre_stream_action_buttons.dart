@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class PreStreamActionButtons extends HookWidget {
@@ -19,7 +15,7 @@ class PreStreamActionButtons extends HookWidget {
     }
 
     return SizedBox(
-      height: 32.h,
+      height: 32.toScale,
       child: Row(
         children: [
           Expanded(
@@ -33,7 +29,7 @@ class PreStreamActionButtons extends HookWidget {
               child: _JoinButton(onJoin: onJoin, loading: loading.value),
             ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           Expanded(
             child: MSecondaryButton(
               label: 'Share',
@@ -41,7 +37,7 @@ class PreStreamActionButtons extends HookWidget {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: colors.outlineVariant3!),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8).r,
+                  borderRadius: $styles.radius.small,
                 ),
               ),
             ),
@@ -64,7 +60,7 @@ class _JoinButton extends StatelessWidget {
       onPressed: onJoin,
       loading: loading,
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8).r),
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
       ),
     );
   }

@@ -1,16 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/note_form/note_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import '../widgets/m_notes_back_button.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteEditorPage extends StatefulWidget {
   const NoteEditorPage({super.key, this.note});
@@ -61,8 +53,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 42.h,
-          leadingWidth: 90.w,
+          toolbarHeight: 42.toScale,
+          leadingWidth: 90.toScale,
           leading: const MNotesBackButton(title: 'Notes'),
           actions: [
             BlocBuilder<NoteFormCubit, NoteFormState>(
@@ -75,21 +67,21 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                   child: MText(
                     state.loading ? 'Saving...' : 'Done',
                     color: colors.primary,
-                    style: MTextStyle.captionMedium,
+                    style: $styles.text.captionMedium,
                   ),
                 );
               },
             ),
-            16.horizontalSpace,
+            $styles.spaces.horizontalLarge,
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
           child: Column(
             children: [
-              16.verticalSpace,
+              $styles.spaces.verticalLarge,
               _TitleField(initialNote: widget.note),
-              MCore.large.verticalSpace,
+              $styles.spaces.verticalLarge,
               Expanded(
                 child: QuillEditor(
                   focusNode: quillFocusNode,
@@ -108,12 +100,10 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: SizedBox(
-          height: 56.h,
+          height: 56.toScale,
           child: Card(
             color: colors.surfaceTint,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MCore.circle).r,
-            ),
+            shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
             child: QuillToolbar.simple(
               configurations: QuillSimpleToolbarConfigurations(
                 controller: controller,
@@ -144,10 +134,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                 showCenterAlignment: false,
                 showDirection: false,
                 showIndent: false,
-                sharedConfigurations: const QuillSharedConfigurations(
-                  locale: Locale('de'),
-                ),
-                color: Colors.purple,
               ),
             ),
           ),
@@ -159,13 +145,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
 
 class _TitleField extends StatelessWidget {
   const _TitleField({this.initialNote});
-
   final Note? initialNote;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: MTextStyle.heading3Bold,
+      style: $styles.text.heading3Bold,
       initialValue: initialNote?.title.getOr(),
       onChanged: context.watch<NoteFormCubit>().titleChanged,
       textInputAction: TextInputAction.next,

@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class CohostListTile extends StatelessWidget {
   const CohostListTile({super.key});
@@ -8,37 +6,37 @@ class CohostListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48.h,
+      height: 48.toScale,
       child: Row(
         children: [
-          MAvatar(radius: 24.r),
-          MCore.small.horizontalSpace,
+          MAvatar(radius: 24.toScale),
+          $styles.spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const MText(
+                MText(
                   'Celebration Church International',
-                  style: MTextStyle.captionMedium,
+                  style: $styles.text.captionMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
-                3.verticalSpace,
-                const MText('30K Subscribers', style: MTextStyle.microRegular),
+                3.vSpace,
+                MText('30K Subscribers', style: $styles.text.microRegular),
               ],
             ),
           ),
-          MCore.large.horizontalSpace,
+          $styles.spaces.horizontalLarge,
           SizedBox(
-            height: 32.h,
+            height: 32.toScale,
             child: MSecondaryButton(
               label: 'Add as Co-host',
               style: OutlinedButton.styleFrom(
-                textStyle: MTextStyle.microMedium,
-                padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
+                textStyle: $styles.text.microMedium,
+                padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8).r,
+                  borderRadius: $styles.radius.small,
                 ),
               ),
               onPressed: () {},

@@ -1,28 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
-import '../../application/chat_bloc.dart';
-import '../../domain/domain.dart';
-import 'chat_bubble.dart';
-
-class ChatList extends HookConsumerWidget {
+class ChatList extends StatelessWidget {
   const ChatList({super.key, required this.controller});
   final ScrollController controller;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return BlocBuilder<ChatBloc, ChatState>(
       buildWhen: (p, c) => p.chats != c.chats,
       builder: (context, state) => ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: MCore.large).r,
+        padding: EdgeInsets.symmetric(vertical: $styles.insets.large),
         controller: controller,
         reverse: true,
         shrinkWrap: true,
-        separatorBuilder: (context, _) => MCore.large.verticalSpace,
+        separatorBuilder: (context, _) => $styles.spaces.verticalLarge,
         itemCount: state.chats.length,
         itemBuilder: (context, i) => _Item(chat: state.chats[i]!),
       ),
@@ -65,20 +57,20 @@ class _Item extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            MCore.small.verticalSpace,
+            $styles.spaces.verticalSmall,
             MModalListTile(
               leading: const Icon(MIcons.edit_05),
               title: 'Edit',
               onTap: () {},
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             MModalListTile(
               leading: const Icon(MIcons.trash),
               title: 'Delete',
               onTap: () => context.showDeleteCommentDialog(),
               titleColor: MColorScheme.of(context)!.error,
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
           ],
         ),
       ),
@@ -98,7 +90,7 @@ class _Item extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            MCore.small.verticalSpace,
+            $styles.spaces.verticalSmall,
             if (isHost)
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
@@ -112,7 +104,7 @@ class _Item extends StatelessWidget {
                 title: 'Report',
                 onTap: () {},
               ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
           ],
         ),
       ),

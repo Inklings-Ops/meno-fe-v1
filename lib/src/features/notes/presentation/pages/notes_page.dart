@@ -1,16 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart' hide Assets;
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder_modal.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import '../widgets/note_body_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NotesPage extends HookWidget {
   const NotesPage({super.key});
@@ -21,7 +10,7 @@ class NotesPage extends HookWidget {
 
     return MScaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
+        preferredSize: Size.fromHeight(kToolbarHeight.toScale),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: MHeader(
@@ -55,11 +44,11 @@ class _AddNewNoteActionButton extends StatelessWidget {
           onTap: () => context.push(Routes.noteEditor),
           child: Row(
             children: [
-              Icon(MIcons.plus, size: 22.r, color: colors.primary),
-              MCore.micro.horizontalSpace,
+              Icon(MIcons.plus, size: 22.toScale, color: colors.primary),
+              $styles.spaces.horizontalMicro,
               MText(
                 'Add New Note',
-                style: MTextStyle.captionMedium,
+                style: $styles.text.captionMedium,
                 color: colors.primary,
               ),
             ],
@@ -92,11 +81,11 @@ class _AddNewFolderActionButton extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(MIcons.plus, size: 22.r, color: colors.primary),
-                MCore.micro.horizontalSpace,
+                Icon(MIcons.plus, size: 22.toScale, color: colors.primary),
+                $styles.spaces.horizontalMicro,
                 MText(
                   'Add New Folder',
-                  style: MTextStyle.captionMedium,
+                  style: $styles.text.captionMedium,
                   color: colors.primary,
                 ),
               ],

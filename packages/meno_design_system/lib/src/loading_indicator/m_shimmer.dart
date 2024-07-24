@@ -24,29 +24,28 @@ class MShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-    final bool isCircle = shape == BoxShape.circle;
-
+    final colors = MColorScheme.of(context)!;
+    final isCircle = shape == BoxShape.circle;
+    final effectiveBorderRadius =
+        BorderRadius.circular(borderRadius ?? 4).radius;
     return Shimmer.fromColors(
       enabled: enabled,
-      baseColor: colorScheme.background!,
-      highlightColor: colorScheme.surfaceShade!,
+      baseColor: colors.background!,
+      highlightColor: colors.surfaceShade!,
       child: Container(
         decoration: BoxDecoration(
           shape: shape,
-          color: backgroundColor ?? colorScheme.background,
-          borderRadius:
-              isCircle ? null : BorderRadius.circular(borderRadius ?? 4),
+          color: backgroundColor ?? colors.background,
+          borderRadius: isCircle ? null : effectiveBorderRadius,
         ),
         child: child ??
             Container(
-              height: height,
-              width: width ?? double.infinity,
+              height: height?.toScale,
+              width: width?.toScale ?? double.infinity,
               decoration: BoxDecoration(
                 shape: shape,
-                color: backgroundColor ?? colorScheme.background,
-                borderRadius:
-                    isCircle ? null : BorderRadius.circular(borderRadius ?? 4),
+                color: backgroundColor ?? colors.background,
+                borderRadius: isCircle ? null : effectiveBorderRadius,
               ),
             ),
       ),

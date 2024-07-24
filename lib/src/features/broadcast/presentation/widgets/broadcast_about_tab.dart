@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastAboutTab extends StatelessWidget {
-  final String? description;
   const BroadcastAboutTab({super.key, required this.description});
+  final String? description;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16).r,
+      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -17,15 +15,15 @@ class BroadcastAboutTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(MIcons.menu_03, size: 16.r),
-              MCore.small.horizontalSpace,
-              const MText(
+              Icon(MIcons.menu_03, size: $styles.insets.large),
+              $styles.spaces.horizontalSmall,
+              MText(
                 'About Broadcast',
-                style: MTextStyle.subheadingMedium,
+                style: $styles.text.subheadingMedium,
               ),
             ],
           ),
-          MCore.large.verticalSpace,
+          $styles.spaces.verticalLarge,
           if (description != null)
             MText(
               description!,

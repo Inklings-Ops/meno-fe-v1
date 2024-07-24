@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class PasswordRulesWidget extends StatelessWidget {
   const PasswordRulesWidget({super.key});
@@ -11,21 +7,20 @@ class PasswordRulesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     return BlocSelector<RegisterCubit, RegisterState, Password>(
       bloc: context.watch<RegisterCubit>(),
       selector: (state) => state.password,
       builder: (context, state) => Visibility(
         visible: !state.isValid,
         child: Container(
-          padding: const EdgeInsets.all(16).r,
+          padding: EdgeInsets.all($styles.insets.large),
           decoration: BoxDecoration(
             color: colors.background,
-            border: Border.all(width: 1.r, color: MColor.grey50),
-            borderRadius: BorderRadius.circular(8).r,
+            border: Border.all(width: 1.toScale, color: MColor.grey50),
+            borderRadius: $styles.radius.small,
           ),
           child: Wrap(
-            runSpacing: 16.h,
+            runSpacing: 16.toScale,
             children: state.value.fold(
               (failure) => failure.maybeWhen(
                 orElse: () => passwordStrengthRules.map((e) {
@@ -56,17 +51,15 @@ class _RuleItem extends StatelessWidget {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final unsetColor = MColorScheme.of(context)?.error;
     final setColor = isLight ? MColor.success300 : MColor.success200;
-
     final ruleColor = !rule.isValid ? unsetColor : setColor;
-
     return Visibility(
       visible: !rule.isValid,
       child: SizedBox(
-        height: 18.h,
-        width: 1.sw,
+        height: 18.toScale,
+        width: MediaQuery.sizeOf(context).width,
         child: MText(
           rule.title,
-          style: MTextStyle.captionRegular,
+          style: $styles.text.captionRegular,
           color: color ?? ruleColor,
         ),
       ),

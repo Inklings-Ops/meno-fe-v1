@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastTab extends HookWidget {
@@ -16,27 +12,27 @@ class BroadcastTab extends HookWidget {
       children: [
         Flexible(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).r,
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).radius,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const _BroadcastArtwork(),
-                MCore.small.verticalSpace,
+                $styles.spaces.verticalSmall,
                 const BroadcastTimer(),
-                MCore.small.verticalSpace,
+                $styles.spaces.verticalSmall,
                 const _BroadcastTitle(),
-                MCore.small.verticalSpace,
+                $styles.spaces.verticalSmall,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const _BroadcastCreator(),
-                    MCore.small.horizontalSpace,
+                    $styles.spaces.horizontalSmall,
                     const BroadcastStatusWidget(),
                   ],
                 ),
-                24.verticalSpace,
+                24.vSpace,
                 const BroadcastControls(),
-                MCore.large.verticalSpace,
+                $styles.spaces.verticalLarge,
               ],
             ),
           ),
@@ -45,8 +41,8 @@ class BroadcastTab extends HookWidget {
           child: Column(
             children: [
               Container(
-                height: 40.h,
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).r,
+                height: 40.toScale,
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).radius,
                 child: TabBar.secondary(
                   controller: tabController,
                   tabs: const [
@@ -55,7 +51,7 @@ class BroadcastTab extends HookWidget {
                   ],
                 ),
               ),
-              24.verticalSpace,
+              24.vSpace,
               Expanded(
                 child: TabBarView(
                   controller: tabController,
@@ -117,7 +113,7 @@ class _BroadcastCreator extends StatelessWidget {
       ),
       builder: (context, fullName) => MText(
         fullName,
-        style: MTextStyle.captionRegular,
+        style: $styles.text.captionRegular,
         color: MColorScheme.of(context)!.onDisabledContainer,
       ),
     );

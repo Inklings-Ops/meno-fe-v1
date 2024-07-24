@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
-
 class MImageSourceModal extends StatelessWidget {
   const MImageSourceModal({
     super.key,
@@ -29,7 +27,7 @@ class MImageSourceModal extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
-          MSize.verticalSpaceLarge,
+          $styles.spaces.verticalLarge,
           ListTile(
             leading: const Icon(MIcons.image),
             title: const MText("Choose from Gallery"),

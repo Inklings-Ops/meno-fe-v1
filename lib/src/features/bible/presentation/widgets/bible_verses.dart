@@ -1,12 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
-import 'package:meno_fe_v1/src/features/bible/application/translations/translations_cubit.dart';
-import 'package:meno_fe_v1/src/features/bible/application/verses/verses_cubit.dart';
-import 'package:meno_fe_v1/src/features/bible/presentation/widgets/verse_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class BibleVerses extends HookWidget {
   const BibleVerses({super.key});
@@ -21,7 +14,6 @@ class BibleVerses extends HookWidget {
       final book = scriptureCubit.state.book;
       final chapter = scriptureCubit.state.chapter;
       final transAbb = transCubit.state.selectedTranslation.abbreviation;
-
       bloc.getVerses(book: book, chapter: chapter, translation: transAbb);
       return null;
     }, const []);
@@ -58,7 +50,7 @@ class BibleVerses extends HookWidget {
         builder: (context, state) => ListView.separated(
           shrinkWrap: true,
           itemCount: state.verses.length,
-          separatorBuilder: (context, i) => MCore.medium.verticalSpace,
+          separatorBuilder: (context, i) => $styles.spaces.verticalMedium,
           itemBuilder: (context, i) => VerseWidget(verse: state.verses[i]),
         ),
       ),

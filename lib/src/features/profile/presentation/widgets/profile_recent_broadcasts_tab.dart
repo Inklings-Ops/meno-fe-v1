@@ -1,18 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
-import '../../../../router/router.dart';
-import 'empty_state_widget.dart';
-
-class ProfileRecentBroadcastsTab extends ConsumerWidget {
+class ProfileRecentBroadcastsTab extends StatelessWidget {
   const ProfileRecentBroadcastsTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final List<Broadcast?> broadcasts = [];
 
     // if (broadcasts.isLoading) {
@@ -61,8 +55,8 @@ class _BuildListView extends StatelessWidget {
       shrinkWrap: true,
       itemCount: itemCount,
       itemBuilder: itemBuilder,
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).r,
-      separatorBuilder: (context, index) => MCore.large.verticalSpace,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).radius,
+      separatorBuilder: (context, index) => $styles.spaces.verticalLarge,
     );
   }
 }

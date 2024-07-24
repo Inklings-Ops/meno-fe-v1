@@ -1,14 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import 'note_card_options_modal.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCard extends StatelessWidget {
   const NoteCard({
@@ -42,16 +37,14 @@ class NoteCard extends StatelessWidget {
       constraints: const BoxConstraints.tightForFinite(),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(MCore.large).r,
+        borderRadius: $styles.radius.large,
         child: Card(
           color: colors.surfaceTint,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(MCore.large).r,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
           margin: EdgeInsets.zero,
           child: Padding(
-            padding: const EdgeInsets.all(MCore.large).r,
+            padding: const EdgeInsets.all(16).radius,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -63,46 +56,46 @@ class NoteCard extends StatelessWidget {
                     children: [
                       MText(
                         note.title.getOr(),
-                        style: MTextStyle.bodyMedium,
+                        style: $styles.text.bodyMedium,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      MCore.small.verticalSpace,
+                      $styles.spaces.verticalSmall,
                       if (noteFolder != null) ...[
                         Row(
                           children: [
                             MTag(
                               title: noteFolder.title.getOr(),
-                              style: MTextStyle.microMedium,
-                              height: 20.h,
+                              style: $styles.text.microMedium,
+                              height: 20.toScale,
                             ),
                           ],
                         ),
-                        MCore.small.verticalSpace,
+                        $styles.spaces.verticalSmall,
                       ],
                       MText(
                         content,
-                        style: MTextStyle.captionRegular,
+                        style: $styles.text.captionRegular,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      14.verticalSpace,
+                      14.vSpace,
                       Wrap(
-                        spacing: MCore.small.r,
+                        spacing: $styles.insets.small,
                         children: [
                           MText(
                             formattedDate,
-                            style: MTextStyle.captionRegular,
+                            style: $styles.text.captionRegular,
                             color: colors.onBackgroundVariant,
                           ),
                           MText(
                             '•',
-                            style: MTextStyle.captionRegular,
+                            style: $styles.text.captionRegular,
                             color: colors.onBackgroundVariant,
                           ),
                           MText(
                             formattedTime,
-                            style: MTextStyle.captionRegular,
+                            style: $styles.text.captionRegular,
                             color: colors.onBackgroundVariant,
                           ),
                         ],
@@ -110,13 +103,13 @@ class NoteCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                MCore.small.horizontalSpace,
+                $styles.spaces.horizontalSmall,
                 if (showAddButton)
                   SizedBox.square(
-                    dimension: 16.r,
+                    dimension: $styles.insets.large,
                     child: Icon(
                       selected ? Icons.check_circle : MIcons.plus_circle,
-                      size: 20.r,
+                      size: 20.toScale,
                     ),
                   )
                 else
@@ -139,14 +132,13 @@ class _MoreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
 
-    return SizedBox(
-      width: 16.r,
-      height: 16.r,
+    return SizedBox.square(
+      dimension: 16.toScale,
       child: IconButton(
         icon: const Icon(MIcons.dots_vertical),
         padding: EdgeInsets.zero,
         color: colors.onDisabledContainer,
-        iconSize: 20.r,
+        iconSize: 20.toScale,
         onPressed: () {
           context.showModal(
             NoteCardOptionsModal(note: note),

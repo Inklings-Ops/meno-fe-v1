@@ -1,13 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart' hide Assets;
-import 'package:meno_fe_v1/gen/assets.gen.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class SearchResults extends StatelessWidget {
   const SearchResults({super.key});
@@ -29,12 +22,12 @@ class SearchResults extends StatelessWidget {
         return Column(
           children: [
             _ResultList(result: state.searchResults),
-            24.verticalSpace,
+            24.vSpace,
             DiscoverPaginationIndicator(
               isLoading: bloc.state.isSearchingMore,
               hasMore: bloc.state.hasMore,
             ),
-            24.verticalSpace,
+            24.vSpace,
           ],
         );
       },
@@ -50,18 +43,17 @@ class _ResultList extends StatelessWidget {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 24.h,
-        crossAxisSpacing: 24.w,
-        childAspectRatio: (159.50 / 176).r,
+        mainAxisSpacing: 24.toScale,
+        crossAxisSpacing: 24.toScale,
+        childAspectRatio: (159.50 / 176).toScale,
       ),
-      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).r,
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).radius,
       itemCount: result.length,
       primary: false,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, i) {
         final broadcast = result[i]!;
-
         if (broadcast.endTime == null) {
           return MCard.live(
             title: broadcast.title.getOr(),
@@ -94,17 +86,20 @@ class _NoResultsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Assets.images.liveForYou.image(height: 152.h, width: 152.w),
-          24.verticalSpace,
-          const MText(
+          Assets.images.liveForYou.image(
+            height: 152.toScale,
+            width: 152.toScale,
+          ),
+          24.vSpace,
+          MText(
             'No Results',
-            style: MTextStyle.heading3Bold,
+            style: $styles.text.heading3Bold,
             textAlign: TextAlign.center,
           ),
-          MCore.micro.verticalSpace,
+          $styles.spaces.verticalMicro,
           MText(
             'Try a new search',
-            style: MTextStyle.bodyRegular,
+            style: $styles.text.bodyRegular,
             color: colors.inActiveContainer,
           ),
         ],

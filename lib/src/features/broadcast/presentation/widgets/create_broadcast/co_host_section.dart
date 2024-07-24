@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import '../participant_item.dart';
-import 'add_cohost_modal.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class CoHostSection extends StatelessWidget {
   const CoHostSection({super.key});
@@ -12,7 +7,7 @@ class CoHostSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LimitedBox(
-      maxHeight: 72.h,
+      maxHeight: 72.toScale,
       child: Row(
         children: [
           ParticipantItem(
@@ -24,9 +19,9 @@ class CoHostSection extends StatelessWidget {
               ),
             ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           Wrap(
-            spacing: 8.r,
+            spacing: 8.toScale,
             children: const [],
           ),
         ],

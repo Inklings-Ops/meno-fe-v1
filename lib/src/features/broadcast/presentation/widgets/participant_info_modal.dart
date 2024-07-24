@@ -1,13 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-
-import '../../../profile/domain/domain.dart';
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ParticipantInfoModal extends HookWidget {
   final Participant participant;
@@ -38,51 +31,51 @@ class ParticipantInfoModal extends HookWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          MAvatar(radius: 36.r, url: participant.imageUrl),
-          MCore.large.verticalSpace,
+          MAvatar(radius: 36.toScale, url: participant.imageUrl),
+          $styles.spaces.verticalLarge,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
+            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 MText(
                   participant.fullName,
-                  style: MTextStyle.heading3Medium,
+                  style: $styles.text.heading3Medium,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 // if (isCohost) ...[
-                //   MCore.small.horizontalSpace,
+                //   $styles.spaces.horizontalSmall,
                 //   const MBadge.cohost(),
                 // ]
               ],
             ),
           ),
-          MCore.micro.verticalSpace,
+          $styles.spaces.verticalMicro,
           if (loading.value && profile.value == null) ...[
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MCore.xxLarge).r,
-              child: MShimmer(height: 24.r),
+              padding: EdgeInsets.symmetric(horizontal: $styles.insets.xxLarge),
+              child: const MShimmer(height: 24),
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
           ],
           if (profile.value?.bio != null) ...[
             MText(
               profile.value!.bio!.getOr(),
-              style: MTextStyle.subheadingRegular,
+              style: $styles.text.subheadingRegular,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
           ],
           MPrimaryButton.icon(
             label: 'Subscribed',
             icon: const Icon(MIcons.user_check),
             onPressed: () {},
           ),
-          MCore.small.verticalSpace,
+          $styles.spaces.verticalSmall,
           MTextButton(
             label: 'View account',
             onPressed: () => context.push(

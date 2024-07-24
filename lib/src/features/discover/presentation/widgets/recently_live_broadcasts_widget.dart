@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/widgets/empty_list_widget.dart';
 
 class RecentlyLiveBroadcastsWidget extends StatelessWidget {
   const RecentlyLiveBroadcastsWidget({super.key});
@@ -18,7 +12,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
       builder: (context, state) {
         if (!state.isLoading && state.hasError || state.broadcasts.isEmpty) {
           return Padding(
-            padding: const EdgeInsets.only(top: 120.0).r,
+            padding: const EdgeInsets.only(top: 120.0).radius,
             child: const EmptyListWidget(),
           );
         }
@@ -28,11 +22,11 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
             GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 24.h,
-                crossAxisSpacing: 24.w,
-                childAspectRatio: (159.50 / 176).r,
+                mainAxisSpacing: 24.toScale,
+                crossAxisSpacing: 24.toScale,
+                childAspectRatio: (159.50 / 176).toScale,
               ),
-              padding: const EdgeInsets.fromLTRB(16, 28, 16, 0).r,
+              padding: const EdgeInsets.fromLTRB(16, 28, 16, 0).radius,
               itemBuilder: (context, i) {
                 final broadcast = state.broadcasts[i]!;
                 return MCard.recentlyLive(
@@ -47,7 +41,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
               primary: false,
               physics: const NeverScrollableScrollPhysics(),
             ),
-            24.verticalSpace,
+            24.vSpace,
             DiscoverPaginationIndicator(
               isLoading: state.isLoading,
               hasMore: state.hasMore,

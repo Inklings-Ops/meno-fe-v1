@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class DeleteNoteAlertDialog extends StatelessWidget {
   const DeleteNoteAlertDialog({
@@ -18,41 +14,39 @@ class DeleteNoteAlertDialog extends StatelessWidget {
     final colorScheme = MColorScheme.of(context)!;
     final bloc = context.watch<NotesBloc>();
     return AlertDialog(
-      title: const MText('Delete Note?', style: MTextStyle.heading2Regular),
-      contentPadding: const EdgeInsets.all(24).r,
-      content: const MText(
+      title: MText('Delete Note?', style: $styles.text.heading2Regular),
+      contentPadding: const EdgeInsets.all(24).radius,
+      content: MText(
         'Do want to delete this note?',
-        style: MTextStyle.captionRegular,
+        style: $styles.text.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
-          size: Size(85.w, 40.h),
+          size: Size(85.toScale, 40.toScale),
           child: MTextButton(
             label: 'Cancel',
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(const Radius.circular(8).r),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
             ),
           ),
         ),
         SizedBox(
-          height: 40.h,
+          height: 40.toScale,
           child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
-              :  MDangerButton(
-            label: 'Delete',
-            onPressed: onDelete,
-            style: TextButton.styleFrom(
-              backgroundColor: colorScheme.error,
-              foregroundColor: colorScheme.onError,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(const Radius.circular(8).r),
-              ),
-            ),
-          ),
+              : MDangerButton(
+                  label: 'Delete',
+                  onPressed: onDelete,
+                  style: TextButton.styleFrom(
+                    backgroundColor: colorScheme.error,
+                    foregroundColor: colorScheme.onError,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: $styles.radius.small,
+                    ),
+                  ),
+                ),
         ),
       ],
     );

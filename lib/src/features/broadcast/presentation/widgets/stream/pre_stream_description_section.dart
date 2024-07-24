@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class PreStreamDescriptionSection extends StatelessWidget {
@@ -17,12 +15,12 @@ class PreStreamDescriptionSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(MIcons.menu_03, size: 16.r),
-            MCore.small.horizontalSpace,
-            const MText('Description', style: MTextStyle.subheadingMedium),
+            Icon(MIcons.menu_03, size: $styles.insets.large),
+            $styles.spaces.horizontalSmall,
+            MText('Description', style: $styles.text.subheadingMedium),
           ],
         ),
-        MCore.large.verticalSpace,
+        $styles.spaces.verticalLarge,
         if (broadcast.description?.getOr() != null)
           MText(broadcast.description!.getOr()!),
       ],

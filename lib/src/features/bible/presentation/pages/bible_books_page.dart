@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../application/bible/bible_bloc.dart';
-import '../widgets/book_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class BibleBooksPage extends StatelessWidget {
   const BibleBooksPage({super.key});
@@ -19,11 +14,11 @@ class BibleBooksPage extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: 24,
+            height: 24.toScale,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const MText('Bible Books', style: MTextStyle.subheadingMedium),
+                MText('Bible Books', style: $styles.text.subheadingMedium),
                 MIconButton(
                   icon: const Icon(MIcons.x_close),
                   color: MColorScheme.of(context)?.onBackground,
@@ -32,7 +27,7 @@ class BibleBooksPage extends StatelessWidget {
               ],
             ),
           ),
-          MCore.small.verticalSpace,
+          $styles.spaces.verticalSmall,
           const MDivider(),
           ListView.separated(
             primary: false,
@@ -41,7 +36,7 @@ class BibleBooksPage extends StatelessWidget {
               bookName: books[i].key,
               onTap: () {},
             ),
-            separatorBuilder: (context, i) => 10.verticalSpace,
+            separatorBuilder: (context, i) => 10.vSpace,
             itemCount: booksLength,
           ),
         ],

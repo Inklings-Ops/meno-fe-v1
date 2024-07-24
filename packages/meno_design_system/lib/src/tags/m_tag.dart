@@ -5,36 +5,32 @@ class MTag extends StatelessWidget {
   const MTag({
     super.key,
     required this.title,
-    this.style = MTextStyle.captionMedium,
+    this.style,
     this.height = 20.0,
   });
 
   final String title;
-  final MTextStyle? style;
+  final TextStyle? style;
   final double height;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return Container(
-      height: height,
-      constraints: BoxConstraints(minHeight: height, maxHeight: height),
-      padding: const EdgeInsets.symmetric(horizontal: MCore.small),
+      height: height.toScale,
+      constraints: BoxConstraints(minHeight: height, maxHeight: height).radius,
+      padding: EdgeInsets.symmetric(horizontal: $styles.insets.small),
       alignment: Alignment.centerLeft,
-
       decoration: ShapeDecoration(
-        color: colorScheme.inActiveContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MCore.micro),
-        ),
+        color: colors.inActiveContainer,
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.micro),
       ),
       child: SizedBox(
         child: Center(
           child: MText(
             title,
-            style: style,
-            color: colorScheme.onInActiveContainer,          
+            style: style ?? $styles.text.captionMedium,
+            color: colors.onInActiveContainer,
           ),
         ),
       ),

@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
 
-import '../../application/application.dart';
+
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class RememberMeCheckboxTile extends StatelessWidget {
   const RememberMeCheckboxTile({super.key});
@@ -15,15 +13,15 @@ class RememberMeCheckboxTile extends StatelessWidget {
       builder: (context, state) => Row(
         children: [
           SizedBox(
-            height: 20.r,
-            width: 20.r,
+            height: 20.toScale,
+            width: 20.toScale,
             child: Checkbox(
               value: state,
               onChanged: context.read<RegisterCubit>().onRememberMeChanged,
             ),
           ),
-          10.horizontalSpace,
-          const MText('Remember me', style: MTextStyle.captionMedium),
+          10.hSpace,
+          MText('Remember me', style: $styles.text.captionMedium),
         ],
       ),
     );

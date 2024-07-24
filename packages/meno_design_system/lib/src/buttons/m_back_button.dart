@@ -15,7 +15,7 @@ class MBackButton extends _ActionButton {
     Key? key,
     String title,
     MColor? iconColor,
-    MTextStyle? textStyle,
+    TextStyle? textStyle,
     VoidCallback? onPressed,
   }) = _MBackButtonWithText;
 
@@ -34,7 +34,7 @@ abstract class _ActionButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final MColor? color;
   final String title;
-  final MTextStyle? textStyle;
+  final TextStyle? textStyle;
 
   const _ActionButton({
     super.key,
@@ -48,9 +48,7 @@ abstract class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
-
     final resolveColor = MInternal.resolve(isLight, MColor.black, MColor.white);
-    const resolveTextStyle = MTextStyle.captionMedium;
 
     return switch (variant) {
       _ActionButtonVariant.icon => MIconButton(
@@ -65,11 +63,11 @@ abstract class _ActionButton extends StatelessWidget {
               Icon(
                 MIcons.chevron_left,
                 color: color ?? resolveColor,
-                size: 16,
+                size: 16.toScale,
               ),
               MText(
                 title,
-                style: textStyle ?? resolveTextStyle,
+                style: textStyle ?? $styles.text.captionMedium,
                 color: color ?? resolveColor,
               ),
             ],

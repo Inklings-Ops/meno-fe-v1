@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastParticipantsModal extends StatelessWidget {
@@ -23,11 +20,9 @@ class BroadcastParticipantsModal extends StatelessWidget {
             showLabel: false,
             hint: 'Search',
           ),
-          MCore.large.verticalSpace,
+          $styles.spaces.verticalLarge,
           const Expanded(
-            child: BroadcastParticipantList(
-              padding: EdgeInsets.zero,
-            ),
+            child: BroadcastParticipantList(padding: EdgeInsets.zero),
           ),
         ],
       ),

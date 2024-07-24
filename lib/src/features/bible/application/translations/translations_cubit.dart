@@ -59,7 +59,7 @@ class TranslationsCubit extends Cubit<TranslationsState> {
     ));
   }
 
-  void initialize() async {
+  void init() async {
     getOfflineTranslations();
     await getOnlineTranslations();
   }

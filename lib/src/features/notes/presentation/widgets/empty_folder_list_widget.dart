@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart' hide Assets;
-import 'package:meno_fe_v1/gen/assets.gen.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import 'create_folder_modal.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class EmptyFolderListWidget extends StatelessWidget {
   const EmptyFolderListWidget({super.key});
@@ -12,17 +7,17 @@ class EmptyFolderListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 266.w,
-      height: 224.h,
+      width: 266.toScale,
+      height: 224.toScale,
       child: Column(
         children: [
-          Assets.images.folder.image(height: 120.h, width: 160.w),
-          const MText(
+          Assets.images.folder.image(height: 120.toScale, width: 160.toScale),
+          MText(
             'Welcome! Organize your notes better through folders.',
-            style: MTextStyle.bodyRegular,
+            style: $styles.text.bodyRegular,
             textAlign: TextAlign.center,
           ),
-          24.verticalSpace,
+          24.vSpace,
           const _CreateNewFolderButton(),
         ],
       ),
@@ -38,21 +33,21 @@ class _CreateNewFolderButton extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     return SizedBox(
-      width: 160.w,
-      height: 32.h,
+      width: 160.toScale,
+      height: 32.toScale,
       child: MSecondaryButton.icon(
         label: 'Create New Folder',
         icon: const Icon(MIcons.plus),
         style: OutlinedButton.styleFrom(
-          textStyle: MTextStyle.microMedium,
+          textStyle: $styles.text.microMedium,
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8).r,
+            borderRadius: $styles.radius.small,
           ),
           side: BorderSide(
             color: colors.outlineVariant3!,
-            width: 1.50.r,
+            width: 1.50.toScale,
           ),
         ),
         onPressed: () => context.showModal(

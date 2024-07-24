@@ -1,14 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../../application/chat_bloc.dart';
-import 'reactions.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class ChatInputContainer extends HookWidget {
   const ChatInputContainer({super.key, required this.scrollController});
@@ -42,28 +34,28 @@ class ChatInputContainer extends HookWidget {
           if (isReactionsVisible.value) const ReactionButton(),
           Container(
             alignment: Alignment.topCenter,
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8).r,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8).radius,
             child: Row(
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 40.h,
+                    height: 40.toScale,
                     child: TextFormField(
-                      style: MTextStyle.captionRegular,
+                      style: $styles.text.captionRegular,
                       controller: contentController,
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                        ).r,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: $styles.insets.medium,
+                        ),
                         hintText: 'Type your comment here...',
                       ),
                     ),
                   ),
                 ),
-                MCore.large.horizontalSpace,
+                $styles.spaces.horizontalLarge,
                 MIconButton(
-                  size: 40.r,
-                  iconSize: 20.r,
+                  size: 40.toScale,
+                  iconSize: 20.toScale,
                   icon: const Icon(Icons.face),
                   isFilled: true,
                   fillColor: colors.outlineVariant2,
@@ -71,7 +63,7 @@ class ChatInputContainer extends HookWidget {
                       isReactionsVisible.value = !isReactionsVisible.value,
                 ),
                 if (isSendVisible.value) ...[
-                  MCore.small.horizontalSpace,
+                  $styles.spaces.horizontalSmall,
                   BlocBuilder<SessionCubit, SessionState>(
                     builder: (context, state) => state.maybeWhen(
                       orElse: () => const SizedBox(),
@@ -80,8 +72,8 @@ class ChatInputContainer extends HookWidget {
                         isFilled: true,
                         fillColor: colors.primary,
                         color: colors.onPrimary,
-                        size: 40.r,
-                        iconSize: 20.r,
+                        size: 40.toScale,
+                        iconSize: 20.toScale,
                         onPressed: () {
                           bloc.sendMessage(contentController.text);
                           scrollController.animateTo(
@@ -104,13 +96,6 @@ class ChatInputContainer extends HookWidget {
   }
 }
 
-/*
-scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );*/
-
 class ReactionButton extends StatelessWidget {
   const ReactionButton({super.key});
 
@@ -119,18 +104,18 @@ class ReactionButton extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     return Positioned(
-      bottom: 60.r,
-      right: 16.r,
+      bottom: 60.toScale,
+      right: 16.toScale,
       child: Container(
-        height: 56.h,
-        padding: const EdgeInsets.all(MCore.small).r,
+        height: 56.toScale,
+        padding: EdgeInsets.all($styles.insets.small),
         decoration: BoxDecoration(
           color: colors.background,
-          borderRadius: BorderRadius.circular(MCore.circle).r,
+          borderRadius: $styles.radius.circle,
         ),
         child: ListView.separated(
           shrinkWrap: true,
-          separatorBuilder: (context, i) => MCore.small.horizontalSpace,
+          separatorBuilder: (context, i) => $styles.spaces.horizontalSmall,
           scrollDirection: Axis.horizontal,
           itemCount: reactions.length,
           itemBuilder: (context, i) {
@@ -138,11 +123,11 @@ class ReactionButton extends StatelessWidget {
               position: i,
               duration: const Duration(milliseconds: 260),
               child: SlideAnimation(
-                verticalOffset: (15 + i * 15).r,
+                verticalOffset: (15 + i * 15).toScale,
                 child: FadeInAnimation(
                   child: MIconButton(
-                    size: 40.r,
-                    iconSize: 20.r,
+                    size: 40.toScale,
+                    iconSize: 20.toScale,
                     icon: reactions[i].icon,
                     isFilled: true,
                     fillColor: colors.outlineVariant2,

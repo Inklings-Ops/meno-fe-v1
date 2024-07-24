@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteWidget extends StatelessWidget {
   const NoteWidget({super.key, this.onTap, this.selected = false});
@@ -19,13 +16,13 @@ class NoteWidget extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20).r,
+      borderRadius: BorderRadius.circular(20).radius,
       child: Container(
-        height: 88.h,
-        padding: const EdgeInsets.all(MCore.large).r,
+        height: 88.toScale,
+        padding: const EdgeInsets.all(16).radius,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(20).r,
+          borderRadius: BorderRadius.circular(20).radius,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -34,13 +31,13 @@ class NoteWidget extends StatelessWidget {
           children: [
             MText(
               'Notes',
-              style: MTextStyle.captionMedium,
+              style: $styles.text.captionMedium,
               color: foreground,
             ),
             BlocBuilder<NotesBloc, NotesState>(
               builder: (context, state) => MText(
                 state.notes.length.toString(),
-                style: MTextStyle.heading2Medium,
+                style: $styles.text.heading2Medium,
                 color: foreground,
               ),
             ),

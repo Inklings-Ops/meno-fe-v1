@@ -2,32 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
 import 'm_input_label.dart';
 
 class MTextFormField extends StatefulWidget {
-  final String label;
-  final bool showLabel;
-  final bool autoFocus;
-  final IconData? labelIcon;
-  final String? hint;
-  final IconData? prefixIcon;
-  final IconData? suffixIcon;
-  final bool enabled;
-  final int maxLines;
-  final int? maxLength;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onFieldSubmitted;
-  final String? initialValue;
-  final FocusNode? focusNode;
-  final TextInputType keyboardType;
-  final bool isPassword;
-  final FormFieldValidator<String>? validator;
-  final AutovalidateMode? autovalidateMode;
-  final bool required;
-  final TextInputAction? textInputAction;
-
   const MTextFormField({
     super.key,
     required this.label,
@@ -52,6 +29,28 @@ class MTextFormField extends StatefulWidget {
     this.required = false,
     this.textInputAction,
   });
+
+  final String label;
+  final bool showLabel;
+  final bool autoFocus;
+  final IconData? labelIcon;
+  final String? hint;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
+  final bool enabled;
+  final int maxLines;
+  final int? maxLength;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
+  final String? initialValue;
+  final FocusNode? focusNode;
+  final TextInputType keyboardType;
+  final bool isPassword;
+  final FormFieldValidator<String>? validator;
+  final AutovalidateMode? autovalidateMode;
+  final bool required;
+  final TextInputAction? textInputAction;
 
   @override
   State<MTextFormField> createState() => _MTextFormFieldState();
@@ -80,7 +79,11 @@ class _MTextFormFieldState extends State<MTextFormField> {
     }
 
     if (widget.suffixIcon != null && widget.maxLines == 1) {
-      suffixWidget = Icon(widget.suffixIcon, size: 20, color: iconColor);
+      suffixWidget = Icon(
+        widget.suffixIcon,
+        size: $styles.insets.xLarge,
+        color: iconColor,
+      );
     }
 
     if (widget.isPassword) {
@@ -91,7 +94,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
     }
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 100),
+      constraints: BoxConstraints(maxHeight: 100.toScale),
       child: LayoutBuilder(
         builder: (context, constraints) => FormField<String?>(
           validator: widget.validator,
@@ -107,18 +110,20 @@ class _MTextFormFieldState extends State<MTextFormField> {
                   icon: widget.labelIcon,
                   required: widget.required,
                 ),
-                MSize.verticalSpaceSmall,
+                $styles.spaces.verticalSmall,
               ],
               SizedBox(
-                height: constraints.maxHeight * 0.48,
+                height: (constraints.maxHeight * 0.48).toScale,
                 child: _buildTextFormField(styles, iconColor, field),
               ),
-              if (field.errorText != null)
+              if (field.errorText != null) ...[
+                $styles.spaces.verticalSmall,
                 Container(
                   alignment: Alignment.centerLeft,
-                  height: constraints.maxHeight * 0.18,
+                  height: (constraints.maxHeight * 0.18).toScale,
                   child: _buildErrorText(field, styles),
                 ),
+              ]
             ],
           ),
         ),
@@ -189,14 +194,12 @@ class _MTextFormFieldState extends State<MTextFormField> {
       obscuringCharacter: "*",
       maxLines: widget.maxLines,
       enabled: widget.enabled,
-      cursorWidth: 1,
-      cursorHeight: 18,
       decoration: InputDecoration(
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: const EdgeInsets.symmetric(horizontal: MCore.medium),
-        counter: const SizedBox(),
+        contentPadding: EdgeInsets.symmetric(horizontal: $styles.insets.medium),
+        counter: null,
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,
         iconColor: iconColor,
@@ -207,9 +210,10 @@ class _MTextFormFieldState extends State<MTextFormField> {
         focusedBorder:
             field.hasError ? styles.borderError : styles.borderFocused,
         disabledBorder: styles.borderDisabled,
-        prefixIconConstraints: BoxConstraints.tight(const Size(36, 20)),
+        error: const SizedBox(),
+        prefixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
         prefixIcon: prefixWidget,
-        suffixIconConstraints: BoxConstraints.tight(const Size(32, 20)),
+        suffixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
         suffixIcon: suffixWidget,
       ),
     );
@@ -217,30 +221,36 @@ class _MTextFormFieldState extends State<MTextFormField> {
 }
 
 class _EyeIcon extends StatelessWidget {
-  final bool obscureText;
   const _EyeIcon(this.obscureText);
+  final bool obscureText;
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 20,
-        width: 20,
-        margin: const EdgeInsets.only(right: MCore.medium),
-        child: obscureText
-            ? const Icon(MIcons.eye, size: 20)
-            : const Icon(MIcons.eye_off, size: 20),
-      );
+  Widget build(BuildContext context) {
+    final iconSize = $styles.insets.xLarge;
+    return Container(
+      height: iconSize,
+      width: iconSize,
+      margin: EdgeInsets.only(right: $styles.insets.medium),
+      child: obscureText
+          ? Icon(MIcons.eye, size: iconSize)
+          : Icon(MIcons.eye_off, size: iconSize),
+    );
+  }
 }
 
 class _PrefixIcon extends StatelessWidget {
+  const _PrefixIcon({required this.icon, this.color});
   final IconData icon;
   final MColor? color;
 
-  const _PrefixIcon({required this.icon, this.color});
-
   @override
-  Widget build(BuildContext context) => Container(
-        alignment: Alignment.centerRight,
-        margin: const EdgeInsets.only(right: 6.0, left: 2.0),
-        child: Icon(icon, size: 20, color: color),
-      );
+  Widget build(BuildContext context) {
+    final iconSize = $styles.insets.xLarge;
+    return Container(
+      width: iconSize,
+      alignment: Alignment.centerRight,
+      margin: const EdgeInsets.only(right: 6).radius,
+      child: Icon(icon, size: iconSize, color: color),
+    );
+  }
 }

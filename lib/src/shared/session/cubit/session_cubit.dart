@@ -22,7 +22,8 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
   @PostConstruct(preResolve: true)
   Future<void> init() async {
     _subscription = _session.userChanges.listen((credential) {
-      emit(_determineState(_session.isOnboarded, credential));
+      final sessionState = _determineState(_session.isOnboarded, credential);
+      emit(sessionState);
       notifyListeners();
     });
   }

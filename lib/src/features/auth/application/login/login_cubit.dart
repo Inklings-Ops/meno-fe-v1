@@ -4,9 +4,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../../onboarding/onboarding.dart';
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/settings/settings.dart';
 
 part 'login_cubit.freezed.dart';
 part 'login_state.dart';
@@ -15,15 +14,14 @@ part 'login_state.dart';
 @lazySingleton
 class LoginCubit extends Cubit<LoginState> {
   final IAuthFacade _facade;
-  final IOnboardingFacade _onboardingFacade;
+  final ISettingsFacade _settingsFacade;
 
   LoginCubit({
     required IAuthFacade facade,
-    required IOnboardingFacade onboardingFacade,
+    required ISettingsFacade settingsFacade,
   })  : _facade = facade,
-        _onboardingFacade = onboardingFacade,
+        _settingsFacade = settingsFacade,
         super(LoginState.initial());
-
 
   /// Updates the user's email address.
   ///
@@ -57,7 +55,7 @@ class LoginCubit extends Cubit<LoginState> {
     if (isEmailValid && isPasswordValid) {
       emit(state.copyWith(loading: true, option: none()));
       fOrS = await _facade.login(email: state.email, password: state.password);
-      unawaited(_onboardingFacade.completeOnboarding);
+      unawaited(_settingsFacade.completeOnboarding);
     }
     emit(state.copyWith(option: optionOf(fOrS), loading: false));
   }

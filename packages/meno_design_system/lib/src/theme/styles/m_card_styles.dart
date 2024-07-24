@@ -8,15 +8,15 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
   final MColor? titleColor;
   final MColor? hostColor;
 
-  final MTextStyle? titleStyle;
-  final MTextStyle? hostStyle;
+  final TextStyle? titleStyle;
+  final TextStyle? hostStyle;
 
   final MColor? nSubtitleColor;
   final MColor? nBackgroundColor;
   final EdgeInsetsGeometry? nCardContentPadding;
   final BorderRadiusGeometry? nBorderRadius;
-  final MTextStyle? nTitleTextStyle;
-  final MTextStyle? nSubtitleTextStyle;
+  final TextStyle? nTitleTextStyle;
+  final TextStyle? nSubtitleTextStyle;
 
   MCardStyles({
     this.backgroundColor,
@@ -34,23 +34,23 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
 
   static T _resolve<T>(isLight, a, b) => MInternal.resolve(isLight, a, b);
 
-  factory MCardStyles.$default({required MColorScheme colorScheme}) {
-    final isLight = colorScheme.brightness == Brightness.light;
+  factory MCardStyles.$default(MColorScheme colors) {
+    final isLight = colors.brightness == Brightness.light;
     return MCardStyles(
       backgroundColor: _resolve(isLight, MColor.white, MColor.primaryAlt),
-      titleColor: colorScheme.onBackground,
+      titleColor: colors.onBackground,
       hostColor: _resolve(isLight, MColor.grey80, MColor.grey30),
-      titleStyle: MTextStyle.captionMedium,
-      hostStyle: MTextStyle.captionRegular,
-      nSubtitleColor: colorScheme.onBackgroundVariant,
-      nBackgroundColor: colorScheme.surfaceTint,
-      nCardContentPadding: const EdgeInsets.symmetric(
-        horizontal: MCore.small,
-        vertical: MCore.large,
+      titleStyle: $styles.text.captionMedium,
+      hostStyle: $styles.text.captionRegular,
+      nSubtitleColor: colors.onBackgroundVariant,
+      nBackgroundColor: colors.surfaceTint,
+      nCardContentPadding: EdgeInsets.symmetric(
+        horizontal: $styles.insets.small,
+        vertical: $styles.insets.large,
       ),
-      nBorderRadius: BorderRadius.circular(16),
-      nTitleTextStyle: MTextStyle.captionRegular,
-      nSubtitleTextStyle: MTextStyle.microRegular,
+      nBorderRadius: $styles.radius.large,
+      nTitleTextStyle: $styles.text.captionRegular,
+      nSubtitleTextStyle: $styles.text.microRegular,
     );
   }
 
@@ -59,14 +59,14 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
     MColor? backgroundColor,
     MColor? titleColor,
     MColor? hostColor,
-    MTextStyle? titleStyle,
-    MTextStyle? hostStyle,
+    TextStyle? titleStyle,
+    TextStyle? hostStyle,
     MColor? nSubtitleColor,
     MColor? nBackgroundColor,
     EdgeInsetsGeometry? nCardContentPadding,
     BorderRadiusGeometry? nBorderRadius,
-    MTextStyle? nTitleTextStyle,
-    MTextStyle? nSubtitleTextStyle,
+    TextStyle? nTitleTextStyle,
+    TextStyle? nSubtitleTextStyle,
   }) {
     return MCardStyles(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -90,8 +90,8 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
       backgroundColor: MColor.lerp(backgroundColor, other.backgroundColor, t),
       titleColor: MColor.lerp(titleColor, other.titleColor, t),
       hostColor: MColor.lerp(hostColor, other.hostColor, t),
-      titleStyle: MTextStyle.lerp(titleStyle, other.titleStyle, t),
-      hostStyle: MTextStyle.lerp(hostStyle, other.hostStyle, t),
+      titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
+      hostStyle: TextStyle.lerp(hostStyle, other.hostStyle, t),
       nSubtitleColor: MColor.lerp(nSubtitleColor, other.nSubtitleColor, t),
       nBackgroundColor:
           MColor.lerp(nBackgroundColor, other.nBackgroundColor, t),
@@ -100,9 +100,9 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
       nBorderRadius:
           BorderRadiusGeometry.lerp(nBorderRadius, other.nBorderRadius, t),
       nTitleTextStyle:
-          MTextStyle.lerp(nTitleTextStyle, other.nTitleTextStyle, t),
+          TextStyle.lerp(nTitleTextStyle, other.nTitleTextStyle, t),
       nSubtitleTextStyle:
-          MTextStyle.lerp(nSubtitleTextStyle, other.nSubtitleTextStyle, t),
+          TextStyle.lerp(nSubtitleTextStyle, other.nSubtitleTextStyle, t),
     );
   }
 

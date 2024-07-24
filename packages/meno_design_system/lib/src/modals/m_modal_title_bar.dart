@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
-
 class MModalTitleBar extends StatelessWidget {
   const MModalTitleBar({
     super.key,
@@ -23,11 +21,11 @@ class MModalTitleBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 24,
+            height: 24.toScale,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                MText(title, style: MTextStyle.subheadingMedium),
+                MText(title, style: $styles.text.subheadingMedium),
                 if (showCloseButton)
                   MIconButton(
                     icon: const Icon(MIcons.x_close),
@@ -37,7 +35,7 @@ class MModalTitleBar extends StatelessWidget {
               ],
             ),
           ),
-          MSize.verticalSpaceSmall,
+          $styles.spaces.verticalSmall,
           const MDivider(),
         ],
       ),

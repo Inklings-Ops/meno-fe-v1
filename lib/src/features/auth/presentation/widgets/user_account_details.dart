@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class UserAccountDetails extends StatelessWidget {
   final VoidCallback? action;
@@ -30,7 +26,7 @@ class _Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 74.h,
+      height: 74.toScale,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -41,13 +37,13 @@ class _Widget extends StatelessWidget {
                   ? MainAxisAlignment.end
                   : MainAxisAlignment.center,
               children: [
-                const MText(
+                MText(
                   'Welcome back,',
-                  style: MTextStyle.subheadingMedium,
+                  style: $styles.text.subheadingMedium,
                 ),
                 MText(
                   user.fullName.getOr(),
-                  style: MTextStyle.heading2Medium,
+                  style: $styles.text.heading2Medium,
                 ),
               ],
             ),
@@ -58,12 +54,12 @@ class _Widget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MAvatar(radius: 24.r, url: user.imageUrl),
+                MAvatar(radius: 24.toScale, url: user.imageUrl),
                 if (action != null) ...[
-                  MCore.micro.verticalSpace,
+                  $styles.spaces.verticalMicro,
                   MText(
                     'Switch account',
-                    style: MTextStyle.captionMedium,
+                    style: $styles.text.captionMedium,
                     color: MColorScheme.of(context)?.primary,
                   ),
                 ],

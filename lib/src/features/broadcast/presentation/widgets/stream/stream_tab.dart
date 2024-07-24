@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class StreamTab extends HookWidget {
@@ -13,26 +9,26 @@ class StreamTab extends HookWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).r,
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).radius,
           child: Column(
             children: [
               const _StreamArtwork(),
-              MCore.small.verticalSpace,
+              $styles.spaces.verticalSmall,
               const BroadcastTimer(),
-              MCore.small.verticalSpace,
+              $styles.spaces.verticalSmall,
               const _StreamTitle(),
-              MCore.small.verticalSpace,
+              $styles.spaces.verticalSmall,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const _CreatorName(),
-                  MCore.small.horizontalSpace,
+                  $styles.spaces.horizontalSmall,
                   const BroadcastStatusWidget(isStreaming: true),
                 ],
               ),
-              24.verticalSpace,
+              24.vSpace,
               const StreamControls(),
-              MCore.large.verticalSpace,
+              $styles.spaces.verticalLarge,
             ],
           ),
         ),
@@ -40,8 +36,8 @@ class StreamTab extends HookWidget {
           child: Column(
             children: [
               Container(
-                margin: const EdgeInsets.fromLTRB(16, 8, 16, 0).r,
-                constraints: const BoxConstraints(maxHeight: 32).r,
+                margin: const EdgeInsets.fromLTRB(16, 8, 16, 0).radius,
+                constraints: const BoxConstraints(maxHeight: 32).radius,
                 child: TabBar.secondary(
                   controller: tabController,
                   tabs: const [
@@ -50,7 +46,7 @@ class StreamTab extends HookWidget {
                   ],
                 ),
               ),
-              24.verticalSpace,
+              24.vSpace,
               Expanded(
                 child: TabBarView(
                   controller: tabController,
@@ -107,7 +103,7 @@ class _CreatorName extends StatelessWidget {
       ),
       builder: (context, fullName) => MText(
         fullName,
-        style: MTextStyle.captionRegular,
+        style: $styles.text.captionRegular,
       ),
     );
   }

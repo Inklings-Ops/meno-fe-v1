@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 enum ReactionType { clap, flame, like, raise, snap }
 
@@ -11,25 +9,27 @@ class Reaction {
   const Reaction(this.reactionType, this.icon);
 }
 
+final dimension = 20.toScale;
+
 final List<Reaction> reactions = <Reaction>[
   Reaction(
     ReactionType.clap,
-    Assets.images.clappingHands.image(height: 20.r, width: 20.r),
+    Assets.images.clappingHands.image(height: dimension, width: dimension),
   ),
   Reaction(
     ReactionType.flame,
-    Assets.images.flame.image(height: 20.r, width: 20.r),
+    Assets.images.flame.image(height: dimension, width: dimension),
   ),
   Reaction(
     ReactionType.like,
-    Assets.images.redHeart.image(height: 20.r, width: 20.r),
+    Assets.images.redHeart.image(height: dimension, width: dimension),
   ),
   Reaction(
     ReactionType.raise,
-    Assets.images.raisingHands.image(height: 20.r, width: 20.r),
+    Assets.images.raisingHands.image(height: dimension, width: dimension),
   ),
   Reaction(
     ReactionType.snap,
-    Assets.images.fingerSnap.image(height: 20.r, width: 20.r),
+    Assets.images.fingerSnap.image(height: dimension, width: dimension),
   ),
 ];

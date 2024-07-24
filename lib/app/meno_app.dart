@@ -1,12 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
-import 'package:meno_fe_v1/src/features/network/application/network_cubit.dart';
-
-import '../src/router/m_router.dart';
-import 'meno_wrapper.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
@@ -16,33 +10,27 @@ class MenoApp extends StatefulWidget {
 
 class _MenoAppState extends State<MenoApp> {
   late final AppLifecycleListener _listener;
-
   final toastBuilder = FToastBuilder();
-  final routerConfig = MRouter.routerConfig;
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      ensureScreenSize: true,
-      builder: (_, child) => MaterialApp.router(
-        theme: MTheme.light,
-        darkTheme: MTheme.dark,
+    return ProviderScope(
+      child: MaterialApp.router(
+        locale: DevicePreview.locale(context),
         debugShowCheckedModeBanner: false,
-        routerDelegate: routerConfig.routerDelegate,
-        routeInformationParser: routerConfig.routeInformationParser,
-        routeInformationProvider: routerConfig.routeInformationProvider,
+        routerDelegate: router.routerDelegate,
+        routeInformationParser: router.routeInformationParser,
+        routeInformationProvider: router.routeInformationProvider,
+        theme: ThemeData(fontFamily: FontFamily.sFProDisplay),
         builder: (context, child) {
           child = toastBuilder(context, child);
-          return MediaQuery(
-            data: context.getDirtyData,
-            child: Overlay(
-              initialEntries: [
-                OverlayEntry(builder: (_) => MenoWrapper(child: child)),
-              ],
-            ),
+          return ResponsiveBreakpoints.builder(
+            child: DevicePreview.appBuilder(context, child),
+            breakpoints: const [
+              Breakpoint(start: 0, end: 450, name: MOBILE),
+              Breakpoint(start: 451, end: 800, name: TABLET),
+              Breakpoint(start: 801, end: 1920, name: DESKTOP),
+            ],
           );
         },
       ),
@@ -75,11 +63,5 @@ class _MenoAppState extends State<MenoApp> {
         }
         break;
     }
-  }
-}
-
-extension MediaQueryX on BuildContext {
-  MediaQueryData get getDirtyData {
-    return MediaQuery.of(this).copyWith(textScaler: TextScaler.linear(1.sp));
   }
 }

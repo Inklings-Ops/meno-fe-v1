@@ -1,15 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-
-import 'empty_folder_list_widget.dart';
-import 'folder_list_failure_widget.dart';
-import 'folder_list_tile.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class AddToFolderModal extends HookWidget {
   const AddToFolderModal({super.key, required this.note});
@@ -58,10 +48,9 @@ class AddToFolderModal extends HookWidget {
                       primary: false,
                       shrinkWrap: true,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: MCore.large).r,
+                      padding: const EdgeInsets.only(bottom: 16).radius,
                       itemCount: folders.length,
-                      separatorBuilder: (context, i) =>
-                          MCore.large.verticalSpace,
+                      separatorBuilder: (_, i) => $styles.spaces.verticalLarge,
                       itemBuilder: (context, i) {
                         final folder = folders[i]!;
                         return FolderListTile(
@@ -76,7 +65,7 @@ class AddToFolderModal extends HookWidget {
               ),
             ),
             if (selectedFolder.value != null) ...[
-              MCore.large.verticalSpace,
+              $styles.spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: noteListBloc.state.isLoading,

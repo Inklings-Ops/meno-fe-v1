@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class CreateFolderModal extends StatefulWidget {
   const CreateFolderModal({super.key, this.initialFolder});
@@ -62,11 +54,11 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              10.verticalSpace,
+              10.vSpace,
               _TitleField(initialTitle: widget.initialFolder?.title),
-              56.verticalSpace,
+              56.vSpace,
               const _SubmitButton(),
-              132.verticalSpace,
+              132.vSpace,
             ],
           ),
         ),
@@ -77,7 +69,6 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
 
 class _TitleField extends StatelessWidget {
   const _TitleField({this.initialTitle});
-
   final FolderTitle? initialTitle;
 
   @override
@@ -100,7 +91,7 @@ class _TitleField extends StatelessWidget {
 
     return TextFormField(
       autofocus: true,
-      style: MTextStyle.heading1Regular,
+      style: $styles.text.heading1Regular,
       initialValue: initialTitle?.getOr(),
       textAlign: TextAlign.center,
       onChanged: bloc.titleChanged,

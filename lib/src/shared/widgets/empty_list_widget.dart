@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class EmptyListWidget extends StatelessWidget {
   const EmptyListWidget({super.key, this.title});
-
   final String? title;
 
   @override
@@ -14,11 +11,14 @@ class EmptyListWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.images.liveForYou.image(height: 120.r, width: 120.r),
-          MCore.medium.verticalSpace,
+          Assets.images.liveForYou.image(
+            height: 120.toScale,
+            width: 120.toScale,
+          ),
+          $styles.spaces.verticalMedium,
           MText(
             title ?? 'Nothing to show here',
-            style: MTextStyle.captionMedium,
+            style: $styles.text.captionMedium,
             textAlign: TextAlign.center,
           ),
         ],

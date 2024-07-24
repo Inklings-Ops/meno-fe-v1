@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart'; 
 
 class BroadcastArtworkWidget extends StatelessWidget {
   final String? imageUrl;
@@ -9,8 +7,8 @@ class BroadcastArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24).r,
-      child: MAvatar(radius: 48.r, url: imageUrl),
+      padding: const EdgeInsets.all(24).radius,
+      child: MAvatar(radius: 48.toScale, url: imageUrl),
     );
   }
 }

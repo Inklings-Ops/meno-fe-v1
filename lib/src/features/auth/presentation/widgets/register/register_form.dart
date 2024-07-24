@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
 
-import '../widgets.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+
 
 class RegisterForm extends HookWidget {
   const RegisterForm({super.key});
@@ -17,14 +15,15 @@ class RegisterForm extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const RegisterNameField(),
-          24.verticalSpace,
+          24.vSpace,
           const RegisterEmail(),
-          24.verticalSpace,
+          24.vSpace,
           const RegisterPasswordField(),
+          $styles.spaces.verticalSmall,
           const PasswordRulesWidget(),
-          MCore.large.verticalSpace,
+          $styles.spaces.verticalLarge,
           const RememberMeCheckboxTile(),
-          MCore.xxLarge.verticalSpace,
+          $styles.spaces.verticalXXLarge,
           const RegisterButton(),
         ],
       ),

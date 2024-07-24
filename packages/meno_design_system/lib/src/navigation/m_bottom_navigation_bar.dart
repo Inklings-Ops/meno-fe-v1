@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/m_decorations.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/m_internal.dart';
-import 'package:meno_design_system/src/theme/m_color.dart';
-import 'package:meno_design_system/src/theme/m_icons.dart';
 
 /// A customizable bottom navigation bar widget for your Flutter app.
 ///
@@ -70,16 +68,16 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final theme = Theme.of(context).bottomNavigationBarTheme;
 
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
 
     return Container(
       width: size.width,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all($styles.insets.large),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
         border: Border(
           top: BorderSide(
-            width: 0.80,
+            width: 0.80.toScale,
             color: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
           ),
         ),
@@ -157,7 +155,7 @@ class MBottomBarNavigationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).bottomNavigationBarTheme;
 
-    final String? effectiveTooltip =
+    final effectiveTooltip =
         item?.tooltip == '' ? null : item?.tooltip ?? item?.label;
 
     final Widget content = (customItem != null)
@@ -173,7 +171,7 @@ class MBottomBarNavigationItem extends StatelessWidget {
                     : theme.unselectedIconTheme!,
                 child: item!.icon,
               ),
-              const SizedBox(height: 6),
+              6.vSpace,
               if (item!.label != null)
                 Text(
                   item!.label!,
@@ -188,8 +186,8 @@ class MBottomBarNavigationItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: theme.backgroundColor,
-        width: 62.50,
-        height: 56,
+        width: 62.50.toScale,
+        height: 56.toScale,
         child: content,
       ),
     );
@@ -200,7 +198,7 @@ class MBottomBarNavigationItem extends StatelessWidget {
       finalResult = Tooltip(
         message: effectiveTooltip,
         preferBelow: false,
-        verticalOffset: 50,
+        verticalOffset: 50.toScale,
         excludeFromSemantics: true,
         child: result,
       );
@@ -222,10 +220,10 @@ class MBottomBarNavigationItem extends StatelessWidget {
 }
 
 const double _kMicSize = 56.0;
-const BoxConstraints _kConstraints = BoxConstraints(
+final BoxConstraints _kConstraints = const BoxConstraints(
   minWidth: _kMicSize,
   minHeight: _kMicSize,
-);
+).radius;
 
 /// A microphone icon widget with custom styling.
 ///
@@ -236,19 +234,19 @@ class Microphone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final VisualDensity visualDensity = theme.visualDensity;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final visualDensity = theme.visualDensity;
 
     return Container(
-      height: _kMicSize,
-      width: _kMicSize,
+      height: _kMicSize.toScale,
+      width: _kMicSize.toScale,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: colorScheme.primary,
-        boxShadow: MDecorations.micBoxShadow,
+        boxShadow: $styles.shadows.mic,
       ),
-      constraints: visualDensity.effectiveConstraints(_kConstraints),
+      constraints: visualDensity.effectiveConstraints(_kConstraints).radius,
       child: Icon(MIcons.microphone, color: colorScheme.onPrimary),
     );
   }

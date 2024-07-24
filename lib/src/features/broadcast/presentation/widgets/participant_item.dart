@@ -1,18 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class ParticipantItem extends StatelessWidget {
-  final Participant? participant;
-  final VoidCallback? onTap;
-  final bool isCohost;
-  final bool isForAddCohost;
-  final bool isCreator;
-
   const ParticipantItem({
     super.key,
     this.participant,
@@ -21,15 +10,19 @@ class ParticipantItem extends StatelessWidget {
     this.isCohost = false,
     this.isForAddCohost = false,
   });
+  final Participant? participant;
+  final VoidCallback? onTap;
+  final bool isCohost;
+  final bool isForAddCohost;
+  final bool isCreator;
 
   @override
   Widget build(BuildContext context) {
     final hasUser = participant != null;
     return InkWell(
       onTap: onTap,
-      child: SizedBox(
-        height: 88.r,
-        width: 80.r,
+      child: SizedBox.square(
+        dimension: 88.toScale,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -38,12 +31,12 @@ class ParticipantItem extends StatelessWidget {
               participant: participant,
               isForAddCohost: isForAddCohost,
             ),
-            MCore.small.verticalSpace,
+            $styles.spaces.verticalSmall,
             SizedBox(
-              height: MCore.large.r,
+              height: $styles.insets.large,
               child: MText(
                 hasUser ? participant!.fullName : 'Add Co-host',
-                style: MTextStyle.microMedium.copyWith(height: 1),
+                style: $styles.text.microMedium.copyWith(height: 1),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 color: hasUser ? null : MColor.grey50,
@@ -51,16 +44,16 @@ class ParticipantItem extends StatelessWidget {
               ),
             ),
             if (isCohost) ...[
-              MCore.micro.verticalSpace,
+              $styles.spaces.verticalMicro,
               SizedBox(
-                height: MCore.medium.r,
+                height: $styles.insets.medium,
                 child: _CoHostTag(participantId: participant!.id),
               ),
             ],
             if (isCreator) ...[
-              MCore.micro.verticalSpace,
+              $styles.spaces.verticalMicro,
               SizedBox(
-                height: MCore.medium.r,
+                height: $styles.insets.medium,
                 child: _HostTag(participantId: participant!.id),
               ),
             ],
@@ -79,35 +72,36 @@ class _ParticipantAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    return SizedBox(
-      height: 48.r,
-      width: 48.r,
+    return SizedBox.square(
+      dimension: 48.toScale,
       child: Stack(
         fit: StackFit.loose,
         children: [
           MAvatar(
-            radius: 24.r,
+            radius: 24.toScale,
             url: participant?.imageUrl,
             hasBorder: false,
-            child: participant == null ? Icon(MIcons.user, size: 16.r) : null,
+            child: participant == null
+                ? Icon(MIcons.user, size: 16.toScale)
+                : null,
           ),
           if (isForAddCohost)
             Positioned(
-              left: 30.r,
-              top: 30.r,
+              left: 30.toScale,
+              top: 30.toScale,
               child: Container(
-                padding: const EdgeInsets.all(4).r,
+                padding: EdgeInsets.all($styles.insets.micro),
                 decoration: BoxDecoration(
                   color: colors.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    width: 2.r,
+                    width: 2.toScale,
                     color: colors.background!,
                   ),
                 ),
                 child: Icon(
                   MIcons.x_close,
-                  size: 8.r,
+                  size: $styles.insets.small,
                   color: colors.onError,
                 ),
               ),
@@ -166,6 +160,6 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MText(title, style: MTextStyle.nanoRegular.copyWith(height: 1));
+    return MText(title, style: $styles.text.nanoRegular.copyWith(height: 1));
   }
 }

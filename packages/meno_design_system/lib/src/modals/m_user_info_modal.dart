@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
-
 class MUserInfoModal extends StatelessWidget {
-  final bool loading;
-  final String? error;
-  final String? fullName;
-  final String? bio;
-  final String? imageUrl;
-  final VoidCallback? onSubscribe;
-  final VoidCallback? onViewAccount;
-
   const MUserInfoModal({
     super.key,
     this.fullName,
@@ -22,6 +12,13 @@ class MUserInfoModal extends StatelessWidget {
     this.loading = false,
     this.error,
   });
+  final bool loading;
+  final String? error;
+  final String? fullName;
+  final String? bio;
+  final String? imageUrl;
+  final VoidCallback? onSubscribe;
+  final VoidCallback? onViewAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -35,32 +32,32 @@ class MUserInfoModal extends StatelessWidget {
           else if (!loading && error != null)
             Center(child: MText(error!))
           else ...[
-            MAvatar(radius: 36, url: imageUrl),
-            MSize.verticalSpaceLarge,
+            MAvatar(radius: 36.toScale, url: imageUrl),
+            $styles.spaces.verticalLarge,
             MText(
               fullName!,
-              style: MTextStyle.heading3Medium,
+              style: $styles.text.heading3Medium,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
             if (bio != null) ...[
-              MSize.verticalSpaceMicro,
+              $styles.spaces.verticalMicro,
               MText(
                 bio!,
-                style: MTextStyle.subheadingRegular,
+                style: $styles.text.subheadingRegular,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
               ),
             ],
-            MSize.verticalSpaceLarge,
+            $styles.spaces.verticalLarge,
             MPrimaryButton.icon(
               label: "Subscribe",
               icon: const Icon(MIcons.user),
               onPressed: onSubscribe,
             ),
-            MSize.verticalSpaceSmall,
+            $styles.spaces.verticalSmall,
             MTextButton(label: "View Account", onPressed: onViewAccount),
           ]
         ],

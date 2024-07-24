@@ -2,17 +2,8 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/m_decorations.dart';
-
-import '../m_size.dart';
 
 class MLiveCard extends StatelessWidget {
-  final String title;
-  final String host;
-  final String? imageUrl;
-  final int? liveCount;
-  final VoidCallback? onTap;
-
   const MLiveCard({
     super.key,
     required this.title,
@@ -21,6 +12,11 @@ class MLiveCard extends StatelessWidget {
     this.liveCount = 0,
     this.onTap,
   });
+  final String title;
+  final String host;
+  final String? imageUrl;
+  final int? liveCount;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -42,33 +38,33 @@ class MLiveCard extends StatelessWidget {
         children: [
           _Container(
             children: [
-              MAvatar(radius: 44, url: imageUrl),
-              MSize.verticalSpaceMedium,
+              MAvatar(radius: 44.toScale, url: imageUrl),
+              $styles.spaces.verticalMedium,
               SizedBox(
-                height: 24,
+                height: 24.toScale,
                 child: MText(
                   title,
                   style: styles.titleStyle,
                   color: styles.titleColor,
-                  textAlign: TextAlign.center,
                   maxLines: 1,
+                  textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              MSize.verticalSpaceMicro,
+              $styles.spaces.verticalMicro,
               MText(
                 host,
                 style: styles.hostStyle,
                 color: styles.hostColor,
-                textAlign: TextAlign.center,
                 maxLines: 1,
+                textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
           Positioned(
-            top: 8.0,
-            left: 16.0,
+            top: 8.0.toScale,
+            left: 16.0.toScale,
             child: MBadge.live(count: count, showBorder: true),
           )
         ],
@@ -82,24 +78,24 @@ class MLiveCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       clipBehavior: Clip.none,
       children: [
         _Container(
           children: [
-            MShimmer(shape: BoxShape.circle, height: 88, width: 88),
-            MSize.verticalSpaceMedium,
-            MShimmer(height: 24, width: 144),
-            MSize.verticalSpaceMicro,
-            MShimmer(height: 14, width: 80),
+            const MShimmer(shape: BoxShape.circle, height: 88, width: 88),
+            $styles.spaces.verticalMedium,
+            const MShimmer(height: 24, width: 144),
+            $styles.spaces.verticalMicro,
+            const MShimmer(height: 14, width: 80),
           ],
         ),
         Positioned(
-          top: 8.0,
-          left: 16.0,
+          top: 8.0.toScale,
+          left: 16.0.toScale,
           child: MShimmer(
-            borderRadius: MCore.circle,
-            child: MBadge.live(count: "00K", showBorder: true),
+            borderRadius: $styles.insets.circle,
+            child: const MBadge.live(count: "00K", showBorder: true),
           ),
         )
       ],
@@ -108,29 +104,26 @@ class MLiveCardSkeleton extends StatelessWidget {
 }
 
 class _Container extends StatelessWidget {
-  final List<Widget> children;
   const _Container({required this.children});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
-
     return Container(
-      width: 176,
-      height: 176,
-      padding: const EdgeInsets.all(14),
+      width: 176.toScale,
+      height: 176.toScale,
+      padding: const EdgeInsets.all(14).radius,
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        shadows: MDecorations.cardShadow,
-        shape: const SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
-          ),
+        shadows: $styles.shadows.soft,
+        shape: SmoothRectangleBorder(
+          borderRadius: $styles.radius.squircleLarge,
         ),
       ),
       child: SizedBox(
-        width: 144,
-        height: 144,
+        width: 144.toScale,
+        height: 144.toScale,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,

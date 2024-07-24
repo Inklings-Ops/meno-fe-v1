@@ -1,13 +1,6 @@
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/services/services.dart' hide StreamState;
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class LiveActivityCard extends StatelessWidget {
   const LiveActivityCard({super.key});
@@ -36,18 +29,16 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: MCore.xxLarge).r,
+      padding: EdgeInsets.only(bottom: $styles.insets.xxLarge),
       child: InkWell(
         onTap: () => context.push(Routes.stream),
         child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16).r,
-          shape: const SmoothRectangleBorder(
-            borderRadius: SmoothBorderRadius.all(
-              SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
-            ),
+          margin: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+          shape: SmoothRectangleBorder(
+            borderRadius: $styles.radius.squircleLarge,
           ),
           child: Padding(
-            padding: const EdgeInsets.all(14).r,
+            padding: const EdgeInsets.all(14).radius,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -57,13 +48,13 @@ class ActivityCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _Badge(badgeTitle: badgeTitle),
-                      2.verticalSpace,
+                      2.vSpace,
                       const _StreamTitle(),
                       const _StreamCreatorName(),
                     ],
                   ),
                 ),
-                MCore.medium.horizontalSpace,
+                $styles.spaces.horizontalMedium,
                 const _LeaveButton(),
               ],
             ),
@@ -84,14 +75,17 @@ class _Badge extends StatelessWidget {
     return Row(
       children: [
         CircleAvatar(
-          radius: 5.r,
+          radius: 5.toScale,
           backgroundColor: colors.secondaryContainer,
-          child: CircleAvatar(radius: 3.r, backgroundColor: colors.secondary),
+          child: CircleAvatar(
+            radius: 3.toScale,
+            backgroundColor: colors.secondary,
+          ),
         ),
-        MCore.micro.horizontalSpace,
+        $styles.spaces.horizontalMicro,
         MText(
           badgeTitle,
-          style: MTextStyle.microMedium,
+          style: $styles.text.microMedium,
           color: MColorScheme.of(context)?.error,
         ),
       ],
@@ -105,7 +99,6 @@ class _LeaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<StreamBloc>();
-
     return BlocBuilder<StreamBloc, StreamState>(
       builder: (context, state) {
         void onLeave() {
@@ -119,15 +112,13 @@ class _LeaveButton extends StatelessWidget {
         }
 
         return LimitedBox(
-          maxHeight: 32.h,
-          maxWidth: 79.w,
+          maxHeight: 32.toScale,
+          maxWidth: 79.toScale,
           child: MDangerButton(
             label: 'Leave',
             onPressed: onLeave,
             style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8).r,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
             ),
           ),
         );
@@ -148,11 +139,11 @@ class _StreamTitle extends StatelessWidget {
       builder: (context, title) {
         if (title == null) return const SizedBox();
         return Container(
-          height: 24.h,
+          height: 24.toScale,
           alignment: Alignment.centerLeft,
           child: MText(
             title,
-            style: MTextStyle.captionMedium,
+            style: $styles.text.captionMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -175,7 +166,7 @@ class _StreamCreatorName extends StatelessWidget {
         if (fullName == null) return const SizedBox();
         return MText(
           fullName,
-          style: MTextStyle.captionRegular,
+          style: $styles.text.captionRegular,
           color: MColorScheme.of(context)!.onBackgroundVariant,
         );
       },

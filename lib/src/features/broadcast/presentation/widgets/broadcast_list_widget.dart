@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastListWidget extends StatelessWidget {
   final NullableIndexedWidgetBuilder itemBuilder;
@@ -17,8 +15,8 @@ class BroadcastListWidget extends StatelessWidget {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
-      padding: const EdgeInsets.symmetric(horizontal: MCore.large),
-      separatorBuilder: (context, i) => 24.horizontalSpace,
+      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+      separatorBuilder: (context, i) => 24.hSpace,
       itemCount: itemCount,
       itemBuilder: itemBuilder,
     );

@@ -17,119 +17,119 @@ import 'package:image_picker/image_picker.dart' as _i10;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i11;
-import 'package:shared_preferences/shared_preferences.dart' as _i24;
+import 'package:shared_preferences/shared_preferences.dart' as _i25;
 
-import '../features/auth/application/account/account_bloc.dart' as _i65;
-import '../features/auth/application/login/login_cubit.dart' as _i46;
-import '../features/auth/application/register/register_cubit.dart' as _i56;
+import '../../config.dart' as _i15;
+import '../features/auth/application/account/account_bloc.dart' as _i58;
+import '../features/auth/application/login/login_cubit.dart' as _i74;
+import '../features/auth/application/register/register_cubit.dart' as _i48;
 import '../features/auth/application/reset_password/reset_password_cubit.dart'
-    as _i57;
-import '../features/auth/auth.dart' as _i28;
-import '../features/auth/domain/domain.dart' as _i47;
-import '../features/auth/infrastructure/auth_facade.dart' as _i29;
+    as _i49;
+import '../features/auth/auth.dart' as _i29;
+import '../features/auth/domain/domain.dart' as _i50;
+import '../features/auth/infrastructure/auth_facade.dart' as _i30;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
-    as _i26;
+    as _i27;
 import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart'
     as _i3;
-import '../features/bible/application/bible/bible_bloc.dart' as _i66;
+import '../features/bible/application/bible/bible_bloc.dart' as _i59;
 import '../features/bible/application/scripture_picker/scripture_picker_cubit.dart'
-    as _i58;
+    as _i51;
 import '../features/bible/application/translations/translations_cubit.dart'
-    as _i63;
-import '../features/bible/application/verses/verses_cubit.dart' as _i64;
-import '../features/bible/domain/domain.dart' as _i31;
-import '../features/bible/infrastructure/bible_facade.dart' as _i32;
-import '../features/bible/infrastructure/datasources/datasources.dart' as _i33;
+    as _i56;
+import '../features/bible/application/verses/verses_cubit.dart' as _i57;
+import '../features/bible/domain/domain.dart' as _i32;
+import '../features/bible/infrastructure/bible_facade.dart' as _i33;
+import '../features/bible/infrastructure/datasources/datasources.dart' as _i34;
 import '../features/bible/infrastructure/datasources/local/bible_local_datasource.dart'
-    as _i27;
+    as _i28;
 import '../features/bible/infrastructure/datasources/remote/bible_remote_datasource.dart'
     as _i4;
 import '../features/broadcast/application/broadcast/broadcast_bloc.dart'
-    as _i67;
+    as _i60;
 import '../features/broadcast/application/broadcast_form/broadcast_form_cubit.dart'
-    as _i68;
+    as _i61;
 import '../features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart'
-    as _i78;
+    as _i72;
 import '../features/broadcast/application/live_participants/live_participants_bloc.dart'
-    as _i79;
+    as _i73;
 import '../features/broadcast/application/recently_live/recently_live_cubit.dart'
-    as _i54;
-import '../features/broadcast/application/stream/stream_bloc.dart' as _i62;
-import '../features/broadcast/application/timer/timer_cubit.dart' as _i25;
-import '../features/broadcast/broadcast.dart' as _i34;
-import '../features/broadcast/domain/domain.dart' as _i55;
-import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i35;
+    as _i46;
+import '../features/broadcast/application/stream/stream_bloc.dart' as _i55;
+import '../features/broadcast/application/timer/timer_cubit.dart' as _i26;
+import '../features/broadcast/broadcast.dart' as _i35;
+import '../features/broadcast/domain/domain.dart' as _i47;
+import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i36;
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart'
     as _i5;
-import '../features/chat/application/chat_bloc.dart' as _i89;
-import '../features/discover/application/all/d_all_cubit.dart' as _i69;
-import '../features/discover/application/filter/filter_bloc.dart' as _i72;
+import '../features/chat/application/chat_bloc.dart' as _i91;
+import '../features/discover/application/all/d_all_cubit.dart' as _i62;
+import '../features/discover/application/filter/filter_bloc.dart' as _i65;
 import '../features/discover/application/now_live/d_now_live_cubit.dart'
-    as _i70;
+    as _i63;
 import '../features/discover/application/recently_live/d_recently_live_cubit.dart'
-    as _i71;
-import '../features/discover/application/search/search_bloc.dart' as _i59;
+    as _i64;
+import '../features/discover/application/search/search_bloc.dart' as _i52;
 import '../features/discover/discover.dart' as _i6;
-import '../features/discover/infrastructure/discover_facade.dart' as _i36;
-import '../features/network/application/network_cubit.dart' as _i48;
-import '../features/network/domain/i_network_facade.dart' as _i37;
-import '../features/network/infrastructure/network_facade.dart' as _i38;
-import '../features/notes/application/folder/folder_cubit.dart' as _i90;
+import '../features/discover/infrastructure/discover_facade.dart' as _i37;
+import '../features/network/application/network_cubit.dart' as _i42;
+import '../features/network/domain/i_network_facade.dart' as _i38;
+import '../features/network/infrastructure/network_facade.dart' as _i39;
+import '../features/notes/application/folder/folder_cubit.dart' as _i85;
 import '../features/notes/application/folder_form/folder_form_cubit.dart'
-    as _i91;
+    as _i86;
 import '../features/notes/application/folder_list/folder_list_bloc.dart'
-    as _i92;
-import '../features/notes/application/note_form/note_form_cubit.dart' as _i85;
-import '../features/notes/application/notes/notes_bloc.dart' as _i86;
-import '../features/notes/domain/domain.dart' as _i73;
-import '../features/notes/infrastructure/datasources/datasources.dart' as _i75;
+    as _i87;
+import '../features/notes/application/note_form/note_form_cubit.dart' as _i80;
+import '../features/notes/application/notes/notes_bloc.dart' as _i82;
+import '../features/notes/domain/domain.dart' as _i81;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
-    as _i49;
+    as _i43;
 import '../features/notes/infrastructure/datasources/note_remote_datasource.dart'
-    as _i16;
-import '../features/notes/infrastructure/note_facade.dart' as _i74;
-import '../features/notes/notes.dart' as _i87;
-import '../features/notifications/domain/i_notification_facade.dart' as _i39;
-import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart'
     as _i17;
-import '../features/notifications/infrastructure/mapper/notifications_mapper.dart'
+import '../features/notes/infrastructure/note_facade.dart' as _i67;
+import '../features/notes/notes.dart' as _i66;
+import '../features/notifications/domain/i_notification_facade.dart' as _i40;
+import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart'
     as _i18;
+import '../features/notifications/infrastructure/mapper/notifications_mapper.dart'
+    as _i19;
 import '../features/notifications/infrastructure/notification_facade.dart'
-    as _i40;
-import '../features/onboarding/application/onboarding_cubit.dart' as _i51;
-import '../features/onboarding/domain/i_onboarding_facade.dart' as _i41;
-import '../features/onboarding/infrastructure/onboarding_facade.dart' as _i42;
-import '../features/onboarding/infrastructure/onboarding_local_datasource.dart'
-    as _i52;
-import '../features/onboarding/onboarding.dart' as _i45;
-import '../features/profile/application/profile/my_profile_bloc.dart' as _i83;
+    as _i41;
+import '../features/profile/application/profile/my_profile_bloc.dart' as _i78;
 import '../features/profile/application/profile_form/profile_form_cubit.dart'
-    as _i88;
-import '../features/profile/domain/domain.dart' as _i76;
+    as _i84;
+import '../features/profile/domain/domain.dart' as _i68;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
-    as _i53;
+    as _i45;
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart'
-    as _i22;
-import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i21;
-import '../features/profile/infrastructure/profile_facade.dart' as _i77;
-import '../features/profile/profile.dart' as _i84;
+    as _i23;
+import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i22;
+import '../features/profile/infrastructure/profile_facade.dart' as _i69;
+import '../features/profile/profile.dart' as _i79;
+import '../features/settings/application/onboarding/onboarding_cubit.dart'
+    as _i83;
+import '../features/settings/infrastructure/datasources/settings_local_datasource.dart'
+    as _i53;
+import '../features/settings/infrastructure/settings_facade.dart' as _i71;
+import '../features/settings/settings.dart' as _i70;
 import '../services/jwt_service.dart' as _i12;
-import '../services/live_kit/live_kit.dart' as _i81;
+import '../services/live_kit/live_kit.dart' as _i76;
 import '../services/live_kit/live_kit_service.dart' as _i13;
 import '../services/media_service.dart' as _i14;
-import '../services/meno/meno_bloc.dart' as _i80;
-import '../services/network_service.dart' as _i15;
-import '../services/notification_service.dart' as _i50;
-import '../services/objectbox_service.dart' as _i19;
-import '../services/permissions_service.dart' as _i20;
-import '../services/secure_storage_service.dart' as _i23;
-import '../services/services.dart' as _i30;
-import '../services/socket/socket.dart' as _i82;
-import '../services/socket/socket_service.dart' as _i61;
-import '../shared/session/cubit/session_cubit.dart' as _i60;
-import '../shared/session/session_context.dart' as _i44;
-import '../shared/shared.dart' as _i43;
-import 'register_module.dart' as _i93;
+import '../services/meno/meno_bloc.dart' as _i75;
+import '../services/network_service.dart' as _i16;
+import '../services/notification_service.dart' as _i44;
+import '../services/objectbox_service.dart' as _i20;
+import '../services/permissions_service.dart' as _i21;
+import '../services/secure_storage_service.dart' as _i24;
+import '../services/services.dart' as _i31;
+import '../services/socket/socket.dart' as _i77;
+import '../services/socket/socket_service.dart' as _i54;
+import '../shared/session/cubit/session_cubit.dart' as _i90;
+import '../shared/session/session_context.dart' as _i89;
+import '../shared/shared.dart' as _i88;
+import 'register_module.dart' as _i92;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -163,218 +163,213 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i13.LiveKitService>(() => _i13.LiveKitService());
     gh.lazySingleton<_i14.MediaService>(
         () => _i14.MediaService(gh<_i10.ImagePicker>()));
-    gh.factory<_i15.NetworkService>(
-        () => _i15.NetworkService(gh<_i11.InternetConnectionChecker>()));
-    gh.lazySingleton<_i16.NoteRemoteDatasource>(
+    gh.singleton<_i15.MenoConfig>(_i15.MenoConfig());
+    gh.factory<_i16.NetworkService>(
+        () => _i16.NetworkService(gh<_i11.InternetConnectionChecker>()));
+    gh.lazySingleton<_i17.NoteRemoteDatasource>(
         () => registerModule.noteRemoteDatasource);
-    gh.lazySingleton<_i17.NotificationRemoteDatasource>(
+    gh.lazySingleton<_i18.NotificationRemoteDatasource>(
         () => registerModule.notificationRemoteDatasource);
-    gh.singleton<_i18.NotificationsMapper>(_i18.NotificationsMapper());
-    await gh.factoryAsync<_i19.ObjectBoxService>(
+    gh.singleton<_i19.NotificationsMapper>(_i19.NotificationsMapper());
+    await gh.factoryAsync<_i20.ObjectBoxService>(
       () => registerModule.obj,
       preResolve: true,
     );
-    await gh.factoryAsync<_i20.PermissionsService>(
+    await gh.factoryAsync<_i21.PermissionsService>(
       () {
-        final i = _i20.PermissionsService();
+        final i = _i21.PermissionsService();
         return i.checkPermissions().then((_) => i);
       },
       preResolve: true,
     );
-    gh.singleton<_i21.ProfileMapper>(_i21.ProfileMapper());
-    gh.lazySingleton<_i22.ProfileRemoteDatasource>(
+    gh.singleton<_i22.ProfileMapper>(_i22.ProfileMapper());
+    gh.lazySingleton<_i23.ProfileRemoteDatasource>(
         () => registerModule.profileRemoteDatasource);
-    gh.lazySingleton<_i23.SecureStorageService>(
-        () => _i23.SecureStorageService());
-    await gh.factoryAsync<_i24.SharedPreferences>(
+    gh.lazySingleton<_i24.SecureStorageService>(
+        () => _i24.SecureStorageService());
+    await gh.factoryAsync<_i25.SharedPreferences>(
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.lazySingleton<_i25.TimerCubit>(() => _i25.TimerCubit());
-    gh.factory<_i26.AuthLocalDatasource>(() =>
-        _i26.AuthLocalDatasource(storage: gh<_i23.SecureStorageService>()));
-    gh.factory<_i27.BibleLocalDatasource>(() =>
-        _i27.BibleLocalDatasource(objectBox: gh<_i19.ObjectBoxService>()));
-    await gh.factoryAsync<_i28.IAuthFacade>(
+    gh.lazySingleton<_i26.TimerCubit>(() => _i26.TimerCubit());
+    gh.factory<_i27.AuthLocalDatasource>(() =>
+        _i27.AuthLocalDatasource(storage: gh<_i24.SecureStorageService>()));
+    gh.factory<_i28.BibleLocalDatasource>(() =>
+        _i28.BibleLocalDatasource(objectBox: gh<_i20.ObjectBoxService>()));
+    await gh.factoryAsync<_i29.IAuthFacade>(
       () {
-        final i = _i29.AuthFacade(
-          remoteDatasource: gh<_i28.AuthRemoteDatasource>(),
-          localDatasource: gh<_i28.AuthLocalDatasource>(),
-          networkService: gh<_i30.NetworkService>(),
-          jwtService: gh<_i30.JWTService>(),
+        final i = _i30.AuthFacade(
+          remoteDatasource: gh<_i29.AuthRemoteDatasource>(),
+          localDatasource: gh<_i29.AuthLocalDatasource>(),
+          networkService: gh<_i31.NetworkService>(),
+          jwtService: gh<_i31.JWTService>(),
         );
         return i.init().then((_) => i);
       },
       preResolve: true,
     );
-    await gh.factoryAsync<_i31.IBibleFacade>(
+    await gh.factoryAsync<_i32.IBibleFacade>(
       () {
-        final i = _i32.BibleFacade(
-          local: gh<_i33.BibleLocalDatasource>(),
-          remote: gh<_i33.BibleRemoteDatasource>(),
-          network: gh<_i15.NetworkService>(),
+        final i = _i33.BibleFacade(
+          local: gh<_i34.BibleLocalDatasource>(),
+          remote: gh<_i34.BibleRemoteDatasource>(),
+          network: gh<_i16.NetworkService>(),
         );
         return i.initialize().then((_) => i);
       },
       preResolve: true,
     );
-    gh.factory<_i34.IBroadcastFacade>(() => _i35.BroadcastFacade(
-          remote: gh<_i34.BroadcastRemoteDatasource>(),
-          network: gh<_i30.NetworkService>(),
+    gh.factory<_i35.IBroadcastFacade>(() => _i36.BroadcastFacade(
+          remote: gh<_i35.BroadcastRemoteDatasource>(),
+          network: gh<_i31.NetworkService>(),
         ));
-    gh.factory<_i6.IDiscoverFacade>(() => _i36.DiscoverFacade(
+    gh.factory<_i6.IDiscoverFacade>(() => _i37.DiscoverFacade(
           remote: gh<_i6.DiscoverRemoteDatasource>(),
-          network: gh<_i15.NetworkService>(),
+          network: gh<_i16.NetworkService>(),
         ));
-    gh.lazySingleton<_i37.INetworkFacade>(() =>
-        _i38.NetworkFacade(connectivity: gh<_i11.InternetConnectionChecker>()));
-    gh.lazySingleton<_i39.INotificationFacade>(() => _i40.NotificationFacade(
-          remoteDatasource: gh<_i17.NotificationRemoteDatasource>(),
-          networkService: gh<_i15.NetworkService>(),
+    gh.lazySingleton<_i38.INetworkFacade>(() =>
+        _i39.NetworkFacade(connectivity: gh<_i11.InternetConnectionChecker>()));
+    gh.lazySingleton<_i40.INotificationFacade>(() => _i41.NotificationFacade(
+          remoteDatasource: gh<_i18.NotificationRemoteDatasource>(),
+          networkService: gh<_i16.NetworkService>(),
         ));
-    gh.factory<_i41.IOnboardingFacade>(
-        () => _i42.OnboardingFacade(storage: gh<_i24.SharedPreferences>()));
-    await gh.factoryAsync<_i43.ISessionContext>(
+    gh.lazySingleton<_i42.NetworkCubit>(
+        () => _i42.NetworkCubit(facade: gh<_i38.INetworkFacade>()));
+    gh.factory<_i43.NoteLocalDatasource>(
+        () => _i43.NoteLocalDatasource(pref: gh<_i25.SharedPreferences>()));
+    await gh.factoryAsync<_i44.NotificationService>(
       () {
-        final i = _i44.SessionContext(
-          authFacade: gh<_i28.IAuthFacade>(),
-          onboardingFacade: gh<_i45.IOnboardingFacade>(),
-        );
-        return i.init().then((_) => i);
-      },
-      preResolve: true,
-    );
-    gh.lazySingleton<_i46.LoginCubit>(() => _i46.LoginCubit(
-          facade: gh<_i47.IAuthFacade>(),
-          onboardingFacade: gh<_i45.IOnboardingFacade>(),
-        ));
-    gh.lazySingleton<_i48.NetworkCubit>(
-        () => _i48.NetworkCubit(facade: gh<_i37.INetworkFacade>()));
-    gh.factory<_i49.NoteLocalDatasource>(
-        () => _i49.NoteLocalDatasource(pref: gh<_i24.SharedPreferences>()));
-    await gh.factoryAsync<_i50.NotificationService>(
-      () {
-        final i = _i50.NotificationService(
+        final i = _i44.NotificationService(
           firebaseMessaging: gh<_i7.FirebaseMessaging>(),
-          storageService: gh<_i23.SecureStorageService>(),
+          storageService: gh<_i24.SecureStorageService>(),
         );
         return i.initialize().then((_) => i);
       },
       preResolve: true,
     );
-    gh.lazySingleton<_i51.OnboardingCubit>(
-        () => _i51.OnboardingCubit(facade: gh<_i41.IOnboardingFacade>()));
-    gh.factory<_i52.OnboardingLocalDatasource>(() =>
-        _i52.OnboardingLocalDatasource(storage: gh<_i24.SharedPreferences>()));
-    gh.factory<_i53.ProfileLocalDatasource>(() =>
-        _i53.ProfileLocalDatasource(storage: gh<_i23.SecureStorageService>()));
-    gh.lazySingleton<_i54.RecentlyLiveCubit>(
-        () => _i54.RecentlyLiveCubit(facade: gh<_i55.IBroadcastFacade>()));
-    gh.lazySingleton<_i56.RegisterCubit>(
-        () => _i56.RegisterCubit(facade: gh<_i28.IAuthFacade>()));
-    gh.lazySingleton<_i57.ResetPasswordCubit>(
-        () => _i57.ResetPasswordCubit(facade: gh<_i47.IAuthFacade>()));
-    gh.factory<_i58.ScripturePickerCubit>(
-        () => _i58.ScripturePickerCubit(facade: gh<_i31.IBibleFacade>()));
-    gh.lazySingleton<_i59.SearchBloc>(
-        () => _i59.SearchBloc(facade: gh<_i6.IDiscoverFacade>()));
-    await gh.factoryAsync<_i60.SessionCubit>(
+    gh.factory<_i45.ProfileLocalDatasource>(() =>
+        _i45.ProfileLocalDatasource(storage: gh<_i24.SecureStorageService>()));
+    gh.lazySingleton<_i46.RecentlyLiveCubit>(
+        () => _i46.RecentlyLiveCubit(facade: gh<_i47.IBroadcastFacade>()));
+    gh.lazySingleton<_i48.RegisterCubit>(
+        () => _i48.RegisterCubit(facade: gh<_i29.IAuthFacade>()));
+    gh.lazySingleton<_i49.ResetPasswordCubit>(
+        () => _i49.ResetPasswordCubit(facade: gh<_i50.IAuthFacade>()));
+    gh.factory<_i51.ScripturePickerCubit>(
+        () => _i51.ScripturePickerCubit(facade: gh<_i32.IBibleFacade>()));
+    gh.lazySingleton<_i52.SearchBloc>(
+        () => _i52.SearchBloc(facade: gh<_i6.IDiscoverFacade>()));
+    gh.factory<_i53.SettingsLocalDatasource>(() => _i53.SettingsLocalDatasource(
+        preferences: gh<_i25.SharedPreferences>()));
+    await gh.factoryAsync<_i54.SocketService>(
       () {
-        final i = _i60.SessionCubit(session: gh<_i43.ISessionContext>());
-        return i.init().then((_) => i);
-      },
-      preResolve: true,
-    );
-    await gh.factoryAsync<_i61.SocketService>(
-      () {
-        final i = _i61.SocketService(facade: gh<_i47.IAuthFacade>());
+        final i = _i54.SocketService(facade: gh<_i50.IAuthFacade>());
         return i.initialize().then((_) => i);
       },
       preResolve: true,
     );
-    gh.factory<_i62.StreamBloc>(() => _i62.StreamBloc(
-          facade: gh<_i34.IBroadcastFacade>(),
-          liveKit: gh<_i30.LiveKitService>(),
-          socket: gh<_i30.SocketService>(),
+    gh.factory<_i55.StreamBloc>(() => _i55.StreamBloc(
+          facade: gh<_i35.IBroadcastFacade>(),
+          liveKit: gh<_i31.LiveKitService>(),
+          socket: gh<_i31.SocketService>(),
         ));
-    gh.factory<_i63.TranslationsCubit>(
-        () => _i63.TranslationsCubit(facade: gh<_i31.IBibleFacade>()));
-    gh.factory<_i64.VersesCubit>(
-        () => _i64.VersesCubit(facade: gh<_i31.IBibleFacade>()));
-    gh.lazySingleton<_i65.AccountBloc>(
-        () => _i65.AccountBloc(facade: gh<_i28.IAuthFacade>()));
-    gh.factory<_i66.BibleBloc>(
-        () => _i66.BibleBloc(facade: gh<_i31.IBibleFacade>()));
-    gh.factory<_i67.BroadcastBloc>(() => _i67.BroadcastBloc(
-          facade: gh<_i34.IBroadcastFacade>(),
-          liveKit: gh<_i30.LiveKitService>(),
-          socket: gh<_i30.SocketService>(),
+    gh.factory<_i56.TranslationsCubit>(
+        () => _i56.TranslationsCubit(facade: gh<_i32.IBibleFacade>()));
+    gh.factory<_i57.VersesCubit>(
+        () => _i57.VersesCubit(facade: gh<_i32.IBibleFacade>()));
+    gh.lazySingleton<_i58.AccountBloc>(
+        () => _i58.AccountBloc(facade: gh<_i29.IAuthFacade>()));
+    gh.factory<_i59.BibleBloc>(
+        () => _i59.BibleBloc(facade: gh<_i32.IBibleFacade>()));
+    gh.factory<_i60.BroadcastBloc>(() => _i60.BroadcastBloc(
+          facade: gh<_i35.IBroadcastFacade>(),
+          liveKit: gh<_i31.LiveKitService>(),
+          socket: gh<_i31.SocketService>(),
         ));
-    gh.lazySingleton<_i68.BroadcastFormCubit>(() => _i68.BroadcastFormCubit(
-          facade: gh<_i34.IBroadcastFacade>(),
+    gh.lazySingleton<_i61.BroadcastFormCubit>(() => _i61.BroadcastFormCubit(
+          facade: gh<_i35.IBroadcastFacade>(),
           mediaService: gh<_i14.MediaService>(),
         ));
-    gh.lazySingleton<_i69.DAllCubit>(
-        () => _i69.DAllCubit(facade: gh<_i6.IDiscoverFacade>()));
-    gh.lazySingleton<_i70.DNowLiveCubit>(
-        () => _i70.DNowLiveCubit(facade: gh<_i6.IDiscoverFacade>()));
-    gh.lazySingleton<_i71.DRecentlyLiveCubit>(
-        () => _i71.DRecentlyLiveCubit(facade: gh<_i6.IDiscoverFacade>()));
-    gh.lazySingleton<_i72.FilterBloc>(
-        () => _i72.FilterBloc(facade: gh<_i6.IDiscoverFacade>()));
-    gh.factory<_i73.INoteFacade>(() => _i74.NoteFacade(
-          network: gh<_i15.NetworkService>(),
-          local: gh<_i75.NoteLocalDatasource>(),
-          remote: gh<_i75.NoteRemoteDatasource>(),
+    gh.lazySingleton<_i62.DAllCubit>(
+        () => _i62.DAllCubit(facade: gh<_i6.IDiscoverFacade>()));
+    gh.lazySingleton<_i63.DNowLiveCubit>(
+        () => _i63.DNowLiveCubit(facade: gh<_i6.IDiscoverFacade>()));
+    gh.lazySingleton<_i64.DRecentlyLiveCubit>(
+        () => _i64.DRecentlyLiveCubit(facade: gh<_i6.IDiscoverFacade>()));
+    gh.lazySingleton<_i65.FilterBloc>(
+        () => _i65.FilterBloc(facade: gh<_i6.IDiscoverFacade>()));
+    gh.factory<_i66.INoteFacade>(() => _i67.NoteFacade(
+          network: gh<_i31.NetworkService>(),
+          local: gh<_i66.NoteLocalDatasource>(),
+          remote: gh<_i66.NoteRemoteDatasource>(),
         ));
-    gh.lazySingleton<_i76.IProfileFacade>(() => _i77.ProfileFacade(
-          remote: gh<_i22.ProfileRemoteDatasource>(),
-          local: gh<_i53.ProfileLocalDatasource>(),
-          network: gh<_i15.NetworkService>(),
+    gh.lazySingleton<_i68.IProfileFacade>(() => _i69.ProfileFacade(
+          remote: gh<_i23.ProfileRemoteDatasource>(),
+          local: gh<_i45.ProfileLocalDatasource>(),
+          network: gh<_i16.NetworkService>(),
         ));
-    gh.lazySingleton<_i78.LiveBroadcastsBloc>(
-        () => _i78.LiveBroadcastsBloc(socket: gh<_i30.SocketService>()));
-    gh.lazySingleton<_i79.LiveParticipantsBloc>(
-        () => _i79.LiveParticipantsBloc(socket: gh<_i30.SocketService>()));
-    gh.factory<_i80.MenoBloc>(() => _i80.MenoBloc(
-          liveKit: gh<_i81.LiveKitService>(),
-          socket: gh<_i82.SocketService>(),
+    gh.factory<_i70.ISettingsFacade>(
+        () => _i71.SettingsFacade(local: gh<_i70.SettingsLocalDatasource>()));
+    gh.lazySingleton<_i72.LiveBroadcastsBloc>(
+        () => _i72.LiveBroadcastsBloc(socket: gh<_i31.SocketService>()));
+    gh.lazySingleton<_i73.LiveParticipantsBloc>(
+        () => _i73.LiveParticipantsBloc(socket: gh<_i31.SocketService>()));
+    gh.lazySingleton<_i74.LoginCubit>(() => _i74.LoginCubit(
+          facade: gh<_i29.IAuthFacade>(),
+          settingsFacade: gh<_i70.ISettingsFacade>(),
         ));
-    gh.lazySingleton<_i83.MyProfileBloc>(
-        () => _i83.MyProfileBloc(facade: gh<_i84.IProfileFacade>()));
-    gh.factoryParam<_i85.NoteFormCubit, _i73.Note?, dynamic>((
+    gh.factory<_i75.MenoBloc>(() => _i75.MenoBloc(
+          liveKit: gh<_i76.LiveKitService>(),
+          socket: gh<_i77.SocketService>(),
+        ));
+    gh.lazySingleton<_i78.MyProfileBloc>(
+        () => _i78.MyProfileBloc(facade: gh<_i79.IProfileFacade>()));
+    gh.factoryParam<_i80.NoteFormCubit, _i81.Note?, dynamic>((
       initialNote,
       _,
     ) =>
-        _i85.NoteFormCubit(
-          facade: gh<_i73.INoteFacade>(),
+        _i80.NoteFormCubit(
+          facade: gh<_i81.INoteFacade>(),
           initialNote: initialNote,
         ));
-    gh.lazySingleton<_i86.NotesBloc>(
-        () => _i86.NotesBloc(facade: gh<_i87.INoteFacade>()));
-    gh.lazySingleton<_i88.ProfileFormCubit>(() => _i88.ProfileFormCubit(
-          facade: gh<_i76.IProfileFacade>(),
+    gh.lazySingleton<_i82.NotesBloc>(
+        () => _i82.NotesBloc(facade: gh<_i66.INoteFacade>()));
+    gh.lazySingleton<_i83.OnboardingCubit>(
+        () => _i83.OnboardingCubit(facade: gh<_i70.ISettingsFacade>()));
+    gh.lazySingleton<_i84.ProfileFormCubit>(() => _i84.ProfileFormCubit(
+          facade: gh<_i68.IProfileFacade>(),
           media: gh<_i14.MediaService>(),
         ));
-    gh.lazySingleton<_i89.ChatBloc>(() => _i89.ChatBloc(
-          session: gh<_i43.ISessionContext>(),
-          socket: gh<_i30.SocketService>(),
-          profileFacade: gh<_i84.IProfileFacade>(),
-        ));
-    gh.factoryParam<_i90.FolderCubit, _i73.Folder, dynamic>((
+    gh.factoryParam<_i85.FolderCubit, _i81.Folder, dynamic>((
       folder,
       _,
     ) =>
-        _i90.FolderCubit(
-          facade: gh<_i73.INoteFacade>(),
+        _i85.FolderCubit(
+          facade: gh<_i81.INoteFacade>(),
           folder: folder,
         ));
-    gh.lazySingleton<_i91.FolderFormCubit>(
-        () => _i91.FolderFormCubit(facade: gh<_i73.INoteFacade>()));
-    gh.lazySingleton<_i92.FolderListBloc>(
-        () => _i92.FolderListBloc(facade: gh<_i87.INoteFacade>()));
+    gh.lazySingleton<_i86.FolderFormCubit>(
+        () => _i86.FolderFormCubit(facade: gh<_i81.INoteFacade>()));
+    gh.lazySingleton<_i87.FolderListBloc>(
+        () => _i87.FolderListBloc(facade: gh<_i66.INoteFacade>()));
+    gh.factory<_i88.ISessionContext>(() => _i89.SessionContext(
+          authFacade: gh<_i29.IAuthFacade>(),
+          settingsFacade: gh<_i70.ISettingsFacade>(),
+        )..init());
+    await gh.factoryAsync<_i90.SessionCubit>(
+      () {
+        final i = _i90.SessionCubit(session: gh<_i88.ISessionContext>());
+        return i.init().then((_) => i);
+      },
+      preResolve: true,
+    );
+    gh.lazySingleton<_i91.ChatBloc>(() => _i91.ChatBloc(
+          session: gh<_i88.ISessionContext>(),
+          socket: gh<_i31.SocketService>(),
+          profileFacade: gh<_i79.IProfileFacade>(),
+        ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i93.RegisterModule {}
+class _$RegisterModule extends _i92.RegisterModule {}

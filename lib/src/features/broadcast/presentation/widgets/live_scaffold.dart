@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class LiveStreamScaffold extends HookWidget {
   final List<Widget> tabs;
@@ -16,15 +13,14 @@ class LiveStreamScaffold extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useTabController(initialLength: tabs.length);
-
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(56.h),
+        preferredSize: Size.fromHeight(56.toScale),
         child: SafeArea(
           child: Container(
-            margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).r,
-            constraints: const BoxConstraints(minHeight: 32).r,
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).radius,
+            constraints: const BoxConstraints(minHeight: 32).radius,
             child: TabBar(controller: controller, tabs: tabs),
           ),
         ),

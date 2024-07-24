@@ -1,14 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-import 'package:meno_fe_v1/src/shared/widgets/empty_list_widget.dart';
 
 class AllBroadcastsWidget extends StatelessWidget {
   const AllBroadcastsWidget({super.key});
@@ -18,7 +10,7 @@ class AllBroadcastsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        24.verticalSpace,
+        24.vSpace,
         BlocBuilder<DAllCubit, DAllState>(
           buildWhen: (p, c) =>
               p.isNowLiveLoading != c.isNowLiveLoading ||
@@ -31,7 +23,7 @@ class AllBroadcastsWidget extends StatelessWidget {
             isNowLive: true,
           ),
         ),
-        32.verticalSpace,
+        32.vSpace,
         BlocBuilder<DAllCubit, DAllState>(
           buildWhen: (p, c) =>
               p.isRecentlyLiveLoading != c.isRecentlyLiveLoading ||
@@ -43,7 +35,7 @@ class AllBroadcastsWidget extends StatelessWidget {
             isLoading: state.isRecentlyLiveLoading,
           ),
         ),
-        32.verticalSpace,
+        32.vSpace,
       ],
     );
   }
@@ -74,11 +66,11 @@ class _Grid extends HookWidget {
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 24.h,
-          crossAxisSpacing: 24.w,
-          childAspectRatio: (176.h / 176.w),
+          mainAxisSpacing: 24.toScale,
+          crossAxisSpacing: 24.toScale,
+          childAspectRatio: (176.toScale / 176.toScale),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16).r,
+        padding: const EdgeInsets.symmetric(horizontal: 16).radius,
         shrinkWrap: true,
         primary: false,
         itemCount: broadcasts.length,
@@ -108,8 +100,8 @@ class _Grid extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _Header(title: title, onSeeAll: onSeeAll),
-        24.verticalSpace,
-        LimitedBox(maxHeight: 376.h, child: child),
+        24.vSpace,
+        LimitedBox(maxHeight: 376.toScale, child: child),
       ],
     );
   }
@@ -124,17 +116,17 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     return Container(
-      height: 24.h,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+      height: 24.toScale,
+      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          MText(title, style: MTextStyle.subheadingBold),
+          MText(title, style: $styles.text.subheadingBold),
           InkWell(
             onTap: onSeeAll,
             child: MText(
               'See all',
-              style: MTextStyle.microMedium,
+              style: $styles.text.microMedium,
               color: colors.primary,
             ),
           ),

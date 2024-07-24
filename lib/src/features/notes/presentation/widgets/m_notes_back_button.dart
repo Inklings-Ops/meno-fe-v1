@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class MNotesBackButton extends StatelessWidget {
   const MNotesBackButton({super.key, required this.title});
@@ -10,16 +8,16 @@ class MNotesBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 56.w,
-      height: 18.h,
-      padding: const EdgeInsets.only(left: MCore.large).r,
+      width: 56.toScale,
+      height: 18.toScale,
+      padding: const EdgeInsets.only(left: 16).radius,
       child: GestureDetector(
         onTap: () => Navigator.maybePop(context),
         child: Row(
           children: [
-            Icon(MIcons.chevron_left, size: 16.r),
-            MCore.micro.horizontalSpace,
-              MText(title, style: MTextStyle.captionMedium),
+            Icon(MIcons.chevron_left, size: 16.toScale),
+            $styles.spaces.horizontalMicro,
+            MText(title, style: $styles.text.captionMedium),
           ],
         ),
       ),

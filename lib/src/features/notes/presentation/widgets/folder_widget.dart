@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderWidget extends StatelessWidget {
   const FolderWidget({
@@ -19,9 +16,9 @@ class FolderWidget extends StatelessWidget {
   });
 
   final String? value;
-  final MTextStyle? valueStyle;
+  final TextStyle? valueStyle;
   final String? title;
-  final MTextStyle? titleStyle;
+  final TextStyle? titleStyle;
   final VoidCallback? onTap;
   final bool selected;
   final MColor? backgroundColor;
@@ -30,6 +27,7 @@ class FolderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     final colors = MColorScheme.of(context)!;
 
     final background = selected ? colors.primary : colors.inActiveContainer;
@@ -44,9 +42,9 @@ class FolderWidget extends StatelessWidget {
       focusElevation: 0.0,
       highlightElevation: 0.0,
       child: Container(
-        height: height ?? 94.h,
-        width: 1.sw,
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16).r,
+        height: height ?? 94.toScale,
+        width: size.width,
+        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16).radius,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,13 +52,13 @@ class FolderWidget extends StatelessWidget {
           children: [
             MText(
               title ?? 'Folders',
-              style: titleStyle ?? MTextStyle.captionMedium,
+              style: titleStyle ?? $styles.text.captionMedium,
               color: foregroundColor ?? foreground,
             ),
             if (value != null)
               MText(
                 value!,
-                style: valueStyle ?? MTextStyle.heading2Medium,
+                style: valueStyle ?? $styles.text.heading2Medium,
                 color: foregroundColor ?? foreground,
               )
             else
@@ -70,7 +68,7 @@ class FolderWidget extends StatelessWidget {
                     orElse: () => '0',
                     success: (folders) => folders.length.toString(),
                   ),
-                  style: valueStyle ?? MTextStyle.heading2Medium,
+                  style: valueStyle ?? $styles.text.heading2Medium,
                   color: foreground,
                 ),
               ),
@@ -85,7 +83,7 @@ class _FolderBorder extends OutlinedBorder {
   const _FolderBorder({super.side});
 
   Path customBorderPath(Rect rect) {
-    final double r = 20.0.r;
+    final double r = 20.0.toScale;
 
     final Path path = Path();
 

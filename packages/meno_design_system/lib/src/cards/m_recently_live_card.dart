@@ -1,17 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../m_size.dart';
+import 'package:meno_design_system/src/gen/assets.gen.dart';
 
 class MRecentlyLiveCard extends StatelessWidget {
-  final String title;
-  final String host;
-  final String? imageUrl;
-  final VoidCallback? onTap;
-
   const MRecentlyLiveCard({
     super.key,
     required this.title,
@@ -19,28 +12,33 @@ class MRecentlyLiveCard extends StatelessWidget {
     this.imageUrl,
     this.onTap,
   });
+  final String title;
+  final String host;
+  final String? imageUrl;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final MCardStyles styles = MCardStyles.of(context)!;
+    final styles = MCardStyles.of(context)!;
+    final isLight = Theme.of(context).brightness == Brightness.light;
 
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
-
-    final ColorFilter colorFilter = ColorFilter.mode(
+    final colorFilter = ColorFilter.mode(
       isLight ? MColor.grey200 : MColor.grey30,
       BlendMode.srcIn,
     );
 
-    final bool hasImage = imageUrl != null;
+    final hasImage = imageUrl != null;
 
-    final SvgPicture placeholder = Assets.images.logoLight.svg(
+    final placeholder = Assets.images.logoLight.svg(
       colorFilter: colorFilter,
-      height: 32.0,
+      height: 32.0.toScale,
     );
 
     final DecorationImage? image = hasImage
         ? DecorationImage(
-            image: CachedNetworkImageProvider(imageUrl!), fit: BoxFit.cover)
+            image: CachedNetworkImageProvider(imageUrl!),
+            fit: BoxFit.cover,
+          )
         : null;
 
     return GestureDetector(
@@ -48,18 +46,18 @@ class MRecentlyLiveCard extends StatelessWidget {
       child: _Container(
         children: [
           Container(
-            width: 148,
-            height: 88,
-            padding: const EdgeInsets.symmetric(vertical: 28),
+            width: 148.toScale,
+            height: 88.toScale,
+            padding: const EdgeInsets.symmetric(vertical: 28).radius,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: isLight ? MColor.grey30 : MColor.grey400,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: $styles.radius.medium,
               image: image,
             ),
             child: !hasImage ? placeholder : null,
           ),
-          MSize.verticalSpaceMedium,
+          $styles.spaces.verticalMedium,
           MText(
             title,
             style: styles.titleStyle,
@@ -68,7 +66,7 @@ class MRecentlyLiveCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          MSize.verticalSpaceMicro,
+          $styles.spaces.verticalMicro,
           MText(
             host,
             style: styles.hostStyle,
@@ -88,36 +86,33 @@ class MRecentlyLiveCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _Container(
+    return _Container(
       children: [
-        MShimmer(borderRadius: 12, width: 148, height: 88),
-        MSize.verticalSpaceMedium,
-        MShimmer(height: 24),
-        MSize.verticalSpaceMicro,
-        MShimmer(height: 14, width: 80),
+        const MShimmer(borderRadius: 12, width: 148, height: 88),
+        $styles.spaces.verticalMedium,
+        const MShimmer(height: 24),
+        $styles.spaces.verticalMicro,
+        const MShimmer(height: 14, width: 80),
       ],
     );
   }
 }
 
 class _Container extends StatelessWidget {
-  final List<Widget> children;
   const _Container({required this.children});
-
+  final List<Widget> children;
   @override
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
-
     return Container(
-      width: 176,
-      height: 176,
-      padding: const EdgeInsets.all(14.0),
+      width: 176.toScale,
+      height: 176.toScale,
+      padding: const EdgeInsets.all(14.0).radius,
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        shape: const SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
-          ),
+        shadows: $styles.shadows.soft,
+        shape: SmoothRectangleBorder(
+          borderRadius: $styles.radius.squircleLarge,
         ),
       ),
       child: Column(
@@ -125,7 +120,7 @@ class _Container extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: children,
-      ),
+      ), 
     );
   }
 }

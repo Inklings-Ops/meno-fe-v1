@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/features.dart';  
 
-import '../../features/auth/domain/domain.dart';
-import '../../features/broadcast/domain/domain.dart';
-import '../constants/m_error_messages.dart';
 
 typedef MMessenger = ScaffoldFeatureController<SnackBar, SnackBarClosedReason>;
 
@@ -20,7 +15,7 @@ extension MSnackBarExtensions on BuildContext {
         behavior: SnackBarBehavior.floating,
         content: MText(
           message,
-          style: MTextStyle.captionRegular,
+          style: $styles.text.captionRegular,
           color: colorScheme?.onError,
         ),
       ),
