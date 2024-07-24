@@ -3,7 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 
 class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
-  final MTextStyle? textStyle;
+  final TextStyle? textStyle;
   final MColor? textColor;
   final MColor? fillColor;
   final MColor? fillColorDisabled;
@@ -23,16 +23,16 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
     this.borderError,
   });
 
-  factory MOtpFieldStyles.$default({required MColorScheme colorScheme}) {
+  factory MOtpFieldStyles.$default(MColorScheme colors) {
     return MOtpFieldStyles(
-      textStyle: MTextStyle.captionRegular,
-      fillColor: colorScheme.background,
-      fillColorDisabled: colorScheme.disabledContainer,
-      textColor: colorScheme.onBackground,
-      errorColor: colorScheme.error,
-      border: Border.all(color: MColor.grey50, width: 1),
-      borderFocused: Border.all(color: colorScheme.outline!, width: 2),
-      borderError: Border.all(color: colorScheme.error!, width: 2),
+      textStyle: $styles.text.captionRegular,
+      fillColor: colors.background,
+      fillColorDisabled: colors.disabledContainer,
+      textColor: colors.onBackground,
+      errorColor: colors.error,
+      border: Border.all(color: MColor.grey50, width: 1.toScale),
+      borderFocused: Border.all(color: colors.outline!, width: 2.toScale),
+      borderError: Border.all(color: colors.error!, width: 2.toScale),
     );
   }
 
@@ -46,7 +46,7 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
 
   @override
   ThemeExtension<MOtpFieldStyles> copyWith({
-    MTextStyle? textStyle,
+    TextStyle? textStyle,
     MColor? textColor,
     MColor? fillColor,
     MColor? fillColorDisabled,
@@ -70,7 +70,7 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
   @override
   ThemeExtension<MOtpFieldStyles> lerp(MOtpFieldStyles? other, double t) {
     return MOtpFieldStyles(
-      textStyle: MTextStyle.lerp(textStyle, other?.textStyle, t),
+      textStyle: TextStyle.lerp(textStyle, other?.textStyle, t),
       textColor: MColor.lerp(textColor, other?.textColor, t),
       fillColor: MColor.lerp(fillColor, other?.fillColor, t),
       fillColorDisabled:

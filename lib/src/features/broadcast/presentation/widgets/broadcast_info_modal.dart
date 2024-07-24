@@ -1,58 +1,49 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-
-import '../../../../services/meno/meno_bloc.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
-  final bool isStreaming;
-  final Broadcast broadcast;
-
   const BroadcastInfoModal({
     super.key,
     required this.broadcast,
     this.isStreaming = false,
   });
+  final bool isStreaming;
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MAvatar(radius: 48.r, url: broadcast.imageUrl),
-          MCore.small.verticalSpace,
+          MAvatar(radius: 48.toScale, url: broadcast.imageUrl),
+          $styles.spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
+            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
             child: MText(
               broadcast.title.getOr(),
-              style: MTextStyle.subheadingBold,
+              style: $styles.text.subheadingBold,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          MCore.micro.verticalSpace,
+          $styles.spaces.verticalMicro,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).r,
+            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
                   broadcast.creator!.fullName,
-                  style: MTextStyle.captionRegular,
+                  style: $styles.text.captionRegular,
                 ),
-                MCore.small.horizontalSpace,
+                $styles.spaces.horizontalSmall,
                 const BroadcastStatusWidget(),
               ],
             ),
           ),
-          24.verticalSpace,
+          24.vSpace,
           if (isStreaming) ...[
             MModalListTile(
               leading: const Icon(MIcons.arrow_narrow_down_left),
@@ -89,7 +80,7 @@ class BroadcastInfoModal extends StatelessWidget {
                 ),
               ),
             ),
-          24.verticalSpace,
+          24.vSpace,
         ],
       ),
     );

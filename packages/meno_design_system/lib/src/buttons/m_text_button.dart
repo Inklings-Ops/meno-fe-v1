@@ -21,7 +21,7 @@ class MTextButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return TextButton(
-      style: style ?? MButtonStyles.of(context)?.text,
+      style: style?.merge(MButtonStyles.of(context)?.text),
       onPressed: onPressed,
       child: child,
     );

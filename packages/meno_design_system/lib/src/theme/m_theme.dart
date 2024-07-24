@@ -1,51 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/gen/fonts.gen.dart';
 
 class MTheme {
-  static ThemeData get dark => createTheme(brightness: Brightness.dark);
+  static ThemeData theme(Brightness brightness) => createTheme(brightness);
 
-  static ThemeData get light => createTheme(brightness: Brightness.light);
+  static ThemeData get dark => createTheme(Brightness.dark);
+
+  static ThemeData get light => createTheme(Brightness.light);
 
   MTheme._();
 
-  static ThemeData createTheme({required Brightness brightness}) {
-    return raw(colorScheme: MColorScheme.$default(brightness));
+  static ThemeData createTheme(Brightness brightness) {
+    return raw(MColorScheme.$default(brightness));
   }
 
-  static ThemeData raw({required MColorScheme colorScheme}) {
+  static ThemeData raw(MColorScheme colors) {
     final textTheme = MTextTheme.$default();
-    final buttonStyles = MButtonStyles.$default(colorScheme: colorScheme);
-    final globalStyles = MGlobalStyles.$default(colorScheme: colorScheme);
-    final navStyles = MNavigationStyles.$default(colorScheme: colorScheme);
-    final modalStyles = MModalStyles.$default(colorScheme: colorScheme);
-    final cardStyles = MCardStyles.$default(colorScheme: colorScheme);
-    final textInputStyles = MTextFieldStyle.$default(colorScheme: colorScheme);
+    final buttonStyles = MButtonStyles.$default(colors);
+    final globalStyles = MGlobalStyles.$default(colors);
+    final navStyles = MNavigationStyles.$default(colors);
+    final modalStyles = MModalStyles.$default(colors);
+    final cardStyles = MCardStyles.$default(colors);
+    final textInputStyles = MTextFieldStyle.$default(colors);
 
     return ThemeData(
       cardTheme: cardStyles.cardTheme,
-      colorScheme: colorScheme.getColorScheme,
+      colorScheme: colors.getColorScheme,
       elevatedButtonTheme: buttonStyles.elevatedButtonTheme,
       outlinedButtonTheme: buttonStyles.outlinedButtonTheme,
       textButtonTheme: buttonStyles.textButtonTheme,
       dividerTheme: globalStyles.dividerTheme,
       dividerColor: globalStyles.dividerColor,
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: colors.background,
       bottomNavigationBarTheme: navStyles.bottomNavigationBarTheme,
       appBarTheme: navStyles.appBarTheme,
       tabBarTheme: navStyles.tabBarTheme,
-      iconTheme: IconThemeData(color: colorScheme.onBackground, size: 24.0),
+      iconTheme: IconThemeData(
+        color: colors.onBackground,
+        size: 24.toScale,
+      ),
       fontFamily: FontFamily.sFProDisplay,
-      disabledColor: colorScheme.disabled,
+      disabledColor: colors.disabled,
       useMaterial3: true,
       snackBarTheme: globalStyles.snackBarTheme,
       checkboxTheme: globalStyles.checkboxTheme,
       bottomSheetTheme: modalStyles.bottomSheetTheme,
-      listTileTheme: ListTileThemeData(textColor: colorScheme.onBackground),
+      listTileTheme: ListTileThemeData(textColor: colors.onBackground),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: colorScheme.primary,
-        linearMinHeight: 4,
-        linearTrackColor: colorScheme.background,
-        circularTrackColor: colorScheme.background,
+        color: colors.primary,
+        linearMinHeight: 4.toScale,
+        linearTrackColor: colors.background,
+        circularTrackColor: colors.background,
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: textInputStyles.border,
@@ -55,26 +61,28 @@ class MTheme {
         disabledBorder: textInputStyles.borderDisabled,
         filled: true,
         iconColor: textInputStyles.iconColor,
+        hintStyle: textInputStyles.hintTextStyle,
+        labelStyle: textInputStyles.labelTextStyle,
+        errorStyle: textInputStyles.errorTextStyle,
+        contentPadding: EdgeInsets.symmetric(horizontal: $styles.insets.medium),
       ),
-      textTheme: textTheme.globalTextTheme.apply(fontSizeFactor: 1),
+      textTheme: textTheme.globalTextTheme,
       chipTheme: ChipThemeData(
         showCheckmark: false,
-        padding: const EdgeInsets.symmetric(
-          horizontal: MCore.large,
-          vertical: 6,
+        padding: EdgeInsets.symmetric(
+          horizontal: $styles.insets.large,
+          vertical: 6.toScale,
         ),
         labelPadding: EdgeInsets.zero,
         side: BorderSide.none,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(MCore.circle)),
-        ),
-        labelStyle: MTextStyle.captionMedium,
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
+        labelStyle: $styles.text.captionMedium,
         color: WidgetStateProperty.resolveWith(
           (states) {
             if (states.contains(WidgetState.selected)) {
-              return colorScheme.primary;
+              return colors.primary;
             } else {
-              return colorScheme.inActiveContainer;
+              return colors.inActiveContainer;
             }
           },
         ),
@@ -82,13 +90,13 @@ class MTheme {
       extensions: [
         buttonStyles,
         globalStyles,
-        colorScheme,
+        colors,
         cardStyles,
         navStyles,
         modalStyles,
         textInputStyles,
         textTheme,
-        MOtpFieldStyles.$default(colorScheme: colorScheme),
+        MOtpFieldStyles.$default(colors),
       ],
     );
   }

@@ -5,7 +5,7 @@ export 'layout/layout.dart';
 export 'm_keys.dart';
 export 'modals/modals.dart';
 export 'pages/loading_page.dart';
-export 'pages/start_up/startup_page.dart';
+export 'pages/startup_page.dart';
 export 'session/session.dart';
 export 'value_objects/value_objects.dart';
 export 'widgets/widgets.dart';

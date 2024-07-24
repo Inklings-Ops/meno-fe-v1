@@ -1,20 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import 'co_host_list_tile.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class AddCohostModal extends StatelessWidget {
   const AddCohostModal({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return MModal(
       title: 'Add Co-host',
       builder: (context) => SingleChildScrollView(
-        padding: MediaQuery.viewInsetsOf(context).r,
+        padding: MediaQuery.viewInsetsOf(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -25,27 +21,27 @@ class AddCohostModal extends StatelessWidget {
               showLabel: false,
               hint: 'Search',
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(
                   MIcons.info_circle,
-                  size: 16.r,
-                  color: colorScheme.onBackgroundVariant,
+                  size: 16.toScale,
+                  color: colors.onBackgroundVariant,
                 ),
-                MCore.micro.horizontalSpace,
+                $styles.spaces.horizontalMicro,
                 MText(
                   'Select not more than 1 co-host',
-                  color: colorScheme.onBackgroundVariant,
+                  color: colors.onBackgroundVariant,
                 ),
               ],
             ),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             const CohostListTile(),
-            24.verticalSpace,
-            MCore.large.verticalSpace,
+            24.vSpace,
+            $styles.spaces.verticalLarge,
             MPrimaryButton(label: 'Done', onPressed: () {}),
           ],
         ),

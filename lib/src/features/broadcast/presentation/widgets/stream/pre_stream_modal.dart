@@ -1,13 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class PreStreamModal extends StatelessWidget {
   const PreStreamModal({super.key, required this.broadcast});
@@ -22,7 +15,6 @@ class PreStreamModal extends StatelessWidget {
           joinFailed: (error) => context.showErrorSnackBar(error.toString()),
           joinSuccess: (broadcast) {
             context.pop();
-            Logger().w('[FROM STREAM PAGE TIMER] => //${broadcast.startTime}');
             context.read<LiveParticipantsBloc>().initialize(broadcast);
             context.read<ChatBloc>().initialize(broadcast);
             context.read<TimerCubit>()
@@ -47,9 +39,9 @@ class PreStreamModal extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _TopSection(broadcast: broadcast),
-                  24.verticalSpace,
+                  24.vSpace,
                   PreStreamDescriptionSection(broadcast: broadcast),
-                  24.verticalSpace,
+                  24.vSpace,
                   MHeader(
                     title: 'Recent Broadcasts',
                     showSideBorder: false,
@@ -80,11 +72,11 @@ class _TopSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 142.h,
+      height: 142.toScale,
       child: Row(
         children: [
           PreStreamArtwork(imageUrl: broadcast.imageUrl),
-          MCore.large.horizontalSpace,
+          $styles.spaces.horizontalLarge,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,22 +84,22 @@ class _TopSection extends StatelessWidget {
               children: [
                 MText(
                   broadcast.title.getOr(),
-                  style: MTextStyle.subheadingMedium,
+                  style: $styles.text.subheadingMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                6.verticalSpace,
+                6.vSpace,
                 const MBadge.live(),
-                6.verticalSpace,
+                6.vSpace,
                 MText(
                   broadcast.creator == null
                       ? broadcast.fullName!
                       : broadcast.creator!.fullName,
-                  style: MTextStyle.captionRegular,
+                  style: $styles.text.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                MCore.medium.verticalSpace,
+                $styles.spaces.verticalMedium,
                 PreStreamActionButtons(broadcast: broadcast),
               ],
             ),

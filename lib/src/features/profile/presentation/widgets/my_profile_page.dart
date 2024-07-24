@@ -1,14 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/recently_live/recently_live_cubit.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({super.key});
@@ -57,45 +49,41 @@ class MyProfilePage extends StatelessWidget {
 
 class CustomContent extends HookWidget {
   const CustomContent({super.key, required this.profile});
-
   final Profile profile;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     final tabController = useTabController(initialLength: 4);
-
     return CustomScrollView(
       slivers: [
         SliverAppBar(
           floating: true,
           pinned: true,
           snap: true,
-          expandedHeight: 340.h,
-          backgroundColor: colorScheme.background,
+          expandedHeight: 340.toScale,
+          backgroundColor: colors.background,
           leading: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: MCore.large).r,
+              padding: EdgeInsets.only(left: $styles.insets.large),
               child: ColoredBox(
-                color: colorScheme.secondary!,
-                child: SizedBox(height: 30.h, width: 3.w),
+                color: colors.secondary!,
+                child: SizedBox(height: 30.toScale, width: 3.toScale),
               ),
             ),
           ),
-          titleTextStyle: MTextStyle.heading3Bold,
-          leadingWidth: 23.r,
-          collapsedHeight: 58.h,
-          titleSpacing: 0.r,
+          titleTextStyle: $styles.text.heading3Bold,
+          leadingWidth: 23.toScale,
+          collapsedHeight: 58.toScale,
+          titleSpacing: 0,
           title: GestureDetector(
             onTap: () => context.showSwitchAccountSheet(),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                MText(profile.fullName.getOr(),
-                    color: colorScheme.onBackground),
-                MCore.small.horizontalSpace,
+                MText(profile.fullName.getOr(), color: colors.onBackground),
+                $styles.spaces.horizontalSmall,
                 const Icon(MIcons.chevron_down, size: 24),
               ],
             ),
@@ -103,25 +91,25 @@ class CustomContent extends HookWidget {
           actions: [
             MIconButton(
               icon: const Icon(MIcons.settings),
-              color: colorScheme.primary,
+              color: colors.primary,
               onPressed: () => context.push(Routes.settings),
             ),
-            MCore.large.horizontalSpace,
+            $styles.spaces.horizontalLarge,
           ],
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(32.h),
+            preferredSize: Size.fromHeight(32.toScale),
             child: SizedBox(
-              height: 32.h,
+              height: 32.toScale,
               child: TabBar(
                 controller: tabController,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
-                labelStyle: MTextStyle.captionMedium,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+                labelStyle: $styles.text.captionMedium,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 labelPadding: const EdgeInsets.symmetric(
-                  horizontal: MCore.large,
+                  horizontal: 16,
                   vertical: 6,
-                ).r,
+                ).radius,
                 tabs: const [
                   Tab(text: 'Recent broadcasts'),
                   Tab(text: 'All broadcasts'),
@@ -134,29 +122,31 @@ class CustomContent extends HookWidget {
           flexibleSpace: FlexibleSpaceBar(
             background: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight).r,
+                padding: const EdgeInsets.only(top: kToolbarHeight).radius,
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 16).radius,
                       child: Row(
                         children: [
-                          MAvatar(radius: 40.r, url: profile.imageUrl),
-                          24.horizontalSpace,
+                          MAvatar(radius: 40.toScale, url: profile.imageUrl),
+                          24.hSpace,
                           ProfileStats(stats: profile.stats),
                         ],
                       ),
                     ),
-                    MCore.large.verticalSpace,
+                    $styles.spaces.verticalLarge,
                     const AccountUpgradeSection(),
-                    MCore.large.verticalSpace,
+                    $styles.spaces.verticalLarge,
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 16).radius,
                       child: ProfileBio(bio: profile.bio),
                     ),
-                    MCore.large.verticalSpace,
+                    $styles.spaces.verticalLarge,
                     const ProfileButtons(),
-                    MCore.large.verticalSpace,
+                    $styles.spaces.verticalLarge,
                   ],
                 ),
               ),

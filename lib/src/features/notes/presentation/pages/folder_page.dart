@@ -1,19 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder/folder_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_form/folder_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/create_folder_modal.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder_widget.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/m_notes_back_button.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/note_card.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import '../widgets/empty_folder_page_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderPage extends HookWidget {
   const FolderPage({super.key, required this.folder});
@@ -53,8 +39,8 @@ class FolderPage extends HookWidget {
         },
         child: Scaffold(
           appBar: AppBar(
-            toolbarHeight: 42.h,
-            leadingWidth: 90.w,
+            toolbarHeight: 42.toScale,
+            leadingWidth: 90.toScale,
             leading: const MNotesBackButton(title: 'Folders'),
             actions: [
               IconButton(
@@ -76,7 +62,7 @@ class FolderPage extends HookWidget {
                             );
                           },
                         ),
-                        MCore.small.verticalSpace,
+                        $styles.spaces.verticalSmall,
                         MModalListTile(
                           leading: Icon(MIcons.trash, color: colors.error),
                           title: 'Delete',
@@ -85,7 +71,7 @@ class FolderPage extends HookWidget {
                             updatedFolder.value,
                           ),
                         ),
-                        MCore.large.verticalSpace,
+                        $styles.spaces.verticalLarge,
                       ],
                     ),
                   ),
@@ -95,22 +81,21 @@ class FolderPage extends HookWidget {
           ),
           body: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
+            padding: const EdgeInsets.symmetric(horizontal: 16).radius,
             child: Column(
               children: [
-                0.verticalSpace,
                 FolderWidget(
                   value: '$numberOfNotes notes',
                   title: isNewFolder
                       ? updatedFolder.value.title.getOr()
                       : folder.title.getOr(),
-                  titleStyle: MTextStyle.subheadingMedium,
-                  valueStyle: MTextStyle.captionMedium,
+                  titleStyle: $styles.text.subheadingMedium,
+                  valueStyle: $styles.text.captionMedium,
                   backgroundColor: colors.primary,
                   foregroundColor: colors.onPrimary,
-                  height: 88.h,
+                  height: 88.toScale,
                 ),
-                24.verticalSpace,
+                24.vSpace,
                 _NotesList(folder: folder)
               ],
             ),
@@ -138,7 +123,7 @@ class _NotesList extends StatelessWidget {
           return ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            separatorBuilder: (_, i) => MCore.large.verticalSpace,
+            separatorBuilder: (_, i) => $styles.spaces.verticalLarge,
             itemCount: folder.notes!.length,
             itemBuilder: (context, i) => NoteCard(
               note: folder.notes![i]!,

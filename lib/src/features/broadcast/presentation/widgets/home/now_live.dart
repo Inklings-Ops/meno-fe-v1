@@ -1,12 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/dependency_injector/injector.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class NowLive extends StatelessWidget {
   const NowLive({super.key});
@@ -66,7 +60,7 @@ class _BuildColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MCore.xxxLarge.verticalSpace,
+        $styles.spaces.verticalXXXLarge,
         MHeader(
           title: 'Now Live',
           action: InkWell(
@@ -77,8 +71,8 @@ class _BuildColumn extends StatelessWidget {
             ),
           ),
         ),
-        24.verticalSpace,
-        LimitedBox(maxHeight: 184.h, child: child),
+        24.vSpace,
+        LimitedBox(maxHeight: 184.toScale, child: child),
       ],
     );
   }

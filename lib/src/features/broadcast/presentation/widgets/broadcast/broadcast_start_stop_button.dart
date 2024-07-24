@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 class BroadcastStartStopButton extends HookWidget {
   const BroadcastStartStopButton({super.key});
@@ -61,11 +56,9 @@ class _Button extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         foregroundColor: foregroundColor ?? colors.onPrimary,
         backgroundColor: (backgroundColor ?? colors.primary)?.withOpacity(0.1),
-        fixedSize: Size(160.w, 40.h),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).r,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MCore.circle).r,
-        ),
+        fixedSize: Size(160.toScale, 40.toScale),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).radius,
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
       ),
     );
   }

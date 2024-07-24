@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/gen/assets.gen.dart';
 import 'package:meno_design_system/src/m_internal.dart';
 
 class MBadge extends StatelessWidget {
   final MColor? color;
   final String? value;
   final String? viewCount;
-  final MTextStyle? textStyle;
+  final TextStyle? textStyle;
   final MColor? valueColor;
-  final BorderRadiusGeometry? borderRadius;
+  final BorderRadius? borderRadius;
   final double? height;
   final double? width;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsets? padding;
   final BoxConstraints? constraints;
   final bool showLoader;
   final bool showBorder;
 
-  const MBadge.cohost({Key? key})
+  MBadge.cohost({Key? key})
       : this._(
           key: key,
           value: "Co-host",
           height: 20.0,
           width: 60.0,
-          // padding: const EdgeInsets.all(8),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           color: MColor.grey30,
           valueColor: MColor.primary700,
-          textStyle: MTextStyle.microMedium,
+          textStyle: $styles.text.microMedium,
         );
 
-  const MBadge.host({Key? key})
+  MBadge.host({Key? key})
       : this._(
           key: key,
           value: "Host",
@@ -38,7 +38,7 @@ class MBadge extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(4)),
           color: MColor.grey30,
           valueColor: MColor.primary700,
-          textStyle: MTextStyle.microMedium,
+          textStyle: $styles.text.microMedium,
         );
 
   const MBadge.large({Key? key, required String value})
@@ -94,12 +94,12 @@ class MBadge extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 16.0),
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
+          valueColor: MColorScheme.of(context)?.primary,
           color: MInternal.resolve(
             Theme.of(context).brightness == Brightness.light,
             MColor.newBadgeLight,
             MColor.newBadgeDark,
           ),
-          valueColor: MColorScheme.of(context)?.primary,
         );
 
   const MBadge.small({Key? key})
@@ -115,7 +115,7 @@ class MBadge extends StatelessWidget {
     this.color,
     this.value,
     this.viewCount,
-    this.textStyle = MTextStyle.nanoBold,
+    this.textStyle,
     this.valueColor,
     this.borderRadius = const BorderRadius.all(Radius.circular(556)),
     this.height,
@@ -142,7 +142,7 @@ class MBadge extends StatelessWidget {
             Assets.images.loading.image(color: valueColor ?? colors.onError),
           _buildText(value!, colors),
           if (viewCount != null) ...[
-            const SizedBox(width: 6),
+            6.hSpace,
             _buildText(viewCount!, colors),
           ],
         ],
@@ -150,16 +150,16 @@ class MBadge extends StatelessWidget {
     }
 
     return Container(
-      height: height,
-      width: width,
-      padding: padding,
-      constraints: constraints,
+      height: height?.toScale,
+      width: width?.toScale,
+      padding: padding?.radius,
+      constraints: constraints?.radius,
       decoration: ShapeDecoration(
         color: color ?? colors.error,
         shape: RoundedRectangleBorder(
-          borderRadius: borderRadius ?? BorderRadius.zero,
+          borderRadius: borderRadius?.radius ?? BorderRadius.zero,
           side: showBorder
-              ? BorderSide(width: 1.0, color: valueColor ?? Colors.white)
+              ? BorderSide(width: 1.toScale, color: valueColor ?? Colors.white)
               : BorderSide.none,
         ),
       ),
@@ -171,7 +171,7 @@ class MBadge extends StatelessWidget {
     return MText(
       content,
       textAlign: TextAlign.center,
-      style: textStyle?.copyWith(letterSpacing: 0.5),
+      style: textStyle?.copyWith(letterSpacing: 0.5.toScale),
       color: valueColor ?? colors.onError,
     );
   }

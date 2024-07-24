@@ -36,14 +36,10 @@ class MIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    // final colors = MColorScheme.of(context)!;
-    final VisualDensity visualDensity = theme.visualDensity;
-    final double effectiveSize = theme.iconTheme.size ?? size;
-    final BoxConstraints boxConstraints = visualDensity.effectiveConstraints(
-      _kConstraints,
-    );
-
+    final theme = Theme.of(context);
+    final visualDensity = theme.visualDensity;
+    final effectiveSize = theme.iconTheme.size ?? size;
+    final boxConstraints = visualDensity.effectiveConstraints(_kConstraints);
     return InkResponse(
       radius: math.max(Material.defaultSplashRadius, (size)),
       onTap: isDisabled ? null : onPressed,

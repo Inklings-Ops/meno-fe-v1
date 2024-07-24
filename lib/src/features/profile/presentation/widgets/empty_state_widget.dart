@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({
@@ -19,19 +17,22 @@ class EmptyStateWidget extends StatelessWidget {
     final colorScheme = MColorScheme.of(context)!;
 
     return Container(
-      margin: const EdgeInsets.only(top: 40).r,
+      margin: const EdgeInsets.only(top: 40).radius,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Assets.images.liveForYou.image(height: 120.r, width: 120.r),
+          Assets.images.liveForYou.image(
+            height: 120.toScale,
+            width: 120.toScale,
+          ),
           MText(
             title ?? 'No broadcasts published yet',
-            style: MTextStyle.captionMedium,
+            style: $styles.text.captionMedium,
             textAlign: TextAlign.center,
           ),
-          MCore.large.verticalSpace,
+          $styles.spaces.verticalLarge,
           SizedBox(
-            height: 32.h,
+            height: 32.toScale,
             child: MSecondaryButton.icon(
               label: 'View $actionTitle',
               icon: Icon(
@@ -41,13 +42,13 @@ class EmptyStateWidget extends StatelessWidget {
               onPressed: action,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: MCore.large,
-                  vertical: MCore.small,
-                ).r,
+                  horizontal: 16,
+                  vertical: 8,
+                ).radius,
                 side: BorderSide(color: colorScheme.outlineVariant3!),
                 foregroundColor: colorScheme.onBackground,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: $styles.radius.small,
                 ),
               ),
             ),

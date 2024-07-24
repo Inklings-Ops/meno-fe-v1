@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../../../router/router.dart';
-import '../widgets/widgets.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class ResetPasswordOtpVerificationPage extends StatelessWidget {
   const ResetPasswordOtpVerificationPage({super.key});
@@ -16,29 +11,26 @@ class ResetPasswordOtpVerificationPage extends StatelessWidget {
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24).r,
+            padding: const EdgeInsets.symmetric(vertical: 24).radius,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                24.verticalSpace,
-                const MText(
-                  'OTP Verification',
-                  style: MTextStyle.heading2Medium,
-                ),
-                MCore.small.verticalSpace,
-                const MText(
+                24.vSpace,
+                MText('OTP Verification', style: $styles.text.heading2Medium),
+                $styles.spaces.verticalSmall,
+                MText(
                   'Enter the 4-digit code we just sent to jimhalpert26@gmail.com to continue',
                   maxLines: 3,
-                  style: MTextStyle.bodyRegular,
+                  style: $styles.text.bodyRegular,
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 const MOtpField(),
-                24.verticalSpace,
+                24.vSpace,
                 const AuthRedirectionText(
                   title: "Didn't receive code?",
                   buttonText: 'Send again',
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Continue',
                   onPressed: () => context.push(Routes.createNewPassword),

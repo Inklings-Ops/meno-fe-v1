@@ -5,13 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class MAvatar extends StatelessWidget {
-  final double radius;
-  final String? url;
-  final File? file;
-  final Widget? child;
-  final VoidCallback? onTap;
-  final bool hasBorder;
-
   const MAvatar({
     super.key,
     required this.radius,
@@ -21,10 +14,16 @@ class MAvatar extends StatelessWidget {
     this.onTap,
     this.hasBorder = true,
   });
+  final double radius;
+  final String? url;
+  final File? file;
+  final Widget? child;
+  final VoidCallback? onTap;
+  final bool hasBorder;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     final bool hasUrl = url != null;
     final bool hasFile = file != null;
@@ -53,7 +52,7 @@ class MAvatar extends StatelessWidget {
       radius: radius,
       foregroundImage: foregroundImage,
       backgroundImage: backgroundImage,
-      backgroundColor: colorScheme.surfaceShade,
+      backgroundColor: colors.surfaceShade,
       child: placeholder,
     );
 
@@ -63,9 +62,9 @@ class MAvatar extends StatelessWidget {
           ? avatar
           : CircleAvatar(
               radius: radius,
-              backgroundColor: colorScheme.outlineVariant3,
+              backgroundColor: colors.outlineVariant3,
               child: Padding(
-                padding: const EdgeInsets.all(1.50),
+                padding: const EdgeInsets.all(1.50).radius,
                 child: avatar,
               ),
             ),

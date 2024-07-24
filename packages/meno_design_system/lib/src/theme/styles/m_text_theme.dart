@@ -1,113 +1,112 @@
 import 'package:flutter/material.dart';
-
-import '../../gen/fonts.gen.dart';
-import 'm_text_style.dart';
+import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/gen/fonts.gen.dart';
 
 class MTextTheme extends ThemeExtension<MTextTheme> {
   /// Heading 1 Regular
-  final MTextStyle? heading1Regular;
+  final TextStyle? heading1Regular;
 
   /// Heading 1 Medium
-  final MTextStyle? heading1Medium;
+  final TextStyle? heading1Medium;
 
   /// Heading 1 Bold
-  final MTextStyle? heading1Bold;
+  final TextStyle? heading1Bold;
 
   /// Heading 2 Regular
-  final MTextStyle? heading2Regular;
+  final TextStyle? heading2Regular;
 
   /// Heading 2 Medium
-  final MTextStyle? heading2Medium;
+  final TextStyle? heading2Medium;
 
   /// Heading 2 Bold
-  final MTextStyle? heading2Bold;
+  final TextStyle? heading2Bold;
 
   /// Heading 3 Regular
-  final MTextStyle? heading3Regular;
+  final TextStyle? heading3Regular;
 
   /// Heading 3 Medium
-  final MTextStyle? heading3Medium;
+  final TextStyle? heading3Medium;
 
   /// Heading 3 Bold
-  final MTextStyle? heading3Bold;
+  final TextStyle? heading3Bold;
 
   /// Subheading Regular
-  final MTextStyle? subheadingRegular;
+  final TextStyle? subheadingRegular;
 
   /// Subheading Medium
-  final MTextStyle? subheadingMedium;
+  final TextStyle? subheadingMedium;
 
   /// Subheading Bold
-  final MTextStyle? subheadingBold;
+  final TextStyle? subheadingBold;
 
   /// Body Regular
-  final MTextStyle? bodyRegular;
+  final TextStyle? bodyRegular;
 
   /// Body Medium
-  final MTextStyle? bodyMedium;
+  final TextStyle? bodyMedium;
 
   /// Body Bold
-  final MTextStyle? bodyBold;
+  final TextStyle? bodyBold;
 
   /// Caption Regular
-  final MTextStyle? captionRegular;
+  final TextStyle? captionRegular;
 
   /// Caption Medium
-  final MTextStyle? captionMedium;
+  final TextStyle? captionMedium;
 
   /// Caption Bold
-  final MTextStyle? captionBold;
+  final TextStyle? captionBold;
 
   /// Micro Regular
-  final MTextStyle? microRegular;
+  final TextStyle? microRegular;
 
   /// Micro Medium
-  final MTextStyle? microMedium;
+  final TextStyle? microMedium;
 
   /// Micro Bold
-  final MTextStyle? microBold;
+  final TextStyle? microBold;
 
   /// Nano Regular
-  final MTextStyle? nanoRegular;
+  final TextStyle? nanoRegular;
 
   /// Nano Medium
-  final MTextStyle? nanoMedium;
+  final TextStyle? nanoMedium;
 
   /// Nano Bold
-  final MTextStyle? nanoBold;
+  final TextStyle? nanoBold;
 
   /// Button Medium
-  final MTextStyle? buttonMedium;
+  final TextStyle? button;
 
   static const String fontFamily = FontFamily.sFProDisplay;
 
   factory MTextTheme.$default() {
-    return const MTextTheme(
-      heading1Regular: MTextStyle.heading1Regular,
-      heading1Bold: MTextStyle.heading1Bold,
-      heading1Medium: MTextStyle.heading1Medium,
-      heading2Regular: MTextStyle.heading2Regular,
-      heading2Bold: MTextStyle.heading2Bold,
-      heading2Medium: MTextStyle.heading2Medium,
-      heading3Regular: MTextStyle.heading3Regular,
-      heading3Bold: MTextStyle.heading3Bold,
-      heading3Medium: MTextStyle.heading3Medium,
-      subheadingRegular: MTextStyle.subheadingRegular,
-      subheadingBold: MTextStyle.subheadingBold,
-      subheadingMedium: MTextStyle.subheadingMedium,
-      bodyRegular: MTextStyle.bodyRegular,
-      bodyBold: MTextStyle.bodyBold,
-      bodyMedium: MTextStyle.bodyMedium,
-      captionRegular: MTextStyle.captionRegular,
-      captionBold: MTextStyle.captionBold,
-      captionMedium: MTextStyle.captionMedium,
-      microRegular: MTextStyle.microRegular,
-      microBold: MTextStyle.microBold,
-      microMedium: MTextStyle.microMedium,
-      nanoRegular: MTextStyle.nanoRegular,
-      nanoBold: MTextStyle.nanoBold,
-      nanoMedium: MTextStyle.nanoMedium,
-      buttonMedium: MTextStyle.buttonMedium,
+    return MTextTheme(
+      heading1Regular: $styles.text.heading1Regular,
+      heading1Bold: $styles.text.heading1Bold,
+      heading1Medium: $styles.text.heading1Medium,
+      heading2Regular: $styles.text.heading2Regular,
+      heading2Bold: $styles.text.heading2Bold,
+      heading2Medium: $styles.text.heading2Medium,
+      heading3Regular: $styles.text.heading3Regular,
+      heading3Bold: $styles.text.heading3Bold,
+      heading3Medium: $styles.text.heading3Medium,
+      subheadingRegular: $styles.text.subheadingRegular,
+      subheadingBold: $styles.text.subheadingBold,
+      subheadingMedium: $styles.text.subheadingMedium,
+      bodyRegular: $styles.text.bodyRegular,
+      bodyBold: $styles.text.bodyBold,
+      bodyMedium: $styles.text.bodyMedium,
+      captionRegular: $styles.text.captionRegular,
+      captionBold: $styles.text.captionBold,
+      captionMedium: $styles.text.captionMedium,
+      microRegular: $styles.text.microRegular,
+      microBold: $styles.text.microBold,
+      microMedium: $styles.text.microMedium,
+      nanoRegular: $styles.text.nanoRegular,
+      nanoBold: $styles.text.nanoBold,
+      nanoMedium: $styles.text.nanoMedium,
+      button: $styles.text.button,
     );
   }
 
@@ -121,7 +120,7 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
       bodyMedium: bodyRegular, // Caption
       bodySmall: microRegular, // Micro
       labelMedium: nanoRegular, // Nano
-      labelSmall: buttonMedium, // Button
+      labelSmall: button, // Button
     );
   }
 
@@ -150,36 +149,36 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
     this.nanoRegular,
     this.nanoBold,
     this.nanoMedium,
-    this.buttonMedium,
+    this.button,
   });
 
   @override
   ThemeExtension<MTextTheme> copyWith({
-    MTextStyle? heading1Regular,
-    MTextStyle? heading1Bold,
-    MTextStyle? heading1Medium,
-    MTextStyle? heading2Regular,
-    MTextStyle? heading2Bold,
-    MTextStyle? heading2Medium,
-    MTextStyle? heading3Regular,
-    MTextStyle? heading3Bold,
-    MTextStyle? heading3Medium,
-    MTextStyle? subheadingRegular,
-    MTextStyle? subheadingBold,
-    MTextStyle? subheadingMedium,
-    MTextStyle? bodyRegular,
-    MTextStyle? bodyBold,
-    MTextStyle? bodyMedium,
-    MTextStyle? captionRegular,
-    MTextStyle? captionBold,
-    MTextStyle? captionMedium,
-    MTextStyle? microRegular,
-    MTextStyle? microBold,
-    MTextStyle? microMedium,
-    MTextStyle? nanoRegular,
-    MTextStyle? nanoBold,
-    MTextStyle? nanoMedium,
-    MTextStyle? buttonMedium,
+    TextStyle? heading1Regular,
+    TextStyle? heading1Bold,
+    TextStyle? heading1Medium,
+    TextStyle? heading2Regular,
+    TextStyle? heading2Bold,
+    TextStyle? heading2Medium,
+    TextStyle? heading3Regular,
+    TextStyle? heading3Bold,
+    TextStyle? heading3Medium,
+    TextStyle? subheadingRegular,
+    TextStyle? subheadingBold,
+    TextStyle? subheadingMedium,
+    TextStyle? bodyRegular,
+    TextStyle? bodyBold,
+    TextStyle? bodyMedium,
+    TextStyle? captionRegular,
+    TextStyle? captionBold,
+    TextStyle? captionMedium,
+    TextStyle? microRegular,
+    TextStyle? microBold,
+    TextStyle? microMedium,
+    TextStyle? nanoRegular,
+    TextStyle? nanoBold,
+    TextStyle? nanoMedium,
+    TextStyle? button,
   }) {
     return MTextTheme(
       heading1Regular: heading1Regular ?? this.heading1Regular,
@@ -206,7 +205,7 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
       nanoRegular: nanoRegular ?? this.nanoRegular,
       nanoBold: nanoBold ?? this.nanoBold,
       nanoMedium: nanoMedium ?? this.nanoMedium,
-      buttonMedium: buttonMedium ?? this.buttonMedium,
+      button: button ?? this.button,
     );
   }
 
@@ -218,35 +217,35 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
     if (other is! MTextTheme) return this;
     return MTextTheme(
       heading1Regular:
-          MTextStyle.lerp(heading1Regular, other.heading1Regular, t),
-      heading1Medium: MTextStyle.lerp(heading1Medium, other.heading1Medium, t),
-      heading1Bold: MTextStyle.lerp(heading1Bold, other.heading1Bold, t),
+          TextStyle.lerp(heading1Regular, other.heading1Regular, t),
+      heading1Medium: TextStyle.lerp(heading1Medium, other.heading1Medium, t),
+      heading1Bold: TextStyle.lerp(heading1Bold, other.heading1Bold, t),
       heading2Regular:
-          MTextStyle.lerp(heading2Regular, other.heading2Regular, t),
-      heading2Medium: MTextStyle.lerp(heading2Medium, other.heading2Medium, t),
-      heading2Bold: MTextStyle.lerp(heading2Bold, other.heading2Bold, t),
+          TextStyle.lerp(heading2Regular, other.heading2Regular, t),
+      heading2Medium: TextStyle.lerp(heading2Medium, other.heading2Medium, t),
+      heading2Bold: TextStyle.lerp(heading2Bold, other.heading2Bold, t),
       heading3Regular:
-          MTextStyle.lerp(heading3Regular, other.heading3Regular, t),
-      heading3Medium: MTextStyle.lerp(heading3Medium, other.heading3Medium, t),
-      heading3Bold: MTextStyle.lerp(heading3Bold, other.heading3Bold, t),
+          TextStyle.lerp(heading3Regular, other.heading3Regular, t),
+      heading3Medium: TextStyle.lerp(heading3Medium, other.heading3Medium, t),
+      heading3Bold: TextStyle.lerp(heading3Bold, other.heading3Bold, t),
       subheadingRegular:
-          MTextStyle.lerp(subheadingRegular, other.subheadingRegular, t),
+          TextStyle.lerp(subheadingRegular, other.subheadingRegular, t),
       subheadingMedium:
-          MTextStyle.lerp(subheadingMedium, other.subheadingMedium, t),
-      subheadingBold: MTextStyle.lerp(subheadingBold, other.subheadingBold, t),
-      bodyRegular: MTextStyle.lerp(bodyRegular, other.bodyRegular, t),
-      bodyMedium: MTextStyle.lerp(bodyMedium, other.bodyMedium, t),
-      bodyBold: MTextStyle.lerp(bodyBold, other.bodyBold, t),
-      captionRegular: MTextStyle.lerp(captionRegular, other.captionRegular, t),
-      captionMedium: MTextStyle.lerp(captionMedium, other.captionMedium, t),
-      captionBold: MTextStyle.lerp(captionBold, other.captionBold, t),
-      microRegular: MTextStyle.lerp(microRegular, other.microRegular, t),
-      microMedium: MTextStyle.lerp(microMedium, other.microMedium, t),
-      microBold: MTextStyle.lerp(microBold, other.microBold, t),
-      nanoRegular: MTextStyle.lerp(nanoRegular, other.nanoRegular, t),
-      nanoMedium: MTextStyle.lerp(nanoMedium, other.nanoMedium, t),
-      nanoBold: MTextStyle.lerp(nanoBold, other.nanoBold, t),
-      buttonMedium: MTextStyle.lerp(buttonMedium, other.buttonMedium, t),
+          TextStyle.lerp(subheadingMedium, other.subheadingMedium, t),
+      subheadingBold: TextStyle.lerp(subheadingBold, other.subheadingBold, t),
+      bodyRegular: TextStyle.lerp(bodyRegular, other.bodyRegular, t),
+      bodyMedium: TextStyle.lerp(bodyMedium, other.bodyMedium, t),
+      bodyBold: TextStyle.lerp(bodyBold, other.bodyBold, t),
+      captionRegular: TextStyle.lerp(captionRegular, other.captionRegular, t),
+      captionMedium: TextStyle.lerp(captionMedium, other.captionMedium, t),
+      captionBold: TextStyle.lerp(captionBold, other.captionBold, t),
+      microRegular: TextStyle.lerp(microRegular, other.microRegular, t),
+      microMedium: TextStyle.lerp(microMedium, other.microMedium, t),
+      microBold: TextStyle.lerp(microBold, other.microBold, t),
+      nanoRegular: TextStyle.lerp(nanoRegular, other.nanoRegular, t),
+      nanoMedium: TextStyle.lerp(nanoMedium, other.nanoMedium, t),
+      nanoBold: TextStyle.lerp(nanoBold, other.nanoBold, t),
+      button: TextStyle.lerp(button, other.button, t),
     );
   }
 

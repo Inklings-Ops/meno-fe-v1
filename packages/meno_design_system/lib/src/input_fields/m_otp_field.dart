@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 import 'package:pinput/pinput.dart';
 
-import '../m_dimensions.dart';
-import '../theme/styles/m_otp_field_style.dart';
-import '../theme/styles/m_text_style.dart';
-
 class MOtpField extends StatelessWidget {
-  final TextEditingController? controller;
-  final bool enabled;
-  final FocusNode? focusNode;
-  final int length;
-  final bool obscureText;
-  final ValueChanged<String?>? onChanged;
-  final FormFieldValidator<String>? validator;
-
   const MOtpField({
     super.key,
     this.controller,
@@ -25,19 +14,26 @@ class MOtpField extends StatelessWidget {
     this.validator,
   });
 
+  final TextEditingController? controller;
+  final bool enabled;
+  final FocusNode? focusNode;
+  final int length;
+  final bool obscureText;
+  final ValueChanged<String?>? onChanged;
+  final FormFieldValidator<String>? validator;
+
   @override
   Widget build(BuildContext context) {
-    final MOtpFieldStyles? styles = MOtpFieldStyles.of(context);
-
+    final styles = MOtpFieldStyles.of(context);
     final defaultPinTheme = PinTheme(
-      constraints: const BoxConstraints(maxHeight: 88, maxWidth: 88),
-      padding: const EdgeInsets.all(24.0),
+      constraints: const BoxConstraints(maxHeight: 88, maxWidth: 88).radius,
+      padding: const EdgeInsets.all(24.0).radius,
       decoration: BoxDecoration(
         color: styles?.fillColor,
         border: styles?.border,
-        borderRadius: MDimensions.mediumBorderRadius,
+        borderRadius: $styles.radius.medium,
       ),
-      textStyle: MTextStyle.heading1Medium.toTextStyle.copyWith(
+      textStyle: $styles.text.heading1Medium.copyWith(
         color: styles?.textStyle?.color,
       ),
     );
@@ -56,12 +52,12 @@ class MOtpField extends StatelessWidget {
       focusedPinTheme: defaultPinTheme.copyDecorationWith(
         color: styles?.fillColor,
         border: styles?.borderFocused,
-        borderRadius: MDimensions.mediumBorderRadius,
+        borderRadius: $styles.radius.medium,
       ),
       errorPinTheme: defaultPinTheme.copyDecorationWith(
         color: styles?.fillColor,
         border: styles?.borderError,
-        borderRadius: MDimensions.mediumBorderRadius,
+        borderRadius: $styles.radius.medium,
       ),
     );
   }

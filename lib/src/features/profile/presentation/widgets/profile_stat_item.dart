@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileStatItem extends StatelessWidget {
@@ -17,15 +16,15 @@ class ProfileStatItem extends StatelessWidget {
     final colorScheme = MColorScheme.of(context)!;
 
     return SizedBox(
-      height: 46.h,
+      height: 46.toScale,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          MText(count.toString(), style: MTextStyle.heading3Medium),
+          MText(count.toString(), style: $styles.text.heading3Medium),
           MText(
             title,
-            style: MTextStyle.microMedium,
+            style: $styles.text.microMedium,
             color: colorScheme.onBackgroundVariant,
           ),
         ],

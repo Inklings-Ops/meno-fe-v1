@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart' hide Assets;
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
-import 'package:meno_fe_v1/src/features/discover/presentation/widgets/all_broadcasts_widget.dart';
-
-import '../widgets/now_live_broadcasts_widget.dart';
-import '../widgets/recently_live_broadcasts_widget.dart';
 
 class DiscoverPage extends HookWidget {
   const DiscoverPage({super.key});
@@ -39,20 +31,20 @@ class DiscoverPage extends HookWidget {
       appBar: AppBar(
         title: const MHeader(title: 'Discover', padding: EdgeInsets.zero),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(110.h),
+          preferredSize: Size.fromHeight(110.toScale),
           child: Column(
             children: [
-              16.verticalSpace,
+              16.vSpace,
               DiscoverSearchBar(onTap: () => isSearching.value = true),
-              24.verticalSpace,
+              24.vSpace,
               LimitedBox(
-                maxHeight: 32.h,
+                maxHeight: 32.toScale,
                 child: SearchFilterList(
                   filter: filter.value,
                   onSelected: (value) => filter.value = value,
                 ),
               ),
-              MCore.micro.verticalSpace,
+              $styles.spaces.verticalMicro,
             ],
           ),
         ),

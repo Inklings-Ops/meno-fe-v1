@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastTimer extends StatelessWidget {
   const BroadcastTimer({super.key, this.showTimeAgo = true, this.textStyle});
   final bool showTimeAgo;
-  final MTextStyle? textStyle;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +19,16 @@ class BroadcastTimer extends StatelessWidget {
           children: [
             MText(
               elapsedTime,
-              style: textStyle ?? MTextStyle.captionRegular,
+              style: textStyle ?? $styles.text.captionRegular,
               color: colors.onDisabledContainer,
             ),
             if (state.timeAgo != null && showTimeAgo) ...[
-              MCore.small.horizontalSpace,
+              $styles.spaces.horizontalSmall,
               const MDot(),
-              MCore.small.horizontalSpace,
+              $styles.spaces.horizontalSmall,
               MText(
                 state.timeAgo!,
-                style: MTextStyle.captionRegular,
+                style: $styles.text.captionRegular,
                 color: colors.onDisabledContainer,
               ),
             ],

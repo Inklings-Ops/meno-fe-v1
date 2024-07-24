@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/meno/meno.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class BroadcastParticipantList extends HookWidget {
   const BroadcastParticipantList({super.key, this.padding});
@@ -27,12 +21,13 @@ class BroadcastParticipantList extends HookWidget {
           if (!isLoading && state.participants.isEmpty) return const SizedBox();
           return GridView.builder(
             shrinkWrap: true,
-            padding: padding ?? const EdgeInsets.symmetric(horizontal: 16).r,
+            padding: padding ??
+                EdgeInsets.symmetric(horizontal: $styles.insets.large),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              crossAxisSpacing: MCore.small.w,
-              mainAxisSpacing: MCore.large.h,
-              childAspectRatio: (80 / 88).r,  
+              crossAxisSpacing: $styles.insets.small,
+              mainAxisSpacing: $styles.insets.large,
+              childAspectRatio: (80 / 88).toScale,  
             ),
             itemCount: state.participants.length,
             itemBuilder: (context, index) {

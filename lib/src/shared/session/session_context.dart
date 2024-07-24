@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/onboarding/onboarding.dart';
+import 'package:meno_fe_v1/src/features/settings/settings.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -10,16 +10,21 @@ import 'session.dart';
 @Injectable(as: ISessionContext)
 class SessionContext implements ISessionContext {
   final IAuthFacade _authFacade;
-  final IOnboardingFacade _onboardingFacade;
+  final ISettingsFacade _settingsFacade;
   final _sessionSubject = BehaviorSubject.seeded(SessionStatus.loading);
   SessionContext({
     required IAuthFacade authFacade,
-    required IOnboardingFacade onboardingFacade,
+    required ISettingsFacade settingsFacade,
   })  : _authFacade = authFacade,
-        _onboardingFacade = onboardingFacade;
+        _settingsFacade = settingsFacade {
+    _authFacade.userChanges.listen((credential) {
+      final isOnboarded = _settingsFacade.isOnboarded;
+      _sessionSubject.add(_determineStatus(isOnboarded, credential));
+    });
+  }
 
   @override
-  bool get isOnboarded => _onboardingFacade.isOnboarded;
+  bool get isOnboarded => _settingsFacade.isOnboarded;
 
   @override
   UserCredential? get credential => _authFacade.credential;
@@ -34,15 +39,11 @@ class SessionContext implements ISessionContext {
   Stream<UserCredential?> get userChanges => _authFacade.userChanges;
 
   @override
-  @PostConstruct(preResolve: true)
-  Future<void> init() async {
+  @PostConstruct()
+  void init() {
     final initialCredential = _authFacade.credential;
-    final isOnboarded = _onboardingFacade.isOnboarded;
+    final isOnboarded = _settingsFacade.isOnboarded;
     _sessionSubject.add(_determineStatus(isOnboarded, initialCredential));
-    _authFacade.userChanges.listen((credential) {
-      final isOnboarded = _onboardingFacade.isOnboarded;
-      _sessionSubject.add(_determineStatus(isOnboarded, credential));
-    });
   }
 
   @override
@@ -65,12 +66,3 @@ SessionStatus _determineStatus(bool isOnboarded, UserCredential? credential) {
     return SessionStatus.authenticated;
   }
 }
-
-  // Stream<SessionStatus> get statusChanges async* {
-  //   final isOnboarded = _onboardingFacade.isOnboarded;
-  //   final credential = await _authFacade.credential;
-  //   yield _determineStatus(isOnboarded, credential);
-  //   yield* _authFacade.userChanges.map((credential) {
-  //     return _determineStatus(isOnboarded, credential);
-  //   }).distinct();
-  // }

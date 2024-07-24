@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class BroadcastControls extends StatelessWidget {
   const BroadcastControls({super.key});
@@ -11,14 +7,14 @@ class BroadcastControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40.h,
+      height: 40.toScale,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const BroadcastMicrophoneButton(),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           const BroadcastStartStopButton(),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           const MoreOptionsButton(),
         ],
       ),
@@ -34,14 +30,12 @@ class MoreOptionsButton extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
-      iconSize: 20,
+      iconSize: 20.toScale,
       color: colors.onBackground,
       style: IconButton.styleFrom(
-        fixedSize: Size.fromWidth(48.r),
+        fixedSize: Size.fromWidth(48.toScale),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(MCore.large)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
       ),
       onPressed: () => context.showModal(
         BlocBuilder<BroadcastBloc, BroadcastState>(

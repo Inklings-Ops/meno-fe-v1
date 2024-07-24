@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/gen/assets.gen.dart';
 
 class MLoadingIndicator extends StatelessWidget {
   final double? height;
@@ -49,8 +50,8 @@ class MLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height,
-      width: width,
+      height: height?.toScale,
+      width: width?.toScale,
       child: Assets.images.loading.image(fit: BoxFit.cover),
     );
   }
@@ -65,14 +66,15 @@ class _BoxLoadingIndicator extends MLoadingIndicator {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
+    final dimension = MediaQuery.sizeOf(context).width * 0.2;
     return Center(
       child: Container(
-        height: height ?? MediaQuery.sizeOf(context).width * 0.2,
-        width: width ?? MediaQuery.sizeOf(context).width * 0.2,
+        height: height ?? dimension,
+        width: width ?? dimension,
         decoration: BoxDecoration(
-          color: colorScheme.background,
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          color: colors.background,
+          borderRadius: $styles.radius.medium,
         ),
         child: Assets.images.loading.image(),
       ),

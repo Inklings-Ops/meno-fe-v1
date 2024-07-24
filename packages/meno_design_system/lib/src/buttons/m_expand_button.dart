@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ExpandButton extends StatelessWidget {
-  final VoidCallback? onTap;
   const ExpandButton({super.key, this.onTap});
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -12,15 +11,15 @@ class ExpandButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 34.h,
-        width: 94.w,
-        padding: const EdgeInsets.symmetric(
-          horizontal: MCore.medium,
-          vertical: MCore.small,
+        height: 34.toScale,
+        width: 94.toScale,
+        padding: EdgeInsets.symmetric(
+          horizontal: $styles.insets.medium,
+          vertical: $styles.insets.small,
         ),
         decoration: BoxDecoration(
           color: colors.inActiveContainer,
-          borderRadius: BorderRadius.circular(MCore.circle),
+          borderRadius: $styles.radius.circle,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -28,12 +27,12 @@ class ExpandButton extends StatelessWidget {
           children: [
             Icon(
               MIcons.expand_01,
-              size: 16.r,
+              size: 16.toScale,
               color: colors.onInActiveContainer,
             ),
             MText(
               "Expand",
-              style: MTextStyle.captionMedium,
+              style: $styles.text.captionMedium,
               color: colors.onInActiveContainer,
             ),
           ],

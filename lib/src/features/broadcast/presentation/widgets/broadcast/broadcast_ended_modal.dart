@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
 
 class BroadcastEndedModal extends HookWidget {
   const BroadcastEndedModal({super.key});
@@ -27,35 +21,35 @@ class BroadcastEndedModal extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
-              child: const MText(
+              padding: const EdgeInsets.symmetric(horizontal: 16).radius,
+              child: MText(
                 'Your live broadcast is complete! Great job.',
-                style: MTextStyle.heading2Bold,
+                style: $styles.text.heading2Bold,
                 textAlign: TextAlign.center,
               ),
             ),
-            24.verticalSpace,
+            24.vSpace,
             const BroadcastArtworkWidget(),
-            MCore.large.verticalSpace,
-            const BroadcastTimer(
+            $styles.spaces.verticalLarge,
+            BroadcastTimer(
               showTimeAgo: false,
-              textStyle: MTextStyle.heading2Bold,
+              textStyle: $styles.text.heading2Bold,
             ),
-            24.verticalSpace,
+            24.vSpace,
             // TODO: implement avatars of listeners
-            const SizedBox(height: 32),
-            MCore.small.verticalSpace,
+            $styles.spaces.verticalXXLarge,
+            $styles.spaces.verticalSmall,
             BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
               selector: (state) => state.participants.length,
               builder: (context, numberOfParticipants) => MText(
                 '$numberOfParticipants people tuned in!',
-                style: MTextStyle.captionRegular,
+                style: $styles.text.captionRegular,
                 textAlign: TextAlign.center,
               ),
             ),
-            40.verticalSpace,
+            40.vSpace,
             MPrimaryButton(label: 'Publish Broadcast', onPressed: () {}),
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             MSecondaryButton(
               label: 'Go to Profile',
               onPressed: () => context.go(Routes.profile),

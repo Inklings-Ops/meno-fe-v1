@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../../../../router/router.dart';
-import '../../../application/recently_live/recently_live_cubit.dart';
-import '../../../domain/domain.dart';
-import '../broadcast_list_widget.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class RecentlyLive extends StatelessWidget {
   const RecentlyLive({super.key});
@@ -39,7 +31,7 @@ class _BuildColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MCore.xxxLarge.verticalSpace,
+        $styles.spaces.verticalXXXLarge,
         MHeader(
           title: 'Recently Live',
           action: InkWell(
@@ -50,17 +42,16 @@ class _BuildColumn extends StatelessWidget {
             ),
           ),
         ),
-        24.verticalSpace,
-        LimitedBox(maxHeight: 176, child: child),
+        24.vSpace,
+        LimitedBox(maxHeight: 176.toScale, child: child),
       ],
     );
   }
 }
 
 class _RecentlyLiveCard extends StatelessWidget {
-  final Broadcast broadcast;
-
   const _RecentlyLiveCard({required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {

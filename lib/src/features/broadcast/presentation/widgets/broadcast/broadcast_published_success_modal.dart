@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import 'broadcast_timer.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastPublishedModal extends HookWidget {
   const BroadcastPublishedModal({super.key});
@@ -25,44 +21,43 @@ class BroadcastPublishedModal extends HookWidget {
 }
 
 class _PublishingInProgressModal extends StatelessWidget {
-  final VoidCallback? onPressed;
-
   const _PublishingInProgressModal({this.onPressed});
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const MText(
+        MText(
           'Publishing broadcast',
-          style: MTextStyle.heading2Bold,
+          style: $styles.text.heading2Bold,
           textAlign: TextAlign.center,
         ),
-        24.verticalSpace,
+        24.vSpace,
         SizedBox.square(
-          dimension: 96.r,
+          dimension: 96.toScale,
           child: Center(
             child: CircleAvatar(
-              radius: 32.r,
-              backgroundColor: colorScheme.onBackground,
+              radius: 32.toScale,
+              backgroundColor: colors.onBackground,
             ),
           ),
         ),
-        MCore.large.verticalSpace,
-        const BroadcastTimer(textStyle: MTextStyle.heading2Bold),
-        24.verticalSpace,
-        32.verticalSpace,
-        MCore.small.verticalSpace,
-        const MText(
+        $styles.spaces.verticalLarge,
+        BroadcastTimer(textStyle: $styles.text.heading2Bold),
+        24.vSpace,
+        32.vSpace,
+        $styles.spaces.verticalSmall,
+        MText(
           '23 people tuned in!',
-          style: MTextStyle.captionRegular,
+          style: $styles.text.captionRegular,
           textAlign: TextAlign.center,
         ),
-        80.verticalSpace,
+        80.vSpace,
         MSecondaryButton(label: 'Cancel', onPressed: onPressed),
       ],
     );
@@ -78,24 +73,24 @@ class _SuccessModal extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Assets.images.onboarding1.image(height: 193.h),
-        24.verticalSpace,
-        const MText(
+        Assets.images.onboarding1.image(height: 193.toScale),
+        24.vSpace,
+        MText(
           'Broadcast Published!',
-          style: MTextStyle.heading2Regular,
+          style: $styles.text.heading2Regular,
           textAlign: TextAlign.center,
         ),
-        MCore.small.verticalSpace,
+        $styles.spaces.verticalSmall,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
-          child: const MText(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+          child: MText(
             'Now you and other people can go back and listen to this broadcast.',
-            style: MTextStyle.captionRegular,
+            style: $styles.text.captionRegular,
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
         ),
-        40.verticalSpace,
+        40.vSpace,
         MPrimaryButton(label: 'Go to Profile', onPressed: () {}),
       ],
     );

@@ -1,16 +1,10 @@
 import 'dart:async';
 
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:meno_fe_v1/src/features/network/domain/network_status.dart';
 
-import '../dependency_injector/injector.dart';
 
-final networkProvider = StreamProvider<NetworkStatus>(
-  (r) => di<NetworkService>().stream,
-);
-
-enum NetworkStatus { connected, disconnected }
 
 @injectable
 class NetworkService {

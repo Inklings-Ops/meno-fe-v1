@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/folder_list/folder_list_bloc.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderListFailureWidget extends StatelessWidget {
   const FolderListFailureWidget({super.key});
@@ -13,28 +10,28 @@ class FolderListFailureWidget extends StatelessWidget {
 
     return Column(
       children: [
-        72.verticalSpace,
-        const MText(
+        72.vSpace,
+        MText(
           'An error occurred while retrieving the folders. Please, reload to try again?',
-          style: MTextStyle.bodyRegular,
+          style: $styles.text.bodyRegular,
           textAlign: TextAlign.center,
         ),
-        24.verticalSpace,
+        24.vSpace,
         SizedBox(
-          height: 32.h,
+          height: 32.toScale,
           child: MSecondaryButton.icon(
             label: 'Reload',
             icon: const Icon(Icons.refresh),
             style: OutlinedButton.styleFrom(
-              textStyle: MTextStyle.microMedium,
+              textStyle: $styles.text.microMedium,
               foregroundColor: colors.onBackground,
               iconColor: colors.onBackground,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8).r,
+                borderRadius: $styles.radius.small,
               ),
               side: BorderSide(
                 color: colors.outlineVariant3!,
-                width: 1.50.r,
+                width: 1.50.toScale,
               ),
             ),
             onPressed: () => context

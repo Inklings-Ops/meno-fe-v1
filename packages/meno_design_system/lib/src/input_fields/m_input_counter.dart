@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class MInputCounter extends StatelessWidget {
-  final int maxLength;
-  final int currentLength;
-  final bool enabled;
-
   const MInputCounter({
     super.key,
     required this.maxLength,
     required this.currentLength,
     this.enabled = true,
   });
+  final int maxLength;
+  final int currentLength;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +23,12 @@ class MInputCounter extends StatelessWidget {
         enabled ? styles.counterTextColor : styles.counterTextColorDisabled;
 
     return Container(
-      constraints: const BoxConstraints(minWidth: 50, maxHeight: 24),
+      constraints: const BoxConstraints(minWidth: 50, maxHeight: 24).radius,
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4).radius,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: MDimensions.smallBorderRadius,
+        borderRadius: $styles.radius.small,
       ),
       child: MText(
         '$currentLength/$maxLength',

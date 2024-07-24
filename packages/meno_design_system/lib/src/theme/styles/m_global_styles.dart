@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../m_color.dart';
-import '../m_color_scheme.dart';
-import 'm_text_style.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
   final MColor? dividerColor;
@@ -15,21 +12,19 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
     this.checkboxTheme,
   });
 
-  factory MGlobalStyles.$default({required MColorScheme colorScheme}) {
+  factory MGlobalStyles.$default(MColorScheme colors) {
     return MGlobalStyles(
-      dividerColor: colorScheme.outlineVariant1,
+      dividerColor: colors.outlineVariant1,
       checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        side: BorderSide(width: 1, color: colorScheme.outlineVariant1!),
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.micro),
+        side: BorderSide(width: 1.toScale, color: colors.outlineVariant1!),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      snackBarTheme:  const SnackBarThemeData(
-        contentTextStyle: MTextStyle.captionRegular,
-        insetPadding: EdgeInsets.all(16),
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: $styles.text.captionRegular,
+        insetPadding: EdgeInsets.all($styles.insets.large),
         behavior: SnackBarBehavior.fixed,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.medium),
       ),
     );
   }
@@ -63,7 +58,7 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
   }
 
   DividerThemeData get dividerTheme {
-    return DividerThemeData(color: dividerColor, thickness: 1.0);
+    return DividerThemeData(color: dividerColor, thickness: 1.0.toScale);
   }
 
   static MGlobalStyles? of(BuildContext context) {

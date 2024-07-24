@@ -1,17 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/router/routes.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../widgets.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class LoginForm extends HookWidget {
-  final bool isPasswordOnly;
-
   const LoginForm({super.key, required this.isPasswordOnly});
+  final bool isPasswordOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +16,24 @@ class LoginForm extends HookWidget {
         children: [
           if (isPasswordOnly) ...[
             UserAccountDetails(action: context.showSwitchAccountSheet),
-            MCore.xxLarge.verticalSpace,
+            $styles.spaces.verticalXXLarge,
           ] else ...[
             LoginEmailField(isPwdOnly: isPasswordOnly),
-            24.verticalSpace,
+            SizedBox(height: 24.toScale),
           ],
           const LoginPasswordField(),
-          MCore.micro.verticalSpace,
+          $styles.spaces.verticalSmall,
           Align(
             alignment: Alignment.centerRight,
             child: InkWell(
               onTap: () => context.push(Routes.resetPassword),
-              child: const MText(
+              child: MText(
                 'Forgot Password?',
-                style: MTextStyle.captionMedium,
+                style: $styles.text.captionMedium,
               ),
             ),
           ),
-          MCore.xxLarge.verticalSpace,
+          $styles.spaces.verticalXXLarge,
           const LoginButton(),
         ],
       ),

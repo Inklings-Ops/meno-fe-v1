@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 enum ToastType { error, success }
 
@@ -14,14 +12,14 @@ class NetworkToast extends StatelessWidget {
     final isError = type == ToastType.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8).r,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8).radius,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(MCore.small).r,
+        borderRadius: $styles.radius.small,
         color: isError ? colorScheme.error : colorScheme.success,
       ),
       child: MText(
         isError ? 'No internet connection' : 'Back online',
-        style: MTextStyle.captionRegular,
+        style: $styles.text.captionRegular,
         color: isError ? colorScheme.onError : colorScheme.onSuccess,
       ),
     );

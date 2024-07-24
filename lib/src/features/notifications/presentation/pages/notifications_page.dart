@@ -1,13 +1,6 @@
-import 'package:flutter/material.dart' hide Notification;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_type.dart';
-import 'package:meno_fe_v1/src/features/notifications/presentation/pages/subscribe_notification_card.dart';
-
-import '../../application/notifications_notifier.dart';
-import 'live_notification_card.dart';
+import 'package:meno_fe_v1/meno.dart' hide Notification;
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 class NotificationsPage extends HookConsumerWidget {
   const NotificationsPage({super.key});
@@ -45,21 +38,21 @@ class _Content extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate([
               if (today?.isNotEmpty ?? false) ...[
-                24.verticalSpace,
-                const MText('Today', style: MTextStyle.captionMedium),
-                MCore.large.verticalSpace,
+                24.vSpace,
+                MText('Today', style: $styles.text.captionMedium),
+                $styles.spaces.verticalLarge,
                 NotificationList(notifications: today!),
               ],
               if (thisWeek?.isNotEmpty ?? false) ...[
-                MCore.xxLarge.verticalSpace,
-                const MText('This Week', style: MTextStyle.captionMedium),
-                MCore.large.verticalSpace,
+                $styles.spaces.verticalXXLarge,
+                MText('This Week', style: $styles.text.captionMedium),
+                $styles.spaces.verticalLarge,
                 NotificationList(notifications: thisWeek!),
               ],
               if (older?.isNotEmpty ?? false) ...[
-                MCore.xxLarge.verticalSpace,
-                const MText('Older', style: MTextStyle.captionMedium),
-                MCore.large.verticalSpace,
+                $styles.spaces.verticalXXLarge,
+                MText('Older', style: $styles.text.captionMedium),
+                $styles.spaces.verticalLarge,
                 NotificationList(notifications: older!),
               ],
             ]),
@@ -72,7 +65,6 @@ class _Content extends StatelessWidget {
 
 class NotificationList extends StatelessWidget {
   const NotificationList({super.key, required this.notifications});
-
   final List<Notification?> notifications;
 
   @override
@@ -88,7 +80,7 @@ class NotificationList extends StatelessWidget {
           SubscribeNotificationCard(notification: notifications[i]!),
         _ => const SizedBox(),
       },
-      separatorBuilder: (context, i) => MCore.large.verticalSpace,
+      separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
       itemCount: notifications.length,
     );
   }
@@ -107,12 +99,12 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
-              vertical: MCore.small,
-            ).r,
+              vertical: 8,
+            ).radius,
             child: const MBackButton.withText(),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: MCore.small).r,
+            padding: const EdgeInsets.symmetric(vertical: 8).radius,
             child: const MHeader(title: 'Notifications'),
           ),
         ],
@@ -121,5 +113,5 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(86.h);
+  Size get preferredSize => Size.fromHeight(86.toScale);
 }

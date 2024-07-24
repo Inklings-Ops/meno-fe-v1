@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class CreateBroadcastListItem extends StatelessWidget {
   final String leadingText;
@@ -22,33 +20,30 @@ class CreateBroadcastListItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12).r,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12).radius,
           decoration: BoxDecoration(
             color: theme.disabledColor,
-            borderRadius: BorderRadius.all(const Radius.circular(8).r),
+            borderRadius: $styles.radius.small,
           ),
           child: SizedBox(
-            height: 24.h,
+            height: 24.toScale,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: MText(
-                    leadingText,
-                    style: MTextStyle.captionMedium,
-                  ),
+                  child: MText(leadingText, style: $styles.text.captionMedium),
                 ),
-                MCore.large.horizontalSpace,
+                $styles.spaces.horizontalLarge,
                 trailing ?? const SizedBox(),
               ],
             ),
           ),
         ),
-        6.verticalSpace,
+        6.vSpace,
         SizedBox(
-          height: 18.h,
-          child: MText(subtitleText, style: MTextStyle.captionRegular),
+          height: 18.toScale,
+          child: MText(subtitleText, style: $styles.text.captionRegular),
         ),
       ],
     );

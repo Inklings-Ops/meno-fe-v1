@@ -2,28 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../m_size.dart';
 import 'm_input_counter.dart';
 import 'm_input_label.dart';
 
 class MTextArea extends StatefulWidget {
-  final String label;
-  final IconData? labelIcon;
-  final String? hint;
-  final bool enabled;
-  final int maxLines;
-  final int? maxLength;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onFieldSubmitted;
-  final String? initialValue;
-  final FocusNode? focusNode;
-  final TextInputType keyboardType;
-  final FormFieldValidator<String>? validator;
-  final AutovalidateMode? autovalidateMode;
-  final bool required;
-  final TextInputAction? textInputAction;
-
   const MTextArea({
     super.key,
     required this.label,
@@ -44,6 +26,23 @@ class MTextArea extends StatefulWidget {
     this.textInputAction,
   });
 
+  final String label;
+  final IconData? labelIcon;
+  final String? hint;
+  final bool enabled;
+  final int maxLines;
+  final int? maxLength;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
+  final String? initialValue;
+  final FocusNode? focusNode;
+  final TextInputType keyboardType;
+  final FormFieldValidator<String>? validator;
+  final AutovalidateMode? autovalidateMode;
+  final bool required;
+  final TextInputAction? textInputAction;
+
   @override
   State<MTextArea> createState() => _MTextAreaState();
 }
@@ -59,7 +58,7 @@ class _MTextAreaState extends State<MTextArea> {
     final styles = MTextFieldStyle.of(context)!;
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 168),
+      constraints: const BoxConstraints(maxHeight: 168).radius,
       child: FormField<String?>(
         validator: widget.validator,
         autovalidateMode: widget.autovalidateMode,
@@ -84,15 +83,15 @@ class _MTextAreaState extends State<MTextArea> {
                 ),
               ],
             ),
-            MSize.verticalSpaceSmall,
+            $styles.spaces.verticalSmall,
             LimitedBox(
-              maxHeight: 136,
+              maxHeight: 136.toScale,
               child: _buildTextFormField(styles, field),
             ),
             if (field.errorText != null)
               Container(
                 alignment: Alignment.centerLeft,
-                height: 18,
+                height: 18.toScale,
                 child: _buildErrorText(field, styles),
               ),
           ],
@@ -158,13 +157,13 @@ class _MTextAreaState extends State<MTextArea> {
       obscuringCharacter: "*",
       maxLines: widget.maxLines,
       enabled: widget.enabled,
-      cursorWidth: 1,
-      cursorHeight: 18,
+      cursorWidth: 1.toScale,
+      cursorHeight: 18.toScale,
       decoration: InputDecoration(
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: const EdgeInsets.all(MCore.medium),
+        contentPadding: EdgeInsets.all($styles.insets.medium),
         counter: const SizedBox(),
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,

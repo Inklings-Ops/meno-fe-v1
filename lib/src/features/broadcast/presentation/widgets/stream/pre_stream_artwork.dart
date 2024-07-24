@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class PreStreamArtwork extends StatelessWidget {
   const PreStreamArtwork({super.key,this.imageUrl});
@@ -28,17 +26,17 @@ class PreStreamArtwork extends StatelessWidget {
     }
 
     final SizedBox placeholder = SizedBox(
-      height: (142 * 0.4).h,
+      height: (142 * 0.4).toScale,
       child: colors.brightness == Brightness.light
           ? Assets.images.logoDark.svg()
           : Assets.images.logoLight.svg(),
     );
 
     return Container(
-      height: 142.r,
-      width: 142.r,
+      height: 142.toScale,
+      width: 142.toScale,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16).r,
+        borderRadius: $styles.radius.large,
         border: Border.all(color: colors.outlineVariant1!),
         image: image,
       ),

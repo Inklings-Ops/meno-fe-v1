@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../../features/auth/application/application.dart';
-import '../../features/auth/domain/domain.dart';
-import '../../router/router.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class MSwitchAccountModal extends StatelessWidget {
   const MSwitchAccountModal({super.key});
@@ -75,15 +67,15 @@ class _AccountListTile extends StatelessWidget {
         context.pop();
       },
       controlAffinity: ListTileControlAffinity.trailing,
-      contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
+      contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12).radius,
       dense: true,
       title: Row(
         children: [
-          MAvatar(radius: 20, url: user.imageUrl),
-          MCore.large.horizontalSpace,
+          MAvatar(radius: 20.toScale, url: user.imageUrl),
+          $styles.spaces.horizontalLarge,
           MText(
             user.fullName.getOr(),
-            style: MTextStyle.bodyRegular,
+            style: $styles.text.bodyRegular,
           ),
         ],
       ),
@@ -97,25 +89,21 @@ class _AddAccountTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     return InkWell(
       onTap: () {
         context.pop();
         context.read<SessionCubit>().logout();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: MCore.small,
-          horizontal: MCore.large,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16).radius,
         child: Row(
           children: [
             const Icon(MIcons.plus_circle),
-            MCore.medium.horizontalSpace,
+            $styles.spaces.horizontalMedium,
             Expanded(
               child: MText(
                 'Add Account',
-                style: MTextTheme.of(context)?.bodyMedium,
+                style: $styles.text.bodyMedium,
                 color: colors.primary,
               ),
             ),
@@ -171,7 +159,7 @@ class _SwitchAccountModal2 extends StatelessWidget {
             orElse: () => [],
             loadSuccess: (allCredentials, currentCredential) => [
               ...allCredentials.map((c) => _AccountListTile(credential: c)),
-              const SizedBox(height: 24),
+              24.vSpace,
               const _AddAccountTile(),
             ],
           ),

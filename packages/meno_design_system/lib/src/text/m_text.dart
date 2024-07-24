@@ -2,18 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class MText extends StatelessWidget {
-  final String data;
-  final MColor? color;
-  final TextStyle? style;
-  final int? maxLines;
-  final Locale? locale;
-  final TextOverflow? overflow;
-  final TextAlign? textAlign;
-  final TextDecoration? decoration;
-  final MColor? decorationColor;
-  final double? decorationThickness;
-  final bool? softWrap;
-
   const MText(
     this.data, {
     super.key,
@@ -28,29 +16,35 @@ class MText extends StatelessWidget {
     this.decorationThickness,
     this.softWrap,
   });
+  final String data;
+  final MColor? color;
+  final TextStyle? style;
+  final int? maxLines;
+  final Locale? locale;
+  final TextOverflow? overflow;
+  final TextAlign? textAlign;
+  final TextDecoration? decoration;
+  final MColor? decorationColor;
+  final double? decorationThickness;
+  final bool? softWrap;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      data,
-      key: key,
-      maxLines: maxLines,
-      locale: locale,
-      overflow: overflow,
-      textAlign: textAlign,
-      softWrap: softWrap,
-      style: TextStyle(
-        color: color,
-        fontFamily: style?.fontFamily,
-        fontSize: style?.fontSize,
-        fontWeight: style?.fontWeight,
-        height: style?.height,
-        debugLabel: style?.debugLabel,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationThickness: decorationThickness,
-        letterSpacing: style?.letterSpacing,
-        textBaseline: style?.textBaseline,
+    final defaultTextStyle = DefaultTextStyle.of(context);
+    TextStyle? effectiveTextStyle = style;
+    if (style == null || style!.inherit) {
+      effectiveTextStyle = defaultTextStyle.style.merge(style);
+    }
+    return DefaultTextStyle(
+      style: effectiveTextStyle!.copyWith(color: color),
+      child: Text(
+        data,
+        key: key,
+        maxLines: maxLines,
+        locale: locale,
+        overflow: overflow,
+        textAlign: textAlign,
+        softWrap: softWrap,
       ),
     );
   }

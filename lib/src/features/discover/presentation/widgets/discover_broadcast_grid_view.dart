@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
-import 'package:meno_fe_v1/src/shared/widgets/empty_list_widget.dart';
 
 class DiscoverBroadcastGridView extends HookWidget {
   const DiscoverBroadcastGridView({
@@ -20,11 +16,11 @@ class DiscoverBroadcastGridView extends HookWidget {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 24.h,
-        crossAxisSpacing: 24.w,
-        childAspectRatio: (159.50 / 176).r,
+        mainAxisSpacing: 24.toScale,
+        crossAxisSpacing: 24.toScale,
+        childAspectRatio: (159.50 / 176).toScale,
       ),
-      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).r,
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).radius,
       itemBuilder: (context, i) {
         final broadcast = broadcasts[i]!;
         return switch (filter) {

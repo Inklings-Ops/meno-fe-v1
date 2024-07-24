@@ -28,7 +28,7 @@ class MPrimaryButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return ElevatedButton(
-      style: style ?? MButtonStyles.of(context)?.primary?.merge(style),
+      style: style?.merge(MButtonStyles.of(context)?.primary),
       onPressed: (loading || disabled) ? null : onPressed,
       child: loading ? const MLoadingIndicator.four(width: 56) : child,
     );

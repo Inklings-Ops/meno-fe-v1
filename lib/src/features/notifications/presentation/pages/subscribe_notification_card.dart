@@ -1,12 +1,8 @@
-import 'package:flutter/material.dart' hide Notification;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../domain/entities/notification.dart';
+import 'package:meno_fe_v1/meno.dart' hide Notification;
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 class SubscribeNotificationCard extends StatelessWidget {
   const SubscribeNotificationCard({super.key, required this.notification});
-
   final Notification notification;
 
   @override
@@ -22,8 +18,11 @@ class SubscribeNotificationCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MAvatar(radius: 24, url: notification.content.subscriberImageUrl),
-          MCore.small.horizontalSpace,
+          MAvatar(
+            radius: 24.toScale,
+            url: notification.content.subscriberImageUrl,
+          ),
+          $styles.spaces.horizontalSmall,
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -35,7 +34,7 @@ class SubscribeNotificationCard extends StatelessWidget {
                   style: styles.nTitleTextStyle,
                   maxLines: 2,
                 ),
-                MCore.small.verticalSpace,
+                $styles.spaces.verticalSmall,
                 MText(
                   '3 days ago',
                   style: styles.nSubtitleTextStyle,
@@ -44,14 +43,14 @@ class SubscribeNotificationCard extends StatelessWidget {
               ],
             ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           Align(
             alignment: Alignment.topCenter,
             child: SizedBox(
-              width: 16.w,
-              height: 16.w,
+              width: 16.toScale,
+              height: 16.toScale,
               child: MIconButton(
-                icon: Icon(MIcons.dots_vertical, size: 16.r),
+                icon: Icon(MIcons.dots_vertical, size: 16.toScale),
               ),
             ),
           ),

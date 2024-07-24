@@ -24,7 +24,7 @@ class MSuccessButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return FilledButton(
-      style: style ?? MButtonStyles.of(context)?.success,
+      style: style?.merge(MButtonStyles.of(context)?.success),
       onPressed: onPressed,
       child: child,
     );

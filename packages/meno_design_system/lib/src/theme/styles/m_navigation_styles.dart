@@ -6,7 +6,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
   final BottomNavigationBarThemeData? bottomNavigationBarTheme;
   final TabBarTheme? tabBarTheme;
   final MColor? accentColor;
-  final MTextStyle? actionTextStyle;
+  final TextStyle? actionTextStyle;
 
   MNavigationStyles({
     this.appBarTheme,
@@ -16,49 +16,51 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
     this.actionTextStyle,
   });
 
-  factory MNavigationStyles.$default({required MColorScheme colorScheme}) {
+  factory MNavigationStyles.$default(MColorScheme colors) {
+    final iconSize = 20.toScale;
     return MNavigationStyles(
       appBarTheme: AppBarTheme(
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
-        backgroundColor: colorScheme.background,
-        // titleSpacing: 0,
-        toolbarHeight: 56,
-        titleTextStyle: MTextStyle.bodyMedium,
+        backgroundColor: colors.background,
+        toolbarHeight: 56.toScale,
+        titleTextStyle: $styles.text.bodyMedium,
         actionsIconTheme: IconThemeData(
-          color: colorScheme.onBackground,
-          size: 24,
+          color: colors.onBackground,
+          size: 24.toScale,
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        backgroundColor: colorScheme.background,
-        unselectedItemColor: colorScheme.inActive,
-        selectedItemColor: colorScheme.primary,
-        selectedIconTheme: IconThemeData(color: colorScheme.primary, size: 20),
-        unselectedIconTheme:
-            IconThemeData(color: colorScheme.inActive, size: 20),
-        unselectedLabelStyle: MTextStyle.microMedium.copyWith(
-          color: colorScheme.inActive,
+        backgroundColor: colors.background,
+        unselectedItemColor: colors.inActive,
+        selectedItemColor: colors.primary,
+        selectedIconTheme: IconThemeData(color: colors.primary, size: iconSize),
+        unselectedIconTheme: IconThemeData(
+          color: colors.inActive,
+          size: iconSize,
         ),
-        selectedLabelStyle: MTextStyle.microMedium.copyWith(
-          color: colorScheme.primary,
+        unselectedLabelStyle: $styles.text.microMedium.copyWith(
+          color: colors.inActive,
+        ),
+        selectedLabelStyle: $styles.text.microMedium.copyWith(
+          color: colors.primary,
         ),
       ),
       accentColor: MColor.secondary300,
-      actionTextStyle: MTextStyle.captionMedium,
+      actionTextStyle: $styles.text.captionMedium,
       tabBarTheme: TabBarTheme(
-        labelStyle: MTextStyle.captionMedium,
-        labelColor: colorScheme.primary,
-        labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-        unselectedLabelStyle: MTextStyle.captionMedium,
-        unselectedLabelColor: colorScheme.onBackgroundVariant,
-        indicatorColor: colorScheme.primary,
+        labelStyle: $styles.text.captionMedium,
+        labelColor: colors.primary,
+        labelPadding: EdgeInsets.symmetric(horizontal: $styles.insets.small),
+        unselectedLabelStyle: $styles.text.captionMedium,
+        unselectedLabelColor: colors.onBackgroundVariant,
+        indicatorColor: colors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
           border: Border(
-            bottom: BorderSide(width: 1, color: colorScheme.primary!),
+            bottom: BorderSide(width: 1.toScale, color: colors.primary!),
           ),
         ),
       ),
@@ -71,7 +73,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
     BottomNavigationBarThemeData? bottomNavigationBarTheme,
     TabBarTheme? tabBarTheme,
     MColor? accentColor,
-    MTextStyle? actionTextStyle,
+    TextStyle? actionTextStyle,
   }) {
     return MNavigationStyles(
       appBarTheme: appBarTheme ?? this.appBarTheme,
@@ -94,7 +96,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
       tabBarTheme: TabBarTheme.lerp(tabBarTheme!, other.tabBarTheme!, t),
       accentColor: MColor.lerp(accentColor, other.accentColor, t),
       actionTextStyle:
-          MTextStyle.lerp(actionTextStyle, other.actionTextStyle, t),
+          TextStyle.lerp(actionTextStyle, other.actionTextStyle, t),
       bottomNavigationBarTheme: BottomNavigationBarThemeData.lerp(
           bottomNavigationBarTheme, other.bottomNavigationBarTheme, t),
     );

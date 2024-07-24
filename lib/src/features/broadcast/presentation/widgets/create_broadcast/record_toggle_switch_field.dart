@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/broadcast_form/broadcast_form_cubit.dart';
-import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/create_broadcast/create_broadcast_list_item.dart';
-
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 class RecordToggleSwitchField extends StatelessWidget {
   const RecordToggleSwitchField({super.key});
 
@@ -15,7 +11,7 @@ class RecordToggleSwitchField extends StatelessWidget {
         leadingText: 'Enable recording',
         subtitleText: 'Record your broadcast to listen back to later',
         trailing: SizedBox(
-          width: 48.w,
+          width: 48.toScale,
           child: Switch(
             value: state.shouldRecord,
             onChanged: context.read<BroadcastFormCubit>().onRecordingChanged,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class DiscoverPaginationIndicator extends StatelessWidget {
@@ -19,11 +18,11 @@ class DiscoverPaginationIndicator extends StatelessWidget {
         if (!isLoading && !hasMore)
           MText(
             'You’ve reached the end 🎉',
-            style: MTextStyle.captionRegular,
+            style: $styles.text.captionRegular,
             color: colors.onBackgroundVariant,
             textAlign: TextAlign.center,
           ),
-        28.verticalSpace,
+        28.vSpace,
       ],
     );
   }

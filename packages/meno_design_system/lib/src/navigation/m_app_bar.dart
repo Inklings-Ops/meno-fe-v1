@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/gen/assets.gen.dart';
 
 enum _AppBarVariant { home, primary, secondary }
 
@@ -24,7 +25,9 @@ class MAppBar extends _AppBar {
     Key? key,
     required String title,
     bool centerTitle,
-    List<Widget>? actions,
+    String? avatarImageUrl,
+    VoidCallback? onAvatarTap,
+    VoidCallback? onNotificationBellTap,
   }) = _HomeAppBar;
 
   const MAppBar._({
@@ -58,9 +61,9 @@ abstract class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => switch (variant) {
-        _AppBarVariant.home => const Size.fromHeight(80.0),
-        _AppBarVariant.primary => const Size.fromHeight(120.0),
-        _AppBarVariant.secondary => const Size.fromHeight(kToolbarHeight),
+        _AppBarVariant.home => $styles.toolbarHeight.home,
+        _AppBarVariant.primary => $styles.toolbarHeight.primary,
+        _AppBarVariant.secondary => $styles.toolbarHeight.secondary,
       };
 
   @override
@@ -100,22 +103,22 @@ class _PrimaryAppBarImpl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
     final styles = MNavigationStyles.of(context)!;
     final colorFilter = ColorFilter.mode(styles.accentColor!, BlendMode.srcIn);
+    final toolbarHeight = 120.toScale;
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: colorScheme.primary,
-      flexibleSpace: SizedBox(
-        height: 120 + MediaQuery.viewPaddingOf(context).top,
+      backgroundColor: colors.primary,
+      toolbarHeight: toolbarHeight,
+      flexibleSpace: SafeArea(
         child: Stack(
-          alignment: Alignment.bottomCenter,
           fit: StackFit.passthrough,
+          alignment: Alignment.centerLeft,
           children: [
-            Container(
-              margin: MediaQuery.viewPaddingOf(context),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,15 +126,15 @@ class _PrimaryAppBarImpl extends StatelessWidget {
                   if (implyLeading) ...[
                     MBackButton.withText(
                       title: backText,
-                      iconColor: colorScheme.onPrimary,
+                      iconColor: colors.onPrimary,
                       textStyle: styles.actionTextStyle,
                     ),
-                    const SizedBox(height: 16),
+                    $styles.spaces.verticalLarge,
                   ],
                   MText(
                     title,
-                    style: MTextStyle.heading2Bold,
-                    color: colorScheme.onPrimary,
+                    style: $styles.text.heading2Bold,
+                    color: colors.onPrimary,
                   ),
                 ],
               ),
@@ -172,14 +175,18 @@ class _HomeAppBar extends MAppBar {
     required super.title,
     super.onBackPressed,
     super.centerTitle = false,
-    super.actions,
+    String? avatarImageUrl,
+    VoidCallback? onAvatarTap,
+    VoidCallback? onNotificationBellTap,
   }) : super._(
           variant: _AppBarVariant.home,
           child: _HomeAppBarImpl(
             title,
             onBackPressed: onBackPressed,
             centerTitle: centerTitle,
-            actions: actions,
+            avatarImageUrl: avatarImageUrl,
+            onAvatarTap: onAvatarTap,
+            onNotificationBellTap: onNotificationBellTap,
           ),
         );
 }
@@ -217,25 +224,31 @@ class _HomeAppBarImpl extends StatelessWidget {
   final String title;
   final VoidCallback? onBackPressed;
   final bool centerTitle;
-  final List<Widget>? actions;
+  final String? avatarImageUrl;
+  final VoidCallback? onAvatarTap;
+  final VoidCallback? onNotificationBellTap;
 
   const _HomeAppBarImpl(
     this.title, {
     this.onBackPressed,
     this.centerTitle = false,
-    this.actions,
+    this.avatarImageUrl,
+    this.onAvatarTap,
+    this.onNotificationBellTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      flexibleSpace: Container(
-        alignment: Alignment.bottomCenter,
+      flexibleSpace: SafeArea(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          height: 56,
+          margin: EdgeInsets.only(top: $styles.insets.small),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 6,
+          ).radius,
+          height: 56.toScale,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Column(
@@ -243,13 +256,28 @@ class _HomeAppBarImpl extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const MText("Hello,", style: MTextStyle.captionRegular),
-                    MText(title, style: MTextStyle.subheadingMedium),
+                    MText("Hello,", style: $styles.text.captionRegular),
+                    MText(title, style: $styles.text.subheadingMedium),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              if (actions != null) ...actions!,
+              $styles.spaces.horizontalSmall,
+              Row(
+                children: [
+                  MIconButton(
+                    icon: const Icon(MIcons.bell),
+                    iconSize: 20.toScale,
+                    onPressed: onNotificationBellTap,
+                  ),
+                  24.hSpace,
+                  MAvatar(
+                    radius: $styles.insets.large,
+                    url: avatarImageUrl,
+                    onTap: onAvatarTap,
+                    hasBorder: false,
+                  ),
+                ],
+              )
             ],
           ),
         ),

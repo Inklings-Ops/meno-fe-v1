@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 class SearchFilterList extends StatelessWidget {
@@ -21,17 +19,17 @@ class SearchFilterList extends StatelessWidget {
         return ChoiceChip(
           label: MText(
             filters[i].name,
-            color: selected ? colors.onPrimary : colors.onInActive,
+            color: selected ? colors.onPrimary : colors.onInActiveContainer,
           ),
           selected: selected,
-          labelStyle: MTextStyle.captionMedium,
+          labelStyle: $styles.text.captionMedium,
           onSelected: (_) => onSelected(filters[i]),
         );
       },
-      separatorBuilder: (context, i) => MCore.large.horizontalSpace,
+      separatorBuilder: (context, i) => $styles.spaces.horizontalLarge,
       itemCount: filters.length,
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
+      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
     );
   }
 }

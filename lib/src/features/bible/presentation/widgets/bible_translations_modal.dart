@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/bible/application/translations/translations_cubit.dart';
 import 'package:meno_fe_v1/src/features/bible/presentation/widgets/translation_widget.dart';
@@ -27,14 +26,12 @@ class BibleTranslationsModal extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const MText('Offline Translations',
-                  style: MTextStyle.microRegular),
-              MCore.small.verticalSpace,
+              MText('Offline Translations', style: $styles.text.microRegular),
+              $styles.spaces.verticalSmall,
               const OfflineBibleTranslationsList(),
-              MCore.xxLarge.verticalSpace,
-              const MText('Online Translations',
-                  style: MTextStyle.microRegular),
-              MCore.small.verticalSpace,
+              $styles.spaces.verticalXXLarge,
+              MText('Online Translations', style: $styles.text.microRegular),
+              $styles.spaces.verticalSmall,
               const OnlineBibleTranslationsList(),
             ],
           ),
@@ -57,10 +54,9 @@ class OfflineBibleTranslationsList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
         itemCount: state.offlineTranslations.length,
-        separatorBuilder: (context, i) => MCore.large.verticalSpace,
+        separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
         itemBuilder: (context, index) {
           final translation = state.offlineTranslations[index];
-
           return TranslationWidget(
             key: ObjectKey(translation.name),
             translation: translation,
@@ -81,7 +77,6 @@ class OnlineBibleTranslationsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<TranslationsCubit>();
-
     return BlocBuilder<TranslationsCubit, TranslationsState>(
       bloc: bloc,
       builder: (context, state) => ListView.separated(
@@ -89,10 +84,9 @@ class OnlineBibleTranslationsList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
         itemCount: state.onlineTranslations.length,
-        separatorBuilder: (context, i) => MCore.large.verticalSpace,
+        separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
         itemBuilder: (context, index) {
           final translation = state.onlineTranslations[index];
-
           return TranslationWidget(
             key: ObjectKey(translation),
             translation: translation,

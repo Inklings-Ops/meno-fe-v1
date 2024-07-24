@@ -8,6 +8,9 @@
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vector_graphics/vector_graphics.dart';
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
@@ -25,7 +28,7 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/collision.png');
 
   /// File path: assets/images/facebook.svg
-  String get facebook => 'assets/images/facebook.svg';
+  SvgGenImage get facebook => const SvgGenImage('assets/images/facebook.svg');
 
   /// File path: assets/images/finger snap.png
   AssetGenImage get fingerSnap =>
@@ -38,10 +41,11 @@ class $AssetsImagesGen {
   AssetGenImage get folder => const AssetGenImage('assets/images/folder.png');
 
   /// File path: assets/images/geometric lines.svg
-  String get geometricLines => 'assets/images/geometric lines.svg';
+  SvgGenImage get geometricLines =>
+      const SvgGenImage('assets/images/geometric lines.svg');
 
   /// File path: assets/images/google.svg
-  String get google => 'assets/images/google.svg';
+  SvgGenImage get google => const SvgGenImage('assets/images/google.svg');
 
   /// File path: assets/images/high voltage.png
   AssetGenImage get highVoltage =>
@@ -59,10 +63,11 @@ class $AssetsImagesGen {
   AssetGenImage get loading => const AssetGenImage('assets/images/loading.gif');
 
   /// File path: assets/images/logo-dark.svg
-  String get logoDark => 'assets/images/logo-dark.svg';
+  SvgGenImage get logoDark => const SvgGenImage('assets/images/logo-dark.svg');
 
   /// File path: assets/images/logo-light.svg
-  String get logoLight => 'assets/images/logo-light.svg';
+  SvgGenImage get logoLight =>
+      const SvgGenImage('assets/images/logo-light.svg');
 
   /// File path: assets/images/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
@@ -183,9 +188,11 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(this._assetName, {this.size = null});
 
   final String _assetName;
+
+  final Size? size;
 
   Image image({
     Key? key,
@@ -248,6 +255,71 @@ class AssetGenImage {
       _assetName,
       bundle: bundle,
       package: package,
+    );
+  }
+
+  String get path => _assetName;
+
+  String get keyName => _assetName;
+}
+
+class SvgGenImage {
+  const SvgGenImage(
+    this._assetName, {
+    this.size = null,
+  }) : _isVecFormat = false;
+
+  const SvgGenImage.vec(
+    this._assetName, {
+    this.size = null,
+  }) : _isVecFormat = true;
+
+  final String _assetName;
+
+  final Size? size;
+  final bool _isVecFormat;
+
+  SvgPicture svg({
+    Key? key,
+    bool matchTextDirection = false,
+    AssetBundle? bundle,
+    String? package,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.contain,
+    AlignmentGeometry alignment = Alignment.center,
+    bool allowDrawingOutsideViewBox = false,
+    WidgetBuilder? placeholderBuilder,
+    String? semanticsLabel,
+    bool excludeFromSemantics = false,
+    SvgTheme? theme,
+    ColorFilter? colorFilter,
+    Clip clipBehavior = Clip.hardEdge,
+    @deprecated Color? color,
+    @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
+    @deprecated bool cacheColorFilter = false,
+  }) {
+    return SvgPicture(
+      _isVecFormat
+          ? AssetBytesLoader(_assetName,
+              assetBundle: bundle, packageName: package)
+          : SvgAssetLoader(_assetName,
+              assetBundle: bundle, packageName: package),
+      key: key,
+      matchTextDirection: matchTextDirection,
+      width: width,
+      height: height,
+      fit: fit,
+      alignment: alignment,
+      allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
+      placeholderBuilder: placeholderBuilder,
+      semanticsLabel: semanticsLabel,
+      excludeFromSemantics: excludeFromSemantics,
+      theme: theme,
+      colorFilter: colorFilter ??
+          (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
+      clipBehavior: clipBehavior,
+      cacheColorFilter: cacheColorFilter,
     );
   }
 

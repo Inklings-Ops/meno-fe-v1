@@ -1,18 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 class ProfileButtons extends StatelessWidget {
   const ProfileButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return SizedBox(
-      height: 32.h,
+      height: 32.toScale,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
         child: Row(
           children: [
             Expanded(
@@ -22,25 +19,25 @@ class ProfileButtons extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: $styles.radius.small,
                   ),
                 ),
               ),
             ),
-            MCore.large.horizontalSpace,
+            $styles.spaces.horizontalLarge,
             Expanded(
               child: MSecondaryButton.icon(
                 label: 'Share profile',
                 icon: Icon(
                   MIcons.share,
-                  color: colorScheme.onBackground,
+                  color: colors.onBackground,
                 ),
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: colorScheme.outlineVariant3!),
-                  foregroundColor: colorScheme.onBackground,
+                  side: BorderSide(color: colors.outlineVariant3!),
+                  foregroundColor: colors.onBackground,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: $styles.radius.small,
                   ),
                 ),
               ),

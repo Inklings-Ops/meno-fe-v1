@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../m_internal.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 
 ButtonStyle get _baseButtonStyle => ButtonStyle(
-      textStyle: MInternal.resolveWith(defaultValue: MTextStyle.captionMedium),
-      iconSize: MInternal.resolveWith(defaultValue: 14.0),
+      textStyle:
+          MInternal.resolveWith(defaultValue: $styles.text.captionMedium),
+      iconSize: MInternal.resolveWith(defaultValue: 14.0.toScale),
       elevation: MInternal.resolveWith(defaultValue: 0.0),
-      fixedSize: MInternal.all(const Size.fromHeight(MCore.xxxLarge)),
-      padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
+      fixedSize: MInternal.all(Size.fromHeight($styles.insets.xxxLarge)),
+      padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8).radius),
       shadowColor: MInternal.all(MColor.shadow),
       visualDensity: VisualDensity.compact,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       shape: MInternal.all(
-        const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(MCore.medium)),
-        ),
+        RoundedRectangleBorder(borderRadius: $styles.radius.medium),
       ),
     );
 
@@ -34,24 +32,24 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
     this.danger,
   });
 
-  factory MButtonStyles.$default({required MColorScheme colorScheme}) {
+  factory MButtonStyles.$default(MColorScheme colors) {
     return MButtonStyles(
       primary: _baseButtonStyle.merge(
         ButtonStyle(
           backgroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.primary!,
-            pressedValue: colorScheme.inversePrimary,
-            disabledValue: colorScheme.disabled,
+            defaultValue: colors.primary!,
+            pressedValue: colors.inversePrimary,
+            disabledValue: colors.disabled,
           ),
           foregroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onPrimary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onPrimary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
           iconColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onPrimary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onPrimary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
         ),
       ),
@@ -59,22 +57,28 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
         ButtonStyle(
           backgroundColor: MInternal.resolveWith(
             defaultValue: MColor.transparent,
-            pressedValue: colorScheme.inversePrimary,
-            disabledValue: colorScheme.disabled,
+            pressedValue: colors.inversePrimary,
+            disabledValue: colors.disabled,
           ),
           foregroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.primary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.primary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
           iconColor: MInternal.resolveWith(
-            defaultValue: colorScheme.primary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.primary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
           side: MInternal.resolveWith(
-            defaultValue: BorderSide(color: colorScheme.primary!, width: 1.50),
-            pressedValue: BorderSide(color: colorScheme.primary!, width: 1.50),
+            defaultValue: BorderSide(
+              color: colors.primary!,
+              width: 1.50.toScale,
+            ),
+            pressedValue: BorderSide(
+              color: colors.primary!,
+              width: 1.50.toScale,
+            ),
             disabledValue: const BorderSide(width: 0),
           ),
         ),
@@ -84,60 +88,60 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
           backgroundColor: MInternal.resolveWith(
             defaultValue: MColor.transparent,
             pressedValue: MColor.transparent,
-            disabledValue: colorScheme.disabled,
+            disabledValue: colors.disabled,
           ),
           foregroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.primary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.primary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
           iconColor: MInternal.resolveWith(
-            defaultValue: colorScheme.primary!,
-            pressedValue: colorScheme.onInversePrimary,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.primary!,
+            pressedValue: colors.onInversePrimary,
+            disabledValue: colors.onDisabled,
           ),
+          visualDensity: VisualDensity.compact,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
       success: _baseButtonStyle.merge(
         ButtonStyle(
           backgroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.success!,
-            pressedValue: colorScheme.successContainer,
-            disabledValue: colorScheme.disabled,
+            defaultValue: colors.success!,
+            pressedValue: colors.successContainer,
+            disabledValue: colors.disabled,
           ),
           foregroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onSuccess!,
-            pressedValue: colorScheme.onSuccessContainer!,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onSuccess!,
+            pressedValue: colors.onSuccessContainer!,
+            disabledValue: colors.onDisabled,
           ),
           iconColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onSuccess!,
-            pressedValue: colorScheme.onSuccessContainer!,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onSuccess!,
+            pressedValue: colors.onSuccessContainer!,
+            disabledValue: colors.onDisabled,
           ),
         ),
       ),
       danger: _baseButtonStyle.merge(
         ButtonStyle(
           backgroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.error!,
-            pressedValue: colorScheme.errorContainer,
-            disabledValue: colorScheme.disabled,
+            defaultValue: colors.error!,
+            pressedValue: colors.errorContainer,
+            disabledValue: colors.disabled,
           ),
           foregroundColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onError!,
-            pressedValue: colorScheme.onErrorContainer!,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onError!,
+            pressedValue: colors.onErrorContainer!,
+            disabledValue: colors.onDisabled,
           ),
           iconColor: MInternal.resolveWith(
-            defaultValue: colorScheme.onError!,
-            pressedValue: colorScheme.onErrorContainer!,
-            disabledValue: colorScheme.onDisabled,
+            defaultValue: colors.onError!,
+            pressedValue: colors.onErrorContainer!,
+            disabledValue: colors.onDisabled,
           ),
           shape: MInternal.all(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-            ),
+            RoundedRectangleBorder(borderRadius: $styles.radius.small),
           ),
         ),
       ),

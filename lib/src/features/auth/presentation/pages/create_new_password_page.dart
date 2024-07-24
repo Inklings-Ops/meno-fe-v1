@@ -1,10 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-
-import '../../../../router/router.dart';
-import '../widgets/widgets.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class CreateNewPasswordPage extends StatelessWidget {
   const CreateNewPasswordPage({super.key});
@@ -16,33 +11,33 @@ class CreateNewPasswordPage extends StatelessWidget {
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24).r,
+            padding: const EdgeInsets.symmetric(vertical: 24).radius,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                24.verticalSpace,
+                24.vSpace,
                 const UserAccountDetails(),
-                MCore.small.verticalSpace,
-                const MText(
+                $styles.spaces.verticalSmall,
+                MText(
                   'Set up new password to continue your experience',
                   maxLines: 2,
-                  style: MTextStyle.captionMedium,
+                  style: $styles.text.captionMedium,
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 const MTextFormField(
                   label: 'Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
                   hint: 'Enter your password',
                 ),
-                24.verticalSpace,
+                24.vSpace,
                 const MTextFormField(
                   label: 'Confirm Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
                   hint: 'Enter your password',
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Reset Password',
                   onPressed: () => context.push(Routes.resetPwdSuccess),

@@ -1,49 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
-import '../widgets/widgets.dart';
 
-class EmailVerificationPage extends HookConsumerWidget {
+class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MScaffold(
       appBar: MAppBar.primary(title: 'Verify Your Email'),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 24).r,
+        padding: const EdgeInsets.symmetric(vertical: 24).radius,
         child: Form(
           child: Builder(
             builder: (formContext) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const MText(
+                MText(
                   'OTP verification',
-                  style: MTextStyle.heading2Medium,
+                  style: $styles.text.heading2Medium,
                 ),
-                MCore.small.verticalSpace,
-                const Text.rich(
+                $styles.spaces.verticalSmall,
+                Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: 'Enter the 4-digit code we just sent to '),
+                      const TextSpan(
+                        text: 'Enter the 4-digit code we just sent to ',
+                      ),
                       TextSpan(
                         text: 'jimhalpert26@gmail.com ',
-                        style: MTextStyle.bodyBold,
+                        style: $styles.text.bodyBold,
                       ),
-                      TextSpan(text: 'to continue.'),
+                      const TextSpan(text: 'to continue.'),
                     ],
                   ),
-                  style: MTextStyle.bodyRegular,
+                  style: $styles.text.bodyRegular,
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 const MOtpField(),
-                24.verticalSpace,
+                24.vSpace,
                 const AuthRedirectionText(
                   title: 'Didn’t receive code?',
                   buttonText: 'Send again',
                 ),
-                MCore.xxLarge.verticalSpace,
+                $styles.spaces.verticalXXLarge,
                 MPrimaryButton(label: 'Continue', onPressed: () {}),
               ],
             ),

@@ -11,20 +11,20 @@ class MInputLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final styles = MTextFieldStyle.of(context)!;
-
+    final effectiveGap = 6.vSpace;
     return SizedBox(
-      height: 18,
+      height: 18.toScale,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16, color: styles.iconColor),
-            const SizedBox(width: 6),
+            Icon(icon, size: $styles.insets.large, color: styles.iconColor),
+            effectiveGap,
           ],
           MText(label, color: styles.textColor, style: styles.labelTextStyle),
           if (required) ...[
-            const SizedBox(width: 6),
+            effectiveGap,
             MText("*", color: styles.errorColor, style: styles.labelTextStyle),
           ],
         ],

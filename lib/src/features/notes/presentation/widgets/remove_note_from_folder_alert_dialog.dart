@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/application/notes/notes_bloc.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   const DeleteNoteFromFolderAlertDialog({
@@ -17,44 +13,40 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
     final bloc = context.watch<NotesBloc>();
 
     return AlertDialog(
-      title: const MText('Remove Note?', style: MTextStyle.heading2Regular),
-      contentPadding: const EdgeInsets.all(24).r,
+      title: MText('Remove Note?', style: $styles.text.heading2Regular),
+      contentPadding: const EdgeInsets.all(24).radius,
       content: MText(
         'Do you want to remove this note from this folder?',
-        style: MTextStyle.captionRegular.copyWith(height: 1.4),
+        style: $styles.text.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
-          size: Size(85.w, 40.h),
+          size: Size(85.toScale, 40.toScale),
           child: MTextButton(
             label: 'Cancel',
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
-              foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(const Radius.circular(8).r),
-              ),
+              foregroundColor: colors.onDisabled?.withOpacity(0.5),
+              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
             ),
           ),
         ),
         SizedBox(
-          height: 40.h,
+          height: 40.toScale,
           child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
               : MDangerButton(
                   label: 'Remove',
                   onPressed: onDelete,
                   style: TextButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        const Radius.circular(8).r,
-                      ),
+                      borderRadius: $styles.radius.small,
                     ),
                   ),
                 ),

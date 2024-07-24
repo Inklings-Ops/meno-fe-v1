@@ -1,37 +1,29 @@
 import 'package:figma_squircle/figma_squircle.dart';
-import 'package:flutter/material.dart' hide Notification;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/helpers/date_helpers.dart';
-
-import '../../domain/entities/notification.dart';
+import 'package:meno_fe_v1/meno.dart' hide Notification;
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 class LiveNotificationCard extends StatelessWidget {
   const LiveNotificationCard({super.key, required this.notification});
-
   final Notification notification;
 
   @override
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
-
     return Container(
       padding: styles.nCardContentPadding,
       decoration: ShapeDecoration(
         color: styles.nBackgroundColor,
-        shape: const SmoothRectangleBorder(
-          borderRadius: SmoothBorderRadius.all(
-            SmoothRadius(cornerRadius: 16, cornerSmoothing: 0.5),
-          ),
+        shape: SmoothRectangleBorder(
+          borderRadius: $styles.radius.squircleLarge,
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const MBadge.small(),
-          MCore.small.horizontalSpace,
-          const MAvatar(radius: 24),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
+          MAvatar(radius: 24.toScale),
+          $styles.spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +33,7 @@ class LiveNotificationCard extends StatelessWidget {
                   style: styles.nTitleTextStyle,
                   maxLines: 4,
                 ),
-                14.verticalSpace,
+                14.vSpace,
                 MText(
                   DateHelpers.calculateTimeAgo(notification.createdAt),
                   style: styles.nSubtitleTextStyle,
@@ -50,12 +42,12 @@ class LiveNotificationCard extends StatelessWidget {
               ],
             ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           Container(
-            height: 80.h,
-            width: 88.w,
+            height: 80.toScale,
+            width: 88.toScale,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12).r,
+              borderRadius: $styles.radius.medium,
               border: Border.all(),
               image: notification.content.imageUrl != null
                   ? DecorationImage(
@@ -64,14 +56,14 @@ class LiveNotificationCard extends StatelessWidget {
                     )
                   : null,
             ),
-            child: Center(child: MPlaceholder(dimension: 30.r)),
+            child: Center(child: MPlaceholder(dimension: 30.toScale)),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           SizedBox(
-            width: 16.w,
-            height: 16.w,
+            width: 16.toScale,
+            height: 16.toScale,
             child: MIconButton(
-              icon: Icon(MIcons.dots_vertical, size: 16.r),
+              icon: Icon(MIcons.dots_vertical, size: 16.toScale),
             ),
           ),
         ],

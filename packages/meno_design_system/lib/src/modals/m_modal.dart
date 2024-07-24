@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/src/modals/m_modal_title_bar.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MModal extends StatelessWidget {
-  final WidgetBuilder builder;
-  final String? title;
-  final bool showCloseButton;
-  final EdgeInsetsGeometry? padding;
-
   const MModal({
     super.key,
     required this.builder,
@@ -14,12 +9,20 @@ class MModal extends StatelessWidget {
     this.showCloseButton = true,
     this.padding,
   });
+  final WidgetBuilder builder;
+  final String? title;
+  final bool showCloseButton;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveContentPadding = title != null
+        ? const EdgeInsets.only(top: 48, bottom: 8)
+        : const EdgeInsets.only(top: 0, bottom: 8);
+
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16).radius,
       child: Stack(
         children: [
           if (title != null)
@@ -31,7 +34,7 @@ class MModal extends StatelessWidget {
               ),
             ),
           Padding(
-            padding: EdgeInsets.only(top: title != null ? 48 : 0, bottom: 8),
+            padding: effectiveContentPadding.radius,
             child: builder(context),
           ),
         ],

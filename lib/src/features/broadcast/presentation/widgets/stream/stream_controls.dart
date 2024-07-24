@@ -1,9 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class StreamControls extends StatelessWidget {
   const StreamControls({super.key});
@@ -11,12 +7,12 @@ class StreamControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40.h,
+      height: 40.toScale,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const StreamLeaveButton(),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           const StreamOptionsButton(),
         ],
       ),
@@ -34,11 +30,9 @@ class StreamOptionsButton extends StatelessWidget {
       icon: const Icon(MIcons.dots_horizontal),
       color: colors.onBackground,
       style: IconButton.styleFrom(
-        fixedSize: Size.fromWidth(48.w),
+        fixedSize: Size.fromWidth(48.toScale),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MCore.large).r,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
       ),
       onPressed: () => context.showModal(
         BlocBuilder<StreamBloc, StreamState>(

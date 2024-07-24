@@ -1,13 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
-import 'package:meno_fe_v1/src/features/bible/application/translations/translations_cubit.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import 'bible_books_modal.dart';
-import 'bible_translations_modal.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class ScripturePicker extends StatelessWidget {
   const ScripturePicker({super.key});
@@ -15,20 +7,20 @@ class ScripturePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56,
-      padding: const EdgeInsets.only(top: MCore.large, bottom: MCore.small),
+      height: 56.toScale,
+      padding: const EdgeInsets.only(top: 16, bottom: 8).radius,
       child: Row(
         children: [
           Expanded(
             child: Row(
               children: [
                 const _ScriptureReference(),
-                MCore.small.horizontalSpace,
+                $styles.spaces.horizontalSmall,
                 const _ScriptureTranslation(),
               ],
             ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           const _PreviousAndNextButton(),
         ],
       ),
@@ -83,30 +75,28 @@ class _PreviousAndNextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     final bloc = context.watch<ScripturePickerCubit>();
-
     return Row(
       children: [
         SizedBox.square(
-          dimension: 32.r,
+          dimension: 32.toScale,
           child: IconButton.filled(
             icon: const Icon(MIcons.chevron_left),
             padding: EdgeInsets.zero,
-            iconSize: 20.r,
+            iconSize: 20.toScale,
             style: IconButton.styleFrom(
               backgroundColor: colors.outlineVariant2,
             ),
             onPressed: bloc.isPreviousEnabled ? bloc.previousChapter : null,
           ),
         ),
-        13.horizontalSpace,
+        13.hSpace,
         SizedBox.square(
-          dimension: 32.r,
+          dimension: 32.toScale,
           child: IconButton.filled(
             icon: const Icon(MIcons.chevron_right),
             padding: EdgeInsets.zero,
-            iconSize: 20.r,
+            iconSize: 20.toScale,
             style: IconButton.styleFrom(
               backgroundColor: colors.outlineVariant2,
             ),
@@ -120,26 +110,24 @@ class _PreviousAndNextButton extends StatelessWidget {
 
 class _Container extends StatelessWidget {
   const _Container({required this.content, required this.onTap});
-
   final String content;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context)!;
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 32.h,
-        constraints: BoxConstraints.loose(Size.fromHeight(32.h)),
-        padding: const EdgeInsets.symmetric(horizontal: MCore.large).r,
+        height: 32.toScale,
+        constraints: BoxConstraints.loose(Size.fromHeight(32.toScale)),
+        padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(MCore.circle).r,
-          color: colorScheme.outlineVariant2,
+          borderRadius: $styles.radius.circle,
+          color: colors.outlineVariant2,
         ),
-        child: MText(content, style: MTextStyle.captionMedium),
+        child: MText(content, style: $styles.text.captionMedium),
       ),
     );
   }

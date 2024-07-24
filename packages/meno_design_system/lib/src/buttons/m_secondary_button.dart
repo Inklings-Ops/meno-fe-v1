@@ -25,7 +25,7 @@ class MSecondaryButton extends MButton {
   @override
   Widget buildButton(BuildContext context, Widget child) {
     return OutlinedButton(
-      style: style ?? MButtonStyles.of(context)?.secondary,
+      style: style?.merge(MButtonStyles.of(context)?.secondary),
       onPressed: loading ? null : onPressed,
       child: loading ? const MLoadingIndicator.four(width: 56) : child,
     );

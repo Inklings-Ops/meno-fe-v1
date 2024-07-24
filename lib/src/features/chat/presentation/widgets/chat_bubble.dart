@@ -1,13 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
-
-import '../../../profile/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ChatBubble extends StatelessWidget {
   final Chat chat;
@@ -20,17 +14,21 @@ class ChatBubble extends StatelessWidget {
     final createdAt = formatDate(chat.createdAt);
     final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           LimitedBox(
-            maxHeight: 24.r,
-            maxWidth: 24.r,
-            child: MAvatar(radius: 12.r, url: chat.imageUrl, hasBorder: false),
+            maxHeight: 24.toScale,
+            maxWidth: 24.toScale,
+            child: MAvatar(
+              radius: 12.toScale,
+              url: chat.imageUrl,
+              hasBorder: false,
+            ),
           ),
-          MCore.small.horizontalSpace,
+          $styles.spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,58 +40,58 @@ class ChatBubble extends StatelessWidget {
                       onTap: !isHost ? () => showUserInfo(context) : null,
                       child: MText(
                         chat.fullName,
-                        style: MTextStyle.microMedium,
+                        style: $styles.text.microMedium,
                         color: colors.onBackgroundVariant,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    MCore.micro.horizontalSpace,
+                    $styles.spaces.horizontalMicro,
                     if (isHost) ...[
                       MDot(
-                        dimension: 2.r,
+                        dimension: 2.toScale,
                         color: colors.onBackgroundVariant,
                       ),
-                      MCore.micro.horizontalSpace,
+                      $styles.spaces.horizontalMicro,
                       MText(
                         'Host',
-                        style: MTextStyle.microMedium,
+                        style: $styles.text.microMedium,
                         color: colors.onBackgroundVariant,
                       ),
-                      MCore.micro.horizontalSpace,
+                      $styles.spaces.horizontalMicro,
                     ],
                     MDot(
-                      dimension: 2.r,
+                      dimension: 2.toScale,
                       color: colors.onBackgroundVariant,
                     ),
-                    MCore.micro.horizontalSpace,
+                    $styles.spaces.horizontalMicro,
                     MText(
                       createdAt,
-                      style: MTextStyle.microMedium,
+                      style: $styles.text.microMedium,
                       color: colors.onBackgroundVariant,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-                MCore.micro.verticalSpace,
+                $styles.spaces.verticalMicro,
                 Container(
-                  padding: const EdgeInsets.all(MCore.medium).r,
+                  padding: EdgeInsets.all($styles.insets.medium),
                   decoration: ShapeDecoration(
                     color: isHost
                         ? colors.secondaryContainer
                         : colors.surfaceShade,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(20).r,
-                        topRight: const Radius.circular(20).r,
-                        bottomRight: const Radius.circular(20).r,
+                        topLeft: const Radius.circular(20).radius,
+                        topRight: const Radius.circular(20).radius,
+                        bottomRight: const Radius.circular(20).radius,
                       ),
                     ),
                   ),
                   child: MText(
                     chat.content.getOr(),
-                    style: MTextStyle.captionRegular,
+                    style: $styles.text.captionRegular,
                     color: isHost
                         ? colors.onSecondaryContainer
                         : colors.onPrimaryContainer,

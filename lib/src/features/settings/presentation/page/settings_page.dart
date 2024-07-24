@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:meno_fe_v1/meno.dart';
+
+import '../widgets/settings_list_tile.dart';
+import '../widgets/settings_section.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -17,7 +16,7 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            MCore.large.verticalSpace,
+            $styles.spaces.verticalLarge,
             SettingsSection(
               title: 'General',
               children: [
@@ -29,7 +28,7 @@ class SettingsPage extends StatelessWidget {
                     label: 'English',
                     icon: Icon(
                       MIcons.chevron_right,
-                      size: 18.r,
+                      size: 18.toScale,
                       color: colors.onBackgroundVariant,
                     ),
                     iconPlacement: MButtonIconPlacement.right,
@@ -60,7 +59,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            MCore.xxLarge.verticalSpace,
+            $styles.spaces.verticalXXLarge,
             SettingsSection(
               title: 'Account & Security',
               children: [
@@ -78,7 +77,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            MCore.xxLarge.verticalSpace,
+            $styles.spaces.verticalXXLarge,
             SettingsSection(
               title: 'Other',
               children: [
@@ -112,115 +111,10 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            MCore.xxLarge.verticalSpace,
+            $styles.spaces.verticalXXLarge,
           ],
         ),
       ),
     );
-  }
-}
-
-class SettingsSection extends StatelessWidget {
-  const SettingsSection({
-    super.key,
-    required this.title,
-    required this.children,
-  });
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        MText(
-          title,
-          style: MTextStyle.captionMedium,
-          color: colors.inActive,
-        ),
-        MCore.small.verticalSpace,
-        Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MCore.large).r,
-            ),
-            color: colors.surfaceTint,
-          ),
-          child: Material(
-            child: Column(children: children),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class SettingsListTile extends StatelessWidget {
-  const SettingsListTile({
-    super.key,
-    required this.title,
-    required this.leadingIcon,
-    required this.onTap,
-    this.isDisabled = false,
-    this.trailing,
-    this.showDivider = true,
-    this.titleColor,
-    this.iconColor,
-  });
-
-  final String title;
-  final IconData leadingIcon;
-  final bool isDisabled;
-  final Widget? trailing;
-  final VoidCallback onTap;
-  final bool showDivider;
-  final MColor? titleColor;
-  final MColor? iconColor;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
-    return Column(
-      children: [
-        ListTile(
-          tileColor: resolveDisabledWithOpacity(colors.surfaceTint),
-          onTap: isDisabled ? null : onTap,
-          minTileHeight: 56.h,
-          leading: Icon(
-            leadingIcon,
-            size: 20.r,
-            color: iconColor ?? resolveDisabledWithOpacity(colors.primary),
-          ),
-          horizontalTitleGap: MCore.small.w,
-          title: MText(
-            title,
-            style: MTextStyle.captionMedium,
-            color: titleColor ??
-                resolveDisabled(colors.onBackground, colors.onInActive),
-          ),
-          trailing: trailing ??
-              Icon(
-                MIcons.chevron_right,
-                size: 20.r,
-                color: resolveDisabledWithOpacity(colors.onBackgroundVariant),
-              ),
-        ),
-        if (showDivider) const MDivider()
-      ],
-    );
-  }
-
-  MColor? resolveDisabled(MColor? main, MColor? disabled) {
-    return !isDisabled ? main : disabled;
-  }
-
-  Color? resolveDisabledWithOpacity(Color? color) {
-    return !isDisabled ? color : color?.withOpacity(0.5);
   }
 }

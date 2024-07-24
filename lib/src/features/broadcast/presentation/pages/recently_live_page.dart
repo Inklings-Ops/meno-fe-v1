@@ -1,27 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-import '../../../../router/router.dart';
-import '../../application/recently_live/recently_live_cubit.dart';
-import '../../domain/domain.dart';
-
-class RecentlyLivePage extends StatefulWidget {
+class RecentlyLivePage extends HookWidget {
   const RecentlyLivePage({super.key});
 
   @override
-  State<RecentlyLivePage> createState() => _RecentlyLivePageState();
-}
-
-class _RecentlyLivePageState extends State<RecentlyLivePage> {
-  final scrollController = ScrollController();
-
-  @override
   Widget build(BuildContext context) {
+    final scrollController = useScrollController();
     final bloc = context.read<RecentlyLiveCubit>();
-    final colorScheme = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context)!;
+    useEffect(() {
+      scrollController.addListener(() {
+        if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 300) {
+          bloc.fetchMore();
+        }
+      });
+      return scrollController.dispose;
+    }, const []);
 
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
@@ -46,51 +42,32 @@ class _RecentlyLivePageState extends State<RecentlyLivePage> {
                 successLast: (broadcasts) => Column(
                   children: [
                     _LoadedList(broadcasts: broadcasts),
-                    MCore.large.verticalSpace,
+                    $styles.spaces.verticalLarge,
                     MText(
                       'You’ve reached the end 🎉',
-                      style: MTextStyle.captionRegular,
-                      color: colorScheme.onBackgroundVariant,
+                      style: $styles.text.captionRegular,
+                      color: colors.onBackgroundVariant,
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
             ),
-            53.verticalSpace,
+            53.vSpace,
           ],
         ),
       ),
     );
   }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    final bloc = context.read<RecentlyLiveCubit>();
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 300) {
-        bloc.fetchMore();
-      }
-    });
-    super.initState();
-  }
 }
 
 class _BuildListView extends StatelessWidget {
-  final int itemCount;
-  final IndexedWidgetBuilder itemBuilder;
-
   const _BuildListView({
     required this.itemCount,
     required this.itemBuilder,
   });
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -99,8 +76,8 @@ class _BuildListView extends StatelessWidget {
       shrinkWrap: true,
       itemCount: itemCount,
       itemBuilder: itemBuilder,
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).r,
-      separatorBuilder: (context, index) => MCore.large.verticalSpace,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).radius,
+      separatorBuilder: (context, index) => $styles.spaces.verticalLarge,
     );
   }
 }
