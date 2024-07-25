@@ -210,7 +210,6 @@ class _MTextFormFieldState extends State<MTextFormField> {
         focusedBorder:
             field.hasError ? styles.borderError : styles.borderFocused,
         disabledBorder: styles.borderDisabled,
-        error: const SizedBox(),
         prefixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
         prefixIcon: prefixWidget,
         suffixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
