@@ -13,7 +13,7 @@ class ProfileBio extends StatelessWidget {
 
     return ReadMoreText(
       bio?.getOr() ?? 'No bio',
-      style: $styles.text.captionRegular.copyWith(height: 1.3.toScale),
+      style: $styles.text.captionRegular,
       trimLines: 3,
       trimMode: TrimMode.Line,
       trimExpandedText: '\nless',

@@ -17,6 +17,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     on<AccountSwitchRequested>(_onSwitchAccount);
   }
   void init() => add(const AccountInitialized());
+  
   Future<void> _onInitialize(AccountInitialized event, emit) async {
     emit(const AccountLoading());
     final allCredentials = await _getAllCredentials();

@@ -51,9 +51,7 @@ class AuthLocalDatasource {
 
   Future<UserCredentialDto?> getUserCredential() async {
     final jsonString = await _storage.read(MKeys.authUserCredentialKey);
-
     if (jsonString == null) return null;
-
     return UserCredentialDto.fromJson(jsonDecode(jsonString));
   }
 

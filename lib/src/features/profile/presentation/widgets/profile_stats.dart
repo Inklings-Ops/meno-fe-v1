@@ -13,9 +13,11 @@ class ProfileStats extends StatelessWidget {
         children: [
           2.hSpace,
           ProfileStatItem(title: 'Broadcasts', count: stats?.broadcasts),
-          $styles.spaces.horizontalLarge,
+          // $styles.spaces.horizontalLarge,
+          const Spacer(),
           ProfileStatItem(title: 'Subscribers', count: stats?.subscribers),
-          $styles.spaces.horizontalLarge,
+          // $styles.spaces.horizontalLarge,
+          const Spacer(),
           ProfileStatItem(title: 'Subscriptions', count: stats?.subscriptions),
           2.hSpace,
         ],

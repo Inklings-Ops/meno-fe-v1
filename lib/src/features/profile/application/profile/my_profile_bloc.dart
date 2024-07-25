@@ -1,6 +1,8 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 import '../../profile.dart';
 
@@ -16,16 +18,20 @@ class MyProfileBloc extends Bloc<MyProfileEvent, MyProfileState> {
       : _facade = facade,
         super(const MyProfileState.loading()) {
     on<_FetchProfileData>(_onFetch);
-
     add(const _FetchProfileData());
   }
 
+  void init([String? id]) => add(MyProfileEvent.fetch(id));
+
   Future<void> _onFetch(event, emit) async {
     emit(const MyProfileState.loading());
-
-    final result = await _facade.getAuthProfile();
-
-    return result.fold(
+    late Either<AuthException, Profile?> fOrS;
+    if (event.id != null) {
+      fOrS = await _facade.getProfile(event.id);
+    } else {
+      fOrS = await _facade.getAuthProfile();
+    }
+    return fOrS.fold(
       (failure) => emit(const _Failure()),
       (success) => emit(_Success(success!)),
     );

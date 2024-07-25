@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
@@ -71,7 +70,6 @@ class ProfileFacade implements IProfileFacade {
 
     try {
       final response = await _remote.getProfile(id);
-      Logger().e(response);
       return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -109,20 +107,16 @@ class ProfileFacade implements IProfileFacade {
     ).wait;
 
     if (!hasNetwork && !hasProfile) {
-      Logger().w('DOING NOTHING');
       return left(const AuthException.networkError());
     }
 
     if (!hasNetwork && hasProfile) {
-      Logger().w('DOING LOCAL');
       final dto = await _local.getProfile();
       return right(dto?.toDomain);
     }
 
     try {
-      Logger().w('DOING REMOTE');
       final response = await _remote.getProfile(credentials!.user.id);
-
       return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);

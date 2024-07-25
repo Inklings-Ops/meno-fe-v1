@@ -132,14 +132,15 @@ class CustomContent extends HookWidget {
                         children: [
                           MAvatar(radius: 40.toScale, url: profile.imageUrl),
                           24.hSpace,
-                          ProfileStats(stats: profile.stats),
+                          Expanded(child: ProfileStats(stats: profile.stats)),
                         ],
                       ),
                     ),
                     $styles.spaces.verticalLarge,
                     const AccountUpgradeSection(),
                     $styles.spaces.verticalLarge,
-                    Padding(
+                    Container(
+                      alignment: Alignment.centerLeft,
                       padding:
                           const EdgeInsets.symmetric(horizontal: 16).radius,
                       child: ProfileBio(bio: profile.bio),

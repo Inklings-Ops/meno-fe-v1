@@ -24,8 +24,9 @@ class LoginPage extends StatelessWidget {
             (failure) => context.showLoginError(failure),
             (success) {
               context.read<SessionCubit>().init();
-              context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
+              context.read<AccountBloc>().init();
               context.read<RecentlyLiveCubit>().fetch();
+              context.read<MyProfileBloc>().init(success.user.id.getOr());
             },
           ),
         );

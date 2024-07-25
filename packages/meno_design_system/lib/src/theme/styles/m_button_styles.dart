@@ -3,8 +3,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/m_internal.dart';
 
 ButtonStyle get _baseButtonStyle => ButtonStyle(
-      textStyle:
-          MInternal.resolveWith(defaultValue: $styles.text.captionMedium),
       iconSize: MInternal.resolveWith(defaultValue: 14.0.toScale),
       elevation: MInternal.resolveWith(defaultValue: 0.0),
       fixedSize: MInternal.all(Size.fromHeight($styles.insets.xxxLarge)),
@@ -12,6 +10,7 @@ ButtonStyle get _baseButtonStyle => ButtonStyle(
       shadowColor: MInternal.all(MColor.shadow),
       visualDensity: VisualDensity.compact,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      textStyle: MInternal.all($styles.text.captionMedium),
       shape: MInternal.all(
         RoundedRectangleBorder(borderRadius: $styles.radius.medium),
       ),
@@ -34,24 +33,23 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
 
   factory MButtonStyles.$default(MColorScheme colors) {
     return MButtonStyles(
-      primary: _baseButtonStyle.merge(
-        ButtonStyle(
-          backgroundColor: MInternal.resolveWith(
-            defaultValue: colors.primary!,
-            pressedValue: colors.inversePrimary,
-            disabledValue: colors.disabled,
-          ),
-          foregroundColor: MInternal.resolveWith(
-            defaultValue: colors.onPrimary!,
-            pressedValue: colors.onInversePrimary,
-            disabledValue: colors.onDisabled,
-          ),
-          iconColor: MInternal.resolveWith(
-            defaultValue: colors.onPrimary!,
-            pressedValue: colors.onInversePrimary,
-            disabledValue: colors.onDisabled,
-          ),
+      primary: _baseButtonStyle.copyWith(
+        backgroundColor: MInternal.resolveWith(
+          defaultValue: colors.primary!,
+          pressedValue: colors.inversePrimary,
+          disabledValue: colors.disabled,
         ),
+        foregroundColor: MInternal.resolveWith(
+          defaultValue: colors.onPrimary!,
+          pressedValue: colors.onInversePrimary,
+          disabledValue: colors.onDisabled,
+        ),
+        iconColor: MInternal.resolveWith(
+          defaultValue: colors.onPrimary!,
+          pressedValue: colors.onInversePrimary,
+          disabledValue: colors.onDisabled,
+        ),
+        textStyle: MInternal.all($styles.text.bodyMedium),
       ),
       secondary: _baseButtonStyle.merge(
         ButtonStyle(
