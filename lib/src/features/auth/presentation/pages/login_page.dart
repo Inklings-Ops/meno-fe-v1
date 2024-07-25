@@ -3,7 +3,6 @@ import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
- 
 class LoginPage extends StatelessWidget {
   final bool implyLeading;
   final bool isPasswordOnly;
@@ -24,6 +23,7 @@ class LoginPage extends StatelessWidget {
           (either) => either.fold(
             (failure) => context.showLoginError(failure),
             (success) {
+              context.read<SessionCubit>().init();
               context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
               context.read<RecentlyLiveCubit>().fetch();
             },

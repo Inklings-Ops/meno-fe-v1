@@ -29,7 +29,11 @@ class DiscoverPage extends HookWidget {
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: AppBar(
-        title: const MHeader(title: 'Discover', padding: EdgeInsets.zero),
+        title: const MHeader(
+          title: 'Discover',
+          padding: EdgeInsets.zero,
+          addTopMargin: true,
+        ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(110.toScale),
           child: Column(

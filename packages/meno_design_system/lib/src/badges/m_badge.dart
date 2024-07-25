@@ -58,10 +58,10 @@ class MBadge extends StatelessWidget {
           key: key,
           value: "LIVE",
           viewCount: count,
-          height: 18,
+          height: 20,
           showLoader: showLoader,
-          constraints: const BoxConstraints(minHeight: 18.0),
-          padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
+          constraints: const BoxConstraints(minHeight: 20.0),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           showBorder: showBorder,
         );
 
@@ -69,8 +69,8 @@ class MBadge extends StatelessWidget {
       : this._(
           key: key,
           value: "OFF-AIR",
-          height: 18,
-          constraints: const BoxConstraints(minHeight: 18.0),
+          height: 20,
+          constraints: const BoxConstraints(minHeight: 20.0),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           color: MColorScheme.of(context)?.disabledContainer,
           valueColor: MColorScheme.of(context)?.onDisabled,
@@ -80,8 +80,8 @@ class MBadge extends StatelessWidget {
       : this._(
           key: key,
           value: "RECONNECTING",
-          height: 18,
-          constraints: const BoxConstraints(minHeight: 18.0),
+          height: 20,
+          constraints: const BoxConstraints(minHeight: 20.0),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           color: MColorScheme.of(context)?.errorContainer,
           valueColor: MColorScheme.of(context)?.onError,
@@ -154,6 +154,7 @@ class MBadge extends StatelessWidget {
       width: width?.toScale,
       padding: padding?.radius,
       constraints: constraints?.radius,
+      // alignment: Alignment.center,
       decoration: ShapeDecoration(
         color: color ?? colors.error,
         shape: RoundedRectangleBorder(
@@ -168,10 +169,11 @@ class MBadge extends StatelessWidget {
   }
 
   MText _buildText(String content, MColorScheme colors) {
+    final effectiveTextStyle = textStyle ?? $styles.text.microMedium;
     return MText(
       content,
       textAlign: TextAlign.center,
-      style: textStyle?.copyWith(letterSpacing: 0.5.toScale),
+      style: effectiveTextStyle.copyWith(letterSpacing: 0.5.toScale),
       color: valueColor ?? colors.onError,
     );
   }

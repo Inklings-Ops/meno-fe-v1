@@ -95,7 +95,7 @@ class MLiveCardSkeleton extends StatelessWidget {
           left: 16.0.toScale,
           child: MShimmer(
             borderRadius: $styles.insets.circle,
-            child: const MBadge.live(count: "00K", showBorder: true),
+            child: MBadge.live(count: "00K", showBorder: true),
           ),
         )
       ],

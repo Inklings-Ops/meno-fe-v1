@@ -19,6 +19,12 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
       : _session = session,
         super(const SessionState.loading());
 
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
+  }
+
   @PostConstruct(preResolve: true)
   Future<void> init() async {
     _subscription = _session.userChanges.listen((credential) {
@@ -32,12 +38,6 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
     emit(const SessionState.unauthenticated());
     unawaited(_session.logout());
     notifyListeners();
-  }
-
-  @override
-  Future<void> close() {
-    _subscription.cancel();
-    return super.close();
   }
 
   SessionState _determineState(bool isOnboarded, UserCredential? credential) {

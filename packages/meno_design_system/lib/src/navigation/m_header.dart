@@ -8,11 +8,13 @@ class MHeader extends StatelessWidget {
     this.action,
     this.showSideBorder = true,
     this.padding,
+    this.addTopMargin = false,
   });
   final String title;
   final Widget? action;
   final bool showSideBorder;
   final EdgeInsetsGeometry? padding;
+  final bool addTopMargin;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class MHeader extends StatelessWidget {
     return Container(
       color: colors.background,
       height: 30.toScale,
+      margin: addTopMargin ? const EdgeInsets.only(top: 8).radius : null,
       padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 0).radius,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

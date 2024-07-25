@@ -89,7 +89,7 @@ class _TopSection extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 6.vSpace,
-                const MBadge.live(),
+                MBadge.live(),
                 6.vSpace,
                 MText(
                   broadcast.creator == null

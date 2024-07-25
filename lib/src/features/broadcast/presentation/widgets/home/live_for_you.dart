@@ -52,13 +52,17 @@ class DiscoverButton extends StatelessWidget {
     return SizedBox(
       height: 32.toScale,
       width: 112.toScale,
-      child: MSecondaryButton(
+      child: MSecondaryButton.icon(
         label: 'Discover',
+        icon: const Icon(MIcons.compass),
         onPressed: () => context.go(Routes.discover),
         style: OutlinedButton.styleFrom(
           textStyle: $styles.text.microMedium,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).radius,
+          shape: RoundedRectangleBorder(
+            borderRadius: $styles.radius.small,
+            side: BorderSide(width: 2.toScale),
+          ),
         ),
       ),
     );

@@ -45,7 +45,11 @@ class FolderListTile extends StatelessWidget {
                 child: ColoredBox(
                   color: colors.primary!,
                   child: Center(
-                    child: Icon(MIcons.file, size: 20.toScale),
+                    child: Icon(
+                      MIcons.file,
+                      size: 20.toScale,
+                      color: colors.onPrimary,
+                    ),
                   ),
                 ),
               ),

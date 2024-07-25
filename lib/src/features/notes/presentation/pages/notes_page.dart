@@ -7,21 +7,21 @@ class NotesPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final selectedIndex = useState(0);
-
     return MScaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight.toScale),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: MHeader(
-            title: 'My Notes',
-            action: switch (selectedIndex.value) {
-              0 => const _AddNewNoteActionButton(),
-              1 => const _AddNewFolderActionButton(),
-              _ => null,
-            },
-          ),
+      appBar: AppBar(
+        title: const MHeader(
+          title: 'My Notes',
+          addTopMargin: true,
+          padding: EdgeInsets.zero,
         ),
+        actions: [
+          switch (selectedIndex.value) {
+            0 => const _AddNewNoteActionButton(),
+            1 => const _AddNewFolderActionButton(),
+            _ => const SizedBox(),
+          },
+          $styles.spaces.horizontalLarge,
+        ],
       ),
       body: NoteBodyWidget(selectedIndex: selectedIndex),
     );
