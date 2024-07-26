@@ -187,13 +187,15 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
           MInternal.resolve(isLight, MColor.grey500, MColor.grey200),
       background: MInternal.resolve(isLight, MColor.white, MColor.primary700),
       onBackground: MInternal.resolve(isLight, MColor.black, MColor.white),
+      surface: MInternal.resolve(isLight, MColor.white, MColor.primary700),
+      onSurface: MInternal.resolve(isLight, MColor.black, MColor.white),
       onBackgroundProminent:
           MInternal.resolve(isLight, MColor.primary600, MColor.primary50),
       // onBackgroundVariant:
       //     MInternal.resolve(isLight, MColor.grey80, MColor.grey30),
       onBackgroundVariant: MColor.grey80,
-      surface: MInternal.resolve(isLight, MColor.white, MColor.primary700),
-      onSurface: MInternal.resolve(isLight, MColor.black, MColor.white),
+      // surface: MInternal.resolve(isLight, MColor.white, MColor.primary700),
+      // onSurface: MInternal.resolve(isLight, MColor.black, MColor.white),
       surfaceTint: MInternal.resolve(isLight, MColor.tint, MColor.primaryAlt),
       surfaceShade: MInternal.resolve(isLight, MColor.tint, MColor.primaryAlt),
       onSurfaceShade: MInternal.resolve(isLight, MColor.grey200, MColor.grey30),

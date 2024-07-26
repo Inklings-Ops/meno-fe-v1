@@ -39,6 +39,8 @@ class PreStreamActionButtons extends HookWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: $styles.radius.small,
                 ),
+                textStyle: $styles.text.microMedium,
+                foregroundColor: colors.onBackground,
               ),
             ),
           ),
@@ -61,6 +63,7 @@ class _JoinButton extends StatelessWidget {
       loading: loading,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+        textStyle: $styles.text.microMedium,
       ),
     );
   }

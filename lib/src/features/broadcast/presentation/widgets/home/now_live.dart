@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class NowLive extends StatelessWidget {
   const NowLive({super.key});
@@ -29,23 +28,20 @@ class _LiveCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final socketService = di<SocketService>();
-    final subscription = useStream(socketService.stateStream);
+    // final socketService = di<SocketService>();
+    // final subscription = useStream(socketService.stateStream);
 
-    useEffect(() {
-      final id = broadcast.id.getOr();
-      socketService.emit(SocketEvent.getNumberOfBroadcastListeners(id));
-      return null;
-    }, [subscription]);
+    // useEffect(() {
+    //   final id = broadcast.id.getOr();
+    //   socketService.emit(SocketEvent.getNumberOfBroadcastListeners(id));
+    //   return null;
+    // }, [subscription]);
 
     return MCard.live(
       title: broadcast.title.getOr(),
-      host: broadcast.creator!.fullName,
+      host: broadcast.creator?.fullName ?? broadcast.fullName ?? '',
       imageUrl: broadcast.imageUrl,
-      liveCount: subscription.data?.maybeWhen(
-        getNumberOfBroadcastListeners: (data, error) => data,
-        orElse: () => 1,
-      ),
+      liveCount: broadcast.totalListeners,
       onTap: () => context.showJoinLiveBroadcastModal(broadcast),
     );
   }

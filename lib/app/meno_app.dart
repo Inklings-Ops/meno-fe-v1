@@ -24,14 +24,15 @@ class _MenoAppState extends State<MenoApp> {
         theme: ThemeData(fontFamily: FontFamily.sFProDisplay),
         builder: (context, child) {
           child = toastBuilder(context, child);
-          return ResponsiveBreakpoints.builder(
-            child: DevicePreview.appBuilder(context, child),
-            breakpoints: const [
-              Breakpoint(start: 0, end: 450, name: MOBILE),
-              Breakpoint(start: 451, end: 800, name: TABLET),
-              Breakpoint(start: 801, end: 1920, name: DESKTOP),
-            ],
-          );
+          return DevicePreview.appBuilder(context, child);
+          // return ResponsiveBreakpoints.builder(
+          //   child: child,
+          //   breakpoints: const [
+          //     Breakpoint(start: 0, end: 450, name: MOBILE),
+          //     Breakpoint(start: 451, end: 800, name: TABLET),
+          //     Breakpoint(start: 801, end: 1920, name: DESKTOP),
+          //   ],
+          // );
         },
       ),
     );

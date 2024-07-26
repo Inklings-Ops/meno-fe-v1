@@ -163,7 +163,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i13.LiveKitService>(() => _i13.LiveKitService());
     gh.lazySingleton<_i14.MediaService>(
         () => _i14.MediaService(gh<_i10.ImagePicker>()));
-    gh.singleton<_i15.MenoConfig>(_i15.MenoConfig());
+    gh.factory<_i15.MenoConfig>(() => _i15.MenoConfig());
     gh.factory<_i16.NetworkService>(
         () => _i16.NetworkService(gh<_i11.InternetConnectionChecker>()));
     gh.lazySingleton<_i17.NoteRemoteDatasource>(
@@ -310,8 +310,10 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.factory<_i70.ISettingsFacade>(
         () => _i71.SettingsFacade(local: gh<_i70.SettingsLocalDatasource>()));
-    gh.lazySingleton<_i72.LiveBroadcastsBloc>(
-        () => _i72.LiveBroadcastsBloc(socket: gh<_i31.SocketService>()));
+    gh.lazySingleton<_i72.LiveBroadcastsBloc>(() => _i72.LiveBroadcastsBloc(
+          facade: gh<_i35.IBroadcastFacade>(),
+          socket: gh<_i31.SocketService>(),
+        ));
     gh.lazySingleton<_i73.LiveParticipantsBloc>(
         () => _i73.LiveParticipantsBloc(socket: gh<_i31.SocketService>()));
     gh.lazySingleton<_i74.LoginCubit>(() => _i74.LoginCubit(

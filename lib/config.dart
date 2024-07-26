@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-@singleton
+@Injectable()
 class MenoConfig {
   Size _appSize = Size.zero;
 

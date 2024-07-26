@@ -97,7 +97,7 @@ abstract class BroadcastRemoteDatasource {
     @Query('endTime[lt]') String? endTimeLT,
 
     /// Equal to end time
-    @Query('endTime=') String? endTimeEQ,
+    @Query('endTime[exist]') bool? endTimeExist,
 
     /// Start time
     @Query('startTime') String? startTime,
@@ -109,6 +109,6 @@ abstract class BroadcastRemoteDatasource {
     @Query('startTime[lt]') String? startTimeLT,
 
     /// Equal to start time
-    @Query('startTime=') String? startTimeEQ,
+    @Query('startTime[exist]') bool? startTimeExist,
   });
 }

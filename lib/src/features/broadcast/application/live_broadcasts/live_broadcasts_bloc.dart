@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-
-import '../../domain/domain.dart';
 
 part 'live_broadcasts_bloc.freezed.dart';
 part 'live_broadcasts_event.dart';
@@ -14,11 +13,15 @@ part 'live_broadcasts_state.dart';
 @lazySingleton
 class LiveBroadcastsBloc
     extends Bloc<LiveBroadcastsEvent, LiveBroadcastsState> {
+  final IBroadcastFacade _facade;
   final SocketService _socket;
   late final StreamSubscription<SocketState> _socketStateSub;
   late final StreamSubscription<SocketEvent> _socketEventSub;
-  LiveBroadcastsBloc({required SocketService socket})
-      : _socket = socket,
+  LiveBroadcastsBloc({
+    required IBroadcastFacade facade,
+    required SocketService socket,
+  })  : _facade = facade,
+        _socket = socket,
         super(const _Loading()) {
     on<_GetLiveBroadcasts>(_onGetLiveBroadcasts);
     on<_UpdateBroadcastList>(_onUpdateBroadcastList);
@@ -40,9 +43,16 @@ class LiveBroadcastsBloc
 
   void init() => add(const _GetLiveBroadcasts());
 
-  void _onGetLiveBroadcasts(_GetLiveBroadcasts event, emit) {
+  Future<void> _onGetLiveBroadcasts(_GetLiveBroadcasts event, emit) async {
     emit(const _Loading());
-    _socket.emit(const SocketEvent.getLiveBroadcasts());
+    final fOrB = await _facade.getBroadcasts(
+      endTimeExist: false,
+      startTimeExist: true,
+      include: 'totalListeners',
+      size: 8,
+      page: 1,
+    );
+    emit(fOrB.fold((l) => const _Failure(), (b) => _Success(b.broadcasts)));
   }
 
   _onUpdateBroadcastList(_UpdateBroadcastList event, emit) async {

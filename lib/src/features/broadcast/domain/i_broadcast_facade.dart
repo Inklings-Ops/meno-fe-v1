@@ -71,7 +71,7 @@ abstract class IBroadcastFacade {
     String? endTimeLT,
 
     /// Equal to end time
-    String? endTimeEQ,
+    bool? endTimeExist,
 
     /// Greater than start time
     String? startTimeGT,
@@ -80,6 +80,6 @@ abstract class IBroadcastFacade {
     String? startTimeLT,
 
     /// Equal to start time
-    String? startTimeEQ,
+    bool? startTimeExist,
   });
 }

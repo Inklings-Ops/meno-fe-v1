@@ -16,9 +16,16 @@ class Styles {
   late final double scale;
   late final MColorScheme? colors;
 
-  Styles({BuildContext? context}) {
-    scale = _computeScale(context);
-    colors = _computeColorScheme(context);
+  static Styles _instance = Styles._();
+
+  Styles._();
+
+  static Styles configure({BuildContext? context}) {
+    Styles styles = Styles._();
+    styles.scale = _computeScale(context);
+    styles.colors = _computeColorScheme(context);
+    _instance = styles;
+    return _instance;
   }
 
   late final insets = _Insets(scale);
@@ -199,16 +206,25 @@ class _ToolBarHeights {
 }
 
 double _computeScale(BuildContext? context) {
-  if (context == null) return 1;
-  final shortestSide = MediaQuery.sizeOf(context).shortestSide;
-  // If larger than an extra large tablet
-  if (shortestSide > 1000) {
-    return 1.3;
-    // If large than a large tablet
-  } else if (shortestSide > 800) {
-    return 1.2;
-  } else {
+  // log('Computing Scale');
+  if (context == null) {
+    // log('[Context not found] Scale = 1');
     return 1;
+  } else {
+    final shortestSide = MediaQuery.sizeOf(context).shortestSide;
+    if (shortestSide > 1000) {
+      // log('[Context Found] [DESKTOPS] Scale = 1.3');
+      return 1.3;
+    } else if (shortestSide > 800) {
+      // log('[Context Found] [TABLETS] Scale = 1.2');
+      return 1.2;
+    } else if (shortestSide > 450) {
+      // log('[Context Found] [BIG PHONES] Scale = 1.1');
+      return 1.1;
+    } else {
+      // log('[Context Found] [PHONES] Scale = 1');
+      return 1;
+    }
   }
 }
 
