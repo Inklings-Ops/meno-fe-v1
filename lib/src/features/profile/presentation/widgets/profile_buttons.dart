@@ -6,6 +6,8 @@ class ProfileButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final shape = RoundedRectangleBorder(borderRadius: $styles.radius.small);
+    final textStyle = $styles.text.microMedium;
     return SizedBox(
       height: 32.toScale,
       child: Padding(
@@ -18,9 +20,8 @@ class ProfileButtons extends StatelessWidget {
                 icon: const Icon(MIcons.edit_05),
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: $styles.radius.small,
-                  ),
+                  textStyle: textStyle,
+                  shape: shape,
                 ),
               ),
             ),
@@ -36,9 +37,8 @@ class ProfileButtons extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: colors.outlineVariant3!),
                   foregroundColor: colors.onBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: $styles.radius.small,
-                  ),
+                  textStyle: textStyle,
+                  shape: shape,
                 ),
               ),
             ),
