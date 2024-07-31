@@ -2,9 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({
-    super.key,
-    required this.title,
-    required this.children,
+    required this.title, required this.children, super.key,
   });
 
   final String title;
@@ -13,20 +11,20 @@ class SettingsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MText(
           title,
-          style: $styles.text.captionMedium,
+          style: textTheme.captionMedium,
           color: colors.inActive,
         ),
-        $styles.spaces.verticalSmall,
+        Spaces.verticalSmall,
         Container(
           clipBehavior: Clip.hardEdge,
           decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
+            shape: const RoundedRectangleBorder(borderRadius: Corners.large),
             color: colors.surfaceTint,
           ),
           child: Material(child: Column(children: children)),

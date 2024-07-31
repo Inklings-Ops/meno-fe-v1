@@ -23,22 +23,22 @@ class LiveActivityCard extends StatelessWidget {
 }
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key, required this.badgeTitle});
+  const ActivityCard({required this.badgeTitle, super.key});
   final String badgeTitle;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: $styles.insets.xxLarge),
+      padding: const EdgeInsets.only(bottom: Insets.xxLarge),
       child: InkWell(
         onTap: () => context.push(Routes.stream),
         child: Card(
-          margin: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+          margin: const EdgeInsets.symmetric(horizontal: Insets.large),
           shape: SmoothRectangleBorder(
-            borderRadius: $styles.radius.squircleLarge,
+            borderRadius: Corners.squircleLarge,
           ),
           child: Padding(
-            padding: const EdgeInsets.all(14).radius,
+            padding: const EdgeInsets.all(14),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -48,13 +48,13 @@ class ActivityCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _Badge(badgeTitle: badgeTitle),
-                      2.vSpace,
+                      const SizedBox(height: 2),
                       const _StreamTitle(),
                       const _StreamCreatorName(),
                     ],
                   ),
                 ),
-                $styles.spaces.horizontalMedium,
+                Spaces.horizontalMedium,
                 const _LeaveButton(),
               ],
             ),
@@ -72,20 +72,21 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return Row(
       children: [
         CircleAvatar(
-          radius: 5.toScale,
+          radius: 5,
           backgroundColor: colors.secondaryContainer,
           child: CircleAvatar(
-            radius: 3.toScale,
+            radius: 3,
             backgroundColor: colors.secondary,
           ),
         ),
-        $styles.spaces.horizontalMicro,
+        Spaces.horizontalMicro,
         MText(
           badgeTitle,
-          style: $styles.text.microMedium,
+          style: textTheme.microMedium,
           color: MColorScheme.of(context)?.error,
         ),
       ],
@@ -112,13 +113,13 @@ class _LeaveButton extends StatelessWidget {
         }
 
         return LimitedBox(
-          maxHeight: 32.toScale,
-          maxWidth: 79.toScale,
+          maxHeight: 32,
+          maxWidth: 79,
           child: MDangerButton(
             label: 'Leave',
             onPressed: onLeave,
             style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
             ),
           ),
         );
@@ -132,6 +133,7 @@ class _StreamTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<StreamBloc, StreamState, String?>(
       selector: (state) => state.whenOrNull(
         joinSuccess: (b) => b.title.getOr(),
@@ -139,11 +141,11 @@ class _StreamTitle extends StatelessWidget {
       builder: (context, title) {
         if (title == null) return const SizedBox();
         return Container(
-          height: 24.toScale,
+          height: 24,
           alignment: Alignment.centerLeft,
           child: MText(
             title,
-            style: $styles.text.captionMedium,
+            style: textTheme.captionMedium,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -158,6 +160,7 @@ class _StreamCreatorName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<StreamBloc, StreamState, String?>(
       selector: (state) => state.whenOrNull(
         joinSuccess: (b) => b.creator?.fullName,
@@ -166,7 +169,7 @@ class _StreamCreatorName extends StatelessWidget {
         if (fullName == null) return const SizedBox();
         return MText(
           fullName,
-          style: $styles.text.captionRegular,
+          style: textTheme.captionRegular,
           color: MColorScheme.of(context)!.onBackgroundVariant,
         );
       },

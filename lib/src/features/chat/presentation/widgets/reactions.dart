@@ -3,13 +3,13 @@ import 'package:meno_fe_v1/meno.dart';
 enum ReactionType { clap, flame, like, raise, snap }
 
 class Reaction {
-  final ReactionType reactionType;
-  final Widget icon;
 
   const Reaction(this.reactionType, this.icon);
+  final ReactionType reactionType;
+  final Widget icon;
 }
 
-final dimension = 20.toScale;
+const dimension = 20.0;
 
 final List<Reaction> reactions = <Reaction>[
   Reaction(

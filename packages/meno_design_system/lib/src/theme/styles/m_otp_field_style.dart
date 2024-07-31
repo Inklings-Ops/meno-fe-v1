@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-
+/// A theme extension for customizing the appearance of OTP fields in the
+/// Meno design system.
+///
+/// This class defines various styles and colors for different states of an
+/// OTP field, such as text style, fill color, border styles, and more.
+///
+/// Example usage:
+/// ```dart
+/// final otpFieldStyles = MOtpFieldStyles.of(context);
+/// ```
 class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
-  final TextStyle? textStyle;
-  final MColor? textColor;
-  final MColor? fillColor;
-  final MColor? fillColorDisabled;
-  final MColor? errorColor;
-  final BoxBorder? border;
-  final BoxBorder? borderFocused;
-  final BoxBorder? borderError;
-
+  /// Creates a new instance of [MOtpFieldStyles].
+  ///
+  /// The constructor allows you to specify custom styles and colors for the
+  /// OTP field.
+  ///
+  /// - [textStyle]: The text style for the OTP field.
+  /// - [textColor]: The color of the text in the OTP field.
+  /// - [fillColor]: The fill color of the OTP field.
+  /// - [fillColorDisabled]: The fill color of the OTP field when disabled.
+  /// - [errorColor]: The color of the OTP field when there is an error.
+  /// - [border]: The border of the OTP field.
+  /// - [borderFocused]: The border of the OTP field when focused.
+  /// - [borderError]: The border of the OTP field when there is an error.
   MOtpFieldStyles({
     this.textStyle,
     this.textColor,
@@ -23,25 +36,72 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
     this.borderError,
   });
 
-  factory MOtpFieldStyles.$default(MColorScheme colors) {
+  /// Creates a default [MOtpFieldStyles] based on the given [MColorScheme]
+  /// and [MTextTheme].
+  ///
+  /// This factory constructor initializes the OTP field styles using the
+  /// provided color scheme and text theme.
+  ///
+  /// - [colors]: The color scheme to use for the OTP field styles.
+  /// - [textTheme]: The text theme to use for the OTP field styles.
+  ///
+  /// Returns a new [MOtpFieldStyles] instance with the default styles applied.
+  factory MOtpFieldStyles.$default(MColorScheme colors, MTextTheme textTheme) {
     return MOtpFieldStyles(
-      textStyle: $styles.text.captionRegular,
+      textStyle: textTheme.captionRegular,
       fillColor: colors.background,
       fillColorDisabled: colors.disabledContainer,
       textColor: colors.onBackground,
       errorColor: colors.error,
-      border: Border.all(color: MColor.grey50, width: 1.toScale),
-      borderFocused: Border.all(color: colors.outline!, width: 2.toScale),
-      borderError: Border.all(color: colors.error!, width: 2.toScale),
+      border: Border.all(color: MColor.grey50),
+      borderFocused: Border.all(color: colors.outline!, width: 2),
+      borderError: Border.all(color: colors.error!, width: 2),
     );
   }
 
+  /// The text style for the OTP field.
+  final TextStyle? textStyle;
+
+  /// The color of the text in the OTP field.
+  final MColor? textColor;
+
+  /// The fill color of the OTP field.
+  final MColor? fillColor;
+
+  /// The fill color of the OTP field when disabled.
+  final MColor? fillColorDisabled;
+
+  /// The color of the OTP field when there is an error.
+  final MColor? errorColor;
+
+  /// The border of the OTP field.
+  final BoxBorder? border;
+
+  /// The border of the OTP field when focused.
+  final BoxBorder? borderFocused;
+
+  /// The border of the OTP field when there is an error.
+  final BoxBorder? borderError;
+
+  /// Retrieves the [MOtpFieldStyles] extension from the closest [Theme]
+  /// instance that encloses the given [context].
+  ///
+  /// This method searches for the nearest [Theme] widget in the widget tree
+  /// and returns the [MOtpFieldStyles] extension if it exists. If no
+  /// [MOtpFieldStyles] extension is found, this method returns null.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final otpFieldStyles = MOtpFieldStyles.of(context);
+  /// ```
+  ///
+  /// - [context]: The build context from which to retrieve the
+  /// [MOtpFieldStyles] extension.
+  ///
+  /// Returns the [MOtpFieldStyles] extension if found, or null if no
+  /// [MOtpFieldStyles] extension is available in the closest [Theme] instance.
   static MOtpFieldStyles? of(BuildContext context) {
     return Theme.of(context).extension<MOtpFieldStyles>();
-  }
-
-  static T resolve<T>(bool isLight, T lightThemeValue, T darkThemeValue) {
-    return isLight ? lightThemeValue : darkThemeValue;
   }
 
   @override

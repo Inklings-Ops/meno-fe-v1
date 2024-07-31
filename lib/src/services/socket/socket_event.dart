@@ -50,7 +50,7 @@ class SocketEvent with _$SocketEvent {
   const factory SocketEvent.numberOfLiveBroadcasts(int value) = SocketNumberOfLiveBroadcasts;
   
   @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.newBroadcastListener(Participant listener) = SocketNewBroadcastListener;
+  const factory SocketEvent.newBroadcastListener(BroadcastParticipant listener) = SocketNewBroadcastListener;
   
   @Implements<BroadcastSubscribedEvent>()
   const factory SocketEvent.numberOfLiveListeners(int value) = SocketNumberOfLiveListeners;

@@ -27,6 +27,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final today = notifications[NotificationCategory.today];
     final thisWeek = notifications[NotificationCategory.thisWeek];
     final older = notifications[NotificationCategory.older];
@@ -38,21 +39,21 @@ class _Content extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate([
               if (today?.isNotEmpty ?? false) ...[
-                24.vSpace,
-                MText('Today', style: $styles.text.captionMedium),
-                $styles.spaces.verticalLarge,
+                Spaces.verticalXLarge,
+                MText('Today', style: textTheme.captionMedium),
+                Spaces.verticalLarge,
                 NotificationList(notifications: today!),
               ],
               if (thisWeek?.isNotEmpty ?? false) ...[
-                $styles.spaces.verticalXXLarge,
-                MText('This Week', style: $styles.text.captionMedium),
-                $styles.spaces.verticalLarge,
+                Spaces.verticalXXLarge,
+                MText('This Week', style: textTheme.captionMedium),
+                Spaces.verticalLarge,
                 NotificationList(notifications: thisWeek!),
               ],
               if (older?.isNotEmpty ?? false) ...[
-                $styles.spaces.verticalXXLarge,
-                MText('Older', style: $styles.text.captionMedium),
-                $styles.spaces.verticalLarge,
+                Spaces.verticalXXLarge,
+                MText('Older', style: textTheme.captionMedium),
+                Spaces.verticalLarge,
                 NotificationList(notifications: older!),
               ],
             ]),
@@ -64,7 +65,7 @@ class _Content extends StatelessWidget {
 }
 
 class NotificationList extends StatelessWidget {
-  const NotificationList({super.key, required this.notifications});
+  const NotificationList({required this.notifications, super.key});
   final List<Notification?> notifications;
 
   @override
@@ -80,7 +81,7 @@ class NotificationList extends StatelessWidget {
           SubscribeNotificationCard(notification: notifications[i]!),
         _ => const SizedBox(),
       },
-      separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
+      separatorBuilder: (context, i) => Spaces.verticalLarge,
       itemCount: notifications.length,
     );
   }
@@ -93,19 +94,19 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      flexibleSpace: Column(
+      flexibleSpace: const Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 8,
-            ).radius,
-            child: const MBackButton.withText(),
+            ),
+            child: MBackButton.withText(),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8).radius,
-            child: const MHeader(title: 'Notifications'),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: MHeader(title: 'Notifications'),
           ),
         ],
       ),
@@ -113,5 +114,5 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(86.toScale);
+  Size get preferredSize => const Size.fromHeight(86);
 }

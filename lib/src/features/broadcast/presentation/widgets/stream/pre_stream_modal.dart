@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class PreStreamModal extends StatelessWidget {
-  const PreStreamModal({super.key, required this.broadcast});
+  const PreStreamModal({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
@@ -39,9 +39,9 @@ class PreStreamModal extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _TopSection(broadcast: broadcast),
-                  24.vSpace,
+                  Spaces.verticalXLarge,
                   PreStreamDescriptionSection(broadcast: broadcast),
-                  24.vSpace,
+                  Spaces.verticalXLarge,
                   MHeader(
                     title: 'Recent Broadcasts',
                     showSideBorder: false,
@@ -53,7 +53,7 @@ class PreStreamModal extends StatelessWidget {
                         color: MColorScheme.of(context)!.onBackgroundVariant,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -65,18 +65,19 @@ class PreStreamModal extends StatelessWidget {
 }
 
 class _TopSection extends StatelessWidget {
-  final Broadcast broadcast;
 
   const _TopSection({required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 142.toScale,
+      height: 142,
       child: Row(
         children: [
           PreStreamArtwork(imageUrl: broadcast.imageUrl),
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,22 +85,22 @@ class _TopSection extends StatelessWidget {
               children: [
                 MText(
                   broadcast.title.getOr(),
-                  style: $styles.text.subheadingMedium,
+                  style: textTheme.subheadingMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                6.vSpace,
+                const SizedBox(height: 6),
                 const MBadge.live(),
-                6.vSpace,
+                const SizedBox(height: 6),
                 MText(
                   broadcast.creator == null
                       ? broadcast.fullName!
                       : broadcast.creator!.fullName,
-                  style: $styles.text.captionRegular,
+                  style: textTheme.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                $styles.spaces.verticalMedium,
+                Spaces.verticalMedium,
                 PreStreamActionButtons(broadcast: broadcast),
               ],
             ),

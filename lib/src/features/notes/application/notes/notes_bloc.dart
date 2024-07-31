@@ -13,8 +13,6 @@ part 'notes_state.dart';
 
 @lazySingleton
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
-  final INoteFacade _facade;
-  StreamSubscription<Either<NoteException, List<Note?>>>? _noteSub;
   NotesBloc({required INoteFacade facade})
       : _facade = facade,
         super(NotesState.initial()) {
@@ -23,6 +21,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<_AddToFolder>(_onAddToFolder);
     on<_RemoveFromFolder>(_onRemoveFromFolder);
   }
+  final INoteFacade _facade;
+  StreamSubscription<Either<NoteException, List<Note?>>>? _noteSub;
   void init() => add(const NotesEvent.getNotes());
   bool get hasNotes => state.notes.isNotEmpty;
 
@@ -90,7 +90,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     emit(fOrN.fold(
       (f) => state.copyWith(exception: f, isLoading: false),
       (t) => state.copyWith(notes: t, isLoading: false),
-    ));
+    ),);
   }
 
   Future<void> _onDeleteNote(

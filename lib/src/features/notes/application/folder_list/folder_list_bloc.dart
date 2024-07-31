@@ -9,7 +9,6 @@ part 'folder_list_state.dart';
 
 @lazySingleton
 class FolderListBloc extends Bloc<FolderListEvent, FolderListState> {
-  final INoteFacade _facade;
   FolderListBloc({
     required INoteFacade facade,
   })  : _facade = facade,
@@ -20,6 +19,7 @@ class FolderListBloc extends Bloc<FolderListEvent, FolderListState> {
     on<_DeleteFolder>(_onDeleteFolder);
     on<_AddToFolder>(_onAddToFolder);
   }
+  final INoteFacade _facade;
 
 void init() => add(const FolderListEvent.getAllFolders());
 

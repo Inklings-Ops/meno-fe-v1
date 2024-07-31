@@ -2,16 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/settings.dart';
+import 'package:meno_fe_v1/src/shared/session/session.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'session.dart';
-
 @Injectable(as: ISessionContext)
 class SessionContext implements ISessionContext {
-  final IAuthFacade _authFacade;
-  final ISettingsFacade _settingsFacade;
-  final _sessionSubject = BehaviorSubject.seeded(SessionStatus.loading);
   SessionContext({
     required IAuthFacade authFacade,
     required ISettingsFacade settingsFacade,
@@ -22,6 +18,9 @@ class SessionContext implements ISessionContext {
       _sessionSubject.add(_determineStatus(isOnboarded, credential));
     });
   }
+  final IAuthFacade _authFacade;
+  final ISettingsFacade _settingsFacade;
+  final _sessionSubject = BehaviorSubject.seeded(SessionStatus.loading);
 
   @override
   bool get isOnboarded => _settingsFacade.isOnboarded;

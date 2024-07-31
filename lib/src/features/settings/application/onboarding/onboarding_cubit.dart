@@ -8,7 +8,6 @@ import 'package:meno_fe_v1/src/features/settings/settings.dart';
 /// A [Cubit] responsible for managing the onboarding state.
 @lazySingleton
 class OnboardingCubit extends Cubit<OnboardingState> {
-  final ISettingsFacade _facade;
 
   /// Constructs the [OnboardingCubit] with the provided [ISettingsFacade].
   OnboardingCubit({required ISettingsFacade facade})
@@ -16,6 +15,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         super(OnboardingState.notCompleted) {
     init();
   }
+  final ISettingsFacade _facade;
 
   /// Clears the onboarding cache asynchronously.
   ///

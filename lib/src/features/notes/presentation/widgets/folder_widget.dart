@@ -29,6 +29,7 @@ class FolderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
@@ -37,14 +38,14 @@ class FolderWidget extends StatelessWidget {
       onPressed: onTap,
       shape: const _FolderBorder(),
       fillColor: backgroundColor ?? background,
-      elevation: 0.0,
-      hoverElevation: 0.0,
-      focusElevation: 0.0,
-      highlightElevation: 0.0,
+      elevation: 0,
+      hoverElevation: 0,
+      focusElevation: 0,
+      highlightElevation: 0,
       child: Container(
-        height: height ?? 94.toScale,
+        height: height ?? 94,
         width: size.width,
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16).radius,
+        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,13 +53,13 @@ class FolderWidget extends StatelessWidget {
           children: [
             MText(
               title ?? 'Folders',
-              style: titleStyle ?? $styles.text.captionMedium,
+              style: titleStyle ?? textTheme.captionMedium,
               color: foregroundColor ?? foreground,
             ),
             if (value != null)
               MText(
                 value!,
-                style: valueStyle ?? $styles.text.heading2Medium,
+                style: valueStyle ?? textTheme.heading2Medium,
                 color: foregroundColor ?? foreground,
               )
             else
@@ -68,7 +69,7 @@ class FolderWidget extends StatelessWidget {
                     orElse: () => '0',
                     success: (folders) => folders.length.toString(),
                   ),
-                  style: valueStyle ?? $styles.text.heading2Medium,
+                  style: valueStyle ?? textTheme.heading2Medium,
                   color: foreground,
                 ),
               ),
@@ -83,29 +84,21 @@ class _FolderBorder extends OutlinedBorder {
   const _FolderBorder({super.side});
 
   Path customBorderPath(Rect rect) {
-    final double r = 20.0.toScale;
-
-    final Path path = Path();
-
-    // Bottom left
-    path.moveTo(0, rect.height - r);
-    path.quadraticBezierTo(0, rect.height, r, rect.height);
-
-    // Bottom right
-    path.lineTo(rect.width - r, rect.height);
-    path.quadraticBezierTo(
-        rect.width, rect.height, rect.width, rect.height - r);
-
-    // Top right (notch)
-    path.lineTo(rect.width, 6 + r);
-    path.quadraticBezierTo(rect.width, 6, rect.width - r, 6);
-    path.lineTo((rect.width * 0.55) + 6, 6);
-    path.lineTo((rect.width * 0.55) + 3, 3);
-    path.quadraticBezierTo(rect.width * 0.55, 0, rect.width * 0.55 - r, 0);
-    path.lineTo(r, 0);
-    path.quadraticBezierTo(0, 0, 0, r);
-    path.close();
-    return path;
+    const r = 20.0;
+    final path = Path();
+    return path
+      ..moveTo(0, rect.height - r)
+      ..quadraticBezierTo(0, rect.height, r, rect.height)
+      ..lineTo(rect.width - r, rect.height)
+      ..quadraticBezierTo(rect.width, rect.height, rect.width, rect.height - r)
+      ..lineTo(rect.width, 6 + r)
+      ..quadraticBezierTo(rect.width, 6, rect.width - r, 6)
+      ..lineTo((rect.width * 0.55) + 6, 6)
+      ..lineTo((rect.width * 0.55) + 3, 3)
+      ..quadraticBezierTo(rect.width * 0.55, 0, rect.width * 0.55 - r, 0)
+      ..lineTo(r, 0)
+      ..quadraticBezierTo(0, 0, 0, r)
+      ..close();
   }
 
   @override

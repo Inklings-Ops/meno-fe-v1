@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
   const BroadcastInfoModal({
-    super.key,
-    required this.broadcast,
+    required this.broadcast, super.key,
     this.isStreaming = false,
   });
   final bool isStreaming;
@@ -13,37 +12,38 @@ class BroadcastInfoModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MAvatar(radius: 48.toScale, url: broadcast.imageUrl),
-          $styles.spaces.verticalSmall,
+          MAvatar(radius: 48, url: broadcast.imageUrl),
+          Spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: MText(
               broadcast.title.getOr(),
-              style: $styles.text.subheadingBold,
+              style: textTheme.subheadingBold,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          $styles.spaces.verticalMicro,
+          Spaces.verticalMicro,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
                   broadcast.creator!.fullName,
-                  style: $styles.text.captionRegular,
+                  style: textTheme.captionRegular,
                 ),
-                $styles.spaces.horizontalSmall,
+                Spaces.horizontalSmall,
                 const BroadcastStatusWidget(),
               ],
             ),
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           if (isStreaming) ...[
             MModalListTile(
               leading: const Icon(MIcons.arrow_narrow_down_left),
@@ -80,7 +80,7 @@ class BroadcastInfoModal extends StatelessWidget {
                 ),
               ),
             ),
-          24.vSpace,
+          Spaces.verticalXLarge,
         ],
       ),
     );

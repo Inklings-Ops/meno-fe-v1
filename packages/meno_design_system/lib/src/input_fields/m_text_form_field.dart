@@ -2,12 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'm_input_label.dart';
-
+/// A customizable text form field widget with extensive styling and
+/// functionality.
+///
+/// This widget wraps a [TextFormField] and provides additional customization
+/// options such as label display,
+/// icons, validation, and more.
+///
+/// To use this widget, provide the required parameters and customize as needed.
+/// For example:
+/// ```dart
+/// MTextFormField(
+///   label: 'Username',
+///   hint: 'Enter your username',
+///   prefixIcon: Icons.person,
+///   isPassword: false,
+///   onChanged: (value) {
+///     // Handle text change
+///   },
+///   validator: (value) {
+///     // Validate input
+///     if (value == null || value.isEmpty) {
+///       return 'Username is required';
+///     }
+///     return null;
+///   },
+/// );
+/// ```
 class MTextFormField extends StatefulWidget {
+  /// Creates an instance of [MTextFormField].
+  ///
+  /// Parameters:
+  /// - [label]: The label for the text form field.
+  /// - [key]: An optional key to identify the widget.
+  /// - [showLabel]: A boolean to control whether the label is shown. Defaults
+  /// to true.
+  /// - [autoFocus]: A boolean to control whether the text field should
+  /// auto-focus. Defaults to false.
+  /// - [labelIcon]: An optional icon to display with the label.
+  /// - [hint]: An optional hint text to display when the field is empty.
+  /// - [prefixIcon]: An optional icon to display before the input field.
+  /// - [suffixIcon]: An optional icon to display after the input field.
+  /// - [enabled]: A boolean to control whether the text field is enabled.
+  /// Defaults to true.
+  /// - [maxLines]: The maximum number of lines to display. Defaults to 1.
+  /// - [maxLength]: An optional maximum number of characters.
+  /// - [controller]: An optional controller for managing the text.
+  /// - [onChanged]: A callback function that is called when the text changes.
+  /// - [onFieldSubmitted]: A callback function that is called when the field
+  /// is submitted.
+  /// - [initialValue]: An optional initial value for the field.
+  /// - [focusNode]: An optional focus node for managing focus.
+  /// - [keyboardType]: The type of keyboard to display. Defaults to
+  /// [TextInputType.text].
+  /// - [isPassword]: A boolean to control whether the field should obscure
+  /// text for passwords. Defaults to false.
+  /// - [validator]: An optional function for validating the input.
+  /// - [autovalidateMode]: An optional mode to control when validation should
+  /// occur.
+  /// - [required]: A boolean to indicate if the field is required. Defaults to
+  /// false.
+  /// - [textInputAction]: An optional action to display on the keyboard.
   const MTextFormField({
-    super.key,
     required this.label,
+    super.key,
     this.showLabel = true,
     this.autoFocus = false,
     this.labelIcon,
@@ -30,26 +88,69 @@ class MTextFormField extends StatefulWidget {
     this.textInputAction,
   });
 
+  /// The label for the text form field.
   final String label;
+
+  /// A boolean to control whether the label is shown. Defaults to true.
   final bool showLabel;
+
+  /// A boolean to control whether the text field should auto-focus. Defaults
+  /// to false.
   final bool autoFocus;
+
+  /// An optional icon to display with the label.
   final IconData? labelIcon;
+
+  /// An optional hint text to display when the field is empty.
   final String? hint;
+
+  /// An optional icon to display before the input field.
   final IconData? prefixIcon;
+
+  /// An optional icon to display after the input field.
   final IconData? suffixIcon;
+
+  /// A boolean to control whether the text field is enabled. Defaults to true.
   final bool enabled;
+
+  /// The maximum number of lines to display. Defaults to 1.
   final int maxLines;
+
+  /// An optional maximum number of characters.
   final int? maxLength;
+
+  /// An optional controller for managing the text.
   final TextEditingController? controller;
+
+  /// A callback function that is called when the text changes.
   final ValueChanged<String>? onChanged;
+
+  /// A callback function that is called when the field is submitted.
   final ValueChanged<String>? onFieldSubmitted;
+
+  /// An optional initial value for the field.
   final String? initialValue;
+
+  /// An optional focus node for managing focus.
   final FocusNode? focusNode;
+
+  /// The type of keyboard to display. Defaults to [TextInputType.text].
   final TextInputType keyboardType;
+
+  /// A boolean to control whether the field should obscure text for passwords.
+  /// Defaults to false.
   final bool isPassword;
+
+  /// An optional function for validating the input.
   final FormFieldValidator<String>? validator;
+
+  /// An optional mode to control when validation should occur.
   final AutovalidateMode? autovalidateMode;
+
+  /// A boolean to indicate if the field is required. Defaults to false.
   final bool required;
+
+  /// An optional action to display on the keyboard.
   final TextInputAction? textInputAction;
 
   @override
@@ -66,7 +167,8 @@ class _MTextFormFieldState extends State<MTextFormField> {
 
   late bool obscureText;
 
-  Widget? suffixWidget, prefixWidget;
+  Widget? suffixWidget;
+  Widget? prefixWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +183,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
     if (widget.suffixIcon != null && widget.maxLines == 1) {
       suffixWidget = Icon(
         widget.suffixIcon,
-        size: $styles.insets.xLarge,
+        size: Insets.xLarge,
         color: iconColor,
       );
     }
@@ -89,19 +191,18 @@ class _MTextFormFieldState extends State<MTextFormField> {
     if (widget.isPassword) {
       suffixWidget = InkWell(
         onTap: () => setState(() => obscureText = !obscureText),
-        child: _EyeIcon(obscureText),
+        child: _EyeIcon(obscureText: obscureText),
       );
     }
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: 100.toScale),
+      constraints: const BoxConstraints(maxHeight: 100),
       child: LayoutBuilder(
         builder: (context, constraints) => FormField<String?>(
           validator: widget.validator,
           autovalidateMode: widget.autovalidateMode,
           builder: (field) => Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (widget.showLabel) ...[
@@ -110,20 +211,20 @@ class _MTextFormFieldState extends State<MTextFormField> {
                   icon: widget.labelIcon,
                   required: widget.required,
                 ),
-                $styles.spaces.verticalSmall,
+                Spaces.verticalSmall,
               ],
               SizedBox(
-                height: (constraints.maxHeight * 0.48).toScale,
+                height: constraints.maxHeight * 0.48,
                 child: _buildTextFormField(styles, iconColor, field),
               ),
               if (field.errorText != null) ...[
-                $styles.spaces.verticalSmall,
+                Spaces.verticalSmall,
                 Container(
                   alignment: Alignment.centerLeft,
-                  height: (constraints.maxHeight * 0.18).toScale,
+                  height: constraints.maxHeight * 0.18,
                   child: _buildErrorText(field, styles),
                 ),
-              ]
+              ],
             ],
           ),
         ),
@@ -160,6 +261,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
     setState(() => _hasFocus = _focus.hasFocus);
   }
 
+  // ignore: avoid_positional_boolean_parameters
   T resolveBorder<T>(bool isBoxed, T boxedValue, T underlinedValue) {
     return isBoxed ? boxedValue : underlinedValue;
   }
@@ -191,15 +293,14 @@ class _MTextFormFieldState extends State<MTextFormField> {
       maxLength: widget.maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       onChanged: widget.onChanged,
-      obscuringCharacter: "*",
+      obscuringCharacter: '*',
       maxLines: widget.maxLines,
       enabled: widget.enabled,
       decoration: InputDecoration(
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: EdgeInsets.symmetric(horizontal: $styles.insets.medium),
-        counter: null,
+        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.medium),
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,
         iconColor: iconColor,
@@ -210,10 +311,9 @@ class _MTextFormFieldState extends State<MTextFormField> {
         focusedBorder:
             field.hasError ? styles.borderError : styles.borderFocused,
         disabledBorder: styles.borderDisabled,
-        error: const SizedBox(),
-        prefixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
+        prefixIconConstraints: BoxConstraints.tight(const Size(44, 48)),
         prefixIcon: prefixWidget,
-        suffixIconConstraints: BoxConstraints.tight(const Size(36, 48)).radius,
+        suffixIconConstraints: BoxConstraints.tight(const Size(44, 48)),
         suffixIcon: suffixWidget,
       ),
     );
@@ -221,19 +321,19 @@ class _MTextFormFieldState extends State<MTextFormField> {
 }
 
 class _EyeIcon extends StatelessWidget {
-  const _EyeIcon(this.obscureText);
+  const _EyeIcon({required this.obscureText});
   final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = $styles.insets.xLarge;
+    const iconSize = Insets.xLarge;
     return Container(
       height: iconSize,
       width: iconSize,
-      margin: EdgeInsets.only(right: $styles.insets.medium),
+      margin: const EdgeInsets.only(right: Insets.medium),
       child: obscureText
-          ? Icon(MIcons.eye, size: iconSize)
-          : Icon(MIcons.eye_off, size: iconSize),
+          ? const Icon(MIcons.eye, size: iconSize)
+          : const Icon(MIcons.eye_off, size: iconSize),
     );
   }
 }
@@ -245,11 +345,11 @@ class _PrefixIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = $styles.insets.xLarge;
+    const iconSize = Insets.xLarge;
     return Container(
       width: iconSize,
       alignment: Alignment.centerRight,
-      margin: const EdgeInsets.only(right: 6).radius,
+      margin: const EdgeInsets.only(right: 6),
       child: Icon(icon, size: iconSize, color: color),
     );
   }

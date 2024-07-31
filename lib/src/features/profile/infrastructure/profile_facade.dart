@@ -3,22 +3,17 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../../../services/network_service.dart';
-import '../../auth/domain/domain.dart';
-import '../domain/domain.dart';
-import 'datasources/profile_local_datasource.dart';
-import 'datasources/profile_remote_datasource.dart';
+import 'package:meno_fe_v1/src/services/network_service.dart';
+import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_local_datasource.dart';
+import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_remote_datasource.dart';
 
 @LazySingleton(as: IProfileFacade)
 class ProfileFacade implements IProfileFacade {
-  final ProfileRemoteDatasource _remote;
-  final ProfileLocalDatasource _local;
-  final NetworkService _network;
-
   ProfileFacade({
     required ProfileRemoteDatasource remote,
     required ProfileLocalDatasource local,
@@ -26,6 +21,9 @@ class ProfileFacade implements IProfileFacade {
   })  : _remote = remote,
         _local = local,
         _network = network;
+  final ProfileRemoteDatasource _remote;
+  final ProfileLocalDatasource _local;
+  final NetworkService _network;
 
   @override
   Future<Either<AuthException, Unit>> editProfile({
@@ -71,7 +69,6 @@ class ProfileFacade implements IProfileFacade {
 
     try {
       final response = await _remote.getProfile(id);
-      Logger().e(response);
       return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -82,14 +79,17 @@ class ProfileFacade implements IProfileFacade {
   }
 
   AuthException _getError(DioException e) {
-    if (e.response?.data['error'].runtimeType == String) {
-      return AuthException.message(e.response?.data['message']);
+    final errorData = e.response?.data as Map<String, dynamic>;
+    final unknownError = errorData['error'] as dynamic;
+    if (unknownError.runtimeType == String) {
+      return AuthException.message(errorData['message'] as String);
     }
 
-    final error = AuthError.fromJson(e.response!.data['error']);
+    final message = errorData['error'] as Map<String, dynamic>;
+    final error = AuthError.fromJson(message);
     String? result;
 
-    for (String? prop in error.props) {
+    for (final prop in error.props) {
       result ??= prop;
     }
 
@@ -109,20 +109,16 @@ class ProfileFacade implements IProfileFacade {
     ).wait;
 
     if (!hasNetwork && !hasProfile) {
-      Logger().w('DOING NOTHING');
       return left(const AuthException.networkError());
     }
 
     if (!hasNetwork && hasProfile) {
-      Logger().w('DOING LOCAL');
       final dto = await _local.getProfile();
       return right(dto?.toDomain);
     }
 
     try {
-      Logger().w('DOING REMOTE');
       final response = await _remote.getProfile(credentials!.user.id);
-
       return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);

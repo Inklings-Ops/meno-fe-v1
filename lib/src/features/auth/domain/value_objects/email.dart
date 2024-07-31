@@ -1,15 +1,12 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../shared/value_objects/value_objects.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 /// A typedef representing the result of validating an email address.
 typedef IEmailResult = Either<ValueFailure<String>, String>;
 
 /// Represents an email address of a Meno user
 class Email extends ValueObject<String> {
-  /// The email address, validated or not.
-  @override
-  final IEmailResult value;
 
   /// Creates a new `IEmail` object.
   factory Email(String input) {
@@ -19,4 +16,7 @@ class Email extends ValueObject<String> {
 
   /// Creates a new `IEmail` object with the specified value.
   const Email._(this.value);
+  /// The email address, validated or not.
+  @override
+  final IEmailResult value;
 }

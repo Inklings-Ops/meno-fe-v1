@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
-  final AppBarTheme? appBarTheme;
-  final BottomNavigationBarThemeData? bottomNavigationBarTheme;
-  final TabBarTheme? tabBarTheme;
-  final MColor? accentColor;
-  final TextStyle? actionTextStyle;
+/// A theme extension for customizing the navigation elements in the
+/// Meno design system.
+///
+/// This class defines various styles for navigation elements such as
+/// AppBar, BottomNavigationBar, TabBar, and more.
+///
+/// Example usage:
+/// ```dart
+/// final navigationStyles = MNavigationStyles.of(context);
+/// ```
 
+class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
+  /// Creates a new instance of [MNavigationStyles].
+  ///
+  /// The constructor allows you to specify custom styles for navigation 
+  /// elements.
+  ///
+  /// - [appBarTheme]: The theme for the AppBar.
+  /// - [bottomNavigationBarTheme]: The theme for the BottomNavigationBar.
+  /// - [tabBarTheme]: The theme for the TabBar.
+  /// - [accentColor]: The accent color for navigation elements.
+  /// - [actionTextStyle]: The text style for action elements in navigation.
   MNavigationStyles({
     this.appBarTheme,
     this.bottomNavigationBarTheme,
@@ -16,19 +31,29 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
     this.actionTextStyle,
   });
 
-  factory MNavigationStyles.$default(MColorScheme colors) {
-    final iconSize = 20.toScale;
+  /// Creates a default [MNavigationStyles] based on the given [MColorScheme]
+  /// and [MTextTheme].
+  ///
+  /// This factory constructor initializes the navigation styles using the
+  /// provided color scheme and text theme.
+  ///
+  /// - [colors]: The color scheme to use for the navigation styles.
+  /// - [textTheme]: The text theme to use for the navigation styles.
+  ///
+  /// Returns a new [MNavigationStyles] instance with the default styles 
+  /// applied.
+  factory MNavigationStyles.$default(
+    MColorScheme colors,
+    MTextTheme textTheme,
+  ) {
     return MNavigationStyles(
       appBarTheme: AppBarTheme(
-        elevation: 0.0,
-        scrolledUnderElevation: 0.0,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         backgroundColor: colors.background,
-        toolbarHeight: 56.toScale,
-        titleTextStyle: $styles.text.bodyMedium,
-        actionsIconTheme: IconThemeData(
-          color: colors.onBackground,
-          size: 24.toScale,
-        ),
+        toolbarHeight: 56,
+        titleTextStyle: textTheme.bodyMedium,
+        actionsIconTheme: IconThemeData(color: colors.onBackground, size: 24),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         showSelectedLabels: true,
@@ -36,35 +61,65 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
         backgroundColor: colors.background,
         unselectedItemColor: colors.inActive,
         selectedItemColor: colors.primary,
-        selectedIconTheme: IconThemeData(color: colors.primary, size: iconSize),
-        unselectedIconTheme: IconThemeData(
-          color: colors.inActive,
-          size: iconSize,
-        ),
-        unselectedLabelStyle: $styles.text.microMedium.copyWith(
-          color: colors.inActive,
-        ),
-        selectedLabelStyle: $styles.text.microMedium.copyWith(
-          color: colors.primary,
-        ),
+        selectedIconTheme: IconThemeData(color: colors.primary, size: 20),
+        unselectedIconTheme: IconThemeData(color: colors.inActive, size: 20),
+        unselectedLabelStyle:
+            textTheme.microMedium?.copyWith(color: colors.inActive),
+        selectedLabelStyle:
+            textTheme.microMedium?.copyWith(color: colors.primary),
       ),
       accentColor: MColor.secondary300,
-      actionTextStyle: $styles.text.captionMedium,
+      actionTextStyle: textTheme.captionMedium,
       tabBarTheme: TabBarTheme(
-        labelStyle: $styles.text.captionMedium,
+        labelStyle: textTheme.captionMedium,
         labelColor: colors.primary,
-        labelPadding: EdgeInsets.symmetric(horizontal: $styles.insets.small),
-        unselectedLabelStyle: $styles.text.captionMedium,
+        labelPadding: const EdgeInsets.symmetric(horizontal: Insets.small),
+        unselectedLabelStyle: textTheme.captionMedium,
         unselectedLabelColor: colors.onBackgroundVariant,
         indicatorColor: colors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(width: 1.toScale, color: colors.primary!),
-          ),
+          border: Border(bottom: BorderSide(color: colors.primary!)),
         ),
       ),
     );
+  }
+
+  /// The theme for the AppBar.
+  final AppBarTheme? appBarTheme;
+
+  /// The theme for the BottomNavigationBar.
+  final BottomNavigationBarThemeData? bottomNavigationBarTheme;
+
+  /// The theme for the TabBar.
+  final TabBarTheme? tabBarTheme;
+
+  /// The accent color for navigation elements.
+  final MColor? accentColor;
+
+  /// The text style for action elements in navigation.
+  final TextStyle? actionTextStyle;
+
+  /// Retrieves the [MNavigationStyles] extension from the closest [Theme]
+  /// instance that encloses the given [context].
+  ///
+  /// This method searches for the nearest [Theme] widget in the widget tree
+  /// and returns the [MNavigationStyles] extension if it exists. If no
+  /// [MNavigationStyles] extension is found, this method returns null.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final navigationStyles = MNavigationStyles.of(context);
+  /// ```
+  ///
+  /// - [context]: The build context from which to retrieve the
+  /// [MNavigationStyles] extension.
+  ///
+  /// Returns the [MNavigationStyles] extension if found, or null if no
+  /// [MNavigationStyles] extension is available in the closest [Theme]
+  /// instance.
+  static MNavigationStyles? of(BuildContext context) {
+    return Theme.of(context).extension<MNavigationStyles>();
   }
 
   @override
@@ -98,11 +153,10 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
       actionTextStyle:
           TextStyle.lerp(actionTextStyle, other.actionTextStyle, t),
       bottomNavigationBarTheme: BottomNavigationBarThemeData.lerp(
-          bottomNavigationBarTheme, other.bottomNavigationBarTheme, t),
+        bottomNavigationBarTheme,
+        other.bottomNavigationBarTheme,
+        t,
+      ),
     );
-  }
-
-  static MNavigationStyles? of(BuildContext context) {
-    return Theme.of(context).extension<MNavigationStyles>();
   }
 }

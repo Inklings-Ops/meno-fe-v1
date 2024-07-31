@@ -20,6 +20,9 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
 import 'package:shared_preferences/shared_preferences.dart' as _i25;
 
 import '../../config.dart' as _i15;
+import '../core/network/application/network_cubit.dart' as _i42;
+import '../core/network/domain/i_network_facade.dart' as _i38;
+import '../core/network/infrastructure/network_facade.dart' as _i39;
 import '../features/auth/application/account/account_bloc.dart' as _i58;
 import '../features/auth/application/login/login_cubit.dart' as _i74;
 import '../features/auth/application/register/register_cubit.dart' as _i48;
@@ -62,7 +65,7 @@ import '../features/broadcast/domain/domain.dart' as _i47;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i36;
 import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart'
     as _i5;
-import '../features/chat/application/chat_bloc.dart' as _i91;
+import '../features/chat/application/chat_bloc.dart' as _i90;
 import '../features/discover/application/all/d_all_cubit.dart' as _i62;
 import '../features/discover/application/filter/filter_bloc.dart' as _i65;
 import '../features/discover/application/now_live/d_now_live_cubit.dart'
@@ -72,17 +75,14 @@ import '../features/discover/application/recently_live/d_recently_live_cubit.dar
 import '../features/discover/application/search/search_bloc.dart' as _i52;
 import '../features/discover/discover.dart' as _i6;
 import '../features/discover/infrastructure/discover_facade.dart' as _i37;
-import '../features/network/application/network_cubit.dart' as _i42;
-import '../features/network/domain/i_network_facade.dart' as _i38;
-import '../features/network/infrastructure/network_facade.dart' as _i39;
-import '../features/notes/application/folder/folder_cubit.dart' as _i85;
+import '../features/notes/application/folder/folder_cubit.dart' as _i83;
 import '../features/notes/application/folder_form/folder_form_cubit.dart'
-    as _i86;
+    as _i84;
 import '../features/notes/application/folder_list/folder_list_bloc.dart'
-    as _i87;
-import '../features/notes/application/note_form/note_form_cubit.dart' as _i80;
-import '../features/notes/application/notes/notes_bloc.dart' as _i82;
-import '../features/notes/domain/domain.dart' as _i81;
+    as _i85;
+import '../features/notes/application/note_form/note_form_cubit.dart' as _i78;
+import '../features/notes/application/notes/notes_bloc.dart' as _i80;
+import '../features/notes/domain/domain.dart' as _i79;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
     as _i43;
 import '../features/notes/infrastructure/datasources/note_remote_datasource.dart'
@@ -96,9 +96,9 @@ import '../features/notifications/infrastructure/mapper/notifications_mapper.dar
     as _i19;
 import '../features/notifications/infrastructure/notification_facade.dart'
     as _i41;
-import '../features/profile/application/profile/my_profile_bloc.dart' as _i78;
+import '../features/profile/application/profile/my_profile_bloc.dart' as _i76;
 import '../features/profile/application/profile_form/profile_form_cubit.dart'
-    as _i84;
+    as _i82;
 import '../features/profile/domain/domain.dart' as _i68;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
     as _i45;
@@ -106,15 +106,14 @@ import '../features/profile/infrastructure/datasources/profile_remote_datasource
     as _i23;
 import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i22;
 import '../features/profile/infrastructure/profile_facade.dart' as _i69;
-import '../features/profile/profile.dart' as _i79;
+import '../features/profile/profile.dart' as _i77;
 import '../features/settings/application/onboarding/onboarding_cubit.dart'
-    as _i83;
+    as _i81;
 import '../features/settings/infrastructure/datasources/settings_local_datasource.dart'
     as _i53;
 import '../features/settings/infrastructure/settings_facade.dart' as _i71;
 import '../features/settings/settings.dart' as _i70;
 import '../services/jwt_service.dart' as _i12;
-import '../services/live_kit/live_kit.dart' as _i76;
 import '../services/live_kit/live_kit_service.dart' as _i13;
 import '../services/media_service.dart' as _i14;
 import '../services/meno/meno_bloc.dart' as _i75;
@@ -124,12 +123,12 @@ import '../services/objectbox_service.dart' as _i20;
 import '../services/permissions_service.dart' as _i21;
 import '../services/secure_storage_service.dart' as _i24;
 import '../services/services.dart' as _i31;
-import '../services/socket/socket.dart' as _i77;
 import '../services/socket/socket_service.dart' as _i54;
-import '../shared/session/cubit/session_cubit.dart' as _i90;
-import '../shared/session/session_context.dart' as _i89;
-import '../shared/shared.dart' as _i88;
-import 'register_module.dart' as _i92;
+import '../shared/session/cubit/session_cubit.dart' as _i88;
+import '../shared/session/session.dart' as _i86;
+import '../shared/session/session_context.dart' as _i87;
+import '../shared/shared.dart' as _i89;
+import 'register_module.dart' as _i91;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -163,7 +162,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.lazySingleton<_i13.LiveKitService>(() => _i13.LiveKitService());
     gh.lazySingleton<_i14.MediaService>(
         () => _i14.MediaService(gh<_i10.ImagePicker>()));
-    gh.singleton<_i15.MenoConfig>(_i15.MenoConfig());
+    gh.factory<_i15.MenoConfig>(() => _i15.MenoConfig());
     gh.factory<_i16.NetworkService>(
         () => _i16.NetworkService(gh<_i11.InternetConnectionChecker>()));
     gh.lazySingleton<_i17.NoteRemoteDatasource>(
@@ -310,8 +309,10 @@ extension GetItInjectableX on _i1.GetIt {
         ));
     gh.factory<_i70.ISettingsFacade>(
         () => _i71.SettingsFacade(local: gh<_i70.SettingsLocalDatasource>()));
-    gh.lazySingleton<_i72.LiveBroadcastsBloc>(
-        () => _i72.LiveBroadcastsBloc(socket: gh<_i31.SocketService>()));
+    gh.lazySingleton<_i72.LiveBroadcastsBloc>(() => _i72.LiveBroadcastsBloc(
+          facade: gh<_i35.IBroadcastFacade>(),
+          socket: gh<_i31.SocketService>(),
+        ));
     gh.lazySingleton<_i73.LiveParticipantsBloc>(
         () => _i73.LiveParticipantsBloc(socket: gh<_i31.SocketService>()));
     gh.lazySingleton<_i74.LoginCubit>(() => _i74.LoginCubit(
@@ -319,57 +320,57 @@ extension GetItInjectableX on _i1.GetIt {
           settingsFacade: gh<_i70.ISettingsFacade>(),
         ));
     gh.factory<_i75.MenoBloc>(() => _i75.MenoBloc(
-          liveKit: gh<_i76.LiveKitService>(),
-          socket: gh<_i77.SocketService>(),
+          liveKit: gh<_i31.LiveKitService>(),
+          socket: gh<_i31.SocketService>(),
         ));
-    gh.lazySingleton<_i78.MyProfileBloc>(
-        () => _i78.MyProfileBloc(facade: gh<_i79.IProfileFacade>()));
-    gh.factoryParam<_i80.NoteFormCubit, _i81.Note?, dynamic>((
+    gh.lazySingleton<_i76.MyProfileBloc>(
+        () => _i76.MyProfileBloc(facade: gh<_i77.IProfileFacade>()));
+    gh.factoryParam<_i78.NoteFormCubit, _i79.Note?, dynamic>((
       initialNote,
       _,
     ) =>
-        _i80.NoteFormCubit(
-          facade: gh<_i81.INoteFacade>(),
+        _i78.NoteFormCubit(
+          facade: gh<_i79.INoteFacade>(),
           initialNote: initialNote,
         ));
-    gh.lazySingleton<_i82.NotesBloc>(
-        () => _i82.NotesBloc(facade: gh<_i66.INoteFacade>()));
-    gh.lazySingleton<_i83.OnboardingCubit>(
-        () => _i83.OnboardingCubit(facade: gh<_i70.ISettingsFacade>()));
-    gh.lazySingleton<_i84.ProfileFormCubit>(() => _i84.ProfileFormCubit(
+    gh.lazySingleton<_i80.NotesBloc>(
+        () => _i80.NotesBloc(facade: gh<_i66.INoteFacade>()));
+    gh.lazySingleton<_i81.OnboardingCubit>(
+        () => _i81.OnboardingCubit(facade: gh<_i70.ISettingsFacade>()));
+    gh.lazySingleton<_i82.ProfileFormCubit>(() => _i82.ProfileFormCubit(
           facade: gh<_i68.IProfileFacade>(),
           media: gh<_i14.MediaService>(),
         ));
-    gh.factoryParam<_i85.FolderCubit, _i81.Folder, dynamic>((
+    gh.factoryParam<_i83.FolderCubit, _i79.Folder, dynamic>((
       folder,
       _,
     ) =>
-        _i85.FolderCubit(
-          facade: gh<_i81.INoteFacade>(),
+        _i83.FolderCubit(
+          facade: gh<_i79.INoteFacade>(),
           folder: folder,
         ));
-    gh.lazySingleton<_i86.FolderFormCubit>(
-        () => _i86.FolderFormCubit(facade: gh<_i81.INoteFacade>()));
-    gh.lazySingleton<_i87.FolderListBloc>(
-        () => _i87.FolderListBloc(facade: gh<_i66.INoteFacade>()));
-    gh.factory<_i88.ISessionContext>(() => _i89.SessionContext(
+    gh.lazySingleton<_i84.FolderFormCubit>(
+        () => _i84.FolderFormCubit(facade: gh<_i79.INoteFacade>()));
+    gh.lazySingleton<_i85.FolderListBloc>(
+        () => _i85.FolderListBloc(facade: gh<_i66.INoteFacade>()));
+    gh.factory<_i86.ISessionContext>(() => _i87.SessionContext(
           authFacade: gh<_i29.IAuthFacade>(),
           settingsFacade: gh<_i70.ISettingsFacade>(),
         )..init());
-    await gh.factoryAsync<_i90.SessionCubit>(
+    await gh.factoryAsync<_i88.SessionCubit>(
       () {
-        final i = _i90.SessionCubit(session: gh<_i88.ISessionContext>());
+        final i = _i88.SessionCubit(session: gh<_i89.ISessionContext>());
         return i.init().then((_) => i);
       },
       preResolve: true,
     );
-    gh.lazySingleton<_i91.ChatBloc>(() => _i91.ChatBloc(
-          session: gh<_i88.ISessionContext>(),
+    gh.lazySingleton<_i90.ChatBloc>(() => _i90.ChatBloc(
+          session: gh<_i89.ISessionContext>(),
           socket: gh<_i31.SocketService>(),
-          profileFacade: gh<_i79.IProfileFacade>(),
+          profileFacade: gh<_i77.IProfileFacade>(),
         ));
     return this;
   }
 }
 
-class _$RegisterModule extends _i92.RegisterModule {}
+class _$RegisterModule extends _i91.RegisterModule {}

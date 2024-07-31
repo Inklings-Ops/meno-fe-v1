@@ -1,44 +1,43 @@
-
-
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class BroadcastPage extends HookWidget {
-  const BroadcastPage({super.key, required this.broadcast});
+  const BroadcastPage({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastBloc>();
     useEffect(() {
-      bloc.add(BroadcastStartRequested(broadcast.id));
+      context.read<TimerCubit>().start();
+      context.read<LiveParticipantsBloc>().initialize(broadcast);
+      context.read<ChatBloc>().initialize(broadcast);
       return null;
-    }, const []);
+    }, const [],);
     return BlocConsumer<BroadcastBloc, BroadcastState>(
       bloc: bloc,
       listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
         bloc.state.whenOrNull(
           failure: (exception) => context.showBroadcastError(exception),
-          startFailed: (e) => context.showErrorSnackBar(e.toString()),
+          startFailed: (e) {
+            context
+              ..pop(context)
+              ..showErrorSnackBar(e.toString());
+          },
           deleteSuccess: () => context.go(Routes.home),
           endSuccess: () {
             context.read<TimerCubit>().stop();
             di<LiveKitService>().dispose();
-            context.showModal(
+            context.showModal<void>(
               const BroadcastEndedModal(),
               enableDrag: false,
               useRootNavigator: true,
               isDismissible: false,
               isScrollControlled: true,
             );
-          },
-          startSuccess: (broadcast, muted) {
-            context.read<TimerCubit>().start();
-            context.read<LiveParticipantsBloc>().initialize(broadcast);
-            context.read<ChatBloc>().initialize(broadcast);
           },
         );
       },
@@ -54,7 +53,7 @@ class BroadcastPage extends HookWidget {
               orElse: () => 'An unknown error occurred',
               serverError: () => 'A server error occurred',
               timeOutError: () => 'Request timed out. Go back & try again',
-            )),
+            ),),
           ),
         ),
         startSuccess: (broadcast, muted) => const PopScope(

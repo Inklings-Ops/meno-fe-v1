@@ -3,11 +3,13 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ParticipantInfoModal extends HookWidget {
-  final Participant participant;
-  const ParticipantInfoModal({super.key, required this.participant});
+  const ParticipantInfoModal({required this.participant, super.key});
+  final BroadcastParticipant participant;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
+
     final facade = di<IProfileFacade>();
 
     final loading = useState<bool>(false);
@@ -24,58 +26,58 @@ class ParticipantInfoModal extends HookWidget {
         });
       }
       return null;
-    }, [profile, facade, participant.id]);
+    }, [profile, facade, participant.id],);
 
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          MAvatar(radius: 36.toScale, url: participant.imageUrl),
-          $styles.spaces.verticalLarge,
+          MAvatar(radius: 36, url: participant.imageUrl),
+          Spaces.verticalLarge,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 MText(
                   participant.fullName,
-                  style: $styles.text.heading3Medium,
+                  style: textTheme.heading3Medium,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 // if (isCohost) ...[
-                //   $styles.spaces.horizontalSmall,
+                //   Spaces.horizontalSmall,
                 //   const MBadge.cohost(),
                 // ]
               ],
             ),
           ),
-          $styles.spaces.verticalMicro,
+          Spaces.verticalMicro,
           if (loading.value && profile.value == null) ...[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: $styles.insets.xxLarge),
-              child: const MShimmer(height: 24),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: Insets.xxLarge),
+              child: MShimmer(height: 24),
             ),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
           ],
           if (profile.value?.bio != null) ...[
             MText(
               profile.value!.bio!.getOr(),
-              style: $styles.text.subheadingRegular,
+              style: textTheme.subheadingRegular,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
           ],
           MPrimaryButton.icon(
             label: 'Subscribed',
             icon: const Icon(MIcons.user_check),
             onPressed: () {},
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           MTextButton(
             label: 'View account',
             onPressed: () => context.push(

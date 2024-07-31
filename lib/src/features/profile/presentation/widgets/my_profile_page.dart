@@ -11,11 +11,11 @@ class MyProfilePage extends StatelessWidget {
     final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
 
     Future<void> onRefresh() async {
-      Future myProfile = bloc.stream.first;
+      final  myProfile = bloc.stream.first;
       bloc.add(const MyProfileEvent.fetch());
 
-      Future recentlyLive = recentlyLiveCubit.stream.first;
-      recentlyLiveCubit.fetch();
+      final  recentlyLive = recentlyLiveCubit.stream.first;
+      await recentlyLiveCubit.fetch();
 
       await Future.wait([myProfile, recentlyLive]);
     }
@@ -48,12 +48,13 @@ class MyProfilePage extends StatelessWidget {
 }
 
 class CustomContent extends HookWidget {
-  const CustomContent({super.key, required this.profile});
+  const CustomContent({required this.profile, super.key});
   final Profile profile;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final tabController = useTabController(initialLength: 4);
     return CustomScrollView(
       slivers: [
@@ -61,29 +62,28 @@ class CustomContent extends HookWidget {
           floating: true,
           pinned: true,
           snap: true,
-          expandedHeight: 340.toScale,
+          expandedHeight: 340,
           backgroundColor: colors.background,
           leading: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: EdgeInsets.only(left: $styles.insets.large),
+              padding: const EdgeInsets.only(left: Insets.large),
               child: ColoredBox(
                 color: colors.secondary!,
-                child: SizedBox(height: 30.toScale, width: 3.toScale),
+                child: const SizedBox(height: 30, width: 3),
               ),
             ),
           ),
-          titleTextStyle: $styles.text.heading3Bold,
-          leadingWidth: 23.toScale,
-          collapsedHeight: 58.toScale,
+          titleTextStyle: textTheme.heading3Bold,
+          leadingWidth: 23,
+          collapsedHeight: 58,
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () => context.showSwitchAccountSheet(),
+            onTap: () => context.showSwitchAccountSheet<void>(),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MText(profile.fullName.getOr(), color: colors.onBackground),
-                $styles.spaces.horizontalSmall,
+                Spaces.horizontalSmall,
                 const Icon(MIcons.chevron_down, size: 24),
               ],
             ),
@@ -94,22 +94,22 @@ class CustomContent extends HookWidget {
               color: colors.primary,
               onPressed: () => context.push(Routes.settings),
             ),
-            $styles.spaces.horizontalLarge,
+            Spaces.horizontalLarge,
           ],
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(32.toScale),
+            preferredSize: const Size.fromHeight(32),
             child: SizedBox(
-              height: 32.toScale,
+              height: 32,
               child: TabBar(
                 controller: tabController,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
-                labelStyle: $styles.text.captionMedium,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                labelStyle: textTheme.captionMedium,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 labelPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 6,
-                ).radius,
+                ),
                 tabs: const [
                   Tab(text: 'Recent broadcasts'),
                   Tab(text: 'All broadcasts'),
@@ -122,31 +122,30 @@ class CustomContent extends HookWidget {
           flexibleSpace: FlexibleSpaceBar(
             background: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight).radius,
+                padding: const EdgeInsets.only(top: kToolbarHeight),
                 child: Column(
                   children: [
                     Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 16).radius,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [
-                          MAvatar(radius: 40.toScale, url: profile.imageUrl),
-                          24.hSpace,
-                          ProfileStats(stats: profile.stats),
+                          MAvatar(radius: 40, url: profile.imageUrl),
+                          const SizedBox(width: 24),
+                          Expanded(child: ProfileStats(stats: profile.stats)),
                         ],
                       ),
                     ),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                     const AccountUpgradeSection(),
-                    $styles.spaces.verticalLarge,
-                    Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 16).radius,
+                    Spaces.verticalLarge,
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: ProfileBio(bio: profile.bio),
                     ),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                     const ProfileButtons(),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                   ],
                 ),
               ),

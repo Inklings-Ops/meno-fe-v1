@@ -11,6 +11,6 @@ sealed class SocketState with _$SocketState {
   const factory SocketState.getChatMessages(List<Chat?> data, dynamic error) = SocketChatMessagesReceived;
   const factory SocketState.liveBroadcast(Broadcast data, dynamic error) = SocketLiveBroadcastReceived;
   const factory SocketState.liveBroadcasts(List<Broadcast?> data, dynamic error) = SocketLiveBroadcastsReceived;
-  const factory SocketState.getBroadcastListeners(List<Participant?> data, dynamic error) = SocketBroadcastListenersReceived;
+  const factory SocketState.getBroadcastListeners(List<BroadcastParticipant?> data, dynamic error) = SocketBroadcastListenersReceived;
   const factory SocketState.getNumberOfBroadcastListeners(int data, dynamic error) = SocketNumberOfBroadcastListenersReceived;
 }

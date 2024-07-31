@@ -5,16 +5,17 @@ class BroadcastAvatarField extends StatelessWidget {
   const BroadcastAvatarField({super.key});
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final bloc = context.watch<BroadcastFormCubit>();
     return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
       bloc: bloc,
       buildWhen: (p, c) => p.artwork != c.artwork,
       builder: (context, state) => Column(
         children: [
-          MAvatar(radius: 48.toScale, file: state.artwork?.getOr()),
+          MAvatar(radius: 48, file: state.artwork?.getOr()),
           MTextButton(
             label: 'Change Artwork',
-            onPressed: () => context.showModal(
+            onPressed: () => context.showModal<void>(
               MImageSourceModal(
                 onGallerySourceTap: () => bloc.artworkChanged(true),
                 onCameraSourceTap: () => bloc.artworkChanged(false),
@@ -23,11 +24,11 @@ class BroadcastAvatarField extends StatelessWidget {
           ),
           Center(
             child: SizedBox(
-              width: 167.toScale,
+              width: 167,
               child: MText(
                 'JPG or PNG accepted. Max size 10mb.',
                 maxLines: 2,
-                style: $styles.text.microRegular,
+                style: textTheme.microRegular,
                 textAlign: TextAlign.center,
               ),
             ),

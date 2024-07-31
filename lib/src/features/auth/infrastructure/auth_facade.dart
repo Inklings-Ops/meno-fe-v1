@@ -10,13 +10,6 @@ import 'package:rxdart/rxdart.dart';
 
 @Injectable(as: IAuthFacade)
 class AuthFacade implements IAuthFacade {
-  final AuthRemoteDatasource _remote;
-  final AuthLocalDatasource _local;
-  final NetworkService _network;
-  final JWTService _jwt;
-
-  final _credentialSubject = BehaviorSubject<UserCredential?>.seeded(null);
-  final _tokenSubject = BehaviorSubject<Token?>.seeded(null);
 
   AuthFacade({
     required AuthRemoteDatasource remoteDatasource,
@@ -27,6 +20,13 @@ class AuthFacade implements IAuthFacade {
         _local = localDatasource,
         _network = networkService,
         _jwt = jwtService;
+  final AuthRemoteDatasource _remote;
+  final AuthLocalDatasource _local;
+  final NetworkService _network;
+  final JWTService _jwt;
+
+  final _credentialSubject = BehaviorSubject<UserCredential?>.seeded(null);
+  final _tokenSubject = BehaviorSubject<Token?>.seeded(null);
 
   @override
   @PostConstruct(preResolve: true)

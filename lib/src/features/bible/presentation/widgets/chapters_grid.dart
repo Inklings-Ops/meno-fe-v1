@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'chapter_widget.dart';
+import 'package:meno_fe_v1/src/features/bible/presentation/widgets/chapter_widget.dart';
 
 class ChaptersGrid extends StatelessWidget {
-  const ChaptersGrid({super.key, required this.chapterLength});
+  const ChaptersGrid({required this.chapterLength, super.key});
 
   final int chapterLength;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: EdgeInsets.symmetric(vertical: $styles.insets.large),
+      padding: const EdgeInsets.symmetric(vertical: Insets.large),
       primary: false,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: chapterLength,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 6,
-        crossAxisSpacing: $styles.insets.medium,
-        mainAxisSpacing: $styles.insets.medium,
+        crossAxisSpacing: Insets.medium,
+        mainAxisSpacing: Insets.medium,
       ),
       itemBuilder: (context, index) => ChapterWidget(chapter: index + 1),
     );

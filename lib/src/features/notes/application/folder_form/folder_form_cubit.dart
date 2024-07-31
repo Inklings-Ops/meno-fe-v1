@@ -9,17 +9,17 @@ part 'folder_form_state.dart';
 
 @lazySingleton
 class FolderFormCubit extends Cubit<FolderFormState> {
-  final INoteFacade _facade;
   FolderFormCubit({
     required INoteFacade facade,
   })  : _facade = facade,
         super(FolderFormState.initial());
+  final INoteFacade _facade;
 
   void init(Folder initialFolder) {
     emit(FolderFormState.initial().copyWith(
       initialFolder: initialFolder,
       title: initialFolder.title,
-    ));
+    ),);
   }
 
   void titleChanged(String title) {
@@ -42,7 +42,7 @@ class FolderFormCubit extends Cubit<FolderFormState> {
       emit(state.copyWith(
         option: some(result),
         loading: false,
-      ));
+      ),);
     }
   }
 }

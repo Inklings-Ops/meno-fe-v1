@@ -54,11 +54,11 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              10.vSpace,
+              const SizedBox(height: 10),
               _TitleField(initialTitle: widget.initialFolder?.title),
-              56.vSpace,
+              const SizedBox(height: 6),
               const _SubmitButton(),
-              132.vSpace,
+              Spaces.verticalXXLarge,
             ],
           ),
         ),
@@ -74,6 +74,7 @@ class _TitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).inputDecorationTheme;
+    final textTheme = MTextTheme.of(context)!;
 
     final border = UnderlineInputBorder(
       borderSide: BorderSide(color: theme.border!.borderSide.color),
@@ -91,7 +92,7 @@ class _TitleField extends StatelessWidget {
 
     return TextFormField(
       autofocus: true,
-      style: $styles.text.heading1Regular,
+      style: textTheme.heading1Regular,
       initialValue: initialTitle?.getOr(),
       textAlign: TextAlign.center,
       onChanged: bloc.titleChanged,

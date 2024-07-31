@@ -11,20 +11,20 @@ class RegisterForm extends HookWidget {
     final formKey = useMemoized(GlobalKey<FormState>.new);
     return Form(
       key: formKey,
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const RegisterNameField(),
-          24.vSpace,
-          const RegisterEmail(),
-          24.vSpace,
-          const RegisterPasswordField(),
-          $styles.spaces.verticalSmall,
-          const PasswordRulesWidget(),
-          $styles.spaces.verticalLarge,
-          const RememberMeCheckboxTile(),
-          $styles.spaces.verticalXXLarge,
-          const RegisterButton(),
+          RegisterNameField(),
+          Spaces.verticalXLarge,
+          RegisterEmail(),
+          Spaces.verticalXLarge,
+          RegisterPasswordField(),
+          Spaces.verticalSmall,
+          PasswordRulesWidget(),
+          Spaces.verticalLarge,
+          RememberMeCheckboxTile(),
+          Spaces.verticalXXLarge,
+          RegisterButton(),
         ],
       ),
     );

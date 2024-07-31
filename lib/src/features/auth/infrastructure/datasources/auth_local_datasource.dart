@@ -2,20 +2,19 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-
-import '../../../../services/secure_storage_service.dart';
-import '../../../../shared/m_keys.dart';
-import '../dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
+import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
 /// A local data source for authentication.
 @injectable
 class AuthLocalDatasource {
-  /// The secure storage service.
-  final SecureStorageService _storage;
-
   /// Creates a new `AuthLocalDatasource` object.
   AuthLocalDatasource({required SecureStorageService storage})
       : _storage = storage;
+
+  /// The secure storage service.
+  final SecureStorageService _storage;
 
   /// Deletes all auth data from the local storage.
   Future<void> deleteAll() => _storage.deleteAll();
@@ -51,10 +50,9 @@ class AuthLocalDatasource {
 
   Future<UserCredentialDto?> getUserCredential() async {
     final jsonString = await _storage.read(MKeys.authUserCredentialKey);
-
     if (jsonString == null) return null;
-
-    return UserCredentialDto.fromJson(jsonDecode(jsonString));
+    final decodedJson = jsonDecode(jsonString) as Map<String, dynamic>;
+    return UserCredentialDto.fromJson(decodedJson);
   }
 
   Future<UserCredentialDto?> getUserCredentialById(String id) async {

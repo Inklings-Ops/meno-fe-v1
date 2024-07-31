@@ -7,42 +7,43 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useEffect(() {
-      di<IBibleFacade>().init();
-      return;
-    }, const []);
-    
+    useEffect(
+      () {
+        di<IBibleFacade>().init();
+        return;
+      },
+      const [],
+    );
+
     final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
     final liveBroadcastsCubit = context.read<LiveBroadcastsBloc>();
 
     Future<void> onRefresh() async {
-      Future liveBroadcasts = liveBroadcastsCubit.stream.first;
+      final liveBroadcasts = liveBroadcastsCubit.stream.first;
       liveBroadcastsCubit.add(const LiveBroadcastsEvent.getLiveBroadcasts());
 
-      Future recentlyLive = recentlyLiveBloc.stream.first;
-      recentlyLiveBloc.fetch();
+      final recentlyLive = recentlyLiveBloc.stream.first;
+      await recentlyLiveBloc.fetch();
 
       await Future.wait([liveBroadcasts, recentlyLive]);
     }
 
-    return MScaffold(
+    return Scaffold(
       appBar: const HomeAppBar(),
-      padding: EdgeInsets.zero,
       body: RefreshIndicator(
         onRefresh: onRefresh,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
+        child: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              24.vSpace,
-              const LiveActivityCard(),
-              const LiveForYou(),
-              const NowLive(),
-              const RecentlyLive(),
-              20.vSpace,
+              Spaces.verticalXLarge,
+              LiveActivityCard(),
+              LiveForYou(),
+              NowLive(),
+              RecentlyLive(),
+              SizedBox(height: 20),
             ],
           ),
         ),

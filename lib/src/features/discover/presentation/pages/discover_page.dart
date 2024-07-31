@@ -6,6 +6,8 @@ class DiscoverPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     final isSearching = useState<bool>(false);
     final scrollController = useScrollController();
 
@@ -20,7 +22,7 @@ class DiscoverPage extends HookWidget {
         }
       });
       return null;
-    }, const []);
+    }, const [],);
 
     if (isSearching.value) {
       return SearchPage(onCancel: () => isSearching.value = false);
@@ -29,22 +31,26 @@ class DiscoverPage extends HookWidget {
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: AppBar(
-        title: const MHeader(title: 'Discover', padding: EdgeInsets.zero),
+        title: const MHeader(
+          title: 'Discover',
+          padding: EdgeInsets.zero,
+          addTopMargin: true,
+        ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(110.toScale),
+          preferredSize: const Size.fromHeight(110),
           child: Column(
             children: [
-              16.vSpace,
+              const SizedBox(height: 6),
               DiscoverSearchBar(onTap: () => isSearching.value = true),
-              24.vSpace,
+              Spaces.verticalXLarge,
               LimitedBox(
-                maxHeight: 32.toScale,
+                maxHeight: 32,
                 child: SearchFilterList(
                   filter: filter.value,
                   onSelected: (value) => filter.value = value,
                 ),
               ),
-              $styles.spaces.verticalMicro,
+              Spaces.verticalMicro,
             ],
           ),
         ),

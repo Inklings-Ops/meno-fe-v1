@@ -12,8 +12,6 @@ part 'note_form_state.dart';
 
 @injectable
 class NoteFormCubit extends Cubit<NoteFormState> {
-  final INoteFacade _facade;
-  final Note? _initialNote;
   NoteFormCubit({
     required INoteFacade facade,
     @factoryParam Note? initialNote,
@@ -24,6 +22,8 @@ class NoteFormCubit extends Cubit<NoteFormState> {
       emit(state.copyWith(note: _initialNote!, isEditing: true));
     }
   }
+  final INoteFacade _facade;
+  final Note? _initialNote;
 
   Timer? _debounce;
 
@@ -54,7 +54,7 @@ class NoteFormCubit extends Cubit<NoteFormState> {
     emit(state.copyWith(
       option: optionOf(fOrS),
       loading: false,
-    ));
+    ),);
   }
 
   void _autoSaveNote() {

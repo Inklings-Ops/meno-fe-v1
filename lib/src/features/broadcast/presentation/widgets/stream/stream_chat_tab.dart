@@ -12,7 +12,6 @@ class StreamChatTab extends HookWidget {
       builder: (context, state) => state.maybeWhen(
         orElse: () => const Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [MText('Waiting to join stream')],
         ),
         joinSuccess: (broadcast) => LayoutBuilder(
@@ -25,7 +24,7 @@ class StreamChatTab extends HookWidget {
                 ),
               ),
               SizedBox(
-                height: 52.toScale,
+                height: 52,
                 width: constraints.maxWidth,
                 child: ChatInputContainer(scrollController: scrollController),
               ),

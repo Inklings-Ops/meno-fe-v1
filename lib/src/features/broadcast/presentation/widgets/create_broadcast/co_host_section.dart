@@ -7,11 +7,11 @@ class CoHostSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LimitedBox(
-      maxHeight: 72.toScale,
+      maxHeight: 72,
       child: Row(
         children: [
           ParticipantItem(
-            onTap: () => context.showModal(
+            onTap: () => context.showModal<void>(
               const AddCohostModal(),
               isScrollControlled: true,
               constraints: BoxConstraints(
@@ -19,10 +19,9 @@ class CoHostSection extends StatelessWidget {
               ),
             ),
           ),
-          $styles.spaces.horizontalSmall,
-          Wrap(
-            spacing: 8.toScale,
-            children: const [],
+          Spaces.horizontalSmall,
+          const Wrap(
+            spacing: 8,
           ),
         ],
       ),

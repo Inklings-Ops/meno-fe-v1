@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'broadcast.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast.dart';
 
 part 'join_broadcast_entity.freezed.dart';
 

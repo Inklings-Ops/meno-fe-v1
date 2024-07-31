@@ -4,22 +4,20 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
+import 'package:meno_fe_v1/src/features/discover/infrastructure/discover_error.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
-
-import 'discover_error.dart';
 
 const int globalPaginationSize = 6;
 
 @Injectable(as: IDiscoverFacade)
 class DiscoverFacade implements IDiscoverFacade {
-  final DiscoverRemoteDatasource _remote;
-  final NetworkService _network;
-
   const DiscoverFacade({
     required DiscoverRemoteDatasource remote,
     required NetworkService network,
   })  : _remote = remote,
         _network = network;
+  final DiscoverRemoteDatasource _remote;
+  final NetworkService _network;
 
   @override
   Future<Either<DiscoverException, DiscoverResult>> fetchBroadcasts({
@@ -85,7 +83,6 @@ class DiscoverFacade implements IDiscoverFacade {
         orderBy: orderBy ?? 'DESC',
         page: page ?? 1,
         size: size ?? globalPaginationSize,
-        include: 'totalListeners',
         endTime: DateTime.now().toString(),
       );
       return right(response.data!.toDomain);
@@ -115,7 +112,6 @@ class DiscoverFacade implements IDiscoverFacade {
 
     try {
       final response = await _remote.fetchRecentlyLive(
-        include: 'totalListeners',
         sortBy: sortBy ?? 'startTime',
         orderBy: orderBy ?? 'DESC',
         page: page ?? 1,
@@ -162,14 +158,17 @@ class DiscoverFacade implements IDiscoverFacade {
 }
 
 DiscoverException _getError(DioException e) {
-  if (e.response?.data['error'].runtimeType == String) {
-    return DiscoverException.message(e.response?.data['message']);
+  final errorData = e.response?.data as Map<String, dynamic>;
+  final unknownError = errorData['error'] as dynamic;
+  if (unknownError.runtimeType == String) {
+    return DiscoverException.message(errorData['message'] as String);
   }
 
-  final error = DiscoverError.fromJson(e.response!.data['error']);
+  final message = errorData['error'] as Map<String, dynamic>;
+  final error = DiscoverError.fromJson(message);
   String? result;
 
-  for (String? prop in error.props) {
+  for (final prop in error.props) {
     result ??= prop;
   }
 

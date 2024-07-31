@@ -1,8 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/note_dto.dart';
 import 'package:objectbox/objectbox.dart';
-
-import '../../domain/domain.dart';
-import 'note_dto.dart';
 
 part 'folder_dto.freezed.dart';
 part 'folder_dto.g.dart';
@@ -12,9 +11,7 @@ part 'folder_dto.g.dart';
 class FolderDto with _$FolderDto {
   @Entity(realClass: FolderDto)
   factory FolderDto({
-    @Id() int? dbId,
-    @Unique() required String id,
-    required String title,
+    @Unique() required String id, required String title, @Id() int? dbId,
     int? numberOfNotes,
     bool? pinned,
     @Property(type: PropertyType.date) DateTime? createdAt,

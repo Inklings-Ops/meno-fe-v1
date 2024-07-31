@@ -7,17 +7,15 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-
 @Injectable(as: IBroadcastFacade)
 class BroadcastFacade implements IBroadcastFacade {
-  final BroadcastRemoteDatasource _remote;
-  final NetworkService _network;
-
   BroadcastFacade({
     required BroadcastRemoteDatasource remote,
     required NetworkService network,
   })  : _remote = remote,
         _network = network;
+  final BroadcastRemoteDatasource _remote;
+  final NetworkService _network;
 
   @override
   Future<Either<BroadcastException, Broadcast>> createBroadcast({
@@ -120,10 +118,10 @@ class BroadcastFacade implements IBroadcastFacade {
     int? size,
     String? endTimeGT,
     String? endTimeLT,
-    String? endTimeEQ,
+    bool? endTimeExist,
     String? startTimeGT,
     String? startTimeLT,
-    String? startTimeEQ,
+    bool? startTimeExist,
   }) async {
     final isConnected = await _network.isConnected;
     if (!isConnected) return left(const BroadcastException.networkError());
@@ -141,10 +139,10 @@ class BroadcastFacade implements IBroadcastFacade {
         size: size ?? 6,
         endTimeGT: endTimeGT,
         endTimeLT: endTimeLT,
-        endTimeEQ: endTimeEQ,
+        endTimeExist: endTimeExist,
         startTimeGT: startTimeGT,
         startTimeLT: startTimeLT,
-        startTimeEQ: startTimeEQ,
+        startTimeExist: startTimeExist,
       );
       return right(response.data!.toDomain);
     } on DioException catch (e) {
@@ -194,14 +192,17 @@ class BroadcastFacade implements IBroadcastFacade {
   }
 
   BroadcastException _getError(DioException e) {
-    if (e.response?.data['error'].runtimeType == String) {
-      return BroadcastException.message(e.response?.data['message']);
+    final errorData = e.response?.data as Map<String, dynamic>;
+    final unknownError = errorData['error'] as dynamic;
+    if (unknownError.runtimeType == String) {
+      return BroadcastException.message(errorData['message'] as String);
     }
 
-    final error = BroadcastError.fromJson(e.response!.data['error']);
+    final message = errorData['error'] as Map<String, dynamic>;
+    final error = BroadcastError.fromJson(message);
     String? result;
 
-    for (String? prop in error.props) {
+    for (final prop in error.props) {
       result ??= prop;
     }
 

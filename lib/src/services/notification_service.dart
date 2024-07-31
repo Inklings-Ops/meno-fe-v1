@@ -49,8 +49,8 @@ Future<void> setupFlutterNotifications() async {
 }
 
 void showFlutterNotification(RemoteMessage message) {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
+  final notification = message.notification;
+  final android = message.notification?.android;
   if (notification != null && android != null && !kIsWeb) {
     flutterLocalNotificationsPlugin.show(
       notification.hashCode,
@@ -76,17 +76,17 @@ Future<void> handleFCMToken() async {
 
 @Injectable()
 class NotificationService {
-  final FirebaseMessaging _firebaseMessaging;
-  final SecureStorageService _storageService;
 
   NotificationService({
     required FirebaseMessaging firebaseMessaging,
     required SecureStorageService storageService,
   })  : _firebaseMessaging = firebaseMessaging,
         _storageService = storageService;
+  final FirebaseMessaging _firebaseMessaging;
+  final SecureStorageService _storageService;
 
   @PostConstruct(preResolve: true)
-  Future initialize() async {
+  Future<void> initialize() async {
     await _firebaseMessaging.requestPermission(provisional: true);
   }
 

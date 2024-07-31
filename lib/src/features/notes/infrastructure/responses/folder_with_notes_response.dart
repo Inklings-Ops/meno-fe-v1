@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../dtos/dtos.dart';
-import 'note_meta_data.dart';
+import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/notes/infrastructure/responses/note_meta_data.dart';
 
 part 'folder_with_notes_response.freezed.dart';
 part 'folder_with_notes_response.g.dart';

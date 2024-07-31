@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
 part 'recently_live_cubit.freezed.dart';
 part 'recently_live_event.dart';
@@ -12,12 +12,12 @@ const size = 6;
 
 @lazySingleton
 class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
-  final IBroadcastFacade _facade;
 
   RecentlyLiveCubit({
     required IBroadcastFacade facade,
   })  : _facade = facade,
         super(const RecentlyLiveState.loading());
+  final IBroadcastFacade _facade;
 
   Future<void> fetch() async {
     emit(const RecentlyLiveState.loading());
@@ -39,7 +39,7 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
 
   Future<void> fetchMore() async {
     if (state is _RLLLoadSuccess) {
-      final loadedState = (state as _RLLLoadSuccess);
+      final loadedState = state as _RLLLoadSuccess;
 
       emit(RecentlyLiveState.loadingMore(loadedState.broadcasts));
 
@@ -58,7 +58,7 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
             : emit(RecentlyLiveState.success([
                 ...loadedState.broadcasts,
                 ...s.broadcasts,
-              ])),
+              ]),),
       );
     }
   }

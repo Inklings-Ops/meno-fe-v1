@@ -5,35 +5,36 @@ class CountDownDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      width: 152.toScale,
-      height: 196.toScale,
+      width: 152,
+      height: 196,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           MText(
             'Going Live in...',
-            style: $styles.text.heading2Medium,
+            style: textTheme.heading2Medium,
             color: colors.onPrimary,
           ),
-          $styles.spaces.verticalLarge,
+          Spaces.verticalLarge,
           CircleAvatar(
-            radius: 72.toScale,
+            radius: 72,
             backgroundColor: colors.primary,
             child: Padding(
-              padding: EdgeInsets.all($styles.insets.small),
+              padding: const EdgeInsets.all(Insets.small),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MText(
                     '3',
-                    style: $styles.text.countDown,
+                    style: textTheme.countDown,
                     color: colors.onPrimary,
                   ),
-                  $styles.spaces.verticalLarge,
+                  Spaces.verticalLarge,
                   MText(
                     'Skip',
-                    style: $styles.text.bodyMedium,
+                    style: textTheme.bodyMedium,
                     color: colors.onPrimary,
                   ),
                 ],

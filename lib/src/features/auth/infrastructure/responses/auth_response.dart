@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'auth_field_error.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/responses/auth_field_error.dart';
 
 part 'auth_response.g.dart';
 
@@ -20,18 +20,18 @@ class AuthResponse<T> extends Equatable {
     this.data,
   });
 
+  factory AuthResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
+      _$AuthResponseFromJson<T>(json, fromJsonT);
+
   final int? statusCode;
   final String? message;
   final AuthFieldError? error;
   final String? path;
   final bool? status;
   final T? data;
-
-  factory AuthResponse.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-  ) =>
-      _$AuthResponseFromJson<T>(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T) toJsonT) =>
       _$AuthResponseToJson<T>(this, toJsonT);

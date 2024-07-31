@@ -3,8 +3,8 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class DetailsPage extends StatelessWidget {
+  const DetailsPage({required this.broadcast, super.key});
   final Broadcast broadcast;
-  const DetailsPage({super.key, required this.broadcast});
 
   @override
   Widget build(BuildContext context) {
@@ -13,39 +13,37 @@ class DetailsPage extends StatelessWidget {
         title: broadcast.title.getOr(),
         actions: [
           const MIconButton(icon: Icon(MIcons.star_border)),
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
           MIconButton(
             icon: const Icon(MIcons.dots_horizontal),
-            onPressed: () => context.showModal(
+            onPressed: () => context.showModal<void>(
               DetailsPageOptionsModal(broadcast: broadcast),
               isScrollControlled: true,
             ),
           ),
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             Align(
-              alignment: Alignment.center,
               child: _Artwork(imageUrl: broadcast.imageUrl),
             ),
-            $styles.spaces.verticalSmall,
+            Spaces.verticalSmall,
             _Time(endTime: broadcast.endTime, startTime: broadcast.startTime),
-            $styles.spaces.verticalMicro,
+            Spaces.verticalMicro,
             _Title(title: broadcast.title.getOr()),
-            $styles.spaces.verticalMicro,
+            Spaces.verticalMicro,
             _Creator(name: broadcast.fullName!),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             MPrimaryButton.icon(
               label: 'Restream',
               icon: const Icon(MIcons.play_arrow),
               onPressed: () {},
             ),
-            40.vSpace,
+            const SizedBox(height: 40),
             _Description(description: broadcast.description?.getOr()),
           ],
         ),
@@ -55,51 +53,52 @@ class DetailsPage extends StatelessWidget {
 }
 
 class DetailsPageOptionsModal extends StatelessWidget {
+  const DetailsPageOptionsModal({required this.broadcast, super.key});
   final Broadcast broadcast;
-  const DetailsPageOptionsModal({super.key, required this.broadcast});
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           _Artwork(imageUrl: broadcast.imageUrl),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           _Title(title: broadcast.title.getOr()),
-          $styles.spaces.verticalMicro,
+          Spaces.verticalMicro,
           MText(
             broadcast.fullName!,
-            style: $styles.text.captionRegular,
+            style: textTheme.captionRegular,
             color: colors.onBackgroundVariant,
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           const MModalListTile(
             leading: Icon(MIcons.user),
             title: 'Go to Profile',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.user_minus_01),
             title: 'Unsubscribe',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.access_time),
             title: 'Listen Later',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.share),
             title: 'Share',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.link_02),
             title: 'Copy Link',
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
         ],
       ),
     );
@@ -113,7 +112,7 @@ class _Artwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final borderRadius = $styles.radius.large;
+    const borderRadius = Corners.large;
 
     final colorFilter = ColorFilter.mode(
       colors.onSurfaceShade!,
@@ -123,7 +122,7 @@ class _Artwork extends StatelessWidget {
     Widget image = Center(
       child: Assets.images.logoLight.svg(
         colorFilter: colorFilter,
-        height: 32.0.toScale,
+        height: 32,
       ),
     );
 
@@ -141,8 +140,8 @@ class _Artwork extends StatelessWidget {
     }
 
     return Container(
-      width: 201.toScale,
-      height: 128.toScale,
+      width: 201,
+      height: 128,
       decoration: BoxDecoration(
         color: colors.surfaceShade,
         borderRadius: borderRadius,
@@ -161,7 +160,7 @@ class _Creator extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     return SizedBox(
-      height: 16.toScale,
+      height: 16,
       child: MTextButton.icon(
         label: name,
         icon: const Icon(MIcons.chevron_right),
@@ -183,18 +182,17 @@ class _Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(MIcons.menu_03, size: 16.toScale),
-            $styles.spaces.horizontalSmall,
-            MText('About Broadcast', style: $styles.text.subheadingMedium),
+            const Icon(MIcons.menu_03, size: 16),
+            Spaces.horizontalSmall,
+            MText('About Broadcast', style: textTheme.subheadingMedium),
           ],
         ),
-        $styles.spaces.verticalLarge,
+        Spaces.verticalLarge,
         if (description != null)
           Align(
             alignment: Alignment.centerLeft,
@@ -213,25 +211,26 @@ class _Time extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (endTime != null)
           MText(
             DateHelpers.calculateTimeAgo(endTime!),
-            style: $styles.text.captionRegular,
+            style: textTheme.captionRegular,
             color: colors.onBackgroundVariant,
           ),
         if (startTime != null && endTime != null) ...[
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           const MDot(),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           MText(
             DateHelpers.getTotalBroadcastTime(
               startTime: startTime!,
               endTime: endTime!,
             ),
-            style: $styles.text.captionRegular,
+            style: textTheme.captionRegular,
             color: colors.onBackgroundVariant,
           ),
         ],
@@ -246,11 +245,12 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 24.toScale,
+      height: 24,
       child: MText(
         title,
-        style: $styles.text.subheadingMedium,
+        style: textTheme.subheadingMedium,
         textAlign: TextAlign.center,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'onboarding.dart';
+import 'package:meno_fe_v1/src/shared/pages/onboarding/onboarding.dart';
 
 class OnboardingBody extends StatelessWidget {
   const OnboardingBody(this.item, {super.key});
@@ -9,9 +9,9 @@ class OnboardingBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageDimension = 240.toScale;
+    const imageDimension = 240.0;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Image.asset(
@@ -19,9 +19,9 @@ class OnboardingBody extends StatelessWidget {
             height: imageDimension,
             width: imageDimension,
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           OnboardingTitle(item.title),
-          $styles.spaces.verticalLarge,
+          Spaces.verticalLarge,
           Flexible(child: OnboardingSubtitle(item.subtitle)),
         ],
       ),

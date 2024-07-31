@@ -11,28 +11,28 @@ class NowLiveBroadcastsWidget extends StatelessWidget {
           p.isLoading != c.isLoading || p.broadcasts != c.broadcasts,
       builder: (context, state) {
         if (!state.isLoading && state.hasError || state.broadcasts.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 120.0).radius,
-            child: const EmptyListWidget(),
+          return const Padding(
+            padding: EdgeInsets.only(top: 120),
+            child: EmptyListWidget(),
           );
         }
 
         return Column(
           children: [
             GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 24.toScale,
-                crossAxisSpacing: 24.toScale,
-                childAspectRatio: (159.50 / 176).toScale,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 24,
+                childAspectRatio: 159.50 / 176,
               ),
-              padding: const EdgeInsets.fromLTRB(16, 28, 16, 0).radius,
+              padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
               itemBuilder: (context, i) {
                 final broadcast = state.broadcasts[i]!;
                 return MCard.live(
                   title: broadcast.title.getOr(),
                   imageUrl: broadcast.imageUrl,
-                  host: broadcast.fullName!,
+                  host: broadcast.fullName,
                   liveCount: broadcast.totalListeners,
                   onTap: () => context.showJoinLiveBroadcastModal(broadcast),
                 );
@@ -42,7 +42,7 @@ class NowLiveBroadcastsWidget extends StatelessWidget {
               primary: false,
               physics: const NeverScrollableScrollPhysics(),
             ),
-            24.vSpace,
+            Spaces.verticalXLarge,
             DiscoverPaginationIndicator(
               isLoading: state.isLoading,
               hasMore: state.hasMore,

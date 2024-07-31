@@ -59,20 +59,20 @@ class _AllBroadcastsView extends HookWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        24.vSpace,
+        Spaces.verticalXLarge,
         _Grid(
           title: 'Now Live',
           snapshot: nowLiveSnapshot,
           isNowLive: true,
           onSeeAll: () {},
         ),
-        32.vSpace,
+        Spaces.verticalXXLarge,
         _Grid(
           title: 'Recently Live',
           snapshot: recentlyLiveSnapshot,
           onSeeAll: () {},
         ),
-        32.vSpace,
+        Spaces.verticalXXLarge,
       ],
     );
   }
@@ -92,6 +92,7 @@ class _Grid extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     late Widget child;
 
     final isLoading = snapshot.connectionState == ConnectionState.waiting;
@@ -103,13 +104,12 @@ class _Grid extends HookWidget {
       final broadcasts = snapshot.data!;
       child = GridView.builder(
         scrollDirection: Axis.horizontal,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 24.toScale,
-          crossAxisSpacing: 24.toScale,
-          childAspectRatio: (176.toScale / 176.toScale),
+          mainAxisSpacing: 24,
+          crossAxisSpacing: 24,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16).radius,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         shrinkWrap: true,
         primary: false,
         itemCount: broadcasts.length,
@@ -119,14 +119,14 @@ class _Grid extends HookWidget {
             return MCard.live(
               title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName!,
+              host: broadcast.fullName,
               liveCount: broadcast.totalListeners,
             );
           } else {
             return MCard.recentlyLive(
               title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName!,
+              host: broadcast.fullName,
             );
           }
         },
@@ -137,25 +137,25 @@ class _Grid extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
-          height: 24.toScale,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+          height: 24,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              MText(title, style: $styles.text.subheadingBold),
+              MText(title, style: textTheme.subheadingBold),
               InkWell(
                 onTap: onSeeAll,
                 child: MText(
                   'See all',
-                  style: $styles.text.microMedium,
+                  style: textTheme.microMedium,
                   color: colors.primary,
                 ),
               ),
             ],
           ),
         ),
-        24.vSpace,
-        LimitedBox(maxHeight: 376.toScale, child: child),
+        Spaces.verticalXLarge,
+        LimitedBox(maxHeight: 376, child: child),
       ],
     );
   }

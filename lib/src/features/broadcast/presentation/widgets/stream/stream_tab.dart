@@ -8,27 +8,27 @@ class StreamTab extends HookWidget {
     final tabController = useTabController(initialLength: 2);
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).radius,
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
           child: Column(
             children: [
-              const _StreamArtwork(),
-              $styles.spaces.verticalSmall,
-              const BroadcastTimer(),
-              $styles.spaces.verticalSmall,
-              const _StreamTitle(),
-              $styles.spaces.verticalSmall,
+              _StreamArtwork(),
+              Spaces.verticalSmall,
+              BroadcastTimer(),
+              Spaces.verticalSmall,
+              _StreamTitle(),
+              Spaces.verticalSmall,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const _CreatorName(),
-                  $styles.spaces.horizontalSmall,
-                  const BroadcastStatusWidget(isStreaming: true),
+                  _CreatorName(),
+                  Spaces.horizontalSmall,
+                  BroadcastStatusWidget(isStreaming: true),
                 ],
               ),
-              24.vSpace,
-              const StreamControls(),
-              $styles.spaces.verticalLarge,
+              Spaces.verticalXLarge,
+              StreamControls(),
+              Spaces.verticalLarge,
             ],
           ),
         ),
@@ -36,8 +36,8 @@ class StreamTab extends HookWidget {
           child: Column(
             children: [
               Container(
-                margin: const EdgeInsets.fromLTRB(16, 8, 16, 0).radius,
-                constraints: const BoxConstraints(maxHeight: 32).radius,
+                margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                constraints: const BoxConstraints(maxHeight: 32),
                 child: TabBar.secondary(
                   controller: tabController,
                   tabs: const [
@@ -46,7 +46,7 @@ class StreamTab extends HookWidget {
                   ],
                 ),
               ),
-              24.vSpace,
+              Spaces.verticalXLarge,
               Expanded(
                 child: TabBarView(
                   controller: tabController,
@@ -96,6 +96,7 @@ class _CreatorName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<StreamBloc, StreamState, String>(
       selector: (state) => state.maybeWhen(
         orElse: () => 'Loading...',
@@ -103,7 +104,7 @@ class _CreatorName extends StatelessWidget {
       ),
       builder: (context, fullName) => MText(
         fullName,
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
       ),
     );
   }

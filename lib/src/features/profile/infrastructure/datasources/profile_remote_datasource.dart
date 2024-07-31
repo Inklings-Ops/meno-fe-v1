@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/infrastructure.dart';
+import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../../../auth/infrastructure/infrastructure.dart';
-import '../dtos/profile_dto.dart';
 
 part 'profile_remote_datasource.g.dart';
 

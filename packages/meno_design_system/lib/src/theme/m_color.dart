@@ -1,5 +1,8 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 
+/// Standard colors for the Meno app
 class MColor extends Color {
   const MColor._(super.value);
 
@@ -109,8 +112,8 @@ class MColor extends Color {
   /// Linearly interpolate between two MColor values.
   ///
   /// The [t] parameter represents the interpolation factor. A value of 0.0
-  /// returns the [a] color, a value of 1.0 returns the [b] color, and values in between
-  /// represent a linear interpolation between the two colors.
+  /// returns the [a] color, a value of 1.0 returns the [b] color, and values
+  /// in between represent a linear interpolation between the two colors.
   static MColor? lerp(MColor? a, MColor? b, double t) {
     if (b == null) {
       if (a == null) {
@@ -137,14 +140,14 @@ class MColor extends Color {
 
 /// Linearly interpolate between two integers.
 ///
-/// Same as [lerpDouble] but specialized for non-null `int` type.
+/// Same as lerpDouble but specialized for non-null `int` type.
 double _lerpInt(int a, int b, double t) {
   return a + (b - a) * t;
 }
 
 /// Same as [num.clamp] but specialized for non-null [int].
 int _clampInt(int value, int min, int max) {
-  assert(min <= max);
+  assert(min <= max, 'max must be greater or equals to the min');
   if (value < min) {
     return min;
   } else if (value > max) {

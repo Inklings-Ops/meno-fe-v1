@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class AddToFolderModal extends HookWidget {
-  const AddToFolderModal({super.key, required this.note});
+  const AddToFolderModal({required this.note, super.key});
 
   final Note note;
 
@@ -48,9 +48,9 @@ class AddToFolderModal extends HookWidget {
                       primary: false,
                       shrinkWrap: true,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 16).radius,
+                      padding: const EdgeInsets.only(bottom: 16),
                       itemCount: folders.length,
-                      separatorBuilder: (_, i) => $styles.spaces.verticalLarge,
+                      separatorBuilder: (_, i) => Spaces.verticalLarge,
                       itemBuilder: (context, i) {
                         final folder = folders[i]!;
                         return FolderListTile(
@@ -65,7 +65,7 @@ class AddToFolderModal extends HookWidget {
               ),
             ),
             if (selectedFolder.value != null) ...[
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: noteListBloc.state.isLoading,

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 
-import 'onboarding.dart';
+import 'package:meno_fe_v1/src/shared/pages/onboarding/onboarding.dart';
 
 class OnboardingPage extends HookWidget {
   const OnboardingPage({super.key});
@@ -46,12 +46,11 @@ class OnboardingPage extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MenoLogo(),
-              72.vSpace,
+              const SizedBox(height: 72),
               LimitedBox(
-                maxHeight: 372.toScale,
-                maxWidth: double.infinity,
+                maxHeight: 372,
                 child: PageView.builder(
                   controller: pageController,
                   onPageChanged: (value) => currentIndex.value = value,
@@ -59,28 +58,28 @@ class OnboardingPage extends HookWidget {
                   itemBuilder: (context, i) => OnboardingBody(items[i]),
                 ),
               ),
-              48.vSpace,
+              Spaces.verticalXXXLarge,
               OnboardingIndicator(
                 currentIndex: currentIndex.value,
                 itemsLength: onboardingItems.length,
               ),
-              24.vSpace,
+              Spaces.verticalXLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MPrimaryButton(
                   label: 'Get started',
                   onPressed: () => context.push(Routes.registerWithLeading),
                 ),
               ),
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MSecondaryButton(
                   label: 'Login',
                   onPressed: () => context.push(Routes.loginWithLeading),
                 ),
               ),
-              64.vSpace,
+              const SizedBox(height: 64),
             ],
           ),
         ),

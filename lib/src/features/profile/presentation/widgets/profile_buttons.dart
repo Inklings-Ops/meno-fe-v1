@@ -6,10 +6,12 @@ class ProfileButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    const shape = RoundedRectangleBorder(borderRadius: Corners.small);
+    final textStyle = MTextTheme.of(context)!.microMedium;
     return SizedBox(
-      height: 32.toScale,
+      height: 32,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
             Expanded(
@@ -18,13 +20,12 @@ class ProfileButtons extends StatelessWidget {
                 icon: const Icon(MIcons.edit_05),
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: $styles.radius.small,
-                  ),
+                  textStyle: textStyle,
+                  shape: shape,
                 ),
               ),
             ),
-            $styles.spaces.horizontalLarge,
+            Spaces.horizontalLarge,
             Expanded(
               child: MSecondaryButton.icon(
                 label: 'Share profile',
@@ -36,9 +37,8 @@ class ProfileButtons extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: colors.outlineVariant3!),
                   foregroundColor: colors.onBackground,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: $styles.radius.small,
-                  ),
+                  textStyle: textStyle,
+                  shape: shape,
                 ),
               ),
             ),

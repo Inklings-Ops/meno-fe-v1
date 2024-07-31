@@ -10,29 +10,29 @@ class BroadcastTab extends HookWidget {
 
     return Column(
       children: [
-        Flexible(
+        const Flexible(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16).radius,
+            padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const _BroadcastArtwork(),
-                $styles.spaces.verticalSmall,
-                const BroadcastTimer(),
-                $styles.spaces.verticalSmall,
-                const _BroadcastTitle(),
-                $styles.spaces.verticalSmall,
+                _BroadcastArtwork(),
+                Spaces.verticalSmall,
+                BroadcastTimer(),
+                Spaces.verticalSmall,
+                _BroadcastTitle(),
+                Spaces.verticalSmall,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const _BroadcastCreator(),
-                    $styles.spaces.horizontalSmall,
-                    const BroadcastStatusWidget(),
+                    _BroadcastCreator(),
+                    Spaces.horizontalSmall,
+                    BroadcastStatusWidget(),
                   ],
                 ),
-                24.vSpace,
-                const BroadcastControls(),
-                $styles.spaces.verticalLarge,
+                Spaces.verticalXLarge,
+                BroadcastControls(),
+                Spaces.verticalLarge,
               ],
             ),
           ),
@@ -41,8 +41,8 @@ class BroadcastTab extends HookWidget {
           child: Column(
             children: [
               Container(
-                height: 40.toScale,
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0).radius,
+                height: 40,
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: TabBar.secondary(
                   controller: tabController,
                   tabs: const [
@@ -51,7 +51,7 @@ class BroadcastTab extends HookWidget {
                   ],
                 ),
               ),
-              24.vSpace,
+              Spaces.verticalXLarge,
               Expanded(
                 child: TabBarView(
                   controller: tabController,
@@ -105,6 +105,7 @@ class _BroadcastCreator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<BroadcastBloc, BroadcastState, String>(
       bloc: context.read<BroadcastBloc>(),
       selector: (state) => state.maybeWhen(
@@ -113,7 +114,7 @@ class _BroadcastCreator extends StatelessWidget {
       ),
       builder: (context, fullName) => MText(
         fullName,
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
         color: MColorScheme.of(context)!.onDisabledContainer,
       ),
     );

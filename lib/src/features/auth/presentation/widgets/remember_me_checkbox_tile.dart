@@ -8,20 +8,21 @@ class RememberMeCheckboxTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final textTheme = MTextTheme.of(context)!;
     return BlocSelector<RegisterCubit, RegisterState, bool>(
       selector: (state) => state.rememberMe,
       builder: (context, state) => Row(
         children: [
           SizedBox(
-            height: 20.toScale,
-            width: 20.toScale,
+            height: 20,
+            width: 20,
             child: Checkbox(
               value: state,
               onChanged: context.read<RegisterCubit>().onRememberMeChanged,
             ),
           ),
-          10.hSpace,
-          MText('Remember me', style: $styles.text.captionMedium),
+          const SizedBox(width: 10),
+          MText('Remember me', style: textTheme.captionMedium),
         ],
       ),
     );

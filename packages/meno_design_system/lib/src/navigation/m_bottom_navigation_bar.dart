@@ -35,6 +35,15 @@ import 'package:meno_design_system/src/m_internal.dart';
 /// )
 /// ```
 class MBottomNavigationBar extends StatefulWidget {
+  /// Creates an [MBottomNavigationBar] widget.
+  const MBottomNavigationBar({
+    required this.currentIndex,
+    required this.items,
+    super.key,
+    this.onTap,
+    this.customItem,
+  });
+
   /// The index of the currently selected item.
   final int currentIndex;
 
@@ -46,15 +55,6 @@ class MBottomNavigationBar extends StatefulWidget {
 
   /// Add a custom center item, e.g. a Microphone or Add button
   final Widget? customItem;
-
-  /// Creates an [MBottomNavigationBar] widget.
-  const MBottomNavigationBar({
-    super.key,
-    required this.currentIndex,
-    required this.items,
-    this.onTap,
-    this.customItem,
-  });
 
   @override
   State<MBottomNavigationBar> createState() => _MBottomNavigationBarState();
@@ -72,12 +72,12 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
 
     return Container(
       width: size.width,
-      padding: EdgeInsets.all($styles.insets.large),
+      padding: const EdgeInsets.all(Insets.large),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
         border: Border(
           top: BorderSide(
-            width: 0.80.toScale,
+            width: 0.80,
             color: MInternal.resolve(isLight, MColor.grey30, MColor.grey400),
           ),
         ),
@@ -92,7 +92,7 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
   // Build the list of navigation tiles
   List<Widget> _buildNavigationTiles() {
     final tiles = <Widget>[];
-    int itemCount = widget.items.length;
+    final itemCount = widget.items.length;
 
     for (var i = 0; i < itemCount; i++) {
       if (i == 2 && widget.customItem != null) {
@@ -123,10 +123,23 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
 
 /// A responsive and customizable item for a bottom navigation bar.
 ///
-/// The [MBottomBarNavigationItem] widget is designed to create individual items for
-/// a bottom navigation bar. It supports icons, labels, and tooltips for
-/// each item.
+/// The [MBottomBarNavigationItem] widget is designed to create individual
+/// items for a bottom navigation bar. It supports icons, labels, and tooltips
+/// for each item.
 class MBottomBarNavigationItem extends StatelessWidget {
+  /// Creates a [MBottomBarNavigationItem] widget.
+  const MBottomBarNavigationItem({
+    required this.onTap,
+    required this.selected,
+    super.key,
+    this.item,
+    this.indexLabel,
+    this.customItem,
+  }) : assert(
+          item == null || customItem == null,
+          'item and custom must not be provided together',
+        );
+
   /// The [BottomNavigationBarItem] to display.
   final BottomNavigationBarItem? item;
 
@@ -139,17 +152,8 @@ class MBottomBarNavigationItem extends StatelessWidget {
   /// Indicates whether this item is currently selected.
   final bool selected;
 
+  /// For adding any custom widget
   final Widget? customItem;
-
-  /// Creates a [MBottomBarNavigationItem] widget.
-  const MBottomBarNavigationItem({
-    super.key,
-    this.item,
-    this.indexLabel,
-    required this.onTap,
-    required this.selected,
-    this.customItem,
-  }) : assert(item == null || customItem == null);
 
   @override
   Widget build(BuildContext context) {
@@ -158,12 +162,11 @@ class MBottomBarNavigationItem extends StatelessWidget {
     final effectiveTooltip =
         item?.tooltip == '' ? null : item?.tooltip ?? item?.label;
 
-    final Widget content = (customItem != null)
+    final content = (customItem != null)
         ? customItem!
         : Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconTheme(
                 data: selected
@@ -171,7 +174,7 @@ class MBottomBarNavigationItem extends StatelessWidget {
                     : theme.unselectedIconTheme!,
                 child: item!.icon,
               ),
-              6.vSpace,
+              const SizedBox(height: 6),
               if (item!.label != null)
                 Text(
                   item!.label!,
@@ -186,25 +189,25 @@ class MBottomBarNavigationItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: theme.backgroundColor,
-        width: 62.50.toScale,
-        height: 56.toScale,
+        width: 62.50,
+        height: 56,
         child: content,
       ),
     );
 
-    Widget finalResult = result;
+    var finalResult = result;
 
     if (effectiveTooltip != null) {
       finalResult = Tooltip(
         message: effectiveTooltip,
         preferBelow: false,
-        verticalOffset: 50.toScale,
+        verticalOffset: 50,
         excludeFromSemantics: true,
         child: result,
       );
     }
 
-    finalResult = Semantics(
+    return Semantics(
       selected: selected,
       container: true,
       child: Stack(
@@ -214,20 +217,18 @@ class MBottomBarNavigationItem extends StatelessWidget {
         ],
       ),
     );
-
-    return finalResult;
   }
 }
 
-const double _kMicSize = 56.0;
-final BoxConstraints _kConstraints = const BoxConstraints(
+const double _kMicSize = 56;
+const BoxConstraints _kConstraints = BoxConstraints(
   minWidth: _kMicSize,
   minHeight: _kMicSize,
-).radius;
+);
 
 /// A microphone icon widget with custom styling.
 ///
-/// The [_Microphone] widget displays a microphone icon with custom styling.
+/// The [Microphone] widget displays a microphone icon with custom styling.
 class Microphone extends StatelessWidget {
   /// Creates a [Microphone] widget.
   const Microphone({super.key});
@@ -239,14 +240,14 @@ class Microphone extends StatelessWidget {
     final visualDensity = theme.visualDensity;
 
     return Container(
-      height: _kMicSize.toScale,
-      width: _kMicSize.toScale,
+      height: _kMicSize,
+      width: _kMicSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: colorScheme.primary,
-        boxShadow: $styles.shadows.mic,
+        boxShadow: Shadows.mic,
       ),
-      constraints: visualDensity.effectiveConstraints(_kConstraints).radius,
+      constraints: visualDensity.effectiveConstraints(_kConstraints),
       child: Icon(MIcons.microphone, color: colorScheme.onPrimary),
     );
   }

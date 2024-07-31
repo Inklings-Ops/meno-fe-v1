@@ -1,9 +1,8 @@
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../../../auth/domain/domain.dart';
-import '../../domain/domain.dart';
-import '../infrastructure.dart';
 
 /// A class for mapping between `UserCredentials` and `Profile` domain objects and `UserCredentialDto` and `Profile` DTOs.
 @singleton

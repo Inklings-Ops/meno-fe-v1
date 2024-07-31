@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 
-import 'entities/folder.dart';
-import 'entities/note.dart';
-import 'exceptions/note_exception.dart';
-import 'value_objects/folder_title.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/entities/folder.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/value_objects/folder_title.dart';
 
 abstract class INoteFacade {
   Future<Either<NoteException, List<Note?>>> getAllNotes({

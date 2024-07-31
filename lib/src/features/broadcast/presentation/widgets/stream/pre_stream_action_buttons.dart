@@ -2,20 +2,21 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class PreStreamActionButtons extends HookWidget {
-  const PreStreamActionButtons({super.key, required this.broadcast});
+  const PreStreamActionButtons({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final loading = useState<bool>(false);
-    void onJoin() async {
+    Future<void> onJoin() async {
       loading.value = true;
       return context.read<StreamBloc>().add(StreamJoinRequested(broadcast.id));
     }
 
     return SizedBox(
-      height: 32.toScale,
+      height: 32,
       child: Row(
         children: [
           Expanded(
@@ -29,16 +30,18 @@ class PreStreamActionButtons extends HookWidget {
               child: _JoinButton(onJoin: onJoin, loading: loading.value),
             ),
           ),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           Expanded(
             child: MSecondaryButton(
               label: 'Share',
               onPressed: () {},
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: colors.outlineVariant3!),
-                shape: RoundedRectangleBorder(
-                  borderRadius: $styles.radius.small,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Corners.small,
                 ),
+                textStyle: textTheme.microMedium,
+                foregroundColor: colors.onBackground,
               ),
             ),
           ),
@@ -55,12 +58,14 @@ class _JoinButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MPrimaryButton(
       label: 'Join',
       onPressed: onJoin,
       loading: loading,
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+        textStyle: textTheme.microMedium,
       ),
     );
   }

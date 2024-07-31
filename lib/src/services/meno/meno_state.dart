@@ -3,7 +3,7 @@ part of 'meno_bloc.dart';
 /// Base type for all [Broadcast] events.
 abstract class MBroadcastEvent implements MenoState {}
 
-/// Base type for all [Notification] events.
+/// Base type for all Notifications events.
 abstract class MNotificationEvent implements MenoState {}
 
 /// Base type for all [Chat] events.
@@ -35,15 +35,19 @@ class MenoState with _$MenoState {
   const factory MenoState.offAir() = MOffAir;
 
   /// When a live [Broadcast] has just been ended by a [Participant].
-  /// Emitted by [endedBroadcast] websocket event via [SocketService]
+  /// Emitted by `endedBroadcast` websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
   const factory MenoState.endedBroadcast(Broadcast broadcast) = MEndedBroadcast;
 
-  /// When a [Participant] leaves a live [Broadcast] that the [Participant] has joined.
-  /// Emitted by [leaveBroadcast] websocket event via [SocketService]
+  /// When a [Participant] leaves a live [Broadcast] that the [Participant] has 
+  /// joined.
+  /// 
+  /// Emitted by `leaveBroadcast` websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
   const factory MenoState.leaveBroadcast() = MLeaveBroadcast;
 
   @Implements<MBroadcastEvent>()
-  const factory MenoState.leftBroadcast(Participant p) = MLeftBroadcast;
+  const factory MenoState.leftBroadcast(
+    BroadcastParticipant participant,
+  ) = MLeftBroadcast;
 }

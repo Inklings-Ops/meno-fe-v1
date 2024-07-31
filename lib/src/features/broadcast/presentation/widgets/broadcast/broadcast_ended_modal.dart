@@ -6,6 +6,7 @@ class BroadcastEndedModal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final canPop = useState(false);
     return PopScope(
       canPop: canPop.value,
@@ -21,35 +22,35 @@ class BroadcastEndedModal extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16).radius,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: MText(
                 'Your live broadcast is complete! Great job.',
-                style: $styles.text.heading2Bold,
+                style: textTheme.heading2Bold,
                 textAlign: TextAlign.center,
               ),
             ),
-            24.vSpace,
+            Spaces.verticalXLarge,
             const BroadcastArtworkWidget(),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             BroadcastTimer(
               showTimeAgo: false,
-              textStyle: $styles.text.heading2Bold,
+              textStyle: textTheme.heading2Bold,
             ),
-            24.vSpace,
+            Spaces.verticalXLarge,
             // TODO: implement avatars of listeners
-            $styles.spaces.verticalXXLarge,
-            $styles.spaces.verticalSmall,
+            Spaces.verticalXXLarge,
+            Spaces.verticalSmall,
             BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
               selector: (state) => state.participants.length,
               builder: (context, numberOfParticipants) => MText(
                 '$numberOfParticipants people tuned in!',
-                style: $styles.text.captionRegular,
+                style: textTheme.captionRegular,
                 textAlign: TextAlign.center,
               ),
             ),
-            40.vSpace,
+            const SizedBox(height: 40),
             MPrimaryButton(label: 'Publish Broadcast', onPressed: () {}),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             MSecondaryButton(
               label: 'Go to Profile',
               onPressed: () => context.go(Routes.profile),

@@ -2,11 +2,12 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class LoginForm extends HookWidget {
-  const LoginForm({super.key, required this.isPasswordOnly});
+  const LoginForm({required this.isPasswordOnly, super.key});
   final bool isPasswordOnly;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final formKey = useMemoized(GlobalKey<FormState>.new);
     return Form(
       key: formKey,
@@ -15,25 +16,27 @@ class LoginForm extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (isPasswordOnly) ...[
-            UserAccountDetails(action: context.showSwitchAccountSheet),
-            $styles.spaces.verticalXXLarge,
+            UserAccountDetails(
+              action: () => context.showSwitchAccountSheet<void>(),
+            ),
+            Spaces.verticalXXLarge,
           ] else ...[
             LoginEmailField(isPwdOnly: isPasswordOnly),
-            SizedBox(height: 24.toScale),
+            Spaces.verticalXLarge,
           ],
           const LoginPasswordField(),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           Align(
             alignment: Alignment.centerRight,
             child: InkWell(
               onTap: () => context.push(Routes.resetPassword),
               child: MText(
                 'Forgot Password?',
-                style: $styles.text.captionMedium,
+                style: textTheme.captionMedium,
               ),
             ),
           ),
-          $styles.spaces.verticalXXLarge,
+          Spaces.verticalXXLarge,
           const LoginButton(),
         ],
       ),

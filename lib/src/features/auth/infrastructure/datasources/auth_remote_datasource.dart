@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/responses/auth_response.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../dtos/dtos.dart';
-import '../responses/auth_response.dart';
 
 part 'auth_remote_datasource.g.dart';
 
@@ -19,17 +18,18 @@ abstract class AuthRemoteDatasource {
       _AuthRemoteDatasource;
 
   @POST('/api/v1/users/password/change')
-  Future<AuthResponse> changePassword({
+  Future<AuthResponse<UserCredentialDto>> changePassword({
     @Field() required String currentPassword,
     @Field() required String newPassword,
   });
 
   @POST('/api/v1/users/password/forgot')
-  Future<AuthResponse> forgotPassword(@Field() String email);
+  Future<AuthResponse<UserCredentialDto>> forgotPassword(@Field() String email);
 
   /// Signs in the user using Google.
   ///
-  /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
+  /// Returns an `AuthResponse` object, which contains either a
+  /// `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signin/google')
   Future<AuthResponse<UserCredentialDto>> googleLogin(
     @Field() String idToken,
@@ -37,7 +37,8 @@ abstract class AuthRemoteDatasource {
 
   /// Registers the user using Google.
   ///
-  /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
+  /// Returns an `AuthResponse` object, which contains either a
+  /// `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signup/google')
   Future<AuthResponse<UserCredentialDto>> googleRegister(
     @Field() String idToken,
@@ -45,7 +46,8 @@ abstract class AuthRemoteDatasource {
 
   /// Signs in the user using their email address and password.
   ///
-  /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
+  /// Returns an `AuthResponse` object, which contains either a
+  /// `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signin')
   Future<AuthResponse<UserCredentialDto>> login({
     @Field() required String email,
@@ -54,7 +56,8 @@ abstract class AuthRemoteDatasource {
 
   /// Registers the user.
   ///
-  /// Returns an `AuthResponse` object, which contains either a `UserCredentialsDto` object or an `AuthError` object.
+  /// Returns an `AuthResponse` object, which contains either a
+  /// `UserCredentialsDto` object or an `AuthError` object.
   @POST('/api/v1/users/signup')
   @MultiPart()
   Future<AuthResponse<UserCredentialDto>> register({
@@ -66,20 +69,20 @@ abstract class AuthRemoteDatasource {
   });
 
   @POST('/api/v1/users/otp')
-  Future<AuthResponse> requestOtp({
+  Future<AuthResponse<UserCredentialDto>> requestOtp({
     @Field() required String email,
     @Field() required String type,
   });
 
   @POST('/api/v1/users/password/reset')
-  Future<AuthResponse> resetPassword({
+  Future<AuthResponse<UserCredentialDto>> resetPassword({
     @Field() required String email,
     @Field() required String code,
     @Field() required String newPassword,
   });
 
   @POST('/api/v1/users/email/verify')
-  Future<AuthResponse> verifyEmailAddress({
+  Future<AuthResponse<UserCredentialDto>> verifyEmailAddress({
     @Field() required String email,
     @Field() required String code,
   });

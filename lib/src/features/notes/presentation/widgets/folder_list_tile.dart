@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderListTile extends StatelessWidget {
   const FolderListTile({
-    super.key,
-    required this.folder,
+    required this.folder, super.key,
     this.onTap,
     this.selected = false,
   });
@@ -16,62 +15,65 @@ class FolderListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final border = Border.all(
-      width: 2.toScale,
+      width: 2,
       color: colors.primary!,
       strokeAlign: BorderSide.strokeAlignOutside,
     );
 
     return InkWell(
       onTap: onTap,
-      borderRadius: $styles.radius.large,
+      borderRadius: Corners.large,
       child: Container(
-        height: 78.toScale,
-        padding: const EdgeInsets.all(16).radius,
+        height: 78,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colors.surfaceTint,
-          borderRadius: $styles.radius.large,
+          borderRadius: Corners.large,
           border: selected ? border : null,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 46.toScale,
-              width: 52.toScale,
+              height: 46,
+              width: 52,
               child: ClipPath(
-                clipper: FolderClipper(r: 8.toScale, notch: 4.toScale),
+                clipper: FolderClipper(r: 8, notch: 4),
                 child: ColoredBox(
                   color: colors.primary!,
                   child: Center(
-                    child: Icon(MIcons.file, size: 20.toScale),
+                    child: Icon(
+                      MIcons.file,
+                      size: 20,
+                      color: colors.onPrimary,
+                    ),
                   ),
                 ),
               ),
             ),
-            $styles.spaces.horizontalSmall,
+            Spaces.horizontalSmall,
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 24.toScale,
+                    height: 24,
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: MText(
                         folder.title.getOr(),
-                        style: $styles.text.captionMedium,
+                        style: textTheme.captionMedium,
                       ),
                     ),
                   ),
-                  $styles.spaces.verticalMicro,
+                  Spaces.verticalMicro,
                   SizedBox(
-                    height: 18.toScale,
+                    height: 18,
                     child: MText(
                       '${folder.numberOfNotes ?? 0} notes',
-                      style: $styles.text.captionRegular,
+                      style: textTheme.captionRegular,
                       color: colors.onBackgroundVariant,
                     ),
                   ),

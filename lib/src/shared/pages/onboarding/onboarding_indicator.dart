@@ -3,9 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class OnboardingIndicator extends StatelessWidget {
   const OnboardingIndicator({
-    super.key,
-    required this.currentIndex,
-    required this.itemsLength,
+    required this.currentIndex, required this.itemsLength, super.key,
   });
   final int currentIndex;
   final int itemsLength;
@@ -15,15 +13,15 @@ class OnboardingIndicator extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     return Center(
       child: SizedBox(
-        height: 8.toScale,
+        height: 8,
         child: Wrap(
-          spacing: 4.toScale,
+          spacing: 4,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: List.generate(
             itemsLength,
             (index) {
               final selected = currentIndex == index;
-              final dimensions = selected ? 8.toScale : 4.toScale;
+              final dimensions = selected ? 8.0 : 4.0;
               return Container(
                 height: dimensions,
                 width: dimensions,

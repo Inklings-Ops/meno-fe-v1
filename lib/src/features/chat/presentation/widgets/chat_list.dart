@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({super.key, required this.controller});
+  const ChatList({required this.controller, super.key});
   final ScrollController controller;
 
   @override
@@ -10,11 +10,11 @@ class ChatList extends StatelessWidget {
     return BlocBuilder<ChatBloc, ChatState>(
       buildWhen: (p, c) => p.chats != c.chats,
       builder: (context, state) => ListView.separated(
-        padding: EdgeInsets.symmetric(vertical: $styles.insets.large),
+        padding: const EdgeInsets.symmetric(vertical: Insets.large),
         controller: controller,
         reverse: true,
         shrinkWrap: true,
-        separatorBuilder: (context, _) => $styles.spaces.verticalLarge,
+        separatorBuilder: (context, _) => Spaces.verticalLarge,
         itemCount: state.chats.length,
         itemBuilder: (context, i) => _Item(chat: state.chats[i]!),
       ),
@@ -23,8 +23,8 @@ class ChatList extends StatelessWidget {
 }
 
 class _Item extends StatelessWidget {
-  final Chat chat;
   const _Item({required this.chat});
+  final Chat chat;
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +57,20 @@ class _Item extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            $styles.spaces.verticalSmall,
+            Spaces.verticalSmall,
             MModalListTile(
               leading: const Icon(MIcons.edit_05),
               title: 'Edit',
               onTap: () {},
             ),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             MModalListTile(
               leading: const Icon(MIcons.trash),
               title: 'Delete',
               onTap: () => context.showDeleteCommentDialog(),
               titleColor: MColorScheme.of(context)!.error,
             ),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
           ],
         ),
       ),
@@ -90,7 +90,7 @@ class _Item extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            $styles.spaces.verticalSmall,
+            Spaces.verticalSmall,
             if (isHost)
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
@@ -104,7 +104,7 @@ class _Item extends StatelessWidget {
                 title: 'Report',
                 onTap: () {},
               ),
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
           ],
         ),
       ),

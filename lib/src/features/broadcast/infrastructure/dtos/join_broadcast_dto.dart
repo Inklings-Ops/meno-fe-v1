@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
-import 'broadcast_dto.dart';
+import 'package:meno_fe_v1/src/features/broadcast/infrastructure/dtos/broadcast_dto.dart';
 
 part 'join_broadcast_dto.freezed.dart';
 part 'join_broadcast_dto.g.dart';

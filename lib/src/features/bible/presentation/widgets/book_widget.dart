@@ -4,29 +4,28 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
 
-import 'chapters_grid.dart';
+import 'package:meno_fe_v1/src/features/bible/presentation/widgets/chapters_grid.dart';
 
 class BookWidget extends HookWidget {
-  final String bookName;
-  final VoidCallback? onTap;
 
   const BookWidget({
-    super.key,
-    required this.bookName,
+    required this.bookName, super.key,
     this.onTap,
   });
+  final String bookName;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final borderRadius = $styles.radius.small;
+    const borderRadius = Corners.small;
     final bloc = context.watch<ScripturePickerCubit>();
     final isSelected = useState<bool>(bloc.state.book == bookName);
 
     useEffect(() {
       isSelected.value = bloc.state.book == bookName;
       return null;
-    }, [bloc.state.book]);
+    }, [bloc.state.book],);
 
     return Column(
       children: [
@@ -42,21 +41,20 @@ class BookWidget extends HookWidget {
             onTap?.call();
           },
           child: Container(
-            height: 56.toScale,
+            height: 56,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,
-            ).radius,
+            ),
             decoration: BoxDecoration(
               color: colors.outlineVariant2,
               borderRadius: borderRadius,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MText(bookName),
-                Icon(MIcons.plus, size: 20.toScale),
+                const Icon(MIcons.plus, size: 20),
               ],
             ),
           ),

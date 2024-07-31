@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCardOptionsModal extends StatelessWidget {
-  const NoteCardOptionsModal({super.key, required this.note});
+  const NoteCardOptionsModal({required this.note, super.key});
   final Note note;
 
   @override
@@ -23,30 +23,30 @@ class NoteCardOptionsModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Add to Folder',
-              onTap: () => context.showModal(
+              onTap: () => context.showModal<void>(
                 AddToFolderModal(note: note),
                 useRootNavigator: true,
                 isScrollControlled: true,
               ),
             ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.share),
             title: 'Share',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.link_02),
             title: 'Copy Link',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           MModalListTile(
             leading: Icon(MIcons.trash, color: colors.error),
             title: 'Delete',
             titleColor: colors.error,
             onTap: () => context.showDeleteNoteDialog(note),
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
         ],
       ),
     );

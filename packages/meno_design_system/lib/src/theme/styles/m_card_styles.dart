@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_design_system/src/m_internal.dart';
 
-import '../../m_internal.dart';
+/// A theme extension for customizing card styles in the
+/// Meno design system.
+///
+/// This class defines various styles for cards, including
+/// background colors, text styles, and padding.
+///
+/// Example usage:
+/// ```dart
+/// final cardStyles = MCardStyles.of(context);
+/// ```
 
 class MCardStyles extends ThemeExtension<MCardStyles> {
-  final MColor? backgroundColor;
-  final MColor? titleColor;
-  final MColor? hostColor;
-
-  final TextStyle? titleStyle;
-  final TextStyle? hostStyle;
-
-  final MColor? nSubtitleColor;
-  final MColor? nBackgroundColor;
-  final EdgeInsetsGeometry? nCardContentPadding;
-  final BorderRadiusGeometry? nBorderRadius;
-  final TextStyle? nTitleTextStyle;
-  final TextStyle? nSubtitleTextStyle;
-
+  /// Creates a new instance of [MCardStyles].
+  ///
+  /// The constructor allows you to specify custom styles for cards.
+  ///
+  /// - [backgroundColor]: The background color of the card.
+  /// - [titleColor]: The color of the card title.
+  /// - [hostColor]: The color of the host text in the card.
+  /// - [titleStyle]: The text style for the card title.
+  /// - [hostStyle]: The text style for the host text in the card.
+  /// - [nSubtitleColor]: The color of the subtitle text in the card.
+  /// - [nBackgroundColor]: The background color for a nested card.
+  /// - [nCardContentPadding]: The padding for the content inside a nested card.
+  /// - [nBorderRadius]: The border radius for a nested card.
+  /// - [nTitleTextStyle]: The text style for the title in a nested card.
+  /// - [nSubtitleTextStyle]: The text style for the subtitle in a nested card.
   MCardStyles({
     this.backgroundColor,
     this.titleColor,
@@ -32,26 +43,97 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
     this.nSubtitleTextStyle,
   });
 
-  static T _resolve<T>(isLight, a, b) => MInternal.resolve(isLight, a, b);
-
-  factory MCardStyles.$default(MColorScheme colors) {
+  /// Creates a default [MCardStyles] based on the given [MColorScheme]
+  /// and [MTextTheme].
+  ///
+  /// This factory constructor initializes the card styles using the
+  /// provided color scheme and text theme.
+  ///
+  /// - [colors]: The color scheme to use for the card styles.
+  /// - [textTheme]: The text theme to use for the card styles.
+  ///
+  /// Returns a new [MCardStyles] instance with the default styles applied.
+  factory MCardStyles.$default(MColorScheme colors, MTextTheme textTheme) {
     final isLight = colors.brightness == Brightness.light;
     return MCardStyles(
-      backgroundColor: _resolve(isLight, MColor.white, MColor.primaryAlt),
+      backgroundColor:
+          MInternal.resolve(isLight, MColor.white, MColor.primaryAlt),
       titleColor: colors.onBackground,
-      hostColor: _resolve(isLight, MColor.grey80, MColor.grey30),
-      titleStyle: $styles.text.captionMedium,
-      hostStyle: $styles.text.captionRegular,
+      hostColor: MInternal.resolve(isLight, MColor.grey80, MColor.grey30),
+      titleStyle: textTheme.captionMedium,
+      hostStyle: textTheme.captionRegular,
       nSubtitleColor: colors.onBackgroundVariant,
       nBackgroundColor: colors.surfaceTint,
-      nCardContentPadding: EdgeInsets.symmetric(
-        horizontal: $styles.insets.small,
-        vertical: $styles.insets.large,
+      nCardContentPadding: const EdgeInsets.symmetric(
+        horizontal: Insets.small,
+        vertical: Insets.large,
       ),
-      nBorderRadius: $styles.radius.large,
-      nTitleTextStyle: $styles.text.captionRegular,
-      nSubtitleTextStyle: $styles.text.microRegular,
+      nBorderRadius: Corners.large,
+      nTitleTextStyle: textTheme.captionRegular,
+      nSubtitleTextStyle: textTheme.microRegular,
     );
+  }
+
+  /// The background color of the card.
+  final MColor? backgroundColor;
+
+  /// The color of the card title.
+  final MColor? titleColor;
+
+  /// The color of the host text in the card.
+  final MColor? hostColor;
+
+  /// The text style for the card title.
+  final TextStyle? titleStyle;
+
+  /// The text style for the host text in the card.
+  final TextStyle? hostStyle;
+
+  /// The color of the subtitle text in the card.
+  final MColor? nSubtitleColor;
+
+  /// The background color for a nested card.
+  final MColor? nBackgroundColor;
+
+  /// The padding for the content inside a nested card.
+  final EdgeInsetsGeometry? nCardContentPadding;
+
+  /// The border radius for a nested card.
+  final BorderRadiusGeometry? nBorderRadius;
+
+  /// The text style for the title in a nested card.
+  final TextStyle? nTitleTextStyle;
+
+  /// The text style for the subtitle in a nested card.
+  final TextStyle? nSubtitleTextStyle;
+
+  /// Provides the [CardTheme] based on the current card styles.
+  ///
+  /// This getter constructs a [CardTheme] using the properties
+  /// defined in the current instance of [MCardStyles].
+  ///
+  /// Returns a [CardTheme] instance with the styles applied.
+  CardTheme get cardTheme => CardTheme(color: backgroundColor);
+
+  /// Retrieves the [MCardStyles] extension from the closest [Theme] instance
+  /// that encloses the given [context].
+  ///
+  /// This method searches for the nearest [Theme] widget in the widget tree
+  /// and returns the [MCardStyles] extension if it exists. If no [MCardStyles]
+  /// extension is found, this method returns null.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final cardStyles = MCardStyles.of(context);
+  /// ```
+  ///
+  /// - [context]: The build context from which to retrieve the [MCardStyles]
+  /// extension.
+  ///
+  /// Returns the [MCardStyles] extension if found, or null if no [MCardStyles]
+  /// extension is available in the closest [Theme] instance.
+  static MCardStyles? of(BuildContext context) {
+    return Theme.of(context).extension<MCardStyles>();
   }
 
   @override
@@ -96,7 +178,10 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
       nBackgroundColor:
           MColor.lerp(nBackgroundColor, other.nBackgroundColor, t),
       nCardContentPadding: EdgeInsetsGeometry.lerp(
-          nCardContentPadding, other.nCardContentPadding, t),
+        nCardContentPadding,
+        other.nCardContentPadding,
+        t,
+      ),
       nBorderRadius:
           BorderRadiusGeometry.lerp(nBorderRadius, other.nBorderRadius, t),
       nTitleTextStyle:
@@ -104,13 +189,5 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
       nSubtitleTextStyle:
           TextStyle.lerp(nSubtitleTextStyle, other.nSubtitleTextStyle, t),
     );
-  }
-
-  CardTheme get cardTheme {
-    return CardTheme(color: backgroundColor);
-  }
-
-  static MCardStyles? of(BuildContext context) {
-    return Theme.of(context).extension<MCardStyles>();
   }
 }

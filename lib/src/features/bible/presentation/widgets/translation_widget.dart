@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class TranslationWidget extends HookWidget {
   const TranslationWidget({
-    super.key,
-    required this.translation,
+    required this.translation, super.key,
     this.progress,
     this.onDownload,
     this.onCancel,
@@ -24,6 +23,7 @@ class TranslationWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     final isSelected = context.select(
       (TranslationsCubit bloc) => bloc.state.selectedTranslation == translation,
@@ -31,7 +31,7 @@ class TranslationWidget extends HookWidget {
     final abbreviation = translation.abbreviation.toUpperCase();
     final isDownloading = useState(false);
     final bloc = context.read<TranslationsCubit>();
-    final borderRadius = BorderRadius.circular(24).radius;
+    final borderRadius = BorderRadius.circular(24);
     return InkWell(
       onTap: () {
         if (isOffline) {
@@ -45,9 +45,8 @@ class TranslationWidget extends HookWidget {
       },
       borderRadius: borderRadius,
       child: Container(
-        height: 66.toScale,
-        padding:
-            const EdgeInsets.symmetric(horizontal: 24, vertical: 12).radius,
+        height: 66,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: borderRadius,
           border: isSelected ? Border.all(color: colors.primary!) : null,
@@ -59,8 +58,8 @@ class TranslationWidget extends HookWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MText(abbreviation, style: $styles.text.bodyMedium),
-                  MText(translation.name, style: $styles.text.microRegular),
+                  MText(abbreviation, style: textTheme.bodyMedium),
+                  MText(translation.name, style: textTheme.microRegular),
                 ],
               ),
             ),
@@ -94,11 +93,11 @@ class _DownloadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
-      dimension: 40.toScale,
+      dimension: 40,
       child: loading
           ? _ProgressIndicator(progress: progress, onCancel: onCancel)
           : IconButton(
-              iconSize: 24.toScale,
+              iconSize: 24,
               padding: EdgeInsets.zero,
               icon: const Icon(Icons.download_outlined),
               onPressed: !loading ? onDownload : null,
@@ -122,7 +121,7 @@ class _ProgressIndicator extends StatelessWidget {
         IconButton(
           onPressed: onCancel,
           padding: EdgeInsets.zero,
-          iconSize: 20.toScale,
+          iconSize: 20,
           style: IconButton.styleFrom(foregroundColor: colors.error),
           icon: const Icon(Icons.stop),
         ),

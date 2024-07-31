@@ -5,16 +5,6 @@ part 'auth_field_error.g.dart';
 
 @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class AuthFieldError extends Equatable {
-  final String? fullName;
-  final String? bio;
-  final String? email;
-  final String? password;
-  final String? image;
-  final String? code;
-  final String? type;
-  final String? mimetype;
-  final String? idToken;
-  final String? size;
 
   const AuthFieldError({
     this.fullName,
@@ -31,6 +21,16 @@ class AuthFieldError extends Equatable {
 
   factory AuthFieldError.fromJson(Map<String, dynamic> json) =>
       _$AuthFieldErrorFromJson(json);
+  final String? fullName;
+  final String? bio;
+  final String? email;
+  final String? password;
+  final String? image;
+  final String? code;
+  final String? type;
+  final String? mimetype;
+  final String? idToken;
+  final String? size;
   @override
   List<Object?> get props => [
         fullName,

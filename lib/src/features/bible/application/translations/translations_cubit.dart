@@ -3,9 +3,8 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:rxdart/rxdart.dart';
-
-import '../../domain/domain.dart';
 
 part 'translations_cubit.freezed.dart';
 part 'translations_state.dart';
@@ -18,7 +17,7 @@ class TranslationsCubit extends Cubit<TranslationsState> {
 
   final IBibleFacade _facade;
 
-  final _downloadProgress = BehaviorSubject<double>.seeded(0.0);
+  final _downloadProgress = BehaviorSubject<double>.seeded(0);
   Stream<double> get downloadProgress => _downloadProgress.stream;
 
   Future<void> changeTranslation(Translation translation) async {
@@ -31,7 +30,7 @@ class TranslationsCubit extends Cubit<TranslationsState> {
 
     final combinedTranslations = [
       ...onlineTranslations,
-      ...offlineTranslations
+      ...offlineTranslations,
     ];
 
     final translations = combinedTranslations
@@ -55,11 +54,11 @@ class TranslationsCubit extends Cubit<TranslationsState> {
     emit(state.copyWith(
       cancelDownload: value,
       loading: false,
-      downloadProgress: 0.0,
-    ));
+      downloadProgress: 0,
+    ),);
   }
 
-  void init() async {
+  Future<void> init() async {
     getOfflineTranslations();
     await getOnlineTranslations();
   }
@@ -81,11 +80,11 @@ class TranslationsCubit extends Cubit<TranslationsState> {
     response.fold(
       (failure) => emit(state.copyWith(
         downloadOption: some(response),
-         downloadProgress: 0.0,
+         downloadProgress: 0,
         loading: false,
         cancelDownload: false,
         selectedTranslation: previousTranslation,
-      )),
+      ),),
       (success) {
         final offlineTranslations = [...state.offlineTranslations, success];
 
@@ -97,10 +96,10 @@ class TranslationsCubit extends Cubit<TranslationsState> {
           onlineTranslations: oOnlineTranslations,
           offlineTranslations: offlineTranslations,
           selectedTranslation: success,
-          downloadProgress: 0.0,
+          downloadProgress: 0,
           loading: false,
           cancelDownload: false,
-        ));
+        ),);
       },
     );
   }

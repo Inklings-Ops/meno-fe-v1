@@ -1,68 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:meno_design_system/src/m_internal.dart';
+import 'package:meno_design_system/src/theme/m_color.dart';
 
-import '../m_internal.dart';
-import 'm_color.dart';
-
+/// A custom theme extension for managing colors within the app.
+///
+/// The [MColorScheme] class extends [ThemeExtension] to define a collection of
+/// colors used throughout the application. This helps in maintaining a
+/// consistent color scheme and allows for easy customization of colors
+/// based on the application's color scheme.
 class MColorScheme extends ThemeExtension<MColorScheme> {
-  final Brightness? brightness;
-  final MColor? primary;
-  final MColor? onPrimary;
-  final MColor? primaryContainer;
-  final MColor? onPrimaryContainer;
-  final MColor? secondary;
-  final MColor? onSecondary;
-  final MColor? secondaryContainer;
-  final MColor? onSecondaryContainer;
-  final MColor? tertiary;
-  final MColor? onTertiary;
-  final MColor? tertiaryContainer;
-  final MColor? onTertiaryContainer;
-  final MColor? error;
-  final MColor? onError;
-  final MColor? errorContainer;
-  final MColor? onErrorContainer;
-  final MColor? informational;
-  final MColor? onInformational;
-  final MColor? informationalContainer;
-  final MColor? onInformationalContainer;
-  final MColor? warning;
-  final MColor? onWarning;
-  final MColor? warningContainer;
-  final MColor? onWarningContainer;
-  final MColor? success;
-  final MColor? onSuccess;
-  final MColor? successContainer;
-  final MColor? onSuccessContainer;
-  final MColor? notification;
-  final MColor? onNotification;
-  final MColor? inActive;
-  final MColor? onInActive;
-  final MColor? inActiveContainer;
-  final MColor? onInActiveContainer;
-  final MColor? disabled;
-  final MColor? onDisabled;
-  final MColor? disabledContainer;
-  final MColor? onDisabledContainer;
-  final MColor? background;
-  final MColor? onBackground;
-  final MColor? onBackgroundProminent;
-  final MColor? onBackgroundVariant;
-  final MColor? surface;
-  final MColor? onSurface;
-  final MColor? surfaceTint;
-  final MColor? surfaceShade;
-  final MColor? onSurfaceShade;
-  final MColor? inverseSurface;
-  final MColor? onInverseSurface;
-  final MColor? inversePrimary;
-  final MColor? onInversePrimary;
-  final MColor? scrim;
-  final MColor? shadow;
-  final MColor? outline;
-  final MColor? outlineVariant1;
-  final MColor? outlineVariant2;
-  final MColor? outlineVariant3;
-
+  /// Creates an [MColorScheme] instance with the provided color scheme.
+  ///
+  /// All colors in the scheme are optional and can be customized individually.
   MColorScheme({
     this.brightness,
     this.primary,
@@ -124,6 +73,11 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
     this.outlineVariant3,
   });
 
+  /// Provides the default [MColorScheme] for the app based on the given
+  /// [brightness].
+  ///
+  /// This factory method initializes an [MColorScheme] instance using
+  /// a predefined set of colors.
   factory MColorScheme.$default(Brightness brightness) {
     final isLight = brightness == Brightness.light;
     return MColorScheme(
@@ -142,7 +96,10 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
           MInternal.resolve(isLight, MColor.secondary50, MColor.secondary75),
       onSecondaryContainer: MColor.secondary600,
       tertiary: MInternal.resolve(
-          isLight, MColor.decorativeYellow75, MColor.decorativeYellow200),
+        isLight,
+        MColor.decorativeYellow75,
+        MColor.decorativeYellow200,
+      ),
       onTertiary: MColor.black,
       tertiaryContainer: MColor.decorativeYellow50,
       onTertiaryContainer: MColor.black,
@@ -187,13 +144,11 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
           MInternal.resolve(isLight, MColor.grey500, MColor.grey200),
       background: MInternal.resolve(isLight, MColor.white, MColor.primary700),
       onBackground: MInternal.resolve(isLight, MColor.black, MColor.white),
-      onBackgroundProminent:
-          MInternal.resolve(isLight, MColor.primary600, MColor.primary50),
-      // onBackgroundVariant:
-      //     MInternal.resolve(isLight, MColor.grey80, MColor.grey30),
-      onBackgroundVariant: MColor.grey80,
       surface: MInternal.resolve(isLight, MColor.white, MColor.primary700),
       onSurface: MInternal.resolve(isLight, MColor.black, MColor.white),
+      onBackgroundProminent:
+          MInternal.resolve(isLight, MColor.primary600, MColor.primary50),
+      onBackgroundVariant: MColor.grey80,
       surfaceTint: MInternal.resolve(isLight, MColor.tint, MColor.primaryAlt),
       surfaceShade: MInternal.resolve(isLight, MColor.tint, MColor.primaryAlt),
       onSurfaceShade: MInternal.resolve(isLight, MColor.grey200, MColor.grey30),
@@ -216,6 +171,180 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
           MInternal.resolve(isLight, MColor.grey50, MColor.grey200),
     );
   }
+
+  /// The [brightness] color
+  final Brightness? brightness;
+
+  /// The [primary] color
+  final MColor? primary;
+
+  /// The [onPrimary] color
+  final MColor? onPrimary;
+
+  /// The [primaryContainer] color
+  final MColor? primaryContainer;
+
+  /// The [onPrimaryContainer] color
+  final MColor? onPrimaryContainer;
+
+  /// The [secondary] color
+  final MColor? secondary;
+
+  /// The [onSecondary] color
+  final MColor? onSecondary;
+
+  /// The [secondaryContainer] color
+  final MColor? secondaryContainer;
+
+  /// The [onSecondaryContainer] color
+  final MColor? onSecondaryContainer;
+
+  /// The [tertiary] color
+  final MColor? tertiary;
+
+  /// The [onTertiary] color
+  final MColor? onTertiary;
+
+  /// The [tertiaryContainer] color
+  final MColor? tertiaryContainer;
+
+  /// The [onTertiaryContainer] color
+  final MColor? onTertiaryContainer;
+
+  /// The [error] color
+  final MColor? error;
+
+  /// The [onError] color
+  final MColor? onError;
+
+  /// The [errorContainer] color
+  final MColor? errorContainer;
+
+  /// The [onErrorContainer] color
+  final MColor? onErrorContainer;
+
+  /// The [informational] color
+  final MColor? informational;
+
+  /// The [onInformational] color
+  final MColor? onInformational;
+
+  /// The [informationalContainer] color
+  final MColor? informationalContainer;
+
+  /// The [onInformationalContainer] color
+  final MColor? onInformationalContainer;
+
+  /// The [warning] color
+  final MColor? warning;
+
+  /// The [onWarning] color
+  final MColor? onWarning;
+
+  /// The [warningContainer] color
+  final MColor? warningContainer;
+
+  /// The [onWarningContainer] color
+  final MColor? onWarningContainer;
+
+  /// The [success] color
+  final MColor? success;
+
+  /// The [onSuccess] color
+  final MColor? onSuccess;
+
+  /// The [successContainer] color
+  final MColor? successContainer;
+
+  /// The [onSuccessContainer] color
+  final MColor? onSuccessContainer;
+
+  /// The [notification] color
+  final MColor? notification;
+
+  /// The [onNotification] color
+  final MColor? onNotification;
+
+  /// The [inActive] color
+  final MColor? inActive;
+
+  /// The [onInActive] color
+  final MColor? onInActive;
+
+  /// The [inActiveContainer] color
+  final MColor? inActiveContainer;
+
+  /// The [onInActiveContainer] color
+  final MColor? onInActiveContainer;
+
+  /// The [disabled] color
+  final MColor? disabled;
+
+  /// The [onDisabled] color
+  final MColor? onDisabled;
+
+  /// The [disabledContainer] color
+  final MColor? disabledContainer;
+
+  /// The [onDisabledContainer] color
+  final MColor? onDisabledContainer;
+
+  /// The [background] color
+  final MColor? background;
+
+  /// The [onBackground] color
+  final MColor? onBackground;
+
+  /// The [onBackgroundProminent] color
+  final MColor? onBackgroundProminent;
+
+  /// The [onBackgroundVariant] color
+  final MColor? onBackgroundVariant;
+
+  /// The [surface] color
+  final MColor? surface;
+
+  /// The [onSurface] color
+  final MColor? onSurface;
+
+  /// The [surfaceTint] color
+  final MColor? surfaceTint;
+
+  /// The [surfaceShade] color
+  final MColor? surfaceShade;
+
+  /// The [onSurfaceShade] color
+  final MColor? onSurfaceShade;
+
+  /// The [inverseSurface] color
+  final MColor? inverseSurface;
+
+  /// The [onInverseSurface] color
+  final MColor? onInverseSurface;
+
+  /// The [inversePrimary] color
+  final MColor? inversePrimary;
+
+  /// The [onInversePrimary] color
+  final MColor? onInversePrimary;
+
+  /// The [scrim] color
+  final MColor? scrim;
+
+  /// The [shadow] color
+  final MColor? shadow;
+
+  /// The [outline] color
+  final MColor? outline;
+
+  /// The [outlineVariant1] color
+  final MColor? outlineVariant1;
+
+  /// The [outlineVariant2] color
+  final MColor? outlineVariant2;
+
+  /// The [outlineVariant3] color
+  final MColor? outlineVariant3;
 
   @override
   ThemeExtension<MColorScheme> copyWith({
@@ -379,7 +508,10 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
       informationalContainer:
           MColor.lerp(informationalContainer, other.informationalContainer, t),
       onInformationalContainer: MColor.lerp(
-          onInformationalContainer, other.onInformationalContainer, t),
+        onInformationalContainer,
+        other.onInformationalContainer,
+        t,
+      ),
       warning: MColor.lerp(warning, other.warning, t),
       onWarning: MColor.lerp(onWarning, other.onWarning, t),
       warningContainer:
@@ -432,10 +564,31 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
     );
   }
 
+  /// Retrieves the [MColorScheme] extension from the closest [Theme] instance
+  /// that encloses the given [context].
+  ///
+  /// This method searches for the nearest [Theme] widget in the widget tree
+  /// and returns the [MColorScheme] extension if it exists. If no
+  /// [MColorScheme] extension is found, this method returns null.
+  ///
+  /// The [MColorScheme] extension must be added to the [ThemeData.extensions]
+  /// in your theme configuration to be accessible using this method.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final mColorScheme = MColorScheme.of(context);
+  /// ```
+  ///
+  /// - [context]: The build context from which to retrieve the [MColorScheme]
+  /// extension.
+  ///
+  /// Returns the [MColorScheme] extension if found, or null if no
+  /// [MColorScheme] extension is available in the closest [Theme] instance.
   static MColorScheme? of(BuildContext context) {
     return Theme.of(context).extension<MColorScheme>();
   }
 
+  /// Creates the [ColorScheme] based the [MColorScheme] extension
   ColorScheme get getColorScheme {
     return ColorScheme(
       brightness: brightness!,

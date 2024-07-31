@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   const DeleteNoteFromFolderAlertDialog({
-    super.key,
-    required this.onDelete,
+    required this.onDelete, super.key,
     this.onCancel,
   });
 
@@ -14,29 +13,29 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final bloc = context.watch<NotesBloc>();
-
     return AlertDialog(
-      title: MText('Remove Note?', style: $styles.text.heading2Regular),
-      contentPadding: const EdgeInsets.all(24).radius,
+      title: MText('Remove Note?', style: textTheme.heading2Regular),
+      contentPadding: const EdgeInsets.all(24),
       content: MText(
         'Do you want to remove this note from this folder?',
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
-          size: Size(85.toScale, 40.toScale),
+          size: const Size(85, 40),
           child: MTextButton(
             label: 'Cancel',
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
-              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
             ),
           ),
         ),
         SizedBox(
-          height: 40.toScale,
+          height: 40,
           child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
               : MDangerButton(
@@ -45,8 +44,8 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: colors.primary,
                     foregroundColor: colors.onPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: $styles.radius.small,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: Corners.small,
                     ),
                   ),
                 ),

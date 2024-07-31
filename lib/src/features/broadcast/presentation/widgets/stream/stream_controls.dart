@@ -6,14 +6,14 @@ class StreamControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40.toScale,
+    return const SizedBox(
+      height: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const StreamLeaveButton(),
-          $styles.spaces.horizontalSmall,
-          const StreamOptionsButton(),
+          StreamLeaveButton(),
+          Spaces.horizontalSmall,
+          StreamOptionsButton(),
         ],
       ),
     );
@@ -30,11 +30,11 @@ class StreamOptionsButton extends StatelessWidget {
       icon: const Icon(MIcons.dots_horizontal),
       color: colors.onBackground,
       style: IconButton.styleFrom(
-        fixedSize: Size.fromWidth(48.toScale),
+        fixedSize: const Size.fromWidth(48),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.large),
       ),
-      onPressed: () => context.showModal(
+      onPressed: () => context.showModal<void>(
         BlocBuilder<StreamBloc, StreamState>(
           builder: (context, state) => state.maybeWhen(
             orElse: () => const SizedBox(),

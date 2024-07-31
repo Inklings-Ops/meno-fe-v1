@@ -6,6 +6,8 @@ class BibleBooksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
+
     final bloc = context.read<BibleBloc>();
     final books = bloc.books;
     final booksLength = books.length;
@@ -14,11 +16,11 @@ class BibleBooksPage extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: 24.toScale,
+            height: 24,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                MText('Bible Books', style: $styles.text.subheadingMedium),
+                MText('Bible Books', style: textTheme.subheadingMedium),
                 MIconButton(
                   icon: const Icon(MIcons.x_close),
                   color: MColorScheme.of(context)?.onBackground,
@@ -27,7 +29,7 @@ class BibleBooksPage extends StatelessWidget {
               ],
             ),
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MDivider(),
           ListView.separated(
             primary: false,
@@ -36,7 +38,7 @@ class BibleBooksPage extends StatelessWidget {
               bookName: books[i].key,
               onTap: () {},
             ),
-            separatorBuilder: (context, i) => 10.vSpace,
+            separatorBuilder: (context, i) => const SizedBox(height: 10),
             itemCount: booksLength,
           ),
         ],

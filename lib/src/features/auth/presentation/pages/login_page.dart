@@ -3,16 +3,15 @@ import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
- 
 class LoginPage extends StatelessWidget {
-  final bool implyLeading;
-  final bool isPasswordOnly;
 
   const LoginPage({
     super.key,
     this.implyLeading = false,
     this.isPasswordOnly = false,
   });
+  final bool implyLeading;
+  final bool isPasswordOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +23,10 @@ class LoginPage extends StatelessWidget {
           (either) => either.fold(
             (failure) => context.showLoginError(failure),
             (success) {
-              context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
+              context.read<SessionCubit>().init();
+              context.read<AccountBloc>().init();
               context.read<RecentlyLiveCubit>().fetch();
+              context.read<MyProfileBloc>().init(success.user.id.getOr());
             },
           ),
         );
@@ -33,23 +34,23 @@ class LoginPage extends StatelessWidget {
       child: MScaffold(
         appBar: MAppBar.primary(title: 'Log in', implyLeading: implyLeading),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 24.toScale),
+          padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               LoginForm(isPasswordOnly: isPasswordOnly),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const GoogleDivider(title: 'Or'),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MGoogleButton(title: 'Login with Google'),
-              144.vSpace,
+              const SizedBox(height: 144),
               AuthRedirectionText(
-                title: 'Don\'t have an account?',
+                title: "Don't have an account?",
                 buttonText: 'Create an account',
                 onPressed: () => implyLeading
-                    ? router.replace(Routes.register, extra: true)
-                    : router.push(Routes.register, extra: true),
-              )
+                    ? const RegisterRoute().replace(context)
+                    : const RegisterRoute().push<void>(context),
+              ),
             ],
           ),
         ),

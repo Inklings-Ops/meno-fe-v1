@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/application/application.dart';
@@ -30,29 +29,29 @@ class RegisterPage extends StatelessWidget {
           implyLeading: implyLeading,
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 24).radius,
+          padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const RegisterForm(),
-              $styles.spaces.verticalXXLarge,
+              Spaces.verticalXXLarge,
               const GoogleDivider(title: 'Or'),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MGoogleButton(title: 'Create with Google'),
-              44.vSpace,
+              const SizedBox(height: 44),
               BlocBuilder<OnboardingCubit, OnboardingState>(
                 builder: (context, state) => AuthRedirectionText(
                   title: 'Already have an account?',
                   buttonText: 'Log in',
                   onPressed: () {
                     if (state == OnboardingState.completed) {
-                      context.replace(Routes.login);
+                      const LoginRoute().replace(context);
                     } else {
-                      context.replace(Routes.loginWithLeading);
+                      const LoginRoute(implyLeading: true).replace(context);
                     }
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

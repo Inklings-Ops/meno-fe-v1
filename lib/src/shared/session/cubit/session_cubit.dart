@@ -13,11 +13,17 @@ part 'session_state.dart';
 
 @Injectable()
 class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
-  final ISessionContext _session;
-  late final StreamSubscription<UserCredential?> _subscription;
   SessionCubit({required ISessionContext session})
       : _session = session,
         super(const SessionState.loading());
+  final ISessionContext _session;
+  late final StreamSubscription<UserCredential?> _subscription;
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
+  }
 
   @PostConstruct(preResolve: true)
   Future<void> init() async {
@@ -32,12 +38,6 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
     emit(const SessionState.unauthenticated());
     unawaited(_session.logout());
     notifyListeners();
-  }
-
-  @override
-  Future<void> close() {
-    _subscription.cancel();
-    return super.close();
   }
 
   SessionState _determineState(bool isOnboarded, UserCredential? credential) {

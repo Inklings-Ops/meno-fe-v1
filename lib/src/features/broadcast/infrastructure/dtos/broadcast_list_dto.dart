@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast_list_entity.dart';
 
-import 'broadcast_dto.dart';
+import 'package:meno_fe_v1/src/features/broadcast/infrastructure/dtos/broadcast_dto.dart';
 
 part 'broadcast_list_dto.freezed.dart';
 part 'broadcast_list_dto.g.dart';

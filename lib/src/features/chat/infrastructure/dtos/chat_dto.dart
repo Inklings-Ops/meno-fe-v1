@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
 part 'chat_dto.freezed.dart';
 part 'chat_dto.g.dart';
@@ -12,10 +12,7 @@ class ChatDto with _$ChatDto {
     required String id,
     required String content,
     required DateTime createdAt,
-    DateTime? updatedAt,
-    required String senderId,
-    required String broadcastId,
-    required String fullName,
+    required String senderId, required String broadcastId, required String fullName, DateTime? updatedAt,
     String? imageUrl,
   }) = _ChatDto;
 

@@ -2,12 +2,16 @@ import 'dart:async';
 
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import '../features/bible/infrastructure/dtos/dtos.dart';
-
 class ObjectBoxService {
+
+  ObjectBoxService._create(this.store) {
+    _bibleBox = store.box<BibleDto>();
+    _verseBox = store.box<VerseDto>();
+  }
   late final Store store;
 
   late Box<BibleDto> _bibleBox;
@@ -16,15 +20,10 @@ class ObjectBoxService {
   late Box<VerseDto> _verseBox;
   Box<VerseDto> get verseBox => _verseBox;
 
-  ObjectBoxService._create(this.store) {
-    _bibleBox = store.box<BibleDto>();
-    _verseBox = store.box<VerseDto>();
-  }
-
   /// Create an instance of ObjectBox to use throughout the app.
   static Future<ObjectBoxService> create() async {
     final docsDir = await getApplicationDocumentsDirectory();
-    var directory = p.join(docsDir.path, 'meno');
+    final directory = p.join(docsDir.path, 'meno');
 
     late Store newStore;
 
@@ -64,7 +63,7 @@ class ObjectBoxService {
         bibleBox.put(BibleDto(
           translation: translation,
           verses: ToMany(items: allVerses),
-        ));
+        ),);
       });
       Logger().w('DONE STORING BIBLE IN OBJECTBOX');
     } on ObjectBoxException catch (e) {

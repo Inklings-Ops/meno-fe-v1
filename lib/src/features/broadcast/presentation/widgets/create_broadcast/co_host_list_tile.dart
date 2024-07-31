@@ -5,12 +5,13 @@ class CohostListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 48.toScale,
+      height: 48,
       child: Row(
         children: [
-          MAvatar(radius: 24.toScale),
-          $styles.spaces.horizontalSmall,
+          const MAvatar(radius: 24),
+          Spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -18,25 +19,25 @@ class CohostListTile extends StatelessWidget {
               children: [
                 MText(
                   'Celebration Church International',
-                  style: $styles.text.captionMedium,
+                  style: textTheme.captionMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
-                3.vSpace,
-                MText('30K Subscribers', style: $styles.text.microRegular),
+                const SizedBox(height:3),
+                MText('30K Subscribers', style: textTheme.microRegular),
               ],
             ),
           ),
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
           SizedBox(
-            height: 32.toScale,
+            height: 32,
             child: MSecondaryButton(
               label: 'Add as Co-host',
               style: OutlinedButton.styleFrom(
-                textStyle: $styles.text.microMedium,
-                padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
-                shape: RoundedRectangleBorder(
-                  borderRadius: $styles.radius.small,
+                textStyle: textTheme.microMedium,
+                padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Corners.small,
                 ),
               ),
               onPressed: () {},

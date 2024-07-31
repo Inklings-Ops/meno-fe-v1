@@ -18,7 +18,7 @@ class TranslationsState with _$TranslationsState {
       onlineTranslations: [],
       offlineTranslations: [],
       translations: [],
-      downloadProgress: 0.0,
+      downloadProgress: 0,
        loading: false,
       cancelDownload: false,
       downloadOption: none(),

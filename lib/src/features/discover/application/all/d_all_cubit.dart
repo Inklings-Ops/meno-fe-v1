@@ -9,10 +9,10 @@ part 'd_all_cubit.freezed.dart';
 
 @lazySingleton
 class DAllCubit extends Cubit<DAllState> {
-  final IDiscoverFacade _facade;
   DAllCubit({required IDiscoverFacade facade})
       : _facade = facade,
         super(DAllState.initial());
+  final IDiscoverFacade _facade;
 
   Future<void> init() async {
     await Future.wait([fetchNowLive(), fetchRecentlyLive()]);
@@ -24,7 +24,7 @@ class DAllCubit extends Cubit<DAllState> {
     emit(fOrS.fold(
       (f) => state.copyWith(isNowLiveLoading: false),
       (s) => state.copyWith(isNowLiveLoading: false, nowLive: s.broadcasts),
-    ));
+    ),);
   }
 
   Future<void> fetchRecentlyLive() async {
@@ -36,7 +36,7 @@ class DAllCubit extends Cubit<DAllState> {
         isRecentlyLiveLoading: false,
         recentlyLive: s.broadcasts,
       ),
-    ));
+    ),);
   }
 
   Future<void> refreshNowLive() async {
@@ -45,7 +45,7 @@ class DAllCubit extends Cubit<DAllState> {
     emit(fOrS.fold(
       (f) => state.copyWith(isNowLiveLoading: false, nowLive: []),
       (s) => state.copyWith(isNowLiveLoading: false, nowLive: s.broadcasts),
-    ));
+    ),);
   }
 
   Future<void> refreshRecentlyLive() async {
@@ -57,6 +57,6 @@ class DAllCubit extends Cubit<DAllState> {
         isRecentlyLiveLoading: false,
         recentlyLive: s.broadcasts,
       ),
-    ));
+    ),);
   }
 }

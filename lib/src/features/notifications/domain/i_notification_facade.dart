@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
-import 'entities/notification.dart';
-import 'exceptions/notification_exception.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/exceptions/notification_exception.dart';
 
 abstract class INotificationFacade {
   Future<Either<NotificationException, List<Notification?>>> getNotifications({

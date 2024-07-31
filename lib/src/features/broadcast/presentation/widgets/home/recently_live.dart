@@ -24,14 +24,14 @@ class RecentlyLive extends StatelessWidget {
 }
 
 class _BuildColumn extends StatelessWidget {
-  final Widget child;
   const _BuildColumn({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        $styles.spaces.verticalXXXLarge,
+        Spaces.verticalXXXLarge,
         MHeader(
           title: 'Recently Live',
           action: InkWell(
@@ -42,8 +42,8 @@ class _BuildColumn extends StatelessWidget {
             ),
           ),
         ),
-        24.vSpace,
-        LimitedBox(maxHeight: 176.toScale, child: child),
+        Spaces.verticalXLarge,
+        LimitedBox(maxHeight: 176, child: child),
       ],
     );
   }
@@ -70,7 +70,7 @@ class _SkeletonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BroadcastListWidget(
-      itemCount: 5,
+      itemCount: 3,
       itemBuilder: (context, i) => MCard.recentlyLive(loading: true),
     );
   }

@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteBodyWidget extends StatelessWidget {
-  const NoteBodyWidget({super.key, required this.selectedIndex});
+  const NoteBodyWidget({required this.selectedIndex, super.key});
   final ValueNotifier<int> selectedIndex;
 
   @override
@@ -23,7 +23,7 @@ class NoteBodyWidget extends StatelessWidget {
           children: [
             Container(
               width: size.width,
-              padding: const EdgeInsets.fromLTRB(0, 24, 0, 8).radius,
+              padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -34,17 +34,17 @@ class NoteBodyWidget extends StatelessWidget {
                       selected: selectedIndex.value == 0,
                     ),
                   ),
-                  $styles.spaces.horizontalSmall,
+                  Spaces.horizontalSmall,
                   Expanded(
                     child: FolderWidget(
                       onTap: () => selectedIndex.value = 1,
                       selected: selectedIndex.value == 1,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-            20.vSpace,
+            const SizedBox(height: 20),
             switch (selectedIndex.value) {
               0 => const NoteListWidget(),
               1 => const FolderListWidget(),

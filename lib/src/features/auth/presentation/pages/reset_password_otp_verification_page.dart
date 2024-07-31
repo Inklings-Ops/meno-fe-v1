@@ -6,31 +6,32 @@ class ResetPasswordOtpVerificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MScaffold(
       appBar: MAppBar.primary(title: 'Reset Password'),
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24).radius,
+            padding: const EdgeInsets.symmetric(vertical: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                24.vSpace,
-                MText('OTP Verification', style: $styles.text.heading2Medium),
-                $styles.spaces.verticalSmall,
+                Spaces.verticalXLarge,
+                MText('OTP Verification', style: textTheme.heading2Medium),
+                Spaces.verticalSmall,
                 MText(
                   'Enter the 4-digit code we just sent to jimhalpert26@gmail.com to continue',
                   maxLines: 3,
-                  style: $styles.text.bodyRegular,
+                  style: textTheme.bodyRegular,
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 const MOtpField(),
-                24.vSpace,
+                Spaces.verticalXLarge,
                 const AuthRedirectionText(
                   title: "Didn't receive code?",
                   buttonText: 'Send again',
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Continue',
                   onPressed: () => context.push(Routes.createNewPassword),

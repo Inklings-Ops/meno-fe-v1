@@ -7,9 +7,6 @@ import 'package:meno_fe_v1/src/services/services.dart';
 
 @Injectable(as: INoteFacade)
 class NoteFacade implements INoteFacade {
-  final NetworkService _network;
-  final NoteLocalDatasource _local;
-  final NoteRemoteDatasource _remote;
 
   NoteFacade({
     required NetworkService network,
@@ -18,6 +15,9 @@ class NoteFacade implements INoteFacade {
   })  : _network = network,
         _local = local,
         _remote = remote;
+  final NetworkService _network;
+  final NoteLocalDatasource _local;
+  final NoteRemoteDatasource _remote;
 
   @override
   Future<Either<NoteException, Note>> createNote(Note note) async {

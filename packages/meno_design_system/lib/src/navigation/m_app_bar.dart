@@ -2,28 +2,68 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/gen/assets.gen.dart';
 
+/// Enum representing different types of app bars.
 enum _AppBarVariant { home, primary, secondary }
 
+/// A factory class for creating different types of app bars.
 class MAppBar extends _AppBar {
+  /// Creates a primary app bar with the given title.
+  ///
+  /// This app bar typically has a back button and is used for navigation.
+  ///
+  /// * `title`: The title of the app bar.
+  /// * `key`: The key for the widget.
+  /// * `backText`: The text for the back button (optional). Defaults to an
+  /// empty string.
+  /// * `onBackPressed`: A callback function called when the back button is
+  /// pressed (optional).
+  /// * `implyLeading`: Whether to imply a leading icon (optional). Defaults
+  /// to false.
   factory MAppBar.primary({
-    Key? key,
     required String title,
+    Key? key,
     String backText,
     VoidCallback? onBackPressed,
     bool implyLeading,
   }) = _PrimaryAppBar;
 
+  /// Creates a secondary app bar with the given title.
+  ///
+  /// This app bar is typically used for screens with less emphasis on
+  /// navigation.
+  ///
+  /// * `title`: The title of the app bar.
+  /// * `key`: The key for the widget.
+  /// * `onBackPressed`: A callback function called when the back button is
+  /// pressed (optional).
+  /// * `centerTitle`: Whether to center the title (optional).
+  /// Defaults to false.
+  /// * `actions`: A list of widgets to display on the right side of the
+  /// app bar (optional).
   factory MAppBar.secondary({
-    Key? key,
     required String title,
+    Key? key,
     VoidCallback? onBackPressed,
     bool centerTitle,
     List<Widget>? actions,
   }) = _SecondaryAppBar;
 
+  /// Creates a home app bar with the given title.
+  ///
+  /// This app bar is typically used for the main screen of an app.
+  ///
+  /// * `title`: The title of the app bar.
+  /// * `key`: The key for the widget.
+  /// * `centerTitle`: Whether to center the title (optional).
+  /// Defaults to false.
+  /// * `avatarImageUrl`: The URL of the user's avatar image (optional).
+  /// * `onAvatarTap`: A callback function called when the avatar is tapped
+  /// (optional).
+  /// * `onNotificationBellTap`: A callback function called when the
+  /// notification bell is tapped (optional).
   factory MAppBar.home({
-    Key? key,
     required String title,
+    Key? key,
     bool centerTitle,
     String? avatarImageUrl,
     VoidCallback? onAvatarTap,
@@ -31,39 +71,64 @@ class MAppBar extends _AppBar {
   }) = _HomeAppBar;
 
   const MAppBar._({
-    super.key,
     required super.title,
     required super.onBackPressed,
     required super.child,
+    super.key,
     super.actions,
     super.centerTitle,
     super.variant,
   });
 }
 
+/// Base class for different app bar types.
 abstract class _AppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-  final List<Widget>? actions;
-  final bool centerTitle;
-  final VoidCallback? onBackPressed;
-  final Widget child;
-  final _AppBarVariant variant;
-
+  /// Creates a new instance of _AppBar.
+  ///
+  /// * `title`: The title of the app bar.
+  /// * `child`: The content of the app bar.
+  /// * `key`: The key for the widget.
+  /// * `actions`: A list of widgets to display on the right side of the
+  /// app bar (optional).
+  /// * `centerTitle`: Whether to center the title (optional).
+  /// Defaults to false.
+  /// * `onBackPressed`: A callback function called when the back button is
+  /// pressed (optional).
+  /// * `variant`: The type of app bar (optional).
+  /// Defaults to `_AppBarVariant.primary`.
   const _AppBar({
-    super.key,
     required this.title,
+    required this.child,
+    super.key,
     this.actions,
     this.centerTitle = false,
     this.onBackPressed,
-    required this.child,
     this.variant = _AppBarVariant.primary,
   });
 
+  /// The title of the app bar.
+  final String title;
+
+  /// The content of the app bar.
+  final Widget child;
+
+  /// A list of widgets to display on the right side of the app bar.
+  final List<Widget>? actions;
+
+  /// Whether to center the title.
+  final bool centerTitle;
+
+  /// A callback function called when the back button is pressed.
+  final VoidCallback? onBackPressed;
+
+  /// The type of app bar.
+  final _AppBarVariant variant;
+
   @override
   Size get preferredSize => switch (variant) {
-        _AppBarVariant.home => $styles.toolbarHeight.home,
-        _AppBarVariant.primary => $styles.toolbarHeight.primary,
-        _AppBarVariant.secondary => $styles.toolbarHeight.secondary,
+        _AppBarVariant.home => ToolBarHeights.home,
+        _AppBarVariant.primary => ToolBarHeights.primary,
+        _AppBarVariant.secondary => ToolBarHeights.secondary,
       };
 
   @override
@@ -72,10 +137,10 @@ abstract class _AppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class _PrimaryAppBar extends MAppBar {
   _PrimaryAppBar({
-    super.key,
     required super.title,
+    super.key,
     super.onBackPressed,
-    String backText = "Back",
+    String backText = 'Back',
     bool implyLeading = true,
   }) : super._(
           child: _PrimaryAppBarImpl(
@@ -89,24 +154,24 @@ class _PrimaryAppBar extends MAppBar {
 }
 
 class _PrimaryAppBarImpl extends StatelessWidget {
-  final String title;
-  final String backText;
-  final VoidCallback? onBackPressed;
-  final bool implyLeading;
-
   const _PrimaryAppBarImpl(
     this.title, {
     required this.backText,
     this.onBackPressed,
     this.implyLeading = true,
   });
+  final String title;
+  final String backText;
+  final VoidCallback? onBackPressed;
+  final bool implyLeading;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final styles = MNavigationStyles.of(context)!;
     final colorFilter = ColorFilter.mode(styles.accentColor!, BlendMode.srcIn);
-    final toolbarHeight = 120.toScale;
+    const toolbarHeight = 120.0;
 
     return AppBar(
       automaticallyImplyLeading: false,
@@ -118,7 +183,7 @@ class _PrimaryAppBarImpl extends StatelessWidget {
           alignment: Alignment.centerLeft,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+              padding: const EdgeInsets.symmetric(horizontal: Insets.large),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,11 +194,11 @@ class _PrimaryAppBarImpl extends StatelessWidget {
                       iconColor: colors.onPrimary,
                       textStyle: styles.actionTextStyle,
                     ),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                   ],
                   MText(
                     title,
-                    style: $styles.text.heading2Bold,
+                    style: textTheme.heading2Bold,
                     color: colors.onPrimary,
                   ),
                 ],
@@ -153,8 +218,8 @@ class _PrimaryAppBarImpl extends StatelessWidget {
 
 class _SecondaryAppBar extends MAppBar {
   _SecondaryAppBar({
-    super.key,
     required super.title,
+    super.key,
     super.onBackPressed,
     super.centerTitle = false,
     super.actions,
@@ -171,8 +236,8 @@ class _SecondaryAppBar extends MAppBar {
 
 class _HomeAppBar extends MAppBar {
   _HomeAppBar({
-    super.key,
     required super.title,
+    super.key,
     super.onBackPressed,
     super.centerTitle = false,
     String? avatarImageUrl,
@@ -192,17 +257,16 @@ class _HomeAppBar extends MAppBar {
 }
 
 class _SecondaryAppBarImpl extends StatelessWidget {
-  final String title;
-  final VoidCallback? onBackPressed;
-  final bool centerTitle;
-  final List<Widget>? actions;
-
   const _SecondaryAppBarImpl(
     this.title, {
     this.onBackPressed,
     this.centerTitle = false,
     this.actions,
   });
+  final String title;
+  final VoidCallback? onBackPressed;
+  final bool centerTitle;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -221,13 +285,6 @@ class _SecondaryAppBarImpl extends StatelessWidget {
 }
 
 class _HomeAppBarImpl extends StatelessWidget {
-  final String title;
-  final VoidCallback? onBackPressed;
-  final bool centerTitle;
-  final String? avatarImageUrl;
-  final VoidCallback? onAvatarTap;
-  final VoidCallback? onNotificationBellTap;
-
   const _HomeAppBarImpl(
     this.title, {
     this.onBackPressed,
@@ -236,18 +293,25 @@ class _HomeAppBarImpl extends StatelessWidget {
     this.onAvatarTap,
     this.onNotificationBellTap,
   });
+  final String title;
+  final VoidCallback? onBackPressed;
+  final bool centerTitle;
+  final String? avatarImageUrl;
+  final VoidCallback? onAvatarTap;
+  final VoidCallback? onNotificationBellTap;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return AppBar(
       flexibleSpace: SafeArea(
         child: Container(
-          margin: EdgeInsets.only(top: $styles.insets.small),
+          margin: const EdgeInsets.only(top: Insets.small),
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 6,
-          ).radius,
-          height: 56.toScale,
+          ),
+          height: 56,
           child: Row(
             children: [
               Expanded(
@@ -256,28 +320,28 @@ class _HomeAppBarImpl extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    MText("Hello,", style: $styles.text.captionRegular),
-                    MText(title, style: $styles.text.subheadingMedium),
+                    MText('Hello,', style: textTheme.captionRegular),
+                    MText(title, style: textTheme.subheadingMedium),
                   ],
                 ),
               ),
-              $styles.spaces.horizontalSmall,
+              Spaces.horizontalSmall,
               Row(
                 children: [
                   MIconButton(
                     icon: const Icon(MIcons.bell),
-                    iconSize: 20.toScale,
+                    iconSize: 20,
                     onPressed: onNotificationBellTap,
                   ),
-                  24.hSpace,
+                  const SizedBox(width: 24),
                   MAvatar(
-                    radius: $styles.insets.large,
+                    radius: Insets.large,
                     url: avatarImageUrl,
                     onTap: onAvatarTap,
                     hasBorder: false,
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

@@ -12,9 +12,6 @@ part 'live_participants_state.dart';
 
 @lazySingleton
 class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
-  final SocketService _socket;
-  late final StreamSubscription<SocketEvent> _socketEventSub;
-  late final StreamSubscription<SocketState> _socketStateSub;
   LiveParticipantsBloc({
     required SocketService socket,
   })  : _socket = socket,
@@ -23,10 +20,10 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
       socketState.whenOrNull(
         getBroadcastListeners: (participants, _) => emit(state.copyWith(
           participants: participants,
-        )),
+        ),),
         getNumberOfBroadcastListeners: (value, _) => emit(state.copyWith(
           numberOfParticipants: value,
-        )),
+        ),),
       );
     });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
@@ -36,6 +33,9 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
       );
     });
   }
+  final SocketService _socket;
+  late final StreamSubscription<SocketEvent> _socketEventSub;
+  late final StreamSubscription<SocketState> _socketStateSub;
 
   Future<void> initialize(Broadcast broadcast) async {
     emit(state.copyWith(broadcast: broadcast, loading: true));
@@ -45,8 +45,8 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
     emit(state.copyWith(loading: false));
   }
 
-  void _onNewBroadcastListener(Participant participant) {
-    final currentParticipants = List<Participant?>.from(state.participants);
+  void _onNewBroadcastListener(BroadcastParticipant participant) {
+    final currentParticipants = List<BroadcastParticipant?>.from(state.participants);
     final isAlreadyIn = currentParticipants.contains(participant);
     if (isAlreadyIn) return;
     final updatedParticipants = [...currentParticipants, participant];
@@ -61,8 +61,8 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
     }
   }
 
-  void participantLeft(Participant participant) {
-    final currentList = List<Participant?>.from(state.participants);
+  void participantLeft(BroadcastParticipant participant) {
+    final currentList = List<BroadcastParticipant?>.from(state.participants);
     final updatedList = currentList.where((p) => p != participant).toList();
     emit(state.copyWith(participants: updatedList));
   }

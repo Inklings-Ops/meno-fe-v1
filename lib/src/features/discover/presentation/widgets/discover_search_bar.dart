@@ -21,45 +21,45 @@ class DiscoverSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
+
     return Padding(
-      padding:
-          padding ?? EdgeInsets.symmetric(horizontal: $styles.insets.large),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: Insets.large),
       child: Row(
         children: [
           Expanded(
             child: SizedBox(
-              height: height.toScale,
+              height: height,
               child: SearchBar(
                 elevation: const WidgetStatePropertyAll(0),
                 autoFocus: autofocus,
                 onTap: onTap,
                 onChanged: onChanged,
                 hintText: 'Search broadcasts or broadcasters',
-                hintStyle: WidgetStatePropertyAll($styles.text.captionRegular),
-                padding: WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: $styles.insets.medium),
+                hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
+                padding: const WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(horizontal: Insets.medium),
                 ),
-                leading: Icon(MIcons.search, size: $styles.insets.large),
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                leading: const Icon(MIcons.search, size: Insets.large),
+                shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
                   side: BorderSide(
-                    width: 1.toScale,
-                    color: const Color(0xFFC2C7D0),
+                    color: Color(0xFFC2C7D0),
                   ),
-                  borderRadius: $styles.radius.small,
-                )),
+                  borderRadius: Corners.small,
+                ),),
               ),
             ),
           ),
           if (showCancelButton) ...[
-            $styles.spaces.horizontalSmall,
+            Spaces.horizontalSmall,
             InkWell(
               onTap: onCancel,
               child: MText(
                 'Cancel',
-                style: $styles.text.captionMedium,
+                style: textTheme.captionMedium,
                 color: colors.inActive,
               ),
-            )
+            ),
           ],
         ],
       ),

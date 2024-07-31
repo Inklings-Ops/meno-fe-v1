@@ -1,9 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
-
-import '../../domain/domain.dart';
-import 'folder_dto.dart';
-import 'note_creator_dto.dart';
 
 part 'note_dto.freezed.dart';
 part 'note_dto.g.dart';

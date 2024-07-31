@@ -2,10 +2,8 @@ import 'package:meno_fe_v1/meno.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({
-    super.key,
+    required this.actionTitle, required this.action, super.key,
     this.title,
-    required this.actionTitle,
-    required this.action,
   });
 
   final String? title;
@@ -15,24 +13,23 @@ class EmptyStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     return Container(
-      margin: const EdgeInsets.only(top: 40).radius,
+      margin: const EdgeInsets.only(top: 40),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Assets.images.liveForYou.image(
-            height: 120.toScale,
-            width: 120.toScale,
+            height: 120,
+            width: 120,
           ),
           MText(
             title ?? 'No broadcasts published yet',
-            style: $styles.text.captionMedium,
+            style: textTheme.captionMedium,
             textAlign: TextAlign.center,
           ),
-          $styles.spaces.verticalLarge,
+          Spaces.verticalLarge,
           SizedBox(
-            height: 32.toScale,
+            height: 32,
             child: MSecondaryButton.icon(
               label: 'View $actionTitle',
               icon: Icon(
@@ -44,11 +41,11 @@ class EmptyStateWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 8,
-                ).radius,
+                ),
                 side: BorderSide(color: colorScheme.outlineVariant3!),
                 foregroundColor: colorScheme.onBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: $styles.radius.small,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Corners.small,
                 ),
               ),
             ),

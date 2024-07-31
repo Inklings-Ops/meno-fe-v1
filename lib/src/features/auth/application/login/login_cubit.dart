@@ -13,8 +13,6 @@ part 'login_state.dart';
 /// A [Cubit] responsible for managing the login state.
 @lazySingleton
 class LoginCubit extends Cubit<LoginState> {
-  final IAuthFacade _facade;
-  final ISettingsFacade _settingsFacade;
 
   LoginCubit({
     required IAuthFacade facade,
@@ -22,6 +20,8 @@ class LoginCubit extends Cubit<LoginState> {
   })  : _facade = facade,
         _settingsFacade = settingsFacade,
         super(LoginState.initial());
+  final IAuthFacade _facade;
+  final ISettingsFacade _settingsFacade;
 
   /// Updates the user's email address.
   ///

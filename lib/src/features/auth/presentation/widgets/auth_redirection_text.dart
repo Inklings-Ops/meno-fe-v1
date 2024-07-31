@@ -3,9 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class AuthRedirectionText extends StatelessWidget {
   const AuthRedirectionText({
-    super.key,
-    required this.title,
-    required this.buttonText,
+    required this.title, required this.buttonText, super.key,
     this.onPressed,
   });
   final String title;
@@ -15,16 +13,17 @@ class AuthRedirectionText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        MText(title, style: $styles.text.captionMedium),
-        $styles.spaces.horizontalMicro,
+        MText(title, style: textTheme.captionMedium),
+        Spaces.horizontalMicro,
         InkWell(
           onTap: onPressed,
           child: MText(
             buttonText,
-            style: $styles.text.captionMedium,
+            style: textTheme.captionMedium,
             color: colors.primary,
           ),
         ),

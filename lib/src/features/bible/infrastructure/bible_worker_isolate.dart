@@ -13,16 +13,15 @@ class BibleIsolateParams {
 }
 
 class BibleWorkerIsolate {
+  BibleWorkerIsolate._(this._commands, this._responses) {
+    _responses.listen(_handleResponsesFromIsolate);
+  }
   final SendPort _commands;
   final ReceivePort _responses;
 
   int _idCounter = 0;
   bool _isClosed = false;
   final Map<int, Completer<Object?>> _activeResponses = {};
-
-  BibleWorkerIsolate._(this._commands, this._responses) {
-    _responses.listen(_handleResponsesFromIsolate);
-  }
 
   Future<List<VerseDto>?> downloadBible(BibleIsolateParams params) async {
     if (_isClosed) throw StateError('BibleIsolateParams is closed');
@@ -46,7 +45,7 @@ class BibleWorkerIsolate {
   static Future<BibleWorkerIsolate> spawn() async {
     final rawPort = RawReceivePort();
     final completer = Completer<(SendPort, ReceivePort)>.sync();
-    rawPort.handler = (initialMessage) {
+    rawPort.handler = (dynamic initialMessage) {
       final commandPort = initialMessage as SendPort;
       final responsePort = ReceivePort.fromRawReceivePort(rawPort);
       completer.complete((commandPort, responsePort));
@@ -76,13 +75,18 @@ class BibleWorkerIsolate {
       final (id, params) = message as (int, BibleIsolateParams);
       try {
         final dio = Dio();
-        final translation = params.translation;
-        final uri = '${Env.bibleApiUrl}/api/default/?v=$translation';
-        final response = await dio.get(uri);
-        final bibleResponse = BibleResponse.fromJson(response.data, (bJSON) {
-          final versesJSON = List<Map<String, dynamic>>.from(bJSON);
-          final dtos = versesJSON.map(VerseDto.fromJson).toList();
-          return dtos.map((v) => v.copyWith(translation: translation)).toList();
+        final trans = params.translation;
+        final uri = '${Env.bibleApiUrl}/api/default/?v=$trans';
+        final response = await dio.get<dynamic>(uri);
+        final data = response.data as Map<String, dynamic>;
+        final bibleResponse = BibleResponse.fromJson(data, (bJSON) {
+          if (bJSON is List) {
+            final versesJSON = List<Map<String, dynamic>>.from(bJSON);
+            final dtos = versesJSON.map(VerseDto.fromJson).toList();
+            return dtos.map((v) => v.copyWith(translation: trans)).toList();
+          } else {
+            throw Exception('Unexpected data format in BibleResponse');
+          }
         });
         sendPort.send((id, bibleResponse.data));
       } catch (e) {

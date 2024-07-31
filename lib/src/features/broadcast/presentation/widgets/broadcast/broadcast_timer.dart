@@ -9,6 +9,7 @@ class BroadcastTimer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return BlocBuilder<TimerCubit, TimerState>(
       bloc: context.watch<TimerCubit>(),
       buildWhen: (p, c) => p != c,
@@ -19,16 +20,16 @@ class BroadcastTimer extends StatelessWidget {
           children: [
             MText(
               elapsedTime,
-              style: textStyle ?? $styles.text.captionRegular,
+              style: textStyle ?? textTheme.captionRegular,
               color: colors.onDisabledContainer,
             ),
             if (state.timeAgo != null && showTimeAgo) ...[
-              $styles.spaces.horizontalSmall,
+              Spaces.horizontalSmall,
               const MDot(),
-              $styles.spaces.horizontalSmall,
+              Spaces.horizontalSmall,
               MText(
                 state.timeAgo!,
-                style: $styles.text.captionRegular,
+                style: textTheme.captionRegular,
                 color: colors.onDisabledContainer,
               ),
             ],

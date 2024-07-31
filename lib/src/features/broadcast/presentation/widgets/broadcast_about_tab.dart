@@ -1,29 +1,28 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastAboutTab extends StatelessWidget {
-  const BroadcastAboutTab({super.key, required this.description});
+  const BroadcastAboutTab({required this.description, super.key});
   final String? description;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(MIcons.menu_03, size: $styles.insets.large),
-              $styles.spaces.horizontalSmall,
+              const Icon(MIcons.menu_03, size: Insets.large),
+              Spaces.horizontalSmall,
               MText(
                 'About Broadcast',
-                style: $styles.text.subheadingMedium,
+                style: textTheme.subheadingMedium,
               ),
             ],
           ),
-          $styles.spaces.verticalLarge,
+          Spaces.verticalLarge,
           if (description != null)
             MText(
               description!,

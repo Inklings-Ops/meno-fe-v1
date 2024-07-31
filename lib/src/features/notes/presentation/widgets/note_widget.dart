@@ -10,19 +10,19 @@ class NoteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20).radius,
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        height: 88.toScale,
-        padding: const EdgeInsets.all(16).radius,
+        height: 88,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(20).radius,
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -31,13 +31,13 @@ class NoteWidget extends StatelessWidget {
           children: [
             MText(
               'Notes',
-              style: $styles.text.captionMedium,
+              style: textTheme.captionMedium,
               color: foreground,
             ),
             BlocBuilder<NotesBloc, NotesState>(
               builder: (context, state) => MText(
                 state.notes.length.toString(),
-                style: $styles.text.heading2Medium,
+                style: textTheme.heading2Medium,
                 color: foreground,
               ),
             ),

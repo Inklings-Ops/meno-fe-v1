@@ -2,32 +2,78 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+/// A widget that represents a card for live content.
+///
+/// This card displays information about live content, including the title,
+/// host, and an optional image. It also supports showing a live count and
+/// handles loading state through the [loading] property. The card can handle
+/// tap gestures through the [onTap] callback.
+///
+/// Example usage:
+/// ```dart
+/// MLiveCard(
+///   title: 'Live Event Title',
+///   host: 'Host Name',
+///   loading: false,
+///   imageUrl: 'https://example.com/image.jpg',
+///   liveCount: 1234,
+///   onTap: () {
+///     // Handle card tap
+///   },
+/// );
+/// ```
 class MLiveCard extends StatelessWidget {
+  /// Creates an instance of [MLiveCard].
+  ///
+  /// Parameters:
+  /// - [title]: The title of the live content.
+  /// - [host]: The name of the host of the live content.
+  /// - [loading]: A boolean indicating if the card is in a loading state.
+  /// - [key]: An optional key to identify the widget.
+  /// - [imageUrl]: An optional URL for an image to be displayed in the card.
+  /// - [liveCount]: An optional count of live viewers or participants.
+  /// - [onTap]: An optional callback function to be invoked when the card is
+  /// tapped.
   const MLiveCard({
+    required this.loading,
+    this.title,
+    this.host,
     super.key,
-    required this.title,
-    required this.host,
     this.imageUrl,
     this.liveCount = 0,
     this.onTap,
   });
-  final String title;
-  final String host;
+
+  /// The title of the live content.
+  final String? title;
+
+  /// The name of the host of the live content.
+  final String? host;
+
+  /// The URL of an image to be displayed in the card.
   final String? imageUrl;
+
+  /// The count of live viewers or participants.
   final int? liveCount;
+
+  /// A callback function to be invoked when the card is tapped.
   final VoidCallback? onTap;
+
+  /// A boolean indicating if the card is in a loading state.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
-    final MCardStyles styles = MCardStyles.of(context)!;
+    final styles = MCardStyles.of(context)!;
 
     String? count;
 
-    if (liveCount != null && liveCount != 0) {
+    if (!loading && liveCount != null && liveCount != 0) {
       count = NumberFormat.compactCurrency(
         decimalDigits: 0,
-        symbol: "",
+        symbol: '',
       ).format(liveCount);
     }
 
@@ -38,67 +84,47 @@ class MLiveCard extends StatelessWidget {
         children: [
           _Container(
             children: [
-              MAvatar(radius: 44.toScale, url: imageUrl),
-              $styles.spaces.verticalMedium,
-              SizedBox(
-                height: 24.toScale,
+              MAvatar(radius: 44, url: imageUrl, loading: loading),
+              Spaces.verticalMedium,
+              Skeletonizer(
+                enabled: loading,
+                child: SizedBox(
+                  height: 24,
+                  child: MText(
+                    loading ? BoneMock.name : title!,
+                    style: styles.titleStyle,
+                    color: styles.titleColor,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              Spaces.verticalMicro,
+              Skeletonizer(
+                enabled: loading,
                 child: MText(
-                  title,
-                  style: styles.titleStyle,
-                  color: styles.titleColor,
+                  loading ? BoneMock.name : host!,
+                  style: styles.hostStyle,
+                  color: styles.hostColor,
                   maxLines: 1,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              $styles.spaces.verticalMicro,
-              MText(
-                host,
-                style: styles.hostStyle,
-                color: styles.hostColor,
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
             ],
           ),
           Positioned(
-            top: 8.0.toScale,
-            left: 16.0.toScale,
-            child: MBadge.live(count: count, showBorder: true),
-          )
+            top: 8,
+            left: 16,
+            child: MBadge.live(
+              count: count,
+              showBorder: true,
+              loading: loading,
+            ),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class MLiveCardSkeleton extends StatelessWidget {
-  const MLiveCardSkeleton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        _Container(
-          children: [
-            const MShimmer(shape: BoxShape.circle, height: 88, width: 88),
-            $styles.spaces.verticalMedium,
-            const MShimmer(height: 24, width: 144),
-            $styles.spaces.verticalMicro,
-            const MShimmer(height: 14, width: 80),
-          ],
-        ),
-        Positioned(
-          top: 8.0.toScale,
-          left: 16.0.toScale,
-          child: MShimmer(
-            borderRadius: $styles.insets.circle,
-            child: const MBadge.live(count: "00K", showBorder: true),
-          ),
-        )
-      ],
     );
   }
 }
@@ -111,22 +137,19 @@ class _Container extends StatelessWidget {
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
     return Container(
-      width: 176.toScale,
-      height: 176.toScale,
-      padding: const EdgeInsets.all(14).radius,
+      width: 176,
+      height: 176,
+      padding: const EdgeInsets.all(14),
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        shadows: $styles.shadows.soft,
-        shape: SmoothRectangleBorder(
-          borderRadius: $styles.radius.squircleLarge,
-        ),
+        shadows: Shadows.soft,
+        shape: SmoothRectangleBorder(borderRadius: Corners.squircleLarge),
       ),
       child: SizedBox(
-        width: 144.toScale,
-        height: 144.toScale,
+        width: 144,
+        height: 144,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: children,
         ),

@@ -17,6 +17,5 @@ class TimerState with _$TimerState {
         seconds: '00',
         elapsedTime: Duration.zero,
         isRunning: false,
-        timeAgo: null,
       );
 }

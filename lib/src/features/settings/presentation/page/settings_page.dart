@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
-import '../widgets/settings_list_tile.dart';
-import '../widgets/settings_section.dart';
+import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_list_tile.dart';
+import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_section.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -16,7 +16,7 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             SettingsSection(
               title: 'General',
               children: [
@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
                     label: 'English',
                     icon: Icon(
                       MIcons.chevron_right,
-                      size: 18.toScale,
+                      size: 18,
                       color: colors.onBackgroundVariant,
                     ),
                     iconPlacement: MButtonIconPlacement.right,
@@ -59,7 +59,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            $styles.spaces.verticalXXLarge,
+            Spaces.verticalXXLarge,
             SettingsSection(
               title: 'Account & Security',
               children: [
@@ -77,7 +77,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            $styles.spaces.verticalXXLarge,
+            Spaces.verticalXXLarge,
             SettingsSection(
               title: 'Other',
               children: [
@@ -111,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
-            $styles.spaces.verticalXXLarge,
+            Spaces.verticalXXLarge,
           ],
         ),
       ),
