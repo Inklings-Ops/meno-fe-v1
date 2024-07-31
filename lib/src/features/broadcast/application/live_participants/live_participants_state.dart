@@ -5,7 +5,7 @@ class LiveParticipantsState with _$LiveParticipantsState {
   const factory LiveParticipantsState({
     required Broadcast broadcast,
     required bool loading,
-    required List<Participant?> participants,
+    required List<BroadcastParticipant?> participants,
     required int numberOfParticipants,
   }) = _LiveParticipantsState;
 

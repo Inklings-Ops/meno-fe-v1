@@ -11,7 +11,6 @@ part 'search_state.dart';
 
 @lazySingleton
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  final IDiscoverFacade _facade;
   SearchBloc({required IDiscoverFacade facade})
       : _facade = facade,
         super(SearchState.initial()) {
@@ -24,8 +23,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .switchMap(mapper),
     );
   }
+  final IDiscoverFacade _facade;
 
-  Future<void> _onSearchResultsFetched(SearchResultsFetched event, emit) async {
+  Future<void> _onSearchResultsFetched(
+    SearchResultsFetched event,
+    Emitter<SearchState> emit,
+  ) async {
     if (state.hasMore || !state.isSearchingMore) {
       emit(state.copyWith(isSearchingMore: true));
       final fOrS = await _facade.search(
@@ -33,34 +36,43 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         page: event.page,
         size: 6,
       );
-      emit(fOrS.fold(
-        (f) => state.copyWith(isLoading: false, exception: f),
-        (r) => state.copyWith(
-          isLoading: false,
-          searchResults: [...state.searchResults, ...r.broadcasts],
-          page: event.page,
-          hasMore: event.page < r.totalPages,
+      emit(
+        fOrS.fold(
+          (f) => state.copyWith(isLoading: false, exception: f),
+          (r) => state.copyWith(
+            isLoading: false,
+            searchResults: [...state.searchResults, ...r.broadcasts],
+            page: event.page,
+            hasMore: event.page < r.totalPages,
+          ),
         ),
-      ));
+      );
     }
   }
 
-  Future<void> _onSearchBarChanged(SearchBarChanged event, emit) async {
-    emit(state.copyWith(
-      keyword: event.keyword,
-      isLoading: true,
-      hasMore: true,
-      exception: null,
-    ));
-    final fOrS = await _facade.search(keywords: event.keyword, size: 6);
-    emit(fOrS.fold(
-      (f) => state.copyWith(isLoading: false, exception: f),
-      (r) => state.copyWith(
-        isLoading: false,
-        searchResults: r.broadcasts,
-        hasMore: r.currentPage < r.totalPages,
+  Future<void> _onSearchBarChanged(
+    SearchBarChanged event,
+    Emitter<SearchState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        keyword: event.keyword,
+        isLoading: true,
+        hasMore: true,
+        exception: null,
       ),
-    ));
+    );
+    final fOrS = await _facade.search(keywords: event.keyword, size: 6);
+    emit(
+      fOrS.fold(
+        (f) => state.copyWith(isLoading: false, exception: f),
+        (r) => state.copyWith(
+          isLoading: false,
+          searchResults: r.broadcasts,
+          hasMore: r.currentPage < r.totalPages,
+        ),
+      ),
+    );
   }
 
   Future<void> _onSearchRefreshed(SearchRefreshed event, emit) async {}

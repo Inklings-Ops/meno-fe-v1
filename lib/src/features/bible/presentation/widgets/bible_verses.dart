@@ -16,7 +16,7 @@ class BibleVerses extends HookWidget {
       final transAbb = transCubit.state.selectedTranslation.abbreviation;
       bloc.getVerses(book: book, chapter: chapter, translation: transAbb);
       return null;
-    }, const []);
+    }, const [],);
 
     return MultiBlocListener(
       listeners: [

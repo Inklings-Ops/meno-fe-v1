@@ -3,9 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class OnboardingIndicator extends StatelessWidget {
   const OnboardingIndicator({
-    super.key,
-    required this.currentIndex,
-    required this.itemsLength,
+    required this.currentIndex, required this.itemsLength, super.key,
   });
   final int currentIndex;
   final int itemsLength;

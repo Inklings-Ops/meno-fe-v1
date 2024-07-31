@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
   const DeleteNoteFromFolderAlertDialog({
-    super.key,
-    required this.onDelete,
+    required this.onDelete, super.key,
     this.onCancel,
   });
 

@@ -23,8 +23,8 @@ class NowLive extends StatelessWidget {
 }
 
 class _LiveCard extends HookWidget {
-  final Broadcast broadcast;
   const _LiveCard({required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +54,9 @@ class _LiveCard extends HookWidget {
 }
 
 class _BuildColumn extends StatelessWidget {
+  const _BuildColumn({required this.child, this.showSeeAllButton = false});
   final Widget child;
   final bool showSeeAllButton;
-  const _BuildColumn({required this.child, this.showSeeAllButton = false});
 
   @override
   Widget build(BuildContext context) {

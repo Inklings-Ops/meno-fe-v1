@@ -1,5 +1,5 @@
-import '../../domain/domain.dart';
-import '../dtos/chat_dto.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/chat/infrastructure/dtos/chat_dto.dart';
 
 class ChatMapper {
   Chat? chatToDomain(ChatDto? dto) {

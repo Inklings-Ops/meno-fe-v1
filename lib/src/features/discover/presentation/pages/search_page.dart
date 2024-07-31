@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 class SearchPage extends HookWidget {
-  const SearchPage({super.key, required this.onCancel});
+  const SearchPage({required this.onCancel, super.key});
   final VoidCallback onCancel;
 
   @override
@@ -19,7 +19,7 @@ class SearchPage extends HookWidget {
         }
       });
       return null;
-    }, const []);
+    }, const [],);
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: AppBar(

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'broadcast_error.dart';
+import 'package:meno_fe_v1/src/features/broadcast/infrastructure/responses/broadcast_error.dart';
 
 part 'broadcast_response.freezed.dart';
 part 'broadcast_response.g.dart';

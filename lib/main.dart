@@ -5,10 +5,10 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-import 'app/app.dart';
+import 'package:meno_fe_v1/app/app.dart';
 
 Future<void> main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
@@ -17,7 +17,6 @@ Future<void> main() async {
   // di<ObjectBoxService>().verseBox.removeAll();
   runApp(
     DevicePreview(
-      enabled: true,
       builder: (_) => MenoRepositoryProvider(
         child: MenoBlocProvider(
           child: ChangeNotifierProvider(

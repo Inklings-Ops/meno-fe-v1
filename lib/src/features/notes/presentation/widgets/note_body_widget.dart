@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteBodyWidget extends StatelessWidget {
-  const NoteBodyWidget({super.key, required this.selectedIndex});
+  const NoteBodyWidget({required this.selectedIndex, super.key});
   final ValueNotifier<int> selectedIndex;
 
   @override
@@ -40,7 +40,7 @@ class NoteBodyWidget extends StatelessWidget {
                       onTap: () => selectedIndex.value = 1,
                       selected: selectedIndex.value == 1,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

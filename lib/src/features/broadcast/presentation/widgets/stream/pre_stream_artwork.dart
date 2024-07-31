@@ -25,8 +25,8 @@ class PreStreamArtwork extends StatelessWidget {
       );
     }
 
-    final SizedBox placeholder = SizedBox(
-      height: (142 * 0.4),
+    final placeholder = SizedBox(
+      height: 142 * 0.4,
       child: colors.brightness == Brightness.light
           ? Assets.images.logoDark.svg()
           : Assets.images.logoLight.svg(),

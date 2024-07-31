@@ -10,7 +10,7 @@ class ParticipantItem extends StatelessWidget {
     this.isCohost = false,
     this.isForAddCohost = false,
   });
-  final Participant? participant;
+  final BroadcastParticipant? participant;
   final VoidCallback? onTap;
   final bool isCohost;
   final bool isForAddCohost;
@@ -25,8 +25,6 @@ class ParticipantItem extends StatelessWidget {
       child: SizedBox.square(
         dimension: 88,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _ParticipantAvatar(
               participant: participant,
@@ -66,8 +64,8 @@ class ParticipantItem extends StatelessWidget {
 }
 
 class _ParticipantAvatar extends StatelessWidget {
-  const _ParticipantAvatar({this.participant, required this.isForAddCohost});
-  final Participant? participant;
+  const _ParticipantAvatar({required this.isForAddCohost, this.participant});
+  final BroadcastParticipant? participant;
   final bool isForAddCohost;
 
   @override
@@ -76,7 +74,6 @@ class _ParticipantAvatar extends StatelessWidget {
     return SizedBox.square(
       dimension: 48,
       child: Stack(
-        fit: StackFit.loose,
         children: [
           MAvatar(
             radius: 24,

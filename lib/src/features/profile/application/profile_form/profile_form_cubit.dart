@@ -4,19 +4,16 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
+import 'package:meno_fe_v1/src/services/media_service.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../../../../services/media_service.dart';
-import '../../../auth/domain/domain.dart';
-import '../../domain/domain.dart';
 
 part 'profile_form_cubit.freezed.dart';
 part 'profile_form_state.dart';
 
 @lazySingleton
 class ProfileFormCubit extends Cubit<ProfileFormState> {
-  final IProfileFacade _facade;
-  final MediaService _media;
 
   ProfileFormCubit({
     required IProfileFacade facade,
@@ -24,11 +21,13 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
   })  : _facade = facade,
         _media = media,
         super(ProfileFormState.initial());
+  final IProfileFacade _facade;
+  final MediaService _media;
 
   bool? get isValid =>
       state.fullName?.isValid == true || state.bio?.isValid == true;
 
-  void avatarChanged(bool fromGallery) async {
+  Future<void> avatarChanged(bool fromGallery) async {
     final file = await _media.getImage(fromGallery: fromGallery);
     if (file != null) {
       emit(state.copyWith(avatar: Avatar(File(file.path)), hasChanges: true));
@@ -55,7 +54,7 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
       loading: false,
       onEdited: some(result),
       hasChanges: false,
-    ));
+    ),);
   }
 
   void fullNameChanged(String fullName) {

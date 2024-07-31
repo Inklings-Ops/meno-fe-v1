@@ -1,8 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/user_dto.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
-
-import '../../domain/domain.dart';
-import 'user_dto.dart';
 
 part 'user_credential_dto.freezed.dart';
 part 'user_credential_dto.g.dart';

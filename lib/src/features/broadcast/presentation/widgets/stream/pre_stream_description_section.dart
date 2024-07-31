@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class PreStreamDescriptionSection extends StatelessWidget {
-  const PreStreamDescriptionSection({super.key, required this.broadcast});
+  const PreStreamDescriptionSection({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
@@ -13,8 +13,6 @@ class PreStreamDescriptionSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Icon(MIcons.menu_03, size: Insets.large),
             Spaces.horizontalSmall,

@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/services/jwt_service.dart';
-
-import 'password_rule.dart';
-import 'value_failure.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/password_rule.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_failure.dart';
 
 typedef ValidationResult = Either<ValueFailure<String>, String>;
 typedef ValidationResultNullable = Either<ValueFailure<String?>, String?>;
@@ -53,9 +52,13 @@ Either<ValueFailure<String>, String> validateSingleLine(String input) {
 }
 
 Either<ValueFailure<String>, String> validatePassword(String input) {
-  final rules = passwordStrengthRules
-      .map((rule) => PasswordRule(rule['name'], rule['rule'](input)))
-      .toList();
+  final rules = passwordStrengthRules.map(
+    (r) {
+      final title = r['name'] as String;
+      final isValidFunc = r['rule'] as bool Function(String);
+      return PasswordRule(title: title, isValid: isValidFunc(input));
+    },
+  ).toList();
 
   if (rules.every((status) => status.isValid)) {
     return right(input);

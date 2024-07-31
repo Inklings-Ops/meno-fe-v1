@@ -1,15 +1,13 @@
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-import '../domain/i_network_facade.dart';
-import '../domain/network_status.dart';
+import 'package:meno_fe_v1/src/core/network/domain/i_network_facade.dart';
+import 'package:meno_fe_v1/src/core/network/domain/network_status.dart';
 
 /// Concrete implementation of the [INetworkFacade] that uses the
 /// [InternetConnectionChecker] to monitor network connectivity.
 @LazySingleton(as: INetworkFacade)
 class NetworkFacade implements INetworkFacade {
-  /// Manages platform-specific network connectivity checks.
-  final InternetConnectionChecker _connectivity;
 
   /// Creates a new instance of [NetworkFacade].
   ///
@@ -17,6 +15,8 @@ class NetworkFacade implements INetworkFacade {
   NetworkFacade({
     required InternetConnectionChecker connectivity,
   }) : _connectivity = connectivity;
+  /// Manages platform-specific network connectivity checks.
+  final InternetConnectionChecker _connectivity;
 
   /// A stream that emits the current network status whenever it changes.
   ///

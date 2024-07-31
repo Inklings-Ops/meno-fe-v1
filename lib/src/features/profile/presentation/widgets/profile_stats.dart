@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ProfileStats extends StatelessWidget {
-  const ProfileStats({super.key, required this.stats});
+  const ProfileStats({required this.stats, super.key});
   final UserStats? stats;
 
   @override

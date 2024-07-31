@@ -4,18 +4,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../shared/helpers/date_helpers.dart';
+import 'package:meno_fe_v1/src/shared/helpers/date_helpers.dart';
 
 part 'timer_cubit.freezed.dart';
 part 'timer_state.dart';
 
 @lazySingleton
 class TimerCubit extends Cubit<TimerState> {
-  Timer? _timer;
 
   TimerCubit() : super(TimerState.initial());
+  Timer? _timer;
 
-  void dispose() async => reset();
+  Future<void> dispose() async => reset();
 
   @override
   Future<void> close() {
@@ -44,7 +44,7 @@ class TimerCubit extends Cubit<TimerState> {
       minutes: _calculateTime(duration, _Unit.mins),
       seconds: _calculateTime(duration, _Unit.secs),
       timeAgo: DateHelpers.getTimeAgo(duration),
-    ));
+    ),);
   }
 
   void start() {
@@ -60,7 +60,7 @@ class TimerCubit extends Cubit<TimerState> {
         minutes: _calculateTime(state.elapsedTime, _Unit.mins),
         seconds: _calculateTime(state.elapsedTime, _Unit.secs),
         timeAgo: DateHelpers.getTimeAgo(state.elapsedTime),
-      ));
+      ),);
     });
   }
 

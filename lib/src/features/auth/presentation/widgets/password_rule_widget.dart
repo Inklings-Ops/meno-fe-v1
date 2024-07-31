@@ -16,7 +16,7 @@ class PasswordRulesWidget extends StatelessWidget {
           padding: const EdgeInsets.all(Insets.large),
           decoration: BoxDecoration(
             color: colors.background,
-            border: Border.all(width: 1, color: MColor.grey50),
+            border: Border.all(color: MColor.grey50),
             borderRadius: Corners.small,
           ),
           child: Wrap(
@@ -24,7 +24,8 @@ class PasswordRulesWidget extends StatelessWidget {
             children: state.value.fold(
               (failure) => failure.maybeWhen(
                 orElse: () => passwordStrengthRules.map((e) {
-                  final rule = PasswordRule(e['name'], false);
+                  final title = e['name'] as String;
+                  final rule = PasswordRule(title: title, isValid: false);
                   return _RuleItem(rule: rule, color: colors.onBackground);
                 }).toList(),
                 invalidPassword: (rules) => rules.map((rule) {

@@ -1,10 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import '../value_objects/value_objects.dart';
-import 'broadcast_status.dart';
-import 'participant.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+ import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcast.freezed.dart';
 
@@ -20,7 +17,7 @@ class Broadcast with _$Broadcast {
     BroadcastToken? broadcastToken,
     BroadcastStatus? status,
     String? creatorId,
-    Participant? creator,
+    BroadcastParticipant? creator,
     String? fullName,
     String? imageId,
     String? imageUrl,
@@ -37,7 +34,7 @@ class Broadcast with _$Broadcast {
     return Broadcast(
       id: Uid<Broadcast>.fromString(''),
       title: SingleLineString(''),
-      creator: Participant.empty(),
+      creator: BroadcastParticipant.empty(),
     );
   }
 }
@@ -46,7 +43,7 @@ extension BX on Broadcast {
   Option<ValueFailure<dynamic>> get failureOption {
     return title.failureOrUnit
         .andThen(description!.failureOrUnit)
-        .fold((f) => some(f), (_) => none());
+        .fold(some, (_) => none());
   }
 
   bool get isValid => failureOption.isNone();

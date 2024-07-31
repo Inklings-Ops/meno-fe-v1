@@ -4,14 +4,14 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class LoginPage extends StatelessWidget {
-  final bool implyLeading;
-  final bool isPasswordOnly;
 
   const LoginPage({
     super.key,
     this.implyLeading = false,
     this.isPasswordOnly = false,
   });
+  final bool implyLeading;
+  final bool isPasswordOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +45,12 @@ class LoginPage extends StatelessWidget {
               const MGoogleButton(title: 'Login with Google'),
               const SizedBox(height: 144),
               AuthRedirectionText(
-                title: 'Don\'t have an account?',
+                title: "Don't have an account?",
                 buttonText: 'Create an account',
                 onPressed: () => implyLeading
-                    ? router.replace(Routes.register, extra: true)
-                    : router.push(Routes.register, extra: true),
-              )
+                    ? const RegisterRoute().replace(context)
+                    : const RegisterRoute().push<void>(context),
+              ),
             ],
           ),
         ),

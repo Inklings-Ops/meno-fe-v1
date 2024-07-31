@@ -9,10 +9,10 @@ part 'd_recently_live_state.dart';
 
 @lazySingleton
 class DRecentlyLiveCubit extends Cubit<DRecentlyLiveState> {
-  final IDiscoverFacade _facade;
   DRecentlyLiveCubit({required IDiscoverFacade facade})
       : _facade = facade,
         super(DRecentlyLiveState.initial());
+  final IDiscoverFacade _facade;
 
   Future<void> fetch(int page) async {
     if (state.isLoading || !state.hasMore) return;
@@ -27,7 +27,7 @@ class DRecentlyLiveCubit extends Cubit<DRecentlyLiveState> {
         hasMore: s.currentPage < s.totalPages,
         broadcasts: [...currentBroadcasts, ...s.broadcasts],
       ),
-    ));
+    ),);
   }
 
   Future<void> refresh() async {
@@ -41,6 +41,6 @@ class DRecentlyLiveCubit extends Cubit<DRecentlyLiveState> {
         hasMore: s.currentPage < s.totalPages,
         broadcasts: s.broadcasts,
       ),
-    ));
+    ),);
   }
 }

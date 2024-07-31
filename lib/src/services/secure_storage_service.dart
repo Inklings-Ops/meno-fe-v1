@@ -6,12 +6,12 @@ const _aOptions = AndroidOptions(encryptedSharedPreferences: true);
 /// A service for securely storing data on the device.
 @lazySingleton
 class SecureStorageService {
-  /// The Flutter Secure Storage plugin.
-  final FlutterSecureStorage _storage;
 
   /// Creates a new `SecureStorageService` object.
   SecureStorageService()
       : _storage = const FlutterSecureStorage(aOptions: _aOptions);
+  /// The Flutter Secure Storage plugin.
+  final FlutterSecureStorage _storage;
 
   /// Deletes the specified key from the secure storage.
   ///

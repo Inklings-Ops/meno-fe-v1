@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 import 'package:objectbox/objectbox.dart';
-
-import '../../domain/domain.dart';
 
 part 'note_creator_dto.freezed.dart';
 part 'note_creator_dto.g.dart';
@@ -11,10 +10,7 @@ part 'note_creator_dto.g.dart';
 class NoteCreatorDto with _$NoteCreatorDto {
   @Entity(realClass: NoteCreatorDto)
   factory NoteCreatorDto({
-    @Id() int? dbId,
-    @Unique() required String id,
-    required String fullName,
-    required String email,
+    @Unique() required String id, required String fullName, required String email, @Id() int? dbId,
    String? imageUrl,
   }) = _NoteCreatorDto;
 

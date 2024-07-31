@@ -11,7 +11,7 @@ class ProfileButtons extends StatelessWidget {
     return SizedBox(
       height: 32,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
             Expanded(

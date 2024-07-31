@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart' hide Notification;
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 class SubscribeNotificationCard extends StatelessWidget {
-  const SubscribeNotificationCard({super.key, required this.notification});
+  const SubscribeNotificationCard({required this.notification, super.key});
   final Notification notification;
 
   @override
@@ -25,7 +25,6 @@ class SubscribeNotificationCard extends StatelessWidget {
           Spaces.horizontalSmall,
           Expanded(
             child: Column(
-              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

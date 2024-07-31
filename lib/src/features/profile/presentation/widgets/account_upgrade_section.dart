@@ -9,7 +9,7 @@ class AccountUpgradeSection extends StatelessWidget {
     return SizedBox(
       height: 24,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
             const MTag(title: 'FREE ACCOUNT', height: 24),

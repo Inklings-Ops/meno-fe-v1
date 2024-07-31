@@ -1,16 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/book.dart';
-import 'chapter_dto.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/entities/book.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/chapter_dto.dart';
 
 part 'book_dto.freezed.dart';
 
 @freezed
 class BookDto with _$BookDto {
   factory BookDto({
-    int? id,
-    required String name,
-    required List<ChapterDto> chapters,
+    required String name, required List<ChapterDto> chapters, int? id,
   }) = _BookDto;
 }
 

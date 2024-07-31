@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class MNotesBackButton extends StatelessWidget {
-  const MNotesBackButton({super.key, required this.title});
+  const MNotesBackButton({required this.title, super.key});
 
   final String title;
 

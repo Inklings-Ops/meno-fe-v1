@@ -18,7 +18,7 @@ class BibleBooksModal extends HookWidget {
       final index = books.toList().indexWhere((b) => b.key == bloc.state.book);
       controller.scrollToIndex(index, preferPosition: AutoScrollPosition.begin);
       return null;
-    }, []);
+    }, [],);
 
     return MModal(
       title: 'Bible Books',

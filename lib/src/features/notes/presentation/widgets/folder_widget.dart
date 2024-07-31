@@ -38,10 +38,10 @@ class FolderWidget extends StatelessWidget {
       onPressed: onTap,
       shape: const _FolderBorder(),
       fillColor: backgroundColor ?? background,
-      elevation: 0.0,
-      hoverElevation: 0.0,
-      focusElevation: 0.0,
-      highlightElevation: 0.0,
+      elevation: 0,
+      hoverElevation: 0,
+      focusElevation: 0,
+      highlightElevation: 0,
       child: Container(
         height: height ?? 94,
         width: size.width,
@@ -84,29 +84,21 @@ class _FolderBorder extends OutlinedBorder {
   const _FolderBorder({super.side});
 
   Path customBorderPath(Rect rect) {
-    const double r = 20.0;
-
-    final Path path = Path();
-
-    // Bottom left
-    path.moveTo(0, rect.height - r);
-    path.quadraticBezierTo(0, rect.height, r, rect.height);
-
-    // Bottom right
-    path.lineTo(rect.width - r, rect.height);
-    path.quadraticBezierTo(
-        rect.width, rect.height, rect.width, rect.height - r);
-
-    // Top right (notch)
-    path.lineTo(rect.width, 6 + r);
-    path.quadraticBezierTo(rect.width, 6, rect.width - r, 6);
-    path.lineTo((rect.width * 0.55) + 6, 6);
-    path.lineTo((rect.width * 0.55) + 3, 3);
-    path.quadraticBezierTo(rect.width * 0.55, 0, rect.width * 0.55 - r, 0);
-    path.lineTo(r, 0);
-    path.quadraticBezierTo(0, 0, 0, r);
-    path.close();
-    return path;
+    const r = 20.0;
+    final path = Path();
+    return path
+      ..moveTo(0, rect.height - r)
+      ..quadraticBezierTo(0, rect.height, r, rect.height)
+      ..lineTo(rect.width - r, rect.height)
+      ..quadraticBezierTo(rect.width, rect.height, rect.width, rect.height - r)
+      ..lineTo(rect.width, 6 + r)
+      ..quadraticBezierTo(rect.width, 6, rect.width - r, 6)
+      ..lineTo((rect.width * 0.55) + 6, 6)
+      ..lineTo((rect.width * 0.55) + 3, 3)
+      ..quadraticBezierTo(rect.width * 0.55, 0, rect.width * 0.55 - r, 0)
+      ..lineTo(r, 0)
+      ..quadraticBezierTo(0, 0, 0, r)
+      ..close();
   }
 
   @override

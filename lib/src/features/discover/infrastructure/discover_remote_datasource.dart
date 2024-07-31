@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/discover/infrastructure/discover_response.dart';
+import 'package:meno_fe_v1/src/features/discover/infrastructure/dtos/discover_result_dto.dart';
 import 'package:retrofit/retrofit.dart';
-import 'discover_response.dart';
-import 'dtos/discover_result_dto.dart';
 
 part 'discover_remote_datasource.g.dart';
 

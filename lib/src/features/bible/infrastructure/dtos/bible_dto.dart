@@ -1,8 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/entities/bible.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/verse_dto.dart';
 import 'package:objectbox/objectbox.dart';
-
-import '../../domain/entities/bible.dart';
-import 'verse_dto.dart';
 
 part 'bible_dto.freezed.dart';
 
@@ -10,9 +9,7 @@ part 'bible_dto.freezed.dart';
 class BibleDto with _$BibleDto {
   @Entity(realClass: BibleDto)
   factory BibleDto({
-    @Id() int? id,
-    @Unique() required String translation,
-    required ToMany<VerseDto> verses,
+    @Unique() required String translation, required ToMany<VerseDto> verses, @Id() int? id,
   }) = _BibleDto;
 }
 

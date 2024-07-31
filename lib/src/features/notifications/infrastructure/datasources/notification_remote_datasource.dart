@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/notifications/infrastructure/responses/notification_response.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../responses/notification_response.dart';
 
 part 'notification_remote_datasource.g.dart';
 

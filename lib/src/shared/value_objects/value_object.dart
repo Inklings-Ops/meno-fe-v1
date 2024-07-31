@@ -2,8 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'value_error.dart';
-import 'value_failure.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_error.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_failure.dart';
 
 abstract class IValueObject {
   bool get isValid;
@@ -15,7 +15,7 @@ abstract class ValueObject<T> implements IValueObject {
 
   Either<ValueFailure<dynamic>, Unit> get failureOrUnit {
     return value.fold(
-      (l) => left(l),
+      left,
       (r) => right(unit),
     );
   }

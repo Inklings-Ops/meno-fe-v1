@@ -2,10 +2,8 @@ import 'package:meno_fe_v1/meno.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({
-    super.key,
+    required this.actionTitle, required this.action, super.key,
     this.title,
-    required this.actionTitle,
-    required this.action,
   });
 
   final String? title;
@@ -19,7 +17,6 @@ class EmptyStateWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 40),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Assets.images.liveForYou.image(
             height: 120,

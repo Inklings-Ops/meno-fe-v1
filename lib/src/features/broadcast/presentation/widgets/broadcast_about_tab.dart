@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastAboutTab extends StatelessWidget {
-  const BroadcastAboutTab({super.key, required this.description});
+  const BroadcastAboutTab({required this.description, super.key});
   final String? description;
 
   @override
@@ -13,8 +13,6 @@ class BroadcastAboutTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               const Icon(MIcons.menu_03, size: Insets.large),
               Spaces.horizontalSmall,

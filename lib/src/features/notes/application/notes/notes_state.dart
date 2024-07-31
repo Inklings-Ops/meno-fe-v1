@@ -12,7 +12,6 @@ class NotesState with _$NotesState {
     return const NotesState(
       notes: [],
       isLoading: false,
-      exception: null,
     );
   }
 }

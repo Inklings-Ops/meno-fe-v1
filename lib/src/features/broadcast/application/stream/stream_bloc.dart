@@ -11,9 +11,6 @@ part 'stream_state.dart';
 
 @Injectable()
 class StreamBloc extends Bloc<StreamEvent, StreamState> {
-  final IBroadcastFacade _facade;
-  final LiveKitService _liveKit;
-  final SocketService _socket;
   StreamBloc({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
@@ -25,8 +22,14 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     on<StreamJoinRequested>(_onJoinBroadcast);
     on<StreamLeaveRequested>(_onLeaveBroadcast);
   }
+  final IBroadcastFacade _facade;
+  final LiveKitService _liveKit;
+  final SocketService _socket;
 
-  Future<void> _onJoinBroadcast(event, emit) async {
+  Future<void> _onJoinBroadcast(
+    StreamJoinRequested event,
+    Emitter<StreamState> emit,
+  ) async {
     final fOrS = await _facade.joinBroadcast(event.id);
     await fOrS.fold(
       (failure) async => emit(StreamFailure(failure)),
@@ -40,7 +43,10 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     );
   }
 
-  void _onLeaveBroadcast(event, emit) async {
+  Future<void> _onLeaveBroadcast(
+    StreamLeaveRequested event,
+    Emitter<StreamState> emit,
+  ) async {
     if (state is StreamJoinSuccess) {
       emit(const StreamLoadInProgress());
       await _liveKit
@@ -56,7 +62,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
   @override
   Future<void> close() async {
     await _liveKit.dispose();
-    super.close();
+    await super.close();
   }
 
   Future<void> dispose() => _liveKit.dispose();

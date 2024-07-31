@@ -4,8 +4,8 @@ import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ChatBubble extends StatelessWidget {
+  const ChatBubble({required this.chat, super.key});
   final Chat chat;
-  const ChatBubble({super.key, required this.chat});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +15,8 @@ class ChatBubble extends StatelessWidget {
     final createdAt = formatDate(chat.createdAt);
     final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           LimitedBox(

@@ -15,7 +15,7 @@ class BroadcastAvatarField extends StatelessWidget {
           MAvatar(radius: 48, file: state.artwork?.getOr()),
           MTextButton(
             label: 'Change Artwork',
-            onPressed: () => context.showModal(
+            onPressed: () => context.showModal<void>(
               MImageSourceModal(
                 onGallerySourceTap: () => bloc.artworkChanged(true),
                 onCameraSourceTap: () => bloc.artworkChanged(false),

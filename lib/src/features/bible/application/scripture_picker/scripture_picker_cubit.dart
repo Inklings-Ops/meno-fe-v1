@@ -48,7 +48,7 @@ class ScripturePickerCubit extends Cubit<ScripturePickerState> {
 
   void verseChanged(int verse) => emit(state.copyWith(verse: verse));
 
-  void nextChapter() async {
+  Future<void> nextChapter() async {
     if (isNextEnabled) {
       final currentBookChapter = _facade.books[state.book]!;
 
@@ -56,7 +56,7 @@ class ScripturePickerCubit extends Cubit<ScripturePickerState> {
         emit(state.copyWith(
           chapter: state.chapter + 1,
           reference: '${state.book} ${state.chapter + 1}',
-        ));
+        ),);
       } else {
         final currentBookIndex = _books.indexWhere((b) => b.key == state.book);
 
@@ -67,19 +67,19 @@ class ScripturePickerCubit extends Cubit<ScripturePickerState> {
             book: nextBook,
             chapter: 1,
             reference: '$nextBook 1',
-          ));
+          ),);
         }
       }
     }
   }
 
-  void previousChapter() async {
+  Future<void> previousChapter() async {
     if (isPreviousEnabled) {
       if (state.chapter > 1) {
         emit(state.copyWith(
           chapter: state.chapter - 1,
           reference: '${state.book} ${state.chapter - 1}',
-        ));
+        ),);
       } else {
         final currentBookIndex = _books.indexWhere((b) => b.key == state.book);
 
@@ -90,7 +90,7 @@ class ScripturePickerCubit extends Cubit<ScripturePickerState> {
             book: previousBook.key,
             chapter: previousBook.value,
             reference: '${previousBook.key} ${previousBook.value}',
-          ));
+          ),);
         }
       }
     }

@@ -1,8 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastStatusWidget extends StatelessWidget {
-  final bool isStreaming;
   const BroadcastStatusWidget({super.key, this.isStreaming = false});
+  final bool isStreaming;
 
   @override
   Widget build(BuildContext context) {

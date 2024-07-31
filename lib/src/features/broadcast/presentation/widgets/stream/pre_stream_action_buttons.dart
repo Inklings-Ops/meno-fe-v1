@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class PreStreamActionButtons extends HookWidget {
-  const PreStreamActionButtons({super.key, required this.broadcast});
+  const PreStreamActionButtons({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
@@ -10,7 +10,7 @@ class PreStreamActionButtons extends HookWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
     final loading = useState<bool>(false);
-    void onJoin() async {
+    Future<void> onJoin() async {
       loading.value = true;
       return context.read<StreamBloc>().add(StreamJoinRequested(broadcast.id));
     }

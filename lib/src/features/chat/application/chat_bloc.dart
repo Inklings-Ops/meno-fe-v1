@@ -10,18 +10,13 @@ import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-import '../domain/domain.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
 part 'chat_bloc.freezed.dart';
 part 'chat_state.dart';
 
 @lazySingleton
 class ChatBloc extends Cubit<ChatState> {
-  final ISessionContext _session;
-  final SocketService _socket;
-  final IProfileFacade _profileFacade;
-  late final StreamSubscription<SocketEvent> _socketEventSub;
-  late final StreamSubscription<SocketState> _socketStateSub;
   ChatBloc({
     required ISessionContext session,
     required SocketService socket,
@@ -35,7 +30,7 @@ class ChatBloc extends Cubit<ChatState> {
         getChatMessages: (chats, _) => emit(state.copyWith(
           chats: chats,
           loading: false,
-        )),
+        ),),
       );
     });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
@@ -44,6 +39,11 @@ class ChatBloc extends Cubit<ChatState> {
       );
     });
   }
+  final ISessionContext _session;
+  final SocketService _socket;
+  final IProfileFacade _profileFacade;
+  late final StreamSubscription<SocketEvent> _socketEventSub;
+  late final StreamSubscription<SocketState> _socketStateSub;
 
   Future<void> initialize(Broadcast broadcast) async {
     emit(state.copyWith(loading: true, broadcast: broadcast));
@@ -81,7 +81,7 @@ class ChatBloc extends Cubit<ChatState> {
     );
   }
 
-  void _updateMessages(Chat chat) async {
+  Future<void> _updateMessages(Chat chat) async {
     final oldMessages = List<Chat?>.from(state.chats);
     emit(state.copyWith(chats: [chat, ...oldMessages]));
   }

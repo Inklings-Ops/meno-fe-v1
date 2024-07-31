@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
   const BroadcastInfoModal({
-    super.key,
-    required this.broadcast,
+    required this.broadcast, super.key,
     this.isStreaming = false,
   });
   final bool isStreaming;
@@ -21,7 +20,7 @@ class BroadcastInfoModal extends StatelessWidget {
           MAvatar(radius: 48, url: broadcast.imageUrl),
           Spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: MText(
               broadcast.title.getOr(),
               style: textTheme.subheadingBold,
@@ -31,7 +30,7 @@ class BroadcastInfoModal extends StatelessWidget {
           ),
           Spaces.verticalMicro,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -1,9 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/entities/entities.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/exceptions/broadcast_exception.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/value_objects/value_objects.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import 'entities/entities.dart';
-import 'exceptions/broadcast_exception.dart';
-import 'value_objects/value_objects.dart';
 
 abstract class IBroadcastFacade {
   Future<Either<BroadcastException, Broadcast>> createBroadcast({

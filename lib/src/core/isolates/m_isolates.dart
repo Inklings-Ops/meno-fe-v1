@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/services/jwt_service.dart';
 
-import '../../services/secure_storage_service.dart';
+import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
 
 class MIsolates {
-  static final _storage = SecureStorageService();
-  static final _auth = AuthLocalDatasource(storage: _storage);
 
   MIsolates._();
+  static final _storage = SecureStorageService();
+  static final _auth = AuthLocalDatasource(storage: _storage);
 
   static Future<List<dynamic>> authResult(RootIsolateToken rootIsolateToken) {
     return Isolate.run(() => _authIsolate(rootIsolateToken));

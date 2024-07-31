@@ -15,7 +15,6 @@ class BroadcastDescriptionField extends StatelessWidget {
         hint: 'Enter a brief description',
         maxLines: 5,
         maxLength: 244,
-        keyboardType: TextInputType.text,
         controller: controller,
         enabled: !state.loading,
         onChanged: context.read<BroadcastFormCubit>().descriptionChanged,

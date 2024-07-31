@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 
-import 'onboarding.dart';
+import 'package:meno_fe_v1/src/shared/pages/onboarding/onboarding.dart';
 
 class OnboardingPage extends HookWidget {
   const OnboardingPage({super.key});
@@ -51,7 +51,6 @@ class OnboardingPage extends HookWidget {
               const SizedBox(height: 72),
               LimitedBox(
                 maxHeight: 372,
-                maxWidth: double.infinity,
                 child: PageView.builder(
                   controller: pageController,
                   onPageChanged: (value) => currentIndex.value = value,
@@ -66,7 +65,7 @@ class OnboardingPage extends HookWidget {
               ),
               Spaces.verticalXLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MPrimaryButton(
                   label: 'Get started',
                   onPressed: () => context.push(Routes.registerWithLeading),
@@ -74,7 +73,7 @@ class OnboardingPage extends HookWidget {
               ),
               Spaces.verticalLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MSecondaryButton(
                   label: 'Login',
                   onPressed: () => context.push(Routes.loginWithLeading),

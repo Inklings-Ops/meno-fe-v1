@@ -1,21 +1,21 @@
 import 'package:dartz/dartz.dart';
 import 'package:uuid/uuid.dart';
 
-import 'value_failure.dart';
-import 'value_object.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_failure.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_object.dart';
 
 class Uid<E> extends ValueObject<String> {
-  @override
-  final Either<ValueFailure<String>, String> value;
-
-  const Uid._(this.value);
 
   factory Uid() {
     return Uid._(right(const Uuid().v1()));
   }
 
+  const Uid._(this.value);
+
   /// Used with strings we trust are unique, such as database IDs.
   factory Uid.fromString(String uniqueIdStr) {
     return Uid._(right(uniqueIdStr));
   }
+  @override
+  final Either<ValueFailure<String>, String> value;
 }

@@ -36,32 +36,38 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
 class BroadcastRoute extends GoRouteData {
   const BroadcastRoute();
   @override
-  Widget build(context, state) {
-    final broadcast = state.extra as Broadcast;
+  Widget build(BuildContext context, GoRouterState state) {
+    final broadcast = state.extra! as Broadcast;
     return BroadcastPage(broadcast: broadcast);
   }
+}
+
+class CreateBroadcastShellBranchData extends StatefulShellBranchData {
+  const CreateBroadcastShellBranchData();
 }
 
 @TypedGoRoute<CreateBroadcastRoute>(path: Routes.createBroadcast)
 class CreateBroadcastRoute extends GoRouteData {
   const CreateBroadcastRoute();
   @override
-  Widget build(context, state) => const CreateBroadcastPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CreateBroadcastPage();
 }
 
 @TypedGoRoute<CreateNewPasswordRoute>(path: Routes.createNewPassword)
 class CreateNewPasswordRoute extends GoRouteData {
   const CreateNewPasswordRoute();
   @override
-  Widget build(context, state) => const CreateNewPasswordPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const CreateNewPasswordPage();
 }
 
 @TypedGoRoute<DetailsRoute>(path: Routes.details)
 class DetailsRoute extends GoRouteData {
   const DetailsRoute();
   @override
-  Widget build(context, state) {
-    final broadcast = (state.extra) as Broadcast;
+  Widget build(BuildContext context, GoRouterState state) {
+    final broadcast = state.extra! as Broadcast;
     return DetailsPage(broadcast: broadcast);
   }
 }
@@ -70,15 +76,16 @@ class DetailsRoute extends GoRouteData {
 class EmailVerificationRoute extends GoRouteData {
   const EmailVerificationRoute();
   @override
-  Widget build(context, state) => const EmailVerificationPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const EmailVerificationPage();
 }
 
 @TypedGoRoute<FolderRoute>(path: Routes.folder)
 class FolderRoute extends GoRouteData {
   const FolderRoute();
   @override
-  Widget build(context, state) {
-    final folder = state.extra as Folder;
+  Widget build(BuildContext context, GoRouterState state) {
+    final folder = state.extra! as Folder;
     return BlocProvider(
       create: (_) => di<FolderCubit>(param1: folder),
       child: FolderPage(folder: folder),
@@ -90,19 +97,21 @@ class FolderRoute extends GoRouteData {
 class LoadingRoute extends GoRouteData {
   const LoadingRoute();
   @override
-  Widget build(context, state) => const LoadingPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const LoadingPage();
 }
 
 @TypedGoRoute<LoginRoute>(path: Routes.login)
 class LoginRoute extends GoRouteData {
-  const LoginRoute();
+  const LoginRoute({this.implyLeading = false, this.isPasswordOnly = false});
+  final bool implyLeading;
+  final bool isPasswordOnly;
+
   @override
-  Widget build(context, state) {
-    final isPasswordOnly = state.uri.queryParameters['isPasswordOnly'];
-    final implyLeading = state.uri.queryParameters['implyLeading'];
+  Widget build(BuildContext context, GoRouterState state) {
     return LoginPage(
-      implyLeading: implyLeading == 'true' ? true : false,
-      isPasswordOnly: isPasswordOnly == 'true' ? true : false,
+      implyLeading: implyLeading,
+      isPasswordOnly: isPasswordOnly,
     );
   }
 }
@@ -111,7 +120,7 @@ class LoginRoute extends GoRouteData {
 class NoteEditorRoute extends GoRouteData {
   const NoteEditorRoute();
   @override
-  Widget build(context, state) {
+  Widget build(BuildContext context, GoRouterState state) {
     final note = state.extra as Note?;
     return BlocProvider.value(
       value: di<NoteFormCubit>(param1: note),
@@ -124,30 +133,33 @@ class NoteEditorRoute extends GoRouteData {
 class NotificationsRoute extends GoRouteData {
   const NotificationsRoute();
   @override
-  Widget build(context, state) => const NotificationsPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const NotificationsPage();
 }
 
 @TypedGoRoute<OnboardingRoute>(path: Routes.onboarding)
 class OnboardingRoute extends GoRouteData {
   const OnboardingRoute();
   @override
-  Widget build(context, state) => const OnboardingPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const OnboardingPage();
 }
 
 @TypedGoRoute<RecentlyLiveRoute>(path: Routes.recentlyLive)
 class RecentlyLiveRoute extends GoRouteData {
   const RecentlyLiveRoute();
   @override
-  Widget build(context, state) => const RecentlyLivePage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const RecentlyLivePage();
 }
 
 @TypedGoRoute<RegisterRoute>(path: Routes.register)
 class RegisterRoute extends GoRouteData {
-  const RegisterRoute();
+  const RegisterRoute({this.implyLeading = true});
+  final bool implyLeading;
   @override
-  Widget build(context, state) {
-    final implyLeading = state.extra as bool?;
-    return RegisterPage(implyLeading: implyLeading ?? true);
+  Widget build(BuildContext context, GoRouterState state) {
+    return RegisterPage(implyLeading: implyLeading);
   }
 }
 
@@ -155,35 +167,43 @@ class RegisterRoute extends GoRouteData {
 class ResetPasswordOtpRoute extends GoRouteData {
   const ResetPasswordOtpRoute();
   @override
-  Widget build(context, state) => const ResetPasswordOtpVerificationPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ResetPasswordOtpVerificationPage();
 }
 
 @TypedGoRoute<ResetPasswordRoute>(path: Routes.resetPassword)
 class ResetPasswordRoute extends GoRouteData {
   const ResetPasswordRoute();
   @override
-  Widget build(context, state) => const ResetPasswordPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ResetPasswordPage();
 }
 
 @TypedGoRoute<ResetPasswordSuccessRoute>(path: Routes.resetPwdSuccess)
 class ResetPasswordSuccessRoute extends GoRouteData {
   const ResetPasswordSuccessRoute();
   @override
-  Widget build(context, state) => const ResetPasswordSuccessPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ResetPasswordSuccessPage();
+}
+
+class SettingsShellBranchData extends StatefulShellBranchData {
+  const SettingsShellBranchData();
 }
 
 @TypedGoRoute<SettingsRoute>(path: Routes.settings)
 class SettingsRoute extends GoRouteData {
   const SettingsRoute();
   @override
-  Widget build(context, state) => const SettingsPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SettingsPage();
 }
 
 @TypedGoRoute<StreamRoute>(path: Routes.stream)
 class StreamRoute extends GoRouteData {
   const StreamRoute();
   @override
-  Widget build(context, state) => const StreamPage();
+  Widget build(BuildContext context, GoRouterState state) => const StreamPage();
 }
 
 // Below handles the routes for the main layout for the bottom app bar
@@ -195,7 +215,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(context, state) => const HomePage();
+  Widget build(BuildContext context, GoRouterState state) => const HomePage();
 }
 
 class DiscoverShellBranchData extends StatefulShellBranchData {
@@ -206,7 +226,8 @@ class DiscoverRoute extends GoRouteData {
   const DiscoverRoute();
 
   @override
-  Widget build(context, state) => const DiscoverPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DiscoverPage();
 }
 
 class NotesShellBranchData extends StatefulShellBranchData {
@@ -217,7 +238,7 @@ class NotesRoute extends GoRouteData {
   const NotesRoute();
 
   @override
-  Widget build(context, state) => const NotesPage();
+  Widget build(BuildContext context, GoRouterState state) => const NotesPage();
 }
 
 class ProfileShellBranchData extends StatefulShellBranchData {
@@ -228,7 +249,8 @@ class ProfileRoute extends GoRouteData {
   const ProfileRoute();
 
   @override
-  Widget build(context, state) => ProfilePage(id: state.extra as String?);
+  Widget build(BuildContext context, GoRouterState state) =>
+      ProfilePage(id: state.extra as String?);
 }
 
 @TypedStatefulShellRoute<MLayoutShellRoute>(
@@ -253,13 +275,28 @@ class ProfileRoute extends GoRouteData {
         TypedGoRoute<ProfileRoute>(path: Routes.profile),
       ],
     ),
+    TypedStatefulShellBranch<SettingsShellBranchData>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<SettingsRoute>(path: Routes.settings),
+      ],
+    ),
+    TypedStatefulShellBranch<CreateBroadcastShellBranchData>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<CreateBroadcastRoute>(path: Routes.createBroadcast),
+      ],
+    ),
   ],
 )
 class MLayoutShellRoute extends StatefulShellRouteData {
   const MLayoutShellRoute();
 
   @override
-  Widget builder(context, state, navigationShell) {
-    return MLayout(shell: navigationShell);
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    final currentRoute = state.path;
+    return MLayoutPage(shell: navigationShell, currentRoute: currentRoute);
   }
 }

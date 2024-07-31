@@ -76,7 +76,7 @@ class _AddNewFolderActionButton extends StatelessWidget {
           if (folders.isEmpty) return const SizedBox();
 
           return InkWell(
-            onTap: () => context.showModal(
+            onTap: () => context.showModal<void>(
               const CreateFolderModal(),
               isScrollControlled: true,
               useRootNavigator: true,

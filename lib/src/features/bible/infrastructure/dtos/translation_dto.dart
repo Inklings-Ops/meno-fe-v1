@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/entities/translation.dart';
 import 'package:objectbox/objectbox.dart';
-
-import '../../domain/entities/translation.dart';
 
 part 'translation_dto.freezed.dart';
 part 'translation_dto.g.dart';
@@ -11,9 +10,9 @@ part 'translation_dto.g.dart';
 class TranslationDto with _$TranslationDto {
   @Entity(realClass: TranslationDto)
   factory TranslationDto({
-    @Id(assignable: true) int? id,
     required String name,
     required String abbreviation,
+    @Id(assignable: true) int? id,
   }) = _TranslationDto;
 
   TranslationDto._();

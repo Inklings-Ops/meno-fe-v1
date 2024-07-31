@@ -27,7 +27,7 @@ class BroadcastParticipantList extends HookWidget {
               crossAxisCount: 4,
               crossAxisSpacing: Insets.small,
               mainAxisSpacing: Insets.large,
-              childAspectRatio: (80 / 88),  
+              childAspectRatio: 80 / 88,  
             ),
             itemCount: state.participants.length,
             itemBuilder: (context, index) {
@@ -36,7 +36,7 @@ class BroadcastParticipantList extends HookWidget {
                 isCohost: participant.isCohost == true,
                 isCreator: participant.id == state.broadcast.creator?.id,
                 participant: participant,
-                onTap: () => context.showModal(
+                onTap: () => context.showModal<void>(
                   ParticipantInfoModal(participant: participant),
                   isScrollControlled: true,
                 ),

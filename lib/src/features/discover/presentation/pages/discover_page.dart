@@ -22,7 +22,7 @@ class DiscoverPage extends HookWidget {
         }
       });
       return null;
-    }, const []);
+    }, const [],);
 
     if (isSearching.value) {
       return SearchPage(onCancel: () => isSearching.value = false);

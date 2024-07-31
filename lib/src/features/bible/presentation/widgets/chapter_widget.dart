@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class ChapterWidget extends StatelessWidget {
-  const ChapterWidget({super.key, required this.chapter});
+  const ChapterWidget({required this.chapter, super.key});
 
   final int chapter;
 

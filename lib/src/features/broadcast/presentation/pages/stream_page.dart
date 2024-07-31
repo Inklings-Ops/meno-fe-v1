@@ -51,7 +51,7 @@ class StreamPage extends HookWidget {
                 orElse: () => 'An unknown error occurred',
                 serverError: () => 'A server error occurred',
                 timeOutError: () => 'Request timed out. Go back & try again',
-              )),
+              ),),
             ),
           ),
           joinSuccess: (_) => const LiveStreamScaffold(

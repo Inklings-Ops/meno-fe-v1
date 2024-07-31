@@ -37,7 +37,7 @@ class MoreOptionsButton extends StatelessWidget {
         side: BorderSide(color: colors.outlineVariant3!),
         shape: const RoundedRectangleBorder(borderRadius: Corners.large),
       ),
-      onPressed: () => context.showModal(
+      onPressed: () => context.showModal<void>(
         BlocBuilder<BroadcastBloc, BroadcastState>(
           builder: (context, state) => state.maybeWhen(
             orElse: () => const SizedBox(),

@@ -43,7 +43,7 @@ class MenoConfig {
   /// Called from the UI layer once a MediaQuery has been obtained
   void handleAppSizeChanged(Size appSize) {
     /// Disable landscape layout on smaller form factors
-    bool isSmall = display.size.shortestSide / display.devicePixelRatio < 600;
+    final isSmall = display.size.shortestSide / display.devicePixelRatio < 600;
     supportedOrientations =
         isSmall ? [Axis.vertical] : [Axis.vertical, Axis.horizontal];
     _updateSystemOrientation();

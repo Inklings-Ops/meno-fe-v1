@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class AddToFolderModal extends HookWidget {
-  const AddToFolderModal({super.key, required this.note});
+  const AddToFolderModal({required this.note, super.key});
 
   final Note note;
 

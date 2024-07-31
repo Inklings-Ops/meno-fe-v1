@@ -68,7 +68,6 @@ class _Grid extends HookWidget {
           crossAxisCount: 2,
           mainAxisSpacing: 24,
           crossAxisSpacing: 24,
-          childAspectRatio: (176 / 176),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         shrinkWrap: true,
@@ -80,7 +79,7 @@ class _Grid extends HookWidget {
             return MCard.live(
               title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName!,
+              host: broadcast.fullName,
               liveCount: broadcast.totalListeners,
               onTap: () => context.showJoinLiveBroadcastModal(broadcast),
             );
@@ -88,7 +87,7 @@ class _Grid extends HookWidget {
             return MCard.recentlyLive(
               title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName!,
+              host: broadcast.fullName,
               onTap: () => context.push(Routes.details, extra: broadcast),
             );
           }

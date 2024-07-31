@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastTitle extends StatelessWidget {
-  const BroadcastTitle({super.key, required this.title});
+  const BroadcastTitle({required this.title, super.key});
   final String title;
 
   @override

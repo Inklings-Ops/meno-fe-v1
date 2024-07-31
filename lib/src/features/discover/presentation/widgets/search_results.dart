@@ -45,7 +45,7 @@ class _ResultList extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: 24,
         crossAxisSpacing: 24,
-        childAspectRatio: (159.50 / 176),
+        childAspectRatio: 159.50 / 176,
       ),
       padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
       itemCount: result.length,
@@ -58,7 +58,7 @@ class _ResultList extends StatelessWidget {
           return MCard.live(
             title: broadcast.title.getOr(),
             imageUrl: broadcast.imageUrl,
-            host: broadcast.fullName!,
+            host: broadcast.fullName,
             liveCount: broadcast.totalListeners,
             onTap: () => context.showJoinLiveBroadcastModal(broadcast),
           );
@@ -85,7 +85,6 @@ class _NoResultsWidget extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Assets.images.liveForYou.image(
             height: 152,

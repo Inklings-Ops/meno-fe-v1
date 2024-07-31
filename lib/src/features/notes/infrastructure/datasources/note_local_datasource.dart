@@ -1,15 +1,13 @@
 import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/dtos.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../dtos/dtos.dart';
 
 @injectable
 class NoteLocalDatasource {
-  final SharedPreferences _pref;
-
   NoteLocalDatasource({required SharedPreferences pref}) : _pref = pref;
+  final SharedPreferences _pref;
 
   static const String notesKey = 'Note_Key';
 
@@ -21,13 +19,16 @@ class NoteLocalDatasource {
   Future<List<NoteDto?>> getAllNotes() async {
     final noteList = _pref.getStringList(notesKey);
     if (noteList != null) {
-      return noteList.map((n) => NoteDto.fromJson(jsonDecode(n))).toList();
+      return noteList.map((n) {
+        final decodedJson = jsonDecode(n) as Map<String, dynamic>;
+        return NoteDto.fromJson(decodedJson);
+      }).toList();
     } else {
       return [];
     }
   }
 
-  void getAllFolders() async {
+  Future<void> getAllFolders() async {
     // final folderBox = _objectbox.store.box<FolderDto?>();
     // return folderBox.getAll();
   }
@@ -73,7 +74,7 @@ class NoteLocalDatasource {
     //   final totalNotes = notes.length;
 
     //   for (var i = 0; i < totalNotes; i += batchSize) {
-    //     final end = (i + batchSize < totalNotes) ? i + batchSize : totalNotes;
+    //    final end = (i + batchSize < totalNotes) ? i + batchSize : totalNotes;
     //     final batch = notes.sublist(i, end);
     //     noteBox.putMany(batch);
     //   }

@@ -24,8 +24,8 @@ class RecentlyLive extends StatelessWidget {
 }
 
 class _BuildColumn extends StatelessWidget {
-  final Widget child;
   const _BuildColumn({required this.child});
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

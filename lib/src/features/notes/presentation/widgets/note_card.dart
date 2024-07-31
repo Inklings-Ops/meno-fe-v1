@@ -7,9 +7,7 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCard extends StatelessWidget {
   const NoteCard({
-    super.key,
-    required this.note,
-    required this.onTap,
+    required this.note, required this.onTap, super.key,
     this.showAddButton = false,
     this.selected = false,
     this.folder,
@@ -26,7 +24,7 @@ class NoteCard extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
-    final json = jsonDecode(note.content.getOr());
+    final json = jsonDecode(note.content.getOr()) as List<dynamic>;
     final content = Document.fromJson(json).toPlainText();
 
     final formattedDate = DateFormat('d MMM yyyy').format(note.createdAt!);
@@ -48,7 +46,6 @@ class NoteCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
                   child: Column(
@@ -68,7 +65,6 @@ class NoteCard extends StatelessWidget {
                             MTag(
                               title: noteFolder.title.getOr(),
                               style: textTheme.microMedium,
-                              height: 20,
                             ),
                           ],
                         ),
@@ -100,7 +96,7 @@ class NoteCard extends StatelessWidget {
                             color: colors.onBackgroundVariant,
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -141,7 +137,7 @@ class _MoreButton extends StatelessWidget {
         color: colors.onDisabledContainer,
         iconSize: 20,
         onPressed: () {
-          context.showModal(
+          context.showModal<void>(
             NoteCardOptionsModal(note: note),
             useRootNavigator: true,
           );

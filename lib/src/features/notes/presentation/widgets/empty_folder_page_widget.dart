@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class EmptyFolderPageWidget extends StatelessWidget {
-  const EmptyFolderPageWidget({super.key, required this.folder});
+  const EmptyFolderPageWidget({required this.folder, super.key});
 
   final Folder folder;
 
@@ -40,7 +40,7 @@ class EmptyFolderPageWidget extends StatelessWidget {
                   width: 1.50,
                 ),
               ),
-              onPressed: () => context.showModal(
+              onPressed: () => context.showModal<void>(
                 _AllNotesModal(folder: folder),
                 isScrollControlled: true,
                 useRootNavigator: true,

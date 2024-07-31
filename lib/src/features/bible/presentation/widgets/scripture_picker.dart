@@ -39,7 +39,7 @@ class _ScriptureTranslation extends StatelessWidget {
         final translation = state.selectedTranslation;
         return _Container(
           content: translation.abbreviation.toUpperCase(),
-          onTap: () => context.showModal(
+          onTap: () => context.showModal<void>(
             const BibleTranslationsModal(),
             isScrollControlled: true,
             useRootNavigator: true,
@@ -59,7 +59,7 @@ class _ScriptureReference extends StatelessWidget {
       buildWhen: (p, c) => p.reference != c.reference,
       builder: (context, state) => _Container(
         content: state.reference,
-        onTap: () => context.showModal(
+        onTap: () => context.showModal<void>(
           const BibleBooksModal(),
           isScrollControlled: true,
           useRootNavigator: true,

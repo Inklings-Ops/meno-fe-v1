@@ -58,13 +58,11 @@ class _MenoAppState extends State<MenoApp> {
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
         di<NetworkCubit>().close();
-        break;
       case AppLifecycleState.resumed:
       case AppLifecycleState.inactive:
         if (di<NetworkCubit>().isClosed) {
           di<NetworkCubit>();
         }
-        break;
     }
   }
 }

@@ -8,7 +8,7 @@ class CreateNewPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     return MScaffold(
-      appBar: MAppBar.primary(title: ('Create New Password')),
+      appBar: MAppBar.primary(title: 'Create New Password'),
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(

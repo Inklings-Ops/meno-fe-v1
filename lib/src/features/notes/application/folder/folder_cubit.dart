@@ -8,12 +8,12 @@ part 'folder_state.dart';
 
 @injectable
 class FolderCubit extends Cubit<FolderState> {
-  final INoteFacade _facade;
   FolderCubit({
     required INoteFacade facade,
     @factoryParam required Folder folder,
   })  : _facade = facade,
         super(FolderState.success(folder));
+  final INoteFacade _facade;
 
   Future<void> getAllNotes() async {
     if (state is _Success) {

@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class TranslationWidget extends HookWidget {
   const TranslationWidget({
-    super.key,
-    required this.translation,
+    required this.translation, super.key,
     this.progress,
     this.onDownload,
     this.onCancel,

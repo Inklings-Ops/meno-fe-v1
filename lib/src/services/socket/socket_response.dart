@@ -7,14 +7,14 @@ part 'socket_response.g.dart';
 class SocketResponse<T> extends Equatable {
   const SocketResponse({this.data, this.error});
 
-  final T? data;
-  final String? error;
-
   factory SocketResponse.fromJson(
     Map<String, dynamic> json,
     T Function(dynamic json) fromJsonT,
   ) =>
       _$SocketResponseFromJson<T>(json, fromJsonT);
+
+  final T? data;
+  final String? error;
 
   @override 
   List<Object?> get props => [data, error];

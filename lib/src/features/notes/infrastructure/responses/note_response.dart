@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'note_error.dart';
+import 'package:meno_fe_v1/src/features/notes/infrastructure/responses/note_error.dart';
 
 part 'note_response.g.dart';
 
@@ -11,12 +11,6 @@ part 'note_response.g.dart';
   genericArgumentFactories: true,
 )
 class NoteResponse<T> extends Equatable {
-  final int? statusCode;
-  final String? message;
-  final NoteError? error;
-  final String? path;
-  final bool? status;
-  final T? data;
 
   const NoteResponse({
     this.statusCode,
@@ -32,6 +26,12 @@ class NoteResponse<T> extends Equatable {
     T Function(Object? json) fromJsonT,
   ) =>
       _$NoteResponseFromJson<T>(json, fromJsonT);
+  final int? statusCode;
+  final String? message;
+  final NoteError? error;
+  final String? path;
+  final bool? status;
+  final T? data;
 
   @override
   List<Object?> get props => [statusCode, message, error, path, status, data];

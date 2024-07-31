@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 
-import 'domain.dart';
+import 'package:meno_fe_v1/src/features/discover/domain/domain.dart';
 
 abstract class IDiscoverFacade {
   Future<Either<DiscoverException, DiscoverResult>> search({

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class OnboardingTitle extends StatelessWidget {
-  final String text;
   const OnboardingTitle(this.text, {super.key});
+  final String text;
 
   @override
   Widget build(BuildContext context) => Center(

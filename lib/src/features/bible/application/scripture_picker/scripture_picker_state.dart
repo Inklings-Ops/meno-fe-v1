@@ -16,7 +16,6 @@ class ScripturePickerState with _$ScripturePickerState {
       book: 'Genesis',
       chapterLength: 50,
       chapter: 1,
-      verse: null,
     );
   }
 }

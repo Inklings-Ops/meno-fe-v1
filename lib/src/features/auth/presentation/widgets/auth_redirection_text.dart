@@ -3,9 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class AuthRedirectionText extends StatelessWidget {
   const AuthRedirectionText({
-    super.key,
-    required this.title,
-    required this.buttonText,
+    required this.title, required this.buttonText, super.key,
     this.onPressed,
   });
   final String title;

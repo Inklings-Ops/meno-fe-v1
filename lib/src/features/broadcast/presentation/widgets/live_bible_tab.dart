@@ -10,7 +10,6 @@ class LiveBibleTab extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: Insets.large),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.max,
         children: [
           ScripturePicker(),
           MDivider(bottomSpace: 16),

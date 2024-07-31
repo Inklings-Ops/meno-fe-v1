@@ -12,7 +12,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
       builder: (context, state) {
         if (!state.isLoading && state.hasError || state.broadcasts.isEmpty) {
           return const Padding(
-            padding: EdgeInsets.only(top: 120.0),
+            padding: EdgeInsets.only(top: 120),
             child: EmptyListWidget(),
           );
         }
@@ -24,7 +24,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 24,
                 crossAxisSpacing: 24,
-                childAspectRatio: (159.50 / 176),
+                childAspectRatio: 159.50 / 176,
               ),
               padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
               itemBuilder: (context, i) {
@@ -32,7 +32,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
                 return MCard.recentlyLive(
                   title: broadcast.title.getOr(),
                   imageUrl: broadcast.imageUrl,
-                  host: broadcast.fullName!,
+                  host: broadcast.fullName,
                   onTap: () => context.push(Routes.details, extra: broadcast),
                 );
               },

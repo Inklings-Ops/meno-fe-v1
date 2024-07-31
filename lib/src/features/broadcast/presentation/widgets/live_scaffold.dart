@@ -1,14 +1,12 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class LiveStreamScaffold extends HookWidget {
-  final List<Widget> tabs;
-  final List<Widget> tabViews;
 
   const LiveStreamScaffold({
-    super.key,
-    required this.tabs,
-    required this.tabViews,
+    required this.tabs, required this.tabViews, super.key,
   });
+  final List<Widget> tabs;
+  final List<Widget> tabViews;
 
   @override
   Widget build(BuildContext context) {

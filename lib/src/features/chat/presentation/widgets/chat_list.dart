@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({super.key, required this.controller});
+  const ChatList({required this.controller, super.key});
   final ScrollController controller;
 
   @override
@@ -23,8 +23,8 @@ class ChatList extends StatelessWidget {
 }
 
 class _Item extends StatelessWidget {
-  final Chat chat;
   const _Item({required this.chat});
+  final Chat chat;
 
   @override
   Widget build(BuildContext context) {

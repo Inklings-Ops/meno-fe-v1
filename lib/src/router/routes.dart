@@ -33,6 +33,8 @@ class Routes {
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';
+  static const String lsSettings = '/lsSettings';
+  static const String lsCreateBroadcast = '/lsCreateBroadcast';
 }
 
 class BottomSheetPage<T> extends Page<void> {

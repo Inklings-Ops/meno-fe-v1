@@ -51,7 +51,7 @@ class _CreateNewFolderButton extends StatelessWidget {
             width: 1.50,
           ),
         ),
-        onPressed: () => context.showModal(
+        onPressed: () => context.showModal<void>(
           const CreateFolderModal(),
           useRootNavigator: true,
           isScrollControlled: true,

@@ -17,7 +17,7 @@ class BroadcastListeningTab extends StatelessWidget {
               const _NumberOfParticipants(),
               const Spacer(),
               ExpandButton(
-                onTap: () => context.showModal(
+                onTap: () => context.showModal<void>(
                   const BroadcastParticipantsModal(),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: size.height * 0.9),

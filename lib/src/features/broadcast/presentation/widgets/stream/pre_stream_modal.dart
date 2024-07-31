@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class PreStreamModal extends StatelessWidget {
-  const PreStreamModal({super.key, required this.broadcast});
+  const PreStreamModal({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
@@ -53,7 +53,7 @@ class PreStreamModal extends StatelessWidget {
                         color: MColorScheme.of(context)!.onBackgroundVariant,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -65,9 +65,9 @@ class PreStreamModal extends StatelessWidget {
 }
 
 class _TopSection extends StatelessWidget {
-  final Broadcast broadcast;
 
   const _TopSection({required this.broadcast});
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {

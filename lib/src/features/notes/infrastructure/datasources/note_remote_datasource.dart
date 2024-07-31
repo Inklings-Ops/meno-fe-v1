@@ -40,7 +40,7 @@ abstract class NoteRemoteDatasource {
   });
 
   @DELETE('/api/v1/notes/{noteId}')
-  Future<NoteResponse> deleteNote(@Path('noteId') String noteId);
+  Future<NoteResponse<dynamic>> deleteNote(@Path('noteId') String noteId);
 
   @PUT('/api/v1/notes/{noteId}/folders/{folderId}')
   Future<NoteResponse<NoteDto?>> addNoteToFolder({
@@ -49,7 +49,7 @@ abstract class NoteRemoteDatasource {
   });
 
   @DELETE('/api/v1/notes/{noteId}/folders/{folderId}')
-  Future<NoteResponse> removeNoteFromFolder({
+  Future<NoteResponse<dynamic>> removeNoteFromFolder({
     @Path('noteId') required String noteId,
     @Path('folderId') required String folderId,
   });
@@ -98,5 +98,5 @@ abstract class NoteRemoteDatasource {
   });
 
   @DELETE('/api/v1/folders/{folderId}')
-  Future<NoteResponse> deleteFolder(@Path('folderId') String folderId);
+  Future<NoteResponse<dynamic>> deleteFolder(@Path('folderId') String folderId);
 }

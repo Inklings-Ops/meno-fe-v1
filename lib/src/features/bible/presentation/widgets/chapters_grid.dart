@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'chapter_widget.dart';
+import 'package:meno_fe_v1/src/features/bible/presentation/widgets/chapter_widget.dart';
 
 class ChaptersGrid extends StatelessWidget {
-  const ChaptersGrid({super.key, required this.chapterLength});
+  const ChaptersGrid({required this.chapterLength, super.key});
 
   final int chapterLength;
 

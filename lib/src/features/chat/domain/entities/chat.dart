@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../inputs/inputs.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/inputs/inputs.dart';
 
 part 'chat.freezed.dart';
 
@@ -10,11 +10,8 @@ class Chat with _$Chat {
     required String id,
     required IChatContent content,
     required DateTime createdAt,
-    DateTime? updatedAt,
-    required String senderId,
-    required String fullName,
+    required String senderId, required String fullName, required String broadcastId, DateTime? updatedAt,
     String? imageUrl,
-    required String broadcastId,
   }) = _Chat;
 
   factory Chat.empty() {
@@ -22,7 +19,6 @@ class Chat with _$Chat {
       id: '',
       content: IChatContent(''),
       createdAt: DateTime.now(),
-      updatedAt:  null,
       senderId: '',
       broadcastId: '',
       fullName: '',

@@ -20,7 +20,6 @@ class SearchState with _$SearchState {
       keyword: null,
       searchResults: [],
       isSearchingMore: false,
-      exception: null,
     );
   }
 }

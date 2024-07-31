@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class MenoBlocProvider extends StatelessWidget {
-  const MenoBlocProvider({super.key, required this.child});
+  const MenoBlocProvider({required this.child, super.key});
   final Widget child;
 
   @override

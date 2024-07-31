@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/meno.dart' hide Notification;
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 class LiveNotificationCard extends StatelessWidget {
-  const LiveNotificationCard({super.key, required this.notification});
+  const LiveNotificationCard({required this.notification, super.key});
   final Notification notification;
 
   @override

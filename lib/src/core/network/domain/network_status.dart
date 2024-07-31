@@ -1,5 +1,8 @@
 /// Enum representing the possible network connectivity states.
 enum NetworkStatus {
+  /// The app is checking the initial state of the network.
+  initializing,
+
   /// The device is connected to the internet.
   connected,
 

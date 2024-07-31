@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class FolderClipper extends CustomClipper<Path> {
-  final double r;
-  final double notch;
 
   FolderClipper({this.r = 20.0, this.notch = 6});
+  final double r;
+  final double notch;
 
   @override
   Path getClip(Size size) {

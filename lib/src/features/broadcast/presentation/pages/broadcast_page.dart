@@ -4,7 +4,7 @@ import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class BroadcastPage extends HookWidget {
-  const BroadcastPage({super.key, required this.broadcast});
+  const BroadcastPage({required this.broadcast, super.key});
   final Broadcast broadcast;
 
   @override
@@ -15,7 +15,7 @@ class BroadcastPage extends HookWidget {
       context.read<LiveParticipantsBloc>().initialize(broadcast);
       context.read<ChatBloc>().initialize(broadcast);
       return null;
-    }, const []);
+    }, const [],);
     return BlocConsumer<BroadcastBloc, BroadcastState>(
       bloc: bloc,
       listenWhen: (previous, current) => previous != current,
@@ -31,7 +31,7 @@ class BroadcastPage extends HookWidget {
           endSuccess: () {
             context.read<TimerCubit>().stop();
             di<LiveKitService>().dispose();
-            context.showModal(
+            context.showModal<void>(
               const BroadcastEndedModal(),
               enableDrag: false,
               useRootNavigator: true,
@@ -53,7 +53,7 @@ class BroadcastPage extends HookWidget {
               orElse: () => 'An unknown error occurred',
               serverError: () => 'A server error occurred',
               timeOutError: () => 'Request timed out. Go back & try again',
-            )),
+            ),),
           ),
         ),
         startSuccess: (broadcast, muted) => const PopScope(

@@ -2,13 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/datasources.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
-
-import '../../../services/network_service.dart';
-import '../domain/domain.dart';
-import 'datasources/datasources.dart';
+import 'package:meno_fe_v1/src/services/network_service.dart';
 
 @Injectable(as: IBibleFacade)
 class BibleFacade implements IBibleFacade {

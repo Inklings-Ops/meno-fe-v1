@@ -34,7 +34,7 @@ class StreamOptionsButton extends StatelessWidget {
         side: BorderSide(color: colors.outlineVariant3!),
         shape: const RoundedRectangleBorder(borderRadius: Corners.large),
       ),
-      onPressed: () => context.showModal(
+      onPressed: () => context.showModal<void>(
         BlocBuilder<StreamBloc, StreamState>(
           builder: (context, state) => state.maybeWhen(
             orElse: () => const SizedBox(),

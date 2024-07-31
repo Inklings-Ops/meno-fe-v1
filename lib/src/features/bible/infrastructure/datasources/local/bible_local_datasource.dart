@@ -5,19 +5,17 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../../../../../objectbox.g.dart';
-import '../../../../../services/objectbox_service.dart';
-import '../../dtos/dtos.dart';
-import '../data_helper.dart';
+import 'package:meno_fe_v1/objectbox.g.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
+import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/services/objectbox_service.dart';
 
 @injectable
 class BibleLocalDatasource {
-  final ObjectBoxService _objectBox;
-
   BibleLocalDatasource({
     required ObjectBoxService objectBox,
   }) : _objectBox = objectBox;
+  final ObjectBoxService _objectBox;
 
   Store get _store => _objectBox.store;
 
@@ -176,7 +174,7 @@ class BibleLocalDatasource {
   }
 
   Future<List<VerseDto>> loadFallbackBible() async {
-    RootIsolateToken rIToken = RootIsolateToken.instance!;
+    final rIToken = RootIsolateToken.instance!;
     final verses = await Isolate.run(() => _loadJSONAsset(rIToken));
     return verses;
   }
@@ -185,11 +183,12 @@ class BibleLocalDatasource {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
     final jsonStr = await rootBundle.loadString('assets/bibles/kjv.json');
 
-    final data = jsonDecode(jsonStr)['data'] as List<dynamic>;
+    final decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
+    final data = decodedJson['data'] as List<dynamic>;
     final versesData = data.cast<Map<String, dynamic>>();
 
     final verses = versesData
-        .map((v) => VerseDto.fromJson(v).copyWith(id: v['index']))
+        .map((v) => VerseDto.fromJson(v).copyWith(id: v['index'] as int))
         .toList();
 
     return verses;

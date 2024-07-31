@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderPage extends HookWidget {
-  const FolderPage({super.key, required this.folder});
+  const FolderPage({required this.folder, super.key});
   final Folder folder;
 
   @override
@@ -20,13 +20,16 @@ class FolderPage extends HookWidget {
             : folder.numberOfNotes) ??
         0;
 
-    useEffect(() {
-      context.read<FolderCubit>().getAllNotes();
-      return null;
-    }, const []);
+    useEffect(
+      () {
+        context.read<FolderCubit>().getAllNotes();
+        return null;
+      },
+      const [],
+    );
 
     return RefreshIndicator(
-      onRefresh: () => folderBloc.getAllNotes(),
+      onRefresh: folderBloc.getAllNotes,
       child: BlocListener<FolderFormCubit, FolderFormState>(
         listenWhen: (p, c) => p.option != c.option,
         listener: (context, state) {
@@ -46,7 +49,7 @@ class FolderPage extends HookWidget {
             actions: [
               IconButton(
                 icon: const Icon(MIcons.dots_horizontal),
-                onPressed: () => context.showModal(
+                onPressed: () => context.showModal<void>(
                   MModal(
                     builder: (context) => Column(
                       mainAxisSize: MainAxisSize.min,
@@ -54,14 +57,13 @@ class FolderPage extends HookWidget {
                         MModalListTile(
                           leading: const Icon(MIcons.edit_05),
                           title: 'Rename Folder',
-                          onTap: () {
-                            context.pop();
-                            context.showModal(
+                          onTap: () => context
+                            ..pop()
+                            ..showModal<void>(
                               CreateFolderModal(initialFolder: folder),
                               isScrollControlled: true,
                               useRootNavigator: true,
-                            );
-                          },
+                            ),
                         ),
                         Spaces.verticalSmall,
                         MModalListTile(
@@ -97,7 +99,7 @@ class FolderPage extends HookWidget {
                   height: 88,
                 ),
                 Spaces.verticalXLarge,
-                _NotesList(folder: folder)
+                _NotesList(folder: folder),
               ],
             ),
           ),

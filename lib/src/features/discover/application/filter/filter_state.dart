@@ -18,7 +18,6 @@ class FilterState with _$FilterState {
       page: 1,
       isLoading: false,
       hasMore: true,
-      exception: null,
     );
   }
 }

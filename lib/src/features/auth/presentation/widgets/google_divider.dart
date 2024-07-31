@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class GoogleDivider extends StatelessWidget {
-  const GoogleDivider({super.key, required this.title});
+  const GoogleDivider({required this.title, super.key});
   final String title;
 
   @override

@@ -3,8 +3,8 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class DetailsPage extends StatelessWidget {
+  const DetailsPage({required this.broadcast, super.key});
   final Broadcast broadcast;
-  const DetailsPage({super.key, required this.broadcast});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class DetailsPage extends StatelessWidget {
           Spaces.horizontalLarge,
           MIconButton(
             icon: const Icon(MIcons.dots_horizontal),
-            onPressed: () => context.showModal(
+            onPressed: () => context.showModal<void>(
               DetailsPageOptionsModal(broadcast: broadcast),
               isScrollControlled: true,
             ),
@@ -26,11 +26,9 @@ class DetailsPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Spaces.verticalLarge,
             Align(
-              alignment: Alignment.center,
               child: _Artwork(imageUrl: broadcast.imageUrl),
             ),
             Spaces.verticalSmall,
@@ -55,8 +53,8 @@ class DetailsPage extends StatelessWidget {
 }
 
 class DetailsPageOptionsModal extends StatelessWidget {
+  const DetailsPageOptionsModal({required this.broadcast, super.key});
   final Broadcast broadcast;
-  const DetailsPageOptionsModal({super.key, required this.broadcast});
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +122,7 @@ class _Artwork extends StatelessWidget {
     Widget image = Center(
       child: Assets.images.logoLight.svg(
         colorFilter: colorFilter,
-        height: 32.0,
+        height: 32,
       ),
     );
 
@@ -188,8 +186,6 @@ class _Description extends StatelessWidget {
     return Column(
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Icon(MIcons.menu_03, size: 16),
             Spaces.horizontalSmall,

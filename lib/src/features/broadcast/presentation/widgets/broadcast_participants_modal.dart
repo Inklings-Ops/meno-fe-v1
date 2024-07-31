@@ -10,7 +10,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
       (LiveParticipantsBloc bloc) => bloc.state.numberOfParticipants,
     );
     return MModal(
-      title: 'Listening (${numberOfParticipants.toString()})',
+      title: 'Listening ($numberOfParticipants)',
       builder: (context) => const Column(
         mainAxisSize: MainAxisSize.min,
         children: [

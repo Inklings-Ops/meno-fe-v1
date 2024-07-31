@@ -3,17 +3,6 @@ part of 'register_cubit.dart';
 // Represents the state of the registration form.
 @freezed
 class RegisterState with _$RegisterState {
-  factory RegisterState({
-    required SingleLineString fullName,
-    required Email email,
-    required Password password,
-    required bool loading,
-    required Option<Either<AuthException, UserCredential>> option,
-    required bool rememberMe,
-  }) = _RegisterState;
-  
-  RegisterState._();
-  bool get isFormValid => fullName.isValid && email.isValid && password.isValid;
 
   factory RegisterState.initial() {
     return RegisterState(
@@ -25,4 +14,15 @@ class RegisterState with _$RegisterState {
       rememberMe: false,
     );
   }
+  factory RegisterState({
+    required SingleLineString fullName,
+    required Email email,
+    required Password password,
+    required bool loading,
+    required Option<Either<AuthException, UserCredential>> option,
+    required bool rememberMe,
+  }) = _RegisterState;
+  
+  RegisterState._();
+  bool get isFormValid => fullName.isValid && email.isValid && password.isValid;
 }

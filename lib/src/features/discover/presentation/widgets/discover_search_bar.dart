@@ -43,11 +43,10 @@ class DiscoverSearchBar extends StatelessWidget {
                 leading: const Icon(MIcons.search, size: Insets.large),
                 shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
                   side: BorderSide(
-                    width: 1,
                     color: Color(0xFFC2C7D0),
                   ),
                   borderRadius: Corners.small,
-                )),
+                ),),
               ),
             ),
           ),
@@ -60,7 +59,7 @@ class DiscoverSearchBar extends StatelessWidget {
                 style: textTheme.captionMedium,
                 color: colors.inActive,
               ),
-            )
+            ),
           ],
         ],
       ),

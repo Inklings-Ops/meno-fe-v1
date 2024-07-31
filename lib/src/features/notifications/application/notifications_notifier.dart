@@ -1,7 +1,6 @@
+import 'package:meno_fe_v1/src/features/notifications/application/notification_providers.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../domain/entities/notification.dart';
-import 'notification_providers.dart';
 
 part 'notifications_notifier.g.dart';
 
@@ -62,7 +61,7 @@ class NotificationsNotifier extends _$NotificationsNotifier {
     final res = await ref.read(notificationFacadeProvider).getNotifications();
     state = res.fold(
       (l) => const AsyncData([]),
-      (r) => AsyncData(r),
+      AsyncData.new,
     );
   }
 

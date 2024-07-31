@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class VerseWidget extends StatelessWidget {
-  const VerseWidget({super.key, required this.verse});
+  const VerseWidget({required this.verse, super.key});
   final Verse verse;
 
   @override
@@ -12,7 +12,7 @@ class VerseWidget extends StatelessWidget {
     final reference = '${verse.book} ${verse.chapter}:${verse.verse}';
     return GestureDetector(
       onTap: () {
-        context.showModal(
+        context.showModal<void>(
           MModal(
             title: reference,
             builder: (context) => const Column(

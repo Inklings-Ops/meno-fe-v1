@@ -98,7 +98,7 @@ class NoteListFailureWidget extends StatelessWidget {
             onPressed: () =>
                 context.read<NotesBloc>().add(const NotesEvent.getNotes()),
           ),
-        )
+        ),
       ],
     );
   }

@@ -11,11 +11,11 @@ class MyProfilePage extends StatelessWidget {
     final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
 
     Future<void> onRefresh() async {
-      Future myProfile = bloc.stream.first;
+      final  myProfile = bloc.stream.first;
       bloc.add(const MyProfileEvent.fetch());
 
-      Future recentlyLive = recentlyLiveCubit.stream.first;
-      recentlyLiveCubit.fetch();
+      final  recentlyLive = recentlyLiveCubit.stream.first;
+      await recentlyLiveCubit.fetch();
 
       await Future.wait([myProfile, recentlyLive]);
     }
@@ -48,7 +48,7 @@ class MyProfilePage extends StatelessWidget {
 }
 
 class CustomContent extends HookWidget {
-  const CustomContent({super.key, required this.profile});
+  const CustomContent({required this.profile, super.key});
   final Profile profile;
 
   @override
@@ -79,9 +79,8 @@ class CustomContent extends HookWidget {
           collapsedHeight: 58,
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () => context.showSwitchAccountSheet(),
+            onTap: () => context.showSwitchAccountSheet<void>(),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MText(profile.fullName.getOr(), color: colors.onBackground),
                 Spaces.horizontalSmall,
@@ -103,7 +102,7 @@ class CustomContent extends HookWidget {
               height: 32,
               child: TabBar(
                 controller: tabController,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 labelStyle: textTheme.captionMedium,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,

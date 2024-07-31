@@ -13,9 +13,6 @@ part 'broadcast_state.dart';
 
 @Injectable()
 class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
-  final IBroadcastFacade _facade;
-  final LiveKitService _liveKit;
-  final SocketService _socket;
   BroadcastBloc({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
@@ -29,8 +26,14 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     on<BroadcastEndRequested>(_onEndBroadcast);
     on<BroadcastDeleteRequested>(_onDeleteBroadcast);
   }
+  final IBroadcastFacade _facade;
+  final LiveKitService _liveKit;
+  final SocketService _socket;
 
-  Future<void> _onStartBroadcast(BroadcastStartRequested event, emit) async {
+  Future<void> _onStartBroadcast(
+    BroadcastStartRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
     final fOrS = await _facade.startBroadcast(event.id);
     await fOrS.fold(
       (failure) async => emit(BroadcastFailure(failure)),
@@ -43,15 +46,21 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     );
   }
 
-  Future<void> _onMuteMicrophone(BroadcastMuteMicrophone event, emit) async {
+  Future<void> _onMuteMicrophone(
+    BroadcastMuteMicrophone event,
+    Emitter<BroadcastState> emit,
+  ) async {
     if (state is BroadcastStartSuccess) {
       final broadcast = (state as BroadcastStartSuccess).broadcast;
-      unawaited(_liveKit.mute(event.value));
+      unawaited(_liveKit.mute(enabled: event.value));
       emit(BroadcastStartSuccess(broadcast: broadcast, muted: event.value));
     }
   }
 
-  Future<void> _onEndBroadcast(BroadcastEndRequested event, emit) async {
+  Future<void> _onEndBroadcast(
+    BroadcastEndRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
     if (state is BroadcastStartSuccess) {
       emit(const BroadcastLoadInProgress());
       await _liveKit
@@ -64,17 +73,22 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     }
   }
 
-  Future<void> _onDeleteBroadcast(BroadcastDeleteRequested event, emit) async {
+  Future<void> _onDeleteBroadcast(
+    BroadcastDeleteRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
     if (state is BroadcastStartSuccess) return;
     emit(const BroadcastLoadInProgress());
     final fOrS = await _facade.deleteBroadcast(event.id);
-    emit(fOrS.fold(
-      (failure) => BroadcastFailure(failure),
-      (success) => const BroadcastDeleteSuccess(),
-    ));
+    emit(
+      fOrS.fold(
+        BroadcastFailure.new,
+        (success) => const BroadcastDeleteSuccess(),
+      ),
+    );
   }
 
-  Future<void> dispose() async => _liveKit.dispose(); 
+  Future<void> dispose() async => _liveKit.dispose();
 
   @override
   Future<void> close() async {

@@ -3,8 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileStatItem extends StatelessWidget {
   const ProfileStatItem({
-    super.key,
-    required this.title,
+    required this.title, super.key,
       this.count= 0,
   });
 
@@ -19,7 +18,6 @@ class ProfileStatItem extends StatelessWidget {
       height: 46,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           MText(count.toString(), style: textTheme.heading3Medium),
           MText(

@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCardOptionsModal extends StatelessWidget {
-  const NoteCardOptionsModal({super.key, required this.note});
+  const NoteCardOptionsModal({required this.note, super.key});
   final Note note;
 
   @override
@@ -23,7 +23,7 @@ class NoteCardOptionsModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Add to Folder',
-              onTap: () => context.showModal(
+              onTap: () => context.showModal<void>(
                 AddToFolderModal(note: note),
                 useRootNavigator: true,
                 isScrollControlled: true,

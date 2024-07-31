@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 class LoginForm extends HookWidget {
-  const LoginForm({super.key, required this.isPasswordOnly});
+  const LoginForm({required this.isPasswordOnly, super.key});
   final bool isPasswordOnly;
 
   @override
@@ -16,7 +16,9 @@ class LoginForm extends HookWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (isPasswordOnly) ...[
-            UserAccountDetails(action: context.showSwitchAccountSheet),
+            UserAccountDetails(
+              action: () => context.showSwitchAccountSheet<void>(),
+            ),
             Spaces.verticalXXLarge,
           ] else ...[
             LoginEmailField(isPwdOnly: isPasswordOnly),

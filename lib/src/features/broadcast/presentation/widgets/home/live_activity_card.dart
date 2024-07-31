@@ -23,7 +23,7 @@ class LiveActivityCard extends StatelessWidget {
 }
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key, required this.badgeTitle});
+  const ActivityCard({required this.badgeTitle, super.key});
   final String badgeTitle;
 
   @override

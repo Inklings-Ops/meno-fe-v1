@@ -3,10 +3,10 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/stream/pre_stream_modal.dart';
 
-import '../modals/m_switch_account_modal.dart';
+import 'package:meno_fe_v1/src/shared/modals/m_switch_account_modal.dart';
 
 extension MBottomSheetsX on BuildContext {
-  Future showModal(
+  Future<T?> showModal<T>(
     Widget child, {
     BoxConstraints? constraints,
     bool isScrollControlled = false,
@@ -14,7 +14,7 @@ extension MBottomSheetsX on BuildContext {
     bool isDismissible = true,
     bool enableDrag = true,
   }) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<T?>(
       context: this,
       builder: (context) => Material(child: child),
       constraints: constraints,
@@ -28,7 +28,7 @@ extension MBottomSheetsX on BuildContext {
     );
   }
 
-  Future showSwitchAccountSheet() => showModal(
+  Future<T?> showSwitchAccountSheet<T>() => showModal(
         const MSwitchAccountModal(),
         isScrollControlled: true,
         useRootNavigator: true,

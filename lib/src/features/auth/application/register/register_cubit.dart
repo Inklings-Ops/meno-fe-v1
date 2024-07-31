@@ -11,10 +11,10 @@ part 'register_state.dart';
 /// A [Cubit] responsible for managing the registration state.
 @lazySingleton
 class RegisterCubit extends Cubit<RegisterState> {
-  final IAuthFacade _facade;
   RegisterCubit({required IAuthFacade facade})
       : _facade = facade,
         super(RegisterState.initial());
+  final IAuthFacade _facade;
 
   /// Updates the user's email address.
   ///

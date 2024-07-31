@@ -2,9 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({
-    super.key,
-    required this.title,
-    required this.children,
+    required this.title, required this.children, super.key,
   });
 
   final String title;

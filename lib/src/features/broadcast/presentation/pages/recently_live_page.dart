@@ -18,7 +18,7 @@ class RecentlyLivePage extends HookWidget {
         }
       });
       return scrollController.dispose;
-    }, const []);
+    }, const [],);
 
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),
@@ -84,8 +84,8 @@ class _BuildListView extends StatelessWidget {
 }
 
 class _LoadedList extends StatelessWidget {
-  final List<Broadcast?> broadcasts;
   const _LoadedList({required this.broadcasts});
+  final List<Broadcast?> broadcasts;
 
   @override
   Widget build(BuildContext context) {

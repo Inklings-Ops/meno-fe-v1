@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class ChatInputContainer extends HookWidget {
-  const ChatInputContainer({super.key, required this.scrollController});
+  const ChatInputContainer({required this.scrollController, super.key});
   final ScrollController scrollController;
 
   @override
@@ -20,7 +20,7 @@ class ChatInputContainer extends HookWidget {
         isSendVisible.value = contentController.text.isNotEmpty;
       });
       return null;
-    }, [contentController.text]);
+    }, [contentController.text],);
 
     return BlocListener<ChatBloc, ChatState>(
       listenWhen: (p, c) => p.onSend != c.onSend,
@@ -125,7 +125,7 @@ class ReactionButton extends StatelessWidget {
               position: i,
               duration: const Duration(milliseconds: 260),
               child: SlideAnimation(
-                verticalOffset: (15 + i * 15),
+                verticalOffset: 15 + i * 15,
                 child: FadeInAnimation(
                   child: MIconButton(
                     size: 40,

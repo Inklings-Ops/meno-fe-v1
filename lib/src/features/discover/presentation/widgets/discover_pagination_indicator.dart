@@ -3,9 +3,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 class DiscoverPaginationIndicator extends StatelessWidget {
   const DiscoverPaginationIndicator({
-    super.key,
-    required this.isLoading,
-    required this.hasMore,
+    required this.isLoading, required this.hasMore, super.key,
   });
   final bool isLoading;
   final bool hasMore;

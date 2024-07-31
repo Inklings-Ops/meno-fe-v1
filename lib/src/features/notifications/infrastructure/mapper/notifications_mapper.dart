@@ -1,11 +1,11 @@
 import 'package:injectable/injectable.dart';
 
-import '../../domain/entities/notification.dart';
-import '../../domain/entities/notification_content.dart';
-import '../../domain/entities/notification_data.dart';
-import '../dtos/notification_content_dto.dart';
-import '../dtos/notification_data_dto.dart';
-import '../dtos/notification_dto.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_content.dart';
+import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_data.dart';
+import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_content_dto.dart';
+import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_data_dto.dart';
+import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_dto.dart';
 
 @singleton
 class NotificationsMapper {

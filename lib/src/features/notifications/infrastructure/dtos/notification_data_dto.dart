@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'notification_dto.dart';
+import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_dto.dart';
 
 part 'notification_data_dto.freezed.dart';
 part 'notification_data_dto.g.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import '../widgets/bible_verses.dart';
-import '../widgets/scripture_picker.dart';
+import 'package:meno_fe_v1/src/features/bible/presentation/widgets/bible_verses.dart';
+import 'package:meno_fe_v1/src/features/bible/presentation/widgets/scripture_picker.dart';
 
 class BiblePage extends StatelessWidget {
   const BiblePage({super.key});
@@ -13,7 +13,6 @@ class BiblePage extends StatelessWidget {
       appBar: MAppBar.secondary(title: 'Bible', centerTitle: true),
       body: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.max,
         children: [
           ScripturePicker(),
           MDivider(bottomSpace: 16),

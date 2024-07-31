@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import 'injector.config.dart';
+import 'package:meno_fe_v1/src/dependency_injector/injector.config.dart';
 
 final di = GetIt.instance;
 

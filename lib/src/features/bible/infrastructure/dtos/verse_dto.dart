@@ -1,7 +1,8 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:objectbox/objectbox.dart';
+// ignore_for_file: invalid_annotation_target
 
-import '../../domain/entities/verse.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/entities/verse.dart';
+import 'package:objectbox/objectbox.dart';
 
 part 'verse_dto.freezed.dart';
 part 'verse_dto.g.dart';
@@ -11,12 +12,12 @@ part 'verse_dto.g.dart';
 class VerseDto with _$VerseDto {
   @Entity(realClass: VerseDto)
   factory VerseDto({
-    @Id(assignable: true) int? id,
     @JsonKey(name: 'book_id') required String book,
     @JsonKey(name: 'book_name') required String bookName,
     required int chapter,
     required String text,
     required int verse,
+    @Id(assignable: true) int? id,
     String? translation,
   }) = _VerseDto;
 

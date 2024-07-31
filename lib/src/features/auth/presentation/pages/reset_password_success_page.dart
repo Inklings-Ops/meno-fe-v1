@@ -20,7 +20,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
           ),
           Spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: MText(
               'Your password has been reset, Jim. Phew! That was a close one.',
               textAlign: TextAlign.center,

@@ -21,7 +21,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   void didChangeDependencies() {
     if (widget.note != null) {
-      final json = jsonDecode(widget.note!.content.getOr());
+      final json = jsonDecode(widget.note!.content.getOr()) as List<dynamic>;
       controller.document = Document.fromJson(json);
     }
 
@@ -77,7 +77,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               Spaces.verticalLarge,
@@ -123,7 +123,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                 showHeaderStyle: false,
                 showListCheck: false,
                 showCodeBlock: false,
-                showAlignmentButtons: false,
                 showLink: false,
                 showSearchButton: false,
                 showQuote: false,
@@ -133,7 +132,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                 showClipboardCopy: false,
                 showClipboardPaste: false,
                 showCenterAlignment: false,
-                showDirection: false,
                 showIndent: false,
               ),
             ),

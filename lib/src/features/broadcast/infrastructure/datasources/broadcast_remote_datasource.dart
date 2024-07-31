@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../dtos/dtos.dart';
-import '../responses/broadcast_response.dart';
 
 part 'broadcast_remote_datasource.g.dart';
 
@@ -30,7 +28,7 @@ abstract class BroadcastRemoteDatasource {
   });
 
   @DELETE('/api/v1/broadcasts/{broadcastId}')
-  Future<BroadcastResponse> deleteBroadcast({
+  Future<BroadcastResponse<dynamic>> deleteBroadcast({
     @Path('broadcastId') required String broadcastId,
   });
 
@@ -61,7 +59,9 @@ abstract class BroadcastRemoteDatasource {
     /// Example : active or inactive
     @Query('status') String? status,
 
-    /// Adds an extra field to each broadcast response with the number of listeners that tuned in
+    /// Adds an extra field to each broadcast response with the number of
+    /// listeners that tuned in
+    ///
     /// Example : totalListeners
     @Query('include') String? include,
 

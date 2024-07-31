@@ -1,4 +1,3 @@
-library;
 
 export 'package:firebase_core/firebase_core.dart';
 export 'package:firebase_messaging/firebase_messaging.dart';
@@ -16,8 +15,9 @@ export 'package:meno_fe_v1/config.dart';
 export 'package:meno_fe_v1/firebase_options.dart';
 export 'package:meno_fe_v1/gen/assets.gen.dart';
 export 'package:meno_fe_v1/gen/fonts.gen.dart';
+export 'package:meno_fe_v1/src/core/core.dart';
+export 'package:meno_fe_v1/src/core/network/network.dart';
 export 'package:meno_fe_v1/src/dependency_injector/injector.dart';
-export 'package:meno_fe_v1/src/features/network/network.dart';
 export 'package:meno_fe_v1/src/router/router.dart';
 export 'package:meno_fe_v1/src/services/meno/meno.dart';
 export 'package:meno_fe_v1/src/shared/shared.dart';

@@ -3,8 +3,7 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class FolderListTile extends StatelessWidget {
   const FolderListTile({
-    super.key,
-    required this.folder,
+    required this.folder, super.key,
     this.onTap,
     this.selected = false,
   });
@@ -35,8 +34,6 @@ class FolderListTile extends StatelessWidget {
           border: selected ? border : null,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               height: 46,

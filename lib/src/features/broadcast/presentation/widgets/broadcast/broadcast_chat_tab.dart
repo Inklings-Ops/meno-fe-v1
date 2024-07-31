@@ -13,7 +13,6 @@ class BroadcastChatTab extends HookWidget {
       builder: (context, state) => state.maybeWhen(
         orElse: () => const Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [MText('Waiting for broadcast to start')],
         ),
         startSuccess: (broadcast, muted) => LayoutBuilder(

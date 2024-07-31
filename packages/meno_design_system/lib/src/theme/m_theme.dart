@@ -115,6 +115,49 @@ class MTheme {
           }
         }),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: colorScheme.background,
+        height: 56,
+        elevation: 0,
+        indicatorColor: Colors.transparent,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) {
+            if (states.contains(WidgetState.selected)) {
+              return IconThemeData(size: 20, color: colorScheme.primary);
+            }
+            return IconThemeData(size: 20, color: colorScheme.inActive);
+          },
+        ),
+        labelTextStyle: WidgetStateTextStyle.resolveWith(
+          (states) {
+            final style = textTheme.microMedium!;
+            if (states.contains(WidgetState.selected)) {
+              return style.copyWith(color: colorScheme.primary);
+            }
+            return style.copyWith(color: colorScheme.inActive);
+          },
+        ),
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: colorScheme.background,
+        minWidth: 224,
+        minExtendedWidth: 224,
+        elevation: 0,
+        indicatorColor: Colors.transparent,
+        labelType: NavigationRailLabelType.none,
+        selectedIconTheme: IconThemeData(size: 20, color: colorScheme.primary),
+        unselectedIconTheme: IconThemeData(
+          size: 20,
+          color: colorScheme.inActive,
+        ),
+        selectedLabelTextStyle: textTheme.microMedium?.copyWith(
+          color: colorScheme.primary,
+        ),
+        unselectedLabelTextStyle: textTheme.microMedium?.copyWith(
+          color: colorScheme.inActive,
+        ),
+      ),
       extensions: [
         colorScheme,
         textTheme,

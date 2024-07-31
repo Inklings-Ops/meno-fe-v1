@@ -11,7 +11,7 @@ class CoHostSection extends StatelessWidget {
       child: Row(
         children: [
           ParticipantItem(
-            onTap: () => context.showModal(
+            onTap: () => context.showModal<void>(
               const AddCohostModal(),
               isScrollControlled: true,
               constraints: BoxConstraints(
@@ -22,7 +22,6 @@ class CoHostSection extends StatelessWidget {
           Spaces.horizontalSmall,
           const Wrap(
             spacing: 8,
-            children: [],
           ),
         ],
       ),

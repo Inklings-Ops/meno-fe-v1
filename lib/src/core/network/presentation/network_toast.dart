@@ -3,8 +3,8 @@ import 'package:meno_fe_v1/meno.dart';
 enum ToastType { error, success }
 
 class NetworkToast extends StatelessWidget {
+  const NetworkToast({required this.type, super.key});
   final ToastType type;
-  const NetworkToast({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {

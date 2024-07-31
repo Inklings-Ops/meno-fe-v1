@@ -3,8 +3,8 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class ParticipantInfoModal extends HookWidget {
-  final Participant participant;
-  const ParticipantInfoModal({super.key, required this.participant});
+  const ParticipantInfoModal({required this.participant, super.key});
+  final BroadcastParticipant participant;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class ParticipantInfoModal extends HookWidget {
         });
       }
       return null;
-    }, [profile, facade, participant.id]);
+    }, [profile, facade, participant.id],);
 
     return MModal(
       builder: (context) => Column(
@@ -36,7 +36,7 @@ class ParticipantInfoModal extends HookWidget {
           MAvatar(radius: 36, url: participant.imageUrl),
           Spaces.verticalLarge,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

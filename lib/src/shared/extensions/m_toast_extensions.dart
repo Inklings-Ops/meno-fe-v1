@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../../features/network/presentation/network_toast.dart';
+import 'package:meno_fe_v1/src/core/network/presentation/network_toast.dart';
 
 extension MToastExtensions on BuildContext {
-  Widget _buildPosition(context, child) {
+  Widget _buildPosition(BuildContext context, Widget child) {
     return Positioned(
-      top: 24.0,
-      left: 16.0,
-      right: 16.0,
+      top: 24,
+      left: 16,
+      right: 16,
       child: child,
     );
   }

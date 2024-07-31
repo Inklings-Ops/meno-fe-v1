@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-import 'entities/entities.dart';
-import 'exceptions/exceptions.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/entities/entities.dart';
+import 'package:meno_fe_v1/src/features/bible/domain/exceptions/exceptions.dart';
 
 /// The [IBibleFacade] abstract class is a contract that defines methods and properties
 /// for interacting with a Bible API. It contains methods to retrieve books of the Bible,

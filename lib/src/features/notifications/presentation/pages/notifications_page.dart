@@ -65,7 +65,7 @@ class _Content extends StatelessWidget {
 }
 
 class NotificationList extends StatelessWidget {
-  const NotificationList({super.key, required this.notifications});
+  const NotificationList({required this.notifications, super.key});
   final List<Notification?> notifications;
 
   @override

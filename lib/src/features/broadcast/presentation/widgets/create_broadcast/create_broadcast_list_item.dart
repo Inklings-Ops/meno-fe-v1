@@ -1,16 +1,14 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class CreateBroadcastListItem extends StatelessWidget {
+
+  const CreateBroadcastListItem({
+    required this.leadingText, required this.subtitleText, super.key,
+    this.trailing,
+  });
   final String leadingText;
   final String subtitleText;
   final Widget? trailing;
-
-  const CreateBroadcastListItem({
-    super.key,
-    required this.leadingText,
-    required this.subtitleText,
-    this.trailing,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,6 @@ class CreateBroadcastListItem extends StatelessWidget {
           child: SizedBox(
             height: 24,
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(

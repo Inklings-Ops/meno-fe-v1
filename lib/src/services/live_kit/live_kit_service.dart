@@ -4,9 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:meno_fe_v1/src/core/env/env.dart';
 import 'package:rxdart/rxdart.dart';
-
-import '../../core/env/env.dart';
 
 export 'package:livekit_client/livekit_client.dart';
 
@@ -56,13 +55,13 @@ class LiveKitService extends Object with Disposable {
 
   Future<void> disconnect() => room.disconnect();
 
-  Future<void> mute(bool enabled) async {
+  Future<void> mute({required bool enabled}) async {
     await room.localParticipant?.setMicrophoneEnabled(enabled);
   }
 
   @override
-  FutureOr onDispose() async {
-    _events.close();
+  FutureOr<void> onDispose() async {
+    await _events.close();
     await dispose();
   }
 

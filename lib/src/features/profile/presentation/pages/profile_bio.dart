@@ -3,7 +3,7 @@ import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:readmore/readmore.dart';
 
 class ProfileBio extends StatelessWidget {
-  const ProfileBio({super.key, required this.bio});
+  const ProfileBio({required this.bio, super.key});
   final Bio? bio;
 
   @override

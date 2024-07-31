@@ -1,8 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class BroadcastExitAlertDialog extends StatelessWidget {
-  final bool isBroadcasting;
   const BroadcastExitAlertDialog({super.key, this.isBroadcasting = true});
+  final bool isBroadcasting;
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +10,8 @@ class BroadcastExitAlertDialog extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
     const borderRadius = Corners.small;
 
-    String label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
-    String content = isBroadcasting
+    final label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
+    final content = isBroadcasting
         ? 'Do you want to end this live broadcast?'
         : 'Do you want to leave this live broadcast?';
 

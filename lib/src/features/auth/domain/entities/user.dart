@@ -51,7 +51,6 @@ class User with _$User {
       verified: false,
       imageId: '',
       imageUrl: '',
-      deleted: null,
     );
   }
 }

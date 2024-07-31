@@ -7,7 +7,7 @@ class ProfileRecentBroadcastsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Broadcast?> broadcasts = [];
+    final broadcasts = <Broadcast?>[];
 
     // if (broadcasts.isLoading) {
     //   return const _LoadingList();
@@ -39,13 +39,13 @@ class ProfileRecentBroadcastsTab extends StatelessWidget {
 }
 
 class _BuildListView extends StatelessWidget {
-  final int itemCount;
-  final IndexedWidgetBuilder itemBuilder;
 
   const _BuildListView({
     required this.itemCount,
     required this.itemBuilder,
   });
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +62,8 @@ class _BuildListView extends StatelessWidget {
 }
 
 class _LoadedList extends StatelessWidget {
-  final List<Broadcast?> broadcasts;
   const _LoadedList({required this.broadcasts});
+  final List<Broadcast?> broadcasts;
 
   @override
   Widget build(BuildContext context) {

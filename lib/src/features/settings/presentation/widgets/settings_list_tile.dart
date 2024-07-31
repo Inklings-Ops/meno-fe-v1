@@ -2,10 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 
 class SettingsListTile extends StatelessWidget {
   const SettingsListTile({
-    super.key,
-    required this.title,
-    required this.leadingIcon,
-    required this.onTap,
+    required this.title, required this.leadingIcon, required this.onTap, super.key,
     this.isDisabled = false,
     this.trailing,
     this.showDivider = true,
@@ -51,7 +48,7 @@ class SettingsListTile extends StatelessWidget {
                 color: resolveDisabledWithOpacity(colors.onBackgroundVariant),
               ),
         ),
-        if (showDivider) const MDivider()
+        if (showDivider) const MDivider(),
       ],
     );
   }

@@ -23,8 +23,6 @@ class AddCohostModal extends StatelessWidget {
             ),
             Spaces.verticalLarge,
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(
                   MIcons.info_circle,

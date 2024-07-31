@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const ProfileAppBar({super.key, required this.name});
+  const ProfileAppBar({required this.name, super.key});
   final String name;
 
   @override
@@ -23,9 +23,8 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 23,
       titleSpacing: 0,
       title: GestureDetector(
-        onTap: () => context.showSwitchAccountSheet(),
+        onTap: () => context.showSwitchAccountSheet<void>(),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             MText(name, color: colors.onBackground),
             Spaces.horizontalSmall,

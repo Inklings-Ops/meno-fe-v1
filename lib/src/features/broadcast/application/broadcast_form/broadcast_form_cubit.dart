@@ -14,16 +14,16 @@ part 'broadcast_form_state.dart';
 
 @lazySingleton
 class BroadcastFormCubit extends Cubit<BroadcastFormState> {
-  final IBroadcastFacade _facade;
-  final MediaService _mediaService;
   BroadcastFormCubit({
     required IBroadcastFacade facade,
     required MediaService mediaService,
   })  : _facade = facade,
         _mediaService = mediaService,
         super(BroadcastFormState.initial());
+  final IBroadcastFacade _facade;
+  final MediaService _mediaService;
 
-  void artworkChanged(bool fromGallery) async {
+  Future<void> artworkChanged(bool fromGallery) async {
     final file = await _mediaService.getImage(fromGallery: fromGallery);
     if (file != null) {
       emit(state.copyWith(artwork: BroadcastArtwork(File(file.path))));
