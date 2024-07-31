@@ -15,35 +15,35 @@ class CreateBroadcastListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12).radius,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           decoration: BoxDecoration(
             color: theme.disabledColor,
-            borderRadius: $styles.radius.small,
+            borderRadius: Corners.small,
           ),
           child: SizedBox(
-            height: 24.toScale,
+            height: 24,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: MText(leadingText, style: $styles.text.captionMedium),
+                  child: MText(leadingText, style: textTheme.captionMedium),
                 ),
-                $styles.spaces.horizontalLarge,
+                Spaces.horizontalLarge,
                 trailing ?? const SizedBox(),
               ],
             ),
           ),
         ),
-        6.vSpace,
+        const SizedBox(height: 6),
         SizedBox(
-          height: 18.toScale,
-          child: MText(subtitleText, style: $styles.text.captionRegular),
+          height: 18,
+          child: MText(subtitleText, style: textTheme.captionRegular),
         ),
       ],
     );

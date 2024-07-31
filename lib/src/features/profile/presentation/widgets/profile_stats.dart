@@ -8,18 +8,18 @@ class ProfileStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46.toScale,
+      height: 46,
       child: Row(
         children: [
-          2.hSpace,
+          const SizedBox(width: 2),
           ProfileStatItem(title: 'Broadcasts', count: stats?.broadcasts),
-          // $styles.spaces.horizontalLarge,
+          // Spaces.horizontalLarge,
           const Spacer(),
           ProfileStatItem(title: 'Subscribers', count: stats?.subscribers),
-          // $styles.spaces.horizontalLarge,
+          // Spaces.horizontalLarge,
           const Spacer(),
           ProfileStatItem(title: 'Subscriptions', count: stats?.subscriptions),
-          2.hSpace,
+          const SizedBox(width: 2),
         ],
       ),
     );

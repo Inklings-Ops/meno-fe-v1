@@ -30,16 +30,16 @@ class RegisterPage extends StatelessWidget {
           implyLeading: implyLeading,
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 24).radius,
+          padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const RegisterForm(),
-              $styles.spaces.verticalXXLarge,
+              Spaces.verticalXXLarge,
               const GoogleDivider(title: 'Or'),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MGoogleButton(title: 'Create with Google'),
-              44.vSpace,
+              const SizedBox(height: 44),
               BlocBuilder<OnboardingCubit, OnboardingState>(
                 builder: (context, state) => AuthRedirectionText(
                   title: 'Already have an account?',

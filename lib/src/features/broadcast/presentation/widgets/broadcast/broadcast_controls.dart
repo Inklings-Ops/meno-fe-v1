@@ -6,16 +6,16 @@ class BroadcastControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40.toScale,
+    return const SizedBox(
+      height: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const BroadcastMicrophoneButton(),
-          $styles.spaces.horizontalSmall,
-          const BroadcastStartStopButton(),
-          $styles.spaces.horizontalSmall,
-          const MoreOptionsButton(),
+          BroadcastMicrophoneButton(),
+          Spaces.horizontalSmall,
+          BroadcastStartStopButton(),
+          Spaces.horizontalSmall,
+          MoreOptionsButton(),
         ],
       ),
     );
@@ -30,12 +30,12 @@ class MoreOptionsButton extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
-      iconSize: 20.toScale,
+      iconSize: 20,
       color: colors.onBackground,
       style: IconButton.styleFrom(
-        fixedSize: Size.fromWidth(48.toScale),
+        fixedSize: const Size.fromWidth(48),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.large),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.large),
       ),
       onPressed: () => context.showModal(
         BlocBuilder<BroadcastBloc, BroadcastState>(

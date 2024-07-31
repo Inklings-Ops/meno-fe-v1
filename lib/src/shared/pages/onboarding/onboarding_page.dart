@@ -46,11 +46,11 @@ class OnboardingPage extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MenoLogo(),
-              72.vSpace,
+              const SizedBox(height: 72),
               LimitedBox(
-                maxHeight: 372.toScale,
+                maxHeight: 372,
                 maxWidth: double.infinity,
                 child: PageView.builder(
                   controller: pageController,
@@ -59,28 +59,28 @@ class OnboardingPage extends HookWidget {
                   itemBuilder: (context, i) => OnboardingBody(items[i]),
                 ),
               ),
-              48.vSpace,
+              Spaces.verticalXXXLarge,
               OnboardingIndicator(
                 currentIndex: currentIndex.value,
                 itemsLength: onboardingItems.length,
               ),
-              24.vSpace,
+              Spaces.verticalXLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: MPrimaryButton(
                   label: 'Get started',
                   onPressed: () => context.push(Routes.registerWithLeading),
                 ),
               ),
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: MSecondaryButton(
                   label: 'Login',
                   onPressed: () => context.push(Routes.loginWithLeading),
                 ),
               ),
-              64.vSpace,
+              const SizedBox(height: 64),
             ],
           ),
         ),

@@ -9,35 +9,35 @@ class EmptyFolderPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      width: 266.toScale,
-      height: 224.toScale,
+      width: 266,
+      height: 224,
       child: Column(
         children: [
-          Assets.images.newFile.image(height: 120.toScale, width: 160.toScale),
-           MText(
+          Assets.images.newFile.image(height: 120, width: 160),
+          MText(
             'Let’s add some notes to this folder',
-            style: $styles.text.bodyRegular,
+            style: textTheme.bodyRegular,
             textAlign: TextAlign.center,
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           SizedBox(
-            width: 155.toScale,
-            height: 32.toScale,
+            width: 155,
+            height: 32,
             child: MSecondaryButton.icon(
               label: 'Add to this Folder',
               icon: const Icon(MIcons.plus),
               style: OutlinedButton.styleFrom(
-                textStyle: $styles.text.microMedium,
+                textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,
                 iconColor: colors.onBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: $styles.radius.small,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Corners.small,
                 ),
                 side: BorderSide(
                   color: colors.outlineVariant3!,
-                  width: 1.50.toScale,
+                  width: 1.50,
                 ),
               ),
               onPressed: () => context.showModal(
@@ -75,7 +75,7 @@ class _AllNotesModal extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            $styles.spaces.verticalLarge,
+            Spaces.verticalLarge,
             Expanded(
               child: BlocBuilder<NotesBloc, NotesState>(
                 bloc: bloc,
@@ -95,9 +95,9 @@ class _AllNotesModal extends HookWidget {
                   return ListView.separated(
                     primary: false,
                     shrinkWrap: true,
-                    padding: const EdgeInsets.only(bottom: 16).radius,
+                    padding: const EdgeInsets.only(bottom: 16),
                     itemCount: list.length,
-                    separatorBuilder: (context, i) => 16.vSpace,
+                    separatorBuilder: (context, i) => const SizedBox(height: 6),
                     itemBuilder: (context, i) => NoteCard(
                       note: list[i]!,
                       showAddButton: true,
@@ -116,7 +116,7 @@ class _AllNotesModal extends HookWidget {
               ),
             ),
             if (selectedNote.value != null) ...[
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: bloc.state.isLoading,

@@ -6,18 +6,19 @@ class EmptyFolderListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      width: 266.toScale,
-      height: 224.toScale,
+      width: 266,
+      height: 224,
       child: Column(
         children: [
-          Assets.images.folder.image(height: 120.toScale, width: 160.toScale),
+          Assets.images.folder.image(height: 120, width: 160),
           MText(
             'Welcome! Organize your notes better through folders.',
-            style: $styles.text.bodyRegular,
+            style: textTheme.bodyRegular,
             textAlign: TextAlign.center,
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           const _CreateNewFolderButton(),
         ],
       ),
@@ -31,23 +32,23 @@ class _CreateNewFolderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      width: 160.toScale,
-      height: 32.toScale,
+      width: 160,
+      height: 32,
       child: MSecondaryButton.icon(
         label: 'Create New Folder',
         icon: const Icon(MIcons.plus),
         style: OutlinedButton.styleFrom(
-          textStyle: $styles.text.microMedium,
+          textStyle: textTheme.microMedium,
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
-          shape: RoundedRectangleBorder(
-            borderRadius: $styles.radius.small,
+          shape: const RoundedRectangleBorder(
+            borderRadius: Corners.small,
           ),
           side: BorderSide(
             color: colors.outlineVariant3!,
-            width: 1.50.toScale,
+            width: 1.50,
           ),
         ),
         onPressed: () => context.showModal(

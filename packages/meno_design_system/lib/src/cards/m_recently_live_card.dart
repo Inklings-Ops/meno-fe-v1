@@ -3,19 +3,59 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/gen/assets.gen.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+/// A widget that represents a card for recently live content.
+///
+/// This card displays information about recently live content, including the
+/// title of the content, the host, and an optional image. The card can also
+/// handle tap gestures through the [onTap] callback.
+///
+/// Example usage:
+/// ```dart
+/// MRecentlyLiveCard(
+///   title: 'Live Event Title',
+///   host: 'Host Name',
+///   imageUrl: 'https://example.com/image.jpg',
+///   onTap: () {
+///     // Handle card tap
+///   },
+/// );
+/// ```
 class MRecentlyLiveCard extends StatelessWidget {
+  /// Creates an instance of [MRecentlyLiveCard].
+  ///
+  /// Parameters:
+  /// - [title]: The title of the recently live content.
+  /// - [host]: The name of the host of the recently live content.
+  /// - [loading]: A boolean indicating if the card is in a loading state.
+  /// - [key]: An optional key to identify the widget.
+  /// - [imageUrl]: An optional URL for an image to be displayed in the card.
+  /// - [onTap]: An optional callback function to be invoked when the card is
+  /// tapped.
   const MRecentlyLiveCard({
+    required this.loading,
+    this.title,
+    this.host,
     super.key,
-    required this.title,
-    required this.host,
     this.imageUrl,
     this.onTap,
   });
-  final String title;
-  final String host;
+
+  /// The title of the recently live content.
+  final String? title;
+
+  /// The name of the host of the recently live content.
+  final String? host;
+
+  /// The URL of an image to be displayed in the card.
   final String? imageUrl;
+
+  /// A callback function to be invoked when the card is tapped.
   final VoidCallback? onTap;
+
+  /// A boolean indicating if the card is in a loading state.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -29,71 +69,72 @@ class MRecentlyLiveCard extends StatelessWidget {
 
     final hasImage = imageUrl != null;
 
-    final placeholder = Assets.images.logoLight.svg(
-      colorFilter: colorFilter,
-      height: 32.0.toScale,
-    );
+    Widget? placeholder;
 
-    final DecorationImage? image = hasImage
-        ? DecorationImage(
-            image: CachedNetworkImageProvider(imageUrl!),
-            fit: BoxFit.cover,
-          )
-        : null;
+    DecorationImage? image;
+    if (loading) {
+      image = null;
+      placeholder = null;
+    } else {
+      if (hasImage) {
+        image = DecorationImage(
+          image: CachedNetworkImageProvider(imageUrl!),
+          fit: BoxFit.cover,
+        );
+      } else {
+        placeholder = Assets.images.logoLight.svg(
+          colorFilter: colorFilter,
+          height: 32,
+        );
+      }
+    }
 
     return GestureDetector(
       onTap: onTap,
       child: _Container(
         children: [
-          Container(
-            width: 148.toScale,
-            height: 88.toScale,
-            padding: const EdgeInsets.symmetric(vertical: 28).radius,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: isLight ? MColor.grey30 : MColor.grey400,
-              borderRadius: $styles.radius.medium,
-              image: image,
+          Skeletonizer(
+            enabled: loading,
+            containersColor: isLight ? MColor.grey30 : MColor.grey400,
+            child: Container(
+              width: 148,
+              height: 88,
+              padding: const EdgeInsets.symmetric(vertical: 28),
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: isLight ? MColor.grey30 : MColor.grey400,
+                borderRadius: Corners.medium,
+                image: loading ? null : image,
+              ),
+              child: !hasImage ? placeholder : null,
             ),
-            child: !hasImage ? placeholder : null,
           ),
-          $styles.spaces.verticalMedium,
-          MText(
-            title,
-            style: styles.titleStyle,
-            color: styles.titleColor,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Spaces.verticalMedium,
+          Skeletonizer(
+            enabled: loading,
+            child: MText(
+              loading ? BoneMock.fullName : title!,
+              style: styles.titleStyle,
+              color: styles.titleColor,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          $styles.spaces.verticalMicro,
-          MText(
-            host,
-            style: styles.hostStyle,
-            color: styles.hostColor,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          Spaces.verticalMicro,
+          Skeletonizer(
+            enabled: loading,
+            child: MText(
+              loading ? BoneMock.name : host!,
+              style: styles.hostStyle,
+              color: styles.hostColor,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class MRecentlyLiveCardSkeleton extends StatelessWidget {
-  const MRecentlyLiveCardSkeleton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return _Container(
-      children: [
-        const MShimmer(borderRadius: 12, width: 148, height: 88),
-        $styles.spaces.verticalMedium,
-        const MShimmer(height: 24),
-        $styles.spaces.verticalMicro,
-        const MShimmer(height: 14, width: 80),
-      ],
     );
   }
 }
@@ -105,22 +146,21 @@ class _Container extends StatelessWidget {
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
     return Container(
-      width: 176.toScale,
-      height: 176.toScale,
-      padding: const EdgeInsets.all(14.0).radius,
+      width: 176,
+      height: 176,
+      padding: const EdgeInsets.all(14),
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
-        shadows: $styles.shadows.soft,
+        shadows: Shadows.soft,
         shape: SmoothRectangleBorder(
-          borderRadius: $styles.radius.squircleLarge,
+          borderRadius: Corners.squircleLarge,
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: children,
-      ), 
+      ),
     );
   }
 }

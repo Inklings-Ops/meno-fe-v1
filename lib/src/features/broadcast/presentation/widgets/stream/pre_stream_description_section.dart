@@ -7,6 +7,7 @@ class PreStreamDescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -15,12 +16,12 @@ class PreStreamDescriptionSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(MIcons.menu_03, size: $styles.insets.large),
-            $styles.spaces.horizontalSmall,
-            MText('Description', style: $styles.text.subheadingMedium),
+            const Icon(MIcons.menu_03, size: Insets.large),
+            Spaces.horizontalSmall,
+            MText('Description', style: textTheme.subheadingMedium),
           ],
         ),
-        $styles.spaces.verticalLarge,
+        Spaces.verticalLarge,
         if (broadcast.description?.getOr() != null)
           MText(broadcast.description!.getOr()!),
       ],

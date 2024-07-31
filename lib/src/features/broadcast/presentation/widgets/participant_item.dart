@@ -18,11 +18,12 @@ class ParticipantItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final hasUser = participant != null;
     return InkWell(
       onTap: onTap,
       child: SizedBox.square(
-        dimension: 88.toScale,
+        dimension: 88,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -31,12 +32,12 @@ class ParticipantItem extends StatelessWidget {
               participant: participant,
               isForAddCohost: isForAddCohost,
             ),
-            $styles.spaces.verticalSmall,
+            Spaces.verticalSmall,
             SizedBox(
-              height: $styles.insets.large,
+              height: Insets.large,
               child: MText(
                 hasUser ? participant!.fullName : 'Add Co-host',
-                style: $styles.text.microMedium.copyWith(height: 1),
+                style: textTheme.microMedium?.copyWith(height: 1),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 color: hasUser ? null : MColor.grey50,
@@ -44,16 +45,16 @@ class ParticipantItem extends StatelessWidget {
               ),
             ),
             if (isCohost) ...[
-              $styles.spaces.verticalMicro,
+              Spaces.verticalMicro,
               SizedBox(
-                height: $styles.insets.medium,
+                height: Insets.medium,
                 child: _CoHostTag(participantId: participant!.id),
               ),
             ],
             if (isCreator) ...[
-              $styles.spaces.verticalMicro,
+              Spaces.verticalMicro,
               SizedBox(
-                height: $styles.insets.medium,
+                height: Insets.medium,
                 child: _HostTag(participantId: participant!.id),
               ),
             ],
@@ -73,35 +74,34 @@ class _ParticipantAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     return SizedBox.square(
-      dimension: 48.toScale,
+      dimension: 48,
       child: Stack(
         fit: StackFit.loose,
         children: [
           MAvatar(
-            radius: 24.toScale,
+            radius: 24,
             url: participant?.imageUrl,
             hasBorder: false,
-            child: participant == null
-                ? Icon(MIcons.user, size: 16.toScale)
-                : null,
+            child:
+                participant == null ? const Icon(MIcons.user, size: 16) : null,
           ),
           if (isForAddCohost)
             Positioned(
-              left: 30.toScale,
-              top: 30.toScale,
+              left: 30,
+              top: 30,
               child: Container(
-                padding: EdgeInsets.all($styles.insets.micro),
+                padding: const EdgeInsets.all(Insets.micro),
                 decoration: BoxDecoration(
                   color: colors.error,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    width: 2.toScale,
+                    width: 2,
                     color: colors.background!,
                   ),
                 ),
                 child: Icon(
                   MIcons.x_close,
-                  size: $styles.insets.small,
+                  size: Insets.small,
                   color: colors.onError,
                 ),
               ),
@@ -160,6 +160,7 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MText(title, style: $styles.text.nanoRegular.copyWith(height: 1));
+    final textTheme = MTextTheme.of(context)!;
+    return MText(title, style: textTheme.nanoRegular?.copyWith(height: 1));
   }
 }

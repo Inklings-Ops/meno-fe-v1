@@ -12,7 +12,6 @@ export 'package:go_router/go_router.dart';
 export 'package:meno_design_system/meno_design_system.dart';
 export 'package:meno_fe_v1/app/meno_bloc_provider.dart';
 export 'package:meno_fe_v1/app/meno_repository_provider.dart';
-export 'package:meno_fe_v1/app/meno_scaffold.dart';
 export 'package:meno_fe_v1/config.dart';
 export 'package:meno_fe_v1/firebase_options.dart';
 export 'package:meno_fe_v1/gen/assets.gen.dart';

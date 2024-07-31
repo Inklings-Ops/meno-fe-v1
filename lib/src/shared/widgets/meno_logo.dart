@@ -8,9 +8,9 @@ class MenoLogo extends StatelessWidget {
     final isLight = Theme.of(context).brightness == Brightness.light;
 
     if (isLight) {
-      return Assets.images.menoPurple.image(height: 32.toScale);
+      return Assets.images.menoPurple.image(height: 32);
     } else {
-      return Assets.images.menoWhite.image(height: 32.toScale);
+      return Assets.images.menoWhite.image(height: 32);
     }
   }
 }

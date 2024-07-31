@@ -2,56 +2,87 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/gen/fonts.gen.dart';
 
+/// A utility class for creating and accessing theme data based on the
+/// application's brightness setting.
+///
+/// The [MTheme] class provides static methods to obtain theme data for both
+/// dark and light modes. This class is intended to simplify the process of
+/// configuring and accessing themes throughout the application.
+///
+/// Example usage:
+/// ```dart
+/// ThemeData lightTheme = MTheme.light;
+/// ThemeData darkTheme = MTheme.dark;
+/// ```
 class MTheme {
-  static ThemeData theme(Brightness brightness) => createTheme(brightness);
-
-  static ThemeData get dark => createTheme(Brightness.dark);
-
-  static ThemeData get light => createTheme(Brightness.light);
-
+  // Private constructor to prevent instantiation.
   MTheme._();
 
-  static ThemeData createTheme(Brightness brightness) {
-    return raw(MColorScheme.$default(brightness));
-  }
+  /// Retrieves the [ThemeData] for the specified [Brightness].
+  ///
+  /// This method returns a [ThemeData] instance configured according to the
+  /// given [brightness]. It internally calls a private method to generate
+  /// the appropriate theme data.
+  ///
+  /// - [brightness]: The brightness mode for which to retrieve the theme data.
+  ///
+  /// Returns the [ThemeData] instance configured for the specified brightness.
+  static ThemeData theme(Brightness brightness) => _raw(brightness);
 
-  static ThemeData raw(MColorScheme colors) {
-    final textTheme = MTextTheme.$default();
-    final buttonStyles = MButtonStyles.$default(colors);
-    final globalStyles = MGlobalStyles.$default(colors);
-    final navStyles = MNavigationStyles.$default(colors);
-    final modalStyles = MModalStyles.$default(colors);
-    final cardStyles = MCardStyles.$default(colors);
-    final textInputStyles = MTextFieldStyle.$default(colors);
+  /// Retrieves the [ThemeData] for dark mode.
+  ///
+  /// This getter provides a [ThemeData] instance configured for dark mode,
+  /// using the internal method to generate the appropriate theme data.
+  ///
+  /// Returns the [ThemeData] instance configured for dark mode.
+  static ThemeData get dark => _raw(Brightness.dark);
+
+  /// Retrieves the [ThemeData] for light mode.
+  ///
+  /// This getter provides a [ThemeData] instance configured for light mode,
+  /// using the internal method to generate the appropriate theme data.
+  ///
+  /// Returns the [ThemeData] instance configured for light mode.
+  static ThemeData get light => _raw(Brightness.light);
+
+  // Private method to generate raw theme data based on brightness.
+  static ThemeData _raw(Brightness brightness) {
+    final colorScheme = MColorScheme.$default(brightness);
+    final textTheme = MTextTheme.$default(colorScheme);
+
+    final buttonStyles = MButtonStyles.$default(colorScheme, textTheme);
+    final cardStyles = MCardStyles.$default(colorScheme, textTheme);
+    final globalStyles = MGlobalStyles.$default(colorScheme, textTheme);
+    final modalStyles = MModalStyles.$default(colorScheme);
+    final navStyles = MNavigationStyles.$default(colorScheme, textTheme);
+    final otpStyles = MOtpFieldStyles.$default(colorScheme, textTheme);
+    final textInputStyles = MTextFieldStyle.$default(colorScheme, textTheme);
 
     return ThemeData(
       cardTheme: cardStyles.cardTheme,
-      colorScheme: colors.getColorScheme,
+      colorScheme: colorScheme.getColorScheme,
       elevatedButtonTheme: buttonStyles.elevatedButtonTheme,
       outlinedButtonTheme: buttonStyles.outlinedButtonTheme,
       textButtonTheme: buttonStyles.textButtonTheme,
       dividerTheme: globalStyles.dividerTheme,
       dividerColor: globalStyles.dividerColor,
-      scaffoldBackgroundColor: colors.background,
+      scaffoldBackgroundColor: colorScheme.background,
       bottomNavigationBarTheme: navStyles.bottomNavigationBarTheme,
       appBarTheme: navStyles.appBarTheme,
       tabBarTheme: navStyles.tabBarTheme,
-      iconTheme: IconThemeData(
-        color: colors.onBackground,
-        size: 24.toScale,
-      ),
+      iconTheme: IconThemeData(color: colorScheme.onBackground, size: 24),
       fontFamily: FontFamily.sFProDisplay,
-      disabledColor: colors.disabled,
+      disabledColor: colorScheme.disabled,
       useMaterial3: true,
       snackBarTheme: globalStyles.snackBarTheme,
       checkboxTheme: globalStyles.checkboxTheme,
       bottomSheetTheme: modalStyles.bottomSheetTheme,
-      listTileTheme: ListTileThemeData(textColor: colors.onBackground),
+      listTileTheme: ListTileThemeData(textColor: colorScheme.onBackground),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: colors.primary,
-        linearMinHeight: 4.toScale,
-        linearTrackColor: colors.background,
-        circularTrackColor: colors.background,
+        color: colorScheme.primary,
+        linearMinHeight: 4,
+        linearTrackColor: colorScheme.background,
+        circularTrackColor: colorScheme.background,
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: textInputStyles.border,
@@ -64,39 +95,36 @@ class MTheme {
         hintStyle: textInputStyles.hintTextStyle,
         labelStyle: textInputStyles.labelTextStyle,
         errorStyle: textInputStyles.errorTextStyle,
-        contentPadding: EdgeInsets.symmetric(horizontal: $styles.insets.medium),
+        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.medium),
       ),
-      textTheme: textTheme.globalTextTheme,
       chipTheme: ChipThemeData(
         showCheckmark: false,
-        padding: EdgeInsets.symmetric(
-          horizontal: $styles.insets.large,
-          vertical: 6.toScale,
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.large,
+          vertical: 6,
         ),
         labelPadding: EdgeInsets.zero,
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
-        labelStyle: $styles.text.captionMedium,
-        color: WidgetStateProperty.resolveWith(
-          (states) {
-            if (states.contains(WidgetState.selected)) {
-              return colors.primary;
-            } else {
-              return colors.inActiveContainer;
-            }
-          },
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
+        labelStyle: textTheme.captionMedium,
+        color: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return colorScheme.primary;
+          } else {
+            return colorScheme.inActiveContainer;
+          }
+        }),
       ),
       extensions: [
+        colorScheme,
+        textTheme,
         buttonStyles,
         globalStyles,
-        colors,
         cardStyles,
         navStyles,
         modalStyles,
         textInputStyles,
-        textTheme,
-        MOtpFieldStyles.$default(colors),
+        otpStyles,
       ],
     );
   }

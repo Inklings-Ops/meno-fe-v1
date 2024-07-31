@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
-
 class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({super.key});
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MScaffold(
       appBar: MAppBar.primary(title: 'Verify Your Email'),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 24).radius,
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Form(
           child: Builder(
             builder: (formContext) => Column(
@@ -18,9 +18,9 @@ class EmailVerificationPage extends StatelessWidget {
               children: [
                 MText(
                   'OTP verification',
-                  style: $styles.text.heading2Medium,
+                  style: textTheme.heading2Medium,
                 ),
-                $styles.spaces.verticalSmall,
+                Spaces.verticalSmall,
                 Text.rich(
                   TextSpan(
                     children: [
@@ -29,21 +29,21 @@ class EmailVerificationPage extends StatelessWidget {
                       ),
                       TextSpan(
                         text: 'jimhalpert26@gmail.com ',
-                        style: $styles.text.bodyBold,
+                        style: textTheme.bodyBold,
                       ),
                       const TextSpan(text: 'to continue.'),
                     ],
                   ),
-                  style: $styles.text.bodyRegular,
+                  style: textTheme.bodyRegular,
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 const MOtpField(),
-                24.vSpace,
+                Spaces.verticalXLarge,
                 const AuthRedirectionText(
                   title: 'Didn’t receive code?',
                   buttonText: 'Send again',
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 MPrimaryButton(label: 'Continue', onPressed: () {}),
               ],
             ),

@@ -12,7 +12,7 @@ class BibleBooksModal extends HookWidget {
     final books = bloc.books.entries;
     final booksLength = books.length;
 
-    final controller = AutoScrollController(suggestedRowHeight: 200.toScale);
+    final controller = AutoScrollController(suggestedRowHeight: 200);
 
     useEffect(() {
       final index = books.toList().indexWhere((b) => b.key == bloc.state.book);
@@ -26,7 +26,7 @@ class BibleBooksModal extends HookWidget {
         child: ListView.separated(
           controller: controller,
           itemCount: booksLength,
-          separatorBuilder: (context, index) => 10.vSpace,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final book = books.elementAt(index);
             return AutoScrollTag(

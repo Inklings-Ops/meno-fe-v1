@@ -23,7 +23,7 @@ class NoteBodyWidget extends StatelessWidget {
           children: [
             Container(
               width: size.width,
-              padding: const EdgeInsets.fromLTRB(0, 24, 0, 8).radius,
+              padding: const EdgeInsets.fromLTRB(0, 24, 0, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -34,7 +34,7 @@ class NoteBodyWidget extends StatelessWidget {
                       selected: selectedIndex.value == 0,
                     ),
                   ),
-                  $styles.spaces.horizontalSmall,
+                  Spaces.horizontalSmall,
                   Expanded(
                     child: FolderWidget(
                       onTap: () => selectedIndex.value = 1,
@@ -44,7 +44,7 @@ class NoteBodyWidget extends StatelessWidget {
                 ],
               ),
             ),
-            20.vSpace,
+            const SizedBox(height: 20),
             switch (selectedIndex.value) {
               0 => const NoteListWidget(),
               1 => const FolderListWidget(),

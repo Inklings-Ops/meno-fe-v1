@@ -37,10 +37,10 @@ class FolderListWidget extends StatelessWidget {
               primary: false,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 16).radius,
+              padding: const EdgeInsets.only(bottom: 16),
               itemCount: folders.length,
               separatorBuilder: (context, index) =>
-                  $styles.spaces.verticalLarge,
+                  Spaces.verticalLarge,
               itemBuilder: (context, i) {
                 final folder = folders[i]!;
                 return FolderListTile(

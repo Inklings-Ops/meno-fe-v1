@@ -7,21 +7,21 @@ class ScripturePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56.toScale,
-      padding: const EdgeInsets.only(top: 16, bottom: 8).radius,
-      child: Row(
+      height: 56,
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: const Row(
         children: [
           Expanded(
             child: Row(
               children: [
-                const _ScriptureReference(),
-                $styles.spaces.horizontalSmall,
-                const _ScriptureTranslation(),
+                _ScriptureReference(),
+                Spaces.horizontalSmall,
+                _ScriptureTranslation(),
               ],
             ),
           ),
-          $styles.spaces.horizontalSmall,
-          const _PreviousAndNextButton(),
+          Spaces.horizontalSmall,
+          _PreviousAndNextButton(),
         ],
       ),
     );
@@ -79,24 +79,24 @@ class _PreviousAndNextButton extends StatelessWidget {
     return Row(
       children: [
         SizedBox.square(
-          dimension: 32.toScale,
+          dimension: 32,
           child: IconButton.filled(
             icon: const Icon(MIcons.chevron_left),
             padding: EdgeInsets.zero,
-            iconSize: 20.toScale,
+            iconSize: 20,
             style: IconButton.styleFrom(
               backgroundColor: colors.outlineVariant2,
             ),
             onPressed: bloc.isPreviousEnabled ? bloc.previousChapter : null,
           ),
         ),
-        13.hSpace,
+        const SizedBox(width: 13),
         SizedBox.square(
-          dimension: 32.toScale,
+          dimension: 32,
           child: IconButton.filled(
             icon: const Icon(MIcons.chevron_right),
             padding: EdgeInsets.zero,
-            iconSize: 20.toScale,
+            iconSize: 20,
             style: IconButton.styleFrom(
               backgroundColor: colors.outlineVariant2,
             ),
@@ -116,18 +116,19 @@ class _Container extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 32.toScale,
-        constraints: BoxConstraints.loose(Size.fromHeight(32.toScale)),
-        padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+        height: 32,
+        constraints: BoxConstraints.loose(const Size.fromHeight(32)),
+        padding: const EdgeInsets.symmetric(horizontal: Insets.large),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: $styles.radius.circle,
+          borderRadius: Corners.circle,
           color: colors.outlineVariant2,
         ),
-        child: MText(content, style: $styles.text.captionMedium),
+        child: MText(content, style: textTheme.captionMedium),
       ),
     );
   }

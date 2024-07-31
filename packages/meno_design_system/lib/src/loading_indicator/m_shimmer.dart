@@ -3,14 +3,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MShimmer extends StatelessWidget {
-  final bool enabled;
-  final Widget? child;
-  final Color? backgroundColor;
-  final double? height;
-  final double? width;
-  final double? borderRadius;
-  final BoxShape shape;
-
   const MShimmer({
     super.key,
     this.enabled = true,
@@ -21,13 +13,19 @@ class MShimmer extends StatelessWidget {
     this.borderRadius,
     this.shape = BoxShape.rectangle,
   });
+  final bool enabled;
+  final Widget? child;
+  final Color? backgroundColor;
+  final double? height;
+  final double? width;
+  final double? borderRadius;
+  final BoxShape shape;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final isCircle = shape == BoxShape.circle;
-    final effectiveBorderRadius =
-        BorderRadius.circular(borderRadius ?? 4).radius;
+    final effectiveBorderRadius = BorderRadius.circular(borderRadius ?? 4);
     return Shimmer.fromColors(
       enabled: enabled,
       baseColor: colors.background!,
@@ -40,8 +38,8 @@ class MShimmer extends StatelessWidget {
         ),
         child: child ??
             Container(
-              height: height?.toScale,
-              width: width?.toScale ?? double.infinity,
+              height: height,
+              width: width ?? double.infinity,
               decoration: BoxDecoration(
                 shape: shape,
                 color: backgroundColor ?? colors.background,

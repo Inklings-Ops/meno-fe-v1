@@ -8,26 +8,26 @@ class VerseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final reference = '${verse.book} ${verse.chapter}:${verse.verse}';
-
     return GestureDetector(
       onTap: () {
         context.showModal(
           MModal(
             title: reference,
-            builder: (context) => Column(
+            builder: (context) => const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const MModalListTile(
+                MModalListTile(
                   leading: Icon(MIcons.send),
                   title: 'Send to chat',
                 ),
-                $styles.spaces.verticalLarge,
-                const MModalListTile(
+                Spaces.verticalLarge,
+                MModalListTile(
                   leading: Icon(MIcons.copy_06),
                   title: 'Copy verse',
                 ),
-                $styles.spaces.verticalLarge,
+                Spaces.verticalLarge,
               ],
             ),
           ),
@@ -39,20 +39,19 @@ class VerseWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4).radius,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              borderRadius: $styles.radius.circle,
+              borderRadius: Corners.circle,
               color: colors.primaryContainer,
             ),
             child: MText(
               reference,
-              style: $styles.text.microMedium,
+              style: textTheme.microMedium,
               textAlign: TextAlign.center,
             ),
           ),
-          $styles.spaces.verticalMicro,
-          MText(verse.text, style: $styles.text.bodyRegular),
+          Spaces.verticalMicro,
+          MText(verse.text, style: textTheme.bodyRegular),
         ],
       ),
     );

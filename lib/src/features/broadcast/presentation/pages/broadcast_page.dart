@@ -1,5 +1,3 @@
-
-
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
@@ -13,7 +11,9 @@ class BroadcastPage extends HookWidget {
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastBloc>();
     useEffect(() {
-      bloc.add(BroadcastStartRequested(broadcast.id));
+      context.read<TimerCubit>().start();
+      context.read<LiveParticipantsBloc>().initialize(broadcast);
+      context.read<ChatBloc>().initialize(broadcast);
       return null;
     }, const []);
     return BlocConsumer<BroadcastBloc, BroadcastState>(
@@ -22,7 +22,11 @@ class BroadcastPage extends HookWidget {
       listener: (context, state) {
         bloc.state.whenOrNull(
           failure: (exception) => context.showBroadcastError(exception),
-          startFailed: (e) => context.showErrorSnackBar(e.toString()),
+          startFailed: (e) {
+            context
+              ..pop(context)
+              ..showErrorSnackBar(e.toString());
+          },
           deleteSuccess: () => context.go(Routes.home),
           endSuccess: () {
             context.read<TimerCubit>().stop();
@@ -34,11 +38,6 @@ class BroadcastPage extends HookWidget {
               isDismissible: false,
               isScrollControlled: true,
             );
-          },
-          startSuccess: (broadcast, muted) {
-            context.read<TimerCubit>().start();
-            context.read<LiveParticipantsBloc>().initialize(broadcast);
-            context.read<ChatBloc>().initialize(broadcast);
           },
         );
       },

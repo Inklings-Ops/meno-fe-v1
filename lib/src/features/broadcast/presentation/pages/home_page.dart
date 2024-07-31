@@ -30,19 +30,19 @@ class HomePage extends HookWidget {
       padding: EdgeInsets.zero,
       body: RefreshIndicator(
         onRefresh: onRefresh,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
+        child: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              24.vSpace,
-              const LiveActivityCard(),
-              const LiveForYou(),
-              const NowLive(),
-              const RecentlyLive(),
-              20.vSpace,
+              Spaces.verticalXLarge,
+              LiveActivityCard(),
+              LiveForYou(),
+              NowLive(),
+              RecentlyLive(),
+              SizedBox(height: 20),
             ],
           ),
         ),

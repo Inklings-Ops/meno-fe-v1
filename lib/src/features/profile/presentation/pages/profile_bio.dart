@@ -1,19 +1,21 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:readmore/readmore.dart'; 
+import 'package:readmore/readmore.dart';
+
 class ProfileBio extends StatelessWidget {
   const ProfileBio({super.key, required this.bio});
   final Bio? bio;
 
   @override
   Widget build(BuildContext context) {
-    final style = $styles.text.captionMedium.copyWith(
+    final textTheme = MTextTheme.of(context)!;
+    final style = textTheme.captionMedium?.copyWith(
       color: MColorScheme.of(context)!.onBackgroundVariant,
     );
 
     return ReadMoreText(
       bio?.getOr() ?? 'No bio',
-      style: $styles.text.captionRegular,
+      style: textTheme.captionRegular,
       trimLines: 3,
       trimMode: TrimMode.Line,
       trimExpandedText: '\nless',

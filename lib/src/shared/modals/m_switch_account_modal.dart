@@ -67,15 +67,15 @@ class _AccountListTile extends StatelessWidget {
         context.pop();
       },
       controlAffinity: ListTileControlAffinity.trailing,
-      contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12).radius,
+      contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
       dense: true,
       title: Row(
         children: [
-          MAvatar(radius: 20.toScale, url: user.imageUrl),
-          $styles.spaces.horizontalLarge,
+          MAvatar(radius: 20, url: user.imageUrl),
+          Spaces.horizontalLarge,
           MText(
             user.fullName.getOr(),
-            style: $styles.text.bodyRegular,
+            style: MTextTheme.of(context)?.bodyRegular,
           ),
         ],
       ),
@@ -89,21 +89,22 @@ class _AddAccountTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return InkWell(
       onTap: () {
         context.pop();
         context.read<SessionCubit>().logout();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16).radius,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Row(
           children: [
             const Icon(MIcons.plus_circle),
-            $styles.spaces.horizontalMedium,
+            Spaces.horizontalMedium,
             Expanded(
               child: MText(
                 'Add Account',
-                style: $styles.text.bodyMedium,
+                style: textTheme.bodyMedium,
                 color: colors.primary,
               ),
             ),
@@ -159,7 +160,7 @@ class _SwitchAccountModal2 extends StatelessWidget {
             orElse: () => [],
             loadSuccess: (allCredentials, currentCredential) => [
               ...allCredentials.map((c) => _AccountListTile(credential: c)),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const _AddAccountTile(),
             ],
           ),

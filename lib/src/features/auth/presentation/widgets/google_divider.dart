@@ -6,12 +6,13 @@ class GoogleDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Row(
       children: [
         const Expanded(child: MDivider()),
-        $styles.spaces.horizontalSmall,
-        MText(title, style: $styles.text.microRegular),
-        $styles.spaces.horizontalSmall,
+        Spaces.horizontalSmall,
+        MText(title, style: textTheme.microRegular),
+        Spaces.horizontalSmall,
         const Expanded(child: MDivider()),
       ],
     );

@@ -8,6 +8,7 @@ class PreStreamActionButtons extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final loading = useState<bool>(false);
     void onJoin() async {
       loading.value = true;
@@ -15,7 +16,7 @@ class PreStreamActionButtons extends HookWidget {
     }
 
     return SizedBox(
-      height: 32.toScale,
+      height: 32,
       child: Row(
         children: [
           Expanded(
@@ -29,17 +30,17 @@ class PreStreamActionButtons extends HookWidget {
               child: _JoinButton(onJoin: onJoin, loading: loading.value),
             ),
           ),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           Expanded(
             child: MSecondaryButton(
               label: 'Share',
               onPressed: () {},
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: colors.outlineVariant3!),
-                shape: RoundedRectangleBorder(
-                  borderRadius: $styles.radius.small,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Corners.small,
                 ),
-                textStyle: $styles.text.microMedium,
+                textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,
               ),
             ),
@@ -57,13 +58,14 @@ class _JoinButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MPrimaryButton(
       label: 'Join',
       onPressed: onJoin,
       loading: loading,
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
-        textStyle: $styles.text.microMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+        textStyle: textTheme.microMedium,
       ),
     );
   }

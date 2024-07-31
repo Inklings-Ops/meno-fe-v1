@@ -34,16 +34,16 @@ class LoginPage extends StatelessWidget {
       child: MScaffold(
         appBar: MAppBar.primary(title: 'Log in', implyLeading: implyLeading),
         body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 24.toScale),
+          padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               LoginForm(isPasswordOnly: isPasswordOnly),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const GoogleDivider(title: 'Or'),
-              24.vSpace,
+              Spaces.verticalXLarge,
               const MGoogleButton(title: 'Login with Google'),
-              144.vSpace,
+              const SizedBox(height: 144),
               AuthRedirectionText(
                 title: 'Don\'t have an account?',
                 buttonText: 'Create an account',

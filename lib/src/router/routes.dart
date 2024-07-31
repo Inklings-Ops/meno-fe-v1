@@ -1,3 +1,5 @@
+import 'package:meno_fe_v1/meno.dart';
+
 class Routes {
   Routes._();
 
@@ -31,4 +33,37 @@ class Routes {
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';
+}
+
+class BottomSheetPage<T> extends Page<void> {
+  const BottomSheetPage({
+    required this.child,
+    super.key,
+    this.constraints,
+    this.isScrollControlled = false,
+    this.useRootNavigator = false,
+    this.isDismissible = true,
+    this.enableDrag = true,
+  });
+
+  final Widget child;
+  final BoxConstraints? constraints;
+  final bool isScrollControlled;
+  final bool useRootNavigator;
+  final bool isDismissible;
+  final bool enableDrag;
+
+  @override
+  Route<T> createRoute(BuildContext context) {
+    return ModalBottomSheetRoute<T>(
+      builder: (context) => Material(child: child),
+      constraints: constraints,
+      backgroundColor: MColorScheme.of(context)?.background,
+      isScrollControlled: isScrollControlled,
+      isDismissible: isDismissible,
+      enableDrag: enableDrag,
+      showDragHandle: true,
+      useSafeArea: true,
+    );
+  }
 }

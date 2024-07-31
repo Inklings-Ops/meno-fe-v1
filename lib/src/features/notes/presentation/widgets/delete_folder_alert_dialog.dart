@@ -14,30 +14,31 @@ class DeleteFolderAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final bloc = context.watch<FolderListBloc>();
 
     return AlertDialog(
-      title: MText('Delete Folder?', style: $styles.text.heading2Regular),
-      contentPadding: const EdgeInsets.all(24).radius,
+      title: MText('Delete Folder?', style: textTheme.heading2Regular),
+      contentPadding: const EdgeInsets.all(24),
       content: MText(
         'Do want to delete this folder?',
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
-          size: Size(85.toScale, 40.toScale),
+          size: const Size(85, 40),
           child: MTextButton(
             label: 'Cancel',
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
-              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
             ),
           ),
         ),
         SizedBox(
-          height: 40.toScale,
-          width: 88.toScale,
+          height: 40,
+          width: 88,
           child: bloc.state == const FolderListState.loading()
               ? const MLoadingIndicator.four()
               : MDangerButton(

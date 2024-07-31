@@ -6,9 +6,9 @@ class LiveBibleTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
-      child: const Column(
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: Insets.large),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.max,
         children: [

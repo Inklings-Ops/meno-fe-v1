@@ -6,38 +6,39 @@ class CreateNewPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MScaffold(
       appBar: MAppBar.primary(title: ('Create New Password')),
       body: Form(
         child: Builder(
           builder: (formContext) => SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24).radius,
+            padding: const EdgeInsets.symmetric(vertical: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                24.vSpace,
+                Spaces.verticalXLarge,
                 const UserAccountDetails(),
-                $styles.spaces.verticalSmall,
+                Spaces.verticalSmall,
                 MText(
                   'Set up new password to continue your experience',
                   maxLines: 2,
-                  style: $styles.text.captionMedium,
+                  style: textTheme.captionMedium,
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 const MTextFormField(
                   label: 'Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
                   hint: 'Enter your password',
                 ),
-                24.vSpace,
+                Spaces.verticalXLarge,
                 const MTextFormField(
                   label: 'Confirm Password',
                   isPassword: true,
                   prefixIcon: MIcons.key,
                   hint: 'Enter your password',
                 ),
-                $styles.spaces.verticalXXLarge,
+                Spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Reset Password',
                   onPressed: () => context.push(Routes.resetPwdSuccess),

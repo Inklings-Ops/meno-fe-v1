@@ -25,8 +25,9 @@ class _Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 74.toScale,
+      height: 74,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -39,11 +40,11 @@ class _Widget extends StatelessWidget {
               children: [
                 MText(
                   'Welcome back,',
-                  style: $styles.text.subheadingMedium,
+                  style: textTheme.subheadingMedium,
                 ),
                 MText(
                   user.fullName.getOr(),
-                  style: $styles.text.heading2Medium,
+                  style: textTheme.heading2Medium,
                 ),
               ],
             ),
@@ -54,12 +55,12 @@ class _Widget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MAvatar(radius: 24.toScale, url: user.imageUrl),
+                MAvatar(radius: 24, url: user.imageUrl),
                 if (action != null) ...[
-                  $styles.spaces.verticalMicro,
+                  Spaces.verticalMicro,
                   MText(
                     'Switch account',
-                    style: $styles.text.captionMedium,
+                    style: textTheme.captionMedium,
                     color: MColorScheme.of(context)?.primary,
                   ),
                 ],

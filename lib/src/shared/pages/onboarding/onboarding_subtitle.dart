@@ -7,13 +7,14 @@ class OnboardingSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Center(
       child: Container(
-        height: 48.toScale,
-        padding: const EdgeInsets.symmetric(horizontal: 30).radius,
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: MText(
           text,
-          style: $styles.text.bodyRegular,
+          style: textTheme.bodyRegular,
           textAlign: TextAlign.center,
           maxLines: 2,
         ),

@@ -7,17 +7,18 @@ class MNotesBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Container(
-      width: 56.toScale,
-      height: 18.toScale,
-      padding: const EdgeInsets.only(left: 16).radius,
+      width: 56,
+      height: 18,
+      padding: const EdgeInsets.only(left: 16),
       child: GestureDetector(
         onTap: () => Navigator.maybePop(context),
         child: Row(
           children: [
-            Icon(MIcons.chevron_left, size: 16.toScale),
-            $styles.spaces.horizontalMicro,
-            MText(title, style: $styles.text.captionMedium),
+            const Icon(MIcons.chevron_left, size: 16),
+            Spaces.horizontalMicro,
+            MText(title, style: textTheme.captionMedium),
           ],
         ),
       ),

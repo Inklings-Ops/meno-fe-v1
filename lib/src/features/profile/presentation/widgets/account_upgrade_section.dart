@@ -5,20 +5,21 @@ class AccountUpgradeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 24.toScale,
+      height: 24,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
           children: [
-            MTag(title: 'FREE ACCOUNT', height: 24.toScale),
-            $styles.spaces.horizontalLarge,
+            const MTag(title: 'FREE ACCOUNT', height: 24),
+            Spaces.horizontalLarge,
             MTextButton(
               label: 'Upgrade to Premium',
               onPressed: () {},
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
-                textStyle: $styles.text.captionMedium.copyWith(
+                textStyle: textTheme.captionMedium?.copyWith(
                   decoration: TextDecoration.underline,
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:meno_fe_v1/meno.dart';
 
 class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
+
   @override
   State<StatefulWidget> createState() => _MenoAppState();
 }
@@ -21,18 +22,19 @@ class _MenoAppState extends State<MenoApp> {
         routerDelegate: router.routerDelegate,
         routeInformationParser: router.routeInformationParser,
         routeInformationProvider: router.routeInformationProvider,
-        theme: ThemeData(fontFamily: FontFamily.sFProDisplay),
+        theme: MTheme.light,
+        darkTheme: MTheme.dark,
         builder: (context, child) {
           child = toastBuilder(context, child);
-          return DevicePreview.appBuilder(context, child);
-          // return ResponsiveBreakpoints.builder(
-          //   child: child,
-          //   breakpoints: const [
-          //     Breakpoint(start: 0, end: 450, name: MOBILE),
-          //     Breakpoint(start: 451, end: 800, name: TABLET),
-          //     Breakpoint(start: 801, end: 1920, name: DESKTOP),
-          //   ],
-          // );
+          return ResponsiveBreakpoints.builder(
+            child: DevicePreview.appBuilder(context, child),
+            breakpoints: const [
+              Breakpoint(start: 0, end: 450, name: PHONE),
+              Breakpoint(start: 451, end: 600, name: MOBILE),
+              Breakpoint(start: 601, end: 800, name: TABLET),
+              Breakpoint(start: 801, end: 1920, name: DESKTOP),
+            ],
+          );
         },
       ),
     );

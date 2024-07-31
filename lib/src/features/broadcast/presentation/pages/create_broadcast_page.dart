@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class CreateBroadcastPage extends HookWidget {
   const CreateBroadcastPage({super.key});
@@ -9,45 +8,55 @@ class CreateBroadcastPage extends HookWidget {
   Widget build(BuildContext context) {
     final formKey = useMemoized(GlobalKey<FormState>.new);
     final colors = MColorScheme.of(context)!;
-    return BlocProvider(
-      create: (_) => BroadcastFormCubit(
-        facade: RepositoryProvider.of<IBroadcastFacade>(context),
-        mediaService: di<MediaService>(),
-      ),
-      child: BlocListener<BroadcastFormCubit, BroadcastFormState>(
-        listener: (context, state) {
-          state.option.fold(
-            () => null,
-            (either) => either.fold(
-              (exception) => context.showBroadcastError(exception),
-              (broadcast) {
+    final broadcastBloc = context.read<BroadcastBloc>();
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BroadcastFormCubit, BroadcastFormState>(
+          listener: (context, state) {
+            state.option.fold(
+              () => null,
+              (either) => either.fold(
+                (exception) => context.showBroadcastError(exception),
+                (broadcast) {
+                  broadcastBloc.add(BroadcastStartRequested(broadcast.id));
+                },
+              ),
+            );
+          },
+        ),
+        BlocListener<BroadcastBloc, BroadcastState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              failure: (exception) => context.showBroadcastError(exception),
+              startFailed: (e) => context.showErrorSnackBar(e.toString()),
+              startSuccess: (broadcast, muted) {
                 context.replace(Routes.broadcast, extra: broadcast);
               },
+            );
+          },
+        ),
+      ],
+      child: Form(
+        key: formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: MScaffold(
+          appBar: AppBar(
+            leading: const SizedBox(),
+            leadingWidth: 0,
+            title: const MHeader(
+              title: 'Go Live Now',
+              padding: EdgeInsets.zero,
             ),
-          );
-        },
-        child: Form(
-          key: formKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: MScaffold(
-            appBar: AppBar(
-              leading: const SizedBox(),
-              leadingWidth: 0,
-              title: const MHeader(
-                title: 'Go Live Now',
-                padding: EdgeInsets.zero,
+            actions: [
+              InkWell(
+                onTap: context.pop,
+                child: MText('Cancel', color: colors.onBackgroundVariant),
               ),
-              actions: [
-                InkWell(
-                  onTap: context.pop,
-                  child: MText('Cancel', color: colors.onBackgroundVariant),
-                ),
-                $styles.spaces.horizontalLarge,
-              ],
-            ),
-            body: const SingleChildScrollView(child: CreateBroadcastForm()),
-            persistentFooterButtons: const [CreateBroadcastButton()],
+              Spaces.horizontalLarge,
+            ],
           ),
+          body: const SingleChildScrollView(child: CreateBroadcastForm()),
+          persistentFooterButtons: const [CreateBroadcastButton()],
         ),
       ),
     );

@@ -36,17 +36,23 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return MPrimaryButton.icon(
       label: 'Leave Broadcast',
       onPressed: onLeave,
       loading: loading,
-      icon: Icon(MIcons.log_out, color: colors.onErrorContainer),
+      icon: const Icon(MIcons.log_out),
       style: ElevatedButton.styleFrom(
-        foregroundColor: colors.onErrorContainer,
-        backgroundColor: colors.errorContainer,
-        fixedSize: Size(160.toScale, 40.toScale),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).radius,
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
+        foregroundColor: colors.error,
+        iconColor: colors.error,
+        backgroundColor: colors.errorContainer?.withOpacity(0.3),
+        fixedSize: const Size(159, 40),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.large,
+          vertical: Insets.small,
+        ),
+        textStyle: textTheme.captionMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
       ),
     );
   }

@@ -11,14 +11,11 @@ class EmptyListWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.images.liveForYou.image(
-            height: 120.toScale,
-            width: 120.toScale,
-          ),
-          $styles.spaces.verticalMedium,
+          Assets.images.liveForYou.image(height: 120, width: 120),
+          Spaces.verticalMedium,
           MText(
             title ?? 'Nothing to show here',
-            style: $styles.text.captionMedium,
+            style: MTextTheme.of(context)?.captionMedium,
             textAlign: TextAlign.center,
           ),
         ],

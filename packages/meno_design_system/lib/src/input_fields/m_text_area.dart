@@ -2,13 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-import 'm_input_counter.dart';
-import 'm_input_label.dart';
-
+/// A customizable text area widget with extensive styling and functionality.
+///
+/// This widget wraps a [TextFormField] and provides additional customization
+/// options such as label display, icons, and more suitable for multiline text
+/// input.
+///
+/// To use this widget, provide the required parameters and customize as
+/// needed. For example:
+/// ```dart
+/// MTextArea(
+///   label: 'Description',
+///   hint: 'Enter your description here',
+///   maxLines: 5,
+///   onChanged: (value) {
+///     // Handle text change
+///   },
+///   validator: (value) {
+///     // Validate input
+///     if (value == null || value.isEmpty) {
+///       return 'Description is required';
+///     }
+///     return null;
+///   },
+/// );
+/// ```
 class MTextArea extends StatefulWidget {
+  /// Creates an instance of [MTextArea].
+  ///
+  /// Parameters:
+  /// - [label]: The label for the text area.
+  /// - [key]: An optional key to identify the widget.
+  /// - [labelIcon]: An optional icon to display with the label.
+  /// - [hint]: An optional hint text to display when the field is empty.
+  /// - [enabled]: A boolean to control whether the text area is enabled.
+  /// Defaults to true.
+  /// - [maxLines]: The maximum number of lines to display. Defaults to 1.
+  /// - [maxLength]: An optional maximum number of characters.
+  /// - [controller]: An optional controller for managing the text.
+  /// - [onChanged]: A callback function that is called when the text changes.
+  /// - [onFieldSubmitted]: A callback function that is called when the field
+  /// is submitted.
+  /// - [initialValue]: An optional initial value for the field.
+  /// - [focusNode]: An optional focus node for managing focus.
+  /// - [keyboardType]: The type of keyboard to display. Defaults to
+  /// [TextInputType.text].
+  /// - [validator]: An optional function for validating the input.
+  /// - [autovalidateMode]: An optional mode to control when validation should
+  /// occur.
+  /// - [required]: A boolean to indicate if the field is required. Defaults to
+  /// false.
+  /// - [textInputAction]: An optional action to display on the keyboard.
   const MTextArea({
-    super.key,
     required this.label,
+    super.key,
     this.labelIcon,
     this.hint,
     this.enabled = true,
@@ -26,21 +73,52 @@ class MTextArea extends StatefulWidget {
     this.textInputAction,
   });
 
+  /// The label for the text area.
   final String label;
+
+  /// An optional icon to display with the label.
   final IconData? labelIcon;
+
+  /// An optional hint text to display when the field is empty.
   final String? hint;
+
+  /// A boolean to control whether the text area is enabled. Defaults to true.
   final bool enabled;
+
+  /// The maximum number of lines to display. Defaults to 1.
   final int maxLines;
+
+  /// An optional maximum number of characters.
   final int? maxLength;
+
+  /// An optional controller for managing the text.
   final TextEditingController? controller;
+
+  /// A callback function that is called when the text changes.
   final ValueChanged<String>? onChanged;
+
+  /// A callback function that is called when the field is submitted.
   final ValueChanged<String>? onFieldSubmitted;
+
+  /// An optional initial value for the field.
   final String? initialValue;
+
+  /// An optional focus node for managing focus.
   final FocusNode? focusNode;
+
+  /// The type of keyboard to display. Defaults to [TextInputType.text].
   final TextInputType keyboardType;
+
+  /// An optional function for validating the input.
   final FormFieldValidator<String>? validator;
+
+  /// An optional mode to control when validation should occur.
   final AutovalidateMode? autovalidateMode;
+
+  /// A boolean to indicate if the field is required. Defaults to false.
   final bool required;
+
+  /// An optional action to display on the keyboard.
   final TextInputAction? textInputAction;
 
   @override
@@ -58,18 +136,16 @@ class _MTextAreaState extends State<MTextArea> {
     final styles = MTextFieldStyle.of(context)!;
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 168).radius,
+      constraints: const BoxConstraints(maxHeight: 168),
       child: FormField<String?>(
         validator: widget.validator,
         autovalidateMode: widget.autovalidateMode,
         builder: (field) => Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MInputLabel(
                   widget.label,
@@ -83,15 +159,15 @@ class _MTextAreaState extends State<MTextArea> {
                 ),
               ],
             ),
-            $styles.spaces.verticalSmall,
+            Spaces.verticalSmall,
             LimitedBox(
-              maxHeight: 136.toScale,
+              maxHeight: 136,
               child: _buildTextFormField(styles, field),
             ),
             if (field.errorText != null)
               Container(
                 alignment: Alignment.centerLeft,
-                height: 18.toScale,
+                height: 18,
                 child: _buildErrorText(field, styles),
               ),
           ],
@@ -126,6 +202,7 @@ class _MTextAreaState extends State<MTextArea> {
 
   void _onFocusChange() => setState(() => hasFocus = _focus.hasFocus);
 
+  // ignore: avoid_positional_boolean_parameters
   T resolveBorder<T>(bool isBoxed, T boxedValue, T underlinedValue) {
     return isBoxed ? boxedValue : underlinedValue;
   }
@@ -154,16 +231,16 @@ class _MTextAreaState extends State<MTextArea> {
       maxLength: 244,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       onChanged: widget.onChanged,
-      obscuringCharacter: "*",
+      obscuringCharacter: '*',
       maxLines: widget.maxLines,
       enabled: widget.enabled,
-      cursorWidth: 1.toScale,
-      cursorHeight: 18.toScale,
+      cursorWidth: 1,
+      cursorHeight: 18,
       decoration: InputDecoration(
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: EdgeInsets.all($styles.insets.medium),
+        contentPadding: const EdgeInsets.all(Insets.medium),
         counter: const SizedBox(),
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,

@@ -29,24 +29,24 @@ class NoteCardOptionsModal extends StatelessWidget {
                 isScrollControlled: true,
               ),
             ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.share),
             title: 'Share',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           const MModalListTile(
             leading: Icon(MIcons.link_02),
             title: 'Copy Link',
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           MModalListTile(
             leading: Icon(MIcons.trash, color: colors.error),
             title: 'Delete',
             titleColor: colors.error,
             onTap: () => context.showDeleteNoteDialog(note),
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
         ],
       ),
     );

@@ -22,12 +22,12 @@ class SearchResults extends StatelessWidget {
         return Column(
           children: [
             _ResultList(result: state.searchResults),
-            24.vSpace,
+            Spaces.verticalXLarge,
             DiscoverPaginationIndicator(
               isLoading: bloc.state.isSearchingMore,
               hasMore: bloc.state.hasMore,
             ),
-            24.vSpace,
+            Spaces.verticalXLarge,
           ],
         );
       },
@@ -41,13 +41,13 @@ class _ResultList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 24.toScale,
-        crossAxisSpacing: 24.toScale,
-        childAspectRatio: (159.50 / 176).toScale,
+        mainAxisSpacing: 24,
+        crossAxisSpacing: 24,
+        childAspectRatio: (159.50 / 176),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).radius,
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
       itemCount: result.length,
       primary: false,
       shrinkWrap: true,
@@ -81,25 +81,26 @@ class _NoResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Assets.images.liveForYou.image(
-            height: 152.toScale,
-            width: 152.toScale,
+            height: 152,
+            width: 152,
           ),
-          24.vSpace,
+          Spaces.verticalXLarge,
           MText(
             'No Results',
-            style: $styles.text.heading3Bold,
+            style: textTheme.heading3Bold,
             textAlign: TextAlign.center,
           ),
-          $styles.spaces.verticalMicro,
+          Spaces.verticalMicro,
           MText(
             'Try a new search',
-            style: $styles.text.bodyRegular,
+            style: textTheme.bodyRegular,
             color: colors.inActiveContainer,
           ),
         ],

@@ -6,27 +6,28 @@ class CreateBroadcastForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+        final textTheme = MTextTheme.of(context)!;
     final descController = useTextEditingController();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        $styles.spaces.verticalSmall,
+        Spaces.verticalSmall,
         const BroadcastAvatarField(),
-        $styles.spaces.verticalLarge,
+        Spaces.verticalLarge,
         const BroadcastTitleField(),
-        24.vSpace,
+        Spaces.verticalXLarge,
         BroadcastDescriptionField(descController),
-        24.vSpace,
+        Spaces.verticalXLarge,
         const CoHostSection(),
-        24.vSpace,
+        Spaces.verticalXLarge,
         CreateBroadcastListItem(
           leadingText: 'Remaining time today',
           subtitleText: 'Your daily broadcast time will reset in 24hrs',
-          trailing: MText('0hr 30min', style: $styles.text.captionRegular),
+          trailing: MText('0hr 30min', style: textTheme.captionRegular),
         ),
-        24.vSpace,
+        Spaces.verticalXLarge,
         const RecordToggleSwitchField(),
-        24.vSpace,
+        Spaces.verticalXLarge,
       ],
     );
   }

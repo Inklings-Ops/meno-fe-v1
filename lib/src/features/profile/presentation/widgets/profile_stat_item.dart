@@ -14,17 +14,17 @@ class ProfileStatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
-
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 46.toScale,
+      height: 46,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          MText(count.toString(), style: $styles.text.heading3Medium),
+          MText(count.toString(), style: textTheme.heading3Medium),
           MText(
             title,
-            style: $styles.text.microMedium,
+            style: textTheme.microMedium,
             color: colorScheme.onBackgroundVariant,
           ),
         ],

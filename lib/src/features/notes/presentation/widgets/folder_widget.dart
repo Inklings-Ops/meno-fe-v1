@@ -29,6 +29,7 @@ class FolderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
@@ -42,9 +43,9 @@ class FolderWidget extends StatelessWidget {
       focusElevation: 0.0,
       highlightElevation: 0.0,
       child: Container(
-        height: height ?? 94.toScale,
+        height: height ?? 94,
         width: size.width,
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16).radius,
+        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,13 +53,13 @@ class FolderWidget extends StatelessWidget {
           children: [
             MText(
               title ?? 'Folders',
-              style: titleStyle ?? $styles.text.captionMedium,
+              style: titleStyle ?? textTheme.captionMedium,
               color: foregroundColor ?? foreground,
             ),
             if (value != null)
               MText(
                 value!,
-                style: valueStyle ?? $styles.text.heading2Medium,
+                style: valueStyle ?? textTheme.heading2Medium,
                 color: foregroundColor ?? foreground,
               )
             else
@@ -68,7 +69,7 @@ class FolderWidget extends StatelessWidget {
                     orElse: () => '0',
                     success: (folders) => folders.length.toString(),
                   ),
-                  style: valueStyle ?? $styles.text.heading2Medium,
+                  style: valueStyle ?? textTheme.heading2Medium,
                   color: foreground,
                 ),
               ),
@@ -83,7 +84,7 @@ class _FolderBorder extends OutlinedBorder {
   const _FolderBorder({super.side});
 
   Path customBorderPath(Rect rect) {
-    final double r = 20.0.toScale;
+    const double r = 20.0;
 
     final Path path = Path();
 

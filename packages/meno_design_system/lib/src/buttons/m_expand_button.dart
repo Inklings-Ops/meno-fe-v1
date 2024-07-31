@@ -1,38 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
+/// A button widget that represents an "Expand" action.
+///
+/// This button displays an icon and text, and can be tapped to trigger a
+/// callback.
+///
+/// Example usage:
+/// ```dart
+/// ExpandButton(
+///   onTap: () {
+///     // Handle the expand action.
+///   },
+/// );
+/// ```
 class ExpandButton extends StatelessWidget {
+  /// Creates an instance of [ExpandButton].
+  ///
+  /// Parameters:
+  /// - [key]: An optional key to identify the widget.
+  /// - [onTap]: An optional callback function to be invoked when the button
+  /// is tapped.
   const ExpandButton({super.key, this.onTap});
+
+  /// The callback function to be invoked when the button is tapped.
+  ///
+  /// If not provided, the button will not perform any action when tapped.
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    return GestureDetector(
+    final textTheme = MTextTheme.of(context)!;
+    return InkWell(
       onTap: onTap,
+      borderRadius: Corners.circle,
       child: Container(
-        height: 34.toScale,
-        width: 94.toScale,
-        padding: EdgeInsets.symmetric(
-          horizontal: $styles.insets.medium,
-          vertical: $styles.insets.small,
+        height: 34,
+        width: 94,
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.medium,
+          vertical: Insets.small,
         ),
         decoration: BoxDecoration(
           color: colors.inActiveContainer,
-          borderRadius: $styles.radius.circle,
+          borderRadius: Corners.circle,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               MIcons.expand_01,
-              size: 16.toScale,
+              size: 16,
               color: colors.onInActiveContainer,
             ),
             MText(
-              "Expand",
-              style: $styles.text.captionMedium,
+              'Expand',
+              style: textTheme.captionMedium,
               color: colors.onInActiveContainer,
             ),
           ],

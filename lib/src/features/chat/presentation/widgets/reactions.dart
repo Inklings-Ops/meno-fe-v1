@@ -9,7 +9,7 @@ class Reaction {
   const Reaction(this.reactionType, this.icon);
 }
 
-final dimension = 20.toScale;
+const dimension = 20.0;
 
 final List<Reaction> reactions = <Reaction>[
   Reaction(

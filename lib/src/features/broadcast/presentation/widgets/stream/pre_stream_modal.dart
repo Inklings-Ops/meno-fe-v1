@@ -39,9 +39,9 @@ class PreStreamModal extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _TopSection(broadcast: broadcast),
-                  24.vSpace,
+                  Spaces.verticalXLarge,
                   PreStreamDescriptionSection(broadcast: broadcast),
-                  24.vSpace,
+                  Spaces.verticalXLarge,
                   MHeader(
                     title: 'Recent Broadcasts',
                     showSideBorder: false,
@@ -71,12 +71,13 @@ class _TopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 142.toScale,
+      height: 142,
       child: Row(
         children: [
           PreStreamArtwork(imageUrl: broadcast.imageUrl),
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,22 +85,22 @@ class _TopSection extends StatelessWidget {
               children: [
                 MText(
                   broadcast.title.getOr(),
-                  style: $styles.text.subheadingMedium,
+                  style: textTheme.subheadingMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                6.vSpace,
-                MBadge.live(),
-                6.vSpace,
+                const SizedBox(height: 6),
+                const MBadge.live(),
+                const SizedBox(height: 6),
                 MText(
                   broadcast.creator == null
                       ? broadcast.fullName!
                       : broadcast.creator!.fullName,
-                  style: $styles.text.captionRegular,
+                  style: textTheme.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                $styles.spaces.verticalMedium,
+                Spaces.verticalMedium,
                 PreStreamActionButtons(broadcast: broadcast),
               ],
             ),

@@ -8,7 +8,7 @@ class NotesTab extends HookWidget {
   Widget build(BuildContext context) {
     final selectedIndex = useState(0);
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
       child: NoteBodyWidget(selectedIndex: selectedIndex),
     );
   }

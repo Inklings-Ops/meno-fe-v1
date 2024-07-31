@@ -24,7 +24,7 @@ class BroadcastStartStopButton extends HookWidget {
           label: 'Stop broadcasting',
           onTap: () => stopBroadcast(broadcast.id),
           backgroundColor: colors.errorContainer,
-          foregroundColor: colors.onErrorContainer,
+          foregroundColor: colors.error,
         ),
       ),
     );
@@ -49,16 +49,21 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return MPrimaryButton(
       label: label,
       onPressed: onTap,
       loading: loading,
       style: ElevatedButton.styleFrom(
         foregroundColor: foregroundColor ?? colors.onPrimary,
-        backgroundColor: (backgroundColor ?? colors.primary)?.withOpacity(0.1),
-        fixedSize: Size(160.toScale, 40.toScale),
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).radius,
-        shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
+        backgroundColor: (backgroundColor ?? colors.primary)?.withOpacity(0.3),
+        fixedSize: const Size(159, 40),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.large,
+          vertical: Insets.small,
+        ),
+        textStyle: textTheme.captionMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/features.dart';  
-
+import 'package:meno_fe_v1/src/features/features.dart';
 
 typedef MMessenger = ScaffoldFeatureController<SnackBar, SnackBarClosedReason>;
 
@@ -9,13 +8,14 @@ extension MSnackBarExtensions on BuildContext {
 
   MMessenger showErrorSnackBar(String message) {
     final colorScheme = MColorScheme.of(this);
+    final textTheme = MTextTheme.of(this)!;
     return ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         backgroundColor: colorScheme?.error,
         behavior: SnackBarBehavior.floating,
         content: MText(
           message,
-          style: $styles.text.captionRegular,
+          style: textTheme.captionRegular,
           color: colorScheme?.onError,
         ),
       ),
@@ -46,7 +46,6 @@ extension MSnackBarExtensions on BuildContext {
       ),
     );
   }
-
 
   MMessenger showBibleError(dynamic exception) {
     return showErrorSnackBar(

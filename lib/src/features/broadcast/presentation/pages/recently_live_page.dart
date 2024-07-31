@@ -9,6 +9,7 @@ class RecentlyLivePage extends HookWidget {
     final scrollController = useScrollController();
     final bloc = context.read<RecentlyLiveCubit>();
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     useEffect(() {
       scrollController.addListener(() {
         if (scrollController.position.pixels >=
@@ -42,10 +43,10 @@ class RecentlyLivePage extends HookWidget {
                 successLast: (broadcasts) => Column(
                   children: [
                     _LoadedList(broadcasts: broadcasts),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                     MText(
                       'You’ve reached the end 🎉',
-                      style: $styles.text.captionRegular,
+                      style: textTheme.captionRegular,
                       color: colors.onBackgroundVariant,
                       textAlign: TextAlign.center,
                     ),
@@ -53,7 +54,7 @@ class RecentlyLivePage extends HookWidget {
                 ),
               ),
             ),
-            53.vSpace,
+            const SizedBox(height: 53),
           ],
         ),
       ),
@@ -76,8 +77,8 @@ class _BuildListView extends StatelessWidget {
       shrinkWrap: true,
       itemCount: itemCount,
       itemBuilder: itemBuilder,
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).radius,
-      separatorBuilder: (context, index) => $styles.spaces.verticalLarge,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+      separatorBuilder: (context, index) => Spaces.verticalLarge,
     );
   }
 }
@@ -110,7 +111,7 @@ class _LoadingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _BuildListView(
-      itemCount: 5,
+      itemCount: 3,
       itemBuilder: (context, _) => const MRecentlyLiveListTile(loading: true),
     );
   }

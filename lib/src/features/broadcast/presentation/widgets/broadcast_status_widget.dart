@@ -9,13 +9,13 @@ class BroadcastStatusWidget extends StatelessWidget {
     return BlocBuilder<MenoBloc, MenoState>(
       bloc: context.watch<MenoBloc>(),
       builder: (context, state) => state.when(
-        live: () =>  MBadge.live(),
+        live: () =>  const MBadge.live(),
         reconnecting: () => MBadge.reconnecting(context),
-        streaming: () =>  MBadge.live(),
+        streaming: () =>  const MBadge.live(),
         offAir: () => MBadge.offAir(context),
         endedBroadcast: (_) => MBadge.offAir(context),
         leaveBroadcast: () => MBadge.offAir(context),
-        leftBroadcast: (_) =>  MBadge.live(),
+        leftBroadcast: (_) =>  const MBadge.live(),
       ),
     );
   }

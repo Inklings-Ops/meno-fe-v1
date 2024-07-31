@@ -7,19 +7,20 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return AppBar(
       leading: Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.only(left: 16).radius,
+          padding: const EdgeInsets.only(left: 16),
           child: ColoredBox(
             color: colors.secondary!,
-            child: SizedBox(height: 30.toScale, width: 3.toScale),
+            child: const SizedBox(height: 30, width: 3),
           ),
         ),
       ),
-      titleTextStyle: $styles.text.heading3Bold,
-      leadingWidth: 23.toScale,
+      titleTextStyle: textTheme.heading3Bold,
+      leadingWidth: 23,
       titleSpacing: 0,
       title: GestureDetector(
         onTap: () => context.showSwitchAccountSheet(),
@@ -27,8 +28,8 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             MText(name, color: colors.onBackground),
-            $styles.spaces.horizontalSmall,
-            Icon(MIcons.chevron_down, size: 24.toScale),
+            Spaces.horizontalSmall,
+            const Icon(MIcons.chevron_down, size: 24),
           ],
         ),
       ),
@@ -37,11 +38,11 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(MIcons.settings),
           color: colors.primary,
         ),
-        $styles.spaces.horizontalLarge,
+        Spaces.horizontalLarge,
       ],
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight.toScale);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -19,5 +19,5 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => $styles.toolbarHeight.home;
+  Size get preferredSize => ToolBarHeights.home;
 }

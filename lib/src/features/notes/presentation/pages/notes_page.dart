@@ -20,7 +20,7 @@ class NotesPage extends HookWidget {
             1 => const _AddNewFolderActionButton(),
             _ => const SizedBox(),
           },
-          $styles.spaces.horizontalLarge,
+          Spaces.horizontalLarge,
         ],
       ),
       body: NoteBodyWidget(selectedIndex: selectedIndex),
@@ -34,6 +34,7 @@ class _AddNewNoteActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     return BlocBuilder<NotesBloc, NotesState>(
       buildWhen: (p, c) => p != c,
@@ -44,11 +45,11 @@ class _AddNewNoteActionButton extends StatelessWidget {
           onTap: () => context.push(Routes.noteEditor),
           child: Row(
             children: [
-              Icon(MIcons.plus, size: 22.toScale, color: colors.primary),
-              $styles.spaces.horizontalMicro,
+              Icon(MIcons.plus, size: 22, color: colors.primary),
+              Spaces.horizontalMicro,
               MText(
                 'Add New Note',
-                style: $styles.text.captionMedium,
+                style: textTheme.captionMedium,
                 color: colors.primary,
               ),
             ],
@@ -65,6 +66,7 @@ class _AddNewFolderActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     return BlocBuilder<FolderListBloc, FolderListState>(
       buildWhen: (p, c) => p != c,
@@ -81,11 +83,11 @@ class _AddNewFolderActionButton extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(MIcons.plus, size: 22.toScale, color: colors.primary),
-                $styles.spaces.horizontalMicro,
+                Icon(MIcons.plus, size: 22, color: colors.primary),
+                Spaces.horizontalMicro,
                 MText(
                   'Add New Folder',
-                  style: $styles.text.captionMedium,
+                  style: textTheme.captionMedium,
                   color: colors.primary,
                 ),
               ],

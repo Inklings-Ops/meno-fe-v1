@@ -12,28 +12,29 @@ class DeleteNoteAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final bloc = context.watch<NotesBloc>();
     return AlertDialog(
-      title: MText('Delete Note?', style: $styles.text.heading2Regular),
-      contentPadding: const EdgeInsets.all(24).radius,
+      title: MText('Delete Note?', style: textTheme.heading2Regular),
+      contentPadding: const EdgeInsets.all(24),
       content: MText(
         'Do want to delete this note?',
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
       ),
       actions: [
         SizedBox.fromSize(
-          size: Size(85.toScale, 40.toScale),
+          size: const Size(85, 40),
           child: MTextButton(
             label: 'Cancel',
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
-              shape: RoundedRectangleBorder(borderRadius: $styles.radius.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
             ),
           ),
         ),
         SizedBox(
-          height: 40.toScale,
+          height: 40,
           child: bloc.state.isLoading
               ? const MLoadingIndicator.four()
               : MDangerButton(
@@ -42,8 +43,8 @@ class DeleteNoteAlertDialog extends StatelessWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: colorScheme.error,
                     foregroundColor: colorScheme.onError,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: $styles.radius.small,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: Corners.small,
                     ),
                   ),
                 ),

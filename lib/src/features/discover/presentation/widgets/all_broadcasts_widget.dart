@@ -10,7 +10,7 @@ class AllBroadcastsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        24.vSpace,
+        Spaces.verticalXLarge,
         BlocBuilder<DAllCubit, DAllState>(
           buildWhen: (p, c) =>
               p.isNowLiveLoading != c.isNowLiveLoading ||
@@ -23,7 +23,7 @@ class AllBroadcastsWidget extends StatelessWidget {
             isNowLive: true,
           ),
         ),
-        32.vSpace,
+        Spaces.verticalXXLarge,
         BlocBuilder<DAllCubit, DAllState>(
           buildWhen: (p, c) =>
               p.isRecentlyLiveLoading != c.isRecentlyLiveLoading ||
@@ -35,7 +35,7 @@ class AllBroadcastsWidget extends StatelessWidget {
             isLoading: state.isRecentlyLiveLoading,
           ),
         ),
-        32.vSpace,
+        Spaces.verticalXXLarge,
       ],
     );
   }
@@ -64,13 +64,13 @@ class _Grid extends HookWidget {
     } else {
       child = GridView.builder(
         scrollDirection: Axis.horizontal,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 24.toScale,
-          crossAxisSpacing: 24.toScale,
-          childAspectRatio: (176.toScale / 176.toScale),
+          mainAxisSpacing: 24,
+          crossAxisSpacing: 24,
+          childAspectRatio: (176 / 176),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16).radius,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         shrinkWrap: true,
         primary: false,
         itemCount: broadcasts.length,
@@ -100,8 +100,8 @@ class _Grid extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _Header(title: title, onSeeAll: onSeeAll),
-        24.vSpace,
-        LimitedBox(maxHeight: 376.toScale, child: child),
+        Spaces.verticalXLarge,
+        LimitedBox(maxHeight: 376, child: child),
       ],
     );
   }
@@ -115,18 +115,19 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return Container(
-      height: 24.toScale,
-      padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+      height: 24,
+      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          MText(title, style: $styles.text.subheadingBold),
+          MText(title, style: textTheme.subheadingBold),
           InkWell(
             onTap: onSeeAll,
             child: MText(
               'See all',
-              style: $styles.text.microMedium,
+              style: textTheme.microMedium,
               color: colors.primary,
             ),
           ),

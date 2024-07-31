@@ -11,17 +11,17 @@ class BroadcastParticipantsModal extends StatelessWidget {
     );
     return MModal(
       title: 'Listening (${numberOfParticipants.toString()})',
-      builder: (context) => Column(
+      builder: (context) => const Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MTextFormField(
+          MTextFormField(
             label: 'Search',
             prefixIcon: MIcons.search,
             showLabel: false,
             hint: 'Search',
           ),
-          $styles.spaces.verticalLarge,
-          const Expanded(
+          Spaces.verticalLarge,
+          Expanded(
             child: BroadcastParticipantList(padding: EdgeInsets.zero),
           ),
         ],

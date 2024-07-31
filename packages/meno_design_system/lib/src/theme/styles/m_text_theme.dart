@@ -2,7 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_design_system/src/gen/fonts.gen.dart';
 
+/// A custom theme extension for managing text styles within the app.
+///
+/// The [MTextTheme] class extends [ThemeExtension] to define a collection of
+/// text styles used throughout the application. This helps in maintaining
+/// consistent typography and allows for easy customization of text styles
+/// based on the application's color scheme.
 class MTextTheme extends ThemeExtension<MTextTheme> {
+  /// Creates an [MTextTheme] instance with the provided text styles.
+  ///
+  /// All text styles are optional and can be customized individually. If a
+  /// text style is not provided, it defaults to null.
+  const MTextTheme({
+    this.heading1Regular,
+    this.heading1Bold,
+    this.heading1Medium,
+    this.heading2Regular,
+    this.heading2Bold,
+    this.heading2Medium,
+    this.heading3Regular,
+    this.heading3Bold,
+    this.heading3Medium,
+    this.subheadingRegular,
+    this.subheadingBold,
+    this.subheadingMedium,
+    this.bodyRegular,
+    this.bodyBold,
+    this.bodyMedium,
+    this.captionRegular,
+    this.captionBold,
+    this.captionMedium,
+    this.microRegular,
+    this.microBold,
+    this.microMedium,
+    this.nanoRegular,
+    this.nanoBold,
+    this.nanoMedium,
+    this.button,
+    this.countDown,
+  });
+
+  /// Provides the default [MTextTheme] for the app based on the given [colors].
+  ///
+  /// This factory method initializes an [MTextTheme] instance using
+  /// a predefined set of text styles, which are derived from the
+  /// provided [MColorScheme].
+  factory MTextTheme.$default(MColorScheme colors) {
+    final typography = _Typography(colors);
+    return MTextTheme(
+      heading1Regular: typography.heading1Regular,
+      heading1Bold: typography.heading1Bold,
+      heading1Medium: typography.heading1Medium,
+      heading2Regular: typography.heading2Regular,
+      heading2Bold: typography.heading2Bold,
+      heading2Medium: typography.heading2Medium,
+      heading3Regular: typography.heading3Regular,
+      heading3Bold: typography.heading3Bold,
+      heading3Medium: typography.heading3Medium,
+      subheadingRegular: typography.subheadingRegular,
+      subheadingBold: typography.subheadingBold,
+      subheadingMedium: typography.subheadingMedium,
+      bodyRegular: typography.bodyRegular,
+      bodyBold: typography.bodyBold,
+      bodyMedium: typography.bodyMedium,
+      captionRegular: typography.captionRegular,
+      captionBold: typography.captionBold,
+      captionMedium: typography.captionMedium,
+      microRegular: typography.microRegular,
+      microBold: typography.microBold,
+      microMedium: typography.microMedium,
+      nanoRegular: typography.nanoRegular,
+      nanoBold: typography.nanoBold,
+      nanoMedium: typography.nanoMedium,
+      button: typography.button,
+      countDown: typography.countDown,
+    );
+  }
+
   /// Heading 1 Regular
   final TextStyle? heading1Regular;
 
@@ -78,79 +154,13 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
   /// Button Medium
   final TextStyle? button;
 
+  /// Count down number text style
+  final TextStyle? countDown;
+
+  /// Provides the Global Font Family
   static const String fontFamily = FontFamily.sFProDisplay;
 
-  factory MTextTheme.$default() {
-    return MTextTheme(
-      heading1Regular: $styles.text.heading1Regular,
-      heading1Bold: $styles.text.heading1Bold,
-      heading1Medium: $styles.text.heading1Medium,
-      heading2Regular: $styles.text.heading2Regular,
-      heading2Bold: $styles.text.heading2Bold,
-      heading2Medium: $styles.text.heading2Medium,
-      heading3Regular: $styles.text.heading3Regular,
-      heading3Bold: $styles.text.heading3Bold,
-      heading3Medium: $styles.text.heading3Medium,
-      subheadingRegular: $styles.text.subheadingRegular,
-      subheadingBold: $styles.text.subheadingBold,
-      subheadingMedium: $styles.text.subheadingMedium,
-      bodyRegular: $styles.text.bodyRegular,
-      bodyBold: $styles.text.bodyBold,
-      bodyMedium: $styles.text.bodyMedium,
-      captionRegular: $styles.text.captionRegular,
-      captionBold: $styles.text.captionBold,
-      captionMedium: $styles.text.captionMedium,
-      microRegular: $styles.text.microRegular,
-      microBold: $styles.text.microBold,
-      microMedium: $styles.text.microMedium,
-      nanoRegular: $styles.text.nanoRegular,
-      nanoBold: $styles.text.nanoBold,
-      nanoMedium: $styles.text.nanoMedium,
-      button: $styles.text.button,
-    );
-  }
 
-  TextTheme get globalTextTheme {
-    return TextTheme(
-      headlineLarge: heading1Regular, // Heading 1
-      headlineMedium: heading2Medium, // Heading 2
-      headlineSmall: heading3Regular, // Heading 3
-      titleMedium: subheadingRegular, // Subheading
-      bodyLarge: bodyMedium, // Caption
-      bodyMedium: bodyRegular, // Caption
-      bodySmall: microRegular, // Micro
-      labelMedium: nanoRegular, // Nano
-      labelSmall: button, // Button
-    );
-  }
-
-  const MTextTheme({
-    this.heading1Regular,
-    this.heading1Bold,
-    this.heading1Medium,
-    this.heading2Regular,
-    this.heading2Bold,
-    this.heading2Medium,
-    this.heading3Regular,
-    this.heading3Bold,
-    this.heading3Medium,
-    this.subheadingRegular,
-    this.subheadingBold,
-    this.subheadingMedium,
-    this.bodyRegular,
-    this.bodyBold,
-    this.bodyMedium,
-    this.captionRegular,
-    this.captionBold,
-    this.captionMedium,
-    this.microRegular,
-    this.microBold,
-    this.microMedium,
-    this.nanoRegular,
-    this.nanoBold,
-    this.nanoMedium,
-    this.button,
-  });
 
   @override
   ThemeExtension<MTextTheme> copyWith({
@@ -179,6 +189,7 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
     TextStyle? nanoBold,
     TextStyle? nanoMedium,
     TextStyle? button,
+    TextStyle? countDown,
   }) {
     return MTextTheme(
       heading1Regular: heading1Regular ?? this.heading1Regular,
@@ -206,6 +217,7 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
       nanoBold: nanoBold ?? this.nanoBold,
       nanoMedium: nanoMedium ?? this.nanoMedium,
       button: button ?? this.button,
+      countDown: countDown ?? this.countDown,
     );
   }
 
@@ -230,8 +242,11 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
       heading3Bold: TextStyle.lerp(heading3Bold, other.heading3Bold, t),
       subheadingRegular:
           TextStyle.lerp(subheadingRegular, other.subheadingRegular, t),
-      subheadingMedium:
-          TextStyle.lerp(subheadingMedium, other.subheadingMedium, t),
+      subheadingMedium: TextStyle.lerp(
+        subheadingMedium,
+        other.subheadingMedium,
+        t,
+      ),
       subheadingBold: TextStyle.lerp(subheadingBold, other.subheadingBold, t),
       bodyRegular: TextStyle.lerp(bodyRegular, other.bodyRegular, t),
       bodyMedium: TextStyle.lerp(bodyMedium, other.bodyMedium, t),
@@ -246,8 +261,98 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
       nanoMedium: TextStyle.lerp(nanoMedium, other.nanoMedium, t),
       nanoBold: TextStyle.lerp(nanoBold, other.nanoBold, t),
       button: TextStyle.lerp(button, other.button, t),
+      countDown: TextStyle.lerp(countDown, other.countDown, t),
     );
   }
 
-  static MTextTheme? of(context) => Theme.of(context).extension<MTextTheme>();
+  /// Retrieves the [MTextTheme] extension from the closest [Theme] instance
+  /// that encloses the given [context].
+  ///
+  /// This method searches for the nearest [Theme] widget in the widget tree
+  /// and returns the [MTextTheme] extension if it exists. If no [MTextTheme]
+  /// extension is found, this method returns null.
+  ///
+  /// The [MTextTheme] extension must be added to the [ThemeData.extensions]
+  /// in your theme configuration to be accessible using this method.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// final mTextTheme = MTextTheme.of(context);
+  /// ```
+  ///
+  /// - [context]: The build context from which to retrieve the [MTextTheme]
+  /// extension.
+  ///
+  /// Returns the [MTextTheme] extension if found, or null if no [MTextTheme]
+  /// extension is available in the closest [Theme] instance.
+  static MTextTheme? of(BuildContext context) {
+    return Theme.of(context).extension<MTextTheme>();
+  }
+}
+
+@immutable
+class _Typography {
+  _Typography(this._colors);
+  final MColorScheme _colors;
+  late final heading1Regular = _font(32, height: 40);
+  late final heading1Medium = heading1Regular.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  late final heading1Bold = heading1Regular.copyWith(
+    fontWeight: FontWeight.w700,
+  );
+  late final heading2Regular = _font(24, height: 32);
+  late final heading2Medium = heading2Regular.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  late final heading2Bold = heading2Regular.copyWith(
+    fontWeight: FontWeight.w700,
+  );
+  late final heading3Regular = _font(20, height: 24);
+  late final heading3Medium = heading3Regular.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  late final heading3Bold = heading3Regular.copyWith(
+    fontWeight: FontWeight.w700,
+  );
+  late final subheadingRegular = _font(16, height: 24);
+  late final subheadingMedium = subheadingRegular.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  late final subheadingBold = subheadingRegular.copyWith(
+    fontWeight: FontWeight.w700,
+  );
+  late final bodyRegular = _font(16, height: 24);
+  late final bodyMedium = bodyRegular.copyWith(fontWeight: FontWeight.w600);
+  late final bodyBold = bodyRegular.copyWith(fontWeight: FontWeight.w700);
+  late final captionRegular = _font(14, height: 16);
+  late final captionMedium = captionRegular.copyWith(
+    fontWeight: FontWeight.w600,
+  );
+  late final captionBold = captionRegular.copyWith(fontWeight: FontWeight.w700);
+  late final microRegular = _font(12, height: 16);
+  late final microMedium = microRegular.copyWith(fontWeight: FontWeight.w600);
+  late final microBold = microRegular.copyWith(fontWeight: FontWeight.w700);
+  late final nanoRegular = _font(10, height: 14);
+  late final nanoMedium = nanoRegular.copyWith(fontWeight: FontWeight.w600);
+  late final nanoBold = nanoRegular.copyWith(fontWeight: FontWeight.w700);
+  late final button = _font(8, height: 16, weight: FontWeight.w600);
+  late final countDown = _font(72, weight: FontWeight.w700);
+  TextStyle get _style => const TextStyle(fontFamily: FontFamily.sFProDisplay);
+  TextStyle _font(
+    double size, {
+    double? height,
+    FontWeight? weight,
+    TextDecoration? decoration,
+    Color? color,
+  }) {
+    return _style.copyWith(
+      fontSize: size,
+      fontFamily: FontFamily.sFProDisplay,
+      height: height != null ? (height / size) : _style.height,
+      fontWeight: weight ?? FontWeight.w500,
+      decoration: decoration,
+      color: color ?? _colors.onBackground,
+    );
+  }
 }

@@ -37,12 +37,18 @@ class _LiveCard extends HookWidget {
     //   return null;
     // }, [subscription]);
 
+    final menoBloc = context.watch<MenoBloc>();
+
     return MCard.live(
       title: broadcast.title.getOr(),
       host: broadcast.creator?.fullName ?? broadcast.fullName ?? '',
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
-      onTap: () => context.showJoinLiveBroadcastModal(broadcast),
+      onTap: () => menoBloc.state.maybeWhen(
+        orElse: () => context.showJoinLiveBroadcastModal(broadcast),
+        streaming: () => context.push(Routes.stream),
+        reconnecting: () => context.push(Routes.stream),
+      ),
     );
   }
 }
@@ -56,7 +62,7 @@ class _BuildColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        $styles.spaces.verticalXXXLarge,
+        Spaces.verticalXXXLarge,
         MHeader(
           title: 'Now Live',
           action: InkWell(
@@ -67,8 +73,8 @@ class _BuildColumn extends StatelessWidget {
             ),
           ),
         ),
-        24.vSpace,
-        LimitedBox(maxHeight: 184.toScale, child: child),
+        const SizedBox(height: 24),
+        LimitedBox(maxHeight: 184, child: child),
       ],
     );
   }
@@ -80,7 +86,7 @@ class _SkeletonLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BroadcastListWidget(
-      itemCount: 5,
+      itemCount: 3,
       itemBuilder: (context, i) => MCard.live(loading: true),
     );
   }

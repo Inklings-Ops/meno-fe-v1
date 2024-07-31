@@ -7,6 +7,7 @@ class LoginForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final formKey = useMemoized(GlobalKey<FormState>.new);
     return Form(
       key: formKey,
@@ -16,24 +17,24 @@ class LoginForm extends HookWidget {
         children: [
           if (isPasswordOnly) ...[
             UserAccountDetails(action: context.showSwitchAccountSheet),
-            $styles.spaces.verticalXXLarge,
+            Spaces.verticalXXLarge,
           ] else ...[
             LoginEmailField(isPwdOnly: isPasswordOnly),
-            SizedBox(height: 24.toScale),
+            Spaces.verticalXLarge,
           ],
           const LoginPasswordField(),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           Align(
             alignment: Alignment.centerRight,
             child: InkWell(
               onTap: () => context.push(Routes.resetPassword),
               child: MText(
                 'Forgot Password?',
-                style: $styles.text.captionMedium,
+                style: textTheme.captionMedium,
               ),
             ),
           ),
-          $styles.spaces.verticalXXLarge,
+          Spaces.verticalXXLarge,
           const LoginButton(),
         ],
       ),

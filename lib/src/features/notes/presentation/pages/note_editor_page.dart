@@ -40,6 +40,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return BlocListener<NoteFormCubit, NoteFormState>(
       listenWhen: (p, c) => p.option != c.option,
       listener: (context, state) {
@@ -53,8 +54,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 42.toScale,
-          leadingWidth: 90.toScale,
+          toolbarHeight: 42,
+          leadingWidth: 90,
           leading: const MNotesBackButton(title: 'Notes'),
           actions: [
             BlocBuilder<NoteFormCubit, NoteFormState>(
@@ -67,21 +68,21 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                   child: MText(
                     state.loading ? 'Saving...' : 'Done',
                     color: colors.primary,
-                    style: $styles.text.captionMedium,
+                    style: textTheme.captionMedium,
                   ),
                 );
               },
             ),
-            $styles.spaces.horizontalLarge,
+            Spaces.horizontalLarge,
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               _TitleField(initialNote: widget.note),
-              $styles.spaces.verticalLarge,
+              Spaces.verticalLarge,
               Expanded(
                 child: QuillEditor(
                   focusNode: quillFocusNode,
@@ -100,10 +101,10 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: SizedBox(
-          height: 56.toScale,
+          height: 56,
           child: Card(
             color: colors.surfaceTint,
-            shape: RoundedRectangleBorder(borderRadius: $styles.radius.circle),
+            shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
             child: QuillToolbar.simple(
               configurations: QuillSimpleToolbarConfigurations(
                 controller: controller,
@@ -149,8 +150,9 @@ class _TitleField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return TextFormField(
-      style: $styles.text.heading3Bold,
+      style: textTheme.heading3Bold,
       initialValue: initialNote?.title.getOr(),
       onChanged: context.watch<NoteFormCubit>().titleChanged,
       textInputAction: TextInputAction.next,

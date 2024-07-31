@@ -6,6 +6,8 @@ class DiscoverPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     final isSearching = useState<bool>(false);
     final scrollController = useScrollController();
 
@@ -35,20 +37,20 @@ class DiscoverPage extends HookWidget {
           addTopMargin: true,
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(110.toScale),
+          preferredSize: const Size.fromHeight(110),
           child: Column(
             children: [
-              16.vSpace,
+              const SizedBox(height: 6),
               DiscoverSearchBar(onTap: () => isSearching.value = true),
-              24.vSpace,
+              Spaces.verticalXLarge,
               LimitedBox(
-                maxHeight: 32.toScale,
+                maxHeight: 32,
                 child: SearchFilterList(
                   filter: filter.value,
                   onSelected: (value) => filter.value = value,
                 ),
               ),
-              $styles.spaces.verticalMicro,
+              Spaces.verticalMicro,
             ],
           ),
         ),

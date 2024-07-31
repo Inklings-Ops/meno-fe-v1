@@ -14,16 +14,16 @@ class LiveNotificationCard extends StatelessWidget {
       decoration: ShapeDecoration(
         color: styles.nBackgroundColor,
         shape: SmoothRectangleBorder(
-          borderRadius: $styles.radius.squircleLarge,
+          borderRadius: Corners.squircleLarge,
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const MBadge.small(),
-          $styles.spaces.horizontalSmall,
-          MAvatar(radius: 24.toScale),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
+          const MAvatar(radius: 24),
+          Spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,7 @@ class LiveNotificationCard extends StatelessWidget {
                   style: styles.nTitleTextStyle,
                   maxLines: 4,
                 ),
-                14.vSpace,
+                const SizedBox(height: 14),
                 MText(
                   DateHelpers.calculateTimeAgo(notification.createdAt),
                   style: styles.nSubtitleTextStyle,
@@ -42,12 +42,12 @@ class LiveNotificationCard extends StatelessWidget {
               ],
             ),
           ),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           Container(
-            height: 80.toScale,
-            width: 88.toScale,
+            height: 80,
+            width: 88,
             decoration: BoxDecoration(
-              borderRadius: $styles.radius.medium,
+              borderRadius: Corners.medium,
               border: Border.all(),
               image: notification.content.imageUrl != null
                   ? DecorationImage(
@@ -56,14 +56,14 @@ class LiveNotificationCard extends StatelessWidget {
                     )
                   : null,
             ),
-            child: Center(child: MPlaceholder(dimension: 30.toScale)),
+            child: const Center(child: MPlaceholder(dimension: 30)),
           ),
-          $styles.spaces.horizontalSmall,
-          SizedBox(
-            width: 16.toScale,
-            height: 16.toScale,
+          Spaces.horizontalSmall,
+          const SizedBox(
+            width: 16,
+            height: 16,
             child: MIconButton(
-              icon: Icon(MIcons.dots_vertical, size: 16.toScale),
+              icon: Icon(MIcons.dots_vertical, size: 16),
             ),
           ),
         ],

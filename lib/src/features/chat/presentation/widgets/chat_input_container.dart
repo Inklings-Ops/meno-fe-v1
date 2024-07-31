@@ -9,6 +9,8 @@ class ChatInputContainer extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
+
     final bloc = context.read<ChatBloc>();
     final contentController = useTextEditingController();
     final isReactionsVisible = useState<bool>(false);
@@ -34,28 +36,28 @@ class ChatInputContainer extends HookWidget {
           if (isReactionsVisible.value) const ReactionButton(),
           Container(
             alignment: Alignment.topCenter,
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8).radius,
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Row(
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 40.toScale,
+                    height: 40,
                     child: TextFormField(
-                      style: $styles.text.captionRegular,
+                      style: textTheme.captionRegular,
                       controller: contentController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
-                          horizontal: $styles.insets.medium,
+                          horizontal: Insets.medium,
                         ),
                         hintText: 'Type your comment here...',
                       ),
                     ),
                   ),
                 ),
-                $styles.spaces.horizontalLarge,
+                Spaces.horizontalLarge,
                 MIconButton(
-                  size: 40.toScale,
-                  iconSize: 20.toScale,
+                  size: 40,
+                  iconSize: 20,
                   icon: const Icon(Icons.face),
                   isFilled: true,
                   fillColor: colors.outlineVariant2,
@@ -63,7 +65,7 @@ class ChatInputContainer extends HookWidget {
                       isReactionsVisible.value = !isReactionsVisible.value,
                 ),
                 if (isSendVisible.value) ...[
-                  $styles.spaces.horizontalSmall,
+                  Spaces.horizontalSmall,
                   BlocBuilder<SessionCubit, SessionState>(
                     builder: (context, state) => state.maybeWhen(
                       orElse: () => const SizedBox(),
@@ -72,8 +74,8 @@ class ChatInputContainer extends HookWidget {
                         isFilled: true,
                         fillColor: colors.primary,
                         color: colors.onPrimary,
-                        size: 40.toScale,
-                        iconSize: 20.toScale,
+                        size: 40,
+                        iconSize: 20,
                         onPressed: () {
                           bloc.sendMessage(contentController.text);
                           scrollController.animateTo(
@@ -104,18 +106,18 @@ class ReactionButton extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
 
     return Positioned(
-      bottom: 60.toScale,
-      right: 16.toScale,
+      bottom: 60,
+      right: 16,
       child: Container(
-        height: 56.toScale,
-        padding: EdgeInsets.all($styles.insets.small),
+        height: 56,
+        padding: const EdgeInsets.all(Insets.small),
         decoration: BoxDecoration(
           color: colors.background,
-          borderRadius: $styles.radius.circle,
+          borderRadius: Corners.circle,
         ),
         child: ListView.separated(
           shrinkWrap: true,
-          separatorBuilder: (context, i) => $styles.spaces.horizontalSmall,
+          separatorBuilder: (context, i) => Spaces.horizontalSmall,
           scrollDirection: Axis.horizontal,
           itemCount: reactions.length,
           itemBuilder: (context, i) {
@@ -123,11 +125,11 @@ class ReactionButton extends StatelessWidget {
               position: i,
               duration: const Duration(milliseconds: 260),
               child: SlideAnimation(
-                verticalOffset: (15 + i * 15).toScale,
+                verticalOffset: (15 + i * 15),
                 child: FadeInAnimation(
                   child: MIconButton(
-                    size: 40.toScale,
-                    iconSize: 20.toScale,
+                    size: 40,
+                    iconSize: 20,
                     icon: reactions[i].icon,
                     isFilled: true,
                     fillColor: colors.outlineVariant2,

@@ -11,7 +11,7 @@ class RecordToggleSwitchField extends StatelessWidget {
         leadingText: 'Enable recording',
         subtitleText: 'Record your broadcast to listen back to later',
         trailing: SizedBox(
-          width: 48.toScale,
+          width: 48,
           child: Switch(
             value: state.shouldRecord,
             onChanged: context.read<BroadcastFormCubit>().onRecordingChanged,

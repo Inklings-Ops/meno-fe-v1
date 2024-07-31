@@ -7,8 +7,8 @@ class BroadcastArtworkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24).radius,
-      child: MAvatar(radius: 48.toScale, url: imageUrl),
+      padding: const EdgeInsets.all(24),
+      child: MAvatar(radius: 48, url: imageUrl),
     );
   }
 }

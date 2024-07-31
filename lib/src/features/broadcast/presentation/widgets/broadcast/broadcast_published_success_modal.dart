@@ -27,6 +27,7 @@ class _PublishingInProgressModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -34,30 +35,30 @@ class _PublishingInProgressModal extends StatelessWidget {
       children: [
         MText(
           'Publishing broadcast',
-          style: $styles.text.heading2Bold,
+          style: textTheme.heading2Bold,
           textAlign: TextAlign.center,
         ),
-        24.vSpace,
+        Spaces.verticalXLarge,
         SizedBox.square(
-          dimension: 96.toScale,
+          dimension: 96,
           child: Center(
             child: CircleAvatar(
-              radius: 32.toScale,
+              radius: 32,
               backgroundColor: colors.onBackground,
             ),
           ),
         ),
-        $styles.spaces.verticalLarge,
-        BroadcastTimer(textStyle: $styles.text.heading2Bold),
-        24.vSpace,
-        32.vSpace,
-        $styles.spaces.verticalSmall,
+        Spaces.verticalLarge,
+        BroadcastTimer(textStyle: textTheme.heading2Bold),
+        Spaces.verticalXLarge,
+        Spaces.verticalXXLarge, // TODO (gettoknowdavid): add avatars
+        Spaces.verticalSmall,
         MText(
           '23 people tuned in!',
-          style: $styles.text.captionRegular,
+          style: textTheme.captionRegular,
           textAlign: TextAlign.center,
         ),
-        80.vSpace,
+        const SizedBox(height: 80),
         MSecondaryButton(label: 'Cancel', onPressed: onPressed),
       ],
     );
@@ -69,28 +70,29 @@ class _SuccessModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Assets.images.onboarding1.image(height: 193.toScale),
-        24.vSpace,
+        Assets.images.onboarding1.image(height: 193),
+        Spaces.verticalXLarge,
         MText(
           'Broadcast Published!',
-          style: $styles.text.heading2Regular,
+          style: textTheme.heading2Regular,
           textAlign: TextAlign.center,
         ),
-        $styles.spaces.verticalSmall,
+        Spaces.verticalSmall,
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: MText(
             'Now you and other people can go back and listen to this broadcast.',
-            style: $styles.text.captionRegular,
+            style: textTheme.captionRegular,
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
         ),
-        40.vSpace,
+        const SizedBox(height: 40),
         MPrimaryButton(label: 'Go to Profile', onPressed: () {}),
       ],
     );

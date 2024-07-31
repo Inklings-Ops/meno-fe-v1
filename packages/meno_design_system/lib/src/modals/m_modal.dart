@@ -1,40 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
+/// A widget that displays a title bar for a modal.
+///
+/// The [MModalTitleBar] includes a title and an optional close button. It can
+/// be used to provide a consistent header for modal dialogs.
 class MModal extends StatelessWidget {
+  /// Creates an instance of [MModalTitleBar].
+  ///
+  /// The [title] parameter is required. The [showCloseButton] parameter
+  /// determines whether a close button is displayed, and defaults to `true`.
+  /// The [padding] parameter can be used to add custom padding to the title
+  /// bar.
   const MModal({
-    super.key,
     required this.builder,
+    super.key,
     this.title,
     this.showCloseButton = true,
     this.padding,
   });
+
+  /// WidgetBuilder for the modal.
   final WidgetBuilder builder;
+
+  /// The title text displayed in the title bar.
   final String? title;
+
+  /// Determines whether the close button is displayed.
+  ///
+  /// Defaults to `true`.
   final bool showCloseButton;
+
+  /// Custom padding for the title bar.
   final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     final effectiveContentPadding = title != null
         ? const EdgeInsets.only(top: 48, bottom: 8)
-        : const EdgeInsets.only(top: 0, bottom: 8);
+        : const EdgeInsets.only(bottom: 8);
 
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16).radius,
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Stack(
         children: [
           if (title != null)
             Positioned.fill(
-              top: 0,
               child: MModalTitleBar(
                 title: title!,
                 showCloseButton: showCloseButton,
               ),
             ),
           Padding(
-            padding: effectiveContentPadding.radius,
+            padding: effectiveContentPadding,
             child: builder(context),
           ),
         ],

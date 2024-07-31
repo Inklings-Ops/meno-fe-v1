@@ -19,10 +19,10 @@ class SubscribeNotificationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           MAvatar(
-            radius: 24.toScale,
+            radius: 24,
             url: notification.content.subscriberImageUrl,
           ),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -34,7 +34,7 @@ class SubscribeNotificationCard extends StatelessWidget {
                   style: styles.nTitleTextStyle,
                   maxLines: 2,
                 ),
-                $styles.spaces.verticalSmall,
+                Spaces.verticalSmall,
                 MText(
                   '3 days ago',
                   style: styles.nSubtitleTextStyle,
@@ -43,14 +43,14 @@ class SubscribeNotificationCard extends StatelessWidget {
               ],
             ),
           ),
-          $styles.spaces.horizontalSmall,
-          Align(
+          Spaces.horizontalSmall,
+          const Align(
             alignment: Alignment.topCenter,
             child: SizedBox(
-              width: 16.toScale,
-              height: 16.toScale,
+              width: 16,
+              height: 16,
               child: MIconButton(
-                icon: Icon(MIcons.dots_vertical, size: 16.toScale),
+                icon: Icon(MIcons.dots_vertical, size: 16),
               ),
             ),
           ),

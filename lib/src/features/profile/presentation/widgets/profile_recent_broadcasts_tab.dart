@@ -55,8 +55,8 @@ class _BuildListView extends StatelessWidget {
       shrinkWrap: true,
       itemCount: itemCount,
       itemBuilder: itemBuilder,
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24).radius,
-      separatorBuilder: (context, index) => $styles.spaces.verticalLarge,
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+      separatorBuilder: (context, index) => Spaces.verticalLarge,
     );
   }
 }

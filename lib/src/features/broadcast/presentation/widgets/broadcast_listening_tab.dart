@@ -10,8 +10,8 @@ class BroadcastListeningTab extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
-          height: 34.toScale,
+          padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+          height: 34,
           child: Row(
             children: [
               const _NumberOfParticipants(),
@@ -26,7 +26,7 @@ class BroadcastListeningTab extends StatelessWidget {
             ],
           ),
         ),
-        $styles.spaces.verticalLarge,
+        Spaces.verticalLarge,
         const Expanded(child: BroadcastParticipantList()),
       ],
     );
@@ -38,13 +38,14 @@ class _NumberOfParticipants extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
       selector: (state) => state.numberOfParticipants,
       builder: (context, numberOfParticipants) => Row(
         children: [
-          Icon(MIcons.hearing, size: 16.toScale),
-          $styles.spaces.horizontalSmall,
-          MText('$numberOfParticipants', style: $styles.text.captionMedium),
+          const Icon(MIcons.hearing, size: 16),
+          Spaces.horizontalSmall,
+          MText('$numberOfParticipants', style: textTheme.captionMedium),
         ],
       ),
     );

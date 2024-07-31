@@ -13,14 +13,14 @@ class PasswordRulesWidget extends StatelessWidget {
       builder: (context, state) => Visibility(
         visible: !state.isValid,
         child: Container(
-          padding: EdgeInsets.all($styles.insets.large),
+          padding: const EdgeInsets.all(Insets.large),
           decoration: BoxDecoration(
             color: colors.background,
-            border: Border.all(width: 1.toScale, color: MColor.grey50),
-            borderRadius: $styles.radius.small,
+            border: Border.all(width: 1, color: MColor.grey50),
+            borderRadius: Corners.small,
           ),
           child: Wrap(
-            runSpacing: 16.toScale,
+            runSpacing: 16,
             children: state.value.fold(
               (failure) => failure.maybeWhen(
                 orElse: () => passwordStrengthRules.map((e) {
@@ -48,6 +48,7 @@ class _RuleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     final isLight = Theme.of(context).brightness == Brightness.light;
     final unsetColor = MColorScheme.of(context)?.error;
     final setColor = isLight ? MColor.success300 : MColor.success200;
@@ -55,11 +56,11 @@ class _RuleItem extends StatelessWidget {
     return Visibility(
       visible: !rule.isValid,
       child: SizedBox(
-        height: 18.toScale,
+        height: 18,
         width: MediaQuery.sizeOf(context).width,
         child: MText(
           rule.title,
-          style: $styles.text.captionRegular,
+          style: textTheme.captionRegular,
           color: color ?? ruleColor,
         ),
       ),

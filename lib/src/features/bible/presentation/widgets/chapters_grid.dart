@@ -11,15 +11,15 @@ class ChaptersGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: EdgeInsets.symmetric(vertical: $styles.insets.large),
+      padding: const EdgeInsets.symmetric(vertical: Insets.large),
       primary: false,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: chapterLength,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 6,
-        crossAxisSpacing: $styles.insets.medium,
-        mainAxisSpacing: $styles.insets.medium,
+        crossAxisSpacing: Insets.medium,
+        mainAxisSpacing: Insets.medium,
       ),
       itemBuilder: (context, index) => ChapterWidget(chapter: index + 1),
     );

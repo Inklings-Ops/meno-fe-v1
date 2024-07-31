@@ -19,7 +19,7 @@ class BookWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final borderRadius = $styles.radius.small;
+    const borderRadius = Corners.small;
     final bloc = context.watch<ScripturePickerCubit>();
     final isSelected = useState<bool>(bloc.state.book == bookName);
 
@@ -42,11 +42,11 @@ class BookWidget extends HookWidget {
             onTap?.call();
           },
           child: Container(
-            height: 56.toScale,
+            height: 56,
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 16,
-            ).radius,
+            ),
             decoration: BoxDecoration(
               color: colors.outlineVariant2,
               borderRadius: borderRadius,
@@ -56,7 +56,7 @@ class BookWidget extends HookWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MText(bookName),
-                Icon(MIcons.plus, size: 20.toScale),
+                const Icon(MIcons.plus, size: 20),
               ],
             ),
           ),

@@ -9,17 +9,18 @@ class NetworkToast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final isError = type == ToastType.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8).radius,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        borderRadius: $styles.radius.small,
+        borderRadius: Corners.small,
         color: isError ? colorScheme.error : colorScheme.success,
       ),
       child: MText(
         isError ? 'No internet connection' : 'Back online',
-        style: $styles.text.captionRegular,
+        style: textTheme.captionRegular,
         color: isError ? colorScheme.onError : colorScheme.onSuccess,
       ),
     );

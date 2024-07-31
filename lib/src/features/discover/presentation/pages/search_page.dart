@@ -26,9 +26,9 @@ class SearchPage extends HookWidget {
         flexibleSpace: Align(
           alignment: Alignment.bottomCenter,
           child: DiscoverSearchBar(
-            height: 32.toScale,
+            height: 32,
             autofocus: true,
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4).radius,
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             showCancelButton: true,
             onCancel: onCancel,
             onChanged: (value) {

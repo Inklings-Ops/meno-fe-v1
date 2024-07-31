@@ -7,10 +7,11 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     if (id != null) {
       return Scaffold(
         body: Center(
-          child: Text(id!, style: $styles.text.heading1Bold),
+          child: Text(id!, style: textTheme.heading1Bold),
         ),
       );
     } else {

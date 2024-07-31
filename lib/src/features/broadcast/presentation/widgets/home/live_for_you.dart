@@ -5,12 +5,13 @@ class LiveForYou extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
         const MHeader(title: 'Live For You ✨'),
         Container(
-          height: 112.toScale,
-          padding: EdgeInsets.symmetric(horizontal: $styles.insets.large),
+          height: 112,
+          padding: const EdgeInsets.symmetric(horizontal: Insets.large),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -22,18 +23,18 @@ class LiveForYou extends StatelessWidget {
                     MText(
                       'Hello there! You are not subscribed to any broadcasts yet.',
                       maxLines: 2,
-                      style: $styles.text.captionRegular,
+                      style: textTheme.captionRegular,
                       color: MColorScheme.of(context)?.onDisabledContainer,
                     ),
-                    $styles.spaces.verticalLarge,
+                    Spaces.verticalLarge,
                     const DiscoverButton(),
                   ],
                 ),
               ),
-              20.hSpace,
+              const SizedBox(width: 20),
               Assets.images.liveForYou.image(
-                height: 112.toScale,
-                width: 112.toScale,
+                height: 112,
+                width: 112,
                 fit: BoxFit.cover,
               ),
             ],
@@ -49,19 +50,20 @@ class DiscoverButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return SizedBox(
-      height: 32.toScale,
-      width: 112.toScale,
+      height: 32,
+      width: 112,
       child: MSecondaryButton.icon(
         label: 'Discover',
         icon: const Icon(MIcons.compass),
         onPressed: () => context.go(Routes.discover),
         style: OutlinedButton.styleFrom(
-          textStyle: $styles.text.microMedium,
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8).radius,
-          shape: RoundedRectangleBorder(
-            borderRadius: $styles.radius.small,
-            side: BorderSide(width: 2.toScale),
+          textStyle: textTheme.microMedium,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          shape: const RoundedRectangleBorder(
+            borderRadius: Corners.small,
+            side: BorderSide(width: 2),
           ),
         ),
       ),

@@ -26,17 +26,17 @@ class PreStreamArtwork extends StatelessWidget {
     }
 
     final SizedBox placeholder = SizedBox(
-      height: (142 * 0.4).toScale,
+      height: (142 * 0.4),
       child: colors.brightness == Brightness.light
           ? Assets.images.logoDark.svg()
           : Assets.images.logoLight.svg(),
     );
 
     return Container(
-      height: 142.toScale,
-      width: 142.toScale,
+      height: 142,
+      width: 142,
       decoration: BoxDecoration(
-        borderRadius: $styles.radius.large,
+        borderRadius: Corners.large,
         border: Border.all(color: colors.outlineVariant1!),
         image: image,
       ),

@@ -9,7 +9,7 @@ class ChapterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final borderRadius = $styles.radius.small;
+    const borderRadius = Corners.small;
 
     return InkWell(
       onTap: () {

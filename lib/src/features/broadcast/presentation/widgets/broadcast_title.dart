@@ -6,13 +6,14 @@ class BroadcastTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: $styles.insets.medium),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.medium),
       child: MText(
         title,
         maxLines: 2,
         textAlign: TextAlign.center,
-        style: $styles.text.subheadingBold,
+        style: textTheme.subheadingBold,
       ),
     );
   }

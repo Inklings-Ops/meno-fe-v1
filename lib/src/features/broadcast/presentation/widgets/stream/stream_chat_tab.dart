@@ -25,7 +25,7 @@ class StreamChatTab extends HookWidget {
                 ),
               ),
               SizedBox(
-                height: 52.toScale,
+                height: 52,
                 width: constraints.maxWidth,
                 child: ChatInputContainer(scrollController: scrollController),
               ),

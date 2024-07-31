@@ -22,12 +22,12 @@ class BroadcastParticipantList extends HookWidget {
           return GridView.builder(
             shrinkWrap: true,
             padding: padding ??
-                EdgeInsets.symmetric(horizontal: $styles.insets.large),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                const EdgeInsets.symmetric(horizontal: Insets.large),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              crossAxisSpacing: $styles.insets.small,
-              mainAxisSpacing: $styles.insets.large,
-              childAspectRatio: (80 / 88).toScale,  
+              crossAxisSpacing: Insets.small,
+              mainAxisSpacing: Insets.large,
+              childAspectRatio: (80 / 88),  
             ),
             itemCount: state.participants.length,
             itemBuilder: (context, index) {

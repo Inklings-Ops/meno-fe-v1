@@ -1,14 +1,29 @@
 // This MTabBarView is based on the original Flutter TabBarView widget with modifications
 // to include the onPageChanged property. Refer to https://docs.flutter.dev/cookbook/design/tabs for details on the original widget.
 
+// ignore_for_file: lines_longer_than_80_chars, prefer_asserts_with_message
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 
+/// A `TabBarView` with an exposed `onPageChanged` callback.
+///
+/// This widget provides the same functionality as a standard `TabBarView` but
+/// exposes the `onPageChanged` callback from `PageView` for more granular control.
 class MTabBarView extends StatefulWidget {
+  /// Creates a new `MTabBarView` widget.
+  ///
+  /// * `children`: The children to display in the view.
+  /// * `controller`: The `TabController` to use to control the view.
+  /// * `physics`: The physics to apply to the page view.
+  /// * `dragStartBehavior`: Determines the drag start behavior.
+  /// * `viewportFraction`: The fraction of the view that each child should occupy.
+  /// * `clipBehavior`: The clipping behavior of the view.
+  /// * `onPageChanged`: A callback called when the page changes.
   const MTabBarView({
-    super.key,
     required this.children,
+    super.key,
     this.controller,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
@@ -16,12 +31,26 @@ class MTabBarView extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.onPageChanged,
   });
-  final TabController? controller;
+
+  /// The children to display in the view.
   final List<Widget> children;
+
+  /// The `TabController` to use to control the view.
+  final TabController? controller;
+
+  /// The physics to apply to the page view.
   final ScrollPhysics? physics;
+
+  /// Determines the drag start behavior.
   final DragStartBehavior dragStartBehavior;
+
+  /// The fraction of the view that each child should occupy.
   final double viewportFraction;
+
+  /// The clipping behavior of the view.
   final Clip clipBehavior;
+
+  /// A callback called when the page changes.
   final void Function(int)? onPageChanged;
 
   @override
@@ -43,7 +72,7 @@ class _MTabBarViewState extends State<MTabBarView> {
   bool get _controllerIsValid => _controller?.animation != null;
 
   void _updateTabController() {
-    final TabController? newController =
+    final newController =
         widget.controller ?? DefaultTabController.maybeOf(context);
     assert(() {
       if (newController == null) {
@@ -162,7 +191,7 @@ class _MTabBarViewState extends State<MTabBarView> {
       return;
     }
 
-    final bool adjacentDestination =
+    final adjacentDestination =
         (_currentIndex! - _controller!.previousIndex).abs() == 1;
     if (adjacentDestination) {
       _warpToAdjacentTab(_controller!.animationDuration);
@@ -175,24 +204,25 @@ class _MTabBarViewState extends State<MTabBarView> {
     if (duration == Duration.zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!,
-          duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
     return Future<void>.value();
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
-    final int previousIndex = _controller!.previousIndex;
+    final previousIndex = _controller!.previousIndex;
     assert((_currentIndex! - previousIndex).abs() > 1);
 
     // initialPage defines which page is shown when starting the animation.
     // This page is adjacent to the destination page.
-    final int initialPage = _currentIndex! > previousIndex
+    final initialPage = _currentIndex! > previousIndex
         ? _currentIndex! - 1
         : _currentIndex! + 1;
 
@@ -201,7 +231,7 @@ class _MTabBarViewState extends State<MTabBarView> {
       // For motivation, see https://github.com/flutter/flutter/pull/29188 and
       // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
       _childrenWithKey = List<Widget>.of(_childrenWithKey, growable: false);
-      final Widget temp = _childrenWithKey[initialPage];
+      final temp = _childrenWithKey[initialPage];
       _childrenWithKey[initialPage] = _childrenWithKey[previousIndex];
       _childrenWithKey[previousIndex] = temp;
     });
@@ -213,20 +243,21 @@ class _MTabBarViewState extends State<MTabBarView> {
     if (duration == Duration.zero) {
       _jumpToPage(_currentIndex!);
     } else {
-      await _animateToPage(_currentIndex!,
-          duration: duration, curve: Curves.ease);
+      await _animateToPage(
+        _currentIndex!,
+        duration: duration,
+        curve: Curves.ease,
+      );
     }
 
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 
   void _syncControllerOffset() {
     _controller!.offset =
-        clampDouble(_pageController!.page! - _controller!.index, -1.0, 1.0);
+        clampDouble(_pageController!.page! - _controller!.index, -1, 1);
   }
 
   // Called when the PageView scrolls
@@ -244,10 +275,10 @@ class _MTabBarViewState extends State<MTabBarView> {
     }
 
     _scrollUnderwayCount += 1;
-    final double page = _pageController!.page!;
+    final page = _pageController!.page!;
     if (notification is ScrollUpdateNotification &&
         !_controller!.indexIsChanging) {
-      final bool pageChanged = (page - _controller!.index).abs() > 1.0;
+      final pageChanged = (page - _controller!.index).abs() > 1.0;
       if (pageChanged) {
         _controller!.index = page.round();
         _currentIndex = _controller!.index;
@@ -269,21 +300,24 @@ class _MTabBarViewState extends State<MTabBarView> {
     if (_debugHasScheduledValidChildrenCountCheck) {
       return true;
     }
-    WidgetsBinding.instance.addPostFrameCallback((Duration duration) {
-      _debugHasScheduledValidChildrenCountCheck = false;
-      if (!mounted) {
-        return;
-      }
-      assert(() {
-        if (_controller!.length != widget.children.length) {
-          throw FlutterError(
-            "Controller's length property (${_controller!.length}) does not match the "
-            "number of children (${widget.children.length}) present in TabBarView's children property.",
-          );
+    WidgetsBinding.instance.addPostFrameCallback(
+      (Duration duration) {
+        _debugHasScheduledValidChildrenCountCheck = false;
+        if (!mounted) {
+          return;
         }
-        return true;
-      }());
-    }, debugLabel: 'TabBarView.validChildrenCountCheck');
+        assert(() {
+          if (_controller!.length != widget.children.length) {
+            throw FlutterError(
+              "Controller's length property (${_controller!.length}) does not match the "
+              "number of children (${widget.children.length}) present in TabBarView's children property.",
+            );
+          }
+          return true;
+        }());
+      },
+      debugLabel: 'TabBarView.validChildrenCountCheck',
+    );
     _debugHasScheduledValidChildrenCountCheck = true;
     return true;
   }

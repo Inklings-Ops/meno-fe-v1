@@ -1,7 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+/// A customizable list tile widget for use in modals.
+///
+/// This widget allows you to create a list tile that can be used within a
+/// modal dialog. It supports a title, leading and trailing icons, and an
+/// optional divider. It also includes options for handling tap events and
+/// displaying a loading indicator.
+///
+/// To use this widget, provide the necessary parameters such as the title and
+/// optional leading and trailing widgets. You can also specify whether to show
+/// a divider, handle tap events, and configure the title color.
+///
+/// Example usage:
+/// ```dart
+/// MModalListTile(
+///   title: 'Settings',
+///   leading: Icon(Icons.settings),
+///   trailing: Icons.chevron_right,
+///   onTap: () {
+///     // Handle tap event
+///   },
+/// );
+/// ```
 class MModalListTile extends StatelessWidget {
+  /// Creates an instance of [MModalListTile].
+  ///
+  /// Parameters:
+  /// - [key]: An optional key to identify the widget.
+  /// - [title]: The title of the list tile.
+  /// - [leading]: An optional widget to display before the title.
+  /// - [trailing]: An optional icon to display after the title.
+  /// - [showDivider]: A boolean indicating whether to show a divider below
+  /// the tile. Defaults to false.
+  /// - [onTap]: A callback function to handle tap events.
+  /// - [titleColor]: The color of the title text.
+  /// - [loading]: A boolean indicating whether the loading state is active.
+  /// Defaults to false.
   const MModalListTile({
     super.key,
     this.title,
@@ -10,54 +46,82 @@ class MModalListTile extends StatelessWidget {
     this.showDivider = false,
     this.onTap,
     this.titleColor,
+    this.loading = false,
   });
+
+  /// The title of the list tile.
   final String? title;
+
+  /// An optional widget to display before the title.
   final Widget? leading;
+
+  /// An optional icon to display after the title.
   final IconData? trailing;
+
+  /// A boolean indicating whether to show a divider below the tile. Defaults
+  /// to false.
   final bool showDivider;
+
+  /// A callback function to handle tap events.
   final VoidCallback? onTap;
+
+  /// The color of the title text.
   final MColor? titleColor;
+
+  /// A boolean indicating whether the loading state is active. Defaults to
+  /// false.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
 
     final iconTheme = IconThemeData(
-      size: 20.toScale,
+      size: 20,
       color: titleColor ?? colors.onBackground,
     );
 
     return SizedBox(
-      height: showDivider ? 56.0.toScale : null,
+      height: showDivider ? 56.0 : null,
       child: Column(
         children: [
           ListTile(
             onTap: onTap,
-            minTileHeight: 40.toScale,
+            minTileHeight: 40,
             title: title != null
-                ? MText(
-                    title!,
-                    style: $styles.text.bodyRegular,
-                    color: titleColor,
+                ? Skeletonizer(
+                    enabled: loading,
+                    child: MText(
+                      title!,
+                      style: textTheme.bodyRegular,
+                      color: titleColor,
+                    ),
                   )
                 : null,
-            minLeadingWidth: $styles.insets.medium,
+            minLeadingWidth: Insets.medium,
             leading: IconTheme(
               data: iconTheme,
-              child: SizedBox.square(dimension: 24.toScale, child: leading),
+              child: SizedBox.square(
+                dimension: 24,
+                child: Skeletonizer(
+                  enabled: loading,
+                  child: leading ?? const SizedBox(),
+                ),
+              ),
             ),
             trailing: SizedBox.square(
-              dimension: 24.toScale,
+              dimension: 24,
               child: trailing != null
                   ? IconTheme(data: iconTheme, child: Icon(trailing))
                   : null,
             ),
-            contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 0).radius,
+            contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
           ),
           if (showDivider)
-            MDivider(
-              bottomSpace: $styles.insets.small,
-              topSpace: $styles.insets.small,
+            const MDivider(
+              bottomSpace: Insets.small,
+              topSpace: Insets.small,
             ),
         ],
       ),

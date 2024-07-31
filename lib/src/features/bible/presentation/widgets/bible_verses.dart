@@ -50,7 +50,7 @@ class BibleVerses extends HookWidget {
         builder: (context, state) => ListView.separated(
           shrinkWrap: true,
           itemCount: state.verses.length,
-          separatorBuilder: (context, i) => $styles.spaces.verticalMedium,
+          separatorBuilder: (context, i) => Spaces.verticalMedium,
           itemBuilder: (context, i) => VerseWidget(verse: state.verses[i]),
         ),
       ),

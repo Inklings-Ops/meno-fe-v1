@@ -10,6 +10,7 @@ class BibleTranslationsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return BlocListener<TranslationsCubit, TranslationsState>(
       listener: (context, state) {
         state.downloadOption.fold(
@@ -26,12 +27,12 @@ class BibleTranslationsModal extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              MText('Offline Translations', style: $styles.text.microRegular),
-              $styles.spaces.verticalSmall,
+              MText('Offline Translations', style: textTheme.microRegular),
+              Spaces.verticalSmall,
               const OfflineBibleTranslationsList(),
-              $styles.spaces.verticalXXLarge,
-              MText('Online Translations', style: $styles.text.microRegular),
-              $styles.spaces.verticalSmall,
+              Spaces.verticalXXLarge,
+              MText('Online Translations', style: textTheme.microRegular),
+              Spaces.verticalSmall,
               const OnlineBibleTranslationsList(),
             ],
           ),
@@ -54,7 +55,7 @@ class OfflineBibleTranslationsList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
         itemCount: state.offlineTranslations.length,
-        separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
+        separatorBuilder: (context, i) => Spaces.verticalLarge,
         itemBuilder: (context, index) {
           final translation = state.offlineTranslations[index];
           return TranslationWidget(
@@ -84,7 +85,7 @@ class OnlineBibleTranslationsList extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
         itemCount: state.onlineTranslations.length,
-        separatorBuilder: (context, i) => $styles.spaces.verticalLarge,
+        separatorBuilder: (context, i) => Spaces.verticalLarge,
         itemBuilder: (context, index) {
           final translation = state.onlineTranslations[index];
           return TranslationWidget(

@@ -26,8 +26,8 @@ class BroadcastChatTab extends HookWidget {
                 ),
               ),
               SizedBox(
-                height: 52.toScale,
-                width: constraints.maxWidth.toScale,
+                height: 52,
+                width: constraints.maxWidth,
                 child: ChatInputContainer(scrollController: scrollController),
               ),
             ],

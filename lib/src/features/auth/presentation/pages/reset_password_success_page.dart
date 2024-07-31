@@ -5,29 +5,30 @@ class ResetPasswordSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
     return MScaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.images.success.image(height: 240.toScale, width: 240.toScale),
-          $styles.spaces.verticalXXXLarge,
+          Assets.images.success.image(height: 240, width: 240),
+          Spaces.verticalXXXLarge,
           MText(
             'Success!',
             textAlign: TextAlign.center,
-            style: $styles.text.heading2Bold,
+            style: textTheme.heading2Bold,
           ),
-          $styles.spaces.verticalSmall,
+          Spaces.verticalSmall,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0).radius,
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
             child: MText(
               'Your password has been reset, Jim. Phew! That was a close one.',
               textAlign: TextAlign.center,
               maxLines: 3,
-              style: $styles.text.bodyRegular,
+              style: textTheme.bodyRegular,
             ),
           ),
-          $styles.spaces.verticalXXXLarge,
+          Spaces.verticalXXXLarge,
           MPrimaryButton(
             label: 'Go Back to Log In',
             onPressed: () => context.go(Routes.login),

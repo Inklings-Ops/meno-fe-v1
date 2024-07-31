@@ -9,26 +9,27 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<ChatBloc>();
     final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
+    final bloc = context.watch<ChatBloc>();
     final createdAt = formatDate(chat.createdAt);
     final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0).radius,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           LimitedBox(
-            maxHeight: 24.toScale,
-            maxWidth: 24.toScale,
+            maxHeight: 24,
+            maxWidth: 24,
             child: MAvatar(
-              radius: 12.toScale,
+              radius: 12,
               url: chat.imageUrl,
               hasBorder: false,
             ),
           ),
-          $styles.spaces.horizontalSmall,
+          Spaces.horizontalSmall,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,58 +41,58 @@ class ChatBubble extends StatelessWidget {
                       onTap: !isHost ? () => showUserInfo(context) : null,
                       child: MText(
                         chat.fullName,
-                        style: $styles.text.microMedium,
+                        style: textTheme.microMedium,
                         color: colors.onBackgroundVariant,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    $styles.spaces.horizontalMicro,
+                    Spaces.horizontalMicro,
                     if (isHost) ...[
                       MDot(
-                        dimension: 2.toScale,
+                        dimension: 2,
                         color: colors.onBackgroundVariant,
                       ),
-                      $styles.spaces.horizontalMicro,
+                      Spaces.horizontalMicro,
                       MText(
                         'Host',
-                        style: $styles.text.microMedium,
+                        style: textTheme.microMedium,
                         color: colors.onBackgroundVariant,
                       ),
-                      $styles.spaces.horizontalMicro,
+                      Spaces.horizontalMicro,
                     ],
                     MDot(
-                      dimension: 2.toScale,
+                      dimension: 2,
                       color: colors.onBackgroundVariant,
                     ),
-                    $styles.spaces.horizontalMicro,
+                    Spaces.horizontalMicro,
                     MText(
                       createdAt,
-                      style: $styles.text.microMedium,
+                      style: textTheme.microMedium,
                       color: colors.onBackgroundVariant,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
-                $styles.spaces.verticalMicro,
+                Spaces.verticalMicro,
                 Container(
-                  padding: EdgeInsets.all($styles.insets.medium),
+                  padding: const EdgeInsets.all(Insets.medium),
                   decoration: ShapeDecoration(
                     color: isHost
                         ? colors.secondaryContainer
                         : colors.surfaceShade,
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(20).radius,
-                        topRight: const Radius.circular(20).radius,
-                        bottomRight: const Radius.circular(20).radius,
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
                       ),
                     ),
                   ),
                   child: MText(
                     chat.content.getOr(),
-                    style: $styles.text.captionRegular,
+                    style: textTheme.captionRegular,
                     color: isHost
                         ? colors.onSecondaryContainer
                         : colors.onPrimaryContainer,
@@ -129,9 +130,11 @@ class _UserInfoModel extends HookWidget {
     if (isLoading) {
       return const MUserInfoModal(loading: true);
     }
+
     if (!isLoading && snapshot.data == null) {
       return const MUserInfoModal(error: 'User was not found');
     }
+    
     final profile = snapshot.data!;
     return MUserInfoModal(
       bio: profile.bio?.getOr(),

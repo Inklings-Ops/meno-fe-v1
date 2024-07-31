@@ -14,13 +14,13 @@ class DiscoverBroadcastGridView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        mainAxisSpacing: 24.toScale,
-        crossAxisSpacing: 24.toScale,
-        childAspectRatio: (159.50 / 176).toScale,
+        mainAxisSpacing: 24,
+        crossAxisSpacing: 24,
+        childAspectRatio: (159.50 / 176),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32).radius,
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 32),
       itemBuilder: (context, i) {
         final broadcast = broadcasts[i]!;
         return switch (filter) {
