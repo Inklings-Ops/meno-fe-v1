@@ -38,7 +38,11 @@ class MLayoutPage extends HookWidget {
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     Widget sideNavRail = const SizedBox();
-    Widget? bottomNavBar = BottomNavBar(selectedIndex: index, onTap: onTap);
+    Widget? bottomNavBar = BottomNavBar(
+      selectedIndex: index,
+      onTap: onTap,
+      onMicrophoneTap: () => const CreateBroadcastRoute().push<void>(context),
+    );
 
     if (useSideNavRail) {
       bottomNavBar = null;
@@ -53,7 +57,9 @@ class MLayoutPage extends HookWidget {
       listener: (context, state) {
         state.whenOrNull(
           authenticated: (user, token) {
-            context.read<MyProfileBloc>().add(const MyProfileEvent.fetch());
+            context.read<MyProfileBloc>().init();
+            context.read<LiveBroadcastsBloc>().init();
+            context.read<RecentlyLiveCubit>().fetch();
           },
         );
       },

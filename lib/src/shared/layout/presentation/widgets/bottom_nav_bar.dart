@@ -8,9 +8,15 @@ const List<Destination> _destinations = [
 ];
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({required this.selectedIndex, super.key, this.onTap});
+  const BottomNavBar({
+    required this.selectedIndex,
+    super.key,
+    this.onTap,
+    this.onMicrophoneTap,
+  });
   final int selectedIndex;
   final ValueChanged<int>? onTap;
+  final VoidCallback? onMicrophoneTap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +44,7 @@ class BottomNavBar extends StatelessWidget {
     final itemCount = _destinations.length;
     for (var i = 0; i < itemCount; i++) {
       if (i == 2) {
-        widgets.add(const Microphone());
+        widgets.add(Microphone(onTap: onMicrophoneTap));
       }
       widgets.add(
         DestinationWidget(
