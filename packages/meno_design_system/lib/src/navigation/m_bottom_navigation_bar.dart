@@ -231,7 +231,9 @@ const BoxConstraints _kConstraints = BoxConstraints(
 /// The [Microphone] widget displays a microphone icon with custom styling.
 class Microphone extends StatelessWidget {
   /// Creates a [Microphone] widget.
-  const Microphone({super.key});
+  const Microphone({super.key, this.onTap});
+  /// Call back action when the microphone icon is tapped
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -239,16 +241,20 @@ class Microphone extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final visualDensity = theme.visualDensity;
 
-    return Container(
-      height: _kMicSize,
-      width: _kMicSize,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: colorScheme.primary,
-        boxShadow: Shadows.mic,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: Corners.circle,
+      child: Container(
+        height: _kMicSize,
+        width: _kMicSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: colorScheme.primary,
+          boxShadow: Shadows.mic,
+        ),
+        constraints: visualDensity.effectiveConstraints(_kConstraints),
+        child: Icon(MIcons.microphone, color: colorScheme.onPrimary),
       ),
-      constraints: visualDensity.effectiveConstraints(_kConstraints),
-      child: Icon(MIcons.microphone, color: colorScheme.onPrimary),
     );
   }
 }

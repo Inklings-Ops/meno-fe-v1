@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:meno_fe_v1/app/app.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-
-import 'package:meno_fe_v1/app/app.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +16,7 @@ Future<void> main() async {
   // di<ObjectBoxService>().verseBox.removeAll();
   runApp(
     DevicePreview(
+      enabled: false,
       builder: (_) => MenoRepositoryProvider(
         child: MenoBlocProvider(
           child: ChangeNotifierProvider(
