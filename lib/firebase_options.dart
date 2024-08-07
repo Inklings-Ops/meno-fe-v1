@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -36,7 +33,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBs54AAhjfyobbpR1mRfn1LJaUe9RKfXD0',
-    appId: '1:593476383611:android:b068968f5dc3bae5cc43de',
+    appId: '1:593476383611:android:a46bf69187c84bc8cc43de',
     messagingSenderId: '593476383611',
     projectId: 'meno-flutter',
     storageBucket: 'meno-flutter.appspot.com',
@@ -44,10 +41,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCjZLIZQmJPxnSlj6CcKlmj8HkC5wDKM0g',
-    appId: '1:593476383611:ios:0b14332d1dc6aafdcc43de',
+    appId: '1:593476383611:ios:59061d1e63e0407fcc43de',
     messagingSenderId: '593476383611',
     projectId: 'meno-flutter',
     storageBucket: 'meno-flutter.appspot.com',
-    iosBundleId: 'com.inklings.menoFeV1',
+    iosBundleId: 'com.inklings.meno',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBbcx8hIQxGwcKEw87AnvOW7w8TRshCobQ',
+    appId: '1:593476383611:web:e1f2ec446e2dc998cc43de',
+    messagingSenderId: '593476383611',
+    projectId: 'meno-flutter',
+    authDomain: 'meno-flutter.firebaseapp.com',
+    storageBucket: 'meno-flutter.appspot.com',
+    measurementId: 'G-37XZDSBXWD',
+  );
+
 }
