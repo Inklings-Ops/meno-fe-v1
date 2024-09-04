@@ -94,6 +94,7 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
           pressedValue: colors.onInversePrimary,
           disabledValue: colors.onDisabled,
         ),
+        textStyle: MInternal.all(textTheme.bodyMedium),
         side: MInternal.resolveWith(
           defaultValue: BorderSide(
             color: colors.primary!,

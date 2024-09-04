@@ -4,7 +4,6 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
 class LoginPage extends StatelessWidget {
-
   const LoginPage({
     super.key,
     this.implyLeading = false,

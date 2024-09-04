@@ -1,6 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
@@ -27,13 +28,30 @@ class _MenoAppState extends State<MenoApp> {
         builder: (context, child) {
           child = toastBuilder(context, child);
           return ResponsiveBreakpoints.builder(
-            child: DevicePreview.appBuilder(context, child),
             breakpoints: const [
               Breakpoint(start: 0, end: 450, name: PHONE),
               Breakpoint(start: 451, end: 600, name: MOBILE),
               Breakpoint(start: 601, end: 800, name: TABLET),
               Breakpoint(start: 801, end: 1920, name: DESKTOP),
             ],
+            child: BlocListener<SessionCubit, SessionState>(
+              listener: (context, state) => state.whenOrNull(
+                authenticated: (user, token) {
+                  context.read<AccountBloc>().init();
+                  context.read<MyProfileBloc>().init();
+                  context.read<NotesBloc>().init();
+                  context.read<LiveBroadcastsBloc>().init();
+                  context.read<RecentlyLiveCubit>().fetch();
+                  return null;
+                },
+              ),
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: TextScaler.noScaling,
+                ),
+                child: DevicePreview.appBuilder(context, child),
+              ),
+            ),
           );
         },
       ),

@@ -79,7 +79,7 @@ class CustomContent extends HookWidget {
           collapsedHeight: 58,
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () => context.showSwitchAccountSheet<void>(),
+            onTap: () => context.push<void>(Routes.switchAccountSheet),
             child: Row(
               children: [
                 MText(profile.fullName.getOr(), color: colors.onBackground),

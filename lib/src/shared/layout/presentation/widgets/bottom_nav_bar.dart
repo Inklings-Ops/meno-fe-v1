@@ -24,7 +24,7 @@ class BottomNavBar extends StatelessWidget {
     final navigationBarTheme = Theme.of(context).navigationBarTheme;
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       decoration: BoxDecoration(
         color: navigationBarTheme.backgroundColor,
         border: Border(

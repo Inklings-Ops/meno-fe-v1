@@ -16,7 +16,6 @@ Future<void> main() async {
   // di<ObjectBoxService>().verseBox.removeAll();
   runApp(
     DevicePreview(
-      enabled: false,
       builder: (_) => MenoRepositoryProvider(
         child: MenoBlocProvider(
           child: ChangeNotifierProvider(

@@ -32,6 +32,41 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
   return null;
 }
 
+@TypedGoRoute<SwitchAccountSheet>(path: Routes.switchAccountSheet)
+class SwitchAccountSheet extends GoRouteData {
+  const SwitchAccountSheet();
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return BottomSheetPage<void>(
+      child: BlocConsumer<AccountBloc, AccountState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          loadFailure: (e) => context
+            ..showErrorSnackBar('Your token is expired. Login again.')
+            ..go(Routes.login),
+        );
+      },
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => MModal(
+          title: 'Switch Account',
+          builder: (context) => const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [MLoadingIndicator.box()],
+          ),
+        ),
+        loadSuccess: (allCredentials, _) {
+          if (allCredentials.length == 1) {
+            return const SwitchAccountModal1();
+          } else {
+            return const SwitchAccountModal2();
+          }
+        },
+      ),
+    )
+    );
+  }
+}
+
 @TypedGoRoute<BroadcastRoute>(path: Routes.broadcast)
 class BroadcastRoute extends GoRouteData {
   const BroadcastRoute();

@@ -35,6 +35,7 @@ class Routes {
   static const String settings = '/settings';
   static const String lsSettings = '/lsSettings';
   static const String lsCreateBroadcast = '/lsCreateBroadcast';
+  static const String switchAccountSheet = '/switchAccountSheet';
 }
 
 class BottomSheetPage<T> extends Page<void> {

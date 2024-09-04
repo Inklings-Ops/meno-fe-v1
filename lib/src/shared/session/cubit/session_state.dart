@@ -85,6 +85,7 @@ extension SessionStateX on SessionState {
         Routes.recentlyLive,
         Routes.settings,
         Routes.stream,
+        Routes.switchAccountSheet,
       ],
     );
   }
