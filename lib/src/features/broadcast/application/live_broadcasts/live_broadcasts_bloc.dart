@@ -55,7 +55,12 @@ class LiveBroadcastsBloc
       size: 8,
       page: 1,
     );
-    emit(fOrB.fold((l) => const _Failure(), (b) => _Success(b.broadcasts)));
+    emit(
+      fOrB.fold(
+        (l) => const _Failure(),
+        (b) => b.broadcasts.isEmpty ? const _Empty() : _Success(b.broadcasts),
+      ),
+    );
   }
 
   Future<void> _onUpdateBroadcastList(

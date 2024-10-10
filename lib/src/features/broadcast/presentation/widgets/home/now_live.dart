@@ -28,15 +28,6 @@ class _LiveCard extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final socketService = di<SocketService>();
-    // final subscription = useStream(socketService.stateStream);
-
-    // useEffect(() {
-    //   final id = broadcast.id.getOr();
-    //   socketService.emit(SocketEvent.getNumberOfBroadcastListeners(id));
-    //   return null;
-    // }, [subscription]);
-
     final menoBloc = context.watch<MenoBloc>();
 
     return MCard.live(
