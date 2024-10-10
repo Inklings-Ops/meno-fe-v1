@@ -183,7 +183,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
     if (widget.suffixIcon != null && widget.maxLines == 1) {
       suffixWidget = Icon(
         widget.suffixIcon,
-        size: Insets.xLarge,
+        size: Insets.xl,
         color: iconColor,
       );
     }
@@ -300,7 +300,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.medium),
+        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.md),
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,
         iconColor: iconColor,
@@ -326,11 +326,11 @@ class _EyeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const iconSize = Insets.xLarge;
+    const iconSize = Insets.xl;
     return Container(
       height: iconSize,
       width: iconSize,
-      margin: const EdgeInsets.only(right: Insets.medium),
+      margin: const EdgeInsets.only(right: Insets.md),
       child: obscureText
           ? const Icon(MIcons.eye, size: iconSize)
           : const Icon(MIcons.eye_off, size: iconSize),
@@ -345,7 +345,7 @@ class _PrefixIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const iconSize = Insets.xLarge;
+    const iconSize = Insets.xl;
     return Container(
       width: iconSize,
       alignment: Alignment.centerRight,

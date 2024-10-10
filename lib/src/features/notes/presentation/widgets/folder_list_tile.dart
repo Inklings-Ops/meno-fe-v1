@@ -24,13 +24,13 @@ class FolderListTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: Corners.large,
+      borderRadius: Corners.lg,
       child: Container(
         height: 78,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colors.surfaceTint,
-          borderRadius: Corners.large,
+          borderRadius: Corners.lg,
           border: selected ? border : null,
         ),
         child: Row(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
+
 class DetailsPage extends StatelessWidget {
   const DetailsPage({required this.broadcast, super.key});
   final Broadcast broadcast;
@@ -112,7 +113,7 @@ class _Artwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    const borderRadius = Corners.large;
+    const borderRadius = Corners.lg;
 
     final colorFilter = ColorFilter.mode(
       colors.onSurfaceShade!,

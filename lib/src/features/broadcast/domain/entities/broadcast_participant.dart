@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/entities/role.dart';
 
 part 'broadcast_participant.freezed.dart';
 
@@ -7,9 +8,13 @@ class BroadcastParticipant with _$BroadcastParticipant {
   const factory BroadcastParticipant({
     required String id,
     required String fullName,
+    String? broadcastId,
+    Role? role,
+    String? bio,
     String? imageUrl,
-    @Default(false) bool isCreator,
-    @Default(false) bool isCohost,
+    int? numberOfListeners,
+    bool? isHostDisconnected,
+    DateTime? disconnectedAt,
   }) = _BroadcastParticipant;
 
   factory BroadcastParticipant.empty() {

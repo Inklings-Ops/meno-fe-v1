@@ -35,12 +35,13 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
             (failure) => context.showNoteError(failure),
             (folder) {
               if (isEdit) {
-                context.pop();
-                context.pop();
+                context
+                  ..pop()
+                  ..pop();
               } else {
                 context.pop();
                 folderListBloc.add(FolderListEvent.updateList(folder));
-                context.push(Routes.folder, extra: {'folder': folder});
+                router.push(Routes.folder, extra: folder);
               }
             },
           ),

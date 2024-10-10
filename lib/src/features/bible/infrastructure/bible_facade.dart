@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
-import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/datasources.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
@@ -134,7 +133,7 @@ class BibleFacade implements IBibleFacade {
     final isConnected = await _network.isConnected;
 
     if (!isConnected) {
-      await syncFallback();
+      await syncFallpop();
       return left(const BibleException.networkError());
     } else {
       try {
@@ -153,7 +152,7 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  Future<Either<BibleException, Unit>> syncFallback() async {
+  Future<Either<BibleException, Unit>> syncFallpop() async {
     Logger().w('Fallback Bible about to download');
 
     try {

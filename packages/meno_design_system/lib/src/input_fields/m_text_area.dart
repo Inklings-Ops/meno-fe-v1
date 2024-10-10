@@ -240,7 +240,7 @@ class _MTextAreaState extends State<MTextArea> {
         enabled: widget.enabled,
         hintText: widget.hint,
         hintStyle: styles.hintTextStyle,
-        contentPadding: const EdgeInsets.all(Insets.medium),
+        contentPadding: const EdgeInsets.all(Insets.md),
         counter: const SizedBox(),
         fillColor: widget.enabled ? styles.fillColor : styles.fillColorDisabled,
         filled: true,

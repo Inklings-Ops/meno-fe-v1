@@ -67,7 +67,7 @@ class CustomContent extends HookWidget {
           leading: Align(
             alignment: Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.only(left: Insets.large),
+              padding: const EdgeInsets.only(left: Insets.lg),
               child: ColoredBox(
                 color: colors.secondary!,
                 child: const SizedBox(height: 30, width: 3),
@@ -79,7 +79,7 @@ class CustomContent extends HookWidget {
           collapsedHeight: 58,
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () => context.push<void>(Routes.switchAccountSheet),
+            onTap: context.showSwitchAccountSheet<void>,
             child: Row(
               children: [
                 MText(profile.fullName.getOr(), color: colors.onBackground),
@@ -92,7 +92,7 @@ class CustomContent extends HookWidget {
             MIconButton(
               icon: const Icon(MIcons.settings),
               color: colors.primary,
-              onPressed: () => context.push(Routes.settings),
+              onPressed: () => router.push(Routes.settings),
             ),
             Spaces.horizontalLarge,
           ],

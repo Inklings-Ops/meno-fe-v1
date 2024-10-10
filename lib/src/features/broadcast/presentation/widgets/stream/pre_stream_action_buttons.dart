@@ -38,7 +38,7 @@ class PreStreamActionButtons extends HookWidget {
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: colors.outlineVariant3!),
                 shape: const RoundedRectangleBorder(
-                  borderRadius: Corners.small,
+                  borderRadius: Corners.sm,
                 ),
                 textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,
@@ -64,7 +64,7 @@ class _JoinButton extends StatelessWidget {
       onPressed: onJoin,
       loading: loading,
       style: ElevatedButton.styleFrom(
-        shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
         textStyle: textTheme.microMedium,
       ),
     );

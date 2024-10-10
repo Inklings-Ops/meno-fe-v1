@@ -10,7 +10,7 @@ class ChatList extends StatelessWidget {
     return BlocBuilder<ChatBloc, ChatState>(
       buildWhen: (p, c) => p.chats != c.chats,
       builder: (context, state) => ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: Insets.large),
+        padding: const EdgeInsets.symmetric(vertical: Insets.lg),
         controller: controller,
         reverse: true,
         shrinkWrap: true,

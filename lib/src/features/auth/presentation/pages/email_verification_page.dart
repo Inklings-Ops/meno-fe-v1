@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+
 
 class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({super.key});

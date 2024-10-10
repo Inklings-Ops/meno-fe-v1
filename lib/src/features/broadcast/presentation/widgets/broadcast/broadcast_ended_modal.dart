@@ -13,7 +13,7 @@ class BroadcastEndedModal extends HookWidget {
       onPopInvoked: (_) {
         context.read<BroadcastBloc>().dispose();
         context.read<TimerCubit>().dispose();
-        context.go(Routes.home);
+        router.go(Routes.home);
         canPop.value = true;
       },
       child: MModal(
@@ -53,7 +53,7 @@ class BroadcastEndedModal extends HookWidget {
             Spaces.verticalLarge,
             MSecondaryButton(
               label: 'Go to Profile',
-              onPressed: () => context.go(Routes.profile),
+              onPressed: () => router.go(Routes.profile),
             ),
           ],
         ),

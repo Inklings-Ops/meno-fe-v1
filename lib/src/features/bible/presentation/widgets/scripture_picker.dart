@@ -122,7 +122,7 @@ class _Container extends StatelessWidget {
       child: Container(
         height: 32,
         constraints: BoxConstraints.loose(const Size.fromHeight(32)),
-        padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+        padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: Corners.circle,

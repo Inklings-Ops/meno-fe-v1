@@ -34,11 +34,11 @@ class MTag extends StatelessWidget {
     return Container(
       height: height,
       constraints: BoxConstraints(minHeight: height, maxHeight: height),
-      padding: const EdgeInsets.symmetric(horizontal: Insets.small),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.sm),
       alignment: Alignment.centerLeft,
       decoration: ShapeDecoration(
         color: colors.inActiveContainer,
-        shape: const RoundedRectangleBorder(borderRadius: Corners.micro),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.xs),
       ),
       child: SizedBox(
         child: Center(

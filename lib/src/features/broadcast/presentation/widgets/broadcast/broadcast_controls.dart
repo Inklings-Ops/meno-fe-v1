@@ -35,7 +35,7 @@ class MoreOptionsButton extends StatelessWidget {
       style: IconButton.styleFrom(
         fixedSize: const Size.fromWidth(48),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: const RoundedRectangleBorder(borderRadius: Corners.large),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
       onPressed: () => context.showModal<void>(
         BlocBuilder<BroadcastBloc, BroadcastState>(

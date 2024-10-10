@@ -8,7 +8,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    const borderRadius = Corners.small;
+    const borderRadius = Corners.sm;
 
     final label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
     final content = isBroadcasting

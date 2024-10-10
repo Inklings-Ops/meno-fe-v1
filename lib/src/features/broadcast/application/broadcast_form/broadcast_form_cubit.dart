@@ -20,10 +20,11 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   })  : _facade = facade,
         _mediaService = mediaService,
         super(BroadcastFormState.initial());
+
   final IBroadcastFacade _facade;
   final MediaService _mediaService;
 
-  Future<void> artworkChanged(bool fromGallery) async {
+  Future<void> artworkChanged({bool fromGallery = true}) async {
     final file = await _mediaService.getImage(fromGallery: fromGallery);
     if (file != null) {
       emit(state.copyWith(artwork: BroadcastArtwork(File(file.path))));
@@ -34,8 +35,8 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
     emit(state.copyWith(description: BroadcastDescription(desc)));
   }
 
-  void onRecordingChanged(bool? value) {
-    emit(state.copyWith(shouldRecord: value ?? false));
+  void onRecordingChanged(bool value) {
+    emit(state.copyWith(shouldRecord: value));
   }
 
   void titleChanged(String title) {

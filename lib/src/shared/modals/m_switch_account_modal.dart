@@ -115,7 +115,7 @@ class _AddAccountTile extends StatelessWidget {
 }
 
 class SwitchAccountModal1 extends StatelessWidget {
-  const SwitchAccountModal1();
+  const SwitchAccountModal1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +135,9 @@ class SwitchAccountModal1 extends StatelessWidget {
           MTextButton(
             label: 'Create New Account',
             onPressed: () {
-              context.pop();
-              context.go(Routes.registerWithoutLeading);
+              context
+                ..pop()
+                ..go(Routes.registerWithoutLeading);
             },
           ),
         ],
@@ -146,7 +147,7 @@ class SwitchAccountModal1 extends StatelessWidget {
 }
 
 class SwitchAccountModal2 extends StatelessWidget {
-  const SwitchAccountModal2();
+  const SwitchAccountModal2({super.key});
 
   @override
   Widget build(BuildContext context) {

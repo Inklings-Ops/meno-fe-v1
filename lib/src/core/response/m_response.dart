@@ -25,7 +25,7 @@ sealed class MResponse<T> with _$MResponse<T> {
   /// indicating success.
   const factory MResponse.data({
     /// The parsed data from the response.
-    @_Converter() T? data,
+    @MRConverter() T? data,
 
     /// The HTTP status code of the response.
     int? statusCode,
@@ -47,7 +47,7 @@ sealed class MResponse<T> with _$MResponse<T> {
   /// flag indicating success.
   const factory MResponse.error({
     /// The parsed error data from the response.
-    @_Converter() T? error,
+    @MRConverter() T? error,
 
     /// The HTTP status code of the response.
     int? statusCode,
@@ -79,8 +79,8 @@ sealed class MResponse<T> with _$MResponse<T> {
 /// This converter handles deserialization of the generic data or error based
 /// on the presence of keys like "data" and "error" in the JSON payload. It
 /// also filters out any key named "runtimeType".
-class _Converter<T> implements JsonConverter<T?, Map<String, dynamic>> {
-  const _Converter();
+class MRConverter<T> implements JsonConverter<T?, Map<String, dynamic>> {
+  const MRConverter();
 
   @override
   T? fromJson(Map<String, dynamic> json) {

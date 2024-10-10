@@ -29,13 +29,13 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: Insets.xxLarge),
+      padding: const EdgeInsets.only(bottom: Insets.xxl),
       child: InkWell(
-        onTap: () => context.push(Routes.stream),
+        onTap: () => router.push(Routes.stream),
         child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: Insets.large),
+          margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
           shape: SmoothRectangleBorder(
-            borderRadius: Corners.squircleLarge,
+            borderRadius: Corners.squircleLg,
           ),
           child: Padding(
             padding: const EdgeInsets.all(14),
@@ -105,9 +105,10 @@ class _LeaveButton extends StatelessWidget {
         void onLeave() {
           context.showLeaveBroadcastDialog().then((value) {
             if (value == true && state is StreamJoinSuccess) {
-              bloc.add(StreamEvent.leave(state.broadcast.id));
-              bloc.dispose();
-              context.go(Routes.home);
+              bloc
+                ..add(StreamEvent.leave(state.broadcast.id))
+                ..dispose();
+              router.go(Routes.home);
             }
           });
         }
@@ -119,7 +120,7 @@ class _LeaveButton extends StatelessWidget {
             label: 'Leave',
             onPressed: onLeave,
             style: FilledButton.styleFrom(
-              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
         );

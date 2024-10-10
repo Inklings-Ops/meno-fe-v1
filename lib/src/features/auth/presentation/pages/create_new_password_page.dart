@@ -41,7 +41,7 @@ class CreateNewPasswordPage extends StatelessWidget {
                 Spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Reset Password',
-                  onPressed: () => context.push(Routes.resetPwdSuccess),
+                  onPressed: () => router.push(Routes.resetPwdSuccess),
                 ),
               ],
             ),

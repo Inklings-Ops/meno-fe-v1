@@ -48,8 +48,8 @@ class _Button extends StatelessWidget {
         backgroundColor: colors.errorContainer?.withOpacity(0.3),
         fixedSize: const Size(159, 40),
         padding: const EdgeInsets.symmetric(
-          horizontal: Insets.large,
-          vertical: Insets.small,
+          horizontal: Insets.lg,
+          vertical: Insets.sm,
         ),
         textStyle: textTheme.captionMedium,
         shape: const RoundedRectangleBorder(borderRadius: Corners.circle),

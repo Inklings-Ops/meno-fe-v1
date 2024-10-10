@@ -48,7 +48,7 @@ class BroadcastInfoModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.arrow_narrow_down_left),
               title: 'Minimize Stream',
-              onTap: () => context.go(Routes.home),
+              onTap: () => router.go(Routes.home),
             ),
             const MModalListTile(
               leading: Icon(MIcons.user_minus_01),

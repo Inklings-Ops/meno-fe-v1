@@ -6,14 +6,14 @@ ButtonStyle _baseButtonStyle(MTextTheme textTheme) {
   return ButtonStyle(
     iconSize: MInternal.resolveWith(defaultValue: 14),
     elevation: MInternal.resolveWith(defaultValue: 0),
-    fixedSize: MInternal.all(const Size.fromHeight(Insets.xxxLarge)),
+    fixedSize: MInternal.all(const Size.fromHeight(Insets.xxxl)),
     padding: MInternal.all(const EdgeInsets.fromLTRB(16, 8, 16, 8)),
     shadowColor: MInternal.all(MColor.shadow),
     visualDensity: VisualDensity.compact,
     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
     textStyle: MInternal.all(textTheme.captionMedium),
     shape: MInternal.all(
-      const RoundedRectangleBorder(borderRadius: Corners.medium),
+      const RoundedRectangleBorder(borderRadius: Corners.md),
     ),
   );
 }
@@ -160,7 +160,7 @@ class MButtonStyles extends ThemeExtension<MButtonStyles> {
           disabledValue: colors.onDisabled,
         ),
         shape: MInternal.all(
-          const RoundedRectangleBorder(borderRadius: Corners.small),
+          const RoundedRectangleBorder(borderRadius: Corners.sm),
         ),
       ),
     );

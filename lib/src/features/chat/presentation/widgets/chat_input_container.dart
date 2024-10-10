@@ -47,7 +47,7 @@ class ChatInputContainer extends HookWidget {
                       controller: contentController,
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
-                          horizontal: Insets.medium,
+                          horizontal: Insets.md,
                         ),
                         hintText: 'Type your comment here...',
                       ),
@@ -110,7 +110,7 @@ class ReactionButton extends StatelessWidget {
       right: 16,
       child: Container(
         height: 56,
-        padding: const EdgeInsets.all(Insets.small),
+        padding: const EdgeInsets.all(Insets.sm),
         decoration: BoxDecoration(
           color: colors.background,
           borderRadius: Corners.circle,

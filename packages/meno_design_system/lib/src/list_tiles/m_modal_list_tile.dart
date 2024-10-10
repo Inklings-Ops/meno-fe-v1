@@ -99,7 +99,7 @@ class MModalListTile extends StatelessWidget {
                     ),
                   )
                 : null,
-            minLeadingWidth: Insets.medium,
+            minLeadingWidth: Insets.md,
             leading: IconTheme(
               data: iconTheme,
               child: SizedBox.square(
@@ -120,8 +120,8 @@ class MModalListTile extends StatelessWidget {
           ),
           if (showDivider)
             const MDivider(
-              bottomSpace: Insets.small,
-              topSpace: Insets.small,
+              bottomSpace: Insets.sm,
+              topSpace: Insets.sm,
             ),
         ],
       ),

@@ -14,7 +14,7 @@ class PreStreamDescriptionSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(MIcons.menu_03, size: Insets.large),
+            const Icon(MIcons.menu_03, size: Insets.lg),
             Spaces.horizontalSmall,
             MText('Description', style: textTheme.subheadingMedium),
           ],

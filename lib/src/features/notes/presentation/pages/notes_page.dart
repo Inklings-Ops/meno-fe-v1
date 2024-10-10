@@ -1,6 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
+
+
 class NotesPage extends HookWidget {
   const NotesPage({super.key});
 
@@ -42,7 +44,7 @@ class _AddNewNoteActionButton extends StatelessWidget {
         if (state.notes.isEmpty) return const SizedBox();
 
         return InkWell(
-          onTap: () => context.push(Routes.noteEditor),
+          onTap: () => router.push(Routes.noteEditor),
           child: Row(
             children: [
               Icon(MIcons.plus, size: 22, color: colors.primary),

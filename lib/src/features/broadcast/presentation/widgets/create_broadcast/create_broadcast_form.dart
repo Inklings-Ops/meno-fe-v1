@@ -6,7 +6,7 @@ class CreateBroadcastForm extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-        final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     final descController = useTextEditingController();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

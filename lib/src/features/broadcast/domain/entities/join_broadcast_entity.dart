@@ -6,7 +6,7 @@ part 'join_broadcast_entity.freezed.dart';
 
 @freezed
 class JoinBroadcastEntity with _$JoinBroadcastEntity {
-  factory JoinBroadcastEntity({
+  const factory JoinBroadcastEntity({
     required String broadcastToken,
     required Broadcast broadcast,
   }) = _JoinBroadcastEntity;

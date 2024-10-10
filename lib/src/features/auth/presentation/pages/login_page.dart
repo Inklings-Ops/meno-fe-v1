@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+
 
 class LoginPage extends StatelessWidget {
   const LoginPage({
@@ -43,12 +42,18 @@ class LoginPage extends StatelessWidget {
               Spaces.verticalXLarge,
               const MGoogleButton(title: 'Login with Google'),
               const SizedBox(height: 144),
-              AuthRedirectionText(
-                title: "Don't have an account?",
-                buttonText: 'Create an account',
-                onPressed: () => implyLeading
-                    ? const RegisterRoute().replace(context)
-                    : const RegisterRoute().push<void>(context),
+              BlocBuilder<OnboardingCubit, OnboardingState>(
+                builder: (context, state) => AuthRedirectionText(
+                  title: "Don't have an account?",
+                  buttonText: 'Create an account',
+                  onPressed: () {
+                    if (state == OnboardingState.completed) {
+                      router.push<void>(Routes.register);
+                    } else {
+                      router.replace<void>(Routes.register);
+                    }
+                  },
+                ),
               ),
             ],
           ),

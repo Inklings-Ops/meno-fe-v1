@@ -15,7 +15,7 @@ class NetworkToast extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        borderRadius: Corners.small,
+        borderRadius: Corners.sm,
         color: isError ? colorScheme.error : colorScheme.success,
       ),
       child: MText(

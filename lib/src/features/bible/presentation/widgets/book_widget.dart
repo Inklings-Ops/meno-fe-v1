@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:meno_fe_v1/src/features/bible/application/scripture_picker/scripture_picker_cubit.dart';
-
 import 'package:meno_fe_v1/src/features/bible/presentation/widgets/chapters_grid.dart';
 
 class BookWidget extends HookWidget {
@@ -18,7 +17,7 @@ class BookWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    const borderRadius = Corners.small;
+    const borderRadius = Corners.sm;
     final bloc = context.watch<ScripturePickerCubit>();
     final isSelected = useState<bool>(bloc.state.book == bookName);
 

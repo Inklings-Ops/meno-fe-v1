@@ -72,7 +72,7 @@ class _MBottomNavigationBarState extends State<MBottomNavigationBar> {
 
     return Container(
       width: size.width,
-      padding: const EdgeInsets.all(Insets.large),
+      padding: const EdgeInsets.all(Insets.lg),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
         border: Border(

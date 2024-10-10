@@ -114,7 +114,7 @@ class _BoxLoadingIndicator extends MLoadingIndicator {
         width: width ?? dimension,
         decoration: BoxDecoration(
           color: colors.background,
-          borderRadius: Corners.medium,
+          borderRadius: Corners.md,
         ),
         child: Assets.images.loading.image(),
       ),

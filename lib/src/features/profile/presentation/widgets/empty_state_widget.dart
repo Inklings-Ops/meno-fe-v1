@@ -45,7 +45,7 @@ class EmptyStateWidget extends StatelessWidget {
                 side: BorderSide(color: colorScheme.outlineVariant3!),
                 foregroundColor: colorScheme.onBackground,
                 shape: const RoundedRectangleBorder(
-                  borderRadius: Corners.small,
+                  borderRadius: Corners.sm,
                 ),
               ),
             ),

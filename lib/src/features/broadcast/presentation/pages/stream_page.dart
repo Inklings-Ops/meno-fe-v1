@@ -1,12 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/services/meno/meno_bloc.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+
 
 class StreamPage extends HookWidget {
   const StreamPage({super.key});
@@ -19,7 +13,7 @@ class StreamPage extends HookWidget {
           listener: (context, state) {
             state.whenOrNull(
               endedBroadcast: (_) {
-                context.go(Routes.home);
+                router.go(Routes.home);
                 context.read<StreamBloc>().dispose();
               },
             );
@@ -32,7 +26,7 @@ class StreamPage extends HookWidget {
               failure: (exception) => context.showBroadcastError(exception),
               joinFailed: (e) => context.showErrorSnackBar(e.toString()),
               leaveSuccess: () {
-                context.go(Routes.home);
+                router.go(Routes.home);
                 context.read<StreamBloc>().dispose();
               },
             );
@@ -46,12 +40,14 @@ class StreamPage extends HookWidget {
           joinFailed: (e) => Scaffold(body: Center(child: MText(e.toString()))),
           failure: (exception) => Scaffold(
             body: Center(
-              child: MText(exception.maybeWhen(
-                message: (message) => message,
-                orElse: () => 'An unknown error occurred',
-                serverError: () => 'A server error occurred',
-                timeOutError: () => 'Request timed out. Go back & try again',
-              ),),
+              child: MText(
+                exception.maybeWhen(
+                  message: (message) => message,
+                  orElse: () => 'An unknown error occurred',
+                  serverError: () => 'A server error occurred',
+                  timeOutError: () => 'Request timed out. Go back & try again',
+                ),
+              ),
             ),
           ),
           joinSuccess: (_) => const LiveStreamScaffold(

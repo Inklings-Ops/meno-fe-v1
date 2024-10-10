@@ -143,7 +143,7 @@ class _Container extends StatelessWidget {
       decoration: ShapeDecoration(
         color: styles.backgroundColor,
         shadows: Shadows.soft,
-        shape: SmoothRectangleBorder(borderRadius: Corners.squircleLarge),
+        shape: SmoothRectangleBorder(borderRadius: Corners.squircleLg),
       ),
       child: SizedBox(
         width: 144,

@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
+
 class ResetPasswordOtpVerificationPage extends StatelessWidget {
   const ResetPasswordOtpVerificationPage({super.key});
 
@@ -34,7 +35,7 @@ class ResetPasswordOtpVerificationPage extends StatelessWidget {
                 Spaces.verticalXXLarge,
                 MPrimaryButton(
                   label: 'Continue',
-                  onPressed: () => context.push(Routes.createNewPassword),
+                  onPressed: () => router.push(Routes.createNewPassword),
                 ),
               ],
             ),

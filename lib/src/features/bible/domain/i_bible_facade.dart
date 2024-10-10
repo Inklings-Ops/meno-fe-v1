@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-
 import 'package:meno_fe_v1/src/features/bible/domain/entities/entities.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/exceptions/exceptions.dart';
 
@@ -62,7 +61,7 @@ abstract class IBibleFacade {
     CancelToken cancel,
   });
 
-  Future<Either<BibleException, Unit>> syncFallback();
+  Future<Either<BibleException, Unit>> syncFallpop();
 
   Future<void> init();
 }

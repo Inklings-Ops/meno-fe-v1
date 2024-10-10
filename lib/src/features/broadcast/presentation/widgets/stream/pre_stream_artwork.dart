@@ -36,7 +36,7 @@ class PreStreamArtwork extends StatelessWidget {
       height: 142,
       width: 142,
       decoration: BoxDecoration(
-        borderRadius: Corners.large,
+        borderRadius: Corners.lg,
         border: Border.all(color: colors.outlineVariant1!),
         image: image,
       ),

@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
+
 class CreateBroadcastPage extends HookWidget {
   const CreateBroadcastPage({super.key});
 
@@ -17,9 +18,7 @@ class CreateBroadcastPage extends HookWidget {
               () => null,
               (either) => either.fold(
                 (exception) => context.showBroadcastError(exception),
-                (broadcast) {
-                  broadcastBloc.add(BroadcastStartRequested(broadcast.id));
-                },
+                (b) => broadcastBloc.add(BroadcastStartRequested(b.id)),
               ),
             );
           },
@@ -30,7 +29,7 @@ class CreateBroadcastPage extends HookWidget {
               failure: (exception) => context.showBroadcastError(exception),
               startFailed: (e) => context.showErrorSnackBar(e.toString()),
               startSuccess: (broadcast, muted) {
-                context.replace(Routes.broadcast, extra: broadcast);
+                router.replace<void>(Routes.broadcast, extra: broadcast);
               },
             );
           },

@@ -21,7 +21,7 @@ class CreateBroadcastListItem extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           decoration: BoxDecoration(
             color: theme.disabledColor,
-            borderRadius: Corners.small,
+            borderRadius: Corners.sm,
           ),
           child: SizedBox(
             height: 24,

@@ -30,7 +30,7 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
-              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
         ),
@@ -45,7 +45,7 @@ class DeleteNoteFromFolderAlertDialog extends StatelessWidget {
                     backgroundColor: colors.primary,
                     foregroundColor: colors.onPrimary,
                     shape: const RoundedRectangleBorder(
-                      borderRadius: Corners.small,
+                      borderRadius: Corners.sm,
                     ),
                   ),
                 ),

@@ -20,7 +20,8 @@ class PreStreamModal extends StatelessWidget {
             context.read<TimerCubit>()
               ..set(broadcast.startTime)
               ..start();
-            context.push(Routes.stream, extra: broadcast);
+            // router.push(Routes.stream, extra: broadcast);
+            router.push(Routes.stream);
           },
         );
       },
@@ -65,7 +66,6 @@ class PreStreamModal extends StatelessWidget {
 }
 
 class _TopSection extends StatelessWidget {
-
   const _TopSection({required this.broadcast});
   final Broadcast broadcast;
 

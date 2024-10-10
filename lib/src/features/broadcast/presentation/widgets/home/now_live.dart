@@ -46,8 +46,8 @@ class _LiveCard extends HookWidget {
       liveCount: broadcast.totalListeners,
       onTap: () => menoBloc.state.maybeWhen(
         orElse: () => context.showJoinLiveBroadcastModal(broadcast),
-        streaming: () => context.push(Routes.stream),
-        reconnecting: () => context.push(Routes.stream),
+        streaming: () => router.push(Routes.stream),
+        reconnecting: () => router.push(Routes.stream),
       ),
     );
   }

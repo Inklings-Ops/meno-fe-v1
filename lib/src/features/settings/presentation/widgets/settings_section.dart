@@ -24,7 +24,7 @@ class SettingsSection extends StatelessWidget {
         Container(
           clipBehavior: Clip.hardEdge,
           decoration: ShapeDecoration(
-            shape: const RoundedRectangleBorder(borderRadius: Corners.large),
+            shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
             color: colors.surfaceTint,
           ),
           child: Material(child: Column(children: children)),

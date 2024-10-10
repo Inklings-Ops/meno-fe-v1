@@ -13,7 +13,7 @@ class BroadcastListWidget extends StatelessWidget {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       clipBehavior: Clip.none,
-      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
       separatorBuilder: (context, i) => const SizedBox(width: 24),
       itemCount: itemCount,
       itemBuilder: itemBuilder,

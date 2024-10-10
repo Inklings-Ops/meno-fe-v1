@@ -191,6 +191,26 @@ class BroadcastFacade implements IBroadcastFacade {
     }
   }
 
+  @override
+  Future<Either<BroadcastException, List<BroadcastParticipant?>>> liveListeners(
+    Uid<Broadcast> id,
+  ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    try {
+      final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
+      final response = await _remote.getLiveListeners(broadcastId: idStr);
+      final domainListeners = response.data?.map((e) => e?.toDomain).toList();
+      return right(domainListeners!);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
+  }
+
   BroadcastException _getError(DioException e) {
     final errorData = e.response?.data as Map<String, dynamic>;
     final unknownError = errorData['error'] as dynamic;

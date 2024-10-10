@@ -14,7 +14,7 @@ class LiveNotificationCard extends StatelessWidget {
       decoration: ShapeDecoration(
         color: styles.nBackgroundColor,
         shape: SmoothRectangleBorder(
-          borderRadius: Corners.squircleLarge,
+          borderRadius: Corners.squircleLg,
         ),
       ),
       child: Row(
@@ -47,7 +47,7 @@ class LiveNotificationCard extends StatelessWidget {
             height: 80,
             width: 88,
             decoration: BoxDecoration(
-              borderRadius: Corners.medium,
+              borderRadius: Corners.md,
               border: Border.all(),
               image: notification.content.imageUrl != null
                   ? DecorationImage(

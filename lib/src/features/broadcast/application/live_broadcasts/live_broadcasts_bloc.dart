@@ -89,7 +89,7 @@ class LiveBroadcastsBloc
     if (state is _Success) {
       final success = state as _Success;
       final broadcasts = List<Broadcast?>.from(success.broadcasts)
-        ..removeWhere((b) => event.broadcast.id == b?.id);
+        ..removeWhere((b) => event.data.broadcastDetails.id == b?.id);
       broadcasts.isEmpty ? emit(const _Empty()) : emit(_Success(broadcasts));
     }
   }

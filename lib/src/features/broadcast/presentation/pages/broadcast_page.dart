@@ -3,6 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
+
 class BroadcastPage extends HookWidget {
   const BroadcastPage({required this.broadcast, super.key});
   final Broadcast broadcast;
@@ -10,12 +11,15 @@ class BroadcastPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastBloc>();
-    useEffect(() {
-      context.read<TimerCubit>().start();
-      context.read<LiveParticipantsBloc>().initialize(broadcast);
-      context.read<ChatBloc>().initialize(broadcast);
-      return null;
-    }, const [],);
+    useEffect(
+      () {
+        context.read<TimerCubit>().start();
+        context.read<LiveParticipantsBloc>().initialize(broadcast);
+        context.read<ChatBloc>().initialize(broadcast);
+        return null;
+      },
+      const [],
+    );
     return BlocConsumer<BroadcastBloc, BroadcastState>(
       bloc: bloc,
       listenWhen: (previous, current) => previous != current,
@@ -24,10 +28,10 @@ class BroadcastPage extends HookWidget {
           failure: (exception) => context.showBroadcastError(exception),
           startFailed: (e) {
             context
-              ..pop(context)
+              ..pop()
               ..showErrorSnackBar(e.toString());
           },
-          deleteSuccess: () => context.go(Routes.home),
+          deleteSuccess: () => router.go(Routes.home),
           endSuccess: () {
             context.read<TimerCubit>().stop();
             di<LiveKitService>().dispose();
@@ -48,12 +52,14 @@ class BroadcastPage extends HookWidget {
         loading: () => const Scaffold(body: MLoadingIndicator.box()),
         failure: (exception) => Scaffold(
           body: Center(
-            child: MText(exception.maybeWhen(
-              message: (message) => message,
-              orElse: () => 'An unknown error occurred',
-              serverError: () => 'A server error occurred',
-              timeOutError: () => 'Request timed out. Go back & try again',
-            ),),
+            child: MText(
+              exception.maybeWhen(
+                message: (message) => message,
+                orElse: () => 'An unknown error occurred',
+                serverError: () => 'A server error occurred',
+                timeOutError: () => 'Request timed out. Go back & try again',
+              ),
+            ),
           ),
         ),
         startSuccess: (broadcast, muted) => const PopScope(

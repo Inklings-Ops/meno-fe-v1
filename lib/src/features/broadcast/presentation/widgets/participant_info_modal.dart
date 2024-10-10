@@ -15,18 +15,21 @@ class ParticipantInfoModal extends HookWidget {
     final loading = useState<bool>(false);
     final profile = useState<Profile?>(null);
 
-    useEffect(() {
-      if (profile.value == null) {
-        loading.value = true;
-        facade.getProfile(participant.id).then((v) {
-          v.fold((l) => null, (r) {
-            profile.value = r;
-            loading.value = false;
+    useEffect(
+      () {
+        if (profile.value == null) {
+          loading.value = true;
+          facade.getProfile(participant.id).then((v) {
+            v.fold((l) => null, (r) {
+              profile.value = r;
+              loading.value = false;
+            });
           });
-        });
-      }
-      return null;
-    }, [profile, facade, participant.id],);
+        }
+        return null;
+      },
+      [profile, facade, participant.id],
+    );
 
     return MModal(
       builder: (context) => Column(
@@ -57,7 +60,7 @@ class ParticipantInfoModal extends HookWidget {
           Spaces.verticalMicro,
           if (loading.value && profile.value == null) ...[
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: Insets.xxLarge),
+              padding: EdgeInsets.symmetric(horizontal: Insets.xxl),
               child: MShimmer(height: 24),
             ),
             Spaces.verticalLarge,
@@ -80,10 +83,7 @@ class ParticipantInfoModal extends HookWidget {
           Spaces.verticalSmall,
           MTextButton(
             label: 'View account',
-            onPressed: () => context.push(
-              Routes.profile,
-              extra: participant.id,
-            ),
+            onPressed: () => router.push(Routes.profile, extra: participant.id),
           ),
           // MTextButton(
           //   label: "Remove as Co-host",

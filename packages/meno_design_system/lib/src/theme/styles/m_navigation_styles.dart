@@ -15,7 +15,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
   /// Creates a new instance of [MNavigationStyles].
   ///
-  /// The constructor allows you to specify custom styles for navigation 
+  /// The constructor allows you to specify custom styles for navigation
   /// elements.
   ///
   /// - [appBarTheme]: The theme for the AppBar.
@@ -40,7 +40,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
   /// - [colors]: The color scheme to use for the navigation styles.
   /// - [textTheme]: The text theme to use for the navigation styles.
   ///
-  /// Returns a new [MNavigationStyles] instance with the default styles 
+  /// Returns a new [MNavigationStyles] instance with the default styles
   /// applied.
   factory MNavigationStyles.$default(
     MColorScheme colors,
@@ -73,7 +73,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
       tabBarTheme: TabBarTheme(
         labelStyle: textTheme.captionMedium,
         labelColor: colors.primary,
-        labelPadding: const EdgeInsets.symmetric(horizontal: Insets.small),
+        labelPadding: const EdgeInsets.symmetric(horizontal: Insets.sm),
         unselectedLabelStyle: textTheme.captionMedium,
         unselectedLabelColor: colors.onBackgroundVariant,
         indicatorColor: colors.primary,

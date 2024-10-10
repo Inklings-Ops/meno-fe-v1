@@ -13,7 +13,6 @@ class MenoApp extends StatefulWidget {
 class _MenoAppState extends State<MenoApp> {
   late final AppLifecycleListener _listener;
   final toastBuilder = FToastBuilder();
-
   @override
   Widget build(BuildContext context) {
     return ProviderScope(

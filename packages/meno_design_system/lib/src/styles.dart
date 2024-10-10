@@ -5,25 +5,25 @@ import 'package:flutter/material.dart';
 @immutable
 class Insets {
   /// Micro spacing (4 units).
-  static const double micro = 4;
+  static const double xs = 4;
 
   /// Small spacing (8 units).
-  static const double small = 8;
+  static const double sm = 8;
 
   /// Medium spacing (12 units).
-  static const double medium = 12;
+  static const double md = 12;
 
   /// Large spacing (16 units).
-  static const double large = 16;
+  static const double lg = 16;
 
   /// Extra-large spacing (24 units).
-  static const double xLarge = 24;
+  static const double xl = 24;
 
   /// Extra-extra-large spacing (32 units).
-  static const double xxLarge = 32;
+  static const double xxl = 32;
 
   /// Extra-extra-extra-large spacing (48 units).
-  static const double xxxLarge = 48;
+  static const double xxxl = 48;
 
   /// Circular spacing (555 units, typically used for full circles).
   static const double circle = 555;
@@ -33,31 +33,31 @@ class Insets {
 @immutable
 class Corners {
   /// Micro corner radius (4 units).
-  static const BorderRadius micro = BorderRadius.all(Radius.circular(4));
+  static const BorderRadius xs = BorderRadius.all(Radius.circular(4));
 
   /// Small corner radius (8 units).
-  static const BorderRadius small = BorderRadius.all(Radius.circular(8));
+  static const BorderRadius sm = BorderRadius.all(Radius.circular(8));
 
   /// Medium corner radius (12 units).
-  static const BorderRadius medium = BorderRadius.all(Radius.circular(12));
+  static const BorderRadius md = BorderRadius.all(Radius.circular(12));
 
   /// Large corner radius (16 units).
-  static const BorderRadius large = BorderRadius.all(Radius.circular(16));
+  static const BorderRadius lg = BorderRadius.all(Radius.circular(16));
 
   /// Extra-large corner radius (24 units).
-  static const BorderRadius xLarge = BorderRadius.all(Radius.circular(24));
+  static const BorderRadius xl = BorderRadius.all(Radius.circular(24));
 
   /// Extra-extra-large corner radius (32 units).
-  static const BorderRadius xxLarge = BorderRadius.all(Radius.circular(32));
+  static const BorderRadius xxl = BorderRadius.all(Radius.circular(32));
 
   /// Extra-extra-extra-large corner radius (48 units).
-  static const BorderRadius xxxLarge = BorderRadius.all(Radius.circular(48));
+  static const BorderRadius xxxl = BorderRadius.all(Radius.circular(48));
 
   /// Circular corner radius (555 units, typically used for full circles).
   static const BorderRadius circle = BorderRadius.all(Radius.circular(555));
 
   /// Large squircle corner radius.
-  static final squircleLarge = SmoothBorderRadius(
+  static final squircleLg = SmoothBorderRadius(
     cornerRadius: 16,
     cornerSmoothing: 1,
   );

@@ -31,6 +31,7 @@ class SocketService extends Object with Disposable {
   @PostConstruct(preResolve: true)
   Future<void> initialize() async {
     _tokenChanges = _facade.tokenChanges.listen((token) {
+      if (token?.isValid == false) return;
       socket = io.io(
         Env.menoApiUrl,
         io.OptionBuilder()
@@ -51,9 +52,13 @@ class SocketService extends Object with Disposable {
         _event.add(SocketEvent.numberOfLiveBroadcasts(value));
       })
       ..on('newBroadcastListener', (data) {
-        final decodedData =
-            jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
-        final dto = BroadcastParticipantDto.fromJson(decodedData);
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = BroadcastParticipantDto.fromJson(decoded);
+        _event.add(SocketEvent.newBroadcastListener(dto.toDomain));
+      })
+      ..on('broadcastListenerLeft', (data) {
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = BroadcastParticipantDto.fromJson(decoded);
         _event.add(SocketEvent.newBroadcastListener(dto.toDomain));
       })
       ..on('numberOfLiveListeners', (data) {
@@ -61,27 +66,31 @@ class SocketService extends Object with Disposable {
         _event.add(SocketEvent.numberOfLiveListeners(value));
       })
       ..on('endedBroadcast', (data) {
-        final decodedData =
-            jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
-        final dto = BroadcastDto.fromJson(decodedData);
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = EndedBroadcastDataDto.fromJson(decoded);
         _event.add(SocketEvent.endedBroadcast(dto.toDomain));
       })
       ..on('newBroadcast', (data) {
-        final decodedData =
-            jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
-        final dto = BroadcastDto.fromJson(decodedData);
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = BroadcastDto.fromJson(decoded);
         _event.add(SocketEvent.newBroadcast(dto.toDomain));
       })
+      ..on('hostDisconnected', (data) {
+        final value = jsonDecode(jsonEncode(data)) as bool;
+        _event.add(SocketEvent.hostDisconnected(value: value));
+      })
+      ..on('hostReconnected', (data) {
+        final value = jsonDecode(jsonEncode(data)) as bool;
+        _event.add(SocketEvent.hostReconnected(value: value));
+      })
       ..on('notification', (data) {
-        final decodedData =
-            jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
-        final dto = NotificationDto.fromJson(decodedData);
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = NotificationDto.fromJson(decoded);
         _event.add(SocketEvent.notification(dto.toDomain));
       })
       ..on('newMessage', (data) {
-        final decodedData =
-            jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
-        final dto = ChatDto.fromJson(decodedData);
+        final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
+        final dto = ChatDto.fromJson(decoded);
         _event.add(SocketEvent.newMessage(dto.toDomain));
       });
   }
@@ -112,49 +121,6 @@ class SocketService extends Object with Disposable {
         'leaveBroadcast',
         {'broadcastId': broadcastId},
       ),
-      getLiveBroadcast: (broadcastId) => emitWithAck(
-        'getLiveBroadcast',
-        {'broadcastId': broadcastId},
-        ack: (dynamic res) {
-          final response = res as Map<String, dynamic>;
-          final error = response['error'] as dynamic;
-          final json = response['data'] as Map<String, dynamic>;
-          final broadcast = BroadcastDto.fromJson(json).toDomain;
-          _state.add(SocketLiveBroadcastReceived(broadcast, error));
-        },
-      ),
-      getLiveBroadcasts: () => emitWithAck(
-        'getLiveBroadcasts',
-        {},
-        ack: (dynamic res) {
-          final response = res as Map<String, dynamic>;
-          final error = response['error'] as dynamic;
-          final list = response['data'] as List<Map<String, dynamic>>?;
-          if (list == null || list.isEmpty) {
-            _state.add(SocketLiveBroadcastsReceived([], error));
-          } else {
-            final dtos = list.map(BroadcastDto.fromJson).toList();
-            final broadcasts = dtos.map((b) => b.toDomain).toList();
-            _state.add(SocketLiveBroadcastsReceived(broadcasts, error));
-          }
-        },
-      ),
-      getBroadcastListeners: (broadcastId) => emitWithAck(
-        'getBroadcastListeners',
-        {'broadcastId': broadcastId},
-        ack: (dynamic res) {
-          final response = res as Map<String, dynamic>;
-          final error = response['error'] as dynamic;
-          final list = response['data'] as List<Map<String, dynamic>>?;
-          if (list == null || list.isEmpty) {
-            _state.add(SocketBroadcastListenersReceived([], error));
-          } else {
-            final dtos = list.map(BroadcastParticipantDto.fromJson).toList();
-            final participants = dtos.map((p) => p.toDomain).toList();
-            _state.add(SocketBroadcastListenersReceived(participants, error));
-          }
-        },
-      ),
       getNumberOfLiveBroadcasts: () => emitWithAck(
         'getNumberOfLiveBroadcasts',
         {},
@@ -173,7 +139,12 @@ class SocketService extends Object with Disposable {
         'endBroadcast',
         {'broadcastId': broadcastId},
       ),
-      sendChatMessage: (senderId, broadcastId, content, createdAt) =>
+      sendChatMessage: (
+        senderId,
+        broadcastId,
+        content,
+        createdAt,
+      ) =>
           emitWithAck(
         'sendChatMessage',
         {
@@ -201,10 +172,6 @@ class SocketService extends Object with Disposable {
       ),
     );
   }
-
-  // void on(String event, Function(dynamic) callback) {
-  //   return socket.on(event, callback);
-  // }
 
   @override
   FutureOr<void> onDispose() {

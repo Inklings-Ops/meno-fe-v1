@@ -31,7 +31,7 @@ class ResetPasswordPage extends HookWidget {
               Spaces.verticalXXLarge,
               MPrimaryButton(
                 label: 'Send Instructions',
-                onPressed: () => context.push(Routes.resetPwdOtp),
+                onPressed: () => router.push(Routes.resetPwdOtp),
               ),
             ],
           ),

@@ -37,11 +37,13 @@ class MenoState with _$MenoState {
   /// When a live [Broadcast] has just been ended by a [Participant].
   /// Emitted by `endedBroadcast` websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
-  const factory MenoState.endedBroadcast(Broadcast broadcast) = MEndedBroadcast;
+  const factory MenoState.endedBroadcast(
+    EndedBroadcastData data,
+  ) = MEndedBroadcast;
 
-  /// When a [Participant] leaves a live [Broadcast] that the [Participant] has 
+  /// When a [Participant] leaves a live [Broadcast] that the [Participant] has
   /// joined.
-  /// 
+  ///
   /// Emitted by `leaveBroadcast` websocket event via [SocketService]
   @Implements<MBroadcastEvent>()
   const factory MenoState.leaveBroadcast() = MLeaveBroadcast;

@@ -29,7 +29,7 @@ class LoginForm extends HookWidget {
           Align(
             alignment: Alignment.centerRight,
             child: InkWell(
-              onTap: () => context.push(Routes.resetPassword),
+              onTap: () => router.push(Routes.resetPassword),
               child: MText(
                 'Forgot Password?',
                 style: textTheme.captionMedium,

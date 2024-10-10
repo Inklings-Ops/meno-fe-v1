@@ -10,7 +10,7 @@ class BroadcastListeningTab extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+          padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
           height: 34,
           child: Row(
             children: [

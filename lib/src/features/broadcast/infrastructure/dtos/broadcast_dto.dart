@@ -12,7 +12,7 @@ part 'broadcast_dto.g.dart';
   includeIfNull: false,
 )
 class BroadcastDto with _$BroadcastDto {
-  factory BroadcastDto({
+  const factory BroadcastDto({
     required String id,
     required String title,
     String? description,
@@ -30,6 +30,10 @@ class BroadcastDto with _$BroadcastDto {
     dynamic deleted,
     int? liveListeners,
     int? totalListeners,
+    // For endedBroadcast socket event data
+    String? creatorBio,
+    String? creatorFullName,
+    String? creatorImageUrl,
   }) = _BroadcastDto;
 
   factory BroadcastDto.fromJson(Map<String, dynamic> json) =>

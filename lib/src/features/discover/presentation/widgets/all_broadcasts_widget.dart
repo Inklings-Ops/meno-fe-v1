@@ -30,7 +30,7 @@ class AllBroadcastsWidget extends StatelessWidget {
               p.recentlyLive != c.recentlyLive,
           builder: (context, state) => _Grid(
             title: 'Recently Live',
-            onSeeAll: () => context.push(Routes.recentlyLive),
+            onSeeAll: () => router.push(Routes.recentlyLive),
             broadcasts: state.recentlyLive,
             isLoading: state.isRecentlyLiveLoading,
           ),
@@ -88,7 +88,7 @@ class _Grid extends HookWidget {
               title: broadcast.title.getOr(),
               imageUrl: broadcast.imageUrl,
               host: broadcast.fullName,
-              onTap: () => context.push(Routes.details, extra: broadcast),
+              onTap: () => router.push(Routes.details, extra: broadcast),
             );
           }
         },
@@ -117,7 +117,7 @@ class _Header extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
     return Container(
       height: 24,
-      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

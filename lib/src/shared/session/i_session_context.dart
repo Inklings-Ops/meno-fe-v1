@@ -2,8 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 abstract class ISessionContext {
-  void init();
-
   Future<void> logout();
 
   Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);

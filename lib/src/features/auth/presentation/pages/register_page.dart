@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/application/application.dart';
-import 'package:meno_fe_v1/src/router/router.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key, this.implyLeading = true});
@@ -45,9 +42,9 @@ class RegisterPage extends StatelessWidget {
                   buttonText: 'Log in',
                   onPressed: () {
                     if (state == OnboardingState.completed) {
-                      const LoginRoute().replace(context);
+                      router.replace<void>(Routes.login);
                     } else {
-                      const LoginRoute(implyLeading: true).replace(context);
+                      router.replace<void>(Routes.loginWithLeading);
                     }
                   },
                 ),

@@ -23,7 +23,7 @@ class MLayoutPage extends HookWidget {
             .then((value) => initialMessage.value = value?.data.toString());
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
-          context.push(Routes.notifications);
+          router.push(Routes.notifications);
         });
         handleFCMToken();
         return null;
@@ -35,11 +35,7 @@ class MLayoutPage extends HookWidget {
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     Widget sideNavRail = const SizedBox();
-    Widget? bottomNavBar = BottomNavBar(
-      selectedIndex: index,
-      onTap: onTap,
-      onMicrophoneTap: () => const CreateBroadcastRoute().push<void>(context),
-    );
+    Widget? bottomNavBar = BottomNavBar(selectedIndex: index, onTap: onTap);
 
     if (useSideNavRail) {
       bottomNavBar = null;

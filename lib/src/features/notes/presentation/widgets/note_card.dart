@@ -36,11 +36,11 @@ class NoteCard extends StatelessWidget {
       constraints: const BoxConstraints.tightForFinite(),
       child: InkWell(
         onTap: onTap,
-        borderRadius: Corners.large,
+        borderRadius: Corners.lg,
         child: Card(
           color: colors.surfaceTint,
           elevation: 0,
-          shape: const RoundedRectangleBorder(borderRadius: Corners.large),
+          shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
           margin: EdgeInsets.zero,
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -78,7 +78,7 @@ class NoteCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 14),
                       Wrap(
-                        spacing: Insets.small,
+                        spacing: Insets.sm,
                         children: [
                           MText(
                             formattedDate,
@@ -103,7 +103,7 @@ class NoteCard extends StatelessWidget {
                 Spaces.horizontalSmall,
                 if (showAddButton)
                   SizedBox.square(
-                    dimension: Insets.large,
+                    dimension: Insets.lg,
                     child: Icon(
                       selected ? Icons.check_circle : MIcons.plus_circle,
                       size: 20,

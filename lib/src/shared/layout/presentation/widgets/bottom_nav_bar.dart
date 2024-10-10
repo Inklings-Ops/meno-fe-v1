@@ -12,11 +12,11 @@ class BottomNavBar extends StatelessWidget {
     required this.selectedIndex,
     super.key,
     this.onTap,
-    this.onMicrophoneTap,
+    // this.onMicrophoneTap,
   });
   final int selectedIndex;
   final ValueChanged<int>? onTap;
-  final VoidCallback? onMicrophoneTap;
+  // final VoidCallback? onMicrophoneTap;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,9 @@ class BottomNavBar extends StatelessWidget {
     final itemCount = _destinations.length;
     for (var i = 0; i < itemCount; i++) {
       if (i == 2) {
-        widgets.add(Microphone(onTap: onMicrophoneTap));
+        widgets.add(
+          Microphone(onTap: () => router.push(Routes.createBroadcast)),
+        );
       }
       widgets.add(
         DestinationWidget(

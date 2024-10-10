@@ -67,7 +67,7 @@ class OnboardingPage extends HookWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: MPrimaryButton(
                     label: 'Get started',
-                    onPressed: () => context.push(Routes.registerWithLeading),
+                    onPressed: () => router.push(Routes.register),
                   ),
                 ),
                 Spaces.verticalLarge,
@@ -75,8 +75,7 @@ class OnboardingPage extends HookWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: MSecondaryButton(
                     label: 'Login',
-                    onPressed: () => const LoginRoute(implyLeading: true)
-                        .push<void>(context),
+                    onPressed: () => router.push(Routes.loginWithLeading),
                   ),
                 ),
                 const SizedBox(height: 64),

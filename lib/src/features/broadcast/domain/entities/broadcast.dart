@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
- import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcast.freezed.dart';
 
@@ -10,7 +10,7 @@ typedef BroadcastToken = String?;
 
 @freezed
 class Broadcast with _$Broadcast {
-  factory Broadcast({
+  const factory Broadcast({
     required Uid<Broadcast> id,
     required SingleLineString title,
     BroadcastDescription? description,
@@ -28,6 +28,10 @@ class Broadcast with _$Broadcast {
     dynamic deleted,
     int? liveListeners,
     int? totalListeners,
+    // For endedBroadcast socket event data
+    String? creatorBio,
+    String? creatorFullName,
+    String? creatorImageUrl,
   }) = _Broadcast;
 
   factory Broadcast.empty() {

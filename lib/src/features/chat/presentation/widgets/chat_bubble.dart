@@ -76,7 +76,7 @@ class ChatBubble extends StatelessWidget {
                 ),
                 Spaces.verticalMicro,
                 Container(
-                  padding: const EdgeInsets.all(Insets.medium),
+                  padding: const EdgeInsets.all(Insets.md),
                   decoration: ShapeDecoration(
                     color: isHost
                         ? colors.secondaryContainer

@@ -183,7 +183,7 @@ class _PrimaryAppBarImpl extends StatelessWidget {
           alignment: Alignment.centerLeft,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+              padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +306,7 @@ class _HomeAppBarImpl extends StatelessWidget {
     return AppBar(
       flexibleSpace: SafeArea(
         child: Container(
-          margin: const EdgeInsets.only(top: Insets.small),
+          margin: const EdgeInsets.only(top: Insets.sm),
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 6,
@@ -335,7 +335,7 @@ class _HomeAppBarImpl extends StatelessWidget {
                   ),
                   const SizedBox(width: 24),
                   MAvatar(
-                    radius: Insets.large,
+                    radius: Insets.lg,
                     url: avatarImageUrl,
                     onTap: onAvatarTap,
                     hasBorder: false,

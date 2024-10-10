@@ -35,7 +35,7 @@ class _BuildColumn extends StatelessWidget {
         MHeader(
           title: 'Recently Live',
           action: InkWell(
-            onTap: () => context.push(Routes.recentlyLive),
+            onTap: () => router.push(Routes.recentlyLive),
             child: MText(
               'See all',
               color: MColorScheme.of(context)!.onBackgroundVariant,
@@ -59,7 +59,7 @@ class _RecentlyLiveCard extends StatelessWidget {
       title: broadcast.title.getOr(),
       host: broadcast.fullName,
       imageUrl: broadcast.imageUrl,
-      onTap: () => context.push(Routes.details, extra: broadcast),
+      onTap: () => router.push(Routes.details, extra: broadcast),
     );
   }
 }

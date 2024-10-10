@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:uuid/uuid.dart';
-
 import 'package:meno_fe_v1/src/shared/value_objects/value_failure.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_object.dart';
+import 'package:uuid/uuid.dart';
 
 class Uid<E> extends ValueObject<String> {
 
