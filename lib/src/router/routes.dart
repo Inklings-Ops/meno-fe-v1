@@ -18,6 +18,7 @@ class Routes {
   static const String resetPwdSuccess = '/resetPasswordSuccess';
   static const String createNewPassword = '/createNewPassword';
   static const String broadcast = '/broadcast';
+  static const String webCreateBroadcast = '/web-createBroadcast';
   static const String createBroadcast = '/createBroadcast';
   static const String stream = '/stream';
   static const String home = '/home';

@@ -71,6 +71,7 @@ extension SessionStateX on SessionState {
         Routes.bible,
         Routes.broadcast,
         Routes.chat,
+        Routes.webCreateBroadcast,
         Routes.createBroadcast,
         Routes.details,
         Routes.discover,

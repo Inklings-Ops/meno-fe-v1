@@ -66,7 +66,7 @@ class SideNavRail extends StatelessWidget {
             SizedBox(
               height: 48,
               child: GestureDetector(
-                onTap: () => router.push<void>(Routes.createBroadcast),
+                onTap: () => router.push<void>(Routes.webCreateBroadcast),
                 child: const Microphone(),
               ),
             ),

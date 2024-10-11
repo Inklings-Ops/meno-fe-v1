@@ -41,6 +41,10 @@ final router = GoRouter(
       ),
     ),
     GoRoute(
+      path: Routes.createBroadcast,
+      builder: (context, state) => const CreateBroadcastPage(),
+    ),
+    GoRoute(
       path: Routes.createNewPassword,
       builder: (context, state) => const CreateNewPasswordPage(),
     ),
@@ -169,7 +173,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.createBroadcast,
+              path: Routes.webCreateBroadcast,
               builder: (context, state) => const CreateBroadcastPage(),
             ),
           ],
