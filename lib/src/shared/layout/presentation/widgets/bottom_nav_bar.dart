@@ -12,11 +12,9 @@ class BottomNavBar extends StatelessWidget {
     required this.selectedIndex,
     super.key,
     this.onTap,
-    // this.onMicrophoneTap,
   });
   final int selectedIndex;
   final ValueChanged<int>? onTap;
-  // final VoidCallback? onMicrophoneTap;
 
   @override
   Widget build(BuildContext context) {

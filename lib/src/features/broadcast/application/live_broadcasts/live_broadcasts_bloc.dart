@@ -52,6 +52,7 @@ class LiveBroadcastsBloc
       endTimeExist: false,
       startTimeExist: true,
       include: 'totalListeners',
+      status: 'active',
       size: 8,
       page: 1,
     );

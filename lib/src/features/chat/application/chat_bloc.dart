@@ -6,11 +6,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
 part 'chat_bloc.freezed.dart';
 part 'chat_state.dart';

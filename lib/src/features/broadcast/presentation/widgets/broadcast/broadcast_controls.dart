@@ -6,16 +6,23 @@ class BroadcastControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       height: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          BroadcastMicrophoneButton(),
+          const BroadcastMicrophoneButton(),
           Spaces.horizontalSmall,
-          BroadcastStartStopButton(),
+          const BroadcastStartStopButton(),
           Spaces.horizontalSmall,
-          MoreOptionsButton(),
+          BlocBuilder<BroadcastBloc, BroadcastState>(
+            builder: (context, state) => state.maybeWhen(
+              orElse: () => const MoreOptionsButton(),
+              startSuccess: (broadcast, muted) => MoreOptionsButton(
+                broadcast: broadcast,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -23,7 +30,8 @@ class BroadcastControls extends StatelessWidget {
 }
 
 class MoreOptionsButton extends StatelessWidget {
-  const MoreOptionsButton({super.key});
+  const MoreOptionsButton({this.broadcast, super.key});
+  final Broadcast? broadcast;
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +45,12 @@ class MoreOptionsButton extends StatelessWidget {
         side: BorderSide(color: colors.outlineVariant3!),
         shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
-      onPressed: () => context.showModal<void>(
-        BlocBuilder<BroadcastBloc, BroadcastState>(
-          builder: (context, state) => state.maybeWhen(
-            orElse: () => const SizedBox(),
-            startSuccess: (b, _) => BroadcastInfoModal(broadcast: b),
-          ),
-        ),
-        isScrollControlled: true,
-      ),
+      onPressed: broadcast == null
+          ? null
+          : () => context.showModal<void>(
+                BroadcastInfoModal(broadcast: broadcast!),
+                isScrollControlled: true,
+              ),
     );
   }
 }

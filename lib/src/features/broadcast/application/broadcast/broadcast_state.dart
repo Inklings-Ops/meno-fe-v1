@@ -2,6 +2,8 @@ part of 'broadcast_bloc.dart';
 
 @freezed
 class BroadcastState with _$BroadcastState {
+  const factory BroadcastState.initial(Broadcast broadcast) = BroadcastInitial;
+
   const factory BroadcastState.loading() = BroadcastLoadInProgress;
 
   const factory BroadcastState.failure(BroadcastException e) = BroadcastFailure;

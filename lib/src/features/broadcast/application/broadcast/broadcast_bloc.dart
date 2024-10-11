@@ -14,18 +14,21 @@ part 'broadcast_state.dart';
 @Injectable()
 class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   BroadcastBloc({
+    @factoryParam required Broadcast broadcast,
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
     required SocketService socket,
-  })  : _facade = facade,
+  })  : _broadcast = broadcast,
+        _facade = facade,
         _liveKit = liveKit,
         _socket = socket,
-        super(const BroadcastLoadInProgress()) {
+        super(BroadcastInitial(broadcast)) {
     on<BroadcastStartRequested>(_onStartBroadcast);
     on<BroadcastMuteMicrophone>(_onMuteMicrophone);
     on<BroadcastEndRequested>(_onEndBroadcast);
     on<BroadcastDeleteRequested>(_onDeleteBroadcast);
   }
+  final Broadcast _broadcast;
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
   final SocketService _socket;
@@ -34,14 +37,25 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastStartRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    final fOrS = await _facade.startBroadcast(event.id);
+    emit(const BroadcastLoadInProgress());
+    final fOrS = await _facade.startBroadcast(_broadcast.id);
     await fOrS.fold(
       (failure) async => emit(BroadcastFailure(failure)),
-      (b) async {
-        await _liveKit.broadcast(b.broadcastToken!).whenComplete(() async {
-          _socket.emit(SocketEvent.startedBroadcast(b.id.getOr()));
-          emit(BroadcastStartSuccess(broadcast: b, muted: false));
-        });
+      (broadcast) async {
+        final broadcastToken = broadcast.broadcastToken!;
+        final startEvent = SocketEvent.startedBroadcast(broadcast.id.getOr());
+        final socketResponse = await _socket.emit2(startEvent);
+
+        if (socketResponse.error != null) {
+          emit(BroadcastStartFailed(socketResponse.error));
+        } else {
+          try {
+            await _liveKit.broadcast(broadcastToken);
+            emit(BroadcastStartSuccess(broadcast: broadcast, muted: false));
+          } catch (e) {
+            emit(BroadcastStartFailed(e.toString()));
+          }
+        }
       },
     );
   }
@@ -63,13 +77,9 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   ) async {
     if (state is BroadcastStartSuccess) {
       emit(const BroadcastLoadInProgress());
-      await _liveKit
-          .disconnect()
-          .then((_) => _liveKit.dispose())
-          .whenComplete(() async {
-        _socket.emit(SocketEvent.endBroadcast(event.id.getOr()));
-        emit(const BroadcastEndSuccess());
-      });
+      await _liveKit.dispose();
+      _socket.emit(SocketEvent.endBroadcast(_broadcast.id.getOr()));
+      emit(const BroadcastEndSuccess());
     }
   }
 

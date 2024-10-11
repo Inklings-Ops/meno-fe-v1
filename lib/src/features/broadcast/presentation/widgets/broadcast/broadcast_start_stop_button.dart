@@ -12,14 +12,18 @@ class BroadcastStartStopButton extends HookWidget {
     Future<void> stopBroadcast(Uid<Broadcast> broadcastId) {
       return context.showEndBroadcastDialog().then((value) {
         if (value != true) return;
-        return bloc.add(BroadcastEndRequested(broadcastId));
+        return bloc.add(const BroadcastEndRequested());
       });
     }
 
     return BlocBuilder<BroadcastBloc, BroadcastState>(
       builder: (context, state) => state.maybeWhen(
-        orElse: () => const _Button(label: 'Start broadcasting'),
+        orElse: () => const _Button(label: 'Loading...'),
         loading: () => const _Button(label: 'Start', loading: true),
+        initial: (broadcast) => _Button(
+          label: 'Start broadcasting',
+          onTap: () => bloc.add(const BroadcastStartRequested()),
+        ),
         startSuccess: (broadcast, muted) => _Button(
           label: 'Stop broadcasting',
           onTap: () => stopBroadcast(broadcast.id),

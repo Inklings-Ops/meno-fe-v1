@@ -21,7 +21,7 @@ class LoginForm extends HookWidget {
             ),
             Spaces.verticalXXLarge,
           ] else ...[
-            LoginEmailField(isPwdOnly: isPasswordOnly),
+            const LoginEmailField(),
             Spaces.verticalXLarge,
           ],
           const LoginPasswordField(),

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -26,8 +26,18 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: Routes.broadcast,
-      builder: (context, state) => BroadcastPage(
-        broadcast: state.extra! as Broadcast,
+      onExit: (context, state) {
+        context.read<BroadcastBloc>().dispose();
+        return true;
+      },
+      builder: (context, state) => BlocProvider(
+        create: (ctx) => BroadcastBloc(
+          broadcast: state.extra! as Broadcast,
+          facade: ctx.read<IBroadcastFacade>(),
+          liveKit: ctx.read<LiveKitService>(),
+          socket: di<SocketService>(),
+        ),
+        child: const BroadcastPage(),
       ),
     ),
     GoRoute(
@@ -64,8 +74,6 @@ final router = GoRouter(
         final q = state.uri.queryParameters;
         final isPasswordOnly = bool.parse(q['isPasswordOnly'] ?? 'false');
         final implyLeading = bool.parse(q['implyLeading'] ?? 'false');
-        Logger().w(isPasswordOnly);
-        Logger().w(di<SessionCubit>().state);
         return LoginPage(
           implyLeading: implyLeading,
           isPasswordOnly: isPasswordOnly,

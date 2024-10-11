@@ -77,6 +77,7 @@ class _BroadcastAboutTab extends StatelessWidget {
     return BlocSelector<BroadcastBloc, BroadcastState, String?>(
       selector: (state) => state.maybeWhen(
         orElse: () => null,
+        initial: (broadcast) => broadcast.description?.getOr(),
         startSuccess: (broadcast, muted) => broadcast.description?.getOr(),
       ),
       builder: (context, desc) => BroadcastAboutTab(description: desc),
@@ -93,6 +94,7 @@ class _BroadcastArtwork extends StatelessWidget {
       bloc: context.read<BroadcastBloc>(),
       selector: (state) => state.maybeWhen(
         orElse: () => null,
+        initial: (broadcast) => broadcast.imageUrl,
         startSuccess: (broadcast, muted) => broadcast.imageUrl,
       ),
       builder: (context, url) => BroadcastArtworkWidget(imageUrl: url),
@@ -110,6 +112,7 @@ class _BroadcastCreator extends StatelessWidget {
       bloc: context.read<BroadcastBloc>(),
       selector: (state) => state.maybeWhen(
         orElse: () => 'Loading...',
+        initial: (broadcast) => broadcast.creator!.fullName,
         startSuccess: (broadcast, muted) => broadcast.creator!.fullName,
       ),
       builder: (context, fullName) => MText(
@@ -129,6 +132,7 @@ class _BroadcastListeningTab extends StatelessWidget {
     return BlocBuilder<BroadcastBloc, BroadcastState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const MLoadingIndicator.box(),
+        initial: (broadcast) => const BroadcastListeningTab(),
         startSuccess: (broadcast, mute) => const BroadcastListeningTab(),
       ),
     );
@@ -143,6 +147,7 @@ class _BroadcastTitle extends StatelessWidget {
     return BlocSelector<BroadcastBloc, BroadcastState, String>(
       selector: (state) => state.maybeWhen(
         orElse: () => 'Loading...',
+        initial: (broadcast) => broadcast.title.getOr(),
         startSuccess: (broadcast, muted) => broadcast.title.getOr(),
       ),
       builder: (context, title) => BroadcastTitle(title: title),

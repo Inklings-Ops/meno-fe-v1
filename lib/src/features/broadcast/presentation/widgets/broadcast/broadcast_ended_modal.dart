@@ -11,7 +11,6 @@ class BroadcastEndedModal extends HookWidget {
     return PopScope(
       canPop: canPop.value,
       onPopInvoked: (_) {
-        context.read<BroadcastBloc>().dispose();
         context.read<TimerCubit>().dispose();
         router.go(Routes.home);
         canPop.value = true;

@@ -1,8 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
-
-class LoginPage extends StatelessWidget {
+class LoginPage extends HookWidget {
   const LoginPage({
     super.key,
     this.implyLeading = false,
@@ -13,6 +12,20 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final email = context.select(
+      (SessionCubit bloc) => bloc.state.whenOrNull(
+        partiallyAuthenticated: (user) => user.email.getOr(),
+      ),
+    );
+
+    useEffect(
+      () {
+        if (isPasswordOnly) context.read<LoginCubit>().emailChanged(email!);
+        return null;
+      },
+      const [],
+    );
+
     return BlocListener<LoginCubit, LoginState>(
       listenWhen: (p, c) => p.option != c.option,
       listener: (context, state) {

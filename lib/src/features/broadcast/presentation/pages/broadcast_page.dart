@@ -1,40 +1,29 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-
 class BroadcastPage extends HookWidget {
-  const BroadcastPage({required this.broadcast, super.key});
-  final Broadcast broadcast;
+  const BroadcastPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastBloc>();
-    useEffect(
-      () {
-        context.read<TimerCubit>().start();
-        context.read<LiveParticipantsBloc>().initialize(broadcast);
-        context.read<ChatBloc>().initialize(broadcast);
-        return null;
-      },
-      const [],
-    );
-    return BlocConsumer<BroadcastBloc, BroadcastState>(
+    return BlocListener<BroadcastBloc, BroadcastState>(
       bloc: bloc,
       listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
-        bloc.state.whenOrNull(
+        state.whenOrNull(
           failure: (exception) => context.showBroadcastError(exception),
-          startFailed: (e) {
-            context
-              ..pop()
-              ..showErrorSnackBar(e.toString());
-          },
           deleteSuccess: () => router.go(Routes.home),
+          startFailed: (e) => context.showErrorSnackBar(e.toString()),
+          startSuccess: (broadcast, muted) {
+            context.read<TimerCubit>().start();
+            context.read<LiveParticipantsBloc>().initialize(broadcast);
+            context.read<ChatBloc>().initialize(broadcast);
+          },
           endSuccess: () {
             context.read<TimerCubit>().stop();
-            di<LiveKitService>().dispose();
+            context.read<LiveKitService>().dispose();
             context.showModal<void>(
               const BroadcastEndedModal(),
               enableDrag: false,
@@ -45,40 +34,19 @@ class BroadcastPage extends HookWidget {
           },
         );
       },
-      buildWhen: (previous, current) => previous != current,
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        startFailed: (e) => Scaffold(body: Center(child: MText(e.toString()))),
-        loading: () => const Scaffold(body: MLoadingIndicator.box()),
-        failure: (exception) => Scaffold(
-          body: Center(
-            child: MText(
-              exception.maybeWhen(
-                message: (message) => message,
-                orElse: () => 'An unknown error occurred',
-                serverError: () => 'A server error occurred',
-                timeOutError: () => 'Request timed out. Go back & try again',
-              ),
-            ),
-          ),
-        ),
-        startSuccess: (broadcast, muted) => const PopScope(
-          canPop: false,
-          child: LiveStreamScaffold(
-            tabs: [
-              Tab(text: 'Broadcast'),
-              Tab(text: 'Chats'),
-              Tab(text: 'Live Bible'),
-              Tab(text: 'Notes'),
-            ],
-            tabViews: [
-              BroadcastTab(),
-              BroadcastChatTab(),
-              LiveBibleTab(),
-              NotesTab(),
-            ],
-          ),
-        ),
+      child: const LiveStreamScaffold(
+        tabs: [
+          Tab(text: 'Broadcast'),
+          Tab(text: 'Chats'),
+          Tab(text: 'Live Bible'),
+          Tab(text: 'Notes'),
+        ],
+        tabViews: [
+          BroadcastTab(),
+          BroadcastChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
       ),
     );
   }

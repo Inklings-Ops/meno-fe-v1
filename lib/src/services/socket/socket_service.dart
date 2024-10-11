@@ -9,8 +9,7 @@ import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/infrastructure/dtos/chat_dto.dart';
 import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_dto.dart';
-import 'package:meno_fe_v1/src/services/socket/socket_event.dart';
-import 'package:meno_fe_v1/src/services/socket/socket_state.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -38,6 +37,7 @@ class SocketService extends Object with Disposable {
             .setTransports(['websocket'])
             .setQuery({'token': token?.getOr()})
             .enableAutoConnect()
+            .enableReconnection()
             .build(),
       );
       setupListeners();
@@ -103,6 +103,36 @@ class SocketService extends Object with Disposable {
     Function? ack,
   }) {
     return socket.emitWithAck(event, data, ack: ack);
+  }
+
+  Future<SocketResponse<dynamic>> emitWithAck2(
+    String event,
+    Map<String, dynamic> data, {
+    Function? ack,
+  }) {
+    final completer = Completer<SocketResponse<dynamic>>();
+    socket.emitWithAck(
+      event,
+      data,
+      ack: (dynamic res) {
+        final socketResponse = SocketResponse.fromJson(
+          res as Map<String, dynamic>,
+          (json) => json as dynamic,
+        );
+        completer.complete(socketResponse);
+      },
+    );
+    return completer.future;
+  }
+
+  Future<SocketResponse<dynamic>> emit2(SocketEvent event) async {
+    return event.maybeWhen(
+      orElse: SocketResponse.new,
+      startedBroadcast: (broadcastId) => emitWithAck2(
+        'startedBroadcast',
+        {'broadcastId': broadcastId},
+      ),
+    );
   }
 
   void emit(SocketEvent event) {

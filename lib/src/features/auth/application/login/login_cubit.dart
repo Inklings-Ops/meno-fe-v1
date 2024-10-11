@@ -13,7 +13,6 @@ part 'login_state.dart';
 /// A [Cubit] responsible for managing the login state.
 @lazySingleton
 class LoginCubit extends Cubit<LoginState> {
-
   LoginCubit({
     required IAuthFacade facade,
     required ISettingsFacade settingsFacade,

@@ -11,7 +11,6 @@ part 'timer_state.dart';
 
 @lazySingleton
 class TimerCubit extends Cubit<TimerState> {
-
   TimerCubit() : super(TimerState.initial());
   Timer? _timer;
 
@@ -38,29 +37,32 @@ class TimerCubit extends Cubit<TimerState> {
     if (startTime == null) return;
 
     final duration = DateTime.now().difference(startTime).abs();
-    emit(state.copyWith(
-      elapsedTime: duration,
-      hours: _calculateTime(duration, _Unit.hrs),
-      minutes: _calculateTime(duration, _Unit.mins),
-      seconds: _calculateTime(duration, _Unit.secs),
-      timeAgo: DateHelpers.getTimeAgo(duration),
-    ),);
+    emit(
+      state.copyWith(
+        elapsedTime: duration,
+        hours: _calculateTime(duration, _Unit.hrs),
+        minutes: _calculateTime(duration, _Unit.mins),
+        seconds: _calculateTime(duration, _Unit.secs),
+        timeAgo: DateHelpers.getTimeAgo(duration),
+      ),
+    );
   }
 
   void start() {
     if (_timer != null) {
       return;
     }
-
     _timer ??= Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      emit(state.copyWith(
-        isRunning: timer.isActive,
-        elapsedTime: state.elapsedTime + const Duration(milliseconds: 100),
-        hours: _calculateTime(state.elapsedTime, _Unit.hrs),
-        minutes: _calculateTime(state.elapsedTime, _Unit.mins),
-        seconds: _calculateTime(state.elapsedTime, _Unit.secs),
-        timeAgo: DateHelpers.getTimeAgo(state.elapsedTime),
-      ),);
+      emit(
+        state.copyWith(
+          isRunning: timer.isActive,
+          elapsedTime: state.elapsedTime + const Duration(milliseconds: 100),
+          hours: _calculateTime(state.elapsedTime, _Unit.hrs),
+          minutes: _calculateTime(state.elapsedTime, _Unit.mins),
+          seconds: _calculateTime(state.elapsedTime, _Unit.secs),
+          timeAgo: DateHelpers.getTimeAgo(state.elapsedTime),
+        ),
+      );
     });
   }
 

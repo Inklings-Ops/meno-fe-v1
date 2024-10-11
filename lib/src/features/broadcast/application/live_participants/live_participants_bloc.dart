@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart' hide Participant;
@@ -47,18 +48,26 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   }
 
   void _onNewBroadcastListener(BroadcastParticipant participant) {
+    Logger().w(participant);
     final currentParticipants =
         List<BroadcastParticipant?>.from(state.participants);
     final isAlreadyIn = currentParticipants.contains(participant);
     if (isAlreadyIn) return;
     final updatedParticipants = [...currentParticipants, participant];
-    emit(state.copyWith(participants: updatedParticipants));
+    emit(
+      state.copyWith(
+        participants: updatedParticipants,
+        numberOfParticipants:
+            participant.numberOfListeners ?? currentParticipants.length,
+      ),
+    );
   }
 
   void _onBroadcastListenerLeft(BroadcastParticipant participant) {
-    final participants = List<BroadcastParticipant?>.from(state.participants)
-      ..removeWhere((p) => p?.id == participant.id);
-    emit(state.copyWith(participants: participants));
+    final participants = List<BroadcastParticipant?>.from(state.participants);
+    final updatedParticipants =
+        participants.where((p) => p?.id != participant.id).toList();
+    emit(state.copyWith(participants: updatedParticipants ));
   }
 
   void _onNumberOfLiveListeners(int value) {

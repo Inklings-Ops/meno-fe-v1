@@ -40,7 +40,8 @@ class User with _$User {
     dynamic deleted,
   }) = _User;
 
-  /// Creates a new `User` object with all of the properties set to their default values.
+  /// Creates a new `User` object with all of the properties set to their 
+  /// default values.
   factory User.empty() {
     return User(
       id: Uid.fromString(''),

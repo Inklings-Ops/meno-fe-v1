@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import 'package:meno_fe_v1/src/services/network_service.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_local_datasource.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_remote_datasource.dart';
+import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
+import 'package:meno_fe_v1/src/services/network_service.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 @LazySingleton(as: IProfileFacade)
 class ProfileFacade implements IProfileFacade {

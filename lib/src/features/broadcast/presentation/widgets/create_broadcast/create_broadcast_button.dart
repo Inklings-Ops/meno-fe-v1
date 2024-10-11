@@ -8,7 +8,6 @@ class CreateBroadcastButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastFormCubit>();
     return Container(
-      height: 77,
       padding: const EdgeInsets.symmetric(horizontal: Insets.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

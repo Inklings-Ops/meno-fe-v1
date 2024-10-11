@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/entities/role.dart';
 
 part 'broadcast_participant_dto.freezed.dart';
 part 'broadcast_participant_dto.g.dart';

@@ -17,7 +17,8 @@ class UserCredential with _$UserCredential {
     Token? token,
   }) = _UserCredential;
 
-  /// Creates a new `UserCredentials` object with all of the properties set to their default values.
+  /// Creates a new `UserCredentials` object with all of the properties set to
+  /// their default values.
   factory UserCredential.empty() {
     return UserCredential(
       user: User.empty(),

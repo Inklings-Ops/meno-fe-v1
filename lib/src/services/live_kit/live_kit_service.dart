@@ -54,6 +54,7 @@ class LiveKitService extends Object with Disposable {
   Future<Room> stream(String broadcastToken) => _connect(broadcastToken, false);
 
   Future<void> disconnect() => room.disconnect();
+  void removeListener() => room.removeListener(_setupListener);
 
   Future<void> mute({required bool enabled}) async {
     await room.localParticipant?.setMicrophoneEnabled(enabled);
@@ -66,6 +67,7 @@ class LiveKitService extends Object with Disposable {
   }
 
   Future<void> dispose() async {
+    await disconnect();
     room.removeListener(_setupListener);
     await listener.dispose();
     await room.dispose();
