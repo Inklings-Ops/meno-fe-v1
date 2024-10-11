@@ -54,7 +54,9 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     return MTextFieldStyle(
       textStyle: textTheme.captionRegular,
       errorTextStyle: textTheme.captionRegular,
-      hintTextStyle: textTheme.captionRegular,
+      hintTextStyle: textTheme.captionRegular?.copyWith(
+        color: colors.onBackgroundVariant,
+      ),
       labelTextStyle: textTheme.captionMedium,
       counterTextStyle: textTheme.microMedium,
       iconColor: colors.onBackground,
