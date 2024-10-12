@@ -8,6 +8,7 @@ class BroadcastListeningTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     return Column(
+      key: const ValueKey('BroadcastListeningTab'),
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
@@ -40,7 +41,7 @@ class _NumberOfParticipants extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
-      selector: (state) => state.numberOfParticipants,
+      selector: (state) => state.numberOfLiveParticipants,
       builder: (context, numberOfParticipants) => Row(
         children: [
           const Icon(MIcons.hearing, size: 16),

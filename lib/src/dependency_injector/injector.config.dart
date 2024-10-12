@@ -74,6 +74,7 @@ import '../features/discover/application/recently_live/d_recently_live_cubit.dar
 import '../features/discover/application/search/search_bloc.dart' as _i1051;
 import '../features/discover/discover.dart' as _i515;
 import '../features/discover/infrastructure/discover_facade.dart' as _i115;
+import '../features/features.dart' as _i1009;
 import '../features/notes/application/folder/folder_cubit.dart' as _i880;
 import '../features/notes/application/folder_form/folder_form_cubit.dart'
     as _i904;
@@ -347,13 +348,13 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.factoryParam<_i659.BroadcastBloc, _i625.Broadcast, dynamic>((
+    gh.factoryParam<_i659.BroadcastBloc, _i1009.Broadcast, dynamic>((
       broadcast,
       _,
     ) =>
         _i659.BroadcastBloc(
           broadcast: broadcast,
-          facade: gh<_i625.IBroadcastFacade>(),
+          facade: gh<_i1009.IBroadcastFacade>(),
           liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),
         ));

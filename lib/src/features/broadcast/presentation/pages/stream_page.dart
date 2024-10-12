@@ -1,5 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/live_scaffold.old.dart';
 
 
 class StreamPage extends HookWidget {
@@ -50,7 +51,7 @@ class StreamPage extends HookWidget {
               ),
             ),
           ),
-          joinSuccess: (_) => const LiveStreamScaffold(
+          joinSuccess: (_) => const LiveStreamScaffoldOld(
             tabs: [
               Tab(text: 'Broadcast'),
               Tab(text: 'Chats'),

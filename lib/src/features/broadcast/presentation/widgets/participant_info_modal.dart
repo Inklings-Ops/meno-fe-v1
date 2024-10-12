@@ -1,35 +1,13 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
-class ParticipantInfoModal extends HookWidget {
+class ParticipantInfoModal extends StatelessWidget {
   const ParticipantInfoModal({required this.participant, super.key});
   final BroadcastParticipant participant;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-
-    final facade = di<IProfileFacade>();
-
-    final loading = useState<bool>(false);
-    final profile = useState<Profile?>(null);
-
-    useEffect(
-      () {
-        if (profile.value == null) {
-          loading.value = true;
-          facade.getProfile(participant.id).then((v) {
-            v.fold((l) => null, (r) {
-              profile.value = r;
-              loading.value = false;
-            });
-          });
-        }
-        return null;
-      },
-      [profile, facade, participant.id],
-    );
 
     return MModal(
       builder: (context) => Column(
@@ -58,16 +36,9 @@ class ParticipantInfoModal extends HookWidget {
             ),
           ),
           Spaces.verticalMicro,
-          if (loading.value && profile.value == null) ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: Insets.xxl),
-              child: MShimmer(height: 24),
-            ),
-            Spaces.verticalLarge,
-          ],
-          if (profile.value?.bio != null) ...[
+          if (participant.bio != null) ...[
             MText(
-              profile.value!.bio!.getOr(),
+              participant.bio!,
               style: textTheme.subheadingRegular,
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -75,16 +46,25 @@ class ParticipantInfoModal extends HookWidget {
             ),
             Spaces.verticalLarge,
           ],
-          MPrimaryButton.icon(
-            label: 'Subscribed',
-            icon: const Icon(MIcons.user_check),
-            onPressed: () {},
-          ),
-          Spaces.verticalSmall,
-          MTextButton(
-            label: 'View account',
-            onPressed: () => router.push(Routes.profile, extra: participant.id),
-          ),
+          if (participant.role == Role.HOST ||
+              participant.role == Role.host) ...[
+            MPrimaryButton(
+              label: 'View Profile',
+              onPressed: () => router.push(Routes.profile),
+            ),
+          ] else ...[
+            MPrimaryButton.icon(
+              label: 'Subscribed',
+              icon: const Icon(MIcons.user_check),
+              onPressed: () {},
+            ),
+            Spaces.verticalSmall,
+            MTextButton(
+              label: 'View account',
+              onPressed: () =>
+                  router.push(Routes.profile, extra: participant.id),
+            ),
+          ],
           // MTextButton(
           //   label: "Remove as Co-host",
           //   onPressed: () {},

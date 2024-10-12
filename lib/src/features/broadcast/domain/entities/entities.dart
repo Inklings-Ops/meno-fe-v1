@@ -1,6 +1,7 @@
 export 'broadcast.dart';
 export 'broadcast_list_entity.dart';
 export 'broadcast_participant.dart';
+export 'broadcast_participants_list_entity.dart';
 export 'broadcast_reason.dart';
 export 'broadcast_status.dart';
 export 'ended_broadcast_data.dart';

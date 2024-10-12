@@ -12,8 +12,6 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   await configureDependencies();
-  // di<ObjectBoxService>().bibleBox.removeAll();
-  // di<ObjectBoxService>().verseBox.removeAll();
   runApp(
     DevicePreview(
       enabled: false,

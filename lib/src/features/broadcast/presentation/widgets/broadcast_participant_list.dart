@@ -8,11 +8,12 @@ class BroadcastParticipantList extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
-      buildWhen: (p, c) => p.participants != c.participants,
+      buildWhen: (p, c) => p.liveParticipants != c.liveParticipants,
       builder: (context, state) {
         final isLoading = state.loading;
+        final participants = state.liveParticipants;
         if (isLoading) return const SizedBox();
-        if (!isLoading && state.participants.isEmpty) return const SizedBox();
+        if (!isLoading && participants.isEmpty) return const SizedBox();
         return GridView.builder(
           shrinkWrap: true,
           padding: padding ?? const EdgeInsets.symmetric(horizontal: Insets.lg),
@@ -22,14 +23,16 @@ class BroadcastParticipantList extends HookWidget {
             mainAxisSpacing: Insets.lg,
             childAspectRatio: 80 / 88,
           ),
-          itemCount: state.participants.length,
+          itemCount: participants.length,
           itemBuilder: (context, index) {
-            final participant = state.participants[index]!;
+            final participant = participants[index];
             return ParticipantItem(
+              key: ValueKey(participant.id),
               participant: participant,
               onTap: () => context.showModal<void>(
                 ParticipantInfoModal(participant: participant),
                 isScrollControlled: true,
+                useRootNavigator: true,
               ),
             );
           },

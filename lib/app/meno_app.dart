@@ -26,6 +26,7 @@ class _MenoAppState extends State<MenoApp> {
         darkTheme: MTheme.dark,
         builder: (context, child) {
           child = toastBuilder(context, child);
+        
           return ResponsiveBreakpoints.builder(
             breakpoints: const [
               Breakpoint(start: 0, end: 450, name: PHONE),
@@ -34,6 +35,7 @@ class _MenoAppState extends State<MenoApp> {
               Breakpoint(start: 801, end: 1920, name: DESKTOP),
             ],
             child: BlocListener<SessionCubit, SessionState>(
+              key: const ValueKey('APP-SessionCubit-Listener'),
               listener: (context, state) => state.whenOrNull(
                 authenticated: (user, token) {
                   context.read<AccountBloc>().init();
@@ -44,12 +46,7 @@ class _MenoAppState extends State<MenoApp> {
                   return null;
                 },
               ),
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: TextScaler.noScaling,
-                ),
-                child: DevicePreview.appBuilder(context, child),
-              ),
+              child: DevicePreview.appBuilder(context, child),
             ),
           );
         },

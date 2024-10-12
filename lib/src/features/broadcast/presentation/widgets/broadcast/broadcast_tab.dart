@@ -9,6 +9,7 @@ class BroadcastTab extends HookWidget {
     final tabController = useTabController(initialLength: 2);
 
     return Column(
+      key: const ValueKey('BroadcastTab'),
       children: [
         const Flexible(
           child: SingleChildScrollView(
@@ -56,7 +57,7 @@ class BroadcastTab extends HookWidget {
                 child: TabBarView(
                   controller: tabController,
                   children: const [
-                    _BroadcastListeningTab(),
+                    BroadcastListeningTab(),
                     _BroadcastAboutTab(),
                   ],
                 ),
@@ -74,13 +75,10 @@ class _BroadcastAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<BroadcastBloc, BroadcastState, String?>(
-      selector: (state) => state.maybeWhen(
-        orElse: () => null,
-        initial: (broadcast) => broadcast.description?.getOr(),
-        startSuccess: (broadcast, muted) => broadcast.description?.getOr(),
-      ),
-      builder: (context, desc) => BroadcastAboutTab(description: desc),
+    final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
+    return BroadcastAboutTab(
+      key: const ValueKey('BroadcastAboutTab'),
+      description: broadcast.description?.getOr(),
     );
   }
 }
@@ -90,14 +88,10 @@ class _BroadcastArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<BroadcastBloc, BroadcastState, String?>(
-      bloc: context.read<BroadcastBloc>(),
-      selector: (state) => state.maybeWhen(
-        orElse: () => null,
-        initial: (broadcast) => broadcast.imageUrl,
-        startSuccess: (broadcast, muted) => broadcast.imageUrl,
-      ),
-      builder: (context, url) => BroadcastArtworkWidget(imageUrl: url),
+    final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
+    return BroadcastArtworkWidget(
+      key: const ValueKey('BroadcastArtworkWidget'),
+      imageUrl: broadcast.imageUrl,
     );
   }
 }
@@ -108,33 +102,12 @@ class _BroadcastCreator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<BroadcastBloc, BroadcastState, String>(
-      bloc: context.read<BroadcastBloc>(),
-      selector: (state) => state.maybeWhen(
-        orElse: () => 'Loading...',
-        initial: (broadcast) => broadcast.creator!.fullName,
-        startSuccess: (broadcast, muted) => broadcast.creator!.fullName,
-      ),
-      builder: (context, fullName) => MText(
-        fullName,
-        style: textTheme.captionRegular,
-        color: MColorScheme.of(context)!.onDisabledContainer,
-      ),
-    );
-  }
-}
-
-class _BroadcastListeningTab extends StatelessWidget {
-  const _BroadcastListeningTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<BroadcastBloc, BroadcastState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const MLoadingIndicator.box(),
-        initial: (broadcast) => const BroadcastListeningTab(),
-        startSuccess: (broadcast, mute) => const BroadcastListeningTab(),
-      ),
+    final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
+    return MText(
+      key: const ValueKey('BroadcastCreator'),
+      broadcast.creator!.fullName,
+      style: textTheme.captionRegular,
+      color: MColorScheme.of(context)!.onDisabledContainer,
     );
   }
 }
@@ -144,13 +117,10 @@ class _BroadcastTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<BroadcastBloc, BroadcastState, String>(
-      selector: (state) => state.maybeWhen(
-        orElse: () => 'Loading...',
-        initial: (broadcast) => broadcast.title.getOr(),
-        startSuccess: (broadcast, muted) => broadcast.title.getOr(),
-      ),
-      builder: (context, title) => BroadcastTitle(title: title),
+    final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
+    return BroadcastTitle(
+      key: const ValueKey('BroadcastTitle'),
+      title: broadcast.title.getOr(),
     );
   }
 }

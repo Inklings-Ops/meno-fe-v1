@@ -1,8 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-
-
 class NotesPage extends HookWidget {
   const NotesPage({super.key});
 

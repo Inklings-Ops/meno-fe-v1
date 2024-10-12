@@ -1,5 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
 class BroadcastEndedModal extends HookWidget {
   const BroadcastEndedModal({super.key});
@@ -7,15 +8,20 @@ class BroadcastEndedModal extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    final canPop = useState(false);
+
+    void cleanUp() {
+      context.read<TimerCubit>().dispose();
+      context.read<LiveKitService>().dispose();
+      context.read<BroadcastBloc>().dispose();
+    }
+
     return PopScope(
-      canPop: canPop.value,
       onPopInvoked: (_) {
-        context.read<TimerCubit>().dispose();
         router.go(Routes.home);
-        canPop.value = true;
+        cleanUp();
       },
       child: MModal(
+        key: const ValueKey('BroadcastEndedModal'),
         builder: (context) => Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,26 +42,54 @@ class BroadcastEndedModal extends HookWidget {
               textStyle: textTheme.heading2Bold,
             ),
             Spaces.verticalXLarge,
-            // TODO: implement avatars of listeners
-            Spaces.verticalXXLarge,
-            Spaces.verticalSmall,
-            BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
-              selector: (state) => state.participants.length,
-              builder: (context, numberOfParticipants) => MText(
-                '$numberOfParticipants people tuned in!',
-                style: textTheme.captionRegular,
-                textAlign: TextAlign.center,
-              ),
-            ),
+            const TotalParticipantsWidget(),
             const SizedBox(height: 40),
             MPrimaryButton(label: 'Publish Broadcast', onPressed: () {}),
             Spaces.verticalLarge,
             MSecondaryButton(
               label: 'Go to Profile',
-              onPressed: () => router.go(Routes.profile),
+              onPressed: () {
+                router.go(Routes.profile);
+                cleanUp();
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class TotalParticipantsWidget extends StatelessWidget {
+  const TotalParticipantsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
+    return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
+      builder: (context, state) => Column(
+        children: [
+          LimitedBox(
+            maxHeight: Insets.xxl,
+            child: Stack(
+              children: state.totalParticipants.map(
+                (e) {
+                  final isFirstIndex = state.totalParticipants.indexOf(e) == 0;
+                  return Positioned(
+                    left: isFirstIndex ? 0 : -12,
+                    child: MAvatar(radius: 16, url: e.imageUrl),
+                  );
+                },
+              ).toList(),
+            ),
+          ),
+          Spaces.verticalSmall,
+          MText(
+            '${state.numberOfTotalParticipants} people tuned in!',
+            style: textTheme.captionRegular,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

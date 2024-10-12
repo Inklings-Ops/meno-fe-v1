@@ -61,10 +61,6 @@ class SocketService extends Object with Disposable {
         final dto = BroadcastParticipantDto.fromJson(decoded);
         _event.add(SocketEvent.newBroadcastListener(dto.toDomain));
       })
-      ..on('numberOfLiveListeners', (data) {
-        final value = jsonDecode(jsonEncode(data)) as int;
-        _event.add(SocketEvent.numberOfLiveListeners(value));
-      })
       ..on('endedBroadcast', (data) {
         final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
         final dto = EndedBroadcastDataDto.fromJson(decoded);
@@ -105,50 +101,36 @@ class SocketService extends Object with Disposable {
     return socket.emitWithAck(event, data, ack: ack);
   }
 
-  Future<SocketResponse<dynamic>> emitWithAck2(
-    String event,
-    Map<String, dynamic> data, {
-    Function? ack,
-  }) {
-    final completer = Completer<SocketResponse<dynamic>>();
-    socket.emitWithAck(
-      event,
-      data,
-      ack: (dynamic res) {
-        final socketResponse = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => json as dynamic,
-        );
-        completer.complete(socketResponse);
-      },
-    );
-    return completer.future;
-  }
-
-  Future<SocketResponse<dynamic>> emit2(SocketEvent event) async {
-    return event.maybeWhen(
-      orElse: SocketResponse.new,
-      startedBroadcast: (broadcastId) => emitWithAck2(
-        'startedBroadcast',
-        {'broadcastId': broadcastId},
-      ),
-    );
-  }
-
   void emit(SocketEvent event) {
     event.whenOrNull(
       startedBroadcast: (broadcastId) => emitWithAck(
         'startedBroadcast',
         {'broadcastId': broadcastId},
-        ack: (_) => _state.add(const SocketBroadcastStarted()),
+        ack: (dynamic res) {
+          final response = SocketResponse.fromJson(
+            res as Map<String, dynamic>,
+            (json) => json as dynamic,
+          );
+          _state.add(SocketBroadcastStarted(error: response.error));
+        },
       ),
       joinBroadcast: (broadcastId) => emitWithAck(
         'joinBroadcast',
         {'broadcastId': broadcastId},
-        ack: (_) => _state.add(const SocketBroadcastJoined()),
+        ack: (dynamic res) {
+          final response = SocketResponse.fromJson(
+            res as Map<String, dynamic>,
+            (json) => json as dynamic,
+          );
+          _state.add(SocketBroadcastJoined(error: response.error));
+        },
       ),
       leaveBroadcast: (broadcastId) => emitWithAck(
         'leaveBroadcast',
+        {'broadcastId': broadcastId},
+      ),
+      endBroadcast: (broadcastId) => emitWithAck(
+        'endBroadcast',
         {'broadcastId': broadcastId},
       ),
       getNumberOfLiveBroadcasts: () => emitWithAck(
@@ -164,10 +146,6 @@ class SocketService extends Object with Disposable {
           final value = jsonDecode(jsonEncode(response['data'])) as int;
           _state.add(SocketNumberOfBroadcastListenersReceived(value, error));
         },
-      ),
-      endBroadcast: (broadcastId) => emitWithAck(
-        'endBroadcast',
-        {'broadcastId': broadcastId},
       ),
       sendChatMessage: (
         senderId,

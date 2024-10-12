@@ -20,15 +20,9 @@ class LiveBroadcastsBloc
         _socket = socket,
         super(const _Loading()) {
     on<_GetLiveBroadcasts>(_onGetLiveBroadcasts);
-    on<_UpdateBroadcastList>(_onUpdateBroadcastList);
     on<_NewBroadcast>(_onNewBroadcast);
     on<_EndedBroadcast>(_onEndedBroadcast);
 
-    _socketStateSub = _socket.stateStream.listen((socketState) {
-      socketState.whenOrNull(
-        liveBroadcasts: (data, error) => add(_UpdateBroadcastList(data)),
-      );
-    });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
       socketEvent.whenOrNull(
         newBroadcast: (broadcast) => add(_NewBroadcast(broadcast)),
@@ -62,14 +56,6 @@ class LiveBroadcastsBloc
         (b) => b.broadcasts.isEmpty ? const _Empty() : _Success(b.broadcasts),
       ),
     );
-  }
-
-  Future<void> _onUpdateBroadcastList(
-    _UpdateBroadcastList event,
-    Emitter<LiveBroadcastsState> emit,
-  ) async {
-    final broadcasts = event.broadcasts;
-    broadcasts.isEmpty ? emit(const _Empty()) : emit(_Success(broadcasts));
   }
 
   Future<void> _onNewBroadcast(

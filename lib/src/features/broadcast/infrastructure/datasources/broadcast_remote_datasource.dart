@@ -53,8 +53,13 @@ abstract class BroadcastRemoteDatasource {
     @Path('broadcastId') required String broadcastId,
   });
 
+  @GET('/api/v1/broadcasts/{broadcastId}/listeners')
+  Future<BroadcastResponse<BroadcastParticipantsListDto>> getListeners({
+    @Path('broadcastId') required String broadcastId,
+  });
+
   @GET('/api/v1/broadcasts/{broadcastId}/live-listeners')
-  Future<BroadcastResponse<List<BroadcastParticipantDto?>>> getLiveListeners({
+  Future<BroadcastResponse<List<BroadcastParticipantDto>>> getLiveListeners({
     @Path('broadcastId') required String broadcastId,
   });
 

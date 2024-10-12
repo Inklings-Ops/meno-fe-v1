@@ -6,36 +6,82 @@ class BroadcastControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       height: 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const BroadcastMicrophoneButton(),
+          _MicrophoneButton(),
           Spaces.horizontalSmall,
-          const BroadcastStartStopButton(),
+          _StartStopButton(),
           Spaces.horizontalSmall,
-          BlocBuilder<BroadcastBloc, BroadcastState>(
-            builder: (context, state) => state.maybeWhen(
-              orElse: () => const MoreOptionsButton(),
-              startSuccess: (broadcast, muted) => MoreOptionsButton(
-                broadcast: broadcast,
-              ),
-            ),
-          ),
+          _MoreOptionsButton(),
         ],
       ),
     );
   }
 }
 
-class MoreOptionsButton extends StatelessWidget {
-  const MoreOptionsButton({this.broadcast, super.key});
-  final Broadcast? broadcast;
+class _MicrophoneButton extends HookWidget {
+  const _MicrophoneButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final isMuted = useState(false);
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) => switch (state.status) {
+        LiveStatus.started => MMicrophoneButton(
+            isMuted: isMuted.value,
+            onTap: () {
+              isMuted.value = !isMuted.value;
+              context.read<BroadcastBloc>().mute(value: !isMuted.value);
+            },
+          ),
+        _ => const MMicrophoneButton(isDisabled: true),
+      },
+    );
+  }
+}
+
+class _StartStopButton extends HookWidget {
+  const _StartStopButton();
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final bloc = context.read<BroadcastBloc>();
+
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) => switch (state.status) {
+        LiveStatus.loading => const _Button(label: 'Start', loading: true),
+        LiveStatus.failure || LiveStatus.initial => _Button(
+            label: 'Start broadcasting',
+            backgroundColor: colors.primary,
+            foregroundColor: colors.onPrimary,
+            onTap: bloc.startBroadcast,
+          ),
+        LiveStatus.started => _Button(
+            label: 'Stop broadcasting',
+            backgroundColor: colors.errorContainer?.withOpacity(0.3),
+            foregroundColor: colors.error,
+            onTap: () => context.showEndBroadcastDialog().then((value) {
+              if (value != true) return null;
+              return bloc.endBroadcast();
+            }),
+          ),
+        _ => const _Button(label: 'Stop Broadcast'),
+      },
+    );
+  }
+}
+
+class _MoreOptionsButton extends StatelessWidget {
+  const _MoreOptionsButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
+    final bloc = context.watch<BroadcastBloc>();
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
       iconSize: 20,
@@ -45,12 +91,49 @@ class MoreOptionsButton extends StatelessWidget {
         side: BorderSide(color: colors.outlineVariant3!),
         shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
-      onPressed: broadcast == null
-          ? null
-          : () => context.showModal<void>(
-                BroadcastInfoModal(broadcast: broadcast!),
-                isScrollControlled: true,
-              ),
+      onPressed: () => context.showModal<void>(
+        BroadcastInfoModal(broadcast: bloc.state.broadcast),
+        isScrollControlled: true,
+        useRootNavigator: true,
+      ),
+    );
+  }
+}
+
+class _Button extends StatelessWidget {
+  const _Button({
+    required this.label,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.loading = false,
+    this.onTap,
+  });
+
+  final String label;
+  final bool loading;
+  final Color? foregroundColor;
+  final Color? backgroundColor;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
+    return MPrimaryButton(
+      label: label,
+      onPressed: onTap,
+      loading: loading,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: foregroundColor ?? colors.onPrimary,
+        backgroundColor: backgroundColor ?? colors.primary,
+        fixedSize: const Size(159, 40),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.lg,
+          vertical: Insets.sm,
+        ),
+        textStyle: textTheme.captionMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
+      ),
     );
   }
 }

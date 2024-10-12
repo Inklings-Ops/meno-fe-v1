@@ -27,6 +27,7 @@ class MMicrophoneButton extends StatelessWidget {
     super.key,
     this.isMuted = true,
     this.onTap,
+    this.isDisabled = false,
   });
 
   /// Whether the microphone is muted. If true, the microphone-off icon is
@@ -37,6 +38,10 @@ class MMicrophoneButton extends StatelessWidget {
   /// An optional callback function to be invoked when the button is tapped.
   final VoidCallback? onTap;
 
+  /// Whether the button is disabled. If true, the button will not respond to
+  /// taps. Defaults to false.
+  final bool isDisabled;
+
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
@@ -44,12 +49,13 @@ class MMicrophoneButton extends StatelessWidget {
       icon: isMuted
           ? const Icon(MIcons.microphone_off)
           : const Icon(MIcons.microphone),
-      color: colors.primary,
+      color: isDisabled ? colors.primary?.withOpacity(0.4) : colors.primary,
       isFilled: true,
       iconSize: 20,
       size: 40,
       fillColor: colors.primary?.withOpacity(0.1),
       onPressed: onTap,
+      isDisabled: isDisabled,
     );
   }
 }

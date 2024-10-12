@@ -24,21 +24,53 @@ final router = GoRouter(
   refreshListenable: di<SessionCubit>(),
   redirect: _handleRedirect,
   routes: [
-    GoRoute(
-      path: Routes.broadcast,
-      onExit: (context, state) {
-        context.read<BroadcastBloc>().dispose();
-        return true;
-      },
-      builder: (context, state) => BlocProvider(
+    StatefulShellRoute(
+      builder: (context, state, navigationShell) => BlocProvider(
         create: (ctx) => BroadcastBloc(
           broadcast: state.extra! as Broadcast,
           facade: ctx.read<IBroadcastFacade>(),
           liveKit: ctx.read<LiveKitService>(),
           socket: di<SocketService>(),
         ),
-        child: const BroadcastPage(),
+        child: navigationShell,
       ),
+      navigatorContainerBuilder: (context, navigationShell, children) {
+        return LiveStreamScaffold(shell: navigationShell, children: children);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: Routes.broadcastTab,
+              builder: (context, state) => const BroadcastTab(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: Routes.chatTab,
+              builder: (context, state) => const BroadcastChatTab(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: Routes.bibleTab,
+              builder: (context, state) => const LiveBibleTab(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: Routes.notesTab,
+              builder: (context, state) => const NotesTab(),
+            ),
+          ],
+        ),
+      ],
     ),
     GoRoute(
       path: Routes.createBroadcast,

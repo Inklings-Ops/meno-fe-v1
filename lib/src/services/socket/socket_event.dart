@@ -60,10 +60,6 @@ class SocketEvent with _$SocketEvent {
   ) = SocketBroadcastListenerLeft;
 
   @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.numberOfLiveListeners(int value) =
-      SocketNumberOfLiveListeners;
-
-  @Implements<BroadcastSubscribedEvent>()
   const factory SocketEvent.endedBroadcast(EndedBroadcastData data) =
       SocketEndedBroadcast;
 

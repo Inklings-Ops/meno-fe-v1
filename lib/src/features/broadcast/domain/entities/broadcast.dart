@@ -28,7 +28,6 @@ class Broadcast with _$Broadcast {
     dynamic deleted,
     int? liveListeners,
     int? totalListeners,
-    // For endedBroadcast socket event data
     String? creatorBio,
     String? creatorFullName,
     String? creatorImageUrl,

@@ -14,6 +14,7 @@ class BroadcastParticipant with _$BroadcastParticipant {
     String? imageUrl,
     int? numberOfListeners,
     bool? isHostDisconnected,
+    DateTime? joinedAt,
     DateTime? disconnectedAt,
   }) = _BroadcastParticipant;
 

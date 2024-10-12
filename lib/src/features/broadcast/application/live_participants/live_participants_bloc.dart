@@ -1,14 +1,11 @@
 import 'dart:async';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart' hide Participant;
 
 part 'live_participants_bloc.freezed.dart';
-part 'live_participants_event.dart';
 part 'live_participants_state.dart';
 
 @lazySingleton
@@ -23,12 +20,12 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
       socketEvent.whenOrNull(
         newBroadcastListener: _onNewBroadcastListener,
         broadcastListenerLeft: _onBroadcastListenerLeft,
-        numberOfLiveListeners: _onNumberOfLiveListeners,
       );
     });
   }
   final SocketService _socket;
   final IBroadcastFacade _facade;
+
   late final StreamSubscription<SocketEvent> _socketEventSub;
   late final StreamSubscription<SocketState> _socketStateSub;
 
@@ -40,38 +37,44 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
         (failure) => state.copyWith(loading: false),
         (participants) => state.copyWith(
           loading: false,
-          participants: participants,
-          numberOfParticipants: participants.length,
+          liveParticipants: participants,
+          numberOfLiveParticipants: participants.length,
+        ),
+      ),
+    );
+  }
+
+  Future<void> fetchTotal(Broadcast broadcast) async {
+    emit(state.copyWith(loading: true));
+    final response = await _facade.listeners(broadcast.id);
+    emit(
+      response.fold(
+        (failure) => state.copyWith(loading: false),
+        (participants) => state.copyWith(
+          loading: false,
+          totalParticipants: participants,
+          numberOfTotalParticipants: participants.length,
         ),
       ),
     );
   }
 
   void _onNewBroadcastListener(BroadcastParticipant participant) {
-    Logger().w(participant);
-    final currentParticipants =
-        List<BroadcastParticipant?>.from(state.participants);
-    final isAlreadyIn = currentParticipants.contains(participant);
-    if (isAlreadyIn) return;
-    final updatedParticipants = [...currentParticipants, participant];
-    emit(
-      state.copyWith(
-        participants: updatedParticipants,
-        numberOfParticipants:
-            participant.numberOfListeners ?? currentParticipants.length,
-      ),
-    );
+    final list = List<BroadcastParticipant>.from(state.liveParticipants);
+    if (!list.contains(participant)) {
+      emit(
+        state.copyWith(
+          liveParticipants: [...list, participant],
+          numberOfLiveParticipants: participant.numberOfListeners!,
+        ),
+      );
+    }
   }
 
   void _onBroadcastListenerLeft(BroadcastParticipant participant) {
-    final participants = List<BroadcastParticipant?>.from(state.participants);
-    final updatedParticipants =
-        participants.where((p) => p?.id != participant.id).toList();
-    emit(state.copyWith(participants: updatedParticipants ));
-  }
-
-  void _onNumberOfLiveListeners(int value) {
-    emit(state.copyWith(numberOfParticipants: value));
+    final list = List<BroadcastParticipant>.from(state.liveParticipants);
+    final updatedList = list.where((p) => p.id != participant.id).toList();
+    emit(state.copyWith(liveParticipants: updatedList));
   }
 
   @override

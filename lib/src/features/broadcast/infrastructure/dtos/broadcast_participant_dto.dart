@@ -8,6 +8,7 @@ part 'broadcast_participant_dto.g.dart';
 @JsonSerializable(
   explicitToJson: true,
   createFactory: false,
+
   includeIfNull: false,
 )
 class BroadcastParticipantDto with _$BroadcastParticipantDto {
@@ -20,6 +21,7 @@ class BroadcastParticipantDto with _$BroadcastParticipantDto {
     String? imageUrl,
     int? numberOfListeners,
     bool? isHostDisconnected,
+    DateTime? joinedAt,
     DateTime? disconnectedAt,
   }) = _BroadcastParticipantDto;
 
@@ -40,6 +42,7 @@ extension ParticipantDtoToDomain on BroadcastParticipantDto {
         imageUrl: imageUrl,
         numberOfListeners: numberOfListeners,
         isHostDisconnected: isHostDisconnected,
+        joinedAt: joinedAt,
         disconnectedAt: disconnectedAt,
       );
 }
@@ -54,6 +57,7 @@ extension ParticipantToDto on BroadcastParticipant {
         imageUrl: imageUrl,
         numberOfListeners: numberOfListeners,
         isHostDisconnected: isHostDisconnected,
+        joinedAt: joinedAt,
         disconnectedAt: disconnectedAt,
       );
 }

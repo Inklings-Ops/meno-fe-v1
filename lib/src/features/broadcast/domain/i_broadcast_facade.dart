@@ -32,7 +32,11 @@ abstract class IBroadcastFacade {
     Uid<Broadcast> id,
   );
 
-  Future<Either<BroadcastException, List<BroadcastParticipant?>>> liveListeners(
+  Future<Either<BroadcastException, List<BroadcastParticipant>>> listeners(
+    Uid<Broadcast> id,
+  );
+
+  Future<Either<BroadcastException, List<BroadcastParticipant>>> liveListeners(
     Uid<Broadcast> id,
   );
 
@@ -41,7 +45,7 @@ abstract class IBroadcastFacade {
     /// Example : active or inactive
     String? status,
 
-    /// Adds an extra field to each broadcast response with the number of 
+    /// Adds an extra field to each broadcast response with the number of
     /// listeners that tuned in
     /// Example : totalListeners
     String? include,

@@ -3,7 +3,8 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
   const BroadcastInfoModal({
-    required this.broadcast, super.key,
+    required this.broadcast,
+    super.key,
     this.isStreaming = false,
   });
   final bool isStreaming;
@@ -72,9 +73,8 @@ class BroadcastInfoModal extends StatelessWidget {
                   title: 'Delete Broadcast',
                   titleColor: colors.error,
                   onTap: () {
-                    final id = broadcast.id;
                     context
-                      ..read<BroadcastBloc>().add(BroadcastDeleteRequested(id))
+                      ..read<BroadcastBloc>().deleteBroadcast(broadcast.id)
                       ..pop();
                   },
                 ),
