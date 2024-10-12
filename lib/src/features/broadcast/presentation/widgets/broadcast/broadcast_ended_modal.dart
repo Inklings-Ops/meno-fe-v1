@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
 class BroadcastEndedModal extends HookWidget {
@@ -13,6 +13,8 @@ class BroadcastEndedModal extends HookWidget {
       context.read<TimerCubit>().dispose();
       context.read<LiveKitService>().dispose();
       context.read<BroadcastBloc>().dispose();
+      context.read<LiveParticipantsBloc>().close();
+      context.read<ChatBloc>().close();
     }
 
     return PopScope(
@@ -60,23 +62,35 @@ class BroadcastEndedModal extends HookWidget {
   }
 }
 
-class TotalParticipantsWidget extends StatelessWidget {
+class TotalParticipantsWidget extends HookWidget {
   const TotalParticipantsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
+
+    useEffect(
+      () {
+        final broadcast = context.read<BroadcastBloc>().state.broadcast;
+        context.read<LiveParticipantsBloc>().fetchTotal(broadcast);
+        return null;
+      },
+      const [],
+    );
+
     return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
       builder: (context, state) => Column(
         children: [
-          LimitedBox(
-            maxHeight: Insets.xxl,
+          SizedBox(
+            height: Insets.xxl,
+            width: 92,
             child: Stack(
+              alignment: Alignment.center,
               children: state.totalParticipants.map(
                 (e) {
-                  final isFirstIndex = state.totalParticipants.indexOf(e) == 0;
                   return Positioned(
-                    left: isFirstIndex ? 0 : -12,
+                    left: state.totalParticipants.indexOf(e) * 30,
+                    right: 0,
                     child: MAvatar(radius: 16, url: e.imageUrl),
                   );
                 },
@@ -85,12 +99,20 @@ class TotalParticipantsWidget extends StatelessWidget {
           ),
           Spaces.verticalSmall,
           MText(
-            '${state.numberOfTotalParticipants} people tuned in!',
+            _getPluralText(state.numberOfTotalParticipants),
             style: textTheme.captionRegular,
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
+  }
+
+  String _getPluralText(int numberOfParticipants) {
+    if (numberOfParticipants == 1) {
+      return '$numberOfParticipants person tuned in!';
+    } else {
+      return '$numberOfParticipants people tuned in!';
+    }
   }
 }

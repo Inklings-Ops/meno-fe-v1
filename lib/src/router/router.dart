@@ -25,13 +25,30 @@ final router = GoRouter(
   redirect: _handleRedirect,
   routes: [
     StatefulShellRoute(
-      builder: (context, state, navigationShell) => BlocProvider(
-        create: (ctx) => BroadcastBloc(
-          broadcast: state.extra! as Broadcast,
-          facade: ctx.read<IBroadcastFacade>(),
-          liveKit: ctx.read<LiveKitService>(),
-          socket: di<SocketService>(),
-        ),
+      builder: (context, state, navigationShell) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (ctx) => BroadcastBloc(
+              broadcast: state.extra! as Broadcast,
+              facade: ctx.read<IBroadcastFacade>(),
+              liveKit: ctx.read<LiveKitService>(),
+              socket: ctx.read<SocketService>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => LiveParticipantsBloc(
+              socket: ctx.read<SocketService>(),
+              facade: ctx.read<IBroadcastFacade>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => ChatBloc(
+              profileFacade: ctx.read<IProfileFacade>(),
+              session: ctx.read<ISessionContext>(),
+              socket: ctx.read<SocketService>(),
+            ),
+          ),
+        ],
         child: navigationShell,
       ),
       navigatorContainerBuilder: (context, navigationShell, children) {
@@ -74,7 +91,13 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.createBroadcast,
-      builder: (context, state) => const CreateBroadcastPage(),
+      builder: (context, state) => BlocProvider(
+        create: (ctx) => BroadcastFormCubit(
+          facade: ctx.read<IBroadcastFacade>(),
+          mediaService: ctx.read<MediaService>(),
+        ),
+        child: const CreateBroadcastPage(),
+      ),
     ),
     GoRoute(
       path: Routes.createNewPassword,

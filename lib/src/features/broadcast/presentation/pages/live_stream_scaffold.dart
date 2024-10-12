@@ -31,17 +31,24 @@ class LiveStreamScaffold extends HookWidget {
                 context.go(Routes.home);
                 return;
               case LiveStatus.started:
-                context.read<MenoBloc>().add(const MenoStateChanged(MLive()));
                 context.read<TimerCubit>().start();
                 context.read<LiveParticipantsBloc>().initialize(broadcast);
                 context.read<ChatBloc>().initialize(broadcast);
+                context.read<MenoBloc>().add(const MenoStateChanged(MLive()));
                 return;
               case LiveStatus.ended:
                 context.read<TimerCubit>().stop();
                 context.read<LiveKitService>().disconnect();
                 context.showModal<void>(
-                  BlocProvider.value(
-                    value: context.read<BroadcastBloc>(),
+                  MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(
+                        value: context.read<BroadcastBloc>(),
+                      ),
+                      BlocProvider.value(
+                        value: context.read<LiveParticipantsBloc>(),
+                      ),
+                    ],
                     child: const BroadcastEndedModal(),
                   ),
                   enableDrag: false,

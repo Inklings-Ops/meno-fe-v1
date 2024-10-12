@@ -27,7 +27,6 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   final IBroadcastFacade _facade;
 
   late final StreamSubscription<SocketEvent> _socketEventSub;
-  late final StreamSubscription<SocketState> _socketStateSub;
 
   Future<void> initialize(Broadcast broadcast) async {
     emit(state.copyWith(broadcast: broadcast, loading: true));
@@ -78,9 +77,8 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   }
 
   @override
-  Future<void> close() {
-    _socketEventSub.cancel();
-    _socketStateSub.cancel();
+  Future<void> close() async {
+    await _socketEventSub.cancel();
     return super.close();
   }
 }

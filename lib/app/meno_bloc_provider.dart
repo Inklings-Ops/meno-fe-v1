@@ -62,18 +62,6 @@ class MenoBlocProvider extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (ctx) => BroadcastFormCubit(
-            facade: ctx.read<IBroadcastFacade>(),
-            mediaService: ctx.read<MediaService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => LiveParticipantsBloc(
-            socket: ctx.read<SocketService>(),
-            facade: ctx.read<IBroadcastFacade>(),
-          ),
-        ),
-        BlocProvider(
           create: (ctx) => LiveBroadcastsBloc(
             facade: ctx.read<IBroadcastFacade>(),
             socket: ctx.read<SocketService>(),
@@ -141,20 +129,6 @@ class MenoBlocProvider extends StatelessWidget {
             socket: di<SocketService>(),
           ),
         ),
-        BlocProvider(
-          create: (ctx) => ChatBloc(
-            profileFacade: ctx.read<IProfileFacade>(),
-            session: ctx.read<ISessionContext>(),
-            socket: di<SocketService>(),
-          ),
-        ),
-        // BlocProvider(
-        //   create: (ctx) => BroadcastBloc(
-        //     facade: ctx.read<IBroadcastFacade>(),
-        //     liveKit: ctx.read<LiveKitService>(),
-        //     socket: di<SocketService>(),
-        //   ),
-        // ),
       ],
       child: child,
     );
