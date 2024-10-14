@@ -70,6 +70,7 @@ extension SessionStateX on SessionState {
         Routes.profile,
         Routes.bibleTab,
         Routes.broadcastTab,
+        Routes.streamTab,
         Routes.chatTab,
         Routes.notesTab,
         Routes.webCreateBroadcast,
@@ -84,7 +85,6 @@ extension SessionStateX on SessionState {
         Routes.profile,
         Routes.recentlyLive,
         Routes.settings,
-        Routes.stream,
       ],
     );
   }

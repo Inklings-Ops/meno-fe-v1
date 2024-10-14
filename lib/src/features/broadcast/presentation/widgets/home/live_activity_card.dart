@@ -31,7 +31,7 @@ class ActivityCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: Insets.xxl),
       child: InkWell(
-        onTap: () => router.push(Routes.stream),
+        onTap: () => router.push(Routes.streamTab),
         child: Card(
           margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
           shape: SmoothRectangleBorder(

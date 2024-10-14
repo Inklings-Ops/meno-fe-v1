@@ -46,8 +46,8 @@ class _LiveCard extends HookWidget {
         } else {
           menoBloc.state.maybeWhen(
             orElse: () => context.showJoinLiveBroadcastModal(broadcast),
-            streaming: () => router.push(Routes.stream),
-            reconnecting: () => router.push(Routes.stream),
+            streaming: () => router.push(Routes.streamTab, extra: broadcast),
+            reconnecting: () => router.push(Routes.streamTab, extra: broadcast),
           );
         }
       },

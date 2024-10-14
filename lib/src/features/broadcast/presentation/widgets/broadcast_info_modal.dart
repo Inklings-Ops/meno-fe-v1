@@ -67,8 +67,10 @@ class BroadcastInfoModal extends StatelessWidget {
           if (!isStreaming)
             BlocBuilder<MenoBloc, MenoState>(
               builder: (context, state) => state.maybeWhen(
-                orElse: () => const SizedBox(),
-                live: () => MModalListTile(
+                live: () => const SizedBox(),
+                reconnecting: () => const SizedBox(),
+                streaming: () => const SizedBox(),
+                orElse: () => MModalListTile(
                   leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete Broadcast',
                   titleColor: colors.error,

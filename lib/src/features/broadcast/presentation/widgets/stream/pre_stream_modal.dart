@@ -20,8 +20,7 @@ class PreStreamModal extends StatelessWidget {
             context.read<TimerCubit>()
               ..set(broadcast.startTime)
               ..start();
-            // router.push(Routes.stream, extra: broadcast);
-            router.push(Routes.stream);
+            router.push(Routes.streamTab, extra: broadcast);
           },
         );
       },

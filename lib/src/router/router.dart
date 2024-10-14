@@ -19,6 +19,33 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
   return null;
 }
 
+StatefulShellBranch _branchRoute(String path, Widget child) {
+  return StatefulShellBranch(
+    routes: [GoRoute(path: path, builder: (context, state) => child)],
+  );
+}
+
+final broadcastingRoutes = [
+  _branchRoute(Routes.broadcastTab, const BroadcastTab()),
+  _branchRoute(Routes.chatTab, const BroadcastChatTab()),
+  _branchRoute(Routes.bibleTab, const LiveBibleTab()),
+  _branchRoute(Routes.notesTab, const NotesTab()),
+];
+
+final streamingRoutes = [
+  _branchRoute(Routes.streamTab, const StreamPage()),
+  _branchRoute(Routes.chatTab, const StreamChatTab()),
+  _branchRoute(Routes.bibleTab, const LiveBibleTab()),
+  _branchRoute(Routes.notesTab, const NotesTab()),
+];
+
+Widget navigatorContainerBuilder(
+  BuildContext context,
+  StatefulNavigationShell shell,
+  List<Widget> children,
+) =>
+    LiveStreamScaffold(shell: shell, children: children);
+
 final router = GoRouter(
   navigatorKey: rootNavigatorKey,
   refreshListenable: di<SessionCubit>(),
@@ -51,43 +78,38 @@ final router = GoRouter(
         ],
         child: navigationShell,
       ),
-      navigatorContainerBuilder: (context, navigationShell, children) {
-        return LiveStreamScaffold(shell: navigationShell, children: children);
-      },
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.broadcastTab,
-              builder: (context, state) => const BroadcastTab(),
+      navigatorContainerBuilder: navigatorContainerBuilder,
+      branches: broadcastingRoutes,
+    ),
+    StatefulShellRoute(
+      builder: (context, state, navigationShell) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (ctx) => StreamBloc(
+              // broadcast: state.extra! as Broadcast,
+              facade: ctx.read<IBroadcastFacade>(),
+              liveKit: ctx.read<LiveKitService>(),
+              socket: ctx.read<SocketService>(),
             ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.chatTab,
-              builder: (context, state) => const BroadcastChatTab(),
+          ),
+          BlocProvider(
+            create: (ctx) => LiveParticipantsBloc(
+              socket: ctx.read<SocketService>(),
+              facade: ctx.read<IBroadcastFacade>(),
             ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.bibleTab,
-              builder: (context, state) => const LiveBibleTab(),
+          ),
+          BlocProvider(
+            create: (ctx) => ChatBloc(
+              profileFacade: ctx.read<IProfileFacade>(),
+              session: ctx.read<ISessionContext>(),
+              socket: ctx.read<SocketService>(),
             ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.notesTab,
-              builder: (context, state) => const NotesTab(),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+        child: navigationShell,
+      ),
+      navigatorContainerBuilder: navigatorContainerBuilder,
+      branches: streamingRoutes,
     ),
     GoRoute(
       path: Routes.createBroadcast,
@@ -180,10 +202,6 @@ final router = GoRouter(
     GoRoute(
       path: Routes.resetPwdSuccess,
       builder: (context, state) => const ResetPasswordSuccessPage(),
-    ),
-    GoRoute(
-      path: Routes.stream,
-      builder: (context, state) => const StreamPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MLayoutPage(
