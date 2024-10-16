@@ -2,7 +2,6 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-
 class HomePage extends HookWidget {
   const HomePage({super.key});
 
@@ -33,18 +32,22 @@ class HomePage extends HookWidget {
       appBar: const HomeAppBar(),
       body: RefreshIndicator(
         onRefresh: onRefresh,
-        child: const SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
             children: [
-              Spaces.verticalXLarge,
-              LiveActivityCard(),
-              LiveForYou(),
-              NowLive(),
-              RecentlyLive(),
-              SizedBox(height: 20),
+              BlocBuilder<MenoBloc, MenoState>(
+                builder: (context, state) => state.maybeWhen(
+                  orElse: () => Spaces.verticalXLarge,
+                  streaming: LiveActivityCard.new,
+                ),
+              ),
+              const LiveForYou(),
+              const NowLive(),
+              const RecentlyLive(),
+              const SizedBox(height: 20),
             ],
           ),
         ),

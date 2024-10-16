@@ -45,7 +45,8 @@ class ParticipantInfoModal extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Spaces.verticalLarge,
-          ],
+          ] else
+            Spaces.verticalLarge,
           if (participant.role == Role.HOST ||
               participant.role == Role.host) ...[
             MPrimaryButton(
