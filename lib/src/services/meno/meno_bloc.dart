@@ -51,6 +51,8 @@ class MenoBloc extends Bloc<MenoEvent, MenoState> {
     }
   }
 
+  void update(MenoState state) => add(MenoStateChanged(state));
+
   @override
   Future<void> close() {
     _liveKitSub.cancel();

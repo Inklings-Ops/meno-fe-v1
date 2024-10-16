@@ -31,23 +31,11 @@ class SocketEvent with _$SocketEvent {
       SocketLeaveBroadcast;
 
   @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getNumberOfLiveBroadcasts() =
-      SocketGetNumberOfLiveBroadcasts;
-
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getNumberOfBroadcastListeners(String broadcastId) =
-      SocketGetNumberOfBroadcastListeners;
-
-  @Implements<BroadcastEmittedEvent>()
   const factory SocketEvent.endBroadcast(String broadcastId) =
       SocketEndBroadcast;
 
   // Subscribe to the following events
   //
-
-  @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.numberOfLiveBroadcasts(int value) =
-      SocketNumberOfLiveBroadcasts;
 
   @Implements<BroadcastSubscribedEvent>()
   const factory SocketEvent.newBroadcastListener(

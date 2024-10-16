@@ -37,17 +37,20 @@ class _LiveCard extends HookWidget {
 
     return MCard.live(
       title: broadcast.title.getOr(),
-      host: broadcast.creator?.fullName ?? broadcast.fullName ?? '',
+      host: broadcast.creator?.fullName ??
+          broadcast.fullName ??
+          broadcast.creatorFullName ??
+          '',
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
       onTap: () {
         if (broadcast.creatorId == myUid) {
-          router.push(Routes.broadcastTab, extra: broadcast);
+          router.push(Routes.broadcast, extra: broadcast);
         } else {
           menoBloc.state.maybeWhen(
             orElse: () => context.showJoinLiveBroadcastModal(broadcast),
-            streaming: () => router.push(Routes.streamTab, extra: broadcast),
-            reconnecting: () => router.push(Routes.streamTab, extra: broadcast),
+            streaming: () => router.push(Routes.stream),
+            reconnecting: () => router.push(Routes.stream),
           );
         }
       },

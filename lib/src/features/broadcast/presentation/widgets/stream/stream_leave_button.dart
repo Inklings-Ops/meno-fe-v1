@@ -8,18 +8,18 @@ class StreamLeaveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<StreamBloc>();
 
-    Future<void> leave(Uid<Broadcast> broadcastId) async {
-      return await context.showLeaveBroadcastDialog().then((value) {
+    Future<void> leave(Uid<Broadcast> broadcastId) {
+      return context.showLeaveBroadcastDialog().then((value) {
         if (value != true) return;
-        bloc.add(StreamEvent.leave(broadcastId));
+        bloc.leaveBroadcast(broadcastId);
       });
     }
 
     return BlocBuilder<StreamBloc, StreamState>(
-      builder: (context, state) => state.maybeWhen(
+      builder: (context, state) => state.status.maybeWhen(
         orElse: () => const _Button(),
         loading: () => const _Button(loading: true),
-        joinSuccess: (broadcast) => _Button(onLeave: () => leave(broadcast.id)),
+        joined: () => _Button(onLeave: () => leave(state.broadcast.id)),
       ),
     );
   }

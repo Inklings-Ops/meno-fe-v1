@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
-class LiveStreamScaffoldOld extends HookWidget {
-  const LiveStreamScaffoldOld({
+class LiveScaffold extends HookWidget {
+  const LiveScaffold({
     required this.tabs,
     required this.tabViews,
     super.key,

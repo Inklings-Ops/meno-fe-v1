@@ -32,8 +32,6 @@ import '../features/auth/domain/domain.dart' as _i968;
 import '../features/auth/infrastructure/auth_facade.dart' as _i790;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
     as _i882;
-import '../features/auth/infrastructure/datasources/auth_remote_datasource.dart'
-    as _i437;
 import '../features/bible/application/bible/bible_bloc.dart' as _i558;
 import '../features/bible/application/scripture_picker/scripture_picker_cubit.dart'
     as _i529;
@@ -45,8 +43,6 @@ import '../features/bible/infrastructure/bible_facade.dart' as _i442;
 import '../features/bible/infrastructure/datasources/datasources.dart' as _i150;
 import '../features/bible/infrastructure/datasources/local/bible_local_datasource.dart'
     as _i664;
-import '../features/bible/infrastructure/datasources/remote/bible_remote_datasource.dart'
-    as _i424;
 import '../features/broadcast/application/broadcast/broadcast_bloc.dart'
     as _i659;
 import '../features/broadcast/application/broadcast_form/broadcast_form_cubit.dart'
@@ -62,8 +58,6 @@ import '../features/broadcast/application/timer/timer_cubit.dart' as _i693;
 import '../features/broadcast/broadcast.dart' as _i625;
 import '../features/broadcast/domain/domain.dart' as _i923;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i1031;
-import '../features/broadcast/infrastructure/datasources/broadcast_remote_datasource.dart'
-    as _i943;
 import '../features/chat/application/chat_bloc.dart' as _i913;
 import '../features/discover/application/all/d_all_cubit.dart' as _i313;
 import '../features/discover/application/filter/filter_bloc.dart' as _i212;
@@ -85,8 +79,6 @@ import '../features/notes/application/notes/notes_bloc.dart' as _i404;
 import '../features/notes/domain/domain.dart' as _i365;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
     as _i933;
-import '../features/notes/infrastructure/datasources/note_remote_datasource.dart'
-    as _i309;
 import '../features/notes/infrastructure/note_facade.dart' as _i176;
 import '../features/notes/notes.dart' as _i1042;
 import '../features/notifications/domain/i_notification_facade.dart' as _i168;
@@ -158,22 +150,24 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
-    gh.lazySingleton<_i437.AuthRemoteDatasource>(
+    gh.lazySingleton<_i1009.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
-    gh.lazySingleton<_i943.BroadcastRemoteDatasource>(
+    gh.lazySingleton<_i1009.BroadcastRemoteDatasource>(
         () => registerModule.broadcastRemoteDatasource);
-    gh.lazySingleton<_i515.DiscoverRemoteDatasource>(
+    gh.lazySingleton<_i1009.DiscoverRemoteDatasource>(
         () => registerModule.discoverRemoteDatasource);
-    gh.lazySingleton<_i589.NotificationRemoteDatasource>(
+    gh.lazySingleton<_i1009.NotificationRemoteDatasource>(
         () => registerModule.notificationRemoteDatasource);
-    gh.lazySingleton<_i309.NoteRemoteDatasource>(
+    gh.lazySingleton<_i1009.NoteRemoteDatasource>(
         () => registerModule.noteRemoteDatasource);
-    gh.lazySingleton<_i424.BibleRemoteDatasource>(
+    gh.lazySingleton<_i1009.BibleRemoteDatasource>(
         () => registerModule.bibleRemoteDatasource);
+    gh.lazySingleton<_i1009.ChatRemoteDatasource>(
+        () => registerModule.chatRemoteDatasource);
     gh.lazySingleton<_i973.InternetConnectionChecker>(
         () => registerModule.internetChecker);
     gh.lazySingleton<_i183.ImagePicker>(() => registerModule.imagePicker);
-    gh.lazySingleton<_i212.ProfileRemoteDatasource>(
+    gh.lazySingleton<_i1009.ProfileRemoteDatasource>(
         () => registerModule.profileRemoteDatasource);
     gh.lazySingleton<_i892.FirebaseMessaging>(() => registerModule.fcm);
     gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
@@ -372,7 +366,7 @@ extension GetItInjectableX on _i174.GetIt {
           socket: gh<_i264.SocketService>(),
         ));
     gh.factory<_i241.StreamBloc>(() => _i241.StreamBloc(
-          facade: gh<_i625.IBroadcastFacade>(),
+          facade: gh<_i1009.IBroadcastFacade>(),
           liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),
         ));

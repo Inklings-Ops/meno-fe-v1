@@ -70,7 +70,7 @@ class _StreamArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<StreamBloc, StreamState, String?>(
-      selector: (state) => state.whenOrNull(joinSuccess: (b) => b.imageUrl),
+      selector: (state) => state.broadcast.imageUrl,
       builder: (context, url) => BroadcastArtworkWidget(imageUrl: url),
     );
   }
@@ -82,10 +82,7 @@ class _StreamTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<StreamBloc, StreamState, String>(
-      selector: (state) => state.maybeWhen(
-        orElse: () => 'Loading...',
-        joinSuccess: (broadcast) => broadcast.title.getOr(),
-      ),
+      selector: (state) => state.broadcast.title.getOr(),
       builder: (context, title) => BroadcastTitle(title: title),
     );
   }
@@ -96,15 +93,11 @@ class _CreatorName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<StreamBloc, StreamState, String>(
-      selector: (state) => state.maybeWhen(
-        orElse: () => 'Loading...',
-        joinSuccess: (b) => b.creator!.fullName,
-      ),
+      selector: (state) => state.broadcast.creator!.fullName,
       builder: (context, fullName) => MText(
         fullName,
-        style: textTheme.captionRegular,
+        style: MTextTheme.of(context)!.captionRegular,
       ),
     );
   }
@@ -116,9 +109,7 @@ class _BroadcastAboutTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<StreamBloc, StreamState, String?>(
-      selector: (state) => state.whenOrNull(
-        joinSuccess: (broadcast) => broadcast.description?.getOr(),
-      ),
+      selector: (state) => state.broadcast.description?.getOr(),
       builder: (context, desc) => BroadcastAboutTab(description: desc),
     );
   }

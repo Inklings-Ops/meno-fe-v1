@@ -64,6 +64,9 @@ extension BroadcastDtoToDomain on BroadcastDto {
       timeZone: timeZone,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
+      creatorBio: creatorBio,
+      creatorFullName: creatorFullName,
+      creatorImageUrl: creatorImageUrl,
     );
   }
 }
@@ -76,7 +79,10 @@ extension BroadcastToDto on Broadcast {
       description: description?.getOr(),
       creatorId: creatorId,
       creator: creator != null
-          ? BroadcastParticipantDto(id: creator!.id, fullName: creator!.fullName)
+          ? BroadcastParticipantDto(
+              id: creator!.id,
+              fullName: creator!.fullName,
+            )
           : null,
       fullName: fullName,
       broadcastToken: broadcastToken,
@@ -90,6 +96,9 @@ extension BroadcastToDto on Broadcast {
       timeZone: timeZone,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
+      creatorBio: creatorBio,
+      creatorFullName: creatorFullName,
+      creatorImageUrl: creatorImageUrl,
     );
   }
 }

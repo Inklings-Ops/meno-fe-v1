@@ -17,8 +17,8 @@ class Routes {
   static const String resetPwdOtp = '/resetPasswordOtp';
   static const String resetPwdSuccess = '/resetPasswordSuccess';
   static const String createNewPassword = '/createNewPassword';
-  static const String broadcastTab = '/broadcast-tab';
-  static const String streamTab = '/stream-tab';
+  static const String broadcast = '/broadcast';
+  static const String stream = '/stream';
   static const String webCreateBroadcast = '/web-createBroadcast';
   static const String createBroadcast = '/createBroadcast';
   static const String home = '/home';
@@ -28,9 +28,6 @@ class Routes {
   static const String recentlyLive = '/recentlyLive';
   static const String details = '/details';
   static const String notifications = '/notifications';
-  static const String notesTab = '/notes-tab';
-  static const String bibleTab = '/bible-tab';
-  static const String chatTab = '/chat-tab';
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';

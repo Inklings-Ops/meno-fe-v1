@@ -1,72 +1,65 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/broadcast/presentation/widgets/live_scaffold.old.dart';
-
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class StreamPage extends HookWidget {
   const StreamPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<MenoBloc, MenoState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              endedBroadcast: (_) {
-                router.go(Routes.home);
-                context.read<StreamBloc>().dispose();
-              },
-            );
+    useEffect(
+      () {
+        final broadcast = context.read<StreamBloc>().state.broadcast;
+        context.read<LiveParticipantsBloc>().initialize(broadcast);
+        context.read<ChatBloc>().initialize(broadcast);
+        context.read<TimerCubit>()
+          ..set(broadcast.startTime)
+          ..start();
+        context.read<MenoBloc>().update(const MStreaming());
+        return null;
+      },
+      const [],
+    );
+
+    return BlocListener<StreamBloc, StreamState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        state.status.whenOrNull(
+          failed: context.showBroadcastError,
+          ended: (data) {
+            context.read<MenoBloc>().update(const MOffAir());
+            router.go(Routes.home);
+            cleanUp(context);
           },
-        ),
-        BlocListener<StreamBloc, StreamState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              loading: () => null,
-              failure: (exception) => context.showBroadcastError(exception),
-              joinFailed: (e) => context.showErrorSnackBar(e.toString()),
-              leaveSuccess: () {
-                router.go(Routes.home);
-                context.read<StreamBloc>().dispose();
-              },
-            );
+          left: () {
+            context.read<MenoBloc>().update(const MOffAir());
+            router.go(Routes.home);
+            cleanUp(context);
           },
-        ),
-      ],
-      child: BlocBuilder<StreamBloc, StreamState>(
-        builder: (context, state) => state.maybeWhen(
-          orElse: () => const SizedBox(),
-          loading: () => const Scaffold(body: MLoadingIndicator.box()),
-          joinFailed: (e) => Scaffold(body: Center(child: MText(e.toString()))),
-          failure: (exception) => Scaffold(
-            body: Center(
-              child: MText(
-                exception.maybeWhen(
-                  message: (message) => message,
-                  orElse: () => 'An unknown error occurred',
-                  serverError: () => 'A server error occurred',
-                  timeOutError: () => 'Request timed out. Go back & try again',
-                ),
-              ),
-            ),
-          ),
-          joinSuccess: (_) => const LiveStreamScaffoldOld(
-            tabs: [
-              Tab(text: 'Broadcast'),
-              Tab(text: 'Chats'),
-              Tab(text: 'Live Bible'),
-              Tab(text: 'Notes'),
-            ],
-            tabViews: [
-              StreamTab(),
-              StreamChatTab(),
-              LiveBibleTab(),
-              NotesTab(),
-            ],
-          ),
-        ),
+        );
+      },
+      child: const LiveScaffold(
+        tabs: [
+          Tab(text: 'Broadcast'),
+          Tab(text: 'Chats'),
+          Tab(text: 'Live Bible'),
+          Tab(text: 'Notes'),
+        ],
+        tabViews: [
+          StreamTab(),
+          StreamChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
       ),
     );
+  }
+
+  void cleanUp(BuildContext context) {
+    context.read<StreamBloc>().dispose();
+    context.read<TimerCubit>().dispose();
+    context.read<LiveParticipantsBloc>().close();
+    context.read<LiveKitService>().dispose();
+    context.read<ChatBloc>().close();
   }
 }

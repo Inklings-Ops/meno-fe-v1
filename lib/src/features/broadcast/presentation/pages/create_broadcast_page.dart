@@ -16,10 +16,8 @@ class CreateBroadcastPage extends HookWidget {
               () => null,
               (either) => either.fold(
                 (exception) => context.showBroadcastError(exception),
-                (broadcast) => router.replace<void>(
-                  Routes.broadcastTab,
-                  extra: broadcast,
-                ),
+                (broadcast) =>
+                    router.replace<void>(Routes.broadcast, extra: broadcast),
               ),
             );
           },

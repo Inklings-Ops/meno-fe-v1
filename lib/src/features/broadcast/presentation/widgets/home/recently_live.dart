@@ -12,7 +12,7 @@ class RecentlyLive extends StatelessWidget {
         loading: () => const _BuildColumn(child: _SkeletonList()),
         success: (broadcasts) => _BuildColumn(
           child: BroadcastListWidget(
-            itemCount: 6,
+            itemCount: broadcasts.take(6).length,
             itemBuilder: (context, i) => _RecentlyLiveCard(
               broadcast: broadcasts[i]!,
             ),

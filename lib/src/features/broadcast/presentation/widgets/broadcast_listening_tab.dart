@@ -19,7 +19,10 @@ class BroadcastListeningTab extends StatelessWidget {
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal<void>(
-                  const BroadcastParticipantsModal(),
+                  BlocProvider.value(
+                    value: context.read<LiveParticipantsBloc>(),
+                    child: const BroadcastParticipantsModal(),
+                  ),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: size.height * 0.9),
                 ),

@@ -4,8 +4,6 @@ part of 'broadcast_bloc.dart';
 class BroadcastState with _$BroadcastState {
   const factory BroadcastState({
     required Broadcast broadcast,
-    @Default(false) bool muted,
-    @Default(LiveStatus.initial) LiveStatus status,
-    BroadcastException? failure,
+    @Default(LiveInitial()) LiveStatus status,
   }) = _BroadcastState;
 }

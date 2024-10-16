@@ -8,7 +8,6 @@ part 'broadcast_participant_dto.g.dart';
 @JsonSerializable(
   explicitToJson: true,
   createFactory: false,
-
   includeIfNull: false,
 )
 class BroadcastParticipantDto with _$BroadcastParticipantDto {

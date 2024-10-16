@@ -39,7 +39,7 @@ class ChatBubble extends StatelessWidget {
                     InkWell(
                       onTap: !isHost ? () => showUserInfo(context) : null,
                       child: MText(
-                        chat.fullName,
+                        chat.fullName ?? chat.sender?.fullName ?? '',
                         style: textTheme.microMedium,
                         color: colors.onBackgroundVariant,
                         maxLines: 1,
@@ -105,9 +105,11 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showUserInfo(BuildContext context) {
+  Future<dynamic> showUserInfo(BuildContext context) async {
+    // This is not proper. Will fix when data objects and dtos are organized
+    if (chat.senderId == null || chat.sender == null) return;
     return context.showModal(
-      _UserInfoModel(senderId: chat.senderId),
+      _UserInfoModel(senderId: chat.senderId ?? chat.sender?.id ?? ''),
       isScrollControlled: true,
     );
   }

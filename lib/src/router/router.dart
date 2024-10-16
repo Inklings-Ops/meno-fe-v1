@@ -19,104 +19,67 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
   return null;
 }
 
-StatefulShellBranch _branchRoute(String path, Widget child) {
-  return StatefulShellBranch(
-    routes: [GoRoute(path: path, builder: (context, state) => child)],
-  );
-}
-
-final broadcastingRoutes = [
-  _branchRoute(Routes.broadcastTab, const BroadcastTab()),
-  _branchRoute(Routes.chatTab, const BroadcastChatTab()),
-  _branchRoute(Routes.bibleTab, const LiveBibleTab()),
-  _branchRoute(Routes.notesTab, const NotesTab()),
-];
-
-final streamingRoutes = [
-  _branchRoute(Routes.streamTab, const StreamPage()),
-  _branchRoute(Routes.chatTab, const StreamChatTab()),
-  _branchRoute(Routes.bibleTab, const LiveBibleTab()),
-  _branchRoute(Routes.notesTab, const NotesTab()),
-];
-
-Widget navigatorContainerBuilder(
-  BuildContext context,
-  StatefulNavigationShell shell,
-  List<Widget> children,
-) =>
-    LiveStreamScaffold(shell: shell, children: children);
-
 final router = GoRouter(
   navigatorKey: rootNavigatorKey,
   refreshListenable: di<SessionCubit>(),
   redirect: _handleRedirect,
   routes: [
-    StatefulShellRoute(
-      builder: (context, state, navigationShell) => MultiBlocProvider(
+    GoRoute(
+      path: Routes.broadcast,
+      builder: (context, state) => MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (ctx) => BroadcastBloc(
+            create: (context) => BroadcastBloc(
               broadcast: state.extra! as Broadcast,
-              facade: ctx.read<IBroadcastFacade>(),
-              liveKit: ctx.read<LiveKitService>(),
-              socket: ctx.read<SocketService>(),
+              facade: context.read<IBroadcastFacade>(),
+              liveKit: context.read<LiveKitService>(),
+              socket: context.read<SocketService>(),
             ),
           ),
           BlocProvider(
-            create: (ctx) => LiveParticipantsBloc(
-              socket: ctx.read<SocketService>(),
-              facade: ctx.read<IBroadcastFacade>(),
+            create: (context) => LiveParticipantsBloc(
+              socket: context.read<SocketService>(),
+              facade: context.read<IBroadcastFacade>(),
             ),
           ),
           BlocProvider(
-            create: (ctx) => ChatBloc(
-              profileFacade: ctx.read<IProfileFacade>(),
-              session: ctx.read<ISessionContext>(),
-              socket: ctx.read<SocketService>(),
+            create: (context) => ChatBloc(
+              profileFacade: context.read<IProfileFacade>(),
+              session: context.read<ISessionContext>(),
+              socket: context.read<SocketService>(),
             ),
           ),
         ],
-        child: navigationShell,
+        child: const BroadcastPage(),
       ),
-      navigatorContainerBuilder: navigatorContainerBuilder,
-      branches: broadcastingRoutes,
     ),
-    StatefulShellRoute(
-      builder: (context, state, navigationShell) => MultiBlocProvider(
+    GoRoute(
+      path: Routes.stream,
+      builder: (context, state) => MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (ctx) => StreamBloc(
-              // broadcast: state.extra! as Broadcast,
-              facade: ctx.read<IBroadcastFacade>(),
-              liveKit: ctx.read<LiveKitService>(),
-              socket: ctx.read<SocketService>(),
+            create: (context) => LiveParticipantsBloc(
+              socket: context.read<SocketService>(),
+              facade: context.read<IBroadcastFacade>(),
             ),
           ),
           BlocProvider(
-            create: (ctx) => LiveParticipantsBloc(
-              socket: ctx.read<SocketService>(),
-              facade: ctx.read<IBroadcastFacade>(),
-            ),
-          ),
-          BlocProvider(
-            create: (ctx) => ChatBloc(
-              profileFacade: ctx.read<IProfileFacade>(),
-              session: ctx.read<ISessionContext>(),
-              socket: ctx.read<SocketService>(),
+            create: (context) => ChatBloc(
+              profileFacade: context.read<IProfileFacade>(),
+              session: context.read<ISessionContext>(),
+              socket: context.read<SocketService>(),
             ),
           ),
         ],
-        child: navigationShell,
+        child: const StreamPage(),
       ),
-      navigatorContainerBuilder: navigatorContainerBuilder,
-      branches: streamingRoutes,
     ),
     GoRoute(
       path: Routes.createBroadcast,
       builder: (context, state) => BlocProvider(
-        create: (ctx) => BroadcastFormCubit(
-          facade: ctx.read<IBroadcastFacade>(),
-          mediaService: ctx.read<MediaService>(),
+        create: (context) => BroadcastFormCubit(
+          facade: context.read<IBroadcastFacade>(),
+          mediaService: context.read<MediaService>(),
         ),
         child: const CreateBroadcastPage(),
       ),

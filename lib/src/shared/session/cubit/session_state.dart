@@ -68,11 +68,8 @@ extension SessionStateX on SessionState {
       authenticated: (user, token) => [
         Routes.home,
         Routes.profile,
-        Routes.bibleTab,
-        Routes.broadcastTab,
-        Routes.streamTab,
-        Routes.chatTab,
-        Routes.notesTab,
+        Routes.broadcast,
+        Routes.stream,
         Routes.webCreateBroadcast,
         Routes.createBroadcast,
         Routes.details,

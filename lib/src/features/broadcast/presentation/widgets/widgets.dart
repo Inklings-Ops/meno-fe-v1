@@ -12,6 +12,7 @@ export 'broadcast_title.dart';
 export 'create_broadcast/create_broadcast.dart';
 export 'home/home.dart';
 export 'live_bible_tab.dart';
+export 'live_scaffold.dart';
 export 'notes_tab.dart';
 export 'participant_info_modal.dart';
 export 'participant_item.dart';

@@ -43,9 +43,9 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
     );
   }
 
-  Future<void> fetchTotal(Broadcast broadcast) async {
+  Future<void> fetchTotal() async {
     emit(state.copyWith(loading: true));
-    final response = await _facade.listeners(broadcast.id);
+    final response = await _facade.listeners(state.broadcast.id);
     emit(
       response.fold(
         (failure) => state.copyWith(loading: false),

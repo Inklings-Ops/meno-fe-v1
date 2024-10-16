@@ -20,9 +20,7 @@ class BroadcastBloc extends Cubit<BroadcastState> {
         _socket = socket,
         super(BroadcastState(broadcast: broadcast)) {
     _socketStateSub = _socket.stateStream.listen((socketState) {
-      socketState.whenOrNull(
-        broadcastStarted: (_, error) => _updateFailure(error),
-      );
+      socketState.whenOrNull(broadcastStarted: _onSocketData);
     });
   }
   final IBroadcastFacade _facade;
@@ -33,91 +31,58 @@ class BroadcastBloc extends Cubit<BroadcastState> {
 
   Future<void> startBroadcast() async {
     final broadcastId = state.broadcast.id;
-    emit(state.copyWith(status: LiveStatus.loading, failure: null));
-    final fOrS = await _facade.startBroadcast(broadcastId);
-    await fOrS.fold(
-      (failure) async => emit(
-        state.copyWith(
-          failure: failure,
-          status: LiveStatus.failure,
-        ),
-      ),
+    _emitStatus(const LiveLoadInProgress());
+    final failureOrBroadcast = await _facade.startBroadcast(broadcastId);
+    await failureOrBroadcast.fold(
+      (exception) async => _emitStatus(BroadcastFailed(exception)),
       (broadcast) async {
-        final startEvent = SocketEvent.startedBroadcast(broadcastId.getOr());
-        _socket.emit(startEvent);
-        if (state.failure == null) {
+        _socket.emit(SocketStartedBroadcast(broadcastId.getOr()));
+        if (state is! BroadcastFailed) {
           try {
             final token = broadcast.broadcastToken!;
             await _liveKit.broadcast(token).whenComplete(() async {
               emit(
                 state.copyWith(
-                  status: LiveStatus.started,
                   broadcast: broadcast,
+                  status: const BroadcastStarted(),
                 ),
               );
             });
           } catch (e) {
-            emit(
-              state.copyWith(
-                status: LiveStatus.failure,
-                failure: BroadcastException.message(e.toString()),
-              ),
-            );
+            final exception = BroadcastException.message(e.toString());
+            _emitStatus(BroadcastFailed(exception));
           }
-        } else {
-          emit(
-            state.copyWith(
-              status: LiveStatus.failure,
-              failure: state.failure,
-            ),
-          );
         }
       },
     );
   }
 
-  Future<void> mute({bool value = false}) async {
-    if (state.status == LiveStatus.started) {
-      unawaited(_liveKit.mute(enabled: value));
-      emit(state.copyWith(muted: value));
+  Future<void> mute({bool enabled = false}) async {
+    if (state.status is BroadcastStarted) {
+      unawaited(_liveKit.mute(enabled: enabled));
+      _emitStatus(BroadcastStarted(muted: enabled));
     }
   }
 
-  Future<void> endBroadcast() async {
-    if (state.status == LiveStatus.started) {
-      emit(state.copyWith(status: LiveStatus.loading, failure: null));
-      _socket.emit(SocketEvent.endBroadcast(state.broadcast.id.getOr()));
+  Future<void> endBroadcast(Uid<Broadcast> broadcastId) async {
+    if (state.status is BroadcastStarted) {
+      _emitStatus(const LiveLoadInProgress());
+      _socket.emit(SocketEndBroadcast(broadcastId.getOr()));
       await _liveKit.dispose();
-      emit(state.copyWith(status: LiveStatus.ended));
+      _emitStatus(BroadcastEnded(EndedBroadcastData.empty()));
     }
   }
 
-  Future<void> deleteBroadcast(Uid<Broadcast> id) async {
-    if (state.status != LiveStatus.started) {
-      emit(state.copyWith(status: LiveStatus.loading, failure: null));
-      final fOrS = await _facade.deleteBroadcast(id);
-      emit(
-        fOrS.fold(
-          (failure) => state.copyWith(
-            status: LiveStatus.failure,
-            failure: failure,
-          ),
-          (success) => state.copyWith(
-            status: LiveStatus.deleted,
-          ),
-        ),
-      );
-    }
-  }
+  Future<void> deleteBroadcast(Uid<Broadcast> id) async {}
 
   Future<void> dispose() async => _liveKit.dispose();
 
-  void _updateFailure(String? error) {
-    if (error != null) {
-      final failure = BroadcastException.message(error);
-      emit(state.copyWith(failure: failure, status: LiveStatus.failure));
-    }
+  void _onSocketData(dynamic data, String? error) {
+    if (error == null) return;
+    return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
   }
+
+  void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));
 
   @override
   Future<void> close() async {

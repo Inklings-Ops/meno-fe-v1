@@ -7,16 +7,11 @@ class LiveActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StreamBloc, StreamState>(
-      builder: (context, state) => state.maybeWhen(
+    return BlocBuilder<MenoBloc, MenoState>(
+      builder: (context, menoState) => menoState.maybeWhen(
         orElse: () => const SizedBox(),
-        joinSuccess: (broadcast) => BlocBuilder<MenoBloc, MenoState>(
-          builder: (context, menoState) => menoState.maybeWhen(
-            orElse: () => const SizedBox(),
-            streaming: () => const ActivityCard(badgeTitle: 'Now Streaming'),
-            reconnecting: () => const ActivityCard(badgeTitle: 'Reconnecting'),
-          ),
-        ),
+        streaming: () => const ActivityCard(badgeTitle: 'Now Streaming'),
+        reconnecting: () => const ActivityCard(badgeTitle: 'Reconnecting'),
       ),
     );
   }
@@ -31,12 +26,10 @@ class ActivityCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: Insets.xxl),
       child: InkWell(
-        onTap: () => router.push(Routes.streamTab),
+        onTap: () => router.push(Routes.stream),
         child: Card(
           margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
-          shape: SmoothRectangleBorder(
-            borderRadius: Corners.squircleLg,
-          ),
+          shape: SmoothRectangleBorder(borderRadius: Corners.squircleLg),
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Row(
@@ -78,17 +71,10 @@ class _Badge extends StatelessWidget {
         CircleAvatar(
           radius: 5,
           backgroundColor: colors.secondaryContainer,
-          child: CircleAvatar(
-            radius: 3,
-            backgroundColor: colors.secondary,
-          ),
+          child: CircleAvatar(radius: 3, backgroundColor: colors.secondary),
         ),
         Spaces.horizontalMicro,
-        MText(
-          badgeTitle,
-          style: textTheme.microMedium,
-          color: MColorScheme.of(context)?.error,
-        ),
+        MText(badgeTitle, style: textTheme.microMedium, color: colors.error),
       ],
     );
   }
@@ -99,33 +85,25 @@ class _LeaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<StreamBloc>();
-    return BlocBuilder<StreamBloc, StreamState>(
-      builder: (context, state) {
-        void onLeave() {
-          context.showLeaveBroadcastDialog().then((value) {
-            if (value == true && state is StreamJoinSuccess) {
-              bloc
-                ..add(StreamEvent.leave(state.broadcast.id))
-                ..dispose();
-              router.go(Routes.home);
-            }
-          });
-        }
-
-        return LimitedBox(
-          maxHeight: 32,
-          maxWidth: 79,
-          child: MDangerButton(
-            label: 'Leave',
-            onPressed: onLeave,
-            style: FilledButton.styleFrom(
-              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
-            ),
-          ),
-        );
-      },
+    return LimitedBox(
+      maxHeight: 32,
+      maxWidth: 79,
+      child: MDangerButton(
+        label: 'Leave',
+        onPressed: () => onLeave(context),
+        style: FilledButton.styleFrom(
+          shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
+        ),
+      ),
     );
+  }
+
+  void onLeave(BuildContext context) {
+    final bloc = context.read<StreamBloc>();
+    context.showLeaveBroadcastDialog().then((value) {
+      if (value == null || value == false) return null;
+      return bloc.leaveBroadcast(bloc.state.broadcast.id);
+    });
   }
 }
 
@@ -135,23 +113,18 @@ class _StreamTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<StreamBloc, StreamState, String?>(
-      selector: (state) => state.whenOrNull(
-        joinSuccess: (b) => b.title.getOr(),
+    return BlocSelector<StreamBloc, StreamState, String>(
+      selector: (state) => state.broadcast.title.getOr(),
+      builder: (context, title) => Container(
+        height: 24,
+        alignment: Alignment.centerLeft,
+        child: MText(
+          title,
+          style: textTheme.captionMedium,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      builder: (context, title) {
-        if (title == null) return const SizedBox();
-        return Container(
-          height: 24,
-          alignment: Alignment.centerLeft,
-          child: MText(
-            title,
-            style: textTheme.captionMedium,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-      },
     );
   }
 }
@@ -163,9 +136,7 @@ class _StreamCreatorName extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     return BlocSelector<StreamBloc, StreamState, String?>(
-      selector: (state) => state.whenOrNull(
-        joinSuccess: (b) => b.creator?.fullName,
-      ),
+      selector: (state) => state.broadcast.creator?.fullName,
       builder: (context, fullName) {
         if (fullName == null) return const SizedBox();
         return MText(

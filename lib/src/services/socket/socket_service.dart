@@ -5,10 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
-import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/chat/infrastructure/dtos/chat_dto.dart';
-import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_dto.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
@@ -47,10 +44,6 @@ class SocketService extends Object with Disposable {
   void setupListeners() {
     socket
       ..on('connect', onConnect)
-      ..on('numberOfLiveBroadcasts', (data) {
-        final value = jsonDecode(jsonEncode(data)) as int;
-        _event.add(SocketEvent.numberOfLiveBroadcasts(value));
-      })
       ..on('newBroadcastListener', (data) {
         final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
         final dto = BroadcastParticipantDto.fromJson(decoded);
@@ -133,20 +126,6 @@ class SocketService extends Object with Disposable {
         'endBroadcast',
         {'broadcastId': broadcastId},
       ),
-      getNumberOfLiveBroadcasts: () => emitWithAck(
-        'getNumberOfLiveBroadcasts',
-        {},
-      ),
-      getNumberOfBroadcastListeners: (broadcastId) => emitWithAck(
-        'getNumberOfBroadcastListeners',
-        {'broadcastId': broadcastId},
-        ack: (dynamic res) {
-          final response = res as Map<String, dynamic>;
-          final error = response['error'] as dynamic;
-          final value = jsonDecode(jsonEncode(response['data'])) as int;
-          _state.add(SocketNumberOfBroadcastListenersReceived(value, error));
-        },
-      ),
       sendChatMessage: (
         senderId,
         broadcastId,
@@ -166,16 +145,13 @@ class SocketService extends Object with Disposable {
         'getChatMessages',
         {'broadcastId': broadcastId},
         ack: (dynamic res) {
-          final response = res as Map<String, dynamic>;
-          final data = response['data'] as Map<String, dynamic>;
-          final list = data['chatMessages'] as List<Map<String, dynamic>>?;
-          if (list == null || list.isEmpty) {
-            _state.add(const SocketState.getChatMessages([], null));
-          } else {
-            final dtos = list.map(ChatDto.fromJson).toList();
-            final chats = dtos.map((c) => c.toDomain).toList();
-            _state.add(SocketState.getChatMessages(chats, null));
-          }
+          final response = SocketResponse<ChatListDto>.fromJson(
+            res as Map<String, dynamic>,
+            (json) => ChatListDto.fromJson(json as Map<String, dynamic>),
+          );
+          final dtos = response.data!.chatMessages;
+          final chatMessages = dtos.map((chat) => chat?.toDomain).toList();
+          _state.add(SocketState.getChatMessages(chatMessages, response.error));
         },
       ),
     );

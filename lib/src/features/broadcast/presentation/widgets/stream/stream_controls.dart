@@ -25,7 +25,7 @@ class StreamOptionsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
+    final bloc = context.watch<StreamBloc>();
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
       color: colors.onBackground,
@@ -35,15 +35,7 @@ class StreamOptionsButton extends StatelessWidget {
         shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
       onPressed: () => context.showModal<void>(
-        BlocBuilder<StreamBloc, StreamState>(
-          builder: (context, state) => state.maybeWhen(
-            orElse: () => const SizedBox(),
-            joinSuccess: (broadcast) => BroadcastInfoModal(
-              broadcast: broadcast,
-              isStreaming: true,
-            ),
-          ),
-        ),
+        BroadcastInfoModal(broadcast: bloc.state.broadcast, isStreaming: true),
         isScrollControlled: true,
       ),
     );

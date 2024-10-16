@@ -1,6 +1,6 @@
 
 export 'jwt_service.dart';
-export 'live_kit/live_kit.dart';
+export 'live_kit/live_kit.dart' hide StreamState;
 export 'media_service.dart';
 export 'meno/meno.dart';
 export 'network_service.dart';

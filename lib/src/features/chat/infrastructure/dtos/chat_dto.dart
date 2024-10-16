@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 part 'chat_dto.freezed.dart';
 part 'chat_dto.g.dart';
@@ -12,8 +11,12 @@ class ChatDto with _$ChatDto {
     required String id,
     required String content,
     required DateTime createdAt,
-    required String senderId, required String broadcastId, required String fullName, DateTime? updatedAt,
+    required String broadcastId,
+    ChatSenderDto? sender,
+    String? senderId,
+    String? fullName,
     String? imageUrl,
+    DateTime? updatedAt,
   }) = _ChatDto;
 
   factory ChatDto.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +32,23 @@ extension ChatDtoToDomain on ChatDto {
       id: id,
       content: IChatContent(content),
       createdAt: createdAt,
+      sender: sender?.toDomain,
+      senderId: senderId,
+      broadcastId: broadcastId,
+      updatedAt: updatedAt,
+      imageUrl: imageUrl,
+      fullName: fullName,
+    );
+  }
+}
+
+extension ChatToDto on Chat {
+  ChatDto get toDto {
+    return ChatDto(
+      id: id,
+      content: content.getOr(),
+      createdAt: createdAt,
+      sender: sender?.toDto,
       senderId: senderId,
       broadcastId: broadcastId,
       updatedAt: updatedAt,

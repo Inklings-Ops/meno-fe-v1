@@ -29,16 +29,16 @@ class _MicrophoneButton extends HookWidget {
   Widget build(BuildContext context) {
     final isMuted = useState(false);
     return BlocBuilder<BroadcastBloc, BroadcastState>(
-      builder: (context, state) => switch (state.status) {
-        LiveStatus.started => MMicrophoneButton(
-            isMuted: isMuted.value,
-            onTap: () {
-              isMuted.value = !isMuted.value;
-              context.read<BroadcastBloc>().mute(value: !isMuted.value);
-            },
-          ),
-        _ => const MMicrophoneButton(isDisabled: true),
-      },
+      builder: (context, state) => state.status.maybeWhen(
+        orElse: () => const MMicrophoneButton(isDisabled: true),
+        started: (muted) => MMicrophoneButton(
+          isMuted: isMuted.value,
+          onTap: () {
+            isMuted.value = !isMuted.value;
+            context.read<BroadcastBloc>().mute(enabled: !isMuted.value);
+          },
+        ),
+      ),
     );
   }
 }
@@ -52,25 +52,25 @@ class _StartStopButton extends HookWidget {
     final bloc = context.read<BroadcastBloc>();
 
     return BlocBuilder<BroadcastBloc, BroadcastState>(
-      builder: (context, state) => switch (state.status) {
-        LiveStatus.loading => const _Button(label: 'Start', loading: true),
-        LiveStatus.failure || LiveStatus.initial => _Button(
-            label: 'Start broadcasting',
-            backgroundColor: colors.primary,
-            foregroundColor: colors.onPrimary,
-            onTap: bloc.startBroadcast,
-          ),
-        LiveStatus.started => _Button(
-            label: 'Stop broadcasting',
-            backgroundColor: colors.errorContainer?.withOpacity(0.3),
-            foregroundColor: colors.error,
-            onTap: () => context.showEndBroadcastDialog().then((value) {
-              if (value != true) return null;
-              return bloc.endBroadcast();
-            }),
-          ),
-        _ => const _Button(label: 'Stop Broadcast'),
-      },
+      builder: (context, state) => state.status.maybeWhen(
+        loading: () => const _Button(label: 'Start', loading: true),
+        ended: (_) => const _Button(label: 'Stop broadcasting'),
+        orElse: () => _Button(
+          label: 'Start broadcasting',
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          onTap: bloc.startBroadcast,
+        ),
+        started: (muted) => _Button(
+          label: 'Stop broadcasting',
+          backgroundColor: colors.errorContainer?.withOpacity(0.3),
+          foregroundColor: colors.error,
+          onTap: () => context.showEndBroadcastDialog().then((value) {
+            if (value != true) return null;
+            return bloc.endBroadcast(state.broadcast.id);
+          }),
+        ),
+      ),
     );
   }
 }

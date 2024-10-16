@@ -2,6 +2,8 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
+
+
 class BroadcastEndedModal extends HookWidget {
   const BroadcastEndedModal({super.key});
 
@@ -69,15 +71,6 @@ class TotalParticipantsWidget extends HookWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
 
-    useEffect(
-      () {
-        final broadcast = context.read<BroadcastBloc>().state.broadcast;
-        context.read<LiveParticipantsBloc>().fetchTotal(broadcast);
-        return null;
-      },
-      const [],
-    );
-
     return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
       builder: (context, state) => Column(
         children: [
@@ -86,15 +79,15 @@ class TotalParticipantsWidget extends HookWidget {
             width: 92,
             child: Stack(
               alignment: Alignment.center,
-              children: state.totalParticipants.map(
-                (e) {
-                  return Positioned(
-                    left: state.totalParticipants.indexOf(e) * 30,
-                    right: 0,
-                    child: MAvatar(radius: 16, url: e.imageUrl),
-                  );
-                },
-              ).toList(),
+              children: state.totalParticipants
+                  .map(
+                    (e) => Positioned(
+                      left: state.totalParticipants.indexOf(e) * 30,
+                      right: 0,
+                      child: MAvatar(radius: 16, url: e.imageUrl),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           Spaces.verticalSmall,

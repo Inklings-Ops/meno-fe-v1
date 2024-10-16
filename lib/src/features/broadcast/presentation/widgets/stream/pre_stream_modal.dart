@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
 class PreStreamModal extends StatelessWidget {
   const PreStreamModal({required this.broadcast, super.key});
@@ -10,17 +9,11 @@ class PreStreamModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<StreamBloc, StreamState>(
       listener: (context, state) {
-        state.whenOrNull(
-          failure: (exception) => context.showBroadcastError(exception),
-          joinFailed: (error) => context.showErrorSnackBar(error.toString()),
-          joinSuccess: (broadcast) {
+        state.status.whenOrNull(
+          failed: context.showBroadcastError,
+          joined: () {
             context.pop();
-            context.read<LiveParticipantsBloc>().initialize(broadcast);
-            context.read<ChatBloc>().initialize(broadcast);
-            context.read<TimerCubit>()
-              ..set(broadcast.startTime)
-              ..start();
-            router.push(Routes.streamTab, extra: broadcast);
+            router.push(Routes.stream);
           },
         );
       },
@@ -91,10 +84,12 @@ class _TopSection extends StatelessWidget {
                 const SizedBox(height: 6),
                 const MBadge.live(),
                 const SizedBox(height: 6),
+                // Fix this
                 MText(
-                  broadcast.creator == null
-                      ? broadcast.fullName!
-                      : broadcast.creator!.fullName,
+                  broadcast.fullName ??
+                      broadcast.creator?.fullName ??
+                      broadcast.creatorFullName ??
+                      '',
                   style: textTheme.captionRegular,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
