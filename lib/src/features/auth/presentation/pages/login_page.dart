@@ -37,7 +37,7 @@ class LoginPage extends HookWidget {
               context.read<SessionCubit>().init();
               context.read<AccountBloc>().init();
               context.read<RecentlyLiveCubit>().fetch();
-              context.read<MyProfileBloc>().init(success.user.id.getOr());
+              context.read<MyProfileCubit>().fetch();
             },
           ),
         );

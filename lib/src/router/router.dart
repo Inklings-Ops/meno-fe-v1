@@ -166,6 +166,13 @@ final router = GoRouter(
       path: Routes.resetPwdSuccess,
       builder: (context, state) => const ResetPasswordSuccessPage(),
     ),
+    GoRoute(
+      path: Routes.othersProfile,
+      builder: (context, state) {
+        context.read<OthersProfileCubit>().fetch(state.extra! as String);
+        return const OthersProfilePage();
+      },
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MLayoutPage(
         shell: navigationShell,
@@ -199,10 +206,8 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.profile,
-              builder: (context, state) => ProfilePage(
-                id: state.extra as String?,
-              ),
+              path: Routes.myProfile,
+              builder: (context, state) => const MyProfilePage(),
             ),
           ],
         ),

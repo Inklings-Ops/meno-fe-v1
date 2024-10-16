@@ -61,14 +61,14 @@ class ProfileFacade implements IProfileFacade {
   }
 
   @override
-  Future<Either<AuthException, Profile?>> getProfile(UserID id) async {
+  Future<Either<AuthException, Profile>> getProfile(UserID id) async {
     if (!(await _network.isConnected)) {
       return left(const AuthException.networkError());
     }
 
     try {
       final response = await _remote.getProfile(id);
-      return right(response.data?.toDomain);
+      return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);

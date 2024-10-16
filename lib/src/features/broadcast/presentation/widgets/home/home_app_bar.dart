@@ -11,7 +11,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         authenticated: (user, token) => MAppBar.home(
           title: user.fullName.getOr(),
           avatarImageUrl: user.imageUrl,
-          onAvatarTap: () => router.push(Routes.profile),
+          onAvatarTap: () => router.push(Routes.myProfile),
           onNotificationBellTap: () => router.push(Routes.notifications),
         ),
       ),

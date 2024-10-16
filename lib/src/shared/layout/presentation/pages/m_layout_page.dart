@@ -52,7 +52,7 @@ class MLayoutPage extends HookWidget {
           listener: (context, state) {
             state.whenOrNull(
               authenticated: (user, token) {
-                context.read<MyProfileBloc>().init();
+                context.read<MyProfileCubit>().fetch();
                 context.read<LiveBroadcastsBloc>().init();
                 context.read<RecentlyLiveCubit>().fetch();
               },

@@ -67,7 +67,6 @@ extension SessionStateX on SessionState {
       ],
       authenticated: (user, token) => [
         Routes.home,
-        Routes.profile,
         Routes.broadcast,
         Routes.stream,
         Routes.webCreateBroadcast,
@@ -79,7 +78,8 @@ extension SessionStateX on SessionState {
         Routes.noteEditor,
         Routes.notes,
         Routes.notifications,
-        Routes.profile,
+        Routes.myProfile,
+        Routes.othersProfile,
         Routes.recentlyLive,
         Routes.settings,
       ],

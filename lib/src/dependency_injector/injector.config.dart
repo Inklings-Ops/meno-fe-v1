@@ -88,7 +88,10 @@ import '../features/notifications/infrastructure/mapper/notifications_mapper.dar
     as _i236;
 import '../features/notifications/infrastructure/notification_facade.dart'
     as _i734;
-import '../features/profile/application/profile/my_profile_bloc.dart' as _i584;
+import '../features/profile/application/my_profile/my_profile_cubit.dart'
+    as _i1025;
+import '../features/profile/application/others_profile/others_profile_cubit.dart'
+    as _i948;
 import '../features/profile/application/profile_form/profile_form_cubit.dart'
     as _i547;
 import '../features/profile/domain/domain.dart' as _i74;
@@ -313,7 +316,7 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     await gh.factoryAsync<_i717.SocketService>(
       () {
-        final i = _i717.SocketService(facade: gh<_i968.IAuthFacade>());
+        final i = _i717.SocketService(facade: gh<_i1009.IAuthFacade>());
         return i.initialize().then((_) => i);
       },
       preResolve: true,
@@ -324,8 +327,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i26.RegisterCubit(facade: gh<_i236.IAuthFacade>()));
     gh.lazySingleton<_i841.ResetPasswordCubit>(
         () => _i841.ResetPasswordCubit(facade: gh<_i968.IAuthFacade>()));
-    gh.lazySingleton<_i584.MyProfileBloc>(
-        () => _i584.MyProfileBloc(facade: gh<_i443.IProfileFacade>()));
+    gh.factory<_i1025.MyProfileCubit>(
+        () => _i1025.MyProfileCubit(facade: gh<_i1009.IProfileFacade>()));
+    gh.factory<_i948.OthersProfileCubit>(
+        () => _i948.OthersProfileCubit(facade: gh<_i1009.IProfileFacade>()));
     gh.lazySingleton<_i913.ChatBloc>(() => _i913.ChatBloc(
           session: gh<_i44.ISessionContext>(),
           socket: gh<_i264.SocketService>(),

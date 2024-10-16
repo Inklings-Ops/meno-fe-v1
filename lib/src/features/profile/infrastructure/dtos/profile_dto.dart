@@ -47,3 +47,21 @@ extension ProfileDtoToDomain on ProfileDto {
     );
   }
 }
+
+extension ProfileToDto on Profile {
+  ProfileDto get toDto {
+    return ProfileDto(
+      id: id,
+      fullName: fullName.getOr(),
+      imageUrl: imageUrl,
+      bio: bio?.getOr(),
+      isSubscribedToUser: isSubscribedToUser,
+      stats: UserStatsDto(
+        broadcasts: stats?.broadcasts,
+        subscribers: stats?.subscribers,
+        subscriptions: stats?.subscriptions,
+      ),
+      verified: verified,
+    );
+  }
+}

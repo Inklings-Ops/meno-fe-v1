@@ -26,7 +26,7 @@ class _MenoAppState extends State<MenoApp> {
         darkTheme: MTheme.dark,
         builder: (context, child) {
           child = toastBuilder(context, child);
-        
+
           return ResponsiveBreakpoints.builder(
             breakpoints: const [
               Breakpoint(start: 0, end: 450, name: PHONE),
@@ -39,7 +39,7 @@ class _MenoAppState extends State<MenoApp> {
               listener: (context, state) => state.whenOrNull(
                 authenticated: (user, token) {
                   context.read<AccountBloc>().init();
-                  context.read<MyProfileBloc>().init();
+                  context.read<MyProfileCubit>().fetch();
                   context.read<NotesBloc>().init();
                   context.read<LiveBroadcastsBloc>().init();
                   context.read<RecentlyLiveCubit>().fetch();

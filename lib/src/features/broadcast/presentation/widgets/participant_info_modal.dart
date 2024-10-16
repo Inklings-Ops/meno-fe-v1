@@ -1,4 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class ParticipantInfoModal extends StatelessWidget {
@@ -8,6 +9,12 @@ class ParticipantInfoModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
+    final currentUser = context.select(
+      (SessionCubit bloc) => bloc.state.maybeWhen(
+        orElse: User.empty,
+        authenticated: (user, token) => user,
+      ),
+    );
 
     return MModal(
       builder: (context) => Column(
@@ -47,11 +54,13 @@ class ParticipantInfoModal extends StatelessWidget {
             Spaces.verticalLarge,
           ] else
             Spaces.verticalLarge,
-          if (participant.role == Role.HOST ||
-              participant.role == Role.host) ...[
+          if (participant.id == currentUser.id.getOr()) ...[
             MPrimaryButton(
               label: 'View Profile',
-              onPressed: () => router.push(Routes.profile),
+              onPressed: () => router.push(
+                Routes.othersProfile,
+                extra: participant.id,
+              ),
             ),
           ] else ...[
             MPrimaryButton.icon(
@@ -62,8 +71,7 @@ class ParticipantInfoModal extends StatelessWidget {
             Spaces.verticalSmall,
             MTextButton(
               label: 'View account',
-              onPressed: () =>
-                  router.push(Routes.profile, extra: participant.id),
+              onPressed: () => router.push(Routes.myProfile),
             ),
           ],
           // MTextButton(

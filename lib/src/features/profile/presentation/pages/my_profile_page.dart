@@ -7,14 +7,14 @@ class MyProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<MyProfileBloc>();
+    final bloc = context.read<MyProfileCubit>();
     final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
 
     Future<void> onRefresh() async {
-      final  myProfile = bloc.stream.first;
-      bloc.add(const MyProfileEvent.fetch());
+      final myProfile = bloc.stream.first;
+      await bloc.fetch();
 
-      final  recentlyLive = recentlyLiveCubit.stream.first;
+      final recentlyLive = recentlyLiveCubit.stream.first;
       await recentlyLiveCubit.fetch();
 
       await Future.wait([myProfile, recentlyLive]);
@@ -25,12 +25,20 @@ class MyProfilePage extends StatelessWidget {
         state.onEdited.fold(
           () => null,
           (either) => either.fold(
-            (failure) => null,
-            (success) => bloc.add(const MyProfileEvent.fetch()),
+            (failure) => context.showErrorSnackBar(
+              failure.maybeWhen(
+                message: (message) => message,
+                networkError: () => MErrorMessages.networkError,
+                serverError: () => MErrorMessages.serverError,
+                timeOutError: () => MErrorMessages.timeOutError,
+                orElse: () => MErrorMessages.unknownError,
+              ),
+            ),
+            (success) => bloc.fetch(),
           ),
         );
       },
-      child: BlocBuilder<MyProfileBloc, MyProfileState>(
+      child: BlocBuilder<MyProfileCubit, MyProfileState>(
         bloc: bloc,
         builder: (context, state) => Scaffold(
           body: RefreshIndicator(
@@ -38,7 +46,15 @@ class MyProfilePage extends StatelessWidget {
             child: state.when(
               loading: () => const Center(child: MLoadingIndicator.box()),
               success: (profile) => CustomContent(profile: profile),
-              failure: (_) => const Text('Oops, something unexpected happened'),
+              failure: (exception) => Text(
+                exception.maybeWhen(
+                  message: (message) => message,
+                  networkError: () => MErrorMessages.networkError,
+                  serverError: () => MErrorMessages.serverError,
+                  timeOutError: () => MErrorMessages.timeOutError,
+                  orElse: () => MErrorMessages.unknownError,
+                ),
+              ),
             ),
           ),
         ),
@@ -146,6 +162,7 @@ class CustomContent extends HookWidget {
                     Spaces.verticalLarge,
                     const ProfileButtons(),
                     Spaces.verticalLarge,
+                    
                   ],
                 ),
               ),

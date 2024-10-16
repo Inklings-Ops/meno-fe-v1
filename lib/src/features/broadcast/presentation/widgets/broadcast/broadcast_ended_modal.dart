@@ -53,7 +53,7 @@ class BroadcastEndedModal extends HookWidget {
             MSecondaryButton(
               label: 'Go to Profile',
               onPressed: () {
-                router.go(Routes.profile);
+                router.go(Routes.myProfile);
                 cleanUp();
               },
             ),
