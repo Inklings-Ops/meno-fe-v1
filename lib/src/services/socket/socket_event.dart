@@ -4,7 +4,7 @@ import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
 
 part 'socket_event.freezed.dart';
- 
+
 abstract class BroadcastEmittedEvent {}
 
 abstract class BroadcastSubscribedEvent {}
@@ -15,57 +15,61 @@ abstract class ChatEmittedEvent {}
 
 abstract class ChatSubscribedEvent {}
 
-
 @freezed
 class SocketEvent with _$SocketEvent {
   // Emitted events
   @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.startedBroadcast(String broadcastId) = SocketStartedBroadcast;
-  
+  const factory SocketEvent.startedBroadcast(String broadcastId) =
+      SocketStartedBroadcast;
+
   @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.joinBroadcast(String broadcastId) = SocketJoinBroadcast;
-  
+  const factory SocketEvent.joinBroadcast(String broadcastId) =
+      SocketJoinBroadcast;
+
   @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.leaveBroadcast(String broadcastId) = SocketLeaveBroadcast;
-  
+  const factory SocketEvent.leaveBroadcast(String broadcastId) =
+      SocketLeaveBroadcast;
+
   @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getLiveBroadcast(String broadcastId) = SocketGetLiveBroadcast;
-  
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getLiveBroadcasts() = SocketGetLiveBroadcasts;
-  
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getBroadcastListeners(String broadcastId) = SocketGetBroadcastListeners;
-  
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getNumberOfLiveBroadcasts() = SocketGetNumberOfLiveBroadcasts;
-  
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.getNumberOfBroadcastListeners(String broadcastId) = SocketGetNumberOfBroadcastListeners;
-  
-  @Implements<BroadcastEmittedEvent>()
-  const factory SocketEvent.endBroadcast(String broadcastId) = SocketEndBroadcast;
+  const factory SocketEvent.endBroadcast(String broadcastId) =
+      SocketEndBroadcast;
+
+  // Subscribe to the following events
+  //
 
   @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.numberOfLiveBroadcasts(int value) = SocketNumberOfLiveBroadcasts;
-  
-  @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.newBroadcastListener(BroadcastParticipant listener) = SocketNewBroadcastListener;
-  
-  @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.numberOfLiveListeners(int value) = SocketNumberOfLiveListeners;
+  const factory SocketEvent.newBroadcastListener(
+    BroadcastParticipant listener,
+  ) = SocketNewBroadcastListener;
 
   @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.endedBroadcast(Broadcast broadcast) = SocketEndedBroadcast;
-  
+  const factory SocketEvent.broadcastListenerLeft(
+    BroadcastParticipant listener,
+  ) = SocketBroadcastListenerLeft;
+
   @Implements<BroadcastSubscribedEvent>()
-  const factory SocketEvent.newBroadcast(Broadcast broadcast) = SocketNewBroadcast;
-  
+  const factory SocketEvent.endedBroadcast(EndedBroadcastData data) =
+      SocketEndedBroadcast;
+
+  @Implements<BroadcastSubscribedEvent>()
+  const factory SocketEvent.newBroadcast(Broadcast broadcast) =
+      SocketNewBroadcast;
+
+  @Implements<BroadcastSubscribedEvent>()
+  const factory SocketEvent.hostDisconnected({required bool value}) =
+      SocketBroadcastHostDisconnected;
+
+  @Implements<BroadcastSubscribedEvent>()
+  const factory SocketEvent.hostReconnected({required bool value}) =
+      SocketBroadcastHostReconnected;
+
   @Implements<NotificationSubscribedEvent>()
-  const factory SocketEvent.notification(Notification notification) = SocketNotification;
+  const factory SocketEvent.notification(Notification notification) =
+      SocketNotification;
 
   @Implements<ChatEmittedEvent>()
-  const factory SocketEvent.getChatMessages(String broadcastId) = SocketGetChatMessages;
+  const factory SocketEvent.getChatMessages(String broadcastId) =
+      SocketGetChatMessages;
 
   @Implements<ChatEmittedEvent>()
   const factory SocketEvent.sendChatMessage({

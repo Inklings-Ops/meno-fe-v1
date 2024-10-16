@@ -7,27 +7,24 @@ class PreStreamActionButtons extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.watch<StreamBloc>();
+
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    final loading = useState<bool>(false);
-    Future<void> onJoin() async {
-      loading.value = true;
-      return context.read<StreamBloc>().add(StreamJoinRequested(broadcast.id));
-    }
 
     return SizedBox(
       height: 32,
       child: Row(
         children: [
           Expanded(
-            child: BlocListener<StreamBloc, StreamState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                  orElse: () => loading.value = false,
-                  loading: () => loading.value,
-                );
-              },
-              child: _JoinButton(onJoin: onJoin, loading: loading.value),
+            child: MPrimaryButton(
+              label: 'Join',
+              onPressed: () => bloc.joinBroadcast(broadcast.id),
+              loading: bloc.state.status is LiveLoadInProgress,
+              style: ElevatedButton.styleFrom(
+                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
+                textStyle: textTheme.microMedium,
+              ),
             ),
           ),
           Spaces.horizontalSmall,
@@ -37,35 +34,13 @@ class PreStreamActionButtons extends HookWidget {
               onPressed: () {},
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: colors.outlineVariant3!),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: Corners.small,
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _JoinButton extends StatelessWidget {
-  const _JoinButton({this.onJoin, this.loading = false});
-  final bool loading;
-  final VoidCallback? onJoin;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return MPrimaryButton(
-      label: 'Join',
-      onPressed: onJoin,
-      loading: loading,
-      style: ElevatedButton.styleFrom(
-        shape: const RoundedRectangleBorder(borderRadius: Corners.small),
-        textStyle: textTheme.microMedium,
       ),
     );
   }

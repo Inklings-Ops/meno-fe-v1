@@ -1,10 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
-class LoginPage extends StatelessWidget {
-
+class LoginPage extends HookWidget {
   const LoginPage({
     super.key,
     this.implyLeading = false,
@@ -15,6 +12,20 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final email = context.select(
+      (SessionCubit bloc) => bloc.state.whenOrNull(
+        partiallyAuthenticated: (user) => user.email.getOr(),
+      ),
+    );
+
+    useEffect(
+      () {
+        if (isPasswordOnly) context.read<LoginCubit>().emailChanged(email!);
+        return null;
+      },
+      const [],
+    );
+
     return BlocListener<LoginCubit, LoginState>(
       listenWhen: (p, c) => p.option != c.option,
       listener: (context, state) {
@@ -26,7 +37,7 @@ class LoginPage extends StatelessWidget {
               context.read<SessionCubit>().init();
               context.read<AccountBloc>().init();
               context.read<RecentlyLiveCubit>().fetch();
-              context.read<MyProfileBloc>().init(success.user.id.getOr());
+              context.read<MyProfileCubit>().fetch();
             },
           ),
         );
@@ -44,12 +55,18 @@ class LoginPage extends StatelessWidget {
               Spaces.verticalXLarge,
               const MGoogleButton(title: 'Login with Google'),
               const SizedBox(height: 144),
-              AuthRedirectionText(
-                title: "Don't have an account?",
-                buttonText: 'Create an account',
-                onPressed: () => implyLeading
-                    ? const RegisterRoute().replace(context)
-                    : const RegisterRoute().push<void>(context),
+              BlocBuilder<OnboardingCubit, OnboardingState>(
+                builder: (context, state) => AuthRedirectionText(
+                  title: "Don't have an account?",
+                  buttonText: 'Create an account',
+                  onPressed: () {
+                    if (state == OnboardingState.completed) {
+                      router.push<void>(Routes.register);
+                    } else {
+                      router.replace<void>(Routes.register);
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -43,14 +43,14 @@ class AddNewNoteButton extends StatelessWidget {
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
           shape: const RoundedRectangleBorder(
-            borderRadius: Corners.small,
+            borderRadius: Corners.sm,
           ),
           side: BorderSide(
             color: colors.outlineVariant3!,
             width: 1.50,
           ),
         ),
-        onPressed: () => context.push(Routes.noteEditor),
+        onPressed: () => router.push(Routes.noteEditor),
       ),
     );
   }

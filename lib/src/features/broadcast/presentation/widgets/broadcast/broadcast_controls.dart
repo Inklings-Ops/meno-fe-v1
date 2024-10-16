@@ -11,23 +11,77 @@ class BroadcastControls extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          BroadcastMicrophoneButton(),
+          _MicrophoneButton(),
           Spaces.horizontalSmall,
-          BroadcastStartStopButton(),
+          _StartStopButton(),
           Spaces.horizontalSmall,
-          MoreOptionsButton(),
+          _MoreOptionsButton(),
         ],
       ),
     );
   }
 }
 
-class MoreOptionsButton extends StatelessWidget {
-  const MoreOptionsButton({super.key});
+class _MicrophoneButton extends HookWidget {
+  const _MicrophoneButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final isMuted = useState(false);
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) => state.status.maybeWhen(
+        orElse: () => const MMicrophoneButton(isDisabled: true),
+        started: (muted) => MMicrophoneButton(
+          isMuted: isMuted.value,
+          onTap: () {
+            isMuted.value = !isMuted.value;
+            context.read<BroadcastBloc>().mute(enabled: !isMuted.value);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _StartStopButton extends HookWidget {
+  const _StartStopButton();
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final bloc = context.read<BroadcastBloc>();
+
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) => state.status.maybeWhen(
+        loading: () => const _Button(label: 'Start', loading: true),
+        ended: (_) => const _Button(label: 'Stop broadcasting'),
+        orElse: () => _Button(
+          label: 'Start broadcasting',
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
+          onTap: bloc.startBroadcast,
+        ),
+        started: (muted) => _Button(
+          label: 'Stop broadcasting',
+          backgroundColor: colors.errorContainer?.withOpacity(0.3),
+          foregroundColor: colors.error,
+          onTap: () => context.showEndBroadcastDialog().then((value) {
+            if (value != true) return null;
+            return bloc.endBroadcast(state.broadcast.id);
+          }),
+        ),
+      ),
+    );
+  }
+}
+
+class _MoreOptionsButton extends StatelessWidget {
+  const _MoreOptionsButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
+    final bloc = context.watch<BroadcastBloc>();
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
       iconSize: 20,
@@ -35,16 +89,50 @@ class MoreOptionsButton extends StatelessWidget {
       style: IconButton.styleFrom(
         fixedSize: const Size.fromWidth(48),
         side: BorderSide(color: colors.outlineVariant3!),
-        shape: const RoundedRectangleBorder(borderRadius: Corners.large),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
       onPressed: () => context.showModal<void>(
-        BlocBuilder<BroadcastBloc, BroadcastState>(
-          builder: (context, state) => state.maybeWhen(
-            orElse: () => const SizedBox(),
-            startSuccess: (b, _) => BroadcastInfoModal(broadcast: b),
-          ),
-        ),
+        BroadcastInfoModal(broadcast: bloc.state.broadcast),
         isScrollControlled: true,
+        useRootNavigator: true,
+      ),
+    );
+  }
+}
+
+class _Button extends StatelessWidget {
+  const _Button({
+    required this.label,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.loading = false,
+    this.onTap,
+  });
+
+  final String label;
+  final bool loading;
+  final Color? foregroundColor;
+  final Color? backgroundColor;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
+    return MPrimaryButton(
+      label: label,
+      onPressed: onTap,
+      loading: loading,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: foregroundColor ?? colors.onPrimary,
+        backgroundColor: backgroundColor ?? colors.primary,
+        fixedSize: const Size(159, 40),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Insets.lg,
+          vertical: Insets.sm,
+        ),
+        textStyle: textTheme.captionMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
       ),
     );
   }

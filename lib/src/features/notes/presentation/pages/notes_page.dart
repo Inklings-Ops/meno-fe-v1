@@ -42,7 +42,7 @@ class _AddNewNoteActionButton extends StatelessWidget {
         if (state.notes.isEmpty) return const SizedBox();
 
         return InkWell(
-          onTap: () => context.push(Routes.noteEditor),
+          onTap: () => router.push(Routes.noteEditor),
           child: Row(
             children: [
               Icon(MIcons.plus, size: 22, color: colors.primary),

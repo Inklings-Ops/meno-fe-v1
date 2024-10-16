@@ -103,7 +103,7 @@ class MRecentlyLiveCard extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: isLight ? MColor.grey30 : MColor.grey400,
-                borderRadius: Corners.medium,
+                borderRadius: Corners.md,
                 image: loading ? null : image,
               ),
               child: !hasImage ? placeholder : null,
@@ -153,7 +153,7 @@ class _Container extends StatelessWidget {
         color: styles.backgroundColor,
         shadows: Shadows.soft,
         shape: SmoothRectangleBorder(
-          borderRadius: Corners.squircleLarge,
+          borderRadius: Corners.squircleLg,
         ),
       ),
       child: Column(

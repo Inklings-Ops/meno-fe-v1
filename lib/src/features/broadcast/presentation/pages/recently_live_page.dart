@@ -1,6 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
+
+
 class RecentlyLivePage extends HookWidget {
   const RecentlyLivePage({super.key});
 
@@ -98,7 +100,7 @@ class _LoadedList extends StatelessWidget {
           creator: broadcast.fullName,
           endTime: broadcast.endTime,
           imageUrl: broadcast.imageUrl,
-          onTap: () => context.push(Routes.details, extra: broadcast),
+          onTap: () => router.push(Routes.details, extra: broadcast),
         );
       },
     );

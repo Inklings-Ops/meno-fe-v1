@@ -12,7 +12,7 @@ part 'broadcast_dto.g.dart';
   includeIfNull: false,
 )
 class BroadcastDto with _$BroadcastDto {
-  factory BroadcastDto({
+  const factory BroadcastDto({
     required String id,
     required String title,
     String? description,
@@ -30,6 +30,9 @@ class BroadcastDto with _$BroadcastDto {
     dynamic deleted,
     int? liveListeners,
     int? totalListeners,
+    String? creatorBio,
+    String? creatorFullName,
+    String? creatorImageUrl,
   }) = _BroadcastDto;
 
   factory BroadcastDto.fromJson(Map<String, dynamic> json) =>
@@ -61,6 +64,9 @@ extension BroadcastDtoToDomain on BroadcastDto {
       timeZone: timeZone,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
+      creatorBio: creatorBio,
+      creatorFullName: creatorFullName,
+      creatorImageUrl: creatorImageUrl,
     );
   }
 }
@@ -73,7 +79,10 @@ extension BroadcastToDto on Broadcast {
       description: description?.getOr(),
       creatorId: creatorId,
       creator: creator != null
-          ? BroadcastParticipantDto(id: creator!.id, fullName: creator!.fullName)
+          ? BroadcastParticipantDto(
+              id: creator!.id,
+              fullName: creator!.fullName,
+            )
           : null,
       fullName: fullName,
       broadcastToken: broadcastToken,
@@ -87,6 +96,9 @@ extension BroadcastToDto on Broadcast {
       timeZone: timeZone,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
+      creatorBio: creatorBio,
+      creatorFullName: creatorFullName,
+      creatorImageUrl: creatorImageUrl,
     );
   }
 }

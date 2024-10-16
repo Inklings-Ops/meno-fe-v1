@@ -1,98 +1,93 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcast_bloc.freezed.dart';
-part 'broadcast_event.dart';
 part 'broadcast_state.dart';
 
 @Injectable()
-class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
+class BroadcastBloc extends Cubit<BroadcastState> {
   BroadcastBloc({
+    @factoryParam required Broadcast broadcast,
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
     required SocketService socket,
   })  : _facade = facade,
         _liveKit = liveKit,
         _socket = socket,
-        super(const BroadcastLoadInProgress()) {
-    on<BroadcastStartRequested>(_onStartBroadcast);
-    on<BroadcastMuteMicrophone>(_onMuteMicrophone);
-    on<BroadcastEndRequested>(_onEndBroadcast);
-    on<BroadcastDeleteRequested>(_onDeleteBroadcast);
+        super(BroadcastState(broadcast: broadcast)) {
+    _socketStateSub = _socket.stateStream.listen((socketState) {
+      socketState.whenOrNull(broadcastStarted: _onSocketData);
+    });
   }
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
   final SocketService _socket;
 
-  Future<void> _onStartBroadcast(
-    BroadcastStartRequested event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    final fOrS = await _facade.startBroadcast(event.id);
-    await fOrS.fold(
-      (failure) async => emit(BroadcastFailure(failure)),
-      (b) async {
-        await _liveKit.broadcast(b.broadcastToken!).whenComplete(() async {
-          _socket.emit(SocketEvent.startedBroadcast(b.id.getOr()));
-          emit(BroadcastStartSuccess(broadcast: b, muted: false));
-        });
+  late final StreamSubscription<SocketState> _socketStateSub;
+
+  Future<void> startBroadcast() async {
+    final broadcastId = state.broadcast.id;
+    _emitStatus(const LiveLoadInProgress());
+    final failureOrBroadcast = await _facade.startBroadcast(broadcastId);
+    await failureOrBroadcast.fold(
+      (exception) async => _emitStatus(BroadcastFailed(exception)),
+      (broadcast) async {
+        _socket.emit(SocketStartedBroadcast(broadcastId.getOr()));
+        if (state is! BroadcastFailed) {
+          try {
+            final token = broadcast.broadcastToken!;
+            await _liveKit.broadcast(token).whenComplete(() async {
+              emit(
+                state.copyWith(
+                  broadcast: broadcast,
+                  status: const BroadcastStarted(),
+                ),
+              );
+            });
+          } catch (e) {
+            final exception = BroadcastException.message(e.toString());
+            _emitStatus(BroadcastFailed(exception));
+          }
+        }
       },
     );
   }
 
-  Future<void> _onMuteMicrophone(
-    BroadcastMuteMicrophone event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    if (state is BroadcastStartSuccess) {
-      final broadcast = (state as BroadcastStartSuccess).broadcast;
-      unawaited(_liveKit.mute(enabled: event.value));
-      emit(BroadcastStartSuccess(broadcast: broadcast, muted: event.value));
+  Future<void> mute({bool enabled = false}) async {
+    if (state.status is BroadcastStarted) {
+      unawaited(_liveKit.mute(enabled: enabled));
+      _emitStatus(BroadcastStarted(muted: enabled));
     }
   }
 
-  Future<void> _onEndBroadcast(
-    BroadcastEndRequested event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    if (state is BroadcastStartSuccess) {
-      emit(const BroadcastLoadInProgress());
-      await _liveKit
-          .disconnect()
-          .then((_) => _liveKit.dispose())
-          .whenComplete(() async {
-        _socket.emit(SocketEvent.endBroadcast(event.id.getOr()));
-        emit(const BroadcastEndSuccess());
-      });
+  Future<void> endBroadcast(Uid<Broadcast> broadcastId) async {
+    if (state.status is BroadcastStarted) {
+      _emitStatus(const LiveLoadInProgress());
+      _socket.emit(SocketEndBroadcast(broadcastId.getOr()));
+      await _liveKit.dispose();
+      _emitStatus(BroadcastEnded(EndedBroadcastData.empty()));
     }
   }
 
-  Future<void> _onDeleteBroadcast(
-    BroadcastDeleteRequested event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    if (state is BroadcastStartSuccess) return;
-    emit(const BroadcastLoadInProgress());
-    final fOrS = await _facade.deleteBroadcast(event.id);
-    emit(
-      fOrS.fold(
-        BroadcastFailure.new,
-        (success) => const BroadcastDeleteSuccess(),
-      ),
-    );
-  }
+  Future<void> deleteBroadcast(Uid<Broadcast> id) async {}
 
   Future<void> dispose() async => _liveKit.dispose();
+
+  void _onSocketData(dynamic data, String? error) {
+    if (error == null) return;
+    return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+  }
+
+  void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));
 
   @override
   Future<void> close() async {
     await _liveKit.dispose();
+    await _socketStateSub.cancel();
     return super.close();
   }
 }

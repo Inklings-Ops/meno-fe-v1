@@ -76,7 +76,7 @@ class _LoadedList extends StatelessWidget {
           creator: broadcast.fullName,
           endTime: broadcast.endTime,
           imageUrl: broadcast.imageUrl,
-          onTap: () => context.push(Routes.details, extra: broadcast),
+          onTap: () => router.push(Routes.details, extra: broadcast),
         );
       },
     );

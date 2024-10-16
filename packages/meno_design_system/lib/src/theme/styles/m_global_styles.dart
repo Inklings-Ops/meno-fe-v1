@@ -40,15 +40,15 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
     return MGlobalStyles(
       dividerColor: colors.outlineVariant1,
       checkboxTheme: CheckboxThemeData(
-        shape: const RoundedRectangleBorder(borderRadius: Corners.micro),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.xs),
         side: BorderSide(color: colors.outlineVariant1!),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       snackBarTheme: SnackBarThemeData(
         contentTextStyle: textTheme.captionRegular,
-        insetPadding: const EdgeInsets.all(Insets.large),
+        insetPadding: const EdgeInsets.all(Insets.lg),
         behavior: SnackBarBehavior.fixed,
-        shape: const RoundedRectangleBorder(borderRadius: Corners.medium),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.md),
       ),
     );
   }

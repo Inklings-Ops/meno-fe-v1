@@ -1,4 +1,3 @@
-
 export 'package:firebase_core/firebase_core.dart';
 export 'package:firebase_messaging/firebase_messaging.dart';
 export 'package:flutter/foundation.dart';
@@ -7,11 +6,11 @@ export 'package:flutter/services.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:flutter_hooks/flutter_hooks.dart';
 export 'package:fluttertoast/fluttertoast.dart';
+export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:go_router/go_router.dart';
 export 'package:meno_design_system/meno_design_system.dart';
 export 'package:meno_fe_v1/app/meno_bloc_provider.dart';
 export 'package:meno_fe_v1/app/meno_repository_provider.dart';
-export 'package:meno_fe_v1/config.dart';
 export 'package:meno_fe_v1/firebase_options.dart';
 export 'package:meno_fe_v1/gen/assets.gen.dart';
 export 'package:meno_fe_v1/gen/fonts.gen.dart';
@@ -23,3 +22,4 @@ export 'package:meno_fe_v1/src/services/meno/meno.dart';
 export 'package:meno_fe_v1/src/shared/shared.dart';
 export 'package:provider/provider.dart' hide Dispose;
 export 'package:responsive_framework/responsive_framework.dart';
+export 'package:hydrated_bloc/hydrated_bloc.dart';

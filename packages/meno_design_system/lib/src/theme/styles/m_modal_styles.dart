@@ -81,7 +81,7 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
   /// Returns a [BottomSheetThemeData] instance with the styles applied.
   BottomSheetThemeData get bottomSheetTheme {
     return BottomSheetThemeData(
-      dragHandleSize: const Size(Insets.xxLarge, Insets.micro),
+      dragHandleSize: const Size(Insets.xxl, Insets.xs),
       showDragHandle: true,
       dragHandleColor: dragHandleColor,
       shape: const RoundedRectangleBorder(

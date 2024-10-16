@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
+
 class FolderPage extends HookWidget {
   const FolderPage({required this.folder, super.key});
   final Folder folder;

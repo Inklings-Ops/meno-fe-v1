@@ -5,16 +5,20 @@ class LiveParticipantsState with _$LiveParticipantsState {
   const factory LiveParticipantsState({
     required Broadcast broadcast,
     required bool loading,
-    required List<BroadcastParticipant?> participants,
-    required int numberOfParticipants,
+    required List<BroadcastParticipant> liveParticipants,
+    required int numberOfLiveParticipants,
+    required List<BroadcastParticipant> totalParticipants,
+    required int numberOfTotalParticipants,
   }) = _LiveParticipantsState;
 
   factory LiveParticipantsState.initial() {
     return LiveParticipantsState(
       broadcast: Broadcast.empty(),
-      participants: [],
       loading: false,
-      numberOfParticipants: 0,
+      liveParticipants: [],
+      numberOfLiveParticipants: 0,
+      totalParticipants: [],
+      numberOfTotalParticipants: 0,
     );
   }
 }

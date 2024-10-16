@@ -31,7 +31,7 @@ class DeleteFolderAlertDialog extends StatelessWidget {
             onPressed: onCancel ?? () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
-              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
         ),

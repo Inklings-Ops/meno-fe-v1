@@ -28,7 +28,7 @@ class SearchFilterList extends StatelessWidget {
       separatorBuilder: (context, i) => Spaces.horizontalLarge,
       itemCount: filters.length,
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
     );
   }
 }

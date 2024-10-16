@@ -8,7 +8,6 @@ class CreateBroadcastPage extends HookWidget {
   Widget build(BuildContext context) {
     final formKey = useMemoized(GlobalKey<FormState>.new);
     final colors = MColorScheme.of(context)!;
-    final broadcastBloc = context.read<BroadcastBloc>();
     return MultiBlocListener(
       listeners: [
         BlocListener<BroadcastFormCubit, BroadcastFormState>(
@@ -17,21 +16,9 @@ class CreateBroadcastPage extends HookWidget {
               () => null,
               (either) => either.fold(
                 (exception) => context.showBroadcastError(exception),
-                (broadcast) {
-                  broadcastBloc.add(BroadcastStartRequested(broadcast.id));
-                },
+                (broadcast) =>
+                    router.replace<void>(Routes.broadcast, extra: broadcast),
               ),
-            );
-          },
-        ),
-        BlocListener<BroadcastBloc, BroadcastState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              failure: (exception) => context.showBroadcastError(exception),
-              startFailed: (e) => context.showErrorSnackBar(e.toString()),
-              startSuccess: (broadcast, muted) {
-                context.replace(Routes.broadcast, extra: broadcast);
-              },
             );
           },
         ),
@@ -55,8 +42,12 @@ class CreateBroadcastPage extends HookWidget {
               Spaces.horizontalLarge,
             ],
           ),
-          body: const SingleChildScrollView(child: CreateBroadcastForm()),
-          persistentFooterButtons: const [CreateBroadcastButton()],
+          body: const SingleChildScrollView(
+            child: CreateBroadcastForm(),
+          ),
+          persistentFooterButtons: const [
+            CreateBroadcastButton(),
+          ],
         ),
       ),
     );

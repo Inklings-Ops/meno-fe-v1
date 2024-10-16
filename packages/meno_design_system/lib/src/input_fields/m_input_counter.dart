@@ -59,7 +59,7 @@ class MInputCounter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: Corners.small,
+        borderRadius: Corners.sm,
       ),
       child: MText(
         '$currentLength/$maxLength',

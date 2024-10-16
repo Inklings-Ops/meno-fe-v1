@@ -23,7 +23,7 @@ class DeleteCommentAlertDialog extends StatelessWidget {
             onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
-              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
         ),
@@ -35,7 +35,7 @@ class DeleteCommentAlertDialog extends StatelessWidget {
             style: TextButton.styleFrom(
               backgroundColor: colors.error,
               foregroundColor: colors.onError,
-              shape: const RoundedRectangleBorder(borderRadius: Corners.small),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
         ),

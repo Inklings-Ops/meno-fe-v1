@@ -33,7 +33,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
                   title: broadcast.title.getOr(),
                   imageUrl: broadcast.imageUrl,
                   host: broadcast.fullName,
-                  onTap: () => context.push(Routes.details, extra: broadcast),
+                  onTap: () => router.push(Routes.details, extra: broadcast),
                 );
               },
               itemCount: state.broadcasts.length,

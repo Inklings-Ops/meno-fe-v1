@@ -9,12 +9,12 @@ class StreamChatTab extends HookWidget {
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
     return BlocBuilder<StreamBloc, StreamState>(
-      builder: (context, state) => state.maybeWhen(
+      builder: (context, state) => state.status.maybeWhen(
         orElse: () => const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [MText('Waiting to join stream')],
         ),
-        joinSuccess: (broadcast) => LayoutBuilder(
+        joined: () => LayoutBuilder(
           builder: (context, constraints) => Column(
             children: [
               Expanded(

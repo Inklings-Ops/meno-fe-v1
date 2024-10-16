@@ -6,11 +6,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-
-import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
 
 part 'chat_bloc.freezed.dart';
 part 'chat_state.dart';
@@ -67,13 +66,9 @@ class ChatBloc extends Cubit<ChatState> {
 
   Future<void> sendMessage(String content) async {
     final credential = _session.credential;
-    Logger().w('SENDER_ID => ${credential!.user.id.getOr()}');
-    Logger().w('BROADCAST_ID => ${state.broadcast.id.getOr()}');
-    Logger().w('CONTENT => $content');
-    Logger().w('CREATED_AT => ${DateTime.now().toIso8601String()}');
     _socket.emit(
       SocketEvent.sendChatMessage(
-        senderId: credential.user.id.getOr(),
+        senderId: credential!.user.id.getOr(),
         broadcastId: state.broadcast.id.getOr(),
         content: content,
         createdAt: DateTime.now().toIso8601String(),

@@ -4,6 +4,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
+
 class NoteEditorPage extends StatefulWidget {
   const NoteEditorPage({super.key, this.note});
 

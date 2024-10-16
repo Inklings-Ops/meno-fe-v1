@@ -9,10 +9,9 @@ class MSwitchAccountModal extends StatelessWidget {
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) {
         state.whenOrNull(
-          loadFailure: (e) {
-            context.showErrorSnackBar('Your token is expired. Login again.');
-            context.go(Routes.login);
-          },
+          loadFailure: (e) => context
+            ..showErrorSnackBar('Your token is expired. Login again.')
+            ..go(Routes.login),
         );
       },
       builder: (context, state) => state.maybeWhen(
@@ -25,9 +24,9 @@ class MSwitchAccountModal extends StatelessWidget {
         ),
         loadSuccess: (allCredentials, _) {
           if (allCredentials.length == 1) {
-            return const _SwitchAccountModal1();
+            return const SwitchAccountModal1();
           } else {
-            return const _SwitchAccountModal2();
+            return const SwitchAccountModal2();
           }
         },
       ),
@@ -115,8 +114,8 @@ class _AddAccountTile extends StatelessWidget {
   }
 }
 
-class _SwitchAccountModal1 extends StatelessWidget {
-  const _SwitchAccountModal1();
+class SwitchAccountModal1 extends StatelessWidget {
+  const SwitchAccountModal1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +135,9 @@ class _SwitchAccountModal1 extends StatelessWidget {
           MTextButton(
             label: 'Create New Account',
             onPressed: () {
-              context.pop();
-              context.go(Routes.registerWithoutLeading);
+              context
+                ..pop()
+                ..go(Routes.registerWithoutLeading);
             },
           ),
         ],
@@ -146,8 +146,8 @@ class _SwitchAccountModal1 extends StatelessWidget {
   }
 }
 
-class _SwitchAccountModal2 extends StatelessWidget {
-  const _SwitchAccountModal2();
+class SwitchAccountModal2 extends StatelessWidget {
+  const SwitchAccountModal2({super.key});
 
   @override
   Widget build(BuildContext context) {

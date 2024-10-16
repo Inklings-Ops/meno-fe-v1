@@ -24,7 +24,7 @@ class DiscoverSearchBar extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
 
     return Padding(
-      padding: padding ?? const EdgeInsets.symmetric(horizontal: Insets.large),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: Insets.lg),
       child: Row(
         children: [
           Expanded(
@@ -38,14 +38,14 @@ class DiscoverSearchBar extends StatelessWidget {
                 hintText: 'Search broadcasts or broadcasters',
                 hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
                 padding: const WidgetStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: Insets.medium),
+                  EdgeInsets.symmetric(horizontal: Insets.md),
                 ),
-                leading: const Icon(MIcons.search, size: Insets.large),
+                leading: const Icon(MIcons.search, size: Insets.lg),
                 shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
                   side: BorderSide(
                     color: Color(0xFFC2C7D0),
                   ),
-                  borderRadius: Corners.small,
+                    borderRadius: Corners.sm,
                 ),),
               ),
             ),

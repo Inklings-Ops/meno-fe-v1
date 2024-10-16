@@ -3,7 +3,8 @@ import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastInfoModal extends StatelessWidget {
   const BroadcastInfoModal({
-    required this.broadcast, super.key,
+    required this.broadcast,
+    super.key,
     this.isStreaming = false,
   });
   final bool isStreaming;
@@ -48,7 +49,7 @@ class BroadcastInfoModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.arrow_narrow_down_left),
               title: 'Minimize Stream',
-              onTap: () => context.go(Routes.home),
+              onTap: () => router.go(Routes.home),
             ),
             const MModalListTile(
               leading: Icon(MIcons.user_minus_01),
@@ -66,15 +67,16 @@ class BroadcastInfoModal extends StatelessWidget {
           if (!isStreaming)
             BlocBuilder<MenoBloc, MenoState>(
               builder: (context, state) => state.maybeWhen(
-                orElse: () => const SizedBox(),
-                live: () => MModalListTile(
+                live: () => const SizedBox(),
+                reconnecting: () => const SizedBox(),
+                streaming: () => const SizedBox(),
+                orElse: () => MModalListTile(
                   leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete Broadcast',
                   titleColor: colors.error,
                   onTap: () {
-                    final id = broadcast.id;
                     context
-                      ..read<BroadcastBloc>().add(BroadcastDeleteRequested(id))
+                      ..read<BroadcastBloc>().deleteBroadcast(broadcast.id)
                       ..pop();
                   },
                 ),

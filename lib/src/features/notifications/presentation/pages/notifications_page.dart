@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/meno.dart' hide Notification;
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
+
 class NotificationsPage extends HookConsumerWidget {
   const NotificationsPage({super.key});
 

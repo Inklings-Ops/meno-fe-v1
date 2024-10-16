@@ -44,7 +44,7 @@ class _CreateNewFolderButton extends StatelessWidget {
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
           shape: const RoundedRectangleBorder(
-            borderRadius: Corners.small,
+            borderRadius: Corners.sm,
           ),
           side: BorderSide(
             color: colors.outlineVariant3!,

@@ -1,4 +1,3 @@
- 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
@@ -10,12 +9,12 @@ class BroadcastChatTab extends HookWidget {
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
     return BlocBuilder<BroadcastBloc, BroadcastState>(
-      builder: (context, state) => state.maybeWhen(
+      builder: (context, state) => state.status.maybeWhen(
         orElse: () => const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [MText('Waiting for broadcast to start')],
         ),
-        startSuccess: (broadcast, muted) => LayoutBuilder(
+        started: (_) => LayoutBuilder(
           builder: (context, constraints) => Column(
             children: [
               Expanded(

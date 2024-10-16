@@ -83,7 +83,7 @@ class MOtpField extends StatelessWidget {
       decoration: BoxDecoration(
         color: styles?.fillColor,
         border: styles?.border,
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
       ),
       textStyle: textTheme.heading1Medium?.copyWith(
         color: styles?.textStyle?.color,
@@ -104,12 +104,12 @@ class MOtpField extends StatelessWidget {
       focusedPinTheme: defaultPinTheme.copyDecorationWith(
         color: styles?.fillColor,
         border: styles?.borderFocused,
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
       ),
       errorPinTheme: defaultPinTheme.copyDecorationWith(
         color: styles?.fillColor,
         border: styles?.borderError,
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
       ),
     );
   }

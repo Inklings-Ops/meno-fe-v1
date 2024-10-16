@@ -19,6 +19,6 @@ class NetworkCubit extends Cubit<NetworkStatus> {
   @override
   Future<void> close() async {
     await _subscription.cancel();
-    super.close();
+    await super.close();
   }
 }

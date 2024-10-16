@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
@@ -14,8 +13,6 @@ class MLayoutPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    Logger().w(currentRoute);
-
     final firebaseMessaging = FirebaseMessaging.instance;
     final initialMessage = useState<String?>(null);
 
@@ -26,7 +23,7 @@ class MLayoutPage extends HookWidget {
             .then((value) => initialMessage.value = value?.data.toString());
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
-          context.push(Routes.notifications);
+          router.push(Routes.notifications);
         });
         handleFCMToken();
         return null;
@@ -38,11 +35,7 @@ class MLayoutPage extends HookWidget {
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
     Widget sideNavRail = const SizedBox();
-    Widget? bottomNavBar = BottomNavBar(
-      selectedIndex: index,
-      onTap: onTap,
-      onMicrophoneTap: () => const CreateBroadcastRoute().push<void>(context),
-    );
+    Widget? bottomNavBar = BottomNavBar(selectedIndex: index, onTap: onTap);
 
     if (useSideNavRail) {
       bottomNavBar = null;
@@ -53,16 +46,28 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return BlocListener<SessionCubit, SessionState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          authenticated: (user, token) {
-            context.read<MyProfileBloc>().init();
-            context.read<LiveBroadcastsBloc>().init();
-            context.read<RecentlyLiveCubit>().fetch();
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SessionCubit, SessionState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              authenticated: (user, token) {
+                context.read<MyProfileCubit>().fetch();
+                context.read<LiveBroadcastsBloc>().init();
+                context.read<RecentlyLiveCubit>().fetch();
+              },
+            );
           },
-        );
-      },
+        ),
+        BlocListener<StreamBloc, StreamState>(
+          listener: (context, state) {
+            state.status.whenOrNull(
+              ended: (data) {},
+              left: () => context.read<StreamBloc>().dispose(),
+            );
+          },
+        ),
+      ],
       child: Scaffold(
         body: Row(children: [sideNavRail, Expanded(child: shell)]),
         bottomNavigationBar: bottomNavBar,

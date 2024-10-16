@@ -1,5 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
+
+
 
 class BroadcastEndedModal extends HookWidget {
   const BroadcastEndedModal({super.key});
@@ -7,16 +10,22 @@ class BroadcastEndedModal extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    final canPop = useState(false);
+
+    void cleanUp() {
+      context.read<TimerCubit>().dispose();
+      context.read<LiveKitService>().dispose();
+      context.read<BroadcastBloc>().dispose();
+      context.read<LiveParticipantsBloc>().close();
+      context.read<ChatBloc>().close();
+    }
+
     return PopScope(
-      canPop: canPop.value,
       onPopInvoked: (_) {
-        context.read<BroadcastBloc>().dispose();
-        context.read<TimerCubit>().dispose();
-        context.go(Routes.home);
-        canPop.value = true;
+        router.go(Routes.home);
+        cleanUp();
       },
       child: MModal(
+        key: const ValueKey('BroadcastEndedModal'),
         builder: (context) => Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,27 +46,66 @@ class BroadcastEndedModal extends HookWidget {
               textStyle: textTheme.heading2Bold,
             ),
             Spaces.verticalXLarge,
-            // TODO: implement avatars of listeners
-            Spaces.verticalXXLarge,
-            Spaces.verticalSmall,
-            BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
-              selector: (state) => state.participants.length,
-              builder: (context, numberOfParticipants) => MText(
-                '$numberOfParticipants people tuned in!',
-                style: textTheme.captionRegular,
-                textAlign: TextAlign.center,
-              ),
-            ),
+            const TotalParticipantsWidget(),
             const SizedBox(height: 40),
             MPrimaryButton(label: 'Publish Broadcast', onPressed: () {}),
             Spaces.verticalLarge,
             MSecondaryButton(
               label: 'Go to Profile',
-              onPressed: () => context.go(Routes.profile),
+              onPressed: () {
+                router.go(Routes.myProfile);
+                cleanUp();
+              },
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+class TotalParticipantsWidget extends HookWidget {
+  const TotalParticipantsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
+
+    return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
+      builder: (context, state) => Column(
+        children: [
+          SizedBox(
+            height: Insets.xxl,
+            width: 92,
+            child: Stack(
+              alignment: Alignment.center,
+              children: state.totalParticipants
+                  .map(
+                    (e) => Positioned(
+                      left: state.totalParticipants.indexOf(e) * 30,
+                      right: 0,
+                      child: MAvatar(radius: 16, url: e.imageUrl),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          Spaces.verticalSmall,
+          MText(
+            _getPluralText(state.numberOfTotalParticipants),
+            style: textTheme.captionRegular,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getPluralText(int numberOfParticipants) {
+    if (numberOfParticipants == 1) {
+      return '$numberOfParticipants person tuned in!';
+    } else {
+      return '$numberOfParticipants people tuned in!';
+    }
   }
 }

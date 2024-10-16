@@ -54,7 +54,9 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     return MTextFieldStyle(
       textStyle: textTheme.captionRegular,
       errorTextStyle: textTheme.captionRegular,
-      hintTextStyle: textTheme.captionRegular,
+      hintTextStyle: textTheme.captionRegular?.copyWith(
+        color: colors.onBackgroundVariant,
+      ),
       labelTextStyle: textTheme.captionMedium,
       counterTextStyle: textTheme.microMedium,
       iconColor: colors.onBackground,
@@ -69,19 +71,19 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       textColor: colors.onBackground,
       errorColor: colors.error,
       border: const OutlineInputBorder(
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
         borderSide: BorderSide(color: MColor.grey50),
       ),
       borderFocused: OutlineInputBorder(
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
         borderSide: BorderSide(color: colors.primary!, width: 2),
       ),
       borderDisabled: const OutlineInputBorder(
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
         borderSide: BorderSide.none,
       ),
       borderError: OutlineInputBorder(
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
         borderSide: BorderSide(color: colors.error!, width: 2),
       ),
     );

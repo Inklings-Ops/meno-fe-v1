@@ -95,12 +95,12 @@ class MTheme {
         hintStyle: textInputStyles.hintTextStyle,
         labelStyle: textInputStyles.labelTextStyle,
         errorStyle: textInputStyles.errorTextStyle,
-        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.medium),
+        contentPadding: const EdgeInsets.symmetric(horizontal: Insets.md),
       ),
       chipTheme: ChipThemeData(
         showCheckmark: false,
         padding: const EdgeInsets.symmetric(
-          horizontal: Insets.large,
+          horizontal: Insets.lg,
           vertical: 6,
         ),
         labelPadding: EdgeInsets.zero,
@@ -117,7 +117,6 @@ class MTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.background,
-        height: 56,
         elevation: 0,
         indicatorColor: Colors.transparent,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

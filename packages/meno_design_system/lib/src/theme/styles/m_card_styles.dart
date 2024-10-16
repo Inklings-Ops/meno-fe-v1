@@ -65,10 +65,10 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
       nSubtitleColor: colors.onBackgroundVariant,
       nBackgroundColor: colors.surfaceTint,
       nCardContentPadding: const EdgeInsets.symmetric(
-        horizontal: Insets.small,
-        vertical: Insets.large,
+        horizontal: Insets.sm,
+        vertical: Insets.lg,
       ),
-      nBorderRadius: Corners.large,
+      nBorderRadius: Corners.lg,
       nTitleTextStyle: textTheme.captionRegular,
       nSubtitleTextStyle: textTheme.microRegular,
     );

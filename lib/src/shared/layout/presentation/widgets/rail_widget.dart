@@ -29,13 +29,13 @@ class RailWidget extends StatelessWidget {
     return Center(
       child: InkWell(
         onTap: onTap,
-        borderRadius: Corners.medium,
+        borderRadius: Corners.md,
         child: Container(
           height: 48,
-          padding: const EdgeInsets.symmetric(horizontal: Insets.medium),
+          padding: const EdgeInsets.symmetric(horizontal: Insets.md),
           decoration: BoxDecoration(
             color: selected ? colors.primaryContainer : null,
-            borderRadius: Corners.medium,
+            borderRadius: Corners.md,
           ),
           child: !extended
               ? iconWidget

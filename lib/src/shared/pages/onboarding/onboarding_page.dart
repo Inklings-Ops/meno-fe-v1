@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
-
 import 'package:meno_fe_v1/src/shared/pages/onboarding/onboarding.dart';
 
 class OnboardingPage extends HookWidget {
@@ -40,47 +39,48 @@ class OnboardingPage extends HookWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Spaces.verticalXLarge,
-              const MenoLogo(),
-              const SizedBox(height: 72),
-              LimitedBox(
-                maxHeight: 372,
-                child: PageView.builder(
-                  controller: pageController,
-                  onPageChanged: (value) => currentIndex.value = value,
-                  itemCount: items.length,
-                  itemBuilder: (context, i) => OnboardingBody(items[i]),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Spaces.verticalXLarge,
+                const MenoLogo(),
+                const SizedBox(height: 72),
+                LimitedBox(
+                  maxHeight: 372,
+                  child: PageView.builder(
+                    controller: pageController,
+                    onPageChanged: (value) => currentIndex.value = value,
+                    itemCount: items.length,
+                    itemBuilder: (context, i) => OnboardingBody(items[i]),
+                  ),
                 ),
-              ),
-              Spaces.verticalXXXLarge,
-              OnboardingIndicator(
-                currentIndex: currentIndex.value,
-                itemsLength: onboardingItems.length,
-              ),
-              Spaces.verticalXLarge,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: MPrimaryButton(
-                  label: 'Get started',
-                  onPressed: () => context.push(Routes.registerWithLeading),
+                Spaces.verticalXXXLarge,
+                OnboardingIndicator(
+                  currentIndex: currentIndex.value,
+                  itemsLength: onboardingItems.length,
                 ),
-              ),
-              Spaces.verticalLarge,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: MSecondaryButton(
-                  label: 'Login',
-                  onPressed: () => context.push(Routes.loginWithLeading),
+                Spaces.verticalXLarge,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: MPrimaryButton(
+                    label: 'Get started',
+                    onPressed: () => router.push(Routes.register),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 64),
-            ],
+                Spaces.verticalLarge,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: MSecondaryButton(
+                    label: 'Login',
+                    onPressed: () => router.push(Routes.loginWithLeading),
+                  ),
+                ),
+                const SizedBox(height: 64),
+              ],
+            ),
           ),
         ),
       ),

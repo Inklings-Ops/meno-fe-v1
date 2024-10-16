@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/src/core/network/domain/network_status.dart';
 
-/// Abstract class representing a facade for interacting with network connectivity.
+/// Abstract class representing a facade for interacting with network 
+/// connectivity.
 abstract class INetworkFacade {
   /// A stream that emits the current network status whenever it changes.
   ///

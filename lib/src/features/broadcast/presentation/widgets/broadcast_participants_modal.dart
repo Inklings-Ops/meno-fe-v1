@@ -6,11 +6,11 @@ class BroadcastParticipantsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numberOfParticipants = context.select(
-      (LiveParticipantsBloc bloc) => bloc.state.numberOfParticipants,
+    final numberOfLiveParticipants = context.select(
+      (LiveParticipantsBloc bloc) => bloc.state.numberOfLiveParticipants,
     );
     return MModal(
-      title: 'Listening ($numberOfParticipants)',
+      title: 'Listening ($numberOfLiveParticipants)',
       builder: (context) => const Column(
         mainAxisSize: MainAxisSize.min,
         children: [

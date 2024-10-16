@@ -1,5 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
+
+
 class ResetPasswordSuccessPage extends StatelessWidget {
   const ResetPasswordSuccessPage({super.key});
 
@@ -31,7 +33,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
           Spaces.verticalXXXLarge,
           MPrimaryButton(
             label: 'Go Back to Log In',
-            onPressed: () => context.go(Routes.login),
+            onPressed: () => router.go(Routes.login),
           ),
         ],
       ),

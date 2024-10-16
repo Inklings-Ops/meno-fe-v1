@@ -8,9 +8,10 @@ class BroadcastListeningTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     return Column(
+      key: const ValueKey('BroadcastListeningTab'),
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+          padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
           height: 34,
           child: Row(
             children: [
@@ -18,7 +19,10 @@ class BroadcastListeningTab extends StatelessWidget {
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal<void>(
-                  const BroadcastParticipantsModal(),
+                  BlocProvider.value(
+                    value: context.read<LiveParticipantsBloc>(),
+                    child: const BroadcastParticipantsModal(),
+                  ),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: size.height * 0.9),
                 ),
@@ -40,7 +44,7 @@ class _NumberOfParticipants extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
-      selector: (state) => state.numberOfParticipants,
+      selector: (state) => state.numberOfLiveParticipants,
       builder: (context, numberOfParticipants) => Row(
         children: [
           const Icon(MIcons.hearing, size: 16),

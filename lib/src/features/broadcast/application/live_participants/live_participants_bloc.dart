@@ -1,76 +1,84 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart' hide Participant;
 
 part 'live_participants_bloc.freezed.dart';
-part 'live_participants_event.dart';
 part 'live_participants_state.dart';
 
 @lazySingleton
 class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   LiveParticipantsBloc({
     required SocketService socket,
+    required IBroadcastFacade facade,
   })  : _socket = socket,
+        _facade = facade,
         super(LiveParticipantsState.initial()) {
-    _socketStateSub = _socket.stateStream.listen((socketState) {
-      socketState.whenOrNull(
-        getBroadcastListeners: (participants, _) => emit(state.copyWith(
-          participants: participants,
-        ),),
-        getNumberOfBroadcastListeners: (value, _) => emit(state.copyWith(
-          numberOfParticipants: value,
-        ),),
-      );
-    });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
       socketEvent.whenOrNull(
         newBroadcastListener: _onNewBroadcastListener,
-        numberOfLiveListeners: _onNumberOfLiveListeners,
+        broadcastListenerLeft: _onBroadcastListenerLeft,
       );
     });
   }
   final SocketService _socket;
+  final IBroadcastFacade _facade;
+
   late final StreamSubscription<SocketEvent> _socketEventSub;
-  late final StreamSubscription<SocketState> _socketStateSub;
 
   Future<void> initialize(Broadcast broadcast) async {
     emit(state.copyWith(broadcast: broadcast, loading: true));
-    final broadcastId = broadcast.id.getOr();
-    _socket.emit(SocketEvent.getBroadcastListeners(broadcastId));
-    _socket.emit(SocketEvent.getNumberOfBroadcastListeners(broadcastId));
-    emit(state.copyWith(loading: false));
+    final response = await _facade.liveListeners(broadcast.id);
+    emit(
+      response.fold(
+        (failure) => state.copyWith(loading: false),
+        (participants) => state.copyWith(
+          loading: false,
+          liveParticipants: participants,
+          numberOfLiveParticipants: participants.length,
+        ),
+      ),
+    );
+  }
+
+  Future<void> fetchTotal() async {
+    emit(state.copyWith(loading: true));
+    final response = await _facade.listeners(state.broadcast.id);
+    emit(
+      response.fold(
+        (failure) => state.copyWith(loading: false),
+        (participants) => state.copyWith(
+          loading: false,
+          totalParticipants: participants,
+          numberOfTotalParticipants: participants.length,
+        ),
+      ),
+    );
   }
 
   void _onNewBroadcastListener(BroadcastParticipant participant) {
-    final currentParticipants = List<BroadcastParticipant?>.from(state.participants);
-    final isAlreadyIn = currentParticipants.contains(participant);
-    if (isAlreadyIn) return;
-    final updatedParticipants = [...currentParticipants, participant];
-    emit(state.copyWith(participants: updatedParticipants));
-  }
-
-  void _onNumberOfLiveListeners(int value) {
-    emit(state.copyWith(numberOfParticipants: value));
-    if (state.numberOfParticipants > value) {
-      final broadcastId = state.broadcast.id.getOr();
-      _socket.emit(SocketEvent.getBroadcastListeners(broadcastId));
+    final list = List<BroadcastParticipant>.from(state.liveParticipants);
+    if (!list.contains(participant)) {
+      emit(
+        state.copyWith(
+          liveParticipants: [...list, participant],
+          numberOfLiveParticipants: participant.numberOfListeners!,
+        ),
+      );
     }
   }
 
-  void participantLeft(BroadcastParticipant participant) {
-    final currentList = List<BroadcastParticipant?>.from(state.participants);
-    final updatedList = currentList.where((p) => p != participant).toList();
-    emit(state.copyWith(participants: updatedList));
+  void _onBroadcastListenerLeft(BroadcastParticipant participant) {
+    final list = List<BroadcastParticipant>.from(state.liveParticipants);
+    final updatedList = list.where((p) => p.id != participant.id).toList();
+    emit(state.copyWith(liveParticipants: updatedList));
   }
 
   @override
-  Future<void> close() {
-    _socketEventSub.cancel();
-    _socketStateSub.cancel();
+  Future<void> close() async {
+    await _socketEventSub.cancel();
     return super.close();
   }
 }

@@ -6,7 +6,7 @@ class ProfileButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    const shape = RoundedRectangleBorder(borderRadius: Corners.small);
+    const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
     final textStyle = MTextTheme.of(context)!.microMedium;
     return SizedBox(
       height: 32,

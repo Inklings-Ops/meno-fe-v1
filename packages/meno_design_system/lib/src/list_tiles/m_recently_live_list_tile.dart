@@ -79,7 +79,7 @@ class MRecentlyLiveListTile extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       shape: SmoothRectangleBorder(
         side: BorderSide(color: colors.outlineVariant1!),
-        borderRadius: Corners.squircleLarge,
+        borderRadius: Corners.squircleLg,
       ),
       minLeadingWidth: 12,
       leading: _Artwork(imageUrl: imageUrl, loading: loading),
@@ -155,13 +155,13 @@ class _Artwork extends StatelessWidget {
           child: Container(
             width: 79,
             height: 68,
-            decoration: const BoxDecoration(borderRadius: Corners.medium),
+            decoration: const BoxDecoration(borderRadius: Corners.md),
           ),
         ),
         imageBuilder: (context, image) => DecoratedBox(
           decoration: BoxDecoration(
             image: DecorationImage(image: image, fit: BoxFit.cover),
-            borderRadius: Corners.medium,
+            borderRadius: Corners.md,
           ),
         ),
       );

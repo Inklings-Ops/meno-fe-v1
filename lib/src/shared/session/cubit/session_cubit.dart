@@ -35,7 +35,7 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    emit(const SessionState.unauthenticated());
+    emit(SessionState.partiallyAuthenticated(user: _session.credential!.user));
     unawaited(_session.logout());
     notifyListeners();
   }
@@ -45,7 +45,7 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
       return const SessionState.onboarding();
     } else if (credential == null) {
       return const SessionState.unauthenticated();
-    } else if (credential.token == null) {
+    } else if (credential.token == null || credential.token?.isValid == false) {
       return SessionState.partiallyAuthenticated(user: credential.user);
     } else {
       return SessionState.authenticated(

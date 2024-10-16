@@ -16,5 +16,6 @@ class Profile with _$Profile {
     bool? isSubscribedToUser,
     bool? verified,
   }) = _Profile;
-}
 
+  factory Profile.empty() => Profile(id: '', fullName: SingleLineString(''));
+}

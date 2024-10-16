@@ -17,8 +17,10 @@ class BroadcastAvatarField extends StatelessWidget {
             label: 'Change Artwork',
             onPressed: () => context.showModal<void>(
               MImageSourceModal(
-                onGallerySourceTap: () => bloc.artworkChanged(true),
-                onCameraSourceTap: () => bloc.artworkChanged(false),
+                onGallerySourceTap: bloc.artworkChanged,
+                onCameraSourceTap: () => bloc.artworkChanged(
+                  fromGallery: false,
+                ),
               ),
             ),
           ),

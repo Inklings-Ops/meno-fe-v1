@@ -1,6 +1,5 @@
 export 'account_upgrade_section.dart';
 export 'empty_state_widget.dart';
-export 'my_profile_page.dart';
 export 'profile_app_bar.dart';
 export 'profile_buttons.dart';
 export 'profile_recent_broadcasts_tab.dart';

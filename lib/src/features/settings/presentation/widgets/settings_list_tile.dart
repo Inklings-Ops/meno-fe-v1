@@ -34,7 +34,7 @@ class SettingsListTile extends StatelessWidget {
             size: 20,
             color: iconColor ?? resolveDisabledWithOpacity(colors.primary),
           ),
-          horizontalTitleGap: Insets.small,
+          horizontalTitleGap: Insets.sm,
           title: MText(
             title,
             style: textTheme.captionMedium,

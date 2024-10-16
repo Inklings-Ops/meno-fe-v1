@@ -37,15 +37,14 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountSwitchRequested event,
     Emitter<AccountState> emit,
   ) async {
-    final allCredentials = (state as AccountLoadSuccess).allCredentials;
     emit(const AccountLoading());
     final fOrS = await _facade.switchAccount(event.credential);
     emit(
-      fOrS.fold(
+      await fOrS.fold(
         AccountLoadFailure.new,
-        (r) => AccountLoadSuccess(
+        (r) async => AccountLoadSuccess(
           currentCredential: event.credential,
-          allCredentials: allCredentials,
+          allCredentials: await _getAllCredentials(),
         ),
       ),
     );

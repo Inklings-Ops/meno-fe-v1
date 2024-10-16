@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
 part 'broadcast_participant_dto.freezed.dart';
@@ -15,9 +14,14 @@ class BroadcastParticipantDto with _$BroadcastParticipantDto {
   factory BroadcastParticipantDto({
     required String id,
     required String fullName,
-    @Default(false) bool isCreator,
-    @Default(false) bool isCohost,
+    String? broadcastId,
+    Role? role,
+    String? bio,
     String? imageUrl,
+    int? numberOfListeners,
+    bool? isHostDisconnected,
+    DateTime? joinedAt,
+    DateTime? disconnectedAt,
   }) = _BroadcastParticipantDto;
 
   factory BroadcastParticipantDto.fromJson(Map<String, dynamic> json) =>
@@ -31,9 +35,14 @@ extension ParticipantDtoToDomain on BroadcastParticipantDto {
   BroadcastParticipant get toDomain => BroadcastParticipant(
         id: id,
         fullName: fullName,
+        role: role,
+        broadcastId: broadcastId,
+        bio: bio,
         imageUrl: imageUrl,
-        isCreator: isCreator,
-        isCohost: isCohost,
+        numberOfListeners: numberOfListeners,
+        isHostDisconnected: isHostDisconnected,
+        joinedAt: joinedAt,
+        disconnectedAt: disconnectedAt,
       );
 }
 
@@ -41,8 +50,13 @@ extension ParticipantToDto on BroadcastParticipant {
   BroadcastParticipantDto get toDto => BroadcastParticipantDto(
         id: id,
         fullName: fullName,
+        role: role,
+        broadcastId: broadcastId,
+        bio: bio,
         imageUrl: imageUrl,
-        isCreator: isCreator,
-        isCohost: isCohost,
+        numberOfListeners: numberOfListeners,
+        isHostDisconnected: isHostDisconnected,
+        joinedAt: joinedAt,
+        disconnectedAt: disconnectedAt,
       );
 }

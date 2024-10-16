@@ -8,7 +8,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    const borderRadius = Corners.small;
+    const borderRadius = Corners.sm;
 
     final label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
     final content = isBroadcasting
@@ -24,7 +24,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
           size: const Size(85, 40),
           child: MTextButton(
             label: 'Cancel',
-            onPressed: () => context.pop(false),
+            onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(
               foregroundColor: colors.onDisabled?.withOpacity(0.5),
               shape: const RoundedRectangleBorder(borderRadius: borderRadius),
@@ -35,7 +35,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
           height: 40,
           child: MDangerButton(
             label: isBroadcasting ? 'Stop' : 'Leave',
-            onPressed: () => context.pop(true),
+            onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               backgroundColor: colors.error,
               foregroundColor: colors.onError,

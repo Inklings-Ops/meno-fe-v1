@@ -7,5 +7,7 @@ analyzer:
 #   #   - "**/*.g.dart"
 #   #   - "**/*.freezed.dart"
   errors:
+    avoid_js_rounded_ints: ignore
+    inference_failure_on_instance_creation: ignore
     invalid_annotation_target: ignore
     # library_private_types_in_public_api: ignore

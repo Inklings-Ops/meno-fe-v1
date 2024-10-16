@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class DetailsPage extends StatelessWidget {
   const DetailsPage({required this.broadcast, super.key});
@@ -8,6 +8,13 @@ class DetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.select(
+      (SessionCubit bloc) => bloc.state.maybeWhen(
+        orElse: User.empty,
+        authenticated: (user, token) => user,
+      ),
+    );
+
     return MScaffold(
       appBar: MAppBar.secondary(
         title: broadcast.title.getOr(),
@@ -28,15 +35,25 @@ class DetailsPage extends StatelessWidget {
         child: Column(
           children: [
             Spaces.verticalLarge,
-            Align(
-              child: _Artwork(imageUrl: broadcast.imageUrl),
-            ),
+            Align(child: _Artwork(imageUrl: broadcast.imageUrl)),
             Spaces.verticalSmall,
             _Time(endTime: broadcast.endTime, startTime: broadcast.startTime),
             Spaces.verticalMicro,
             _Title(title: broadcast.title.getOr()),
             Spaces.verticalMicro,
-            _Creator(name: broadcast.fullName!),
+            _Creator(
+              name: broadcast.fullName!,
+              onTap: () async {
+                final id = broadcast.creatorId ?? broadcast.creator?.id;
+                if (id == null) {
+                  return;
+                } else if (id == currentUser.id.getOr()) {
+                  await router.push(Routes.myProfile);
+                } else {
+                  await router.push(Routes.othersProfile, extra: id);
+                }
+              },
+            ),
             Spaces.verticalLarge,
             MPrimaryButton.icon(
               label: 'Restream',
@@ -60,6 +77,12 @@ class DetailsPageOptionsModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
+    final currentUser = context.select(
+      (SessionCubit bloc) => bloc.state.maybeWhen(
+        orElse: User.empty,
+        authenticated: (user, token) => user,
+      ),
+    );
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -74,9 +97,19 @@ class DetailsPageOptionsModal extends StatelessWidget {
             color: colors.onBackgroundVariant,
           ),
           Spaces.verticalXLarge,
-          const MModalListTile(
-            leading: Icon(MIcons.user),
+          MModalListTile(
+            leading: const Icon(MIcons.user),
             title: 'Go to Profile',
+            onTap: () async {
+              final id = broadcast.creatorId ?? broadcast.creator?.id;
+              if (id == null) {
+                return;
+              } else if (id == currentUser.id.getOr()) {
+                await router.push(Routes.myProfile);
+              } else {
+                await router.push(Routes.othersProfile, extra: id);
+              }
+            },
           ),
           Spaces.verticalSmall,
           const MModalListTile(
@@ -112,7 +145,7 @@ class _Artwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    const borderRadius = Corners.large;
+    const borderRadius = Corners.lg;
 
     final colorFilter = ColorFilter.mode(
       colors.onSurfaceShade!,
@@ -152,13 +185,12 @@ class _Artwork extends StatelessWidget {
 }
 
 class _Creator extends StatelessWidget {
-  const _Creator({required this.name});
+  const _Creator({required this.name, this.onTap});
   final String name;
-
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     return SizedBox(
       height: 16,
       child: MTextButton.icon(
@@ -170,7 +202,7 @@ class _Creator extends StatelessWidget {
           foregroundColor: colors.onBackgroundVariant,
           iconColor: colors.onBackgroundVariant,
         ),
-        onPressed: () {},
+        onPressed: onTap,
       ),
     );
   }

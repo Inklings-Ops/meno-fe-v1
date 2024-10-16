@@ -2,16 +2,6 @@ part of 'login_cubit.dart';
 
 @freezed
 class LoginState with _$LoginState {
-
-  /// Creates a new `LoginFormState` object with the initial values.
-  factory LoginState.initial() {
-    return LoginState(
-      email: Email(''),
-      password: Password(''),
-      loading: false,
-      option: none(),
-    );
-  }
   /// Creates a new `LoginState` object.
   factory LoginState({
     /// The user's email address.
@@ -26,6 +16,16 @@ class LoginState with _$LoginState {
     /// The result of the last login attempt.
     required Option<Either<AuthException, UserCredential>> option,
   }) = _LoginState;
+
+  /// Creates a new `LoginFormState` object with the initial values.
+  factory LoginState.initial() {
+    return LoginState(
+      email: Email(''),
+      password: Password(''),
+      loading: false,
+      option: none(),
+    );
+  }
 
   LoginState._();
 

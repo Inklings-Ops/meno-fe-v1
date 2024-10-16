@@ -13,11 +13,11 @@ class PasswordRulesWidget extends StatelessWidget {
       builder: (context, state) => Visibility(
         visible: !state.isValid,
         child: Container(
-          padding: const EdgeInsets.all(Insets.large),
+          padding: const EdgeInsets.all(Insets.lg),
           decoration: BoxDecoration(
             color: colors.background,
             border: Border.all(color: MColor.grey50),
-            borderRadius: Corners.small,
+            borderRadius: Corners.sm,
           ),
           child: Wrap(
             runSpacing: 16,

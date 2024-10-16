@@ -8,7 +8,7 @@ class BroadcastTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Insets.medium),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.md),
       child: MText(
         title,
         maxLines: 2,

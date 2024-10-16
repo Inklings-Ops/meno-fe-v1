@@ -6,20 +6,18 @@ class ParticipantItem extends StatelessWidget {
     super.key,
     this.participant,
     this.onTap,
-    this.isCreator = false,
-    this.isCohost = false,
     this.isForAddCohost = false,
   });
   final BroadcastParticipant? participant;
   final VoidCallback? onTap;
-  final bool isCohost;
   final bool isForAddCohost;
-  final bool isCreator;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     final hasUser = participant != null;
+    final isCohost = participant?.role == Role.cohost;
+    final isHost = participant?.role == Role.host;
     return InkWell(
       onTap: onTap,
       child: SizedBox.square(
@@ -32,7 +30,7 @@ class ParticipantItem extends StatelessWidget {
             ),
             Spaces.verticalSmall,
             SizedBox(
-              height: Insets.large,
+              height: Insets.lg,
               child: MText(
                 hasUser ? participant!.fullName : 'Add Co-host',
                 style: textTheme.microMedium?.copyWith(height: 1),
@@ -45,14 +43,14 @@ class ParticipantItem extends StatelessWidget {
             if (isCohost) ...[
               Spaces.verticalMicro,
               SizedBox(
-                height: Insets.medium,
+                height: Insets.md,
                 child: _CoHostTag(participantId: participant!.id),
               ),
             ],
-            if (isCreator) ...[
+            if (isHost) ...[
               Spaces.verticalMicro,
               SizedBox(
-                height: Insets.medium,
+                height: Insets.md,
                 child: _HostTag(participantId: participant!.id),
               ),
             ],
@@ -87,7 +85,7 @@ class _ParticipantAvatar extends StatelessWidget {
               left: 30,
               top: 30,
               child: Container(
-                padding: const EdgeInsets.all(Insets.micro),
+                padding: const EdgeInsets.all(Insets.xs),
                 decoration: BoxDecoration(
                   color: colors.error,
                   shape: BoxShape.circle,
@@ -98,7 +96,7 @@ class _ParticipantAvatar extends StatelessWidget {
                 ),
                 child: Icon(
                   MIcons.x_close,
-                  size: Insets.small,
+                  size: Insets.sm,
                   color: colors.onError,
                 ),
               ),

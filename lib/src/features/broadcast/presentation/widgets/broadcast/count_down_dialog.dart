@@ -22,7 +22,7 @@ class CountDownDialog extends StatelessWidget {
             radius: 72,
             backgroundColor: colors.primary,
             child: Padding(
-              padding: const EdgeInsets.all(Insets.small),
+              padding: const EdgeInsets.all(Insets.sm),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

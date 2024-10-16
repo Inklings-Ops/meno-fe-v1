@@ -35,9 +35,9 @@ class CohostListTile extends StatelessWidget {
               label: 'Add as Co-host',
               style: OutlinedButton.styleFrom(
                 textStyle: textTheme.microMedium,
-                padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+                padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
                 shape: const RoundedRectangleBorder(
-                  borderRadius: Corners.small,
+                  borderRadius: Corners.sm,
                 ),
               ),
               onPressed: () {},

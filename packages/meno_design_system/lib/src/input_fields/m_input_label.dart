@@ -52,7 +52,7 @@ class MInputLabel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: Insets.large, color: styles.iconColor),
+            Icon(icon, size: Insets.lg, color: styles.iconColor),
             const SizedBox(height: 6),
           ],
           MText(label, color: styles.textColor, style: styles.labelTextStyle),

@@ -22,7 +22,7 @@ class SideNavRail extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Insets.medium),
+      padding: const EdgeInsets.symmetric(horizontal: Insets.md),
       decoration: BoxDecoration(
         color: colors.background,
         border: Border(right: BorderSide(color: colors.outlineVariant1!)),
@@ -34,8 +34,8 @@ class SideNavRail extends StatelessWidget {
         minExtendedWidth: 204,
         leading: Container(
           margin: const EdgeInsets.only(
-            top: Insets.medium,
-            bottom: Insets.xxLarge,
+            top: Insets.md,
+            bottom: Insets.xxl,
           ),
           alignment: Alignment.center,
           child: Assets.images.menoPurple.image(height: 24),
@@ -60,13 +60,13 @@ class SideNavRail extends StatelessWidget {
               selected: false,
               label: 'Settings',
               icon: const Icon(MIcons.settings),
-              onTap: () => const SettingsRoute().push<void>(context),
+              onTap: () => router.push(Routes.settings),
             ),
             Spaces.verticalXLarge,
             SizedBox(
               height: 48,
               child: GestureDetector(
-                onTap: () => const CreateBroadcastRoute().push<void>(context),
+                onTap: () => router.push<void>(Routes.webCreateBroadcast),
                 child: const Microphone(),
               ),
             ),

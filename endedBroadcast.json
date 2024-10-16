@@ -1,0 +1,18 @@
+{
+    "broadcastDetails": {
+        "id": "8eb02a46-292d-457f-9be3-3f0a214ccd5f",
+        "title": "Test Broadcast",
+        "imageUrl": null,
+        "startTime": "2024-10-08T02:30:54.323Z",
+        "description": "We going in",
+        "broadcastToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXRhZGF0YSI6IntcImlkXCI6XCI2ZmU4ZGJmMi1lMGVjLTRkOGMtYmIxMy1mYjk1ODNjZGE3ODhcIixcImZ1bGxOYW1lXCI6XCJEYXZpZCBNaWNoYWVsXCIsXCJpbWFnZVVybFwiOlwiaHR0cHM6Ly9yZXMuY2xvdWRpbmFyeS5jb20vZ3NvbjAwNy9pbWFnZS91cGxvYWQvdjE2ODE2ODA1MDUvY2NyZDc2aHFzZmcwcGlhamV1eGEuanBnXCJ9IiwibmFtZSI6IkRhdmlkIE1pY2hhZWwiLCJ2aWRlbyI6eyJyb29tSm9pbiI6dHJ1ZSwicm9vbSI6IjhlYjAyYTQ2LTI5MmQtNDU3Zi05YmUzLTNmMGEyMTRjY2Q1ZiIsImNhblN1YnNjcmliZSI6dHJ1ZSwiY2FuUHVibGlzaCI6dHJ1ZSwicm9vbVJlY29yZCI6dHJ1ZSwiY2FuUHVibGlzaFNvdXJjZXMiOlsibWljcm9waG9uZSJdfSwiaWF0IjoxNzI4MzU0NjU0LCJuYmYiOjE3MjgzNTQ2NTQsImV4cCI6MTcyODM1ODI1NCwiaXNzIjoiQVBJS1FoSEVVWEVDeEN1Iiwic3ViIjoiNmZlOGRiZjItZTBlYy00ZDhjLWJiMTMtZmI5NTgzY2RhNzg4IiwianRpIjoiNmZlOGRiZjItZTBlYy00ZDhjLWJiMTMtZmI5NTgzY2RhNzg4In0.7Rb_l6k7GAEQPlCLhWpu_OzIkaKF75YL1UA1XLyPRnA",
+        "creatorId": "6fe8dbf2-e0ec-4d8c-bb13-fb9583cda788",
+        "creatorBio": "David Michael: Always wanting to know more of God. Super charged with the Spirit.\nHallelujah!",
+        "creatorFullName": "David Michael",
+        "creatorImageUrl": "https://res.cloudinary.com/gson007/image/upload/v1681680505/ccrd76hqsfg0piajeuxa.jpg"
+    },
+    "reason": {
+        "type": "normal",
+        "message": "Host has the ended Broadcast"
+    }
+}

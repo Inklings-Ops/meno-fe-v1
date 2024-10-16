@@ -39,8 +39,8 @@ class ExpandButton extends StatelessWidget {
         height: 34,
         width: 94,
         padding: const EdgeInsets.symmetric(
-          horizontal: Insets.medium,
-          vertical: Insets.small,
+          horizontal: Insets.md,
+          vertical: Insets.sm,
         ),
         decoration: BoxDecoration(
           color: colors.inActiveContainer,

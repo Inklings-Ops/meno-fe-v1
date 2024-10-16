@@ -11,7 +11,7 @@ class LiveForYou extends StatelessWidget {
         const MHeader(title: 'Live For You ✨'),
         Container(
           height: 112,
-          padding: const EdgeInsets.symmetric(horizontal: Insets.large),
+          padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,12 +57,12 @@ class DiscoverButton extends StatelessWidget {
       child: MSecondaryButton.icon(
         label: 'Discover',
         icon: const Icon(MIcons.compass),
-        onPressed: () => context.go(Routes.discover),
+        onPressed: () => router.go(Routes.discover),
         style: OutlinedButton.styleFrom(
           textStyle: textTheme.microMedium,
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           shape: const RoundedRectangleBorder(
-            borderRadius: Corners.small,
+            borderRadius: Corners.sm,
             side: BorderSide(width: 2),
           ),
         ),
