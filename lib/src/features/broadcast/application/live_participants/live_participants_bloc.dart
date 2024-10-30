@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart' hide Participant;
@@ -59,21 +60,28 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
   }
 
   void _onNewBroadcastListener(BroadcastParticipant participant) {
-    final list = List<BroadcastParticipant>.from(state.liveParticipants);
-    if (!list.contains(participant)) {
+    final updatedSet = state.liveParticipants.toSet();
+    if (updatedSet.add(participant)) {
       emit(
         state.copyWith(
-          liveParticipants: [...list, participant],
-          numberOfLiveParticipants: participant.numberOfListeners!,
+          liveParticipants: updatedSet.toList(),
+          numberOfLiveParticipants: updatedSet.length,
         ),
       );
     }
   }
 
   void _onBroadcastListenerLeft(BroadcastParticipant participant) {
-    final list = List<BroadcastParticipant>.from(state.liveParticipants);
-    final updatedList = list.where((p) => p.id != participant.id).toList();
-    emit(state.copyWith(liveParticipants: updatedList));
+    Logger().w('From _onBroadcastListenerLeft => $participant');
+    final updatedSet = state.liveParticipants.toSet()
+      ..removeWhere((p) => p.id == participant.id);
+    Logger().w('From _onBroadcastListenerLeft => $updatedSet');
+    emit(
+      state.copyWith(
+        liveParticipants: updatedSet.toList(),
+        numberOfLiveParticipants: participant.numberOfListeners!,
+      ),
+    );
   }
 
   @override

@@ -20,4 +20,11 @@ class PermissionsService {
       await openAppSettings();
     }
   }
+
+  // Future<void> requestNotificationsPermissions() async {
+  //   final status = await Permission.notification.request();
+  //   if (status.) {
+  //     await openAppSettings();
+  //   }
+  // }
 }

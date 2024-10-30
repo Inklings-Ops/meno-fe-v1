@@ -36,22 +36,22 @@ class BroadcastBloc extends Cubit<BroadcastState> {
     await failureOrBroadcast.fold(
       (exception) async => _emitStatus(BroadcastFailed(exception)),
       (broadcast) async {
-        _socket.emit(SocketStartedBroadcast(broadcastId.getOr()));
-        if (state is! BroadcastFailed) {
-          try {
-            final token = broadcast.broadcastToken!;
-            await _liveKit.broadcast(token).whenComplete(() async {
+        try {
+          final token = broadcast.broadcastToken!;
+          await _liveKit.broadcast(token).whenComplete(() async {
+            _socket.emit(SocketStartedBroadcast(broadcastId.getOr()));
+            if (state is! BroadcastFailed) {
               emit(
                 state.copyWith(
                   broadcast: broadcast,
                   status: const BroadcastStarted(),
                 ),
               );
-            });
-          } catch (e) {
-            final exception = BroadcastException.message(e.toString());
-            _emitStatus(BroadcastFailed(exception));
-          }
+            }
+          });
+        } catch (e) {
+          final exception = BroadcastException.message(e.toString());
+          _emitStatus(BroadcastFailed(exception));
         }
       },
     );
@@ -59,7 +59,7 @@ class BroadcastBloc extends Cubit<BroadcastState> {
 
   Future<void> mute({bool enabled = false}) async {
     if (state.status is BroadcastStarted) {
-      unawaited(_liveKit.mute(enabled: enabled));
+      await _liveKit.mute(enabled: enabled);
       _emitStatus(BroadcastStarted(muted: enabled));
     }
   }
@@ -77,9 +77,15 @@ class BroadcastBloc extends Cubit<BroadcastState> {
 
   Future<void> dispose() async => _liveKit.dispose();
 
+  // void _onSocketData(dynamic data, String? error) {
+  //   if (error == null) return;
+  //   return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+  // }
   void _onSocketData(dynamic data, String? error) {
-    if (error == null) return;
-    return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+    if (error != null) {
+      _liveKit.disconnect();
+      _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+    }
   }
 
   void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));

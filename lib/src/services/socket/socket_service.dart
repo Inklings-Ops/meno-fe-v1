@@ -52,7 +52,7 @@ class SocketService extends Object with Disposable {
       ..on('broadcastListenerLeft', (data) {
         final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;
         final dto = BroadcastParticipantDto.fromJson(decoded);
-        _event.add(SocketEvent.newBroadcastListener(dto.toDomain));
+        _event.add(SocketEvent.broadcastListenerLeft(dto.toDomain));
       })
       ..on('endedBroadcast', (data) {
         final decoded = jsonDecode(jsonEncode(data)) as Map<String, dynamic>;

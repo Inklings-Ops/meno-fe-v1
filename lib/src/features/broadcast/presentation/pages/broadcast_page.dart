@@ -30,6 +30,7 @@ class BroadcastPage extends StatelessWidget {
               MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: ctx.read<BroadcastBloc>()),
+                  BlocProvider.value(value: ctx.read<ChatBloc>()),
                   BlocProvider.value(value: ctx.read<LiveParticipantsBloc>()),
                 ],
                 child: const BroadcastEndedModal(),

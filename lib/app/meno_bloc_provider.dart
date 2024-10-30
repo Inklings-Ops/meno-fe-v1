@@ -47,7 +47,8 @@ class MenoBlocProvider extends StatelessWidget {
           create: (ctx) => RegisterCubit(facade: ctx.read<IAuthFacade>()),
         ),
         BlocProvider(
-          create: (ctx) => MyProfileCubit(facade: ctx.read<IProfileFacade>()),
+          create: (ctx) =>
+              MyProfileCubit(facade: ctx.read<IProfileFacade>())..fetch(),
         ),
         BlocProvider(
           create: (ctx) => ProfileFormCubit(
@@ -134,6 +135,7 @@ class MenoBlocProvider extends StatelessWidget {
             facade: context.read<IProfileFacade>(),
           ),
         ),
+        BlocProvider(create: (context) => ChatTimerCubit()),
       ],
       child: child,
     );
