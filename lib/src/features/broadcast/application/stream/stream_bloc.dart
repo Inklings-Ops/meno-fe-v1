@@ -41,7 +41,6 @@ class StreamBloc extends Cubit<StreamState> {
       (exception) async => _emitStatus(BroadcastFailed(exception)),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
-
         try {
           final token = joinBroadcast.broadcastToken;
           await _liveKit.stream(token).whenComplete(() async {
@@ -77,7 +76,11 @@ class StreamBloc extends Cubit<StreamState> {
   void _onSocketData(dynamic data, String? error) {
     if (error != null) {
       _liveKit.disconnect();
-      _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+      emit(
+        state.copyWith(
+          status: BroadcastFailed(BroadcastException.message(error)),
+        ),
+      );
     }
   }
 

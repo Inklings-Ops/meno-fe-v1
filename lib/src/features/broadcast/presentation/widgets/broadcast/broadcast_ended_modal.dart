@@ -2,8 +2,6 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
-
-
 class BroadcastEndedModal extends HookWidget {
   const BroadcastEndedModal({super.key});
 
@@ -20,7 +18,7 @@ class BroadcastEndedModal extends HookWidget {
     }
 
     return PopScope(
-      onPopInvoked: (_) {
+      onPopInvokedWithResult: (didPop, result) {
         router.go(Routes.home);
         cleanUp();
       },

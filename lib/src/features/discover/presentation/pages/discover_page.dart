@@ -73,7 +73,7 @@ class DiscoverPage extends HookWidget {
   }
 
   Future<void> refresh(BuildContext context, Filter filter) async {
-    return await switch (filter) {
+    return switch (filter) {
       Filter.all => Future.wait([
           context.read<DAllCubit>().refreshNowLive(),
           context.read<DAllCubit>().refreshRecentlyLive(),
