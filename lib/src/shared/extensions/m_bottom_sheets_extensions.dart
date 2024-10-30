@@ -9,20 +9,20 @@ extension MBottomSheetsX on BuildContext {
   Future<T?> showModal<T>(
     Widget child, {
     BoxConstraints? constraints,
-    bool isScrollControlled = false,
-    bool useRootNavigator = false,
-    bool isDismissible = true,
-    bool enableDrag = true,
+    bool? isScrollControlled,
+    bool? useRootNavigator,
+    bool? isDismissible,
+    bool? enableDrag,
   }) {
     return showModalBottomSheet<T?>(
       context: this,
       builder: (context) => Material(child: child),
       constraints: constraints,
       backgroundColor: MColorScheme.of(this)?.background,
-      isScrollControlled: isScrollControlled,
-      useRootNavigator: useRootNavigator,
-      isDismissible: isDismissible,
-      enableDrag: enableDrag,
+      isScrollControlled: isScrollControlled ?? false,
+      useRootNavigator: useRootNavigator ?? false,
+      isDismissible: isDismissible ?? true,
+      enableDrag: enableDrag ?? true,
       showDragHandle: true,
       useSafeArea: true,
     );

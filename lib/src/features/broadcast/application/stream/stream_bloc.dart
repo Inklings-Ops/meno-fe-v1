@@ -41,17 +41,17 @@ class StreamBloc extends Cubit<StreamState> {
       (exception) async => _emitStatus(BroadcastFailed(exception)),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
-        _socket.emit(SocketJoinBroadcast(broadcastId.getOr()));
-        if (state is! BroadcastFailed) {
-          try {
-            final token = joinBroadcast.broadcastToken;
-            await _liveKit.stream(token).whenComplete(() async {
+        try {
+          final token = joinBroadcast.broadcastToken;
+          await _liveKit.stream(token).whenComplete(() async {
+            _socket.emit(SocketJoinBroadcast(broadcastId.getOr()));
+            if (state is! BroadcastFailed) {
               _emitStatus(const BroadcastJoined());
-            });
-          } catch (e) {
-            final exception = BroadcastException.message(e.toString());
-            _emitStatus(BroadcastFailed(exception));
-          }
+            }
+          });
+        } catch (e) {
+          final exception = BroadcastException.message(e.toString());
+          _emitStatus(BroadcastFailed(exception));
         }
       },
     );
@@ -68,9 +68,20 @@ class StreamBloc extends Cubit<StreamState> {
 
   void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));
 
+  // void _onSocketData(dynamic data, String? error) {
+  //   if (error == null) return;
+  //   return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+  // }
+
   void _onSocketData(dynamic data, String? error) {
-    if (error == null) return;
-    return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
+    if (error != null) {
+      _liveKit.disconnect();
+      emit(
+        state.copyWith(
+          status: BroadcastFailed(BroadcastException.message(error)),
+        ),
+      );
+    }
   }
 
   @override

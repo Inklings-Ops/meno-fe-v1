@@ -207,7 +207,10 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.myProfile,
-              builder: (context, state) => const MyProfilePage(),
+              builder: (context, state) => BlocProvider.value(
+                value: context.read<MyProfileCubit>()..fetch(),
+                child: const MyProfilePage(),
+              ),
             ),
           ],
         ),

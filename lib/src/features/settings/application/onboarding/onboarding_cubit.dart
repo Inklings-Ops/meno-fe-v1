@@ -21,7 +21,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   ///
   /// Emits [OnboardingState.notCompleted] after clearing the cache.
   Future<void> clearCache() async {
-    return await _facade.clearCache.whenComplete(
+    return _facade.clearCache.whenComplete(
       () => emit(OnboardingState.notCompleted),
     );
   }
@@ -30,7 +30,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   ///
   /// Emits [OnboardingState.completed] after completing onboarding.
   Future<void> complete() async {
-    return await _facade.completeOnboarding.whenComplete(
+    return _facade.completeOnboarding.whenComplete(
       () => emit(OnboardingState.completed),
     );
   }

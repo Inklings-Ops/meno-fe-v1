@@ -23,10 +23,12 @@ class BroadcastChatTab extends HookWidget {
                   child: ChatList(controller: scrollController),
                 ),
               ),
-              SizedBox(
-                height: 52,
-                width: constraints.maxWidth,
-                child: ChatInputContainer(scrollController: scrollController),
+              SafeArea(
+                child: SizedBox(
+                  height: 52,
+                  width: constraints.maxWidth,
+                  child: ChatInputContainer(scrollController: scrollController),
+                ),
               ),
             ],
           ),

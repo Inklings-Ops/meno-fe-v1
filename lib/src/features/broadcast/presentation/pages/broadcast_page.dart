@@ -2,8 +2,6 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-
-
 class BroadcastPage extends StatelessWidget {
   const BroadcastPage({super.key});
 
@@ -30,6 +28,7 @@ class BroadcastPage extends StatelessWidget {
               MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: ctx.read<BroadcastBloc>()),
+                  BlocProvider.value(value: ctx.read<ChatBloc>()),
                   BlocProvider.value(value: ctx.read<LiveParticipantsBloc>()),
                 ],
                 child: const BroadcastEndedModal(),

@@ -62,7 +62,7 @@ class NoteFormCubit extends Cubit<NoteFormState> {
 
     _debounce = Timer(
       const Duration(seconds: 10),
-      () async => await onSubmit(),
+      () async => onSubmit(),
     );
   }
 

@@ -23,7 +23,6 @@ class Chat with _$Chat {
       id: '',
       content: IChatContent(''),
       createdAt: DateTime.now(),
-      sender: null,
       senderId: '',
       broadcastId: '',
       fullName: '',

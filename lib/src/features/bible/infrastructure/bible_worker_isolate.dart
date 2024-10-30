@@ -29,7 +29,7 @@ class BibleWorkerIsolate {
     final id = _idCounter++;
     _activeResponses[id] = completer;
     _commands.send((id, params));
-    return await completer.future;
+    return completer.future;
   }
 
   void _handleResponsesFromIsolate(dynamic message) {
