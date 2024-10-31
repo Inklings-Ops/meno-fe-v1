@@ -7,7 +7,7 @@ part 'live_status.freezed.dart';
 class LiveStatus with _$LiveStatus {
   const factory LiveStatus.initial() = LiveInitial;
   const factory LiveStatus.loading() = LiveLoadInProgress;
-  const factory LiveStatus.started({@Default(false) bool muted}) = BroadcastStarted;
+  const factory LiveStatus.started({@Default(true) bool isMicrophoneEnabled}) = BroadcastStarted;
   const factory LiveStatus.joined() = BroadcastJoined;
   const factory LiveStatus.ended(EndedBroadcastData data) = BroadcastEnded;
   const factory LiveStatus.left() = BroadcastLeft;

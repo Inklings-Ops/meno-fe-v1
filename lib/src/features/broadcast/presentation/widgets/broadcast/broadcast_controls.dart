@@ -22,21 +22,18 @@ class BroadcastControls extends StatelessWidget {
   }
 }
 
-class _MicrophoneButton extends HookWidget {
+class _MicrophoneButton extends StatelessWidget {
   const _MicrophoneButton();
 
   @override
   Widget build(BuildContext context) {
-    final isMuted = useState(false);
     return BlocBuilder<BroadcastBloc, BroadcastState>(
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => state.status.maybeWhen(
         orElse: () => const MMicrophoneButton(isDisabled: true),
-        started: (muted) => MMicrophoneButton(
-          isMuted: isMuted.value,
-          onTap: () {
-            isMuted.value = !isMuted.value;
-            context.read<BroadcastBloc>().mute(enabled: !isMuted.value);
-          },
+        started: (isMicrophoneEnabled) => MMicrophoneButton(
+          isMicrophoneEnabled: isMicrophoneEnabled,
+          onTap: context.read<BroadcastBloc>().toggleMute,
         ),
       ),
     );

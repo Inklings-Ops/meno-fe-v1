@@ -9,7 +9,7 @@ import 'package:meno_design_system/meno_design_system.dart';
 /// Example usage:
 /// ```dart
 /// MMicrophoneButton(
-///   isMuted: true,
+///   isMicrophoneEnabled: true,
 ///   onTap: () {
 ///     // Handle microphone button tap
 ///   },
@@ -20,12 +20,13 @@ class MMicrophoneButton extends StatelessWidget {
   ///
   /// Parameters:
   /// - [key]: An optional key to identify the widget.
-  /// - [isMuted]: Indicates whether the microphone is muted. Defaults to true.
+  /// - [isMicrophoneEnabled]: Indicates whether the microphone is muted.
+  ///   Defaults to true.
   /// - [onTap]: An optional callback function to be invoked when the button is
   /// tapped.
   const MMicrophoneButton({
     super.key,
-    this.isMuted = true,
+    this.isMicrophoneEnabled = true,
     this.onTap,
     this.isDisabled = false,
   });
@@ -33,7 +34,7 @@ class MMicrophoneButton extends StatelessWidget {
   /// Whether the microphone is muted. If true, the microphone-off icon is
   /// displayed.
   /// If false, the microphone icon is displayed. Defaults to true.
-  final bool isMuted;
+  final bool isMicrophoneEnabled;
 
   /// An optional callback function to be invoked when the button is tapped.
   final VoidCallback? onTap;
@@ -46,9 +47,9 @@ class MMicrophoneButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     return MIconButton(
-      icon: isMuted
-          ? const Icon(MIcons.microphone_off)
-          : const Icon(MIcons.microphone),
+      icon: isMicrophoneEnabled
+          ? const Icon(MIcons.microphone)
+          : const Icon(MIcons.microphone_off),
       color: isDisabled ? colors.primary?.withOpacity(0.4) : colors.primary,
       isFilled: true,
       iconSize: 20,

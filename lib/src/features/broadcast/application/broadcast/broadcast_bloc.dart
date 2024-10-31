@@ -57,10 +57,11 @@ class BroadcastBloc extends Cubit<BroadcastState> {
     );
   }
 
-  Future<void> mute({bool enabled = false}) async {
+  void toggleMute()  {
     if (state.status is BroadcastStarted) {
-      await _liveKit.mute(enabled: enabled);
-      _emitStatus(BroadcastStarted(muted: enabled));
+      final enabled = (state.status as BroadcastStarted).isMicrophoneEnabled;
+      unawaited(_liveKit.mute(enabled: !enabled));
+      _emitStatus(BroadcastStarted(isMicrophoneEnabled: !enabled));
     }
   }
 
