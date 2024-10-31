@@ -68,11 +68,6 @@ class StreamBloc extends Cubit<StreamState> {
 
   void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));
 
-  // void _onSocketData(dynamic data, String? error) {
-  //   if (error == null) return;
-  //   return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
-  // }
-
   void _onSocketData(dynamic data, String? error) {
     if (error != null) {
       _liveKit.disconnect();

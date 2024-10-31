@@ -27,8 +27,8 @@ class StreamPage extends HookWidget {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
           ended: (data) {
-            context.read<MenoBloc>().update(const MOffAir());
             router.go(Routes.home);
+            context.read<MenoBloc>().update(const MOffAir());
             cleanUp(context);
           },
           left: () {

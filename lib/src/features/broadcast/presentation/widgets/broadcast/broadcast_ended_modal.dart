@@ -2,7 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
-class BroadcastEndedModal extends HookWidget {
+class BroadcastEndedModal extends StatelessWidget {
   const BroadcastEndedModal({super.key});
 
   @override

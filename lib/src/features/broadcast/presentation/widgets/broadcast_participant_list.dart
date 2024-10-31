@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-class BroadcastParticipantList extends HookWidget {
+class BroadcastParticipantList extends StatelessWidget {
   const BroadcastParticipantList({super.key, this.padding});
   final EdgeInsetsGeometry? padding;
 

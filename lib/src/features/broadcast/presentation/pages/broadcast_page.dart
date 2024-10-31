@@ -2,15 +2,11 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-class BroadcastPage extends HookWidget {
+class BroadcastPage extends StatelessWidget {
   const BroadcastPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    useAutomaticKeepAlive();
-
-    final controller = useTabController(initialLength: 4);
-
     return BlocListener<BroadcastBloc, BroadcastState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (ctx, state) {
@@ -45,36 +41,19 @@ class BroadcastPage extends HookWidget {
           },
         );
       },
-      child: MScaffold(
-        padding: EdgeInsets.zero,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: SafeArea(
-            child: Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              constraints: const BoxConstraints(minHeight: 32),
-              child: TabBar(
-                controller: controller,
-                tabs: const [
-                  Tab(text: 'Broadcast'),
-                  Tab(text: 'Chats'),
-                  Tab(text: 'Live Bible'),
-                  Tab(text: 'Notes'),
-                ],
-              ),
-            ),
-          ),
-        ),
-        body: MTabBarView(
-          controller: controller,
-          children: const [
-            BroadcastTab(),
-            BroadcastChatTab(),
-            LiveBibleTab(),
-            NotesTab(),
-          ],
-          onPageChanged: (_) => FocusScope.of(context).unfocus(),
-        ),
+      child: const LiveScaffold(
+        tabs: [
+          Tab(text: 'Broadcast'),
+          Tab(text: 'Chats'),
+          Tab(text: 'Live Bible'),
+          Tab(text: 'Notes'),
+        ],
+        tabViews: [
+          BroadcastTab(),
+          BroadcastChatTab(),
+          LiveBibleTab(),
+          NotesTab(),
+        ],
       ),
     );
   }

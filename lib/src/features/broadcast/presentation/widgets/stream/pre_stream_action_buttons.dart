@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-class PreStreamActionButtons extends HookWidget {
+class PreStreamActionButtons extends StatelessWidget {
   const PreStreamActionButtons({required this.broadcast, super.key});
   final Broadcast broadcast;
 

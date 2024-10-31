@@ -78,10 +78,6 @@ class BroadcastBloc extends Cubit<BroadcastState> {
 
   Future<void> dispose() async => _liveKit.dispose();
 
-  // void _onSocketData(dynamic data, String? error) {
-  //   if (error == null) return;
-  //   return _emitStatus(BroadcastFailed(BroadcastException.message(error)));
-  // }
   void _onSocketData(dynamic data, String? error) {
     if (error != null) {
       _liveKit.disconnect();

@@ -11,6 +11,7 @@ class LiveScaffold extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    useAutomaticKeepAlive();
     final controller = useTabController(initialLength: tabs.length);
     return MScaffold(
       padding: EdgeInsets.zero,

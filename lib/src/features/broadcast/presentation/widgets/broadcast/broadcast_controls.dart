@@ -40,7 +40,7 @@ class _MicrophoneButton extends StatelessWidget {
   }
 }
 
-class _StartStopButton extends HookWidget {
+class _StartStopButton extends StatelessWidget {
   const _StartStopButton();
 
   @override
@@ -58,7 +58,7 @@ class _StartStopButton extends HookWidget {
           foregroundColor: colors.onPrimary,
           onTap: bloc.startBroadcast,
         ),
-        started: (muted) => _Button(
+        started: (_) => _Button(
           label: 'Stop broadcasting',
           backgroundColor: colors.errorContainer?.withOpacity(0.3),
           foregroundColor: colors.error,
