@@ -6,6 +6,8 @@ class BroadcastTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    useAutomaticKeepAlive();
+    
     final tabController = useTabController(initialLength: 2);
 
     return Column(
