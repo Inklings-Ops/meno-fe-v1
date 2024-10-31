@@ -29,12 +29,28 @@ class LiveParticipantsBloc extends Cubit<LiveParticipantsState> {
 
   late final StreamSubscription<SocketEvent> _socketEventSub;
 
+  bool _hasFetchedParticipants = false;
+
   Future<void> initialize(Broadcast broadcast) async {
+    if (_hasFetchedParticipants) return;
+    await _fetchParticipants(broadcast);
+  }
+
+  Future<void> reload(Broadcast broadcast) async {
+    _hasFetchedParticipants = false;
+    await initialize(broadcast);
+  }
+
+  Future<void> _fetchParticipants(Broadcast broadcast) async {
+    _hasFetchedParticipants = true;
     emit(state.copyWith(broadcast: broadcast, loading: true));
     final response = await _facade.liveListeners(broadcast.id);
     emit(
       response.fold(
-        (failure) => state.copyWith(loading: false),
+        (failure) {
+          _hasFetchedParticipants = false;
+          return state.copyWith(loading: false);
+        },
         (participants) => state.copyWith(
           loading: false,
           liveParticipants: participants,
