@@ -151,9 +151,8 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
     gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
-    gh.lazySingleton<_i693.TimerCubit>(() => _i693.TimerCubit());
+    gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
     gh.lazySingleton<_i1009.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
     gh.lazySingleton<_i1009.BroadcastRemoteDatasource>(
@@ -178,8 +177,9 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
-    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
+    gh.lazySingleton<_i693.TimerCubit>(() => _i693.TimerCubit());
     gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
+    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i933.NoteLocalDatasource>(
@@ -257,22 +257,22 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i313.DAllCubit>(
         () => _i313.DAllCubit(facade: gh<_i515.IDiscoverFacade>()));
-    gh.lazySingleton<_i1051.SearchBloc>(
-        () => _i1051.SearchBloc(facade: gh<_i515.IDiscoverFacade>()));
+    gh.lazySingleton<_i212.FilterBloc>(
+        () => _i212.FilterBloc(facade: gh<_i515.IDiscoverFacade>()));
     gh.lazySingleton<_i971.DNowLiveCubit>(
         () => _i971.DNowLiveCubit(facade: gh<_i515.IDiscoverFacade>()));
     gh.lazySingleton<_i908.DRecentlyLiveCubit>(
         () => _i908.DRecentlyLiveCubit(facade: gh<_i515.IDiscoverFacade>()));
-    gh.lazySingleton<_i212.FilterBloc>(
-        () => _i212.FilterBloc(facade: gh<_i515.IDiscoverFacade>()));
-    gh.factory<_i241.VersesCubit>(
-        () => _i241.VersesCubit(facade: gh<_i720.IBibleFacade>()));
+    gh.lazySingleton<_i1051.SearchBloc>(
+        () => _i1051.SearchBloc(facade: gh<_i515.IDiscoverFacade>()));
     gh.factory<_i558.BibleBloc>(
         () => _i558.BibleBloc(facade: gh<_i720.IBibleFacade>()));
     gh.factory<_i529.ScripturePickerCubit>(
         () => _i529.ScripturePickerCubit(facade: gh<_i720.IBibleFacade>()));
     gh.factory<_i478.TranslationsCubit>(
         () => _i478.TranslationsCubit(facade: gh<_i720.IBibleFacade>()));
+    gh.factory<_i241.VersesCubit>(
+        () => _i241.VersesCubit(facade: gh<_i720.IBibleFacade>()));
     gh.factoryParam<_i987.NoteFormCubit, _i365.Note?, dynamic>((
       initialNote,
       _,
@@ -321,16 +321,16 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.lazySingleton<_i841.ResetPasswordCubit>(
-        () => _i841.ResetPasswordCubit(facade: gh<_i968.IAuthFacade>()));
-    gh.lazySingleton<_i26.RegisterCubit>(
-        () => _i26.RegisterCubit(facade: gh<_i236.IAuthFacade>()));
     gh.lazySingleton<_i27.AccountBloc>(
         () => _i27.AccountBloc(facade: gh<_i236.IAuthFacade>()));
-    gh.factory<_i948.OthersProfileCubit>(
-        () => _i948.OthersProfileCubit(facade: gh<_i1009.IProfileFacade>()));
+    gh.lazySingleton<_i26.RegisterCubit>(
+        () => _i26.RegisterCubit(facade: gh<_i236.IAuthFacade>()));
+    gh.lazySingleton<_i841.ResetPasswordCubit>(
+        () => _i841.ResetPasswordCubit(facade: gh<_i968.IAuthFacade>()));
     gh.factory<_i1025.MyProfileCubit>(
         () => _i1025.MyProfileCubit(facade: gh<_i1009.IProfileFacade>()));
+    gh.factory<_i948.OthersProfileCubit>(
+        () => _i948.OthersProfileCubit(facade: gh<_i1009.IProfileFacade>()));
     gh.lazySingleton<_i913.ChatBloc>(() => _i913.ChatBloc(
           session: gh<_i44.ISessionContext>(),
           socket: gh<_i264.SocketService>(),
