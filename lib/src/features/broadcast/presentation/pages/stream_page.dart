@@ -10,9 +10,10 @@ class StreamPage extends HookWidget {
     useEffect(
       () {
         final broadcast = context.read<StreamBloc>().state.broadcast;
-        context.read<LiveParticipantsBloc>().initialize(broadcast);
-        context.read<ChatBloc>().initialize(broadcast);
         context.read<TimerCubit>().setAndStart(broadcast.startTime);
+        context.read<ChatBloc>().add(ChatInitialized(broadcast));
+
+        context.read<LiveParticipantsBloc>().initialize(broadcast);
         context.read<MenoBloc>().update(const MStreaming());
         return null;
       },
@@ -51,6 +52,17 @@ class StreamPage extends HookWidget {
         ],
       ),
     );
+  }
+
+  void _handleStreamEnd(BuildContext context) {
+    context.read<MenoBloc>().update(const MOffAir());
+    router.go(Routes.home);
+    context.read<LiveKitService>().dispose();
+    context.read<ChatBloc>().add(const ChatReset());
+
+    context.read<StreamBloc>().dispose();
+    context.read<TimerCubit>().dispose();
+    context.read<LiveParticipantsBloc>().close();
   }
 
   void cleanUp(BuildContext context) {

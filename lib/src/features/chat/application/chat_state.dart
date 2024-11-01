@@ -1,20 +1,17 @@
 part of 'chat_bloc.dart';
 
+enum ChatStatus { initial, success, failure }
+
 @freezed
 class ChatState with _$ChatState {
   const factory ChatState({
     required Broadcast broadcast,
-    required bool loading,
     required List<Chat?> chats,
-    required Option<Unit> onSend,
+    @Default(ChatStatus.initial) ChatStatus status,
   }) = _ChatState;
 
-  factory ChatState.initial() {
-    return ChatState(
-      broadcast: Broadcast.empty(),
-      chats: [],
-      loading: false,
-      onSend: none(),
-    );
-  }
+  factory ChatState.initial() => ChatState(
+        broadcast: Broadcast.empty(),
+        chats: [],
+      );
 }

@@ -19,6 +19,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../../meno.dart' as _i1014;
 import '../core/network/application/network_cubit.dart' as _i513;
 import '../core/network/domain/i_network_facade.dart' as _i305;
 import '../core/network/infrastructure/network_facade.dart' as _i479;
@@ -101,7 +102,6 @@ import '../features/profile/infrastructure/datasources/profile_remote_datasource
     as _i212;
 import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i865;
 import '../features/profile/infrastructure/profile_facade.dart' as _i920;
-import '../features/profile/profile.dart' as _i443;
 import '../features/settings/application/onboarding/onboarding_cubit.dart'
     as _i598;
 import '../features/settings/infrastructure/datasources/settings_local_datasource.dart'
@@ -331,11 +331,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1025.MyProfileCubit(facade: gh<_i1009.IProfileFacade>()));
     gh.factory<_i948.OthersProfileCubit>(
         () => _i948.OthersProfileCubit(facade: gh<_i1009.IProfileFacade>()));
-    gh.lazySingleton<_i913.ChatBloc>(() => _i913.ChatBloc(
-          session: gh<_i44.ISessionContext>(),
-          socket: gh<_i264.SocketService>(),
-          profileFacade: gh<_i443.IProfileFacade>(),
-        ));
     gh.lazySingleton<_i940.LoginCubit>(() => _i940.LoginCubit(
           facade: gh<_i236.IAuthFacade>(),
           settingsFacade: gh<_i709.ISettingsFacade>(),
@@ -368,6 +363,10 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i458.LiveBroadcastsBloc>(() => _i458.LiveBroadcastsBloc(
           facade: gh<_i625.IBroadcastFacade>(),
+          socket: gh<_i264.SocketService>(),
+        ));
+    gh.lazySingleton<_i913.ChatBloc>(() => _i913.ChatBloc(
+          session: gh<_i1014.ISessionContext>(),
           socket: gh<_i264.SocketService>(),
         ));
     gh.factory<_i241.StreamBloc>(() => _i241.StreamBloc(

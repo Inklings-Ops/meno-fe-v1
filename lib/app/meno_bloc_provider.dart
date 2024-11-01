@@ -135,7 +135,12 @@ class MenoBlocProvider extends StatelessWidget {
             facade: context.read<IProfileFacade>(),
           ),
         ),
-        BlocProvider(create: (context) => ChatTimerCubit()),
+        BlocProvider(
+          create: (ctx) => ChatBloc(
+            session: ctx.read<ISessionContext>(),
+            socket: ctx.read<SocketService>(),
+          ),
+        ),
       ],
       child: child,
     );

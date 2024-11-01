@@ -93,5 +93,6 @@ class StreamBloc extends Cubit<StreamState> {
     await _liveKit.dispose();
     await _socketStateSub.cancel();
     await _socketEventSub.cancel();
+    emit(StreamState(broadcast: Broadcast.empty()));
   }
 }

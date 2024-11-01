@@ -15,6 +15,7 @@ class ChatInputContainer extends HookWidget {
     final contentController = useTextEditingController();
     final isReactionsVisible = useState<bool>(false);
     final isSendVisible = useState(contentController.text.isNotEmpty);
+    
     useEffect(() {
       contentController.addListener(() {
         isSendVisible.value = contentController.text.isNotEmpty;
@@ -22,78 +23,70 @@ class ChatInputContainer extends HookWidget {
       return null;
     }, [contentController.text],);
 
-    return BlocListener<ChatBloc, ChatState>(
-      listenWhen: (p, c) => p.onSend != c.onSend,
-      listener: (context, state) {
-        state.onSend.fold(() => null, (a) {
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
-        });
-      },
-      child: Stack(
-        clipBehavior: Clip.none,
-        fit: StackFit.passthrough,
-        children: [
-          if (isReactionsVisible.value) const ReactionButton(),
-          Container(
-            alignment: Alignment.topCenter,
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextFormField(
-                      style: textTheme.captionRegular,
-                      controller: contentController,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: Insets.md,
-                        ),
-                        hintText: 'Type your comment here...',
+    return Stack(
+      clipBehavior: Clip.none,
+      fit: StackFit.passthrough,
+      children: [
+        if (isReactionsVisible.value) const ReactionButton(),
+        Container(
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    style: textTheme.captionRegular,
+                    controller: contentController,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: Insets.md,
                       ),
+                      hintText: 'Type your comment here...',
                     ),
                   ),
                 ),
-                Spaces.horizontalLarge,
-                MIconButton(
-                  size: 40,
-                  iconSize: 20,
-                  icon: const Icon(Icons.face),
-                  isFilled: true,
-                  fillColor: colors.outlineVariant2,
-                  onPressed: () =>
-                      isReactionsVisible.value = !isReactionsVisible.value,
-                ),
-                if (isSendVisible.value) ...[
-                  Spaces.horizontalSmall,
-                  BlocBuilder<SessionCubit, SessionState>(
-                    builder: (context, state) => state.maybeWhen(
-                      orElse: () => const SizedBox(),
-                      authenticated: (user, _) => MIconButton(
-                        icon: const Icon(MIcons.send),
-                        isFilled: true,
-                        fillColor: colors.primary,
-                        color: colors.onPrimary,
-                        size: 40,
-                        iconSize: 20,
-                        onPressed: () {
-                          bloc.sendMessage(contentController.text);
-                          scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                          contentController.clear();
-                        },
-                      ),
+              ),
+              Spaces.horizontalLarge,
+              MIconButton(
+                size: 40,
+                iconSize: 20,
+                icon: const Icon(Icons.face),
+                isFilled: true,
+                fillColor: colors.outlineVariant2,
+                onPressed: () =>
+                    isReactionsVisible.value = !isReactionsVisible.value,
+              ),
+              if (isSendVisible.value) ...[
+                Spaces.horizontalSmall,
+                BlocBuilder<SessionCubit, SessionState>(
+                  builder: (context, state) => state.maybeWhen(
+                    orElse: () => const SizedBox(),
+                    authenticated: (user, _) => MIconButton(
+                      icon: const Icon(MIcons.send),
+                      isFilled: true,
+                      fillColor: colors.primary,
+                      color: colors.onPrimary,
+                      size: 40,
+                      iconSize: 20,
+                      onPressed: () {
+                        bloc.add(ChatSendPressed(contentController.text));
+                        scrollController.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                        contentController.clear();
+                      },
                     ),
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

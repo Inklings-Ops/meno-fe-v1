@@ -15,8 +15,9 @@ class BroadcastPage extends StatelessWidget {
           failed: ctx.showBroadcastError,
           started: (_) {
             ctx.read<TimerCubit>().start();
+            ctx.read<ChatBloc>().add(ChatInitialized(broadcast));
+            
             ctx.read<LiveParticipantsBloc>().initialize(broadcast);
-            ctx.read<ChatBloc>().initialize(broadcast);
             ctx.read<MenoBloc>().update(const MLive());
           },
           ended: (_) {

@@ -82,6 +82,7 @@ class _Item extends StatelessWidget {
     bool isHost = false,
   }) async {
     final colors = MColorScheme.of(context)!;
+    final bloc = context.read<ChatBloc>();
     return context.showModal(
       isScrollControlled: true,
       MModal(
@@ -95,7 +96,7 @@ class _Item extends StatelessWidget {
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
                 title: 'Delete',
-                onTap: () => context.read<ChatBloc>().deleteMessage(chat),
+                onTap: () => bloc.add(ChatDeletePressed(chat)),
                 titleColor: colors.error,
               )
             else

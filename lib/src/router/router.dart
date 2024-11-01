@@ -44,7 +44,6 @@ final router = GoRouter(
           ),
           BlocProvider(
             create: (context) => ChatBloc(
-              profileFacade: context.read<IProfileFacade>(),
               session: context.read<ISessionContext>(),
               socket: context.read<SocketService>(),
             ),
@@ -63,13 +62,12 @@ final router = GoRouter(
               facade: context.read<IBroadcastFacade>(),
             ),
           ),
-          BlocProvider(
-            create: (context) => ChatBloc(
-              profileFacade: context.read<IProfileFacade>(),
-              session: context.read<ISessionContext>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
+          // BlocProvider(
+          //   create: (context) => ChatBloc(
+          //     session: context.read<ISessionContext>(),
+          //     socket: context.read<SocketService>(),
+          //   ),
+          // ),
         ],
         child: const StreamPage(),
       ),
