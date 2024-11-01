@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-
 import 'package:meno_fe_v1/src/shared/helpers/date_helpers.dart';
 
 part 'timer_cubit.freezed.dart';

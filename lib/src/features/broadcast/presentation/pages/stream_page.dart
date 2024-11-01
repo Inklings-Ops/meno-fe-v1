@@ -12,9 +12,7 @@ class StreamPage extends HookWidget {
         final broadcast = context.read<StreamBloc>().state.broadcast;
         context.read<LiveParticipantsBloc>().initialize(broadcast);
         context.read<ChatBloc>().initialize(broadcast);
-        context.read<TimerCubit>()
-          ..set(broadcast.startTime)
-          ..start();
+        context.read<TimerCubit>().setAndStart(broadcast.startTime);
         context.read<MenoBloc>().update(const MStreaming());
         return null;
       },
@@ -27,8 +25,8 @@ class StreamPage extends HookWidget {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
           ended: (data) {
-            router.go(Routes.home);
             context.read<MenoBloc>().update(const MOffAir());
+            router.go(Routes.home);
             cleanUp(context);
           },
           left: () {

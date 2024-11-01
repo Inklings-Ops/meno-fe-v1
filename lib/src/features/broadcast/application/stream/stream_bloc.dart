@@ -22,9 +22,7 @@ class StreamBloc extends Cubit<StreamState> {
       socketState.whenOrNull(broadcastJoined: _onSocketData);
     });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(
-        endedBroadcast: (data) => _emitStatus(BroadcastEnded(data)),
-      );
+      socketEvent.whenOrNull(endedBroadcast: _onEndedBroadcast);
     });
   }
   final IBroadcastFacade _facade;
@@ -77,6 +75,10 @@ class StreamBloc extends Cubit<StreamState> {
         ),
       );
     }
+  }
+
+  void _onEndedBroadcast(EndedBroadcastData data) {
+    emit(state.copyWith(status: BroadcastEnded(data)));
   }
 
   @override

@@ -1,7 +1,7 @@
-import 'package:get_time_ago/get_time_ago.dart';
-import 'package:intl/intl.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:timeago_flutter/timeago_flutter.dart';
+
 class ChatBubble extends StatelessWidget {
   const ChatBubble({required this.chat, super.key});
   final Chat chat;
@@ -12,7 +12,7 @@ class ChatBubble extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
     final bloc = context.watch<ChatBloc>();
     final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
-final createdAt = GetTimeAgo.parse(chat.createdAt);
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -64,15 +64,16 @@ final createdAt = GetTimeAgo.parse(chat.createdAt);
                       color: colors.onBackgroundVariant,
                     ),
                     Spaces.horizontalMicro,
-                    
-                    MText(
-                      createdAt,
-                      style: textTheme.microMedium,
-                      color: colors.onBackgroundVariant,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Timeago(
+                      builder: (_, value) => MText(
+                        value,
+                        style: textTheme.microMedium,
+                        color: colors.onBackgroundVariant,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      date: chat.createdAt,
                     ),
-                    
                   ],
                 ),
                 Spaces.verticalMicro,
@@ -114,7 +115,7 @@ final createdAt = GetTimeAgo.parse(chat.createdAt);
   }
 }
 
-class _UserInfoModel extends HookWidget {
+class _UserInfoModel extends StatelessWidget {
   const _UserInfoModel({required this.chat});
   final Chat chat;
 
@@ -129,16 +130,16 @@ class _UserInfoModel extends HookWidget {
   }
 }
 
-String formatDate(DateTime date) {
-  final difference = DateTime.now().difference(date.toLocal());
+// String formatDate(DateTime date) {
+//   final difference = DateTime.now().difference(date.toLocal());
 
-  if (difference.inMinutes < 60) {
-    return '${difference.inMinutes} minutes ago';
-  } else if (difference.inHours < 24) {
-    return '${difference.inHours} hours ago';
-  } else if (difference.inDays < 7) {
-    return '${difference.inDays} days ago';
-  } else {
-    return DateFormat.jm().format(date);
-  }
-}
+//   if (difference.inMinutes < 60) {
+//     return '${difference.inMinutes} minutes ago';
+//   } else if (difference.inHours < 24) {
+//     return '${difference.inHours} hours ago';
+//   } else if (difference.inDays < 7) {
+//     return '${difference.inDays} days ago';
+//   } else {
+//     return DateFormat.jm().format(date);
+//   }
+// }

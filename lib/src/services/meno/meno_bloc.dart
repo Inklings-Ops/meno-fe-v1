@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
@@ -40,7 +41,10 @@ class MenoBloc extends Bloc<MenoEvent, MenoState> {
   }
 
   void _mapLiveKitEventToState(RoomEvent roomEvent) {
-    if (roomEvent is RoomReconnectedEvent) {
+    if (roomEvent is RoomConnectedEvent) {
+      Logger().w('LIVEKIT & MENO CONNECTED!!!');
+      add(const MenoStateChanged(MLive()));
+    } else if (roomEvent is RoomReconnectedEvent) {
       add(const MenoStateChanged(MLive()));
     } else if (roomEvent is RoomDisconnectedEvent) {
       add(const MenoStateChanged(MOffAir()));

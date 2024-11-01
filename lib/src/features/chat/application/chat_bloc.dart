@@ -26,18 +26,16 @@ class ChatBloc extends Cubit<ChatState> {
         super(ChatState.initial()) {
     _socketStateSub = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
-        getChatMessages: (chats, _) => emit(state.copyWith(
-          chats: chats,
-          loading: false,
-        ),),
+        getChatMessages: (chats, _) => emit(
+          state.copyWith(chats: chats, loading: false),
+        ),
       );
     });
     _socketEventSub = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(
-        newMessage: _updateMessages,
-      );
+      socketEvent.whenOrNull(newMessage: _updateMessages);
     });
   }
+  
   final ISessionContext _session;
   final SocketService _socket;
   final IProfileFacade _profileFacade;
