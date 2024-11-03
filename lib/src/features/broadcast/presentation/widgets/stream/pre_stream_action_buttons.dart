@@ -19,7 +19,7 @@ class PreStreamActionButtons extends StatelessWidget {
           Expanded(
             child: MPrimaryButton(
               label: 'Join',
-              onPressed: () => bloc.joinBroadcast(broadcast.id),
+              onPressed: () => bloc.add(StreamJoinPressed(broadcast.id)),
               loading: bloc.state.status is LiveLoadInProgress,
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),

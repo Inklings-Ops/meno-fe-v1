@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -14,19 +13,20 @@ class LiveKitService extends Object with Disposable {
   late Room room;
   late EventsListener<RoomEvent> listener;
 
-  final _events = BehaviorSubject<RoomEvent>();
-  Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
+  BehaviorSubject<RoomEvent>? _events;
+  Stream<RoomEvent>? get eventsStream => _events?.stream.asBroadcastStream();
 
   Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
+    final completer = Completer<Room>();
+
     // Create a new room
     room = Room();
+    if (_events == null || _events!.isClosed) {
+      _events = BehaviorSubject<RoomEvent>();
+    }
 
     // Set a Listener for the Room Events before connecting
     listener = room.createListener(synchronized: true);
-
-    final options = FastConnectOptions(
-      microphone: TrackOption(enabled: isHost),
-    );
 
     try {
       // Try to connect to the room
@@ -34,43 +34,61 @@ class LiveKitService extends Object with Disposable {
       await room.connect(
         Env.menoLiveKitUrl,
         broadcastToken,
-        fastConnectOptions: options,
+        fastConnectOptions: FastConnectOptions(
+          microphone: TrackOption(enabled: isHost),
+        ),
       );
 
       _setupListener();
-
-      return room;
+      completer.complete(room);
     } catch (e) {
-      throw PlatformException(code: 'live-kit-error', message: e.toString());
+      completer.completeError(e);
     }
+
+    return completer.future;
   }
 
-  void _setupListener() {
-    listener.listen(_events.add);
-  }
+  /// Sets up the event listener for the room.
+  void _setupListener() => listener.listen((event) {
+        if (_events != null && !_events!.isClosed) {
+          _events!.add(event);
+        }
+      });
 
+  /// Start a broadcast session.
   Future<Room> broadcast(String broadcastToken) => _connect(broadcastToken);
 
+  /// Start a streaming session for viewers.
   Future<Room> stream(String broadcastToken) => _connect(broadcastToken, false);
 
-  Future<void> disconnect() => room.disconnect();
-  void removeListener() => room.removeListener(_setupListener);
-
+  /// Mute or unmute the local participant's microphone.
   Future<void> mute({required bool enabled}) async {
     await room.localParticipant?.setMicrophoneEnabled(enabled);
   }
 
-  @override
-  FutureOr<void> onDispose() async {
-    await _events.close();
-    await dispose();
+  /// Disconnects from the room, ensuring resources are freed.
+  Future<void> disconnect() async {
+    if (room.connectionState == ConnectionState.connected) {
+      await room.disconnect();
+    }
   }
+
+  /// Removes the listener from the room events.
+  void removeListener() {
+    listener.cancelAll();
+    room.removeListener(_setupListener);
+  }
+
+  @override
+  FutureOr<void> onDispose() => dispose();
 
   Future<void> dispose() async {
     await disconnect();
     room.removeListener(_setupListener);
-    await listener.dispose();
+    await _events?.close();
+    await listener.cancelAll();
     await room.dispose();
+    _events = null;
     return;
   }
 }

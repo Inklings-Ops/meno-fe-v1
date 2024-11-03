@@ -7,7 +7,7 @@ class BroadcastParticipantList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
+    return BlocBuilder<ParticipantsBloc, ParticipantsState>(
       buildWhen: (p, c) => p.liveParticipants != c.liveParticipants,
       builder: (context, state) {
         final isLoading = state.loading;

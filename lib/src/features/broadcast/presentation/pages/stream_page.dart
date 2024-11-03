@@ -7,17 +7,18 @@ class StreamPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Memoize broadcast to avoid re-initializing on every rebuild.
+    final b = useMemoized(() => context.read<StreamBloc>().state.broadcast);
+
     useEffect(
       () {
-        final broadcast = context.read<StreamBloc>().state.broadcast;
-        context.read<TimerCubit>().setAndStart(broadcast.startTime);
-        context.read<ChatBloc>().add(ChatInitialized(broadcast));
-
-        context.read<LiveParticipantsBloc>().initialize(broadcast);
+        context.read<ChatBloc>().add(ChatInitialized(b));
+        context.read<ParticipantsBloc>().add(ParticipantsInitialized(b));
+        context.read<TimerCubit>().setAndStart(b.startTime);
         context.read<MenoBloc>().update(const MStreaming());
         return null;
       },
-      const [],
+      [b],
     );
 
     return BlocListener<StreamBloc, StreamState>(
@@ -25,16 +26,8 @@ class StreamPage extends HookWidget {
       listener: (context, state) {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
-          ended: (data) {
-            context.read<MenoBloc>().update(const MOffAir());
-            router.go(Routes.home);
-            cleanUp(context);
-          },
-          left: () {
-            context.read<MenoBloc>().update(const MOffAir());
-            router.go(Routes.home);
-            cleanUp(context);
-          },
+          ended: (data) => _handleStreamEnd(context),
+          left: () => _handleStreamEnd(context),
         );
       },
       child: const LiveScaffold(
@@ -57,19 +50,12 @@ class StreamPage extends HookWidget {
   void _handleStreamEnd(BuildContext context) {
     context.read<MenoBloc>().update(const MOffAir());
     router.go(Routes.home);
-    context.read<LiveKitService>().dispose();
+    
+    context.read<StreamBloc>().add(const StreamReset());
+    context.read<ParticipantsBloc>().add(const ParticipantsReset());
     context.read<ChatBloc>().add(const ChatReset());
 
-    context.read<StreamBloc>().dispose();
-    context.read<TimerCubit>().dispose();
-    context.read<LiveParticipantsBloc>().close();
-  }
-
-  void cleanUp(BuildContext context) {
-    context.read<StreamBloc>().dispose();
-    context.read<TimerCubit>().dispose();
-    context.read<LiveParticipantsBloc>().close();
     context.read<LiveKitService>().dispose();
-    context.read<ChatBloc>().close();
+    context.read<TimerCubit>().dispose();
   }
 }

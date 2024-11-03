@@ -62,8 +62,8 @@ class MLayoutPage extends HookWidget {
         BlocListener<StreamBloc, StreamState>(
           listener: (context, state) {
             state.status.whenOrNull(
-              ended: (data) {},
-              left: () => context.read<StreamBloc>().dispose(),
+              ended: (_) => context.read<StreamBloc>().add(const StreamReset()),
+              left: () => context.read<StreamBloc>().add(const StreamReset()),
             );
           },
         ),

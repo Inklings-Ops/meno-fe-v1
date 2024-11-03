@@ -9,37 +9,11 @@ class BroadcastPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<BroadcastBloc, BroadcastState>(
       listenWhen: (previous, current) => previous.status != current.status,
-      listener: (ctx, state) {
-        final broadcast = state.broadcast;
+      listener: (context, state) {
         state.status.whenOrNull(
-          failed: ctx.showBroadcastError,
-          started: (_) {
-            ctx.read<TimerCubit>().start();
-            ctx.read<ChatBloc>().add(ChatInitialized(broadcast));
-            
-            ctx.read<LiveParticipantsBloc>().initialize(broadcast);
-            ctx.read<MenoBloc>().update(const MLive());
-          },
-          ended: (_) {
-            ctx.read<TimerCubit>().stop();
-            ctx.read<LiveKitService>().disconnect();
-            ctx.read<LiveParticipantsBloc>().fetchTotal();
-            ctx.read<MenoBloc>().update(const MOffAir());
-            ctx.showModal<void>(
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(value: ctx.read<BroadcastBloc>()),
-                  BlocProvider.value(value: ctx.read<ChatBloc>()),
-                  BlocProvider.value(value: ctx.read<LiveParticipantsBloc>()),
-                ],
-                child: const BroadcastEndedModal(),
-              ),
-              enableDrag: false,
-              useRootNavigator: true,
-              isDismissible: false,
-              isScrollControlled: true,
-            );
-          },
+          failed: context.showBroadcastError,
+          started: (_) => _onStartedBroadcast(context, state.broadcast),
+          ended: (_) => _onEndedBroadcast(context),
         );
       },
       child: const LiveScaffold(
@@ -56,6 +30,30 @@ class BroadcastPage extends StatelessWidget {
           NotesTab(),
         ],
       ),
+    );
+  }
+
+  void _onStartedBroadcast(BuildContext context, Broadcast broadcast) {
+    context.read<ChatBloc>().add(ChatInitialized(broadcast));
+    context.read<ParticipantsBloc>().add(ParticipantsInitialized(broadcast));
+    context.read<TimerCubit>().start();
+    context.read<MenoBloc>().update(const MLive());
+  }
+
+  void _onEndedBroadcast(BuildContext context) {
+    context.read<TimerCubit>().stop();
+    context.read<LiveKitService>().disconnect();
+    context.read<ParticipantsBloc>().add(const AllParticipantsFetchPressed());
+    context.read<MenoBloc>().update(const MOffAir());
+    context.showModal<void>(
+      BlocProvider.value(
+        value: context.read<BroadcastBloc>(),
+        child: const BroadcastEndedModal(),
+      ),
+      enableDrag: false,
+      useRootNavigator: true,
+      isDismissible: false,
+      isScrollControlled: true,
     );
   }
 }

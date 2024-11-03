@@ -101,8 +101,8 @@ class _LeaveButton extends StatelessWidget {
   void onLeave(BuildContext context) {
     final bloc = context.read<StreamBloc>();
     context.showLeaveBroadcastDialog().then((value) {
-      if (value == null || value == false) return null;
-      return bloc.leaveBroadcast(bloc.state.broadcast.id);
+      if (value == null || value == false) return;
+      return bloc.add(StreamLeavePressed(bloc.state.broadcast.id));
     });
   }
 }

@@ -9,18 +9,10 @@ class BroadcastEndedModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
 
-    void cleanUp() {
-      context.read<TimerCubit>().dispose();
-      context.read<LiveKitService>().dispose();
-      context.read<BroadcastBloc>().dispose();
-      context.read<LiveParticipantsBloc>().close();
-      context.read<ChatBloc>().close();
-    }
-
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
         router.go(Routes.home);
-        cleanUp();
+        cleanUp(context);
       },
       child: MModal(
         key: const ValueKey('BroadcastEndedModal'),
@@ -44,7 +36,7 @@ class BroadcastEndedModal extends StatelessWidget {
               textStyle: textTheme.heading2Bold,
             ),
             Spaces.verticalXLarge,
-            const TotalParticipantsWidget(),
+            const AllParticipantsWidget(),
             const SizedBox(height: 40),
             MPrimaryButton(label: 'Publish Broadcast', onPressed: () {}),
             Spaces.verticalLarge,
@@ -52,7 +44,7 @@ class BroadcastEndedModal extends StatelessWidget {
               label: 'Go to Profile',
               onPressed: () {
                 router.go(Routes.myProfile);
-                cleanUp();
+                cleanUp(context);
               },
             ),
           ],
@@ -60,16 +52,27 @@ class BroadcastEndedModal extends StatelessWidget {
       ),
     );
   }
+
+  void cleanUp(BuildContext context) {
+    context.read<TimerCubit>().dispose();
+    context.read<LiveKitService>().dispose();
+    context.read<ParticipantsBloc>().add(const ParticipantsReset());
+    context.read<ChatBloc>().add(const ChatReset());
+
+    context.read<BroadcastBloc>().dispose();
+  }
 }
 
-class TotalParticipantsWidget extends HookWidget {
-  const TotalParticipantsWidget({super.key});
+/// Displays all the [BroadcastParticipant]s that have joined through out the 
+/// lifecycle of the live [Broadcast]
+class AllParticipantsWidget extends HookWidget {
+  const AllParticipantsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
 
-    return BlocBuilder<LiveParticipantsBloc, LiveParticipantsState>(
+    return BlocBuilder<ParticipantsBloc, ParticipantsState>(
       builder: (context, state) => Column(
         children: [
           SizedBox(
@@ -77,10 +80,10 @@ class TotalParticipantsWidget extends HookWidget {
             width: 92,
             child: Stack(
               alignment: Alignment.center,
-              children: state.totalParticipants
+              children: state.allParticipants
                   .map(
                     (e) => Positioned(
-                      left: state.totalParticipants.indexOf(e) * 30,
+                      left: state.allParticipants.indexOf(e) * 30,
                       right: 0,
                       child: MAvatar(radius: 16, url: e.imageUrl),
                     ),
@@ -90,7 +93,7 @@ class TotalParticipantsWidget extends HookWidget {
           ),
           Spaces.verticalSmall,
           MText(
-            _getPluralText(state.numberOfTotalParticipants),
+            _getPluralText(state.numberOfAllParticipants),
             style: textTheme.captionRegular,
             textAlign: TextAlign.center,
           ),

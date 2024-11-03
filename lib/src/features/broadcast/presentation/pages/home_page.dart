@@ -1,6 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/bible/bible.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class HomePage extends HookWidget {
   const HomePage({super.key});
@@ -36,22 +36,45 @@ class HomePage extends HookWidget {
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          child: Column(
-            children: [
-              BlocBuilder<MenoBloc, MenoState>(
-                builder: (context, state) => state.maybeWhen(
-                  orElse: () => Spaces.verticalXLarge,
-                  streaming: LiveActivityCard.new,
+          child: BlocListener<StreamBloc, StreamState>(
+            listener: (context, state) {
+              state.status.whenOrNull(
+                ended: (data) {
+                  _handleStreamEnd(context);
+                  context.showErrorSnackBar(data.reason.message);
+                },
+                left: () => _handleStreamEnd(context),
+              );
+            },
+            child: Column(
+              children: [
+                BlocBuilder<MenoBloc, MenoState>(
+                  builder: (context, state) => state.maybeWhen(
+                    orElse: () => Spaces.verticalXLarge,
+                    streaming: LiveActivityCard.new,
+                  ),
                 ),
-              ),
-              const LiveForYou(),
-              const NowLive(),
-              const RecentlyLive(),
-              const SizedBox(height: 20),
-            ],
+                const LiveForYou(),
+                const NowLive(),
+                const RecentlyLive(),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _handleStreamEnd(BuildContext context) {
+    context.read<MenoBloc>().update(const MOffAir());
+    router.go(Routes.home);
+
+    context.read<StreamBloc>().add(const StreamReset());
+    context.read<ParticipantsBloc>().add(const ParticipantsReset());
+    context.read<ChatBloc>().add(const ChatReset());
+
+    context.read<LiveKitService>().dispose();
+    context.read<TimerCubit>().dispose();
   }
 }

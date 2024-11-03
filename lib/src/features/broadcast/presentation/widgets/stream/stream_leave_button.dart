@@ -11,7 +11,7 @@ class StreamLeaveButton extends StatelessWidget {
     Future<void> leave(Uid<Broadcast> broadcastId) {
       return context.showLeaveBroadcastDialog().then((value) {
         if (value != true) return;
-        bloc.leaveBroadcast(broadcastId);
+        bloc.add(StreamLeavePressed(broadcastId));
       });
     }
 

@@ -6,10 +6,11 @@ import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'stream_bloc.freezed.dart';
+part 'stream_event.dart';
 part 'stream_state.dart';
 
 @Injectable()
-class StreamBloc extends Cubit<StreamState> {
+class StreamBloc extends Bloc<StreamEvent, StreamState> {
   StreamBloc({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
@@ -17,82 +18,140 @@ class StreamBloc extends Cubit<StreamState> {
   })  : _facade = facade,
         _liveKit = liveKit,
         _socket = socket,
-        super(StreamState(broadcast: Broadcast.empty())) {
-    _socketStateSub = _socket.stateStream.listen((socketState) {
-      socketState.whenOrNull(broadcastJoined: _onSocketData);
-    });
-    _socketEventSub = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(endedBroadcast: _onEndedBroadcast);
-    });
+        super(StreamState.initial()) {
+    on<StreamJoinPressed>(_onStreamJoinPressed);
+    on<StreamLeavePressed>(_onStreamLeavePressed);
+    on<StreamEnded>(_onStreamEnded);
+    on<StreamReset>(_onStreamReset);
+    on<_SocketDataReceived>(_onSocketDataReceived);
+
+    _initializeSocketListeners();
   }
+
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
   final SocketService _socket;
 
-  late final StreamSubscription<SocketState> _socketStateSub;
-  late final StreamSubscription<SocketEvent> _socketEventSub;
+  StreamSubscription<SocketState>? _socketStateSubscription;
+  StreamSubscription<SocketEvent>? _socketEventSubscription;
 
-  Future<void> joinBroadcast(Uid<Broadcast> broadcastId) async {
-    _emitStatus(const LiveLoadInProgress());
-    final failureOrJoinBroadcast = await _facade.joinBroadcast(broadcastId);
+  /// Tracks the initialization state of the Streams
+  bool _listenersInitialized = false;
+
+  void _initializeSocketListeners() {
+    if (_listenersInitialized) return;
+
+    _socketStateSubscription = _socket.stateStream.listen((socketState) {
+      socketState.whenOrNull(
+        broadcastJoined: (data, error) => add(
+          _SocketDataReceived(data: data, error: error),
+        ),
+      );
+    });
+
+    _socketEventSubscription = _socket.eventsStream.listen((socketEvent) {
+      socketEvent.whenOrNull(
+        endedBroadcast: (data) => add(StreamEnded(data)),
+      );
+    });
+
+    _listenersInitialized = true;
+  }
+
+  Future<void> _onStreamJoinPressed(
+    StreamJoinPressed event,
+    Emitter<StreamState> emit,
+  ) async {
+    _initializeSocketListeners();
+
+    // Emit loading status to indicate connection attempt
+    emit(state.copyWith(status: const LiveLoadInProgress()));
+
+    // Attempt to join the broadcast and handle potential errors
+    final failureOrJoinBroadcast = await _facade.joinBroadcast(event.id);
+
     await failureOrJoinBroadcast.fold(
-      (exception) async => _emitStatus(BroadcastFailed(exception)),
+      // Handle failure by updating the state with the error
+      (failure) async => emit(state.copyWith(status: BroadcastFailed(failure))),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
+
         try {
-          final token = joinBroadcast.broadcastToken;
-          await _liveKit.stream(token).whenComplete(() async {
-            _socket.emit(SocketJoinBroadcast(broadcastId.getOr()));
-            if (state is! BroadcastFailed) {
-              _emitStatus(const BroadcastJoined());
-            }
-          });
+          // Attempt to connect to LiveKit using the token
+          await _liveKit.stream(joinBroadcast.broadcastToken);
+          // Emit socket event to indicate joining the broadcast room
+          _socket.emit(SocketJoinBroadcast(event.id.getOr()));
+
+          // Check for any error from the web socket service
+          if (state.status is! BroadcastFailed) {
+            // Update state to reflect successful joining of the broadcast
+            emit(state.copyWith(status: const BroadcastJoined()));
+          }
         } catch (e) {
+          // Emit a failure status if connection fails
           final exception = BroadcastException.message(e.toString());
-          _emitStatus(BroadcastFailed(exception));
+          emit(state.copyWith(status: BroadcastFailed(exception)));
         }
       },
     );
   }
 
-  Future<void> leaveBroadcast(Uid<Broadcast> broadcastId) async {
-    if (state.status is BroadcastJoined) {
-      _emitStatus(const LiveLoadInProgress());
-      _socket.emit(SocketLeaveBroadcast(broadcastId.getOr()));
-      await _liveKit.dispose();
-      _emitStatus(const BroadcastLeft());
-    }
+  void _onStreamLeavePressed(
+    StreamLeavePressed event,
+    Emitter<StreamState> emit,
+  ) {
+    if (state.status is! BroadcastJoined) return;
+
+    // Emit the loading state
+    emit(state.copyWith(status: const LiveLoadInProgress()));
+
+    // Emit the `leaveBroadcast` socket event to leave the broadcast
+    _socket.emit(SocketLeaveBroadcast(event.id.getOr()));
+
+    // Emit the BroadcastLeft state
+    emit(state.copyWith(status: const BroadcastLeft()));
   }
 
-  void _emitStatus(LiveStatus status) => emit(state.copyWith(status: status));
-
-  void _onSocketData(dynamic data, String? error) {
-    if (error != null) {
-      _liveKit.disconnect();
-      emit(
-        state.copyWith(
-          status: BroadcastFailed(BroadcastException.message(error)),
-        ),
-      );
-    }
+  /// To be emitted when a live broadcast by another user is ended either
+  /// normally or abnormally
+  void _onStreamEnded(StreamEnded event, Emitter<StreamState> emit) {
+    emit(state.copyWith(status: BroadcastEnded(event.data)));
   }
 
-  void _onEndedBroadcast(EndedBroadcastData data) {
-    emit(state.copyWith(status: BroadcastEnded(data)));
+  Future<void> _cancelSubscriptions() async {
+    await _socketStateSubscription?.cancel();
+    await _socketEventSubscription?.cancel();
+    _socketStateSubscription = null;
+    _socketEventSubscription = null;
+    _listenersInitialized = false;
+  }
+
+  Future<void> _onStreamReset(
+    StreamReset event,
+    Emitter<StreamState> emit,
+  ) async {
+    await _cancelSubscriptions();
+    emit(StreamState.initial());
+  }
+
+  /// Will be called to check for any error on the Web Socket Service after an
+  /// event has been emitted
+  void _onSocketDataReceived(
+    _SocketDataReceived event,
+    Emitter<StreamState> emit,
+  ) {
+    if (event.error == null) return;
+    // Disconnect Live Kit
+    unawaited(_liveKit.disconnect());
+
+    // Emit the failure state with the error message from the socket
+    final exception = BroadcastException.message(event.error!);
+    emit(state.copyWith(status: BroadcastFailed(exception)));
   }
 
   @override
   Future<void> close() async {
-    await _liveKit.dispose();
-    await _socketStateSub.cancel();
-    await _socketEventSub.cancel();
+    await _cancelSubscriptions();
     await super.close();
-  }
-
-  Future<void> dispose() async {
-    await _liveKit.dispose();
-    await _socketStateSub.cancel();
-    await _socketEventSub.cancel();
-    emit(StreamState(broadcast: Broadcast.empty()));
   }
 }

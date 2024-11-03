@@ -16,8 +16,8 @@ class ParticipantItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     final hasUser = participant != null;
-    final isCohost = participant?.role == Role.cohost;
-    final isHost = participant?.role == Role.host;
+    final isCohost = [Role.cohost, Role.COHOST].contains(participant?.role);
+    final isHost = [Role.host, Role.HOST].contains(participant?.role);
     return InkWell(
       onTap: onTap,
       child: SizedBox.square(

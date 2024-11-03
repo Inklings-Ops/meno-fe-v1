@@ -7,4 +7,6 @@ class ChatEvent with _$ChatEvent {
   const factory ChatEvent.chatEditPressed(Chat chat) = ChatEditPressed;
   const factory ChatEvent.chatSendPressed(String content) = ChatSendPressed;
   const factory ChatEvent.reset() = ChatReset;
+  const factory ChatEvent.chatsLoaded(List<Chat?> chats) = _ChatsLoaded;
+  const factory ChatEvent.newChatReceived(Chat chat) = _NewChatReceived;
 }

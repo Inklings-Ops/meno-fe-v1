@@ -26,51 +26,19 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: Routes.broadcast,
-      builder: (context, state) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => BroadcastBloc(
-              broadcast: state.extra! as Broadcast,
-              facade: context.read<IBroadcastFacade>(),
-              liveKit: context.read<LiveKitService>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => LiveParticipantsBloc(
-              socket: context.read<SocketService>(),
-              facade: context.read<IBroadcastFacade>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => ChatBloc(
-              session: context.read<ISessionContext>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
-        ],
+      builder: (context, state) => BlocProvider(
+        create: (context) => BroadcastBloc(
+          broadcast: state.extra! as Broadcast,
+          facade: context.read<IBroadcastFacade>(),
+          liveKit: context.read<LiveKitService>(),
+          socket: context.read<SocketService>(),
+        ),
         child: const BroadcastPage(),
       ),
     ),
     GoRoute(
       path: Routes.stream,
-      builder: (context, state) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => LiveParticipantsBloc(
-              socket: context.read<SocketService>(),
-              facade: context.read<IBroadcastFacade>(),
-            ),
-          ),
-          // BlocProvider(
-          //   create: (context) => ChatBloc(
-          //     session: context.read<ISessionContext>(),
-          //     socket: context.read<SocketService>(),
-          //   ),
-          // ),
-        ],
-        child: const StreamPage(),
-      ),
+      builder: (context, state) => const StreamPage(),
     ),
     GoRoute(
       path: Routes.createBroadcast,

@@ -50,8 +50,6 @@ import '../features/broadcast/application/broadcast_form/broadcast_form_cubit.da
     as _i866;
 import '../features/broadcast/application/live_broadcasts/live_broadcasts_bloc.dart'
     as _i458;
-import '../features/broadcast/application/live_participants/live_participants_bloc.dart'
-    as _i505;
 import '../features/broadcast/application/recently_live/recently_live_cubit.dart'
     as _i254;
 import '../features/broadcast/application/stream/stream_bloc.dart' as _i241;
@@ -352,11 +350,6 @@ extension GetItInjectableX on _i174.GetIt {
           liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),
         ));
-    gh.lazySingleton<_i505.LiveParticipantsBloc>(
-        () => _i505.LiveParticipantsBloc(
-              socket: gh<_i264.SocketService>(),
-              facade: gh<_i625.IBroadcastFacade>(),
-            ));
     gh.factory<_i336.MenoBloc>(() => _i336.MenoBloc(
           liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),

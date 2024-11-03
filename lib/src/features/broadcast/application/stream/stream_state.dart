@@ -6,4 +6,6 @@ class StreamState with _$StreamState {
     required Broadcast broadcast,
     @Default(LiveInitial()) LiveStatus status,
   }) = _StreamState;
+
+  factory StreamState.initial() => StreamState(broadcast: Broadcast.empty());
 }

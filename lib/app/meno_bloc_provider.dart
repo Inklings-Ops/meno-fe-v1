@@ -141,6 +141,12 @@ class MenoBlocProvider extends StatelessWidget {
             socket: ctx.read<SocketService>(),
           ),
         ),
+        BlocProvider(
+          create: (ctx) => ParticipantsBloc(
+            facade: ctx.read<IBroadcastFacade>(),
+            socket: ctx.read<SocketService>(),
+          ),
+        ),
       ],
       child: child,
     );

@@ -17,43 +17,42 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   })  : _session = session,
         _socket = socket,
         super(ChatState.initial()) {
-    on<ChatEvent>((event, emit) {});
     on<ChatInitialized>(_onChatInitialized);
     on<ChatSendPressed>(_onChatSendPressed);
     on<ChatDeletePressed>(_onChatDeletePressed);
     on<ChatEditPressed>(_onChatEditPressed);
     on<ChatReset>(_onChatReset);
+    on<_NewChatReceived>(_onNewChatReceived);
+    on<_ChatsLoaded>(_onChatsLoaded);
   }
 
   final ISessionContext _session;
   final SocketService _socket;
 
-  late final StreamSubscription<SocketEvent>? _socketEventSubscription;
-  late final StreamSubscription<SocketState>? _socketStateSubscription;
+  StreamSubscription<SocketEvent>? _socketEventSubscription;
+  StreamSubscription<SocketState>? _socketStateSubscription;
+
+  /// Tracks the initialization state of the Streams
+  bool _listenersInitialized = false;
 
   void _onChatInitialized(ChatInitialized event, Emitter<ChatState> emit) {
-    if (_socketEventSubscription == null || _socketStateSubscription == null) {
-      emit(state.copyWith(broadcast: event.broadcast));
+    if (_listenersInitialized) return;
 
-      _socketEventSubscription = _socket.eventsStream.listen((socketEvent) {
-        socketEvent.whenOrNull(
-          newMessage: (chat) {
-            final oldMessages = List<Chat?>.from(state.chats);
-            emit(state.copyWith(chats: [chat, ...oldMessages]));
-          },
-        );
-      });
+    emit(state.copyWith(broadcast: event.broadcast));
 
-      _socketStateSubscription = _socket.stateStream.listen((socketState) {
-        socketState.whenOrNull(
-          getChatMessages: (chats, _) {
-            emit(state.copyWith(chats: chats, status: ChatStatus.success));
-          },
-        );
-      });
+    _socketEventSubscription = _socket.eventsStream.listen((socketEvent) {
+      socketEvent.whenOrNull(newMessage: (chat) => add(_NewChatReceived(chat)));
+    });
 
-      _socket.emit(SocketEvent.getChatMessages(event.broadcast.id.getOr()));
-    }
+    _socketStateSubscription = _socket.stateStream.listen((socketState) {
+      socketState.whenOrNull(
+        getChatMessages: (chats, _) => add(_ChatsLoaded(chats)),
+      );
+    });
+
+    _socket.emit(SocketEvent.getChatMessages(event.broadcast.id.getOr()));
+
+    _listenersInitialized = true;
   }
 
   void _onChatSendPressed(ChatSendPressed event, Emitter<ChatState> emit) {
@@ -68,6 +67,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
   }
 
+  void _onNewChatReceived(_NewChatReceived event, Emitter<ChatState> emit) {
+    final oldMessages = List<Chat?>.from(state.chats);
+    emit(state.copyWith(chats: [event.chat, ...oldMessages]));
+  }
+
+  void _onChatsLoaded(_ChatsLoaded event, Emitter<ChatState> emit) {
+    emit(state.copyWith(chats: event.chats));
+  }
+
   void _onChatDeletePressed(ChatDeletePressed event, Emitter<ChatState> emit) {}
 
   void _onChatEditPressed(ChatEditPressed event, Emitter<ChatState> emit) {}
@@ -77,6 +85,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     await _socketStateSubscription?.cancel();
     _socketEventSubscription = null;
     _socketStateSubscription = null;
+    _listenersInitialized = false;
     emit(ChatState.initial());
   }
 }
