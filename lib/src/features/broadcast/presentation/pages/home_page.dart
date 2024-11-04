@@ -39,11 +39,11 @@ class HomePage extends HookWidget {
           child: BlocListener<StreamBloc, StreamState>(
             listener: (context, state) {
               state.status.whenOrNull(
-                ended: (data) {
+                left: () => _handleStreamEnd(context),
+                streamEnded: (data) {
                   _handleStreamEnd(context);
                   context.showErrorSnackBar(data.reason.message);
                 },
-                left: () => _handleStreamEnd(context),
               );
             },
             child: Column(

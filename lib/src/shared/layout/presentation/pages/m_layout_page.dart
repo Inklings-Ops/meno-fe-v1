@@ -46,28 +46,16 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<SessionCubit, SessionState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              authenticated: (user, token) {
-                context.read<MyProfileCubit>().fetch();
-                context.read<LiveBroadcastsBloc>().init();
-                context.read<RecentlyLiveCubit>().fetch();
-              },
-            );
+    return BlocListener<SessionCubit, SessionState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          authenticated: (user, token) {
+            context.read<MyProfileCubit>().fetch();
+            context.read<LiveBroadcastsBloc>().init();
+            context.read<RecentlyLiveCubit>().fetch();
           },
-        ),
-        BlocListener<StreamBloc, StreamState>(
-          listener: (context, state) {
-            state.status.whenOrNull(
-              ended: (_) => context.read<StreamBloc>().add(const StreamReset()),
-              left: () => context.read<StreamBloc>().add(const StreamReset()),
-            );
-          },
-        ),
-      ],
+        );
+      },
       child: Scaffold(
         body: Row(children: [sideNavRail, Expanded(child: shell)]),
         bottomNavigationBar: bottomNavBar,

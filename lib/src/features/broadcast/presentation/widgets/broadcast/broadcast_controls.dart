@@ -54,7 +54,7 @@ class _StartStopButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => state.status.maybeWhen(
         loading: () => const _Button(label: 'Start', loading: true),
-        ended: (_) => const _Button(label: 'Stop broadcasting'),
+        broadcastEnded: () => const _Button(label: 'Stop broadcasting'),
         orElse: () => _Button(
           label: 'Start broadcasting',
           backgroundColor: colors.primary,

@@ -26,8 +26,8 @@ class StreamPage extends HookWidget {
       listener: (context, state) {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
-          ended: (data) => _handleStreamEnd(context),
           left: () => _handleStreamEnd(context),
+          streamEnded: (data) => _handleStreamEnd(context),
         );
       },
       child: const LiveScaffold(

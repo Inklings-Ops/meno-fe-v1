@@ -72,7 +72,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
 
     await failureOrJoinBroadcast.fold(
       // Handle failure by updating the state with the error
-      (failure) async => emit(state.copyWith(status: BroadcastFailed(failure))),
+      (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
 
@@ -83,14 +83,14 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
           _socket.emit(SocketJoinBroadcast(event.id.getOr()));
 
           // Check for any error from the web socket service
-          if (state.status is! BroadcastFailed) {
+          if (state.status is! LiveFailure) {
             // Update state to reflect successful joining of the broadcast
-            emit(state.copyWith(status: const BroadcastJoined()));
+            emit(state.copyWith(status: const LiveBroadcastJoined()));
           }
         } catch (e) {
           // Emit a failure status if connection fails
           final exception = BroadcastException.message(e.toString());
-          emit(state.copyWith(status: BroadcastFailed(exception)));
+          emit(state.copyWith(status: LiveFailure(exception)));
         }
       },
     );
@@ -100,7 +100,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     StreamLeavePressed event,
     Emitter<StreamState> emit,
   ) {
-    if (state.status is! BroadcastJoined) return;
+    if (state.status is! LiveBroadcastJoined) return;
 
     // Emit the loading state
     emit(state.copyWith(status: const LiveLoadInProgress()));
@@ -108,14 +108,14 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     // Emit the `leaveBroadcast` socket event to leave the broadcast
     _socket.emit(SocketLeaveBroadcast(event.id.getOr()));
 
-    // Emit the BroadcastLeft state
-    emit(state.copyWith(status: const BroadcastLeft()));
+    // Emit the LiveBroadcastLeft state
+    emit(state.copyWith(status: const LiveBroadcastLeft()));
   }
 
   /// To be emitted when a live broadcast by another user is ended either
   /// normally or abnormally
   void _onStreamEnded(StreamEnded event, Emitter<StreamState> emit) {
-    emit(state.copyWith(status: BroadcastEnded(event.data)));
+    emit(state.copyWith(status: LiveStreamEnded(event.data)));
   }
 
   Future<void> _cancelSubscriptions() async {
@@ -146,7 +146,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
 
     // Emit the failure state with the error message from the socket
     final exception = BroadcastException.message(event.error!);
-    emit(state.copyWith(status: BroadcastFailed(exception)));
+    emit(state.copyWith(status: LiveFailure(exception)));
   }
 
   @override

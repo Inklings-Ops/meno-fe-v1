@@ -60,7 +60,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     emit(state.copyWith(status: const LiveLoadInProgress()));
     final failureOrBroadcast = await _facade.startBroadcast(broadcastId);
     await failureOrBroadcast.fold(
-      (failure) async => emit(state.copyWith(status: BroadcastFailed(failure))),
+      (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (broadcast) async {
         try {
           // Attempt to connect to LiveKit using the token
@@ -70,11 +70,11 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
           _socket.emit(SocketStartedBroadcast(broadcast.id.getOr()));
 
           // Check for any error from the web socket service
-          if (state.status is! BroadcastFailed) {
+          if (state.status is! LiveFailure) {
             // Update state to reflect successful joining of the broadcast
             emit(
               state.copyWith(
-                status: const BroadcastStarted(),
+                status: const LiveBroadcastStarted(),
                 broadcast: broadcast,
               ),
             );
@@ -82,7 +82,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         } catch (e) {
           // Emit a failure status if connection fails
           final exception = BroadcastException.message(e.toString());
-          emit(state.copyWith(status: BroadcastFailed(exception)));
+          emit(state.copyWith(status: LiveFailure(exception)));
         }
       },
     );
@@ -92,7 +92,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastEndPressed event,
     Emitter<BroadcastState> emit,
   ) {
-    if (state.status is! BroadcastStarted) return;
+    if (state.status is! LiveBroadcastStarted) return;
 
     // Emit the loading state
     emit(state.copyWith(status: const LiveLoadInProgress()));
@@ -101,17 +101,23 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     _socket.emit(SocketEndBroadcast(event.broadcastId.getOr()));
 
     // Emit the BroadcastEnded state
-    emit(state.copyWith(status: BroadcastEnded(EndedBroadcastData.empty())));
+    emit(state.copyWith(status: const LiveBroadcastEnded()));
   }
 
   void _onBroadcastMuteToggled(
     BroadcastMuteToggled event,
     Emitter<BroadcastState> emit,
   ) {
-    if (state.status is! BroadcastStarted) return;
-    final enabled = (state.status as BroadcastStarted).microphoneEnabled;
+    if (state.status is! LiveBroadcastStarted) return;
+    final enabled = (state.status as LiveBroadcastStarted).microphoneEnabled;
     unawaited(_liveKit.mute(enabled: !enabled));
-    emit(state.copyWith(status: BroadcastStarted(microphoneEnabled: !enabled)));
+    emit(
+      state.copyWith(
+        status: LiveBroadcastStarted(
+          microphoneEnabled: !enabled,
+        ),
+      ),
+    );
   }
 
   Future<void> _onBroadcastReset(
@@ -134,7 +140,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
 
     // Emit the failure state with the error message from the socket
     final exception = BroadcastException.message(event.error!);
-    emit(state.copyWith(status: BroadcastFailed(exception)));
+    emit(state.copyWith(status: LiveFailure(exception)));
   }
 
   @override

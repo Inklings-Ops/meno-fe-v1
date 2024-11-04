@@ -13,7 +13,7 @@ class BroadcastPage extends StatelessWidget {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
           started: (_) => _onStartedBroadcast(context, state.broadcast),
-          ended: (_) => _onEndedBroadcast(context),
+          broadcastEnded: () => _onEndedBroadcast(context),
         );
       },
       child: const LiveScaffold(

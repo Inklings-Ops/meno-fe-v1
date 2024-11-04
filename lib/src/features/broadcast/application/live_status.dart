@@ -9,9 +9,12 @@ class LiveStatus with _$LiveStatus {
   const factory LiveStatus.loading() = LiveLoadInProgress;
   const factory LiveStatus.started({
     @Default(true) bool microphoneEnabled,
-  }) = BroadcastStarted;
-  const factory LiveStatus.joined() = BroadcastJoined;
-  const factory LiveStatus.ended(EndedBroadcastData data) = BroadcastEnded;
-  const factory LiveStatus.left() = BroadcastLeft;
-  const factory LiveStatus.failed(BroadcastException exception) = BroadcastFailed;
+  }) = LiveBroadcastStarted;
+  const factory LiveStatus.joined() = LiveBroadcastJoined;
+  const factory LiveStatus.broadcastEnded() = LiveBroadcastEnded;
+  const factory LiveStatus.streamEnded(
+    EndedBroadcastData data,
+  ) = LiveStreamEnded;
+  const factory LiveStatus.left() = LiveBroadcastLeft;
+  const factory LiveStatus.failed(BroadcastException exception) = LiveFailure;
 }
