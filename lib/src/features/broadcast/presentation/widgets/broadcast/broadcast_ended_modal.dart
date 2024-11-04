@@ -58,8 +58,7 @@ class BroadcastEndedModal extends StatelessWidget {
     context.read<LiveKitService>().dispose();
     context.read<ParticipantsBloc>().add(const ParticipantsReset());
     context.read<ChatBloc>().add(const ChatReset());
-
-    context.read<BroadcastBloc>().dispose();
+    context.read<BroadcastBloc>().add(const BroadcastReset());
   }
 }
 

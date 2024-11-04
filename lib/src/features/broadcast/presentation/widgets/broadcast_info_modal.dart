@@ -74,11 +74,7 @@ class BroadcastInfoModal extends StatelessWidget {
                   leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete Broadcast',
                   titleColor: colors.error,
-                  onTap: () {
-                    context
-                      ..read<BroadcastBloc>().deleteBroadcast(broadcast.id)
-                      ..pop();
-                  },
+                  onTap: () {},
                 ),
               ),
             ),

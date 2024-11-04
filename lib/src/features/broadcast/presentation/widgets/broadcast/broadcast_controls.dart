@@ -27,13 +27,15 @@ class _MicrophoneButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.watch<BroadcastBloc>();
     return BlocBuilder<BroadcastBloc, BroadcastState>(
+      bloc: bloc,
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => state.status.maybeWhen(
         orElse: () => const MMicrophoneButton(isDisabled: true),
         started: (isMicrophoneEnabled) => MMicrophoneButton(
           isMicrophoneEnabled: isMicrophoneEnabled,
-          onTap: context.read<BroadcastBloc>().toggleMute,
+          onTap: () => bloc.add(const BroadcastMuteToggled()),
         ),
       ),
     );
@@ -46,9 +48,10 @@ class _StartStopButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final bloc = context.read<BroadcastBloc>();
-
+    final bloc = context.watch<BroadcastBloc>();
     return BlocBuilder<BroadcastBloc, BroadcastState>(
+      bloc: bloc,
+      buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => state.status.maybeWhen(
         loading: () => const _Button(label: 'Start', loading: true),
         ended: (_) => const _Button(label: 'Stop broadcasting'),
@@ -56,15 +59,15 @@ class _StartStopButton extends StatelessWidget {
           label: 'Start broadcasting',
           backgroundColor: colors.primary,
           foregroundColor: colors.onPrimary,
-          onTap: bloc.startBroadcast,
+          onTap: () => bloc.add(const BroadcastStartPressed()),
         ),
         started: (_) => _Button(
           label: 'Stop broadcasting',
           backgroundColor: colors.errorContainer?.withOpacity(0.3),
           foregroundColor: colors.error,
           onTap: () => context.showEndBroadcastDialog().then((value) {
-            if (value != true) return null;
-            return bloc.endBroadcast(state.broadcast.id);
+            if (value != true) return;
+            return bloc.add(BroadcastEndPressed(state.broadcast.id));
           }),
         ),
       ),

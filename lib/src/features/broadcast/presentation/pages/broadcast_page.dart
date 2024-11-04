@@ -46,10 +46,7 @@ class BroadcastPage extends StatelessWidget {
     context.read<ParticipantsBloc>().add(const AllParticipantsFetchPressed());
     context.read<MenoBloc>().update(const MOffAir());
     context.showModal<void>(
-      BlocProvider.value(
-        value: context.read<BroadcastBloc>(),
-        child: const BroadcastEndedModal(),
-      ),
+      const BroadcastEndedModal(),
       enableDrag: false,
       useRootNavigator: true,
       isDismissible: false,
