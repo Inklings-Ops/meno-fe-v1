@@ -6,4 +6,8 @@ class BroadcastState with _$BroadcastState {
     required Broadcast broadcast,
     @Default(LiveInitial()) LiveStatus status,
   }) = _BroadcastState;
+
+  factory BroadcastState.initial() {
+    return BroadcastState(broadcast: Broadcast.empty());
+  }
 }
