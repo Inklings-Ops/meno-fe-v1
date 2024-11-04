@@ -2,31 +2,28 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-class LiveActivityCard extends StatelessWidget {
-  const LiveActivityCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<MenoBloc, MenoState>(
-      builder: (context, menoState) => menoState.maybeWhen(
-        orElse: () => const SizedBox(),
-        streaming: () => const ActivityCard(badgeTitle: 'Now Streaming'),
-        reconnecting: () => const ActivityCard(badgeTitle: 'Reconnecting'),
-      ),
-    );
-  }
-}
-
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({required this.badgeTitle, super.key});
+  const ActivityCard({
+    required this.badgeTitle,
+    required this.broadcast,
+    this.actionButtonLabel,
+    this.onTap,
+    this.action,
+    super.key,
+  });
+
   final String badgeTitle;
+  final Broadcast broadcast;
+  final VoidCallback? onTap;
+  final String? actionButtonLabel;
+  final VoidCallback? action;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: Insets.xxl),
       child: InkWell(
-        onTap: () => router.push(Routes.stream),
+        onTap: onTap,
         child: Card(
           margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
           shape: SmoothRectangleBorder(borderRadius: Corners.squircleLg),
@@ -42,13 +39,16 @@ class ActivityCard extends StatelessWidget {
                     children: [
                       _Badge(badgeTitle: badgeTitle),
                       const SizedBox(height: 2),
-                      const _StreamTitle(),
-                      const _StreamCreatorName(),
+                      _Title(title: broadcast.title.getOr()),
+                      _CreatorName(fullName: broadcast.creator!.fullName),
                     ],
                   ),
                 ),
                 Spaces.horizontalMedium,
-                const _LeaveButton(),
+                _ActionButton(
+                  label: actionButtonLabel,
+                  onPressed: action,
+                ),
               ],
             ),
           ),
@@ -80,8 +80,14 @@ class _Badge extends StatelessWidget {
   }
 }
 
-class _LeaveButton extends StatelessWidget {
-  const _LeaveButton();
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    this.label,
+    this.onPressed,
+  });
+
+  final String? label;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -89,62 +95,44 @@ class _LeaveButton extends StatelessWidget {
       maxHeight: 32,
       maxWidth: 79,
       child: MDangerButton(
-        label: 'Leave',
-        onPressed: () => onLeave(context),
+        label: label ?? '',
+        onPressed: onPressed,
         style: FilledButton.styleFrom(
           shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
         ),
       ),
     );
   }
-
-  void onLeave(BuildContext context) {
-    final bloc = context.read<StreamBloc>();
-    context.showLeaveBroadcastDialog().then((value) {
-      if (value == null || value == false) return;
-      return bloc.add(StreamLeavePressed(bloc.state.broadcast.id));
-    });
-  }
 }
 
-class _StreamTitle extends StatelessWidget {
-  const _StreamTitle();
-
+class _Title extends StatelessWidget {
+  const _Title({required this.title});
+  final String title;
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<StreamBloc, StreamState, String>(
-      selector: (state) => state.broadcast.title.getOr(),
-      builder: (context, title) => Container(
-        height: 24,
-        alignment: Alignment.centerLeft,
-        child: MText(
-          title,
-          style: textTheme.captionMedium,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+    return Container(
+      height: 24,
+      alignment: Alignment.centerLeft,
+      child: MText(
+        title,
+        style: MTextTheme.of(context)!.captionMedium,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
 }
 
-class _StreamCreatorName extends StatelessWidget {
-  const _StreamCreatorName();
+class _CreatorName extends StatelessWidget {
+  const _CreatorName({required this.fullName});
+  final String fullName;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<StreamBloc, StreamState, String?>(
-      selector: (state) => state.broadcast.creator?.fullName,
-      builder: (context, fullName) {
-        if (fullName == null) return const SizedBox();
-        return MText(
-          fullName,
-          style: textTheme.captionRegular,
-          color: MColorScheme.of(context)!.onBackgroundVariant,
-        );
-      },
+    return MText(
+      fullName,
+      style: MTextTheme.of(context)!.captionRegular,
+      color: MColorScheme.of(context)!.onBackgroundVariant,
     );
   }
 }

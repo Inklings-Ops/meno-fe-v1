@@ -51,7 +51,8 @@ class HomePage extends HookWidget {
                 BlocBuilder<MenoBloc, MenoState>(
                   builder: (context, state) => state.maybeWhen(
                     orElse: () => Spaces.verticalXLarge,
-                    streaming: LiveActivityCard.new,
+                    streaming: LiveStreamActivityCard.new,
+                    live: LiveBroadcastActivityCard.new,
                   ),
                 ),
                 const LiveForYou(),
