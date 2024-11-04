@@ -26,15 +26,7 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: Routes.broadcast,
-      builder: (context, state) => BlocProvider(
-        create: (context) => BroadcastBloc(
-          broadcast: state.extra! as Broadcast,
-          facade: context.read<IBroadcastFacade>(),
-          liveKit: context.read<LiveKitService>(),
-          socket: context.read<SocketService>(),
-        ),
-        child: const BroadcastPage(),
-      ),
+      builder: (context, state) => const BroadcastPage(),
     ),
     GoRoute(
       path: Routes.stream,
