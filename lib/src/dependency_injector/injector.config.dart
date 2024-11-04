@@ -340,16 +340,6 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.factoryParam<_i659.BroadcastBloc, _i1009.Broadcast, dynamic>((
-      broadcast,
-      _,
-    ) =>
-        _i659.BroadcastBloc(
-          broadcast: broadcast,
-          facade: gh<_i1009.IBroadcastFacade>(),
-          liveKit: gh<_i264.LiveKitService>(),
-          socket: gh<_i264.SocketService>(),
-        ));
     gh.factory<_i336.MenoBloc>(() => _i336.MenoBloc(
           liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),
@@ -360,6 +350,11 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i913.ChatBloc>(() => _i913.ChatBloc(
           session: gh<_i1014.ISessionContext>(),
+          socket: gh<_i264.SocketService>(),
+        ));
+    gh.factory<_i659.BroadcastBloc>(() => _i659.BroadcastBloc(
+          facade: gh<_i1009.IBroadcastFacade>(),
+          liveKit: gh<_i264.LiveKitService>(),
           socket: gh<_i264.SocketService>(),
         ));
     gh.factory<_i241.StreamBloc>(() => _i241.StreamBloc(

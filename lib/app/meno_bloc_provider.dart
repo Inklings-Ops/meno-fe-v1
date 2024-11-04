@@ -10,123 +10,149 @@ class MenoBlocProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (ctx) => di<SessionCubit>()),
+        BlocProvider(create: (context) => di<SessionCubit>()),
         BlocProvider(
-          create: (ctx) => NetworkCubit(facade: ctx.read<INetworkFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => OnboardingCubit(facade: ctx.read<ISettingsFacade>()),
-        ),
-        BlocProvider(create: (ctx) => TimerCubit()),
-        BlocProvider(
-          create: (ctx) => BibleBloc(facade: ctx.read<IBibleFacade>())..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => ScripturePickerCubit(
-            facade: ctx.read<IBibleFacade>(),
+          create: (context) => NetworkCubit(
+            facade: context.read<INetworkFacade>(),
           ),
         ),
         BlocProvider(
-          create: (ctx) => TranslationsCubit(
-            facade: ctx.read<IBibleFacade>(),
+          create: (context) => OnboardingCubit(
+            facade: context.read<ISettingsFacade>(),
+          ),
+        ),
+        BlocProvider(create: (context) => TimerCubit()),
+        BlocProvider(
+          create: (context) => BibleBloc(
+            facade: context.read<IBibleFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => VersesCubit(facade: ctx.read<IBibleFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => AccountBloc(facade: ctx.read<IAuthFacade>())..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => LoginCubit(
-            facade: ctx.read<IAuthFacade>(),
-            settingsFacade: ctx.read<ISettingsFacade>(),
+          create: (context) => ScripturePickerCubit(
+            facade: context.read<IBibleFacade>(),
           ),
         ),
         BlocProvider(
-          create: (ctx) => RegisterCubit(facade: ctx.read<IAuthFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) =>
-              MyProfileCubit(facade: ctx.read<IProfileFacade>())..fetch(),
-        ),
-        BlocProvider(
-          create: (ctx) => ProfileFormCubit(
-            facade: ctx.read<IProfileFacade>(),
-            media: ctx.read<MediaService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => MenoBloc(
-            liveKit: ctx.read<LiveKitService>(),
-            socket: ctx.read<SocketService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => LiveBroadcastsBloc(
-            facade: ctx.read<IBroadcastFacade>(),
-            socket: ctx.read<SocketService>(),
+          create: (context) => TranslationsCubit(
+            facade: context.read<IBibleFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => NoteFormCubit(facade: ctx.read<INoteFacade>()),
+          create: (context) => VersesCubit(
+            facade: context.read<IBibleFacade>(),
+          ),
         ),
         BlocProvider(
-          create: (ctx) => RecentlyLiveCubit(
-            facade: ctx.read<IBroadcastFacade>(),
+          create: (context) => AccountBloc(
+            facade: context.read<IAuthFacade>(),
+          )..init(),
+        ),
+        BlocProvider(
+          create: (context) => LoginCubit(
+            facade: context.read<IAuthFacade>(),
+            settingsFacade: context.read<ISettingsFacade>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => RegisterCubit(
+            facade: context.read<IAuthFacade>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => MyProfileCubit(
+            facade: context.read<IProfileFacade>(),
           )..fetch(),
         ),
         BlocProvider(
-          create: (ctx) => SearchBloc(facade: ctx.read<IDiscoverFacade>()),
+          create: (context) => ProfileFormCubit(
+            facade: context.read<IProfileFacade>(),
+            media: context.read<MediaService>(),
+          ),
         ),
         BlocProvider(
-          create: (ctx) => FolderCubit(
-            facade: ctx.read<INoteFacade>(),
+          create: (context) => MenoBloc(
+            liveKit: context.read<LiveKitService>(),
+            socket: context.read<SocketService>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => LiveBroadcastsBloc(
+            facade: context.read<IBroadcastFacade>(),
+            socket: context.read<SocketService>(),
+          )..init(),
+        ),
+        BlocProvider(
+          create: (context) => NoteFormCubit(
+            facade: context.read<INoteFacade>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => RecentlyLiveCubit(
+            facade: context.read<IBroadcastFacade>(),
+          )..fetch(),
+        ),
+        BlocProvider(
+          create: (context) => SearchBloc(
+            facade: context.read<IDiscoverFacade>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => FolderCubit(
+            facade: context.read<INoteFacade>(),
             folder: Folder.empty(),
           ),
         ),
         BlocProvider(
-          create: (ctx) => DAllCubit(
-            facade: ctx.read<IDiscoverFacade>(),
+          create: (context) => DAllCubit(
+            facade: context.read<IDiscoverFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => DNowLiveCubit(
-            facade: ctx.read<IDiscoverFacade>(),
+          create: (context) => DNowLiveCubit(
+            facade: context.read<IDiscoverFacade>(),
           )..fetch(1),
         ),
         BlocProvider(
-          create: (ctx) => DRecentlyLiveCubit(
-            facade: ctx.read<IDiscoverFacade>(),
+          create: (context) => DRecentlyLiveCubit(
+            facade: context.read<IDiscoverFacade>(),
           )..fetch(1),
         ),
         BlocProvider(
-          create: (ctx) => FilterBloc(
-            facade: ctx.read<IDiscoverFacade>(),
+          create: (context) => FilterBloc(
+            facade: context.read<IDiscoverFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => NotesBloc(
-            facade: ctx.read<INoteFacade>(),
+          create: (context) => NotesBloc(
+            facade: context.read<INoteFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => FolderFormCubit(facade: ctx.read<INoteFacade>()),
+          create: (context) => FolderFormCubit(
+            facade: context.read<INoteFacade>(),
+          ),
         ),
         BlocProvider(
-          create: (ctx) => FolderListBloc(
-            facade: ctx.read<INoteFacade>(),
+          create: (context) => FolderListBloc(
+            facade: context.read<INoteFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => FolderListBloc(
-            facade: ctx.read<INoteFacade>(),
+          create: (context) => FolderListBloc(
+            facade: context.read<INoteFacade>(),
           )..init(),
         ),
         BlocProvider(
-          create: (ctx) => StreamBloc(
-            facade: ctx.read<IBroadcastFacade>(),
-            liveKit: ctx.read<LiveKitService>(),
+          create: (context) => BroadcastBloc(
+            facade: context.read<IBroadcastFacade>(),
+            liveKit: context.read<LiveKitService>(),
+            socket: context.read<SocketService>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => StreamBloc(
+            facade: context.read<IBroadcastFacade>(),
+            liveKit: context.read<LiveKitService>(),
             socket: di<SocketService>(),
           ),
         ),
@@ -136,15 +162,15 @@ class MenoBlocProvider extends StatelessWidget {
           ),
         ),
         BlocProvider(
-          create: (ctx) => ChatBloc(
-            session: ctx.read<ISessionContext>(),
-            socket: ctx.read<SocketService>(),
+          create: (context) => ChatBloc(
+            session: context.read<ISessionContext>(),
+            socket: context.read<SocketService>(),
           ),
         ),
         BlocProvider(
-          create: (ctx) => ParticipantsBloc(
-            facade: ctx.read<IBroadcastFacade>(),
-            socket: ctx.read<SocketService>(),
+          create: (context) => ParticipantsBloc(
+            facade: context.read<IBroadcastFacade>(),
+            socket: context.read<SocketService>(),
           ),
         ),
       ],
