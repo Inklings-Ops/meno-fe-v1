@@ -12,7 +12,7 @@ class FolderListFailureWidget extends StatelessWidget {
       children: [
         const SizedBox(height: 72),
         MText(
-          'An error occurred while retrieving the folders. Please, reload to try again?',
+          'An error occurred while retrieving the folders. Please, try again?',
           style: textTheme.bodyRegular,
           textAlign: TextAlign.center,
         ),

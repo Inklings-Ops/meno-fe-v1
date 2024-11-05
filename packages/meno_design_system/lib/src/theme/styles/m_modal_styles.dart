@@ -89,8 +89,6 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
       ),
       backgroundColor: backgroundColor,
       modalBackgroundColor: modalBackgroundColor,
-      // TODO(gettoknowdavid): Add Box Constraints for the Bottom Sheets.
-      // constraints: BoxConstraints(maxHeight: size.height * 0.9),
     );
   }
 

@@ -2,7 +2,10 @@ import 'package:meno_fe_v1/meno.dart';
 
 class SettingsListTile extends StatelessWidget {
   const SettingsListTile({
-    required this.title, required this.leadingIcon, required this.onTap, super.key,
+    required this.title,
+    required this.leadingIcon,
+    required this.onTap,
+    super.key,
     this.isDisabled = false,
     this.trailing,
     this.showDivider = true,

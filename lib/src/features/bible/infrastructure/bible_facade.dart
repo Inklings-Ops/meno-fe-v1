@@ -133,7 +133,7 @@ class BibleFacade implements IBibleFacade {
     final isConnected = await _network.isConnected;
 
     if (!isConnected) {
-      await syncFallpop();
+      await syncFallback();
       return left(const BibleException.networkError());
     } else {
       try {
@@ -152,7 +152,7 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  Future<Either<BibleException, Unit>> syncFallpop() async {
+  Future<Either<BibleException, Unit>> syncFallback() async {
     Logger().w('Fallback Bible about to download');
 
     try {

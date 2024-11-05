@@ -15,7 +15,7 @@ class DiscoverResultWidget extends HookWidget {
 
         if (filter == Filter.all) return const _AllBroadcastsView();
 
-        if (!isLoading && state.searchMap[filter]?.isEmpty == true) {
+        if (!isLoading && (state.searchMap[filter]?.isEmpty ?? false)) {
           return const Center(child: EmptyListWidget());
         }
 
@@ -98,7 +98,7 @@ class _Grid extends HookWidget {
     final isLoading = snapshot.connectionState == ConnectionState.waiting;
     if (isLoading || snapshot.hasError) {
       child = const MLoadingIndicator.box();
-    } else if (!isLoading && snapshot.data?.isEmpty == true) {
+    } else if (!isLoading && (snapshot.data?.isEmpty ?? false)) {
       child = const EmptyListWidget();
     } else {
       final broadcasts = snapshot.data!;

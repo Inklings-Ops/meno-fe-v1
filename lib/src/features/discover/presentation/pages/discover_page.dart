@@ -97,21 +97,3 @@ class DiscoverPage extends HookWidget {
     };
   }
 }
-
-
-// class _LoadingIndicator extends StatelessWidget {
-//   const _LoadingIndicator();
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocBuilder<FilterBloc, FilterState>(
-//       buildWhen: (p, c) => p.isLoading != c.isLoading || p.hasMore != c.hasMore,
-//       builder: (context, state) {
-//         if (state.filter == Filter.all) return const SizedBox();
-//         return DiscoverPaginationIndicator(
-//           isLoading: state.isLoading,
-//           hasMore: state.hasMore,
-//         );
-//       },
-//     );
-//   }
-// }

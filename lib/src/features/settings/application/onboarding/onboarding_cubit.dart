@@ -35,10 +35,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     );
   }
 
-  /// Initializes the onboarding state based on whether the user has completed onboarding.
+  /// Initializes the onboarding state based on whether the user has 
+  /// completed onboarding.
   ///
-  /// If the user has completed onboarding, it emits [OnboardingState.completed],
-  /// otherwise, it emits [OnboardingState.notCompleted].
+  /// If the user has completed onboarding, it 
+  /// emits [OnboardingState.completed], otherwise, it emits 
+  /// [OnboardingState.notCompleted].
   void init() {
     if (_facade.isOnboarded) {
       return emit(OnboardingState.completed);

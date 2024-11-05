@@ -217,6 +217,7 @@ class MBadge extends StatelessWidget {
   /// Whether to show a border around the badge.
   final bool showBorder;
 
+  /// Loading boolean
   final bool loading;
 
   @override

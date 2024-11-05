@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:meno_fe_v1/src/shared/value_objects/value_error.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_failure.dart';
 
@@ -34,7 +33,8 @@ abstract class ValueObject<T> implements IValueObject {
     return other is ValueObject<T> && other.value == value;
   }
 
-  /// Throws [UnexpectedValueError] containing the [ValueFailure]
+  /// Throws UnexpectedValueError containing the [ValueFailure]
+  // ignore: only_throw_errors
   T getOr() => value.fold((f) => throw ValueError.unexpectedError(f), id);
 
   T getOrE(T dflt) => value.getOrElse(() => dflt);

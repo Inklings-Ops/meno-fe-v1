@@ -21,7 +21,7 @@ class ResetPasswordOtpVerificationPage extends StatelessWidget {
                 MText('OTP Verification', style: textTheme.heading2Medium),
                 Spaces.verticalSmall,
                 MText(
-                  'Enter the 4-digit code we just sent to jimhalpert26@gmail.com to continue',
+                  '''Enter the 4-digit code we just sent to jimhalpert26@gmail.com to continue''',
                   maxLines: 3,
                   style: textTheme.bodyRegular,
                 ),

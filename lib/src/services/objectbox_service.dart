@@ -7,7 +7,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class ObjectBoxService {
-
   ObjectBoxService._create(this.store) {
     _bibleBox = store.box<BibleDto>();
     _verseBox = store.box<VerseDto>();
@@ -45,27 +44,18 @@ class ObjectBoxService {
 
   Future<void> storeBible(List<VerseDto> verses, String translation) async {
     try {
-      Logger().w('TRYING OBJECTBOX SERVICE STORE BIBLE WITHOUT ISOLATE');
-      // const batchSize = 10000;
-      // final totalItems = verses.length;
-
-      // for (var i = 0; i < totalItems; i += batchSize) {
-      //   final end = (i + batchSize < totalItems) ? i + batchSize : totalItems;
-      //   final batch = verses.sublist(i, end);
-      //   await _verseBox.putManyAsync(batch);
-      // }
       store.runInTransaction(TxMode.write, () {
-        Logger().w('RUNNING TRANSACTION');
         _verseBox.putMany(verses);
 
         final allVerses = _verseBox.getAll();
 
-        bibleBox.put(BibleDto(
-          translation: translation,
-          verses: ToMany(items: allVerses),
-        ),);
+        bibleBox.put(
+          BibleDto(
+            translation: translation,
+            verses: ToMany(items: allVerses),
+          ),
+        );
       });
-      Logger().w('DONE STORING BIBLE IN OBJECTBOX');
     } on ObjectBoxException catch (e) {
       Logger().w(e.toString());
     }

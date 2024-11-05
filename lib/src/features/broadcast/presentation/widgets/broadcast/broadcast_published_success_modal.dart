@@ -51,7 +51,7 @@ class _PublishingInProgressModal extends StatelessWidget {
         Spaces.verticalLarge,
         BroadcastTimer(textStyle: textTheme.heading2Bold),
         Spaces.verticalXLarge,
-        Spaces.verticalXXLarge, // TODO(gettoknowdavid): add avatars
+        Spaces.verticalXXLarge, // Add avatars
         Spaces.verticalSmall,
         MText(
           '23 people tuned in!',
@@ -86,7 +86,7 @@ class _SuccessModal extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: MText(
-            'Now you and other people can go back and listen to this broadcast.',
+            'Now you and other people can go back and listen to this broadcast',
             style: textTheme.captionRegular,
             textAlign: TextAlign.center,
             maxLines: 2,

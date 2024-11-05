@@ -46,7 +46,7 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   Future<void> create() async {
     late Either<BroadcastException, Broadcast> fOrB;
     emit(state.copyWith(loading: true, option: none()));
-    if (state.title.isValid && state.description?.isValid == true) {
+    if (state.title.isValid && (state.description?.isValid ?? false)) {
       fOrB = await _facade.createBroadcast(
         title: state.title,
         description: state.description,

@@ -3,11 +3,15 @@ linter:
  rules:
   public_member_api_docs: false
 analyzer:
-#   # exclude:
-#   #   - "**/*.g.dart"
-#   #   - "**/*.freezed.dart"
+  exclude:
+    - lib/objectbox.g.dart
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
   errors:
     avoid_js_rounded_ints: ignore
+    avoid_positional_boolean_parameters: ignore
+    cascade_invocations: ignore
     inference_failure_on_instance_creation: ignore
     invalid_annotation_target: ignore
+    one_member_abstracts: ignore
     # library_private_types_in_public_api: ignore

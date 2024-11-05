@@ -334,7 +334,7 @@ class NoteFacade implements INoteFacade {
     required String folderId,
   }) async {
     if (!(await _network.isConnected)) {
-      // TODO: check how to remove note from  folder on ObjectBox
+      // how to remove item from folder on ObjectBox
       return left(const NoteException.networkError());
     } else {
       try {

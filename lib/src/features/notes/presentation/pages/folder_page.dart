@@ -120,7 +120,7 @@ class _NotesList extends StatelessWidget {
         orElse: () => const SizedBox(),
         loading: () => const MLoadingIndicator.four(),
         success: (folder) {
-          if (folder.notes == null || folder.notes?.isEmpty == true) {
+          if (folder.notes == null || (folder.notes?.isEmpty ?? false)) {
             return EmptyFolderPageWidget(folder: folder);
           }
 
