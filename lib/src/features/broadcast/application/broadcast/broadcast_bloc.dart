@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -9,7 +8,6 @@ part 'broadcast_bloc.freezed.dart';
 part 'broadcast_event.dart';
 part 'broadcast_state.dart';
 
-@Injectable()
 class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   BroadcastBloc({
     required IBroadcastFacade facade,

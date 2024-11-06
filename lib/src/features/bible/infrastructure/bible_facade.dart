@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/datasources.dart';
@@ -24,14 +23,21 @@ class BibleFacade implements IBibleFacade {
 
   @PostConstruct(preResolve: true)
   Future<void> initialize() async {
-    // Logger().w('INITIALIZING BIBLE');
+    const params = BibleIsolateParams(translation: 'kjv');
+
+    if (!_local.isBibleEmpty) return;
+
+    final verseDtos = await _local.loadFallbackBible();
+    await _local.storeBible(verseDtos, params.translation);
+    return;
+  }
+
+  @override
+  Future<void> init() async {
     // const params = BibleIsolateParams(translation: 'kjv');
     // final isConnected = await _network.isConnected;
 
-    // if (!_local.isBibleEmpty) {
-    //   Logger().w('ALREADY DOWNLOADED');
-    //   return;
-    // }
+    // if (!_local.isBibleEmpty) return;
 
     // if (_local.isBibleEmpty && isConnected) {
     //   Logger().w('DOWNLOADING FROM REMOTE');
@@ -40,36 +46,11 @@ class BibleFacade implements IBibleFacade {
     //   await _local.storeBible(verseDtos ?? [], params.translation);
     //   return;
     // } else {
-    //   Logger().w('DOWNLOADING FROM LOCAL JSON');
-    //   final verseDtos = await _local.loadFallbackBible();
-    //   await _local.storeBible(verseDtos, params.translation);
-    //   return;
+    // Logger().w('DOWNLOADING FROM LOCAL JSON');
+    // final verseDtos = await _local.loadFallbackBible();
+    // await _local.storeBible(verseDtos, params.translation);
+    // return;
     // }
-  }
-
-@override
-  Future<void> init() async {
-        Logger().w('INITIALIZING BIBLE');
-    const params = BibleIsolateParams(translation: 'kjv');
-    final isConnected = await _network.isConnected;
-
-    if (!_local.isBibleEmpty) {
-      Logger().w('ALREADY DOWNLOADED');
-      return;
-    }
-
-    if (_local.isBibleEmpty && isConnected) {
-      Logger().w('DOWNLOADING FROM REMOTE');
-      final worker = await BibleWorkerIsolate.spawn();
-      final verseDtos = await worker.downloadBible(params);
-      await _local.storeBible(verseDtos ?? [], params.translation);
-      return;
-    } else {
-      Logger().w('DOWNLOADING FROM LOCAL JSON');
-      final verseDtos = await _local.loadFallbackBible();
-      await _local.storeBible(verseDtos, params.translation);
-      return;
-    }
   }
 
   @override
@@ -129,7 +110,6 @@ class BibleFacade implements IBibleFacade {
     void Function(int, int)? onProgress,
     CancelToken? cancel,
   }) async {
-    Logger().w('Bible about to download $translation');
     final isConnected = await _network.isConnected;
 
     if (!isConnected) {
@@ -137,7 +117,6 @@ class BibleFacade implements IBibleFacade {
       return left(const BibleException.networkError());
     } else {
       try {
-        Logger().w('Bible downloading $translation');
         final worker = await BibleWorkerIsolate.spawn();
         final verseDtos = await worker.downloadBible(
           BibleIsolateParams(translation: translation),
@@ -153,11 +132,7 @@ class BibleFacade implements IBibleFacade {
 
   @override
   Future<Either<BibleException, Unit>> syncFallback() async {
-    Logger().w('Fallback Bible about to download');
-
     try {
-      Logger().w('Fallback Bible downloaded already');
-
       final verseDtos = await _local.loadFallbackBible();
       await _local.storeBible(verseDtos, 'kjv');
 
@@ -190,27 +165,4 @@ class BibleFacade implements IBibleFacade {
     final translations = dtos.map((e) => e.toDomain).toList();
     return translations;
   }
-
-//   @override
-//   Future<Either<BibleException, List<Translation>>> getTranslations() async {
-//     final isConnected = await _network.isConnected;
-
-//     try {
-//       if (isConnected) {
-//         final response = await _remote.getTranslations();
-//         final dtos = response.data;
-
-//         await _local.storeTranslations(1, dtos);
-
-//         final translations = dtos.map((e) => e.toDomain).toList();
-//         return right(translations);
-//       } else {
-//         // final dtos = _local.getTranslations();
-//         // final translations = dtos.map((e) => e.toDomain).toList();
-//         return right([]);
-//       }
-//     } on Exception catch (e) {
-//       return left(BibleException.message(e.toString()));
-//     }
-//   }
 }

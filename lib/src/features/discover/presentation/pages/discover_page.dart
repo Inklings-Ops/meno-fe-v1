@@ -1,30 +1,58 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
-
-
-class DiscoverPage extends HookWidget {
+class DiscoverPage extends StatelessWidget {
   const DiscoverPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => SearchBloc(facade: di<IDiscoverFacade>())),
+        BlocProvider(
+          create: (_) => DAllCubit(facade: di<IDiscoverFacade>())..init(),
+        ),
+        BlocProvider(
+          create: (_) => DNowLiveCubit(facade: di<IDiscoverFacade>())..fetch(1),
+        ),
+        BlocProvider(
+          create: (_) => DRecentlyLiveCubit(
+            facade: di<IDiscoverFacade>(),
+          )..fetch(1),
+        ),
+        BlocProvider(
+          create: (_) => FilterBloc(facade: di<IDiscoverFacade>())..init(),
+        ),
+      ],
+      child: const DiscoverView(),
+    );
+  }
+}
 
+class DiscoverView extends HookWidget {
+  const DiscoverView({super.key});
 
+  @override
+  Widget build(BuildContext context) {
     final isSearching = useState<bool>(false);
     final scrollController = useScrollController();
 
     final filter = useState<Filter>(Filter.all);
 
-    useEffect(() {
-      scrollController.addListener(() {
-        final pixels = scrollController.position.pixels;
-        final maxScrollExtent = scrollController.position.maxScrollExtent - 350;
-        if (pixels >= maxScrollExtent) {
-          fetchMore(context, filter.value);
-        }
-      });
-      return null;
-    }, const [],);
+    useEffect(
+      () {
+        scrollController.addListener(() {
+          final pixels = scrollController.position.pixels;
+          final maxScrollExtent =
+              scrollController.position.maxScrollExtent - 350;
+          if (pixels >= maxScrollExtent) {
+            fetchMore(context, filter.value);
+          }
+        });
+        return null;
+      },
+      const [],
+    );
 
     if (isSearching.value) {
       return SearchPage(onCancel: () => isSearching.value = false);

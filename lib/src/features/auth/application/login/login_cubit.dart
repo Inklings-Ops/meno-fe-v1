@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/settings.dart';
 
@@ -11,7 +10,6 @@ part 'login_cubit.freezed.dart';
 part 'login_state.dart';
 
 /// A [Cubit] responsible for managing the login state.
-@lazySingleton
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit({
     required IAuthFacade facade,
@@ -21,6 +19,8 @@ class LoginCubit extends Cubit<LoginState> {
         super(LoginState.initial());
   final IAuthFacade _facade;
   final ISettingsFacade _settingsFacade;
+
+  bool get isOnboarded => _settingsFacade.isOnboarded;
 
   /// Updates the user's email address.
   ///

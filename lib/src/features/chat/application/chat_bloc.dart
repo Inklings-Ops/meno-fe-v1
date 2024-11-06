@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -9,7 +8,6 @@ part 'chat_bloc.freezed.dart';
 part 'chat_event.dart';
 part 'chat_state.dart';
 
-@lazySingleton
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc({
     required ISessionContext session,

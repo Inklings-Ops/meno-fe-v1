@@ -2,9 +2,21 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/application/application.dart';
 
-
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key, this.implyLeading = true});
+  final bool implyLeading;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => RegisterCubit(facade: di<IAuthFacade>()),
+      child: RegisterView(implyLeading: implyLeading),
+    );
+  }
+}
+
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key, this.implyLeading = true});
   final bool implyLeading;
 
   @override

@@ -2,7 +2,23 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
 class OthersProfilePage extends StatelessWidget {
-  const OthersProfilePage({super.key});
+  const OthersProfilePage({required this.userId, super.key});
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => OthersProfileCubit(
+        facade: di<IProfileFacade>(),
+        userId: userId,
+      )..fetch(),
+      child: const OthersProfileView(),
+    );
+  }
+}
+
+class OthersProfileView extends StatelessWidget {
+  const OthersProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,19 +2,26 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-class HomePage extends HookWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    useEffect(
-      () {
-        di<IBibleFacade>().init();
-        return;
-      },
-      const [],
+    return BlocProvider(
+      create: (context) => LiveBroadcastsBloc(
+        facade: di<IBroadcastFacade>(),
+        socket: di<SocketService>(),
+      )..init(),
+      child: const HomeView(),
     );
+  }
+}
 
+class HomeView extends HookWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
     final liveBroadcastsCubit = context.read<LiveBroadcastsBloc>();
 
@@ -75,7 +82,7 @@ class HomePage extends HookWidget {
     context.read<ParticipantsBloc>().add(const ParticipantsReset());
     context.read<ChatBloc>().add(const ChatReset());
 
-    context.read<LiveKitService>().dispose();
+    di<LiveKitService>().dispose();
     context.read<TimerCubit>().dispose();
   }
 }

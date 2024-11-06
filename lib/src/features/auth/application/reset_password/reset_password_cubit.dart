@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 
@@ -9,7 +8,6 @@ part 'reset_password_cubit.freezed.dart';
 part 'reset_password_state.dart';
 
 /// A [Cubit] responsible for managing the password recovery state.
-@lazySingleton
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   ResetPasswordCubit({required IAuthFacade facade})
       : _facade = facade,

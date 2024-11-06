@@ -43,14 +43,14 @@ class DetailsPage extends StatelessWidget {
             Spaces.verticalMicro,
             _Creator(
               name: broadcast.fullName!,
-              onTap: () async {
-                final id = broadcast.creatorId ?? broadcast.creator?.id;
-                if (id == null) {
+              onTap: () {
+                final userId = broadcast.creatorId ?? broadcast.creator?.id;
+                if (userId == null) {
                   return;
-                } else if (id == currentUser.id.getOr()) {
-                  await router.push(Routes.myProfile);
+                } else if (userId == currentUser.id.getOr()) {
+                  router.go(Routes.myProfile);
                 } else {
-                  await router.push(Routes.othersProfile, extra: id);
+                  router.push(Routes.othersProfile, extra: userId);
                 }
               },
             ),

@@ -1,12 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 
 part 'verses_cubit.freezed.dart';
 part 'verses_state.dart';
 
-@injectable
 class VersesCubit extends Cubit<VersesState> {
   VersesCubit({required IBibleFacade facade})
       : _facade = facade,

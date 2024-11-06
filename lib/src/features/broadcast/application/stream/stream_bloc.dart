@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -9,7 +8,6 @@ part 'stream_bloc.freezed.dart';
 part 'stream_event.dart';
 part 'stream_state.dart';
 
-@Injectable()
 class StreamBloc extends Bloc<StreamEvent, StreamState> {
   StreamBloc({
     required IBroadcastFacade facade,

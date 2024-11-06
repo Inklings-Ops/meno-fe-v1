@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
@@ -10,7 +9,6 @@ part 'live_broadcasts_bloc.freezed.dart';
 part 'live_broadcasts_event.dart';
 part 'live_broadcasts_state.dart';
 
-@lazySingleton
 class LiveBroadcastsBloc
     extends Bloc<LiveBroadcastsEvent, LiveBroadcastsState> {
   LiveBroadcastsBloc({

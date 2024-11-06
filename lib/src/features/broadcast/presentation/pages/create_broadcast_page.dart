@@ -1,8 +1,24 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
-class CreateBroadcastPage extends HookWidget {
+class CreateBroadcastPage extends StatelessWidget {
   const CreateBroadcastPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => BroadcastFormCubit(
+        facade: di<IBroadcastFacade>(),
+        mediaService: di<MediaService>(),
+      ),
+      child: const CreateBroadcastView(),
+    );
+  }
+}
+
+class CreateBroadcastView extends HookWidget {
+  const CreateBroadcastView({super.key});
 
   @override
   Widget build(BuildContext context) {

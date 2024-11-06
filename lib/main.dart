@@ -7,7 +7,6 @@ import 'package:meno_fe_v1/app/app.dart';
 import 'package:meno_fe_v1/app/meno_bloc_observer.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -15,19 +14,15 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   await configureDependencies();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getTemporaryDirectory(),
-  );
+  
   Bloc.observer = MenoBlocObserver(log: Logger());
   runApp(
     DevicePreview(
       enabled: false,
-      builder: (_) => MenoRepositoryProvider(
-        child: MenoBlocProvider(
-          child: ChangeNotifierProvider(
-            create: (ctx) => di<SessionCubit>(),
-            child: const MenoApp(),
-          ),
+      builder: (_) => MenoBlocProvider(
+        child: ChangeNotifierProvider(
+          create: (ctx) => di<SessionCubit>(),
+          child: const MenoApp(),
         ),
       ),
     ),

@@ -1,12 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 
 part 'scripture_picker_cubit.freezed.dart';
 part 'scripture_picker_state.dart';
 
-@injectable
 class ScripturePickerCubit extends Cubit<ScripturePickerState> {
   ScripturePickerCubit({required IBibleFacade facade})
       : _facade = facade,

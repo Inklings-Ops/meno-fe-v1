@@ -40,7 +40,10 @@ class _ScriptureTranslation extends StatelessWidget {
         return _Container(
           content: translation.abbreviation.toUpperCase(),
           onTap: () => context.showModal<void>(
-            const BibleTranslationsModal(),
+            BlocProvider.value(
+              value: context.read<TranslationsCubit>()..init(),
+              child: const BibleTranslationsModal(),
+            ),
             isScrollControlled: true,
             useRootNavigator: true,
           ),

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
@@ -9,7 +8,6 @@ part 'filter_bloc.freezed.dart';
 part 'filter_event.dart';
 part 'filter_state.dart';
 
-@lazySingleton
 class FilterBloc extends Bloc<FilterEvent, FilterState> {
   FilterBloc({required IDiscoverFacade facade})
       : _facade = facade,

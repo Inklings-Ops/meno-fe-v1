@@ -42,7 +42,7 @@ class BroadcastPage extends StatelessWidget {
 
   void _onEndedBroadcast(BuildContext context) {
     context.read<TimerCubit>().stop();
-    context.read<LiveKitService>().disconnect();
+    di<LiveKitService>().disconnect();
     context.read<ParticipantsBloc>().add(const AllParticipantsFetchPressed());
     context.read<MenoBloc>().update(const MOffAir());
     context.showModal<void>(

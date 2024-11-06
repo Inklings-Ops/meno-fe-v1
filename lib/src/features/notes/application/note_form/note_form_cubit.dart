@@ -3,18 +3,16 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 
 
 part 'note_form_cubit.freezed.dart';
 part 'note_form_state.dart';
 
-@injectable
 class NoteFormCubit extends Cubit<NoteFormState> {
   NoteFormCubit({
     required INoteFacade facade,
-    @factoryParam Note? initialNote,
+    Note? initialNote,
   })  : _facade = facade,
         _initialNote = initialNote,
         super(NoteFormState.initial()) {

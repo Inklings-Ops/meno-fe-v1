@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -34,13 +33,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.createBroadcast,
-      builder: (context, state) => BlocProvider(
-        create: (context) => BroadcastFormCubit(
-          facade: context.read<IBroadcastFacade>(),
-          mediaService: context.read<MediaService>(),
-        ),
-        child: const CreateBroadcastPage(),
-      ),
+      builder: (context, state) => const CreateBroadcastPage(),
     ),
     GoRoute(
       path: Routes.createNewPassword,
@@ -48,9 +41,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.details,
-      builder: (context, state) => DetailsPage(
-        broadcast: state.extra! as Broadcast,
-      ),
+      builder: (_, state) => DetailsPage(broadcast: state.extra! as Broadcast),
     ),
     GoRoute(
       path: Routes.emailVerification,
@@ -58,13 +49,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.folder,
-      builder: (context, state) {
-        final folder = state.extra! as Folder;
-        return BlocProvider(
-          create: (_) => di<FolderCubit>(param1: folder),
-          child: FolderPage(folder: folder),
-        );
-      },
+      builder: (context, state) => FolderPage(folder: state.extra! as Folder),
     ),
     GoRoute(
       path: Routes.loading,
@@ -84,13 +69,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.noteEditor,
-      builder: (context, state) {
-        final note = state.extra as Note?;
-        return BlocProvider.value(
-          value: di<NoteFormCubit>(param1: note),
-          child: NoteEditorPage(note: note),
-        );
-      },
+      builder: (context, state) => NoteEditorPage(note: state.extra as Note?),
     ),
     GoRoute(
       path: Routes.notifications,
@@ -126,10 +105,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.othersProfile,
-      builder: (context, state) {
-        context.read<OthersProfileCubit>().fetch(state.extra! as String);
-        return const OthersProfilePage();
-      },
+      builder: (_, state) => OthersProfilePage(userId: state.extra! as String),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MLayoutPage(
@@ -165,10 +141,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.myProfile,
-              builder: (context, state) => BlocProvider.value(
-                value: context.read<MyProfileCubit>()..fetch(),
-                child: const MyProfilePage(),
-              ),
+              builder: (context, state) => const MyProfilePage(),
             ),
           ],
         ),

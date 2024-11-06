@@ -55,7 +55,7 @@ class BroadcastEndedModal extends StatelessWidget {
 
   void cleanUp(BuildContext context) {
     context.read<TimerCubit>().dispose();
-    context.read<LiveKitService>().dispose();
+    di<LiveKitService>().dispose();
     context.read<ParticipantsBloc>().add(const ParticipantsReset());
     context.read<ChatBloc>().add(const ChatReset());
     context.read<BroadcastBloc>().add(const BroadcastReset());

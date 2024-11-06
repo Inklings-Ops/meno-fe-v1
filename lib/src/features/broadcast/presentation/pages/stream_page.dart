@@ -55,7 +55,7 @@ class StreamPage extends HookWidget {
     context.read<ParticipantsBloc>().add(const ParticipantsReset());
     context.read<ChatBloc>().add(const ChatReset());
 
-    context.read<LiveKitService>().dispose();
+    di<LiveKitService>().dispose();
     context.read<TimerCubit>().dispose();
   }
 }

@@ -1,10 +1,23 @@
 import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/settings/settings.dart';
 import 'package:meno_fe_v1/src/shared/pages/onboarding/onboarding.dart';
 
-class OnboardingPage extends HookWidget {
+class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => OnboardingCubit(facade: di<ISettingsFacade>()),
+      child: const OnboardingView(),
+    );
+  }
+}
+
+class OnboardingView extends HookWidget {
+  const OnboardingView({super.key});
 
   @override
   Widget build(BuildContext context) {

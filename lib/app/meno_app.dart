@@ -38,8 +38,6 @@ class _MenoAppState extends State<MenoApp> {
               key: const ValueKey('APP-SessionCubit-Listener'),
               listener: (context, state) => state.whenOrNull(
                 authenticated: (user, token) {
-                  context.read<AccountBloc>().init();
-                  context.read<MyProfileCubit>().fetch();
                   context.read<NotesBloc>().init();
                   context.read<LiveBroadcastsBloc>().init();
                   context.read<RecentlyLiveCubit>().fetch();
@@ -71,11 +69,11 @@ class _MenoAppState extends State<MenoApp> {
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
-        di<NetworkCubit>().close();
+        context.read<NetworkCubit>().close();
       case AppLifecycleState.resumed:
       case AppLifecycleState.inactive:
-        if (di<NetworkCubit>().isClosed) {
-          di<NetworkCubit>();
+        if (context.read<NetworkCubit>().isClosed) {
+          context.read<NetworkCubit>();
         }
     }
   }

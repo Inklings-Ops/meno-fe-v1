@@ -1,13 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
 
 part 'folder_form_cubit.freezed.dart';
 part 'folder_form_state.dart';
 
-@lazySingleton
 class FolderFormCubit extends Cubit<FolderFormState> {
   FolderFormCubit({
     required INoteFacade facade,

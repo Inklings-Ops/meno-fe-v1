@@ -1,9 +1,21 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-
-class FolderPage extends HookWidget {
+class FolderPage extends StatelessWidget {
   const FolderPage({required this.folder, super.key});
+  final Folder folder;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: FolderCubit(facade: di<INoteFacade>(), folder: folder),
+      child: FolderView(folder: folder),
+    );
+  }
+}
+
+class FolderView extends HookWidget {
+  const FolderView({required this.folder, super.key});
   final Folder folder;
 
   @override

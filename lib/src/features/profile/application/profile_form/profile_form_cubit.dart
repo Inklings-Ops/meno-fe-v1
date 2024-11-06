@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
 import 'package:meno_fe_v1/src/services/media_service.dart';
@@ -12,7 +11,6 @@ import 'package:meno_fe_v1/src/shared/shared.dart';
 part 'profile_form_cubit.freezed.dart';
 part 'profile_form_state.dart';
 
-@lazySingleton
 class ProfileFormCubit extends Cubit<ProfileFormState> {
   ProfileFormCubit({
     required IProfileFacade facade,

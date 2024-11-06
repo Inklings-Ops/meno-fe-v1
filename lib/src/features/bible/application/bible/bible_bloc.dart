@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 
@@ -9,7 +8,6 @@ part 'bible_bloc.freezed.dart';
 part 'bible_event.dart';
 part 'bible_state.dart';
 
-@injectable
 class BibleBloc extends Bloc<BibleEvent, BibleState> {
   BibleBloc({required IBibleFacade facade})
       : _facade = facade,

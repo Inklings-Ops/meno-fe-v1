@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/settings/settings.dart';
 
 
 /// A [Cubit] responsible for managing the onboarding state.
-@lazySingleton
 class OnboardingCubit extends Cubit<OnboardingState> {
 
   /// Constructs the [OnboardingCubit] with the provided [ISettingsFacade].
