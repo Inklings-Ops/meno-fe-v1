@@ -49,7 +49,13 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.folder,
-      builder: (context, state) => FolderPage(folder: state.extra! as Folder),
+      builder: (context, state) {
+        final folder = state.extra! as Folder;
+        return BlocProvider.value(
+          value: FolderCubit(facade: di<INoteFacade>(), folder: folder),
+          child: FolderPage(folder: folder),
+        );
+      },
     ),
     GoRoute(
       path: Routes.loading,
@@ -69,7 +75,13 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.noteEditor,
-      builder: (context, state) => NoteEditorPage(note: state.extra as Note?),
+      builder: (context, state) {
+        final note = state.extra as Note?;
+        return BlocProvider.value(
+          value: NoteFormCubit(facade: di<INoteFacade>(), initialNote: note),
+          child: NoteEditorPage(note: note),
+        );
+      },
     ),
     GoRoute(
       path: Routes.notifications,

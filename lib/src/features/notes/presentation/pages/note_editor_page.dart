@@ -4,29 +4,16 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-class NoteEditorPage extends StatelessWidget {
-  const NoteEditorPage({this.note, super.key});
-  final Note? note;
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: NoteFormCubit(facade: di<INoteFacade>(), initialNote: note),
-      child: NoteEditorPage(note: note),
-    );
-  }
-}
-
-class NoteEditorView extends StatefulWidget {
-  const NoteEditorView({super.key, this.note});
+class NoteEditorPage extends StatefulWidget {
+  const NoteEditorPage({super.key, this.note});
 
   final Note? note;
 
   @override
-  State<NoteEditorView> createState() => _NoteEditorViewState();
+  State<NoteEditorPage> createState() => _NoteEditorPageState();
 }
 
-class _NoteEditorViewState extends State<NoteEditorView> {
+class _NoteEditorPageState extends State<NoteEditorPage> {
   QuillController controller = QuillController.basic();
   FocusNode quillFocusNode = FocusNode();
   final scrollController = ScrollController();

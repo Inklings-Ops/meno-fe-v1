@@ -34,7 +34,6 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(
           create: (_) => NoteFormCubit(
             facade: di<INoteFacade>(),
-            initialNote: Note.empty(),
           ),
         ),
         BlocProvider(
