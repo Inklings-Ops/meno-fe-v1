@@ -9,6 +9,9 @@ sealed class SocketState with _$SocketState {
   const factory SocketState.error(String error) = SocketError;
   const factory SocketState.broadcastStarted() = SocketBroadcastStarted;
   const factory SocketState.broadcastJoined() = SocketBroadcastJoined;
+  const factory SocketState.liveBroadcastRetrieved(
+    Broadcast broadcast,
+  ) = SocketLiveBroadcastRetrieved;
   const factory SocketState.getChatMessages(
     List<Chat?> data,
   ) = SocketChatMessagesReceived;

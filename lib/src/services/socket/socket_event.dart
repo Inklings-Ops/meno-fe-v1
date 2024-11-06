@@ -34,9 +34,11 @@ class SocketEvent with _$SocketEvent {
   const factory SocketEvent.endBroadcast(String broadcastId) =
       SocketEndBroadcast;
 
-  // Subscribe to the following events
-  //
+  @Implements<BroadcastEmittedEvent>()
+  const factory SocketEvent.getLiveBroadcast(String broadcastId) =
+      SocketGetLiveBroadcast;
 
+  // Subscribe to the following events
   @Implements<BroadcastSubscribedEvent>()
   const factory SocketEvent.newBroadcastListener(
     BroadcastParticipant listener,

@@ -5,7 +5,9 @@ class BroadcastEvent with _$BroadcastEvent {
   const factory BroadcastEvent.initialize(Broadcast broadcast) =
       BroadcastInitialized;
   const factory BroadcastEvent.start() = BroadcastStartPressed;
-  const factory BroadcastEvent.reconnect() = BroadcastReconnectRequested;
+  const factory BroadcastEvent.reconnect(
+    Broadcast broadcast,
+  ) = BroadcastReconnectRequested;
   const factory BroadcastEvent.end(Uid<Broadcast> broadcastId) =
       BroadcastEndPressed;
   const factory BroadcastEvent.muteToggled() = BroadcastMuteToggled;
@@ -14,4 +16,7 @@ class BroadcastEvent with _$BroadcastEvent {
     dynamic data,
     String? error,
   }) = _SocketDataReceived;
+  const factory BroadcastEvent.socketBroadcastRetrieved(
+    Broadcast broadcast,
+  ) = _SocketBroadcastRetrieved;
 }

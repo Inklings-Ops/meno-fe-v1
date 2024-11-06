@@ -119,8 +119,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
-    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
+    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i933.NoteLocalDatasource>(

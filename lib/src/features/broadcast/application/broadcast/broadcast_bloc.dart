@@ -23,6 +23,8 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     on<BroadcastMuteToggled>(_onBroadcastMuteToggled);
     on<BroadcastReset>(_onBroadcastReset);
     on<_SocketDataReceived>(_onSocketDataReceived);
+    on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
+    on<_SocketBroadcastRetrieved>(_onSocketBroadcastRetrieved);
   }
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
@@ -133,6 +135,20 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     // Emit the failure state with the error message from the socket
     final exception = event.error!.toBroadcastException;
     emit(state.copyWith(status: LiveFailure(exception)));
+  }
+
+  Future<void> _onBroadcastReconnectRequested(
+    BroadcastReconnectRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    
+  }
+
+  void _onSocketBroadcastRetrieved(
+    _SocketBroadcastRetrieved event,
+    Emitter<BroadcastState> emit,
+  )  {
+    emit(state.copyWith(broadcast: event.broadcast));
   }
 
   @override
