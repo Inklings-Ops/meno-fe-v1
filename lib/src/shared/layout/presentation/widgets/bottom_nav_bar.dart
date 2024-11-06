@@ -1,4 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/services/permissions_service.dart';
 
 const List<Destination> _destinations = [
   Destination(icon: Icon(MIcons.home_04), label: 'Home'),
@@ -43,7 +44,12 @@ class BottomNavBar extends StatelessWidget {
     for (var i = 0; i < itemCount; i++) {
       if (i == 2) {
         widgets.add(
-          Microphone(onTap: () => router.push(Routes.createBroadcast)),
+          Microphone(
+            onTap: () {
+              di<PermissionsService>().requestMicrophonePermissions();
+              router.push(Routes.createBroadcast);
+            },
+          ),
         );
       }
       widgets.add(

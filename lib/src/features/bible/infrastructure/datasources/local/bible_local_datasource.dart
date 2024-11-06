@@ -5,6 +5,8 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/gen/assets.gen.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
@@ -166,6 +168,7 @@ class BibleLocalDatasource {
   }
 
   Future<void> storeBible(List<VerseDto> verses, String translation) {
+    Logger().w('STORING BIBLE');
     return _objectBox.storeBible(verses, translation);
   }
 
@@ -181,7 +184,7 @@ class BibleLocalDatasource {
 
   static Future<List<VerseDto>> _loadJSONAsset(RootIsolateToken token) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-    final jsonStr = await rootBundle.loadString('assets/bibles/kjv.json');
+    final jsonStr = await rootBundle.loadString(Assets.json.kjv);
 
     final decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
     final data = decodedJson['data'] as List<dynamic>;

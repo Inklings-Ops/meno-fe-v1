@@ -92,15 +92,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.obj,
       preResolve: true,
     );
-    await gh.factoryAsync<_i179.PermissionsService>(
-      () {
-        final i = _i179.PermissionsService();
-        return i.checkPermissions().then((_) => i);
-      },
-      preResolve: true,
-    );
     gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
+    gh.singleton<_i179.PermissionsService>(() => _i179.PermissionsService());
     gh.lazySingleton<_i1009.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
     gh.lazySingleton<_i1009.BroadcastRemoteDatasource>(

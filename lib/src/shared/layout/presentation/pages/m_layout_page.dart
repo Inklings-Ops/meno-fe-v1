@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
+import 'package:meno_fe_v1/src/services/permissions_service.dart';
 
 class MLayoutPage extends HookWidget {
   const MLayoutPage({
@@ -18,6 +19,8 @@ class MLayoutPage extends HookWidget {
 
     useEffect(
       () {
+        di<PermissionsService>().requestNotificationsPermissions();
+        di<IBibleFacade>().init();
         firebaseMessaging
             .getInitialMessage()
             .then((value) => initialMessage.value = value?.data.toString());
@@ -50,7 +53,6 @@ class MLayoutPage extends HookWidget {
       listener: (context, state) {
         state.whenOrNull(
           authenticated: (user, token) {
-            // context.read<MyProfileCubit>().fetch();
             context.read<LiveBroadcastsBloc>().init();
             context.read<RecentlyLiveCubit>().fetch();
           },
