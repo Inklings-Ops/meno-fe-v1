@@ -7,11 +7,11 @@ class LiveStreamActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final broadcast = context.select((StreamBloc bloc) => bloc.state.broadcast);
-
+    
     return BlocBuilder<MenoBloc, MenoState>(
       builder: (context, menoState) => menoState.maybeWhen(
         orElse: () => const SizedBox(),
-        live: () => ActivityCard(
+        streaming: () => ActivityCard(
           badgeTitle: 'Now Streaming',
           broadcast: broadcast,
           actionButtonLabel: 'Leave',

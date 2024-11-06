@@ -97,50 +97,50 @@
 
 //   dynamic onConnect(_) => Logger().i('Socket Connected');
 
-//   void emitWithAck(
-//     String event,
-//     Map<String, dynamic> data, {
-//     Function? ack,
-//   }) {
-//     return socket.emitWithAck(event, data, ack: ack);
-//   }
+  // void emitWithAck(
+  //   String event,
+  //   Map<String, dynamic> data, {
+  //   Function? ack,
+  // }) {
+  //   return socket.emitWithAck(event, data, ack: ack);
+  // }
 
-//   Future<SocketResponse<dynamic>> emitWithAck2(
-//     String event,
-//     Map<String, dynamic> data, {
-//     dynamic Function(dynamic)? ack,
-//   }) {
-//     final completer = Completer<SocketResponse<dynamic>>();
-//     socket.emitWithAck(
-//       event,
-//       data,
-//       ack: (dynamic res) {
-//         Logger().w(res);
-//         final socketResponse = SocketResponse.fromJson(
-//           res as Map<String, dynamic>,
-//           (json) => json as dynamic,
-//         );
-//         completer.complete(socketResponse);
-//         ack?.call(res);
-//       },
-//     );
-//     return completer.future;
-//   }
+  // Future<SocketResponse<dynamic>> emitWithAck2(
+  //   String event,
+  //   Map<String, dynamic> data, {
+  //   dynamic Function(dynamic)? ack,
+  // }) {
+  //   final completer = Completer<SocketResponse<dynamic>>();
+  //   socket.emitWithAck(
+  //     event,
+  //     data,
+  //     ack: (dynamic res) {
+  //       Logger().w(res);
+  //       final socketResponse = SocketResponse.fromJson(
+  //         res as Map<String, dynamic>,
+  //         (json) => json as dynamic,
+  //       );
+  //       completer.complete(socketResponse);
+  //       ack?.call(res);
+  //     },
+  //   );
+  //   return completer.future;
+  // }
 
 //   Future<SocketResponse<dynamic>> emit2(SocketEvent event) async {
 //     return event.maybeWhen(
 //       orElse: SocketResponse.new,
-//       startedBroadcast: (broadcastId) => emitWithAck2(
-//         'startedBroadcast',
-//         {'broadcastId': broadcastId},
-//         ack: (dynamic res) {
-//           final response = SocketResponse.fromJson(
-//             res as Map<String, dynamic>,
-//             (json) => json as dynamic,
-//           );
-//           _state.add(SocketBroadcastStarted(error: response.error));
-//         },
-//       ),
+      // startedBroadcast: (broadcastId) => emitWithAck2(
+      //   'startedBroadcast',
+      //   {'broadcastId': broadcastId},
+      //   ack: (dynamic res) {
+      //     final response = SocketResponse.fromJson(
+      //       res as Map<String, dynamic>,
+      //       (json) => json as dynamic,
+      //     );
+      //     _state.add(SocketBroadcastStarted(error: response.error));
+      //   },
+      // ),
 //       joinBroadcast: (broadcastId) => emitWithAck2(
 //         'joinBroadcast',
 //         {'broadcastId': broadcastId},

@@ -41,9 +41,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
 
     _socketStateSubscription = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
-        broadcastJoined: (data, error) => add(
-          _SocketDataReceived(data: data, error: error),
-        ),
+        error: (error) => add(_SocketDataReceived(error: error)),
       );
     });
 
@@ -61,34 +59,28 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     Emitter<StreamState> emit,
   ) async {
     _initializeSocketListeners();
-
-    // Emit loading status to indicate connection attempt
     emit(state.copyWith(status: const LiveLoadInProgress()));
-
-    // Attempt to join the broadcast and handle potential errors
     final failureOrJoinBroadcast = await _facade.joinBroadcast(event.id);
-
     await failureOrJoinBroadcast.fold(
-      // Handle failure by updating the state with the error
       (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
 
         try {
-          // Attempt to connect to LiveKit using the token
-          await _liveKit.stream(joinBroadcast.broadcastToken);
-          // Emit socket event to indicate joining the broadcast room
-          _socket.emit(SocketJoinBroadcast(event.id.getOr()));
-
-          // Check for any error from the web socket service
-          if (state.status is! LiveFailure) {
-            // Update state to reflect successful joining of the broadcast
-            emit(state.copyWith(status: const LiveBroadcastJoined()));
-          }
+          final token = joinBroadcast.broadcastToken;
+          await _liveKit.stream(token).whenComplete(() async {
+            final response = await _socket.emitFuture(
+              SocketJoinBroadcast(event.id.getOr()),
+            );
+            if (response.error != null) {
+              final exception = response.error!.toBroadcastException;
+              emit(state.copyWith(status: LiveFailure(exception)));
+            } else {
+              emit(state.copyWith(status: const LiveBroadcastJoined()));
+            }
+          });
         } catch (e) {
-          // Emit a failure status if connection fails
-          final exception = BroadcastException.message(e.toString());
-          emit(state.copyWith(status: LiveFailure(exception)));
+          emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
         }
       },
     );
@@ -143,7 +135,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     unawaited(_liveKit.disconnect());
 
     // Emit the failure state with the error message from the socket
-    final exception = BroadcastException.message(event.error!);
+    final exception = event.error!.toBroadcastException;
     emit(state.copyWith(status: LiveFailure(exception)));
   }
 

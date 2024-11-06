@@ -41,9 +41,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     emit(state.copyWith(broadcast: event.broadcast));
     _socketStateSubscription = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
-        broadcastStarted: (data, error) => add(
-          _SocketDataReceived(data: data, error: error),
-        ),
+        error: (error) => add(_SocketDataReceived(error: error)),
       );
     });
 
@@ -60,27 +58,23 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     await failureOrBroadcast.fold(
       (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (broadcast) async {
+        emit(state.copyWith(broadcast: broadcast));
+
         try {
-          // Attempt to connect to LiveKit using the token
-          await _liveKit.broadcast(broadcast.broadcastToken!);
-
-          // Emit socket event to indicate joining the broadcast room
-          _socket.emit(SocketStartedBroadcast(broadcast.id.getOr()));
-
-          // Check for any error from the web socket service
-          if (state.status is! LiveFailure) {
-            // Update state to reflect successful joining of the broadcast
-            emit(
-              state.copyWith(
-                status: const LiveBroadcastStarted(),
-                broadcast: broadcast,
-              ),
+          final token = broadcast.broadcastToken;
+          await _liveKit.broadcast(token!).whenComplete(() async {
+            final response = await _socket.emitFuture(
+              SocketStartedBroadcast(broadcast.id.getOr()),
             );
-          }
+            if (response.error != null) {
+              final exception = response.error!.toBroadcastException;
+              emit(state.copyWith(status: LiveFailure(exception)));
+            } else {
+              emit(state.copyWith(status: const LiveBroadcastStarted()));
+            }
+          });
         } catch (e) {
-          // Emit a failure status if connection fails
-          final exception = BroadcastException.message(e.toString());
-          emit(state.copyWith(status: LiveFailure(exception)));
+          emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
         }
       },
     );
@@ -137,7 +131,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     unawaited(_liveKit.disconnect());
 
     // Emit the failure state with the error message from the socket
-    final exception = BroadcastException.message(event.error!);
+    final exception = event.error!.toBroadcastException;
     emit(state.copyWith(status: LiveFailure(exception)));
   }
 

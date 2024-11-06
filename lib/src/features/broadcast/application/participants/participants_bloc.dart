@@ -127,8 +127,8 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
       response.fold(
         (exception) => state.copyWith(loading: false, exception: exception),
         (participants) => state.copyWith(
-          liveParticipants: participants,
-          numberOfLiveParticipants: participants.length,
+          allParticipants: participants,
+          numberOfAllParticipants: participants.length,
           loading: false,
         ),
       ),

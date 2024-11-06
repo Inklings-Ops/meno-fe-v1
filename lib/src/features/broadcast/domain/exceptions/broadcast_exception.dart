@@ -9,3 +9,9 @@ class BroadcastException with _$BroadcastException {
   const factory BroadcastException.networkError() = _NetworkError;
   const factory BroadcastException.timeOutError() = _TimeOutError;
 }
+
+extension BroadcastExceptionX on Object {
+  BroadcastException get toBroadcastException {
+    return BroadcastException.message(toString());
+  }
+}

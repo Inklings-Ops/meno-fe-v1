@@ -44,7 +44,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     _socketStateSubscription = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
-        getChatMessages: (chats, _) => add(_ChatsLoaded(chats)),
+        getChatMessages: (chats) => add(_ChatsLoaded(chats)),
       );
     });
 

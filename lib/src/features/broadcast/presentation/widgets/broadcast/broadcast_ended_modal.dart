@@ -62,7 +62,7 @@ class BroadcastEndedModal extends StatelessWidget {
   }
 }
 
-/// Displays all the [BroadcastParticipant]s that have joined through out the 
+/// Displays all the [BroadcastParticipant]s that have joined through out the
 /// lifecycle of the live [Broadcast]
 class AllParticipantsWidget extends HookWidget {
   const AllParticipantsWidget({super.key});

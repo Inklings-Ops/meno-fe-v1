@@ -34,7 +34,7 @@ class CreateBroadcastView extends HookWidget {
                 (exception) => context.showBroadcastError(exception),
                 (b) {
                   context.read<BroadcastBloc>().add(BroadcastInitialized(b));
-                  router.push<void>(Routes.broadcast);
+                  router.replace<void>(Routes.broadcast);
                 },
               ),
             );

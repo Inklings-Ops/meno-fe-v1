@@ -48,8 +48,13 @@ class HomeView extends HookWidget {
               state.status.whenOrNull(
                 left: () => _handleStreamEnd(context),
                 streamEnded: (data) {
-                  _handleStreamEnd(context);
-                  context.showErrorSnackBar(data.reason.message);
+                  final broadcast = data.broadcastDetails;
+                  final creator = broadcast.creatorId ?? broadcast.creator?.id;
+                  final authUser = di<ISessionContext>().credential!.user.id;
+                  if (creator != authUser.getOr()) {
+                    _handleStreamEnd(context);
+                    context.showErrorSnackBar(data.reason.message);
+                  }
                 },
               );
             },
