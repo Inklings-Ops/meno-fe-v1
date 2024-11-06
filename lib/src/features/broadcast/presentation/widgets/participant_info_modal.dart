@@ -17,68 +17,73 @@ class ParticipantInfoModal extends StatelessWidget {
     );
 
     return MModal(
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          MAvatar(radius: 36, url: participant.imageUrl),
-          Spaces.verticalLarge,
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MText(
-                  participant.fullName,
-                  style: textTheme.heading3Medium,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                // if (isCohost) ...[
-                //   Spaces.horizontalSmall,
-                //   const MBadge.cohost(),
-                // ]
-              ],
-            ),
-          ),
-          Spaces.verticalMicro,
-          if (participant.bio != null) ...[
-            MText(
-              participant.bio!,
-              style: textTheme.subheadingRegular,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            MAvatar(radius: 36, url: participant.imageUrl),
             Spaces.verticalLarge,
-          ] else
-            Spaces.verticalLarge,
-          if (participant.id == currentUser.id.getOr()) ...[
-            MPrimaryButton(
-              label: 'View Profile',
-              onPressed: () => router.push(
-                Routes.othersProfile,
-                extra: participant.id,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MText(
+                    participant.fullName,
+                    style: textTheme.heading3Medium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // if (isCohost) ...[
+                  //   Spaces.horizontalSmall,
+                  //   const MBadge.cohost(),
+                  // ]
+                ],
               ),
             ),
-          ] else ...[
-            MPrimaryButton.icon(
-              label: 'Subscribed',
-              icon: const Icon(MIcons.user_check),
-              onPressed: () {},
-            ),
-            Spaces.verticalSmall,
-            MTextButton(
-              label: 'View account',
-              onPressed: () => router.push(Routes.myProfile),
-            ),
+            Spaces.verticalMicro,
+            if (participant.bio != null) ...[
+              MText(
+                participant.bio!,
+                style: textTheme.subheadingRegular,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Spaces.verticalLarge,
+            ] else
+              Spaces.verticalLarge,
+            if (participant.id == currentUser.id.getOr()) ...[
+              MPrimaryButton(
+                label: 'View Profile',
+                onPressed: () => router.push(
+                  Routes.othersProfile,
+                  extra: participant.id,
+                ),
+              ),
+            ] else ...[
+              MPrimaryButton.icon(
+                label: 'Subscribed',
+                icon: const Icon(MIcons.user_check),
+                onPressed: () {},
+              ),
+              Spaces.verticalSmall,
+              MTextButton(
+                label: 'View account',
+                onPressed: () => router.push(
+                  Routes.othersProfile,
+                  extra: participant.id,
+                ),
+              ),
+            ],
+            // MTextButton(
+            //   label: "Remove as Co-host",
+            //   onPressed: () {},
+            // ),
           ],
-          // MTextButton(
-          //   label: "Remove as Co-host",
-          //   onPressed: () {},
-          // ),
-        ],
+        ),
       ),
     );
   }
