@@ -99,8 +99,8 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
+    gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.lazySingleton<_i1009.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
     gh.lazySingleton<_i1009.BroadcastRemoteDatasource>(
@@ -125,8 +125,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
-    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
+    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i933.NoteLocalDatasource>(
