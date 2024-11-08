@@ -67,6 +67,28 @@ class HomeView extends HookWidget {
                     live: LiveBroadcastActivityCard.new,
                   ),
                 ),
+                BlocBuilder<BroadcastBloc, BroadcastState>(
+                  bloc: context.read<BroadcastBloc>()..checkForLiveBroadcasts(),
+                  builder: (context, state) {
+                    final hostDisconnected = state.hostDisconnected;
+                    final broadcast = state.broadcast;
+                    if (hostDisconnected && broadcast != Broadcast.empty()) {
+                      return ActivityCard(
+                        badgeTitle: 'Reconnect back',
+                        broadcast: broadcast,
+                        actionButtonLabel: 'Reconnect',
+                        action: () {
+                          context
+                              .read<BroadcastBloc>()
+                              .add(BroadcastReconnectRequested(broadcast));
+                        },
+                        // onTap: () => router.push<void>(Routes.broadcast),
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
                 const LiveForYou(),
                 const NowLive(),
                 const RecentlyLive(),

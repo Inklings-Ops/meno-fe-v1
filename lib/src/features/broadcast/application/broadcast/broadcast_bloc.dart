@@ -1,21 +1,28 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'broadcast_bloc.freezed.dart';
 part 'broadcast_event.dart';
 part 'broadcast_state.dart';
+
+const _liveBroadcastKey = 'liveBroadcast';
 
 class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   BroadcastBloc({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
     required SocketService socket,
+    required SharedPreferences preferences,
   })  : _facade = facade,
         _liveKit = liveKit,
         _socket = socket,
+        _preferences = preferences,
         super(BroadcastState.initial()) {
     on<BroadcastInitialized>(_onBroadcastInitialized);
     on<BroadcastStartPressed>(_onBroadcastStartPressed);
@@ -29,11 +36,30 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
   final SocketService _socket;
+  final SharedPreferences _preferences;
 
   StreamSubscription<SocketState>? _socketStateSubscription;
 
   /// Tracks the initialization state of the Streams
   bool _listenersInitialized = false;
+
+  Future<void> checkForLiveBroadcasts() async {
+    Logger().w('checkForLiveBroadcasts');
+    // if (_preferences.containsKey(_liveBroadcastKey)) {
+    //   final jsonString = _preferences.getString(_liveBroadcastKey);
+    //   Logger().w('jsonString => $jsonString');
+    //   final source = jsonDecode(jsonString!) as Map<String, dynamic>;
+    //   final broadcast = BroadcastDto.fromJson(source).toDomain;
+    //   final result = await _socket.emitFuture(
+    //     SocketEvent.getLiveBroadcast(broadcast.id.getOr()),
+    //   );
+    //   Logger().w('result => $result');
+    //   final resultBroadcast = result.data as Broadcast?;
+    //   if (resultBroadcast?.id == broadcast.id) {
+    //     add(_SocketBroadcastRetrieved(broadcast));
+    //   }
+    // }
+  }
 
   void _onBroadcastInitialized(
     BroadcastInitialized event,
@@ -73,6 +99,8 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
               emit(state.copyWith(status: LiveFailure(exception)));
             } else {
               emit(state.copyWith(status: const LiveBroadcastStarted()));
+              final jsonString = jsonEncode(broadcast.toDto.toJson());
+              await _preferences.setString(_liveBroadcastKey, jsonString);
             }
           });
         } catch (e) {
@@ -119,6 +147,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     Emitter<BroadcastState> emit,
   ) async {
     await _socketStateSubscription?.cancel();
+    await _preferences.remove(_liveBroadcastKey);
     _socketStateSubscription = null;
     _listenersInitialized = false;
   }
@@ -141,14 +170,26 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    
+    try {
+      final token = event.broadcast.broadcastToken;
+      await _liveKit.broadcast(token!).whenComplete(() {
+        emit(
+          state.copyWith(
+            status: const LiveBroadcastStarted(),
+            hostDisconnected: false,
+          ),
+        );
+      });
+    } catch (e) {
+      emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
+    }
   }
 
   void _onSocketBroadcastRetrieved(
     _SocketBroadcastRetrieved event,
     Emitter<BroadcastState> emit,
-  )  {
-    emit(state.copyWith(broadcast: event.broadcast));
+  ) {
+    emit(state.copyWith(broadcast: event.broadcast, hostDisconnected: true));
   }
 
   @override

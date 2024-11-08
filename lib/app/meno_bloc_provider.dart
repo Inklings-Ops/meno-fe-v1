@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MenoBlocProvider extends StatelessWidget {
   const MenoBlocProvider({required this.child, super.key});
@@ -62,6 +63,7 @@ class MenoBlocProvider extends StatelessWidget {
             facade: di<IBroadcastFacade>(),
             liveKit: di<LiveKitService>(),
             socket: di<SocketService>(),
+            preferences: di<SharedPreferences>(),
           ),
         ),
         BlocProvider(

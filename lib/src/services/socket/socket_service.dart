@@ -195,7 +195,7 @@ class SocketService extends Object with Disposable {
       data,
       ack: (dynamic res) {
         final socketResponse = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
+          res as Map<String, dynamic>,  
           (json) => json as dynamic,
         );
         completer.complete(socketResponse);
@@ -235,6 +235,21 @@ class SocketService extends Object with Disposable {
             _state.add(SocketError(response.error!));
           } else {
             _state.add(const SocketBroadcastJoined());
+          }
+        },
+      ),
+      getLiveBroadcast: (broadcastId) => emitFutureWithAck(
+        'getLiveBroadcast',
+        {'broadcastId': broadcastId},
+        ack: (dynamic res) {
+          final response = SocketResponse<BroadcastDto>.fromJson(
+            res as Map<String, dynamic>,
+            (json) => BroadcastDto.fromJson(json as Map<String, dynamic>),
+          );
+          if (response.error != null) {
+            _state.add(SocketError(response.error!));
+          } else {
+            _state.add(SocketLiveBroadcastRetrieved(response.data!.toDomain));
           }
         },
       ),
