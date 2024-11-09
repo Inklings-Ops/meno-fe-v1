@@ -29,12 +29,7 @@ class _LiveCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final menoBloc = context.watch<MenoBloc>();
-    final myUid = context.select(
-      (SessionCubit bloc) => bloc.state.whenOrNull(
-        authenticated: (user, token) => user.id.getOr(),
-      ),
-    );
-
+    final session = context.read<SessionCubit>().state;
     return MCard.live(
       title: broadcast.title.getOr(),
       host: broadcast.creator?.fullName ??
@@ -44,16 +39,18 @@ class _LiveCard extends HookWidget {
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
       onTap: () {
-        if (broadcast.creatorId == myUid) {
-          router.push(Routes.broadcast, extra: broadcast);
-        } else {
-          menoBloc.state.maybeWhen(
-            orElse: () => context.showJoinLiveBroadcastModal(broadcast),
-            live: () => router.push(Routes.broadcast),
-            streaming: () => router.push(Routes.stream),
-            reconnecting: () => router.push(Routes.stream),
-          );
-        }
+        menoBloc.state.maybeWhen(
+          orElse: () {
+            final myUid = session.whenOrNull(
+              authenticated: (user, _) => user.id.getOr(),
+            );
+            if (broadcast.creatorId == myUid) return;
+            context.showJoinLiveBroadcastModal(broadcast);
+          },
+          live: () => router.push(Routes.broadcast, extra: broadcast),
+          streaming: () => router.push(Routes.stream),
+          reconnecting: () => router.push(Routes.stream),
+        );
       },
     );
   }

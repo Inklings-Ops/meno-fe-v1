@@ -7,8 +7,14 @@ part 'socket_state.freezed.dart';
 @freezed
 sealed class SocketState with _$SocketState {
   const factory SocketState.error(String error) = SocketError;
-  const factory SocketState.broadcastStarted() = SocketBroadcastStarted;
-  const factory SocketState.broadcastJoined() = SocketBroadcastJoined;
+  const factory SocketState.broadcastStarted({
+    dynamic data,
+    String? error,
+  }) = SocketBroadcastStarted;
+  const factory SocketState.broadcastJoined({
+    dynamic data,
+    String? error,
+  }) = SocketBroadcastJoined;
   const factory SocketState.liveBroadcastRetrieved(
     Broadcast broadcast,
   ) = SocketLiveBroadcastRetrieved;

@@ -2,13 +2,17 @@ part of 'broadcast_bloc.dart';
 
 @freezed
 class BroadcastEvent with _$BroadcastEvent {
-  const factory BroadcastEvent.initialize(Broadcast broadcast) =
+  const factory BroadcastEvent.initialize(Broadcast broadcast,) =
       BroadcastInitialized;
   const factory BroadcastEvent.start() = BroadcastStartPressed;
+  const factory BroadcastEvent.onStart({
+    dynamic data,
+    String? error,
+  }) = _BroadcastStartReceived;
   const factory BroadcastEvent.reconnect(
     Broadcast broadcast,
   ) = BroadcastReconnectRequested;
-  const factory BroadcastEvent.end(Uid<Broadcast> broadcastId) =
+  const factory BroadcastEvent.end(Uid<Broadcast> broadcastId,) =
       BroadcastEndPressed;
   const factory BroadcastEvent.muteToggled() = BroadcastMuteToggled;
   const factory BroadcastEvent.reset() = BroadcastReset;
@@ -16,7 +20,8 @@ class BroadcastEvent with _$BroadcastEvent {
     dynamic data,
     String? error,
   }) = _SocketDataReceived;
-  const factory BroadcastEvent.socketBroadcastRetrieved(
-    Broadcast broadcast,
-  ) = _SocketBroadcastRetrieved;
+  const factory BroadcastEvent.socketBroadcastRetrieved({
+    required Broadcast broadcast,
+    required Broadcast storedBroadcast,
+  }) = _SocketBroadcastRetrieved;
 }

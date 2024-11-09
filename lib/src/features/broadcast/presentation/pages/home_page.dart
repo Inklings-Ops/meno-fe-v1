@@ -35,6 +35,13 @@ class HomeView extends HookWidget {
       await Future.wait([liveBroadcasts, recentlyLive]);
     }
 
+    final isStreaming = context.select(
+      (MenoBloc bloc) => bloc.state.maybeWhen(
+        orElse: () => false,
+        streaming: () => true,
+      ),
+    );
+
     return Scaffold(
       appBar: const HomeAppBar(),
       body: RefreshIndicator(
@@ -43,21 +50,37 @@ class HomeView extends HookWidget {
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          child: BlocListener<StreamBloc, StreamState>(
-            listener: (context, state) {
-              state.status.whenOrNull(
-                left: () => _handleStreamEnd(context),
-                streamEnded: (data) {
-                  final broadcast = data.broadcastDetails;
-                  final creator = broadcast.creatorId ?? broadcast.creator?.id;
-                  final authUser = di<ISessionContext>().credential!.user.id;
-                  if (creator != authUser.getOr()) {
-                    _handleStreamEnd(context);
-                    context.showErrorSnackBar(data.reason.message);
-                  }
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<BroadcastBloc, BroadcastState>(
+                listenWhen: (p, c) => p.status != c.status,
+                listener: (context, state) {
+                  state.status.whenOrNull(
+                    failed: context.showBroadcastError,
+                    broadcastEnded: () => _onEndedBroadcast(context),
+                  );
                 },
-              );
-            },
+              ),
+              BlocListener<StreamBloc, StreamState>(
+                listener: (context, state) {
+                  state.status.whenOrNull(
+                    left: () => _handleStreamEnd(context),
+                    streamEnded: (data) {
+                      if (!isStreaming) return;
+                      final broadcast = data.broadcastDetails;
+                      final creator =
+                          broadcast.creatorId ?? broadcast.creator?.id;
+                      final authUser =
+                          di<ISessionContext>().credential!.user.id;
+                      if (creator != authUser.getOr()) {
+                        _handleStreamEnd(context);
+                        context.showErrorSnackBar(data.reason.message);
+                      }
+                    },
+                  );
+                },
+              ),
+            ],
             child: Column(
               children: [
                 BlocBuilder<MenoBloc, MenoState>(
@@ -76,13 +99,23 @@ class HomeView extends HookWidget {
                       return ActivityCard(
                         badgeTitle: 'Reconnect back',
                         broadcast: broadcast,
-                        actionButtonLabel: 'Reconnect',
+                        actionButtonLabel: 'Rejoin',
                         action: () {
                           context
                               .read<BroadcastBloc>()
                               .add(BroadcastReconnectRequested(broadcast));
+                          context
+                              .read<ChatBloc>()
+                              .add(ChatInitialized(broadcast));
+                          context
+                              .read<ParticipantsBloc>()
+                              .add(ParticipantsInitialized(broadcast));
+                          context
+                              .read<TimerCubit>()
+                              .setAndStart(broadcast.startTime);
+                          context.read<MenoBloc>().update(const MLive());
+                          // router.push<void>(Routes.broadcast);
                         },
-                        // onTap: () => router.push<void>(Routes.broadcast),
                       );
                     } else {
                       return const SizedBox();
@@ -111,5 +144,19 @@ class HomeView extends HookWidget {
 
     di<LiveKitService>().dispose();
     context.read<TimerCubit>().dispose();
+  }
+
+  void _onEndedBroadcast(BuildContext context) {
+    context.read<TimerCubit>().stop();
+    di<LiveKitService>().disconnect();
+    context.read<ParticipantsBloc>().add(const AllParticipantsFetchPressed());
+    context.read<MenoBloc>().update(const MOffAir());
+    context.showModal<void>(
+      const BroadcastEndedModal(),
+      enableDrag: false,
+      useRootNavigator: true,
+      isDismissible: false,
+      isScrollControlled: true,
+    );
   }
 }

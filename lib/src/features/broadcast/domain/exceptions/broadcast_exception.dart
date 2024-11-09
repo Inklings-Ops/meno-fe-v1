@@ -11,7 +11,7 @@ class BroadcastException with _$BroadcastException {
 }
 
 extension BroadcastExceptionX on Object {
-  BroadcastException get toBroadcastException {
+  BroadcastException get toException {
     return BroadcastException.message(toString());
   }
 }

@@ -18,6 +18,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
         _socket = socket,
         super(StreamState.initial()) {
     on<StreamJoinPressed>(_onStreamJoinPressed);
+    on<_StreamJoinReceived>(_onStreamJoined);
     on<StreamLeavePressed>(_onStreamLeavePressed);
     on<StreamEnded>(_onStreamEnded);
     on<StreamReset>(_onStreamReset);
@@ -41,6 +42,9 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
 
     _socketStateSubscription = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
+        broadcastJoined: (data, error) {
+          add(_StreamJoinReceived(data: data, error: error));
+        },
         error: (error) => add(_SocketDataReceived(error: error)),
       );
     });
@@ -60,30 +64,28 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
   ) async {
     _initializeSocketListeners();
     emit(state.copyWith(status: const LiveLoadInProgress()));
-    final failureOrJoinBroadcast = await _facade.joinBroadcast(event.id);
+    final broadcastId = event.broadcastId;
+    final failureOrJoinBroadcast = await _facade.joinBroadcast(broadcastId);
     await failureOrJoinBroadcast.fold(
       (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (joinBroadcast) async {
         emit(state.copyWith(broadcast: joinBroadcast.broadcast));
-
         try {
-          final token = joinBroadcast.broadcastToken;
-          await _liveKit.stream(token).whenComplete(() async {
-            final response = await _socket.emitFuture(
-              SocketJoinBroadcast(event.id.getOr()),
-            );
-            if (response.error != null) {
-              final exception = response.error!.toBroadcastException;
-              emit(state.copyWith(status: LiveFailure(exception)));
-            } else {
-              emit(state.copyWith(status: const LiveBroadcastJoined()));
-            }
-          });
+          await _liveKit.stream(joinBroadcast.broadcastToken);
+          _socket.emit(SocketJoinBroadcast(broadcastId.getOr()));
         } catch (e) {
-          emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
+          emit(state.copyWith(status: LiveFailure(e.toException)));
         }
       },
     );
+  }
+
+  void _onStreamJoined(_StreamJoinReceived event, Emitter<StreamState> emit) {
+    if (event.error == null) {
+      emit(state.copyWith(status: const LiveBroadcastJoined()));
+    } else {
+      emit(state.copyWith(status: LiveFailure(event.error!.toException)));
+    }
   }
 
   void _onStreamLeavePressed(
@@ -96,7 +98,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     emit(state.copyWith(status: const LiveLoadInProgress()));
 
     // Emit the `leaveBroadcast` socket event to leave the broadcast
-    _socket.emit(SocketLeaveBroadcast(event.id.getOr()));
+    _socket.emit(SocketLeaveBroadcast(event.broadcastId.getOr()));
 
     // Emit the LiveBroadcastLeft state
     emit(state.copyWith(status: const LiveBroadcastLeft()));
@@ -135,7 +137,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
     unawaited(_liveKit.disconnect());
 
     // Emit the failure state with the error message from the socket
-    final exception = event.error!.toBroadcastException;
+    final exception = event.error!.toException;
     emit(state.copyWith(status: LiveFailure(exception)));
   }
 

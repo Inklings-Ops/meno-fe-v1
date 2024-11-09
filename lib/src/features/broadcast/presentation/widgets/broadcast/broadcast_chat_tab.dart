@@ -15,7 +15,7 @@ class BroadcastChatTab extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [MText('Waiting for broadcast to start')],
         ),
-        started: (_) => LayoutBuilder(
+        started: (microphoneEnabled, reconnected) => LayoutBuilder(
           builder: (context, constraints) => Column(
             children: [
               Expanded(

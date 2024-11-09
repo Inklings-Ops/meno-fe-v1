@@ -8,7 +8,9 @@ import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'broadcast_bloc.freezed.dart';
+
 part 'broadcast_event.dart';
+
 part 'broadcast_state.dart';
 
 const _liveBroadcastKey = 'liveBroadcast';
@@ -26,6 +28,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         super(BroadcastState.initial()) {
     on<BroadcastInitialized>(_onBroadcastInitialized);
     on<BroadcastStartPressed>(_onBroadcastStartPressed);
+    on<_BroadcastStartReceived>(_onStarted);
     on<BroadcastEndPressed>(_onBroadcastEndPressed);
     on<BroadcastMuteToggled>(_onBroadcastMuteToggled);
     on<BroadcastReset>(_onBroadcastReset);
@@ -33,6 +36,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
     on<_SocketBroadcastRetrieved>(_onSocketBroadcastRetrieved);
   }
+
   final IBroadcastFacade _facade;
   final LiveKitService _liveKit;
   final SocketService _socket;
@@ -44,21 +48,23 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   bool _listenersInitialized = false;
 
   Future<void> checkForLiveBroadcasts() async {
-    Logger().w('checkForLiveBroadcasts');
-    // if (_preferences.containsKey(_liveBroadcastKey)) {
-    //   final jsonString = _preferences.getString(_liveBroadcastKey);
-    //   Logger().w('jsonString => $jsonString');
-    //   final source = jsonDecode(jsonString!) as Map<String, dynamic>;
-    //   final broadcast = BroadcastDto.fromJson(source).toDomain;
-    //   final result = await _socket.emitFuture(
-    //     SocketEvent.getLiveBroadcast(broadcast.id.getOr()),
-    //   );
-    //   Logger().w('result => $result');
-    //   final resultBroadcast = result.data as Broadcast?;
-    //   if (resultBroadcast?.id == broadcast.id) {
-    //     add(_SocketBroadcastRetrieved(broadcast));
-    //   }
-    // }
+    Logger().w('Checking... => ${_preferences.containsKey(_liveBroadcastKey)}');
+    if (_preferences.containsKey(_liveBroadcastKey)) {
+      final jsonString = _preferences.getString(_liveBroadcastKey);
+      final source = jsonDecode(jsonString!) as Map<String, dynamic>;
+      final storedBroadcast = BroadcastDto.fromJson(source).toDomain;
+      _socket.stateStream.listen(
+        (socketState) => socketState.whenOrNull(
+          liveBroadcastRetrieved: (broadcast) => add(
+            _SocketBroadcastRetrieved(
+              broadcast: broadcast,
+              storedBroadcast: storedBroadcast,
+            ),
+          ),
+        ),
+      );
+      _socket.emit(SocketEvent.getLiveBroadcast(storedBroadcast.id.getOr()));
+    }
   }
 
   void _onBroadcastInitialized(
@@ -70,6 +76,9 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     _socketStateSubscription = _socket.stateStream.listen((socketState) {
       socketState.whenOrNull(
         error: (error) => add(_SocketDataReceived(error: error)),
+        broadcastStarted: (data, error) {
+          add(_BroadcastStartReceived(data: data, error: error));
+        },
       );
     });
 
@@ -87,27 +96,27 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
       (failure) async => emit(state.copyWith(status: LiveFailure(failure))),
       (broadcast) async {
         emit(state.copyWith(broadcast: broadcast));
-
         try {
-          final token = broadcast.broadcastToken;
-          await _liveKit.broadcast(token!).whenComplete(() async {
-            final response = await _socket.emitFuture(
-              SocketStartedBroadcast(broadcast.id.getOr()),
-            );
-            if (response.error != null) {
-              final exception = response.error!.toBroadcastException;
-              emit(state.copyWith(status: LiveFailure(exception)));
-            } else {
-              emit(state.copyWith(status: const LiveBroadcastStarted()));
-              final jsonString = jsonEncode(broadcast.toDto.toJson());
-              await _preferences.setString(_liveBroadcastKey, jsonString);
-            }
-          });
+          await _liveKit.broadcast(broadcast.broadcastToken!);
+          _socket.emit(SocketStartedBroadcast(broadcast.id.getOr()));
         } catch (e) {
-          emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
+          emit(state.copyWith(status: LiveFailure(e.toException)));
         }
       },
     );
+  }
+
+  Future<void> _onStarted(
+    _BroadcastStartReceived event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    if (event.error == null) {
+      emit(state.copyWith(status: const LiveBroadcastStarted()));
+      final jsonString = jsonEncode(state.broadcast.toDto.toJson());
+      await _preferences.setString(_liveBroadcastKey, jsonString);
+    } else {
+      emit(state.copyWith(status: LiveFailure(event.error!.toException)));
+    }
   }
 
   void _onBroadcastEndPressed(
@@ -162,7 +171,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     unawaited(_liveKit.disconnect());
 
     // Emit the failure state with the error message from the socket
-    final exception = event.error!.toBroadcastException;
+    final exception = event.error!.toException;
     emit(state.copyWith(status: LiveFailure(exception)));
   }
 
@@ -170,18 +179,17 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
   ) async {
+    emit(state.copyWith(status: const LiveLoadInProgress()));
     try {
-      final token = event.broadcast.broadcastToken;
-      await _liveKit.broadcast(token!).whenComplete(() {
-        emit(
-          state.copyWith(
-            status: const LiveBroadcastStarted(),
-            hostDisconnected: false,
-          ),
-        );
-      });
+      await _liveKit.broadcast(event.broadcast.broadcastToken!);
+      emit(
+        state.copyWith(
+          status: const LiveBroadcastStarted(reconnected: true),
+          hostDisconnected: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(status: LiveFailure(e.toBroadcastException)));
+      emit(state.copyWith(status: LiveFailure(e.toException)));
     }
   }
 
@@ -189,7 +197,15 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     _SocketBroadcastRetrieved event,
     Emitter<BroadcastState> emit,
   ) {
-    emit(state.copyWith(broadcast: event.broadcast, hostDisconnected: true));
+    if (event.storedBroadcast.id == event.broadcast.id) {
+      final startTime = event.broadcast.startTime;
+      emit(
+        state.copyWith(
+          broadcast: event.storedBroadcast.copyWith(startTime: startTime),
+          hostDisconnected: true,
+        ),
+      );
+    }
   }
 
   @override

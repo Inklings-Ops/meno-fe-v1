@@ -9,6 +9,7 @@ class LiveStatus with _$LiveStatus {
   const factory LiveStatus.loading() = LiveLoadInProgress;
   const factory LiveStatus.started({
     @Default(true) bool microphoneEnabled,
+    @Default(false) bool reconnected,
   }) = LiveBroadcastStarted;
   const factory LiveStatus.joined() = LiveBroadcastJoined;
   const factory LiveStatus.broadcastEnded() = LiveBroadcastEnded;

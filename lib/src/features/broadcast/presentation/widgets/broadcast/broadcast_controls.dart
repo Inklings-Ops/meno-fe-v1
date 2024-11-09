@@ -33,7 +33,7 @@ class _MicrophoneButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) => state.status.maybeWhen(
         orElse: () => const MMicrophoneButton(isDisabled: true),
-        started: (isMicrophoneEnabled) => MMicrophoneButton(
+        started: (isMicrophoneEnabled, _) => MMicrophoneButton(
           isMicrophoneEnabled: isMicrophoneEnabled,
           onTap: () => bloc.add(const BroadcastMuteToggled()),
         ),
@@ -61,7 +61,7 @@ class _StartStopButton extends StatelessWidget {
           foregroundColor: colors.onPrimary,
           onTap: () => bloc.add(const BroadcastStartPressed()),
         ),
-        started: (_) => _Button(
+        started: (microphoneEnabled, reconnected) => _Button(
           label: 'Stop broadcasting',
           backgroundColor: colors.errorContainer?.withOpacity(0.3),
           foregroundColor: colors.error,

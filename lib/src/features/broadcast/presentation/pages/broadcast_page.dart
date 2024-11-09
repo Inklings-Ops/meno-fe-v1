@@ -12,8 +12,12 @@ class BroadcastPage extends StatelessWidget {
       listener: (context, state) {
         state.status.whenOrNull(
           failed: context.showBroadcastError,
-          started: (_) => _onStartedBroadcast(context, state.broadcast),
           broadcastEnded: () => _onEndedBroadcast(context),
+          started: (_, reconnected) => _onStartedBroadcast(
+            context: context,
+            broadcast: state.broadcast,
+            reconnected: reconnected,
+          ),
         );
       },
       child: const LiveScaffold(
@@ -33,11 +37,19 @@ class BroadcastPage extends StatelessWidget {
     );
   }
 
-  void _onStartedBroadcast(BuildContext context, Broadcast broadcast) {
+  void _onStartedBroadcast({
+    required BuildContext context,
+    required Broadcast broadcast,
+    required bool reconnected,
+  }) {
     context.read<ChatBloc>().add(ChatInitialized(broadcast));
     context.read<ParticipantsBloc>().add(ParticipantsInitialized(broadcast));
-    context.read<TimerCubit>().start();
     context.read<MenoBloc>().update(const MLive());
+    if (reconnected) {
+      context.read<TimerCubit>().setAndStart(broadcast.startTime);
+    } else {
+      context.read<TimerCubit>().start();
+    }
   }
 
   void _onEndedBroadcast(BuildContext context) {
