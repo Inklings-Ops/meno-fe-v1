@@ -2,21 +2,25 @@ part of 'participants_bloc.dart';
 
 @freezed
 class ParticipantsEvent with _$ParticipantsEvent {
-  const factory ParticipantsEvent.initialized(
-    Broadcast broadcast,
-  ) = ParticipantsInitialized;
-  const factory ParticipantsEvent.participantsReloadPressed() =
-      ParticipantsReloadPressed;
-  const factory ParticipantsEvent.allParticipantsFetchPressed() =
-      AllParticipantsFetchPressed;
-  const factory ParticipantsEvent.participantLoaded(
-    List<BroadcastParticipant> participants,
-  ) = _ParticipantsLoaded;
+  const factory ParticipantsEvent.getLiveParticipants(
+    Uid<Broadcast> broadcastId,
+  ) = GetLiveParticipants;
+
+  const factory ParticipantsEvent.participantsReloadPressed(
+    Uid<Broadcast> broadcastId,
+  ) = ParticipantsReloadPressed;
+
+  const factory ParticipantsEvent.getAllParticipants(
+    Uid<Broadcast> broadcastId,
+  ) = GetAllParticipants;
+
   const factory ParticipantsEvent.participantJoined(
     BroadcastParticipant participant,
-  ) = _ParticipantJoined;
+  ) = ParticipantJoined;
+
   const factory ParticipantsEvent.participantLeft(
     BroadcastParticipant participant,
-  ) = _ParticipantLeft;
+  ) = ParticipantLeft;
+
   const factory ParticipantsEvent.reset() = ParticipantsReset;
 }

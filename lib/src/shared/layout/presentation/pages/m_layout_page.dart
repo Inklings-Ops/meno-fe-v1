@@ -1,7 +1,10 @@
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
 import 'package:meno_fe_v1/src/services/permissions_service.dart';
+import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class MLayoutPage extends HookWidget {
   const MLayoutPage({
@@ -15,15 +18,23 @@ class MLayoutPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final firebaseMessaging = FirebaseMessaging.instance;
-    final initialMessage = useState<String?>(null);
+    final initMessage = useState<String?>(null);
+
+    void onInitialMessage(RemoteMessage? value) {
+      initMessage.value = value?.data.toString();
+    }
 
     useEffect(
       () {
+        final token = context.select<SessionCubit, Token?>(
+          (bloc) => bloc.state.whenOrNull(
+            authenticated: (user, token) => token,
+          ),
+        );
+        context.read<SocketBloc>().add(SocketConnect(token!));
         di<PermissionsService>().requestNotificationsPermissions();
         di<IBibleFacade>().init();
-        firebaseMessaging
-            .getInitialMessage()
-            .then((value) => initialMessage.value = value?.data.toString());
+        firebaseMessaging.getInitialMessage().then(onInitialMessage);
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
           router.push(Routes.notifications);
@@ -31,7 +42,7 @@ class MLayoutPage extends HookWidget {
         handleFCMToken();
         return null;
       },
-      [firebaseMessaging, initialMessage],
+      [firebaseMessaging, initMessage],
     );
 
     final index = shell.currentIndex;
@@ -49,15 +60,51 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return BlocListener<SessionCubit, SessionState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          authenticated: (user, token) {
-            context.read<LiveBroadcastsBloc>().init();
-            context.read<RecentlyLiveCubit>().fetch();
+    final isStreaming = context.select<LiveBloc, bool>((bloc) {
+      return bloc.state.maybeWhen(orElse: () => false, streaming: () => true);
+    });
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SocketBloc, SocketState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              broadcastEnded: () {
+                Logger().e('FROM LAYOUTTTTTTTT');
+                // context.read<TimerCubit>().stop();
+                // context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+                // context.read<ChatBloc>().add(const ChatReset());
+                // context.read<LiveBloc>().add(const LiveReset());
+                // if (router.state?.path == Routes.broadcast) {
+                //   router.go(Routes.endedBroadcast);
+                // } else {
+                //   router.push(Routes.endedBroadcast);
+                // }
+              },
+              endedBroadcast: (data) {
+                if (!isStreaming) return;
+                context.read<LiveBloc>().add(const LiveReset());
+                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+                context.read<ParticipantsBloc>().add(const ParticipantsReset());
+                context.read<ChatBloc>().add(const ChatReset());
+                context.read<StreamBloc>().add(const StreamReset());
+                context.read<TimerCubit>().dispose();
+                router.go(Routes.home);
+                context.showErrorSnackBar(data.reason.message);
+              },
+              broadcastLeft: () {
+                context.read<LiveBloc>().add(const LiveReset());
+                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+                context.read<ParticipantsBloc>().add(const ParticipantsReset());
+                context.read<ChatBloc>().add(const ChatReset());
+                context.read<StreamBloc>().add(const StreamReset());
+                context.read<TimerCubit>().dispose();
+                router.go(Routes.home);
+              },
+            );
           },
-        );
-      },
+        ),
+      ],
       child: Scaffold(
         body: Row(children: [sideNavRail, Expanded(child: shell)]),
         bottomNavigationBar: bottomNavBar,

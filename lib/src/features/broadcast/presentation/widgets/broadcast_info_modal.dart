@@ -65,7 +65,7 @@ class BroadcastInfoModal extends StatelessWidget {
             title: 'Copy Link',
           ),
           if (!isStreaming)
-            BlocBuilder<MenoBloc, MenoState>(
+            BlocBuilder<LiveBloc, LiveState>(
               builder: (context, state) => state.maybeWhen(
                 live: () => const SizedBox(),
                 reconnecting: () => const SizedBox(),

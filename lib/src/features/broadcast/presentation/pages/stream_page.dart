@@ -1,35 +1,51 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
+import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class StreamPage extends HookWidget {
   const StreamPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Memoize broadcast to avoid re-initializing on every rebuild.
-    final b = useMemoized(() => context.read<StreamBloc>().state.broadcast);
+    final socket = context.watch<SocketBloc>();
 
-    useEffect(
-      () {
-        context.read<ChatBloc>().add(ChatInitialized(b));
-        context.read<ParticipantsBloc>().add(ParticipantsInitialized(b));
-        context.read<TimerCubit>().setAndStart(b.startTime);
-        context.read<MenoBloc>().update(const MStreaming());
-        return null;
-      },
-      [b],
+    final broadcast = useMemoized(
+      () => context.read<StreamBloc>().state.broadcast,
     );
+    final id = broadcast.id;
 
-    return BlocListener<StreamBloc, StreamState>(
-      listenWhen: (previous, current) => previous.status != current.status,
-      listener: (context, state) {
-        state.status.whenOrNull(
-          failed: context.showBroadcastError,
-          left: () => _handleStreamEnd(context),
-          streamEnded: (data) => _handleStreamEnd(context),
-        );
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LiveKitBloc, LiveKitState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              connectionFailed: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                context.showErrorSnackBar(error);
+              },
+              streamConnected: (_) => socket.add(SocketJoinBroadcast(id)),
+            );
+          },
+        ),
+        BlocListener<SocketBloc, SocketState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              error: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                context.showErrorSnackBar(error);
+              },
+              broadcastJoined: () {
+                context.read<SocketBloc>().add(SocketGetMessages(id));
+                context.read<ParticipantsBloc>().add(GetLiveParticipants(id));
+                context.read<TimerCubit>().setAndStart(broadcast.startTime);
+                context.read<LiveBloc>().add(const LiveStarted());
+                context.read<LiveBloc>().add(const GoStreaming());
+              },
+            );
+          },
+        ),
+      ],
       child: const LiveScaffold(
         tabs: [
           Tab(text: 'Broadcast'),
@@ -45,17 +61,5 @@ class StreamPage extends HookWidget {
         ],
       ),
     );
-  }
-
-  void _handleStreamEnd(BuildContext context) {
-    context.read<MenoBloc>().update(const MOffAir());
-    router.go(Routes.home);
-    
-    context.read<StreamBloc>().add(const StreamReset());
-    context.read<ParticipantsBloc>().add(const ParticipantsReset());
-    context.read<ChatBloc>().add(const ChatReset());
-
-    di<LiveKitService>().dispose();
-    context.read<TimerCubit>().dispose();
   }
 }

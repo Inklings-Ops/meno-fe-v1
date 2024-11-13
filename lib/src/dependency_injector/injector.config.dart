@@ -32,6 +32,8 @@ import '../features/bible/infrastructure/datasources/local/bible_local_datasourc
     as _i664;
 import '../features/broadcast/broadcast.dart' as _i625;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i1031;
+import '../features/chat/chat.dart' as _i506;
+import '../features/chat/infrastructure/chat_facade.dart' as _i536;
 import '../features/discover/discover.dart' as _i515;
 import '../features/discover/infrastructure/discover_facade.dart' as _i115;
 import '../features/features.dart' as _i1009;
@@ -57,6 +59,7 @@ import '../features/settings/infrastructure/datasources/settings_local_datasourc
     as _i385;
 import '../features/settings/infrastructure/settings_facade.dart' as _i838;
 import '../features/settings/settings.dart' as _i709;
+import '../services/background_service.dart' as _i879;
 import '../services/jwt_service.dart' as _i431;
 import '../services/live_kit/live_kit_service.dart' as _i691;
 import '../services/media_service.dart' as _i586;
@@ -66,7 +69,6 @@ import '../services/objectbox_service.dart' as _i116;
 import '../services/permissions_service.dart' as _i179;
 import '../services/secure_storage_service.dart' as _i535;
 import '../services/services.dart' as _i264;
-import '../services/socket/socket_service.dart' as _i717;
 import '../shared/session/cubit/session_cubit.dart' as _i607;
 import '../shared/session/session_context.dart' as _i320;
 import '../shared/shared.dart' as _i44;
@@ -119,6 +121,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
+    gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
     gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
@@ -180,6 +183,10 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
+    gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
+          remote: gh<_i506.ChatRemoteDatasource>(),
+          network: gh<_i264.NetworkService>(),
+        ));
     await gh.factoryAsync<_i236.IAuthFacade>(
       () {
         final i = _i790.AuthFacade(
@@ -201,13 +208,6 @@ extension GetItInjectableX on _i174.GetIt {
           authFacade: gh<_i236.IAuthFacade>(),
           settingsFacade: gh<_i709.ISettingsFacade>(),
         ));
-    await gh.factoryAsync<_i717.SocketService>(
-      () {
-        final i = _i717.SocketService(facade: gh<_i1009.IAuthFacade>());
-        return i.initialize().then((_) => i);
-      },
-      preResolve: true,
-    );
     await gh.factoryAsync<_i607.SessionCubit>(
       () {
         final i = _i607.SessionCubit(session: gh<_i44.ISessionContext>());

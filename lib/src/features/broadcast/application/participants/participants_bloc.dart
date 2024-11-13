@@ -5,32 +5,29 @@ import 'dart:collection';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'participants_bloc.freezed.dart';
+
 part 'participants_event.dart';
+
 part 'participants_state.dart';
 
 class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
-  ParticipantsBloc({
-    required SocketService socket,
-    required IBroadcastFacade facade,
-  })  : _socket = socket,
-        _facade = facade,
+  ParticipantsBloc({required IBroadcastFacade facade})
+      : _facade = facade,
         super(ParticipantsState.initial()) {
-    on<ParticipantsInitialized>(_onParticipantsInitialized);
+    on<GetLiveParticipants>(_onGetLiveParticipants);
     on<ParticipantsReloadPressed>(_onParticipantsReloadPressed);
-    on<AllParticipantsFetchPressed>(_onAllParticipantsFetchPressed);
+    on<GetAllParticipants>(_onGetAllParticipants);
     on<ParticipantsReset>(_onParticipantsReset);
-    on<_ParticipantJoined>(_onParticipantJoined, transformer: _transformer());
-    on<_ParticipantLeft>(_onParticipantLeft, transformer: _transformer());
+    on<ParticipantJoined>(_onParticipantJoined, transformer: _transformer());
+    on<ParticipantLeft>(_onParticipantLeft, transformer: _transformer());
   }
 
-  final SocketService _socket;
   final IBroadcastFacade _facade;
 
-  StreamSubscription<SocketEvent>? _socketEventSubscription;
+  final _initialState = ParticipantsState.initial();
 
   /// Priority bucket for [Role.host]. This is not a list as there will be only
   /// one host broadcast
@@ -49,20 +46,15 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   ///
   /// This will
   /// - Store the live broadcast object gotten from the event parameter
-  /// - Register the [_socketEventSubscription] for listening to the
-  ///   [SocketService] events, which are `newBroadcastListener` and
-  ///   `broadcastListenerLeft`
   /// - Retrieve all the currently live participants and update the state
-  Future<void> _onParticipantsInitialized(
-    ParticipantsInitialized event,
+  Future<void> _onGetLiveParticipants(
+    GetLiveParticipants event,
     Emitter<ParticipantsState> emit,
   ) async {
     if (_listenersInitialized) return;
 
-    emit(state.copyWith(broadcast: event.broadcast));
-
     // Retrieve all the currently live participants from the backend
-    final response = await _facade.liveListeners(state.broadcast.id);
+    final response = await _facade.liveListeners(event.broadcastId);
 
     emit(
       response.fold(
@@ -78,18 +70,6 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
       ),
     );
 
-    _socketEventSubscription = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(
-        // Subscribe to the `newBroadcastListener` event to add a new
-        // participant that joins a broadcast
-        newBroadcastListener: (listener) => add(_ParticipantJoined(listener)),
-
-        // Subscribe to the `broadcastListenerLeft` event to remove a
-        // participant that leaves the broadcast
-        broadcastListenerLeft: (listener) => add(_ParticipantLeft(listener)),
-      );
-    });
-
     _listenersInitialized = true;
   }
 
@@ -99,7 +79,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     Emitter<ParticipantsState> emit,
   ) async {
     emit(state.copyWith(loading: true));
-    final response = await _facade.liveListeners(state.broadcast.id);
+    final response = await _facade.liveListeners(event.broadcastId);
     emit(
       response.fold(
         (exception) => state.copyWith(loading: false, exception: exception),
@@ -117,12 +97,12 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
 
   /// Fetches all the [BroadcastParticipant]s that have joined the broadcast
   /// from the time it started to its ending
-  Future<void> _onAllParticipantsFetchPressed(
-    AllParticipantsFetchPressed event,
+  Future<void> _onGetAllParticipants(
+    GetAllParticipants event,
     Emitter<ParticipantsState> emit,
   ) async {
     emit(state.copyWith(loading: true));
-    final response = await _facade.listeners(state.broadcast.id);
+    final response = await _facade.listeners(event.broadcastId);
     emit(
       response.fold(
         (exception) => state.copyWith(loading: false, exception: exception),
@@ -135,12 +115,13 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     );
   }
 
-  /// Event function to update the state when a new [BroadcastParticipant] joins
-  /// a [Broadcast]
+  /// Event function to update the state when a new [BroadcastParticipant]
+  /// joins a [Broadcast]
   void _onParticipantJoined(
-    _ParticipantJoined event,
+    ParticipantJoined event,
     Emitter<ParticipantsState> emit,
   ) {
+    if (!_listenersInitialized) return;
     _addToBucket(event.participant);
     emit(
       state.copyWith(
@@ -153,9 +134,10 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   /// Event function to update the state when a [BroadcastParticipant] leaves
   /// a [Broadcast]
   void _onParticipantLeft(
-    _ParticipantLeft event,
+    ParticipantLeft event,
     Emitter<ParticipantsState> emit,
   ) {
+    if (!_listenersInitialized) return;
     _removeFromBucket(event.participant);
     emit(
       state.copyWith(
@@ -166,17 +148,15 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   }
 
   /// Event function to reset the [ParticipantsBloc] and free up resources
-  Future<void> _onParticipantsReset(
+  void _onParticipantsReset(
     ParticipantsReset event,
     Emitter<ParticipantsState> emit,
-  ) async {
-    await _socketEventSubscription?.cancel();
-    _socketEventSubscription = null;
+  ) {
     _listenersInitialized = false;
     host = null;
     cohosts.clear();
     listeners.clear();
-    emit(ParticipantsState.initial());
+    emit(_initialState);
   }
 
   void _addToBucket(BroadcastParticipant participant) {
@@ -237,11 +217,5 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
         .bufferTime(const Duration(milliseconds: 350))
         .expand((batch) => batch)
         .asyncExpand(mapper);
-  }
-
-  @override
-  Future<void> close() async {
-    await _socketEventSubscription?.cancel();
-    await super.close();
   }
 }

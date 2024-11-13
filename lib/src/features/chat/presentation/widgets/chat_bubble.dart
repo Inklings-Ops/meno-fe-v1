@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:timeago_flutter/timeago_flutter.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -10,8 +10,8 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    final bloc = context.watch<ChatBloc>();
-    final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
+    final broadcast = context.watch<BroadcastBloc>().state.broadcast;
+    final isHost = broadcast.creator!.id == chat.senderId;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),

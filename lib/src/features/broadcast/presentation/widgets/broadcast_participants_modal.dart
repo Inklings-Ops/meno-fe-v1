@@ -21,9 +21,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
             hint: 'Search',
           ),
           Spaces.verticalLarge,
-          Expanded(
-            child: BroadcastParticipantList(padding: EdgeInsets.zero),
-          ),
+          Expanded(child: BroadcastParticipantList(padding: EdgeInsets.zero)),
         ],
       ),
     );

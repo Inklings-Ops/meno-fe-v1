@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/app/app.dart';
 import 'package:meno_fe_v1/app/meno_bloc_observer.dart';
@@ -15,7 +12,6 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   await configureDependencies();
-  await initializeBackgroundService();
 
   Bloc.observer = MenoBlocObserver(log: Logger());
   runApp(

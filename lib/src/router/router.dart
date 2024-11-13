@@ -24,30 +24,37 @@ final router = GoRouter(
   redirect: _handleRedirect,
   routes: [
     GoRoute(
+      name: Routes.broadcast,
       path: Routes.broadcast,
       builder: (context, state) => const BroadcastPage(),
     ),
     GoRoute(
+      name: Routes.stream,
       path: Routes.stream,
       builder: (context, state) => const StreamPage(),
     ),
     GoRoute(
+      name: Routes.createBroadcast,
       path: Routes.createBroadcast,
       builder: (context, state) => const CreateBroadcastPage(),
     ),
     GoRoute(
+      name: Routes.createNewPassword,
       path: Routes.createNewPassword,
       builder: (context, state) => const CreateNewPasswordPage(),
     ),
     GoRoute(
+      name: Routes.details,
       path: Routes.details,
       builder: (_, state) => DetailsPage(broadcast: state.extra! as Broadcast),
     ),
     GoRoute(
+      name: Routes.emailVerification,
       path: Routes.emailVerification,
       builder: (context, state) => const EmailVerificationPage(),
     ),
     GoRoute(
+      name: Routes.folder,
       path: Routes.folder,
       builder: (context, state) {
         final folder = state.extra! as Folder;
@@ -58,10 +65,23 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.loading,
       path: Routes.loading,
       builder: (context, state) => const LoadingPage(),
     ),
     GoRoute(
+      name: Routes.endedBroadcast,
+      path: Routes.endedBroadcast,
+      onExit: (context, state) {
+        context.read<TimerCubit>().dispose();
+        context.read<ParticipantsBloc>().add(const ParticipantsReset());
+        context.read<BroadcastBloc>().add(const BroadcastReset());
+        return true;
+      },
+      builder: (context, state) => const EndedBroadcastPage(),
+    ),
+    GoRoute(
+      name: Routes.login,
       path: Routes.login,
       builder: (context, state) {
         final q = state.uri.queryParameters;
@@ -74,6 +94,7 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.noteEditor,
       path: Routes.noteEditor,
       builder: (context, state) {
         final note = state.extra as Note?;
@@ -84,18 +105,22 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.notifications,
       path: Routes.notifications,
       builder: (context, state) => const NotificationsPage(),
     ),
     GoRoute(
+      name: Routes.onboarding,
       path: Routes.onboarding,
       builder: (context, state) => const OnboardingPage(),
     ),
     GoRoute(
+      name: Routes.recentlyLive,
       path: Routes.recentlyLive,
       builder: (context, state) => const RecentlyLivePage(),
     ),
     GoRoute(
+      name: Routes.register,
       path: Routes.register,
       builder: (context, state) {
         final q = state.uri.queryParameters;
@@ -104,18 +129,22 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.resetPwdOtp,
       path: Routes.resetPwdOtp,
       builder: (context, state) => const ResetPasswordOtpVerificationPage(),
     ),
     GoRoute(
+      name: Routes.resetPassword,
       path: Routes.resetPassword,
       builder: (context, state) => const ResetPasswordPage(),
     ),
     GoRoute(
+      name: Routes.resetPwdSuccess,
       path: Routes.resetPwdSuccess,
       builder: (context, state) => const ResetPasswordSuccessPage(),
     ),
     GoRoute(
+      name: Routes.othersProfile,
       path: Routes.othersProfile,
       builder: (_, state) => OthersProfilePage(userId: state.extra! as String),
     ),
@@ -128,6 +157,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.home,
               path: Routes.home,
               builder: (context, state) => const HomePage(),
             ),
@@ -136,6 +166,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.discover,
               path: Routes.discover,
               builder: (context, state) => const DiscoverPage(),
             ),
@@ -144,6 +175,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.notes,
               path: Routes.notes,
               builder: (context, state) => const NotesPage(),
             ),
@@ -152,6 +184,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.myProfile,
               path: Routes.myProfile,
               builder: (context, state) => const MyProfilePage(),
             ),
@@ -160,6 +193,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.webCreateBroadcast,
               path: Routes.webCreateBroadcast,
               builder: (context, state) => const CreateBroadcastPage(),
             ),
@@ -168,6 +202,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.settings,
               path: Routes.settings,
               builder: (context, state) => const SettingsPage(),
             ),
@@ -177,3 +212,10 @@ final router = GoRouter(
     ),
   ],
 );
+
+extension GoRouteX on GoRouter {
+  void popAndPush(String location) {
+    pop();
+    push(location);
+  }
+}

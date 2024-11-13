@@ -3,35 +3,24 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'live_broadcasts_bloc.freezed.dart';
+
 part 'live_broadcasts_event.dart';
+
 part 'live_broadcasts_state.dart';
 
 class LiveBroadcastsBloc
     extends Bloc<LiveBroadcastsEvent, LiveBroadcastsState> {
-  LiveBroadcastsBloc({
-    required IBroadcastFacade facade,
-    required SocketService socket,
-  })  : _facade = facade,
-        _socket = socket,
+  LiveBroadcastsBloc({required IBroadcastFacade facade})
+      : _facade = facade,
         super(const _Loading()) {
     on<_GetLiveBroadcasts>(_onGetLiveBroadcasts);
-    on<_NewBroadcast>(_onNewBroadcast);
-    on<_EndedBroadcast>(_onEndedBroadcast);
-
-    _socketEventSub = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(
-        newBroadcast: (broadcast) => add(_NewBroadcast(broadcast)),
-        endedBroadcast: (broadcast) => add(_EndedBroadcast(broadcast)),
-      );
-    });
+    on<NewBroadcastReceived>(_onNewBroadcast);
+    on<EndedBroadcastReceived>(_onEndedBroadcast);
   }
+
   final IBroadcastFacade _facade;
-  final SocketService _socket;
-  late final StreamSubscription<SocketState> _socketStateSub;
-  late final StreamSubscription<SocketEvent> _socketEventSub;
 
   void init() => add(const _GetLiveBroadcasts());
 
@@ -57,7 +46,7 @@ class LiveBroadcastsBloc
   }
 
   Future<void> _onNewBroadcast(
-    _NewBroadcast event,
+    NewBroadcastReceived event,
     Emitter<LiveBroadcastsState> emit,
   ) async {
     if (state is _Empty) {
@@ -73,7 +62,7 @@ class LiveBroadcastsBloc
   }
 
   Future<void> _onEndedBroadcast(
-    _EndedBroadcast event,
+    EndedBroadcastReceived event,
     Emitter<LiveBroadcastsState> emit,
   ) async {
     if (state is _Success) {
@@ -82,12 +71,5 @@ class LiveBroadcastsBloc
         ..removeWhere((b) => event.data.broadcastDetails.id == b?.id);
       broadcasts.isEmpty ? emit(const _Empty()) : emit(_Success(broadcasts));
     }
-  }
-
-  @override
-  Future<void> close() async {
-    await _socketStateSub.cancel();
-    await _socketEventSub.cancel();
-    await super.close();
   }
 }

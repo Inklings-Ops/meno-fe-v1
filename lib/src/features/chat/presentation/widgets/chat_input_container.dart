@@ -1,9 +1,16 @@
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:meno_fe_v1/src/features/chat/presentation/widgets/reaction_button.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class ChatInputContainer extends HookWidget {
-  const ChatInputContainer({required this.scrollController, super.key});
+  const ChatInputContainer({
+    required this.broadcast,
+    required this.scrollController,
+    super.key,
+  });
+
+  final Broadcast broadcast;
   final ScrollController scrollController;
 
   @override
@@ -11,23 +18,53 @@ class ChatInputContainer extends HookWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
-    final bloc = context.read<ChatBloc>();
+    final socketBloc = context.read<SocketBloc>();
+
     final contentController = useTextEditingController();
-    final isReactionsVisible = useState<bool>(false);
+    final reactionVisible = useState<bool>(false);
     final isSendVisible = useState(contentController.text.isNotEmpty);
-    
-    useEffect(() {
-      contentController.addListener(() {
-        isSendVisible.value = contentController.text.isNotEmpty;
-      });
-      return null;
-    }, [contentController.text],);
+
+    useEffect(
+      () {
+        contentController.addListener(() {
+          isSendVisible.value = contentController.text.isNotEmpty;
+        });
+        return null;
+      },
+      [contentController.text],
+    );
+
+    final currentUserId = context.select(
+      (SessionCubit bloc) => bloc.state.maybeWhen(
+        orElse: () => '',
+        authenticated: (user, token) => user.id.getOr(),
+      ),
+    );
+
+    void sendMessage() {
+      socketBloc.add(
+        SocketSendMessage(
+          senderId: currentUserId,
+          broadcastId: broadcast.id.getOr(),
+          content: contentController.text,
+          createdAt: DateTime.timestamp().toIso8601String(),
+        ),
+      );
+
+      scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+
+      contentController.clear();
+    }
 
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.passthrough,
       children: [
-        if (isReactionsVisible.value) const ReactionButton(),
+        if (reactionVisible.value) const ReactionButton(),
         Container(
           alignment: Alignment.topCenter,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -55,84 +92,24 @@ class ChatInputContainer extends HookWidget {
                 icon: const Icon(Icons.face),
                 isFilled: true,
                 fillColor: colors.outlineVariant2,
-                onPressed: () =>
-                    isReactionsVisible.value = !isReactionsVisible.value,
+                onPressed: () => reactionVisible.value = !reactionVisible.value,
               ),
               if (isSendVisible.value) ...[
                 Spaces.horizontalSmall,
-                BlocBuilder<SessionCubit, SessionState>(
-                  builder: (context, state) => state.maybeWhen(
-                    orElse: () => const SizedBox(),
-                    authenticated: (user, _) => MIconButton(
-                      icon: const Icon(MIcons.send),
-                      isFilled: true,
-                      fillColor: colors.primary,
-                      color: colors.onPrimary,
-                      size: 40,
-                      iconSize: 20,
-                      onPressed: () {
-                        bloc.add(ChatSendPressed(contentController.text));
-                        scrollController.animateTo(
-                          0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                        contentController.clear();
-                      },
-                    ),
-                  ),
+                MIconButton(
+                  icon: const Icon(MIcons.send),
+                  isFilled: true,
+                  fillColor: colors.primary,
+                  color: colors.onPrimary,
+                  size: 40,
+                  iconSize: 20,
+                  onPressed: sendMessage,
                 ),
               ],
             ],
           ),
         ),
       ],
-    );
-  }
-}
-
-class ReactionButton extends StatelessWidget {
-  const ReactionButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
-    return Positioned(
-      bottom: 60,
-      right: 16,
-      child: Container(
-        height: 56,
-        padding: const EdgeInsets.all(Insets.sm),
-        decoration: BoxDecoration(
-          color: colors.background,
-          borderRadius: Corners.circle,
-        ),
-        child: ListView.separated(
-          shrinkWrap: true,
-          separatorBuilder: (context, i) => Spaces.horizontalSmall,
-          scrollDirection: Axis.horizontal,
-          itemCount: reactions.length,
-          itemBuilder: (context, i) {
-            return AnimationConfiguration.staggeredList(
-              position: i,
-              duration: const Duration(milliseconds: 260),
-              child: SlideAnimation(
-                verticalOffset: 15 + i * 15,
-                child: FadeInAnimation(
-                  child: MIconButton(
-                    size: 40,
-                    iconSize: 20,
-                    icon: reactions[i].icon,
-                    isFilled: true,
-                    fillColor: colors.outlineVariant2,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
     );
   }
 }

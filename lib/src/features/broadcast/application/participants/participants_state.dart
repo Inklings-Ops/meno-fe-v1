@@ -3,9 +3,6 @@ part of 'participants_bloc.dart';
 @freezed
 class ParticipantsState with _$ParticipantsState {
   const factory ParticipantsState({
-    /// The current broadcast
-    required Broadcast broadcast,
-
     /// The list of participants currently live-streaming the broadcast
     required List<BroadcastParticipant> liveParticipants,
 
@@ -23,13 +20,12 @@ class ParticipantsState with _$ParticipantsState {
     /// The loading state
     @Default(false) bool loading,
 
-    /// [BroadcastException] incase of a failed state
+    /// [BroadcastException] in case of a failed state
     BroadcastException? exception,
   }) = _ParticipantsState;
 
   factory ParticipantsState.initial() {
-    return ParticipantsState(
-      broadcast: Broadcast.empty(),
+    return const ParticipantsState(
       liveParticipants: [],
       numberOfLiveParticipants: 0,
       allParticipants: [],

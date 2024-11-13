@@ -1,6 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
+import 'package:meno_fe_v1/src/services/media_service.dart';
 
 class CreateBroadcastPage extends StatelessWidget {
   const CreateBroadcastPage({super.key});
@@ -22,21 +23,40 @@ class CreateBroadcastView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formKey = useMemoized(GlobalKey<FormState>.new);
     final colors = MColorScheme.of(context)!;
+    final formKey = useMemoized(GlobalKey<FormState>.new);
+
+    final broadcastBloc = context.read<BroadcastBloc>();
+    final liveKit = context.read<LiveKitBloc>();
+
     return MultiBlocListener(
       listeners: [
         BlocListener<BroadcastFormCubit, BroadcastFormState>(
+          listenWhen: (previous, current) => previous.option != current.option,
           listener: (context, state) {
             state.option.fold(
-              () => null,
+              () {},
               (either) => either.fold(
-                (exception) => context.showBroadcastError(exception),
-                (b) {
-                  context.read<BroadcastBloc>().add(BroadcastInitialized(b));
-                  router.replace<void>(Routes.broadcast);
+                (error) {
+                  context.read<LiveBloc>().add(const GoFailure());
+                  context.showBroadcastError(error);
                 },
+                (b) => broadcastBloc.add(BroadcastStartPressed(b)),
               ),
+            );
+          },
+        ),
+        BlocListener<BroadcastBloc, BroadcastState>(
+          listener: (context, state) {
+            state.status.whenOrNull(
+              failure: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                context.showBroadcastError(error);
+              },
+              broadcastStarted: () {
+                liveKit.add(LiveKitBroadcast(state.broadcast.broadcastToken!));
+                router.go(Routes.broadcast);
+              },
             );
           },
         ),
@@ -60,12 +80,8 @@ class CreateBroadcastView extends HookWidget {
               Spaces.horizontalLarge,
             ],
           ),
-          body: const SingleChildScrollView(
-            child: CreateBroadcastForm(),
-          ),
-          persistentFooterButtons: const [
-            CreateBroadcastButton(),
-          ],
+          body: const SingleChildScrollView(child: CreateBroadcastForm()),
+          persistentFooterButtons: const [CreateBroadcastButton()],
         ),
       ),
     );

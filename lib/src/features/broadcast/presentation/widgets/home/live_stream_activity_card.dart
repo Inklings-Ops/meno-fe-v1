@@ -1,5 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class LiveStreamActivityCard extends StatelessWidget {
   const LiveStreamActivityCard({super.key});
@@ -7,15 +8,15 @@ class LiveStreamActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final broadcast = context.select((StreamBloc bloc) => bloc.state.broadcast);
-    
-    return BlocBuilder<MenoBloc, MenoState>(
-      builder: (context, menoState) => menoState.maybeWhen(
+
+    return BlocBuilder<LiveBloc, LiveState>(
+      builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         streaming: () => ActivityCard(
           badgeTitle: 'Now Streaming',
           broadcast: broadcast,
           actionButtonLabel: 'Leave',
-          action: () => onBroadcastLeave(context),
+          action: () => onBroadcastLeave(context, broadcast.id),
           onTap: () => router.push<void>(Routes.stream),
         ),
         reconnecting: () => ActivityCard(
@@ -28,11 +29,11 @@ class LiveStreamActivityCard extends StatelessWidget {
     );
   }
 
-  void onBroadcastLeave(BuildContext context) {
-    final bloc = context.read<StreamBloc>();
+  void onBroadcastLeave(BuildContext context, Uid<Broadcast> broadcastId) {
+    final socket = context.read<SocketBloc>();
     context.showLeaveBroadcastDialog().then((value) {
       if (value == null || value == false) return;
-      return bloc.add(StreamLeavePressed(bloc.state.broadcast.id));
+      return socket.add(SocketLeaveBroadcast(broadcastId));
     });
   }
 }

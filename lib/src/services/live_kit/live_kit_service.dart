@@ -13,17 +13,16 @@ class LiveKitService extends Object with Disposable {
   late Room room;
   late EventsListener<RoomEvent> listener;
 
-  BehaviorSubject<RoomEvent>? _events;
-  Stream<RoomEvent>? get eventsStream => _events?.stream.asBroadcastStream();
+  late BehaviorSubject<RoomEvent> _events;
+
+  Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
 
   Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
     final completer = Completer<Room>();
 
     // Create a new room
     room = Room();
-    if (_events == null || _events!.isClosed) {
-      _events = BehaviorSubject<RoomEvent>();
-    }
+    _events = BehaviorSubject<RoomEvent>();
 
     // Set a Listener for the Room Events before connecting
     listener = room.createListener(synchronized: true);
@@ -49,11 +48,7 @@ class LiveKitService extends Object with Disposable {
   }
 
   /// Sets up the event listener for the room.
-  void _setupListener() => listener.listen((event) {
-        if (_events != null && !_events!.isClosed) {
-          _events!.add(event);
-        }
-      });
+  void _setupListener() => listener.listen(_events.add);
 
   /// Start a broadcast session.
   Future<Room> broadcast(String broadcastToken) => _connect(broadcastToken);
@@ -69,13 +64,13 @@ class LiveKitService extends Object with Disposable {
   /// Disconnects from the room, ensuring resources are freed.
   Future<void> disconnect() async {
     if (room.connectionState == ConnectionState.connected) {
-      await room.disconnect();
+      await Future.wait([room.disconnect(), removeListener()]);
     }
   }
 
   /// Removes the listener from the room events.
-  void removeListener() {
-    listener.cancelAll();
+  Future<void> removeListener() async {
+    await listener.cancelAll();
     room.removeListener(_setupListener);
   }
 
@@ -85,10 +80,9 @@ class LiveKitService extends Object with Disposable {
   Future<void> dispose() async {
     await disconnect();
     room.removeListener(_setupListener);
-    await _events?.close();
+    await _events.close();
     await listener.cancelAll();
     await room.dispose();
-    _events = null;
     return;
   }
 }

@@ -1,8 +1,10 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 
-class PreStreamModal extends StatelessWidget {
+class PreStreamModal extends HookWidget {
   const PreStreamModal({required this.broadcast, super.key});
+
   final Broadcast broadcast;
 
   @override
@@ -10,10 +12,14 @@ class PreStreamModal extends StatelessWidget {
     return BlocListener<StreamBloc, StreamState>(
       listener: (context, state) {
         state.status.whenOrNull(
-          failed: context.showBroadcastError,
-          joined: () {
-            context.pop();
-            router.push(Routes.stream);
+          failure: (error) {
+            context.read<LiveBloc>().add(const GoFailure());
+            context.showBroadcastError(error);
+          },
+          streamJoined: () {
+            final token = state.broadcast.broadcastToken!;
+            context.watch<LiveKitBloc>().add(LiveKitStream(token));
+            router.popAndPush(Routes.stream);
           },
         );
       },
@@ -59,6 +65,7 @@ class PreStreamModal extends StatelessWidget {
 
 class _TopSection extends StatelessWidget {
   const _TopSection({required this.broadcast});
+
   final Broadcast broadcast;
 
   @override
