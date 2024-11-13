@@ -5,7 +5,6 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/gen/assets.gen.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
@@ -168,7 +167,6 @@ class BibleLocalDatasource {
   }
 
   Future<void> storeBible(List<VerseDto> verses, String translation) {
-    Logger().w('STORING BIBLE');
     return _objectBox.storeBible(verses, translation);
   }
 

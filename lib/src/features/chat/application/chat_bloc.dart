@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
@@ -42,7 +41,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onLoadChatMessages(LoadChatMessages event, Emitter<ChatState> emit) {
-    Logger().e(event.chats);
     emit(state.copyWith(chats: event.chats));
   }
 

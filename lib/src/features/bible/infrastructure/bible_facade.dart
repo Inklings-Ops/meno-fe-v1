@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
@@ -30,7 +29,6 @@ class BibleFacade implements IBibleFacade {
   Future<void> init() async {
     if (!_local.isBibleEmpty) return;
 
-    Logger().w('DOWNLOADING FROM REMOTE');
     final jsonStr = await rootBundle.loadString(Assets.json.kjv);
     final worker = await BibleWorkerIsolate.spawn();
     final verseDtos = await worker.parseBible(jsonStr);

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:logger/logger.dart';
+import 'package:flutter/material.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:path/path.dart' as p;
@@ -57,7 +57,7 @@ class ObjectBoxService {
         );
       });
     } on ObjectBoxException catch (e) {
-      Logger().w(e.toString());
+      debugPrint(e.toString());
     }
   }
 }
