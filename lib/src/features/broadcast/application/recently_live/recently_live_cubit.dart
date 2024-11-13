@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
-
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 
 part 'recently_live_cubit.freezed.dart';
@@ -10,7 +8,6 @@ part 'recently_live_state.dart';
 
 const size = 6;
 
-@lazySingleton
 class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
 
   RecentlyLiveCubit({
@@ -25,7 +22,8 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
     final result = await _facade.getBroadcasts(
       size: size,
       orderBy: 'DESC',
-      sortBy: 'startTime',
+      sortBy: 'endTime',
+      endTimeExist: true,
       page: 1,
     );
 
@@ -46,7 +44,8 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
       final result = await _facade.getBroadcasts(
         size: size,
         orderBy: 'DESC',
-        sortBy: 'startTime',
+        sortBy: 'endTime',
+        endTimeExist: true,
         // Calculates next page
         page: loadedState.broadcasts.length ~/ size + 1,
       );

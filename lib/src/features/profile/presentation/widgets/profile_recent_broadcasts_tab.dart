@@ -82,15 +82,3 @@ class _LoadedList extends StatelessWidget {
     );
   }
 }
-
-// class _LoadingList extends StatelessWidget {
-//   const _LoadingList();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return _BuildListView(
-//       itemCount: 2,
-//       itemBuilder: (context, _) => const MRecentlyLiveListTile(loading: true),
-//     );
-//   }
-// }

@@ -1,13 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 part 'd_now_live_cubit.freezed.dart';
 part 'd_now_live_state.dart';
 
-@lazySingleton
 class DNowLiveCubit extends Cubit<DNowLiveState> {
   DNowLiveCubit({required IDiscoverFacade facade})
       : _facade = facade,

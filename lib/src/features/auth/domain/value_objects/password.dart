@@ -23,7 +23,7 @@ class Password extends ValueObject<String> {
     }
   }
 
-  /// Creates a new `IPassword` object with the specified value and isLogin flag.
+  /// Creates a new `IPassword` object with the specified value and isLogin flag
   const Password._(this.value, {this.isLogin = false});
   /// The password, validated or not.
   @override

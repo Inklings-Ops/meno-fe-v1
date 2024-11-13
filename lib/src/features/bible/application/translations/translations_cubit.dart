@@ -2,14 +2,13 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'translations_cubit.freezed.dart';
+
 part 'translations_state.dart';
 
-@injectable
 class TranslationsCubit extends Cubit<TranslationsState> {
   TranslationsCubit({required IBibleFacade facade})
       : _facade = facade,
@@ -18,20 +17,18 @@ class TranslationsCubit extends Cubit<TranslationsState> {
   final IBibleFacade _facade;
 
   final _downloadProgress = BehaviorSubject<double>.seeded(0);
+
   Stream<double> get downloadProgress => _downloadProgress.stream;
 
   Future<void> changeTranslation(Translation translation) async {
     emit(state.copyWith(selectedTranslation: translation));
   }
 
-  Future<void> getOnlineTranslations() async {
-    final onlineTranslations = await _facade.onlineTranslations;
+  Future<void> getTranslations() async {
+    final allTranslations = await _facade.onlineTranslations();
     final offlineTranslations = state.offlineTranslations;
 
-    final combinedTranslations = [
-      ...onlineTranslations,
-      ...offlineTranslations,
-    ];
+    final combinedTranslations = [...allTranslations, ...offlineTranslations];
 
     final translations = combinedTranslations
         .where((translation) => !offlineTranslations.contains(translation))
@@ -51,16 +48,18 @@ class TranslationsCubit extends Cubit<TranslationsState> {
       cancel: CancelToken()..cancel(),
     );
 
-    emit(state.copyWith(
-      cancelDownload: value,
-      loading: false,
-      downloadProgress: 0,
-    ),);
+    emit(
+      state.copyWith(
+        cancelDownload: value,
+        loading: false,
+        downloadProgress: 0,
+      ),
+    );
   }
 
   Future<void> init() async {
     getOfflineTranslations();
-    await getOnlineTranslations();
+    await getTranslations();
   }
 
   Future<void> downloadTranslation(Translation translation) async {
@@ -78,13 +77,15 @@ class TranslationsCubit extends Cubit<TranslationsState> {
     );
 
     response.fold(
-      (failure) => emit(state.copyWith(
-        downloadOption: some(response),
-         downloadProgress: 0,
-        loading: false,
-        cancelDownload: false,
-        selectedTranslation: previousTranslation,
-      ),),
+      (failure) => emit(
+        state.copyWith(
+          downloadOption: some(response),
+          downloadProgress: 0,
+          loading: false,
+          cancelDownload: false,
+          selectedTranslation: previousTranslation,
+        ),
+      ),
       (success) {
         final offlineTranslations = [...state.offlineTranslations, success];
 
@@ -92,14 +93,16 @@ class TranslationsCubit extends Cubit<TranslationsState> {
             .where((t) => t.abbreviation != success.abbreviation)
             .toList();
 
-        emit(state.copyWith(
-          onlineTranslations: oOnlineTranslations,
-          offlineTranslations: offlineTranslations,
-          selectedTranslation: success,
-          downloadProgress: 0,
-          loading: false,
-          cancelDownload: false,
-        ),);
+        emit(
+          state.copyWith(
+            onlineTranslations: oOnlineTranslations,
+            offlineTranslations: offlineTranslations,
+            selectedTranslation: success,
+            downloadProgress: 0,
+            loading: false,
+            cancelDownload: false,
+          ),
+        );
       },
     );
   }

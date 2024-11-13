@@ -50,9 +50,6 @@ NotificationCategory getCategory(DateTime createdAt) {
 class NotificationsNotifier extends _$NotificationsNotifier {
   @override
   Future<List<Notification?>> build() async {
-    // const AsyncLoading();
-    // final res = await ref.read(notificationFacadeProvider).getNotifications();
-    // return res.fold((l) => [], (r) => r);
     return [];
   }
 

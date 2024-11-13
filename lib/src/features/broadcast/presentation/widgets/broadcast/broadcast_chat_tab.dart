@@ -7,30 +7,42 @@ class BroadcastChatTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final broadcast = context.read<BroadcastBloc>().state.broadcast;
     final scrollController = useScrollController();
-    return BlocBuilder<BroadcastBloc, BroadcastState>(
-      builder: (context, state) => state.status.maybeWhen(
-        orElse: () => const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [MText('Waiting for broadcast to start')],
-        ),
-        started: (_) => LayoutBuilder(
-          builder: (context, constraints) => Column(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: ChatList(controller: scrollController),
-                ),
+
+    return LayoutBuilder(
+      builder: (context, constraints) => Column(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ChatList(
+                broadcast: broadcast,
+                scrollController: scrollController,
               ),
-              SizedBox(
-                height: 52,
-                width: constraints.maxWidth,
-                child: ChatInputContainer(scrollController: scrollController),
-              ),
-            ],
+            ),
           ),
-        ),
+          SafeArea(
+            child: Column(
+              children: [
+                BlocBuilder<ChatBloc, ChatState>(
+                  buildWhen: (p, c) => p.hideWelcomeNote != c.hideWelcomeNote,
+                  builder: (context, state) => !state.hideWelcomeNote
+                      ? const ChatWelcomeWidget()
+                      : const SizedBox(),
+                ),
+                SizedBox(
+                  height: 52,
+                  width: constraints.maxWidth,
+                  child: ChatInputContainer(
+                    broadcast: broadcast,
+                    scrollController: scrollController,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

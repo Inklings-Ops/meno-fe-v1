@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-
 class FolderPage extends HookWidget {
   const FolderPage({required this.folder, super.key});
   final Folder folder;
@@ -120,7 +119,7 @@ class _NotesList extends StatelessWidget {
         orElse: () => const SizedBox(),
         loading: () => const MLoadingIndicator.four(),
         success: (folder) {
-          if (folder.notes == null || folder.notes?.isEmpty == true) {
+          if (folder.notes == null || (folder.notes?.isEmpty ?? false)) {
             return EmptyFolderPageWidget(folder: folder);
           }
 

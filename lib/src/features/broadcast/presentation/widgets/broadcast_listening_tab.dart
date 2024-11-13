@@ -19,10 +19,7 @@ class BroadcastListeningTab extends StatelessWidget {
               const Spacer(),
               ExpandButton(
                 onTap: () => context.showModal<void>(
-                  BlocProvider.value(
-                    value: context.read<LiveParticipantsBloc>(),
-                    child: const BroadcastParticipantsModal(),
-                  ),
+                  const BroadcastParticipantsModal(),
                   isScrollControlled: true,
                   constraints: BoxConstraints(maxHeight: size.height * 0.9),
                 ),
@@ -43,7 +40,7 @@ class _NumberOfParticipants extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<LiveParticipantsBloc, LiveParticipantsState, int>(
+    return BlocSelector<ParticipantsBloc, ParticipantsState, int>(
       selector: (state) => state.numberOfLiveParticipants,
       builder: (context, numberOfParticipants) => Row(
         children: [

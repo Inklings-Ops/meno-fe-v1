@@ -4,7 +4,8 @@ import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-/// A class for mapping between `UserCredentials` and `Profile` domain objects and `UserCredentialDto` and `Profile` DTOs.
+/// A class for mapping between `UserCredentials` and `Profile` domain 
+/// objects and `UserCredentialDto` and `Profile` DTOs.
 @singleton
 class ProfileMapper {
   /// Converts a `ProfileDto` DTO to a `Profile` domain object.

@@ -7,9 +7,12 @@ part 'chat_remote_datasource.g.dart';
 
 @RestApi()
 abstract class ChatRemoteDatasource {
+  /// Creates a new `ChatRemoteDatasource` object.
   @factoryMethod
-  factory ChatRemoteDatasource(Dio dio, {String baseUrl}) =
-      _ChatRemoteDatasource;
+  factory ChatRemoteDatasource(
+    Dio dio, {
+    String baseUrl,
+  }) = _ChatRemoteDatasource;
 
   @GET('/api/v1/chat-messages')
   Future<ChatResponse<ChatListDto>> chatMessages({

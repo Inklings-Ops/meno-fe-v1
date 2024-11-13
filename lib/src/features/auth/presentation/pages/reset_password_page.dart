@@ -18,7 +18,8 @@ class ResetPasswordPage extends HookWidget {
             children: [
               Spaces.verticalXLarge,
               MText(
-                'Please enter the email associated with your account and we will send an email with instructions to reset your password.',
+                '''
+Please enter the email associated with your account and we will send an email with instructions to reset your password.''',
                 maxLines: 3,
                 style: textTheme.bodyRegular,
               ),

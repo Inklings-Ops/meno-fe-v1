@@ -1,7 +1,6 @@
-import 'package:intl/intl.dart';
+import 'package:get_time_ago/get_time_ago.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({required this.chat, super.key});
@@ -11,9 +10,11 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    final bloc = context.watch<ChatBloc>();
-    final createdAt = formatDate(chat.createdAt);
-    final isHost = bloc.state.broadcast.creator!.id == chat.senderId;
+    final broadcast = context.watch<BroadcastBloc>().state.broadcast;
+    final isHost = broadcast.creator!.id == chat.senderId;
+
+    final timeStamp = GetTimeAgo.parse(chat.createdAt);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -66,12 +67,22 @@ class ChatBubble extends StatelessWidget {
                     ),
                     Spaces.horizontalMicro,
                     MText(
-                      createdAt,
+                      timeStamp,
                       style: textTheme.microMedium,
                       color: colors.onBackgroundVariant,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    // Timeago(
+                    //   builder: (_, value) => MText(
+                    //     value,
+                    //     style: textTheme.microMedium,
+                    //     color: colors.onBackgroundVariant,
+                    //     maxLines: 1,
+                    //     overflow: TextOverflow.ellipsis,
+                    //   ),
+                    //   date: chat.createdAt,
+                    // ),
                   ],
                 ),
                 Spaces.verticalMicro,
@@ -106,60 +117,38 @@ class ChatBubble extends StatelessWidget {
   }
 
   Future<dynamic> showUserInfo(BuildContext context) async {
-    // This is not proper. Will fix when data objects and dtos are organized
-    if (chat.senderId == null && chat.sender == null) return;
     return context.showModal(
-      _UserInfoModel(senderId: chat.senderId ?? chat.sender?.id ?? ''),
+      _UserInfoModel(chat: chat),
       isScrollControlled: true,
     );
   }
 }
 
-class _UserInfoModel extends HookWidget {
-  const _UserInfoModel({required this.senderId});
-  final String senderId;
+class _UserInfoModel extends StatelessWidget {
+  const _UserInfoModel({required this.chat});
+  final Chat chat;
+
   @override
   Widget build(BuildContext context) {
-    Future<Profile?> getInfo() {
-      return context.read<ChatBloc>().getSenderInfo(senderId);
-    }
-
-    final future = useMemoized(getInfo);
-    final snapshot = useFuture(future);
-
-    final isLoading = snapshot.connectionState == ConnectionState.waiting;
-    if (isLoading) {
-      return const MUserInfoModal(loading: true);
-    }
-
-    if (!isLoading && snapshot.data == null) {
-      return const MUserInfoModal(error: 'User was not found');
-    }
-    
-    final profile = snapshot.data!;
     return MUserInfoModal(
-      bio: profile.bio?.getOr(),
-      fullName: profile.fullName.getOr(),
-      imageUrl: profile.imageUrl,
+      fullName: chat.fullName,
+      imageUrl: chat.imageUrl,
       onSubscribe: () {},
       onViewAccount: () {},
     );
   }
 }
 
-String formatDate(DateTime date) {
-  final now = DateTime.now();
-  final difference = now.difference(date);
+// String formatDate(DateTime date) {
+//   final difference = DateTime.now().difference(date.toLocal());
 
-  if (difference.inSeconds < 60) {
-    return 'Just now';
-  } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes} minutes ago';
-  } else if (difference.inHours < 24) {
-    return '${difference.inHours} hours ago';
-  } else if (difference.inDays < 7) {
-    return '${difference.inDays} days ago';
-  } else {
-    return DateFormat.jm().format(date);
-  }
-}
+//   if (difference.inMinutes < 60) {
+//     return '${difference.inMinutes} minutes ago';
+//   } else if (difference.inHours < 24) {
+//     return '${difference.inHours} hours ago';
+//   } else if (difference.inDays < 7) {
+//     return '${difference.inDays} days ago';
+//   } else {
+//     return DateFormat.jm().format(date);
+//   }
+// }

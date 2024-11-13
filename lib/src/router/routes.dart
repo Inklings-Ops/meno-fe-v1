@@ -32,6 +32,7 @@ class Routes {
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';
+  static const String endedBroadcast = '/endedBroadcast';
 }
 class ModalPage<T> extends Page<void> {
   const ModalPage({

@@ -10,7 +10,6 @@ import 'package:rxdart/rxdart.dart';
 
 @Injectable(as: IAuthFacade)
 class AuthFacade implements IAuthFacade {
-
   AuthFacade({
     required AuthRemoteDatasource remoteDatasource,
     required AuthLocalDatasource localDatasource,
@@ -214,7 +213,7 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<Either<AuthException, Unit>> switchAccount(UserCredential c) async {
-    if (c.token != null && c.token?.isActive == true) {
+    if ((c.token?.isActive ?? false) == true) {
       _credentialSubject.add(c);
       _tokenSubject.add(c.token);
       await _local.storeAuthCombined(c.toDto);
@@ -223,24 +222,6 @@ class AuthFacade implements IAuthFacade {
       return left(const AuthException.userTokenExpired());
     }
   }
-  // @override
-  // Future<Either<AuthException, Unit>> switchAccount(
-  //   UserCredential credential,
-  // ) async {
-  //   final isExpired = _jwt.isExpired(credential.token!);
-  //   if (isExpired) {
-  //     return left(const AuthException.userTokenExpired());
-  //   } else {
-  //     final dto = credential.toDto;
-
-  //     await _local.storeAuthUserCredentials(dto);
-
-  //     _userController.add(credential);
-  //     _tokenController.add(credential.token);
-
-  //     return right(unit);
-  //   }
-  // }
 
   @override
   Future<Either<AuthException, Unit>> verifyEmailAddress({
@@ -281,19 +262,19 @@ class AuthFacade implements IAuthFacade {
     required Password currentPassword,
     required Password newPassword,
   }) async {
-    // TODO: implement changePassword
+    // (gettoknowdavid): implement changePassword
     throw UnimplementedError();
   }
 
   @override
   Future<Either<AuthException, Unit>> forgotPassword(Email email) async {
-    // TODO: implement forgotPassword
+    // (gettoknowdavid): implement forgotPassword
     throw UnimplementedError();
   }
 
   @override
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false}) {
-    // TODO: implement googleSignIn
+    // (gettoknowdavid): implement googleSignIn
     throw UnimplementedError();
   }
 }

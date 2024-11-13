@@ -7,37 +7,62 @@ class StreamPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useEffect(
-      () {
-        final broadcast = context.read<StreamBloc>().state.broadcast;
-        context.read<LiveParticipantsBloc>().initialize(broadcast);
-        context.read<ChatBloc>().initialize(broadcast);
-        context.read<TimerCubit>()
-          ..set(broadcast.startTime)
-          ..start();
-        context.read<MenoBloc>().update(const MStreaming());
-        return null;
-      },
-      const [],
-    );
+    final socket = context.watch<SocketBloc>();
 
-    return BlocListener<StreamBloc, StreamState>(
-      listenWhen: (previous, current) => previous.status != current.status,
-      listener: (context, state) {
-        state.status.whenOrNull(
-          failed: context.showBroadcastError,
-          ended: (data) {
-            context.read<MenoBloc>().update(const MOffAir());
-            router.go(Routes.home);
-            cleanUp(context);
+    final broadcast = useMemoized(
+      () => context.read<StreamBloc>().state.broadcast,
+    );
+    final id = broadcast.id;
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LiveKitBloc, LiveKitState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              connectionFailed: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                router.pop();
+              },
+              streamConnected: (_) async {
+                await di<BackgroundService>().invokeStreamInBackground();
+                socket.add(SocketJoinBroadcast(id));
+              },
+            );
           },
-          left: () {
-            context.read<MenoBloc>().update(const MOffAir());
-            router.go(Routes.home);
-            cleanUp(context);
+        ),
+        BlocListener<SocketBloc, SocketState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              error: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+                router.pop();
+              },
+              broadcastJoined: () {
+                context.read<SocketBloc>().add(SocketGetMessages(id));
+                context.read<ParticipantsBloc>().add(GetLiveParticipants(id));
+                context.read<TimerCubit>().setAndStart(broadcast.startTime);
+                context.read<LiveBloc>().add(const LiveStarted());
+                context.read<LiveBloc>().add(const GoStreaming());
+                di<BackgroundService>().startBackgroundService();
+              },
+              messagesReceived: (chats) {
+                context.read<ChatBloc>().add(LoadChatMessages(chats));
+              },
+              endedBroadcast: (data) {
+                di<BackgroundService>().endBackgroundTask();
+                context.read<LiveBloc>().add(const LiveReset());
+                router.go(Routes.home);
+              },
+              broadcastLeft: () {
+                di<BackgroundService>().endBackgroundTask();
+                context.read<LiveBloc>().add(const LiveReset());
+                router.go(Routes.home);
+              },
+            );
           },
-        );
-      },
+        ),
+      ],
       child: const LiveScaffold(
         tabs: [
           Tab(text: 'Broadcast'),
@@ -53,13 +78,5 @@ class StreamPage extends HookWidget {
         ],
       ),
     );
-  }
-
-  void cleanUp(BuildContext context) {
-    context.read<StreamBloc>().dispose();
-    context.read<TimerCubit>().dispose();
-    context.read<LiveParticipantsBloc>().close();
-    context.read<LiveKitService>().dispose();
-    context.read<ChatBloc>().close();
   }
 }

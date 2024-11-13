@@ -57,5 +57,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'meno-flutter.appspot.com',
     measurementId: 'G-37XZDSBXWD',
   );
-
 }

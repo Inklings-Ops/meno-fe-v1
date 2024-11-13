@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,7 +8,6 @@ part 'search_bloc.freezed.dart';
 part 'search_event.dart';
 part 'search_state.dart';
 
-@lazySingleton
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc({required IDiscoverFacade facade})
       : _facade = facade,

@@ -1,95 +1,71 @@
 import 'dart:async';
 
-import 'package:dartz/dartz.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 part 'chat_bloc.freezed.dart';
+
+part 'chat_event.dart';
+
 part 'chat_state.dart';
 
-@lazySingleton
-class ChatBloc extends Cubit<ChatState> {
-  ChatBloc({
-    required ISessionContext session,
-    required SocketService socket,
-    required IProfileFacade profileFacade,
-  })  : _session = session,
-        _socket = socket,
-        _profileFacade = profileFacade,
-        super(ChatState.initial()) {
-    _socketStateSub = _socket.stateStream.listen((socketState) {
-      socketState.whenOrNull(
-        getChatMessages: (chats, _) => emit(state.copyWith(
-          chats: chats,
-          loading: false,
-        ),),
-      );
-    });
-    _socketEventSub = _socket.eventsStream.listen((socketEvent) {
-      socketEvent.whenOrNull(
-        newMessage: _updateMessages,
-      );
-    });
-  }
-  final ISessionContext _session;
-  final SocketService _socket;
-  final IProfileFacade _profileFacade;
-  late final StreamSubscription<SocketEvent> _socketEventSub;
-  late final StreamSubscription<SocketState> _socketStateSub;
-
-  Future<void> initialize(Broadcast broadcast) async {
-    emit(state.copyWith(loading: true, broadcast: broadcast));
-    _socket.emit(SocketEvent.getChatMessages(state.broadcast.id.getOr()));
+class ChatBloc extends Bloc<ChatEvent, ChatState> {
+  ChatBloc({required IChatFacade facade})
+      : _facade = facade,
+        super(const ChatState(chats: [])) {
+    on<GetChatMessages>(_onGetChatMessages);
+    on<NewChatReceived>(_onNewChatReceived);
+    on<ChatDeletePressed>(_onChatDeletePressed);
+    on<ChatEditPressed>(_onChatEditPressed);
+    on<ChatReset>(_onChatReset);
+    on<LoadChatMessages>(_onLoadChatMessages);
+    on<ContentChanged>(_onContentChanged);
+    on<ClearChatContent>(_onClearChatContent);
+    on<ToggleShowReactions>(_onToggleReactions);
+    on<HideChatWelcomeNote>(_onHideWelcomeNote);
   }
 
-  Future<void> deleteMessage(Chat chat) async {
-    Logger().f(chat);
+  final IChatFacade _facade;
+
+  Future<void> _onGetChatMessages(
+    GetChatMessages event,
+    Emitter<ChatState> emit,
+  ) async {
+    final failureOrMessages = await _facade.getChatMessages(event.broadcastId);
+    failureOrMessages.fold((failure) {}, (messages) {});
   }
 
-  Future<void> editMessage({
-    required String content,
-    required Uid<Broadcast> broadcastId,
-  }) async {}
-
-  Future<void> getRecentMessages({
-    required Uid<Broadcast> id,
-    int? page,
-    int? size,
-  }) async {}
-
-  Future<void> sendMessage(String content) async {
-    final credential = _session.credential;
-    _socket.emit(
-      SocketEvent.sendChatMessage(
-        senderId: credential!.user.id.getOr(),
-        broadcastId: state.broadcast.id.getOr(),
-        content: content,
-        createdAt: DateTime.now().toIso8601String(),
-      ),
-    );
-  }
-
-  Future<void> _updateMessages(Chat chat) async {
+  void _onNewChatReceived(NewChatReceived event, Emitter<ChatState> emit) {
     final oldMessages = List<Chat?>.from(state.chats);
-    emit(state.copyWith(chats: [chat, ...oldMessages]));
+    emit(state.copyWith(chats: [event.chat, ...oldMessages]));
   }
 
-  Future<Profile?> getSenderInfo(String senderId) async {
-    final fOrP = await _profileFacade.getProfile(senderId);
-    return fOrP.fold((_) => null, (profile) => profile);
+  void _onLoadChatMessages(LoadChatMessages event, Emitter<ChatState> emit) {
+    emit(state.copyWith(chats: event.chats));
   }
 
-  @override
-  Future<void> close() {
-    _socketEventSub.cancel();
-    _socketStateSub.cancel();
-    return super.close();
+  void _onChatDeletePressed(ChatDeletePressed event, Emitter<ChatState> emit) {}
+
+  void _onChatEditPressed(ChatEditPressed event, Emitter<ChatState> emit) {}
+
+  Future<void> _onChatReset(ChatReset event, Emitter<ChatState> emit) async {
+    emit(const ChatState(chats: []));
+  }
+
+  void _onContentChanged(ContentChanged event, Emitter<ChatState> emit) {
+    final hasContent = event.content.isNotEmpty;
+    emit(state.copyWith(content: event.content, hasContent: hasContent));
+  }
+
+  void _onClearChatContent(ClearChatContent event, Emitter<ChatState> emit) {
+    emit(state.copyWith(content: null));
+  }
+
+  void _onToggleReactions(ToggleShowReactions event, Emitter<ChatState> emit) {
+    emit(state.copyWith(showReactions: !state.showReactions));
+  }
+
+  void _onHideWelcomeNote(HideChatWelcomeNote event, Emitter<ChatState> emit) {
+    emit(state.copyWith(hideWelcomeNote: true));
   }
 }

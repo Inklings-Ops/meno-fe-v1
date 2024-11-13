@@ -5,7 +5,10 @@ part 'note_creator.freezed.dart';
 @freezed
 class NoteCreator with _$NoteCreator {
   factory NoteCreator({
-    required String id, required String fullName, required String email, int? dbId,
+    required String id,
+    required String fullName,
+    required String email,
+    int? dbId,
     String? imageUrl,
   }) = _NoteCreator;
 

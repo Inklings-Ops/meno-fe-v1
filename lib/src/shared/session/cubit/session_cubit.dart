@@ -9,6 +9,7 @@ import 'package:meno_fe_v1/src/router/router.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'session_cubit.freezed.dart';
+
 part 'session_state.dart';
 
 @Injectable()
@@ -17,16 +18,19 @@ class SessionCubit extends Cubit<SessionState> with ChangeNotifier {
       : _session = session,
         super(const SessionState.loading());
   final ISessionContext _session;
-  late final StreamSubscription<UserCredential?> _subscription;
+
+  StreamSubscription<UserCredential?>? _subscription;
 
   @override
   Future<void> close() {
-    _subscription.cancel();
+    _subscription?.cancel();
     return super.close();
   }
 
   @PostConstruct(preResolve: true)
   Future<void> init() async {
+    _subscription = null;
+    if (_subscription != null) return;
     _subscription = _session.userChanges.listen((credential) {
       final sessionState = _determineState(_session.isOnboarded, credential);
       emit(sessionState);

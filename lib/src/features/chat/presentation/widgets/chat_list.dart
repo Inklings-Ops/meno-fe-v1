@@ -1,34 +1,57 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({required this.controller, super.key});
-  final ScrollController controller;
+  const ChatList({
+    required this.broadcast,
+    required this.scrollController,
+    super.key,
+  });
+
+  final Broadcast broadcast;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatBloc, ChatState>(
-      buildWhen: (p, c) => p.chats != c.chats,
-      builder: (context, state) => ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: Insets.lg),
-        controller: controller,
-        reverse: true,
-        shrinkWrap: true,
-        separatorBuilder: (context, _) => Spaces.verticalLarge,
-        itemCount: state.chats.length,
-        itemBuilder: (context, i) => _Item(chat: state.chats[i]!),
+    final bloc = context.read<ChatBloc>();
+
+    return BlocListener<SocketBloc, SocketState>(
+      listenWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+        state.whenOrNull(
+          newMessage: (chat) => bloc.add(NewChatReceived(chat)),
+        );
+      },
+      child: BlocBuilder<ChatBloc, ChatState>(
+        buildWhen: (previous, current) => previous.chats != current.chats,
+        builder: (context, state) => ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: Insets.lg),
+          controller: scrollController,
+          reverse: true,
+          shrinkWrap: true,
+          separatorBuilder: (context, _) => Spaces.verticalLarge,
+          itemCount: state.chats.length,
+          itemBuilder: (context, i) => _ChatBubble(
+            broadcast: broadcast,
+            chat: state.chats[i]!,
+          ),
+        ),
       ),
     );
   }
 }
 
-class _Item extends StatelessWidget {
-  const _Item({required this.chat});
+class _ChatBubble extends StatelessWidget {
+  const _ChatBubble({required this.broadcast, required this.chat});
+
+  final Broadcast broadcast;
   final Chat chat;
 
   @override
   Widget build(BuildContext context) {
-    final broadcast = context.select((ChatBloc bloc) => bloc.state.broadcast);
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
@@ -82,12 +105,13 @@ class _Item extends StatelessWidget {
     bool isHost = false,
   }) async {
     final colors = MColorScheme.of(context)!;
+    final bloc = context.read<ChatBloc>();
     return context.showModal(
       isScrollControlled: true,
       MModal(
         title: "User's Comment",
         builder: (context) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Spaces.verticalSmall,
@@ -95,7 +119,7 @@ class _Item extends StatelessWidget {
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
                 title: 'Delete',
-                onTap: () => context.read<ChatBloc>().deleteMessage(chat),
+                onTap: () => bloc.add(ChatDeletePressed(chat)),
                 titleColor: colors.error,
               )
             else

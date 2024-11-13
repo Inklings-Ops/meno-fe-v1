@@ -1,8 +1,31 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
-class LoginPage extends HookWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({
+    super.key,
+    this.implyLeading = false,
+    this.isPasswordOnly = false,
+  });
+  final bool implyLeading;
+  final bool isPasswordOnly;
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => LoginCubit(
+        facade: di<IAuthFacade>(),
+        settingsFacade: di<ISettingsFacade>(),
+      ),
+      child: LoginView(
+        implyLeading: implyLeading,
+        isPasswordOnly: isPasswordOnly,
+      ),
+    );
+  }
+}
+
+class LoginView extends HookWidget {
+  const LoginView({
     super.key,
     this.implyLeading = false,
     this.isPasswordOnly = false,
@@ -12,6 +35,7 @@ class LoginPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final email = context.select(
       (SessionCubit bloc) => bloc.state.whenOrNull(
         partiallyAuthenticated: (user) => user.email.getOr(),
@@ -35,9 +59,9 @@ class LoginPage extends HookWidget {
             (failure) => context.showLoginError(failure),
             (success) {
               context.read<SessionCubit>().init();
-              context.read<AccountBloc>().init();
               context.read<RecentlyLiveCubit>().fetch();
-              context.read<MyProfileCubit>().fetch();
+              // context.read<AccountBloc>().init();
+              // context.read<MyProfileCubit>().fetch();
             },
           ),
         );
@@ -55,18 +79,16 @@ class LoginPage extends HookWidget {
               Spaces.verticalXLarge,
               const MGoogleButton(title: 'Login with Google'),
               const SizedBox(height: 144),
-              BlocBuilder<OnboardingCubit, OnboardingState>(
-                builder: (context, state) => AuthRedirectionText(
-                  title: "Don't have an account?",
-                  buttonText: 'Create an account',
-                  onPressed: () {
-                    if (state == OnboardingState.completed) {
-                      router.push<void>(Routes.register);
-                    } else {
-                      router.replace<void>(Routes.register);
-                    }
-                  },
-                ),
+              AuthRedirectionText(
+                title: "Don't have an account?",
+                buttonText: 'Create an account',
+                onPressed: () {
+                  if (context.read<LoginCubit>().isOnboarded) {
+                    router.push<void>(Routes.register);
+                  } else {
+                    router.replace<void>(Routes.register);
+                  }
+                },
               ),
             ],
           ),

@@ -9,7 +9,9 @@ class ValueFailure<T> with _$ValueFailure<T> {
   const factory ValueFailure.empty() = Empty<T>;
   const factory ValueFailure.invalidEmail() = InvalidEmail<T>;
   const factory ValueFailure.invalidImageType() = InvalidImageType<T>;
-  const factory ValueFailure.invalidPassword(List<PasswordRule?> rules) = InvalidPassword<T>;
+  const factory ValueFailure.invalidPassword(
+    List<PasswordRule?> rules,
+  ) = InvalidPassword<T>;
   const factory ValueFailure.multiline() = Multiline<T>;
   const factory ValueFailure.lengthExceeded(int max) = LengthExceeded<T>;
   const factory ValueFailure.tokenExpired() = TokenExpired<T>;

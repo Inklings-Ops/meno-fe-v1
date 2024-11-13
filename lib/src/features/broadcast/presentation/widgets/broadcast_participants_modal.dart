@@ -7,7 +7,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numberOfLiveParticipants = context.select(
-      (LiveParticipantsBloc bloc) => bloc.state.numberOfLiveParticipants,
+      (ParticipantsBloc bloc) => bloc.state.numberOfLiveParticipants,
     );
     return MModal(
       title: 'Listening ($numberOfLiveParticipants)',
@@ -21,9 +21,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
             hint: 'Search',
           ),
           Spaces.verticalLarge,
-          Expanded(
-            child: BroadcastParticipantList(padding: EdgeInsets.zero),
-          ),
+          Expanded(child: BroadcastParticipantList(padding: EdgeInsets.zero)),
         ],
       ),
     );

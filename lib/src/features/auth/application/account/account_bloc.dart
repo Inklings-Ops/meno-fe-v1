@@ -1,21 +1,26 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 part 'account_bloc.freezed.dart';
 part 'account_event.dart';
 part 'account_state.dart';
 
-@lazySingleton
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
   AccountBloc({required IAuthFacade facade})
       : _facade = facade,
         super(const _AccountInitial()) {
     on<AccountInitialized>(_onInitialize);
     on<AccountSwitchRequested>(_onSwitchAccount);
+    _subscription = _facade.userChanges.listen(
+      (_) => add(const AccountInitialized()),
+    );
   }
   final IAuthFacade _facade;
+  late final StreamSubscription<UserCredential?> _subscription;
+
   void init() => add(const AccountInitialized());
 
   Future<void> _onInitialize(
@@ -53,5 +58,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Future<List<UserCredential>> _getAllCredentials() async {
     final credentialsMap = await _facade.allCredentials;
     return credentialsMap?.values.toList() ?? [];
+  }
+
+  @override
+  Future<void> close() {
+    _subscription.cancel();
+    return super.close();
   }
 }

@@ -4,136 +4,60 @@ import 'package:meno_fe_v1/src/services/services.dart';
 
 class MenoBlocProvider extends StatelessWidget {
   const MenoBlocProvider({required this.child, super.key});
+
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (ctx) => di<SessionCubit>()),
+        BlocProvider(create: (_) => di<SessionCubit>()),
+        BlocProvider(create: (_) => SocketBloc()),
+        BlocProvider(create: (_) => LiveKitBloc(liveKit: di<LiveKitService>())),
+        BlocProvider(create: (_) => LiveBloc(liveKit: di<LiveKitService>())),
         BlocProvider(
-          create: (ctx) => NetworkCubit(facade: ctx.read<INetworkFacade>()),
+          create: (_) => OnboardingCubit(facade: di<ISettingsFacade>()),
         ),
+        BlocProvider(create: (_) => AccountBloc(facade: di<IAuthFacade>())),
+        BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),
         BlocProvider(
-          create: (ctx) => OnboardingCubit(facade: ctx.read<ISettingsFacade>()),
-        ),
-        BlocProvider(create: (ctx) => TimerCubit()),
-        BlocProvider(
-          create: (ctx) => BibleBloc(facade: ctx.read<IBibleFacade>())..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => ScripturePickerCubit(
-            facade: ctx.read<IBibleFacade>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => TranslationsCubit(
-            facade: ctx.read<IBibleFacade>(),
-          )..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => VersesCubit(facade: ctx.read<IBibleFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => AccountBloc(facade: ctx.read<IAuthFacade>())..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => LoginCubit(
-            facade: ctx.read<IAuthFacade>(),
-            settingsFacade: ctx.read<ISettingsFacade>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => RegisterCubit(facade: ctx.read<IAuthFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => MyProfileCubit(facade: ctx.read<IProfileFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => ProfileFormCubit(
-            facade: ctx.read<IProfileFacade>(),
-            media: ctx.read<MediaService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => MenoBloc(
-            liveKit: ctx.read<LiveKitService>(),
-            socket: ctx.read<SocketService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (ctx) => LiveBroadcastsBloc(
-            facade: ctx.read<IBroadcastFacade>(),
-            socket: ctx.read<SocketService>(),
-          )..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => NoteFormCubit(facade: ctx.read<INoteFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => RecentlyLiveCubit(
-            facade: ctx.read<IBroadcastFacade>(),
+          create: (_) => RecentlyLiveCubit(
+            facade: di<IBroadcastFacade>(),
           )..fetch(),
         ),
+        BlocProvider(create: (_) => NoteFormCubit(facade: di<INoteFacade>())),
         BlocProvider(
-          create: (ctx) => SearchBloc(facade: ctx.read<IDiscoverFacade>()),
+          create: (_) => NotesBloc(facade: di<INoteFacade>())..init(),
         ),
         BlocProvider(
-          create: (ctx) => FolderCubit(
-            facade: ctx.read<INoteFacade>(),
+          create: (_) => FolderCubit(
+            facade: di<INoteFacade>(),
             folder: Folder.empty(),
           ),
         ),
+        BlocProvider(create: (_) => FolderFormCubit(facade: di<INoteFacade>())),
         BlocProvider(
-          create: (ctx) => DAllCubit(
-            facade: ctx.read<IDiscoverFacade>(),
-          )..init(),
+          create: (_) => FolderListBloc(facade: di<INoteFacade>())..init(),
         ),
         BlocProvider(
-          create: (ctx) => DNowLiveCubit(
-            facade: ctx.read<IDiscoverFacade>(),
-          )..fetch(1),
+          create: (_) => BroadcastBloc(facade: di<IBroadcastFacade>()),
+        ),
+        BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),
+        BlocProvider(create: (_) => ChatBloc(facade: di<IChatFacade>())),
+        BlocProvider(
+          create: (_) => ParticipantsBloc(facade: di<IBroadcastFacade>()),
+        ),
+        BlocProvider(create: (_) => TimerCubit()),
+        BlocProvider(
+          create: (_) => BibleBloc(facade: di<IBibleFacade>())..init(),
         ),
         BlocProvider(
-          create: (ctx) => DRecentlyLiveCubit(
-            facade: ctx.read<IDiscoverFacade>(),
-          )..fetch(1),
+          create: (_) => ScripturePickerCubit(facade: di<IBibleFacade>()),
         ),
         BlocProvider(
-          create: (ctx) => FilterBloc(
-            facade: ctx.read<IDiscoverFacade>(),
-          )..init(),
+          create: (_) => TranslationsCubit(facade: di<IBibleFacade>())..init(),
         ),
-        BlocProvider(
-          create: (ctx) => NotesBloc(
-            facade: ctx.read<INoteFacade>(),
-          )..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => FolderFormCubit(facade: ctx.read<INoteFacade>()),
-        ),
-        BlocProvider(
-          create: (ctx) => FolderListBloc(
-            facade: ctx.read<INoteFacade>(),
-          )..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => FolderListBloc(
-            facade: ctx.read<INoteFacade>(),
-          )..init(),
-        ),
-        BlocProvider(
-          create: (ctx) => StreamBloc(
-            facade: ctx.read<IBroadcastFacade>(),
-            liveKit: ctx.read<LiveKitService>(),
-            socket: di<SocketService>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => OthersProfileCubit(
-            facade: context.read<IProfileFacade>(),
-          ),
-        ),
+        BlocProvider(create: (_) => VersesCubit(facade: di<IBibleFacade>())),
       ],
       child: child,
     );

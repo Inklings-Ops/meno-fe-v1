@@ -82,6 +82,7 @@ extension SessionStateX on SessionState {
         Routes.othersProfile,
         Routes.recentlyLive,
         Routes.settings,
+        Routes.endedBroadcast,
       ],
     );
   }

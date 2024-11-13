@@ -114,7 +114,7 @@ class MBadge extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 20),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           color: MColorScheme.of(context)?.errorContainer,
-          valueColor: MColorScheme.of(context)?.onError,
+          valueColor: MColorScheme.of(context)?.onErrorContainer,
         );
 
   /// Creates a new badge with a customizable value.
@@ -217,6 +217,7 @@ class MBadge extends StatelessWidget {
   /// Whether to show a border around the badge.
   final bool showBorder;
 
+  /// Loading boolean
   final bool loading;
 
   @override

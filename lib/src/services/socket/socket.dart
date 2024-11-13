@@ -1,5 +1,2 @@
-export 'event_names.dart';
-export 'socket_event.dart';
+export 'bloc/socket_bloc.dart';
 export 'socket_response.dart';
-export 'socket_service.dart';
-export 'socket_state.dart';

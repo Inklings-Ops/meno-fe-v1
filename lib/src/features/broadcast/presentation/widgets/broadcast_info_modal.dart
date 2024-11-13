@@ -65,7 +65,7 @@ class BroadcastInfoModal extends StatelessWidget {
             title: 'Copy Link',
           ),
           if (!isStreaming)
-            BlocBuilder<MenoBloc, MenoState>(
+            BlocBuilder<LiveBloc, LiveState>(
               builder: (context, state) => state.maybeWhen(
                 live: () => const SizedBox(),
                 reconnecting: () => const SizedBox(),
@@ -74,11 +74,7 @@ class BroadcastInfoModal extends StatelessWidget {
                   leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete Broadcast',
                   titleColor: colors.error,
-                  onTap: () {
-                    context
-                      ..read<BroadcastBloc>().deleteBroadcast(broadcast.id)
-                      ..pop();
-                  },
+                  onTap: () {},
                 ),
               ),
             ),

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 
@@ -11,7 +10,6 @@ part 'notes_bloc.freezed.dart';
 part 'notes_event.dart';
 part 'notes_state.dart';
 
-@lazySingleton
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
   NotesBloc({required INoteFacade facade})
       : _facade = facade,

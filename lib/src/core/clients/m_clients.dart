@@ -25,11 +25,7 @@ class MClients {
     // Add interceptors to handle authentication token and logging
     dio.interceptors.addAll([
       AuthTokenInterceptor(),
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false, // Prevent logging response headers
-      ),
+      LogInterceptor(responseHeader: false),
     ]);
 
     return dio;

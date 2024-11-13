@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -25,94 +24,64 @@ final router = GoRouter(
   redirect: _handleRedirect,
   routes: [
     GoRoute(
+      name: Routes.broadcast,
       path: Routes.broadcast,
-      builder: (context, state) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => BroadcastBloc(
-              broadcast: state.extra! as Broadcast,
-              facade: context.read<IBroadcastFacade>(),
-              liveKit: context.read<LiveKitService>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => LiveParticipantsBloc(
-              socket: context.read<SocketService>(),
-              facade: context.read<IBroadcastFacade>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => ChatBloc(
-              profileFacade: context.read<IProfileFacade>(),
-              session: context.read<ISessionContext>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
-        ],
-        child: const BroadcastPage(),
-      ),
+      builder: (context, state) => const BroadcastPage(),
     ),
     GoRoute(
+      name: Routes.stream,
       path: Routes.stream,
-      builder: (context, state) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => LiveParticipantsBloc(
-              socket: context.read<SocketService>(),
-              facade: context.read<IBroadcastFacade>(),
-            ),
-          ),
-          BlocProvider(
-            create: (context) => ChatBloc(
-              profileFacade: context.read<IProfileFacade>(),
-              session: context.read<ISessionContext>(),
-              socket: context.read<SocketService>(),
-            ),
-          ),
-        ],
-        child: const StreamPage(),
-      ),
+      builder: (context, state) => const StreamPage(),
     ),
     GoRoute(
+      name: Routes.createBroadcast,
       path: Routes.createBroadcast,
-      builder: (context, state) => BlocProvider(
-        create: (context) => BroadcastFormCubit(
-          facade: context.read<IBroadcastFacade>(),
-          mediaService: context.read<MediaService>(),
-        ),
-        child: const CreateBroadcastPage(),
-      ),
+      builder: (context, state) => const CreateBroadcastPage(),
     ),
     GoRoute(
+      name: Routes.createNewPassword,
       path: Routes.createNewPassword,
       builder: (context, state) => const CreateNewPasswordPage(),
     ),
     GoRoute(
+      name: Routes.details,
       path: Routes.details,
-      builder: (context, state) => DetailsPage(
-        broadcast: state.extra! as Broadcast,
-      ),
+      builder: (_, state) => DetailsPage(broadcast: state.extra! as Broadcast),
     ),
     GoRoute(
+      name: Routes.emailVerification,
       path: Routes.emailVerification,
       builder: (context, state) => const EmailVerificationPage(),
     ),
     GoRoute(
+      name: Routes.folder,
       path: Routes.folder,
       builder: (context, state) {
         final folder = state.extra! as Folder;
-        return BlocProvider(
-          create: (_) => di<FolderCubit>(param1: folder),
+        return BlocProvider.value(
+          value: FolderCubit(facade: di<INoteFacade>(), folder: folder),
           child: FolderPage(folder: folder),
         );
       },
     ),
     GoRoute(
+      name: Routes.loading,
       path: Routes.loading,
       builder: (context, state) => const LoadingPage(),
     ),
     GoRoute(
+      name: Routes.endedBroadcast,
+      path: Routes.endedBroadcast,
+      onExit: (context, state) {
+        context.read<TimerCubit>().dispose();
+        context.read<ParticipantsBloc>().add(const ParticipantsReset());
+        context.read<BroadcastBloc>().add(const BroadcastReset());
+        return true;
+      },
+      builder: (context, state) => const EndedBroadcastPage(),
+    ),
+    GoRoute(
+      name: Routes.login,
       path: Routes.login,
       builder: (context, state) {
         final q = state.uri.queryParameters;
@@ -125,28 +94,33 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.noteEditor,
       path: Routes.noteEditor,
       builder: (context, state) {
         final note = state.extra as Note?;
         return BlocProvider.value(
-          value: di<NoteFormCubit>(param1: note),
+          value: NoteFormCubit(facade: di<INoteFacade>(), initialNote: note),
           child: NoteEditorPage(note: note),
         );
       },
     ),
     GoRoute(
+      name: Routes.notifications,
       path: Routes.notifications,
       builder: (context, state) => const NotificationsPage(),
     ),
     GoRoute(
+      name: Routes.onboarding,
       path: Routes.onboarding,
       builder: (context, state) => const OnboardingPage(),
     ),
     GoRoute(
+      name: Routes.recentlyLive,
       path: Routes.recentlyLive,
       builder: (context, state) => const RecentlyLivePage(),
     ),
     GoRoute(
+      name: Routes.register,
       path: Routes.register,
       builder: (context, state) {
         final q = state.uri.queryParameters;
@@ -155,23 +129,24 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      name: Routes.resetPwdOtp,
       path: Routes.resetPwdOtp,
       builder: (context, state) => const ResetPasswordOtpVerificationPage(),
     ),
     GoRoute(
+      name: Routes.resetPassword,
       path: Routes.resetPassword,
       builder: (context, state) => const ResetPasswordPage(),
     ),
     GoRoute(
+      name: Routes.resetPwdSuccess,
       path: Routes.resetPwdSuccess,
       builder: (context, state) => const ResetPasswordSuccessPage(),
     ),
     GoRoute(
+      name: Routes.othersProfile,
       path: Routes.othersProfile,
-      builder: (context, state) {
-        context.read<OthersProfileCubit>().fetch(state.extra! as String);
-        return const OthersProfilePage();
-      },
+      builder: (_, state) => OthersProfilePage(userId: state.extra! as String),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MLayoutPage(
@@ -182,6 +157,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.home,
               path: Routes.home,
               builder: (context, state) => const HomePage(),
             ),
@@ -190,6 +166,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.discover,
               path: Routes.discover,
               builder: (context, state) => const DiscoverPage(),
             ),
@@ -198,6 +175,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.notes,
               path: Routes.notes,
               builder: (context, state) => const NotesPage(),
             ),
@@ -206,6 +184,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.myProfile,
               path: Routes.myProfile,
               builder: (context, state) => const MyProfilePage(),
             ),
@@ -214,6 +193,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.webCreateBroadcast,
               path: Routes.webCreateBroadcast,
               builder: (context, state) => const CreateBroadcastPage(),
             ),
@@ -222,6 +202,7 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              name: Routes.settings,
               path: Routes.settings,
               builder: (context, state) => const SettingsPage(),
             ),
@@ -231,3 +212,10 @@ final router = GoRouter(
     ),
   ],
 );
+
+extension GoRouteX on GoRouter {
+  void popAndPush(String location) {
+    pop();
+    push(location);
+  }
+}

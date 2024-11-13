@@ -23,7 +23,7 @@ class StreamTab extends HookWidget {
                 children: [
                   _CreatorName(),
                   Spaces.horizontalSmall,
-                  BroadcastStatusWidget(isStreaming: true),
+                  BroadcastStatusWidget(),
                 ],
               ),
               Spaces.verticalXLarge,

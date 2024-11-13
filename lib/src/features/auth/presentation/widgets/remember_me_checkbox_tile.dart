@@ -1,5 +1,3 @@
-
-
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
@@ -8,7 +6,7 @@ class RememberMeCheckboxTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context)!;
     return BlocSelector<RegisterCubit, RegisterState, bool>(
       selector: (state) => state.rememberMe,
       builder: (context, state) => Row(

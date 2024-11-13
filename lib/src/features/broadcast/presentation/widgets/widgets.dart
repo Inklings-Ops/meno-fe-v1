@@ -10,6 +10,7 @@ export 'broadcast_participants_modal.dart';
 export 'broadcast_status_widget.dart';
 export 'broadcast_title.dart';
 export 'create_broadcast/create_broadcast.dart';
+export 'ended_broadcast/ended_broadcast.dart';
 export 'home/home.dart';
 export 'live_bible_tab.dart';
 export 'live_scaffold.dart';

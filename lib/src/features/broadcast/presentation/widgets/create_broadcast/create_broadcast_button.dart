@@ -7,6 +7,8 @@ class CreateBroadcastButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<BroadcastFormCubit>();
+    final live = context.watch<LiveBloc>();
+    final isLoading = live.state is LiveLoading;
     return Container(
       height: 77,
       padding: const EdgeInsets.symmetric(horizontal: Insets.sm),
@@ -16,12 +18,13 @@ class CreateBroadcastButton extends StatelessWidget {
         children: [
           MPrimaryButton(
             label: 'Start Broadcast',
-            loading: bloc.state.loading,
-            disabled: bloc.state.loading || !bloc.state.isFormValid,
+            loading: isLoading,
+            disabled: isLoading || !bloc.state.isFormValid,
             onPressed: () {
               context.clearSnackBars();
               FocusScope.of(context).unfocus();
               if (Form.of(context).validate()) {
+                live.add(const GoLoading());
                 bloc.create();
               }
             },

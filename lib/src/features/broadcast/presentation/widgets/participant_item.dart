@@ -16,8 +16,8 @@ class ParticipantItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     final hasUser = participant != null;
-    final isCohost = participant?.role == Role.cohost;
-    final isHost = participant?.role == Role.host;
+    final isCohost = [Role.cohost, Role.COHOST].contains(participant?.role);
+    final isHost = [Role.host, Role.HOST].contains(participant?.role);
     return InkWell(
       onTap: onTap,
       child: SizedBox.square(
@@ -29,30 +29,21 @@ class ParticipantItem extends StatelessWidget {
               isForAddCohost: isForAddCohost,
             ),
             Spaces.verticalSmall,
-            SizedBox(
-              height: Insets.lg,
-              child: MText(
-                hasUser ? participant!.fullName : 'Add Co-host',
-                style: textTheme.microMedium?.copyWith(height: 1),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                color: hasUser ? null : MColor.grey50,
-                textAlign: TextAlign.center,
-              ),
+            MText(
+              hasUser ? participant!.fullName : 'Add Co-host',
+              style: textTheme.microMedium?.copyWith(height: 1),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              color: hasUser ? null : MColor.grey50,
+              textAlign: TextAlign.center,
             ),
             if (isCohost) ...[
               Spaces.verticalMicro,
-              SizedBox(
-                height: Insets.md,
-                child: _CoHostTag(participantId: participant!.id),
-              ),
+              _CoHostTag(participantId: participant!.id),
             ],
             if (isHost) ...[
               Spaces.verticalMicro,
-              SizedBox(
-                height: Insets.md,
-                child: _HostTag(participantId: participant!.id),
-              ),
+              _HostTag(participantId: participant!.id),
             ],
           ],
         ),

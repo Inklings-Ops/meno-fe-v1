@@ -1,6 +1,9 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
+import 'package:meno_fe_v1/src/services/permissions_service.dart';
+import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class MLayoutPage extends HookWidget {
   const MLayoutPage({
@@ -14,13 +17,23 @@ class MLayoutPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final firebaseMessaging = FirebaseMessaging.instance;
-    final initialMessage = useState<String?>(null);
+    final initMessage = useState<String?>(null);
+
+    void onInitialMessage(RemoteMessage? value) {
+      initMessage.value = value?.data.toString();
+    }
 
     useEffect(
       () {
-        firebaseMessaging
-            .getInitialMessage()
-            .then((value) => initialMessage.value = value?.data.toString());
+        final token = context.select<SessionCubit, Token?>(
+          (bloc) => bloc.state.whenOrNull(
+            authenticated: (user, token) => token,
+          ),
+        );
+        context.read<SocketBloc>().add(SocketConnect(token!));
+        di<PermissionsService>().requestNotificationsPermissions();
+        di<IBibleFacade>().init();
+        firebaseMessaging.getInitialMessage().then(onInitialMessage);
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
           router.push(Routes.notifications);
@@ -28,7 +41,7 @@ class MLayoutPage extends HookWidget {
         handleFCMToken();
         return null;
       },
-      [firebaseMessaging, initialMessage],
+      [firebaseMessaging, initMessage],
     );
 
     final index = shell.currentIndex;
@@ -48,23 +61,14 @@ class MLayoutPage extends HookWidget {
 
     return MultiBlocListener(
       listeners: [
-        BlocListener<SessionCubit, SessionState>(
+        BlocListener<LiveKitBloc, LiveKitState>(
           listener: (context, state) {
-            state.whenOrNull(
-              authenticated: (user, token) {
-                context.read<MyProfileCubit>().fetch();
-                context.read<LiveBroadcastsBloc>().init();
-                context.read<RecentlyLiveCubit>().fetch();
-              },
-            );
+            state.whenOrNull(connectionFailed: context.showErrorSnackBar);
           },
         ),
-        BlocListener<StreamBloc, StreamState>(
+        BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
-            state.status.whenOrNull(
-              ended: (data) {},
-              left: () => context.read<StreamBloc>().dispose(),
-            );
+            state.whenOrNull(error: context.showErrorSnackBar);
           },
         ),
       ],

@@ -1,8 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-
-
 class RecentlyLivePage extends HookWidget {
   const RecentlyLivePage({super.key});
 
@@ -12,15 +10,18 @@ class RecentlyLivePage extends HookWidget {
     final bloc = context.read<RecentlyLiveCubit>();
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    useEffect(() {
-      scrollController.addListener(() {
-        if (scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 300) {
-          bloc.fetchMore();
-        }
-      });
-      return scrollController.dispose;
-    }, const [],);
+    useEffect(
+      () {
+        scrollController.addListener(() {
+          if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 300) {
+            bloc.fetchMore();
+          }
+        });
+        return scrollController.dispose;
+      },
+      const [],
+    );
 
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Recently Live', centerTitle: true),

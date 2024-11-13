@@ -5,6 +5,7 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/gen/assets.gen.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
@@ -20,6 +21,16 @@ class BibleLocalDatasource {
   Store get _store => _objectBox.store;
 
   bool get isBibleEmpty => _objectBox.isBibleEmpty;
+
+  Map<String, String> get translations => {
+        'kjv': 'King James Version',
+        'amp': 'Amplified Bible',
+        'asv': 'American Standard Version',
+        'esv': 'English Standard Version',
+        'niv': 'New International Version',
+        'nkjv': 'New King James Version',
+        'ylt': "Young's Literal Translation",
+      };
 
   Map<String, int> get booksToChaptersMap => {
         'Genesis': 50,
@@ -181,7 +192,7 @@ class BibleLocalDatasource {
 
   static Future<List<VerseDto>> _loadJSONAsset(RootIsolateToken token) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-    final jsonStr = await rootBundle.loadString('assets/bibles/kjv.json');
+    final jsonStr = await rootBundle.loadString(Assets.json.kjv);
 
     final decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
     final data = decodedJson['data'] as List<dynamic>;

@@ -73,7 +73,7 @@ class NoteListFailureWidget extends StatelessWidget {
       children: [
         const SizedBox(height: 72),
         MText(
-          'An error occurred while retrieving the notes. Please, reload to try again?',
+          'An error occurred while retrieving the notes. Please, try again?',
           style: textTheme.bodyRegular,
           textAlign: TextAlign.center,
         ),

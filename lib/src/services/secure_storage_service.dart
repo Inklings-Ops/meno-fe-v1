@@ -25,12 +25,14 @@ class SecureStorageService {
 
   /// Checks whether the specified key exists in the secure storage.
   ///
-  /// Returns a `Future` that completes to `true` if the key exists, or `false` otherwise.
+  /// Returns a `Future` that completes to `true` if the key exists, or 
+  /// `false` otherwise.
   Future<bool> hasKey(String key) => _storage.containsKey(key: key);
 
   /// Reads the value of the specified key from the secure storage.
   ///
-  /// Returns a `Future` that completes to the value of the key, or `null` if the key does not exist.
+  /// Returns a `Future` that completes to the value of the key, or `null` if 
+  /// the key does not exist.
   Future<String?> read(String key) => _storage.read(key: key);
 
   /// Writes the specified value to the secure storage under the specified key.

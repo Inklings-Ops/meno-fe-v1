@@ -3,6 +3,7 @@ import 'package:meno_fe_v1/src/features/broadcast/domain/entities/role.dart';
 
 part 'broadcast_participant.freezed.dart';
 
+@immutable
 @freezed
 class BroadcastParticipant with _$BroadcastParticipant {
   const factory BroadcastParticipant({
@@ -21,4 +22,13 @@ class BroadcastParticipant with _$BroadcastParticipant {
   factory BroadcastParticipant.empty() {
     return const BroadcastParticipant(id: '', fullName: '');
   }
+
+  const BroadcastParticipant._();
+
+  @override
+  bool operator ==(Object other) =>
+      other is BroadcastParticipant && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
