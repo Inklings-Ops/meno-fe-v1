@@ -126,20 +126,28 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  Future<List<Translation>> get onlineTranslations async {
-    final isConnected = await _network.isConnected;
+  Future<List<Translation>> onlineTranslations({
+    bool retrieveOnline = false,
+  }) async {
+    if (retrieveOnline) {
+      final isConnected = await _network.isConnected;
 
-    try {
-      if (isConnected) {
-        final response = await _remote.getTranslations();
-        final translations = response.data.map((e) => e.toDomain).toList();
-        return translations;
-      } else {
-        return [];
+      try {
+        if (isConnected) {
+          final response = await _remote.getTranslations();
+          final translations = response.data.map((e) => e.toDomain).toList();
+          return translations;
+        } else {
+          return [];
+        }
+      } on Exception catch (e) {
+        throw Exception(e.toString());
       }
-    } on Exception catch (e) {
-      throw Exception(e.toString());
     }
+
+    return _local.translations.entries
+        .map((e) => Translation(name: e.key, abbreviation: e.value))
+        .toList();
   }
 
   @override

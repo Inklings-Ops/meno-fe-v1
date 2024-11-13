@@ -22,6 +22,16 @@ class BibleLocalDatasource {
 
   bool get isBibleEmpty => _objectBox.isBibleEmpty;
 
+  Map<String, String> get translations => {
+        'kjv': 'King James Version',
+        'amp': 'Amplified Bible',
+        'asv': 'American Standard Version',
+        'esv': 'English Standard Version',
+        'niv': 'New International Version',
+        'nkjv': 'New King James Version',
+        'ylt': "Young's Literal Translation",
+      };
+
   Map<String, int> get booksToChaptersMap => {
         'Genesis': 50,
         'Exodus': 40,

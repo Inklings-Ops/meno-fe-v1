@@ -55,7 +55,7 @@ class MenoBlocProvider extends StatelessWidget {
           create: (_) => ScripturePickerCubit(facade: di<IBibleFacade>()),
         ),
         BlocProvider(
-          create: (_) => TranslationsCubit(facade: di<IBibleFacade>()),
+          create: (_) => TranslationsCubit(facade: di<IBibleFacade>())..init(),
         ),
         BlocProvider(create: (_) => VersesCubit(facade: di<IBibleFacade>())),
       ],
