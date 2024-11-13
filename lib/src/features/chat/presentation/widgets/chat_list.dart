@@ -2,7 +2,7 @@
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatList extends StatelessWidget {
   const ChatList({
@@ -17,35 +17,26 @@ class ChatList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ChatBloc>();
+
     return BlocListener<SocketBloc, SocketState>(
+      listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
         state.whenOrNull(
           newMessage: (chat) => bloc.add(NewChatReceived(chat)),
-          messagesReceived: (chats) => bloc.add(LoadChatMessages(chats)),
         );
       },
       child: BlocBuilder<ChatBloc, ChatState>(
-        builder: (context, state) => state.when(
-          initial: () => const SizedBox(),
-          loadInProgress: () => Center(child: MLoadingIndicator.box()),
-          success: (chats) => ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: Insets.lg),
-            controller: scrollController,
-            reverse: true,
-            shrinkWrap: true,
-            separatorBuilder: (context, _) => Spaces.verticalLarge,
-            itemCount: chats.length,
-            itemBuilder: (context, i) => _ChatBubble(
-              broadcast: broadcast,
-              chat: chats[i]!,
-            ),
-          ),
-          failed: (error) => Center(
-            child: Column(
-              children: [
-                Text(error),
-              ],
-            ),
+        buildWhen: (previous, current) => previous.chats != current.chats,
+        builder: (context, state) => ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: Insets.lg),
+          controller: scrollController,
+          reverse: true,
+          shrinkWrap: true,
+          separatorBuilder: (context, _) => Spaces.verticalLarge,
+          itemCount: state.chats.length,
+          itemBuilder: (context, i) => _ChatBubble(
+            broadcast: broadcast,
+            chat: state.chats[i]!,
           ),
         ),
       ),
@@ -120,7 +111,7 @@ class _ChatBubble extends StatelessWidget {
       MModal(
         title: "User's Comment",
         builder: (context) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Spaces.verticalSmall,

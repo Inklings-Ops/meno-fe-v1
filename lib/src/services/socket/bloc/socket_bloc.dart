@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -171,7 +172,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           add(SocketUpdateState(SocketError(response.error!)));
         } else {
           final dtos = response.data!.chatMessages;
+          Logger().e(dtos);
           final chatMessages = dtos.map((chat) => chat?.toDomain).toList();
+          Logger().e(chatMessages);
           add(SocketUpdateState(SocketMessagesReceived(chatMessages)));
         }
       },

@@ -1,6 +1,6 @@
+import 'package:get_time_ago/get_time_ago.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:timeago_flutter/timeago_flutter.dart';
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({required this.chat, super.key});
@@ -12,7 +12,9 @@ class ChatBubble extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
     final broadcast = context.watch<BroadcastBloc>().state.broadcast;
     final isHost = broadcast.creator!.id == chat.senderId;
-    
+
+    final timeStamp = GetTimeAgo.parse(chat.createdAt);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -64,16 +66,23 @@ class ChatBubble extends StatelessWidget {
                       color: colors.onBackgroundVariant,
                     ),
                     Spaces.horizontalMicro,
-                    Timeago(
-                      builder: (_, value) => MText(
-                        value,
-                        style: textTheme.microMedium,
-                        color: colors.onBackgroundVariant,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      date: chat.createdAt,
+                    MText(
+                      timeStamp,
+                      style: textTheme.microMedium,
+                      color: colors.onBackgroundVariant,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    // Timeago(
+                    //   builder: (_, value) => MText(
+                    //     value,
+                    //     style: textTheme.microMedium,
+                    //     color: colors.onBackgroundVariant,
+                    //     maxLines: 1,
+                    //     overflow: TextOverflow.ellipsis,
+                    //   ),
+                    //   date: chat.createdAt,
+                    // ),
                   ],
                 ),
                 Spaces.verticalMicro,

@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
@@ -60,48 +59,16 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    final isStreaming = context.select<LiveBloc, bool>((bloc) {
-      return bloc.state.maybeWhen(orElse: () => false, streaming: () => true);
-    });
-
     return MultiBlocListener(
       listeners: [
+        BlocListener<LiveKitBloc, LiveKitState>(
+          listener: (context, state) {
+            state.whenOrNull(connectionFailed: context.showErrorSnackBar);
+          },
+        ),
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
-            state.whenOrNull(
-              broadcastEnded: () {
-                Logger().e('FROM LAYOUTTTTTTTT');
-                // context.read<TimerCubit>().stop();
-                // context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-                // context.read<ChatBloc>().add(const ChatReset());
-                // context.read<LiveBloc>().add(const LiveReset());
-                // if (router.state?.path == Routes.broadcast) {
-                //   router.go(Routes.endedBroadcast);
-                // } else {
-                //   router.push(Routes.endedBroadcast);
-                // }
-              },
-              endedBroadcast: (data) {
-                if (!isStreaming) return;
-                context.read<LiveBloc>().add(const LiveReset());
-                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-                context.read<ParticipantsBloc>().add(const ParticipantsReset());
-                context.read<ChatBloc>().add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                context.read<TimerCubit>().dispose();
-                router.go(Routes.home);
-                context.showErrorSnackBar(data.reason.message);
-              },
-              broadcastLeft: () {
-                context.read<LiveBloc>().add(const LiveReset());
-                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-                context.read<ParticipantsBloc>().add(const ParticipantsReset());
-                context.read<ChatBloc>().add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                context.read<TimerCubit>().dispose();
-                router.go(Routes.home);
-              },
-            );
+            state.whenOrNull(error: context.showErrorSnackBar);
           },
         ),
       ],

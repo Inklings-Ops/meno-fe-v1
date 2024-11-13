@@ -15,4 +15,12 @@ class ChatEvent with _$ChatEvent {
   const factory ChatEvent.chatEditPressed(Chat chat) = ChatEditPressed;
 
   const factory ChatEvent.reset() = ChatReset;
+
+  const factory ChatEvent.contentChanged(String content) = ContentChanged;
+
+  const factory ChatEvent.clearChatContent() = ClearChatContent;
+
+  const factory ChatEvent.toggleShowReactions() = ToggleShowReactions;
+
+  const factory ChatEvent.hideChatWelcomeNote() = HideChatWelcomeNote;
 }

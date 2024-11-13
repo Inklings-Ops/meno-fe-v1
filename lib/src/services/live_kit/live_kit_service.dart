@@ -40,8 +40,8 @@ class LiveKitService extends Object with Disposable {
 
       _setupListener();
       completer.complete(room);
-    } catch (e) {
-      completer.completeError(e);
+    } on Exception {
+      completer.completeError('Failed to connect. Please try again later.');
     }
 
     return completer.future;

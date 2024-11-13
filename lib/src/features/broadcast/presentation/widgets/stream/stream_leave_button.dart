@@ -18,7 +18,11 @@ class StreamLeaveButton extends StatelessWidget {
       onPressed: () {
         context.showLeaveBroadcastDialog().then((value) {
           if (value != true) return;
-          socket.add(SocketLeaveBroadcast(broadcast.id));
+          if (context.mounted) {
+            socket.add(SocketLeaveBroadcast(broadcast.id));
+            context.read<LiveBloc>().add(const LiveReset());
+            router.go(Routes.home);
+          }
         });
       },
       icon: const Icon(MIcons.log_out),

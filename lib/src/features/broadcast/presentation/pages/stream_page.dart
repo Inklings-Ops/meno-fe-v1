@@ -22,7 +22,7 @@ class StreamPage extends HookWidget {
             state.whenOrNull(
               connectionFailed: (error) {
                 context.read<LiveBloc>().add(const GoFailure());
-                context.showErrorSnackBar(error);
+                router.pop();
               },
               streamConnected: (_) => socket.add(SocketJoinBroadcast(id)),
             );
@@ -33,7 +33,8 @@ class StreamPage extends HookWidget {
             state.whenOrNull(
               error: (error) {
                 context.read<LiveBloc>().add(const GoFailure());
-                context.showErrorSnackBar(error);
+                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+                router.pop();
               },
               broadcastJoined: () {
                 context.read<SocketBloc>().add(SocketGetMessages(id));
@@ -41,6 +42,17 @@ class StreamPage extends HookWidget {
                 context.read<TimerCubit>().setAndStart(broadcast.startTime);
                 context.read<LiveBloc>().add(const LiveStarted());
                 context.read<LiveBloc>().add(const GoStreaming());
+              },
+              messagesReceived: (chats) {
+                context.read<ChatBloc>().add(LoadChatMessages(chats));
+              },
+              endedBroadcast: (data) {
+                context.read<LiveBloc>().add(const LiveReset());
+                router.go(Routes.home);
+              },
+              broadcastLeft: () {
+                context.read<LiveBloc>().add(const LiveReset());
+                router.go(Routes.home);
               },
             );
           },

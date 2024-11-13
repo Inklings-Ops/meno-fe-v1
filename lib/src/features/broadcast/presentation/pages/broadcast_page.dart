@@ -42,6 +42,15 @@ class BroadcastPage extends StatelessWidget {
                 context.read<LiveBloc>().add(const LiveStarted());
                 context.read<LiveBloc>().add(const GoLive());
               },
+              broadcastEnded: () {
+                participantsBloc.add(GetAllParticipants(broadcastId));
+                context.read<TimerCubit>().stop();
+                context.read<LiveBloc>().add(const LiveReset());
+                router.replace<void>(Routes.endedBroadcast);
+              },
+              messagesReceived: (chats) {
+                context.read<ChatBloc>().add(LoadChatMessages(chats));
+              },
             );
           },
         ),

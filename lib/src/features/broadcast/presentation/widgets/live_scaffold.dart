@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/application/application.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class LiveScaffold extends HookWidget {
   const LiveScaffold({
@@ -38,10 +38,13 @@ class LiveScaffold extends HookWidget {
         BlocBuilder<LiveBloc, LiveState>(
           builder: (context, state) => state.maybeWhen(
             orElse: () => const SizedBox(),
-            loading: () => Container(
+            loading: () => ColoredBox(
               color: Colors.black.withOpacity(0.8),
-              alignment: Alignment.center,
-              child: const MLoadingIndicator.box(),
+              child: const SizedBox.expand(
+                child: Center(
+                  child: MLoadingIndicator(130, 130),
+                ),
+              ),
             ),
           ),
         ),

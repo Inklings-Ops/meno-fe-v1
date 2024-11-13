@@ -1,12 +1,23 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/chat/application/application.dart';
+import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 
-class EndedBroadcastPage extends StatelessWidget {
+class EndedBroadcastPage extends HookWidget {
   const EndedBroadcastPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
+
+    useEffect(
+      () {
+        context.read<LiveKitBloc>().add(const LiveKitDisconnect());
+        context.read<ChatBloc>().add(const ChatReset());
+        return;
+      },
+      const [],
+    );
 
     return MScaffold(
       body: Center(

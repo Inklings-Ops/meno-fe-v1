@@ -18,7 +18,7 @@ class PreStreamModal extends HookWidget {
           },
           streamJoined: () {
             final token = state.broadcast.broadcastToken!;
-            context.watch<LiveKitBloc>().add(LiveKitStream(token));
+            context.read<LiveKitBloc>().add(LiveKitStream(token));
             router.popAndPush(Routes.stream);
           },
         );
