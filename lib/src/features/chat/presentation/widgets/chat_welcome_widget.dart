@@ -42,7 +42,7 @@ class ChatWelcomeWidget extends StatelessWidget {
                 SizedBox(
                   height: Insets.xxl,
                   child: MText(
-                    'Welcome to the live chat! We encourage you to be as interactive as you can.',
+                    '''Welcome to the live chat! We encourage you to be as interactive as you can.''',
                     style: textTheme.microRegular,
                   ),
                 ),
@@ -59,7 +59,7 @@ class ChatWelcomeWidget extends StatelessWidget {
                       padding: EdgeInsets.zero,
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

@@ -32,11 +32,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     GetChatMessages event,
     Emitter<ChatState> emit,
   ) async {
-    // final failureOrMessages=await _facade.getChatMessages(event.broadcastId);
-    // failureOrMessages.fold(
-    //   (failure) => emit(ChatLoadFailed(failure)),
-    //   (messages) => emit(ChatLoadSuccess(messages)),
-    // );
+    final failureOrMessages = await _facade.getChatMessages(event.broadcastId);
+    failureOrMessages.fold((failure) {}, (messages) {});
   }
 
   void _onNewChatReceived(NewChatReceived event, Emitter<ChatState> emit) {
