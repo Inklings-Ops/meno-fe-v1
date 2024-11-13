@@ -4,13 +4,11 @@ import 'dart:ui';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 @pragma('vm:entry-point')
 Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
-
   return true;
 }
 
@@ -37,16 +35,16 @@ Future<void> onStart(ServiceInstance service) async {
     });
   }
 
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
-    if (service is AndroidServiceInstance) {
-      if (await service.isForegroundService()) {
-        await service.setForegroundNotificationInfo(
-          title: 'Meno',
-          content: 'Meno is running in the background',
-        );
-      }
-    }
-  });
+  // Timer.periodic(const Duration(seconds: 1), (timer) async {
+  //   if (service is AndroidServiceInstance) {
+  //     if (await service.isForegroundService()) {
+  //       await service.setForegroundNotificationInfo(
+  //         title: 'Meno',
+  //         content: 'Meno is running in the background',
+  //       );
+  //     }
+  //   }
+  // });
 }
 
 @lazySingleton
@@ -58,18 +56,25 @@ class BackgroundService {
       iosConfiguration: IosConfiguration(autoStart: false),
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
-        isForegroundMode: true,
+        isForegroundMode: false,
         autoStart: false,
       ),
     );
   }
 
-  Future<void> startBroadcastInBackground(Broadcast broadcast) async {
-    if (await _service.isRunning()) {
-      _service.invoke(MKeys.broadcastBackgroundTask, {
-        'broadcastId': broadcast.id.getOr(),
-        'broadcastToken': broadcast.broadcastToken,
-      });
+  Future<void> invokeBroadcastInBackground() async {
+    if (await _service.isRunning() == false) {
+      _service.invoke(MKeys.broadcastBackgroundTask);
     }
   }
+
+  Future<void> invokeStreamInBackground() async {
+    if (await _service.isRunning() == false) {
+      _service.invoke(MKeys.streamBackgroundTask);
+    }
+  }
+
+  void endBackgroundTask() => _service.invoke(MKeys.endBackgroundTask);
+
+  Future<void> startBackgroundService() => _service.startService();
 }

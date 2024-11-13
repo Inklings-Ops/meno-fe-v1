@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class BroadcastPage extends StatelessWidget {
   const BroadcastPage({super.key});
@@ -22,7 +21,8 @@ class BroadcastPage extends StatelessWidget {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.showErrorSnackBar(error);
               },
-              broadcastConnected: (room, microphoneEnabled) {
+              broadcastConnected: (room, microphoneEnabled) async {
+                await di<BackgroundService>().invokeBroadcastInBackground();
                 socket.add(SocketStartBroadcast(broadcastId));
               },
             );
@@ -41,8 +41,10 @@ class BroadcastPage extends StatelessWidget {
                 context.read<TimerCubit>().start();
                 context.read<LiveBloc>().add(const LiveStarted());
                 context.read<LiveBloc>().add(const GoLive());
+                di<BackgroundService>().startBackgroundService();
               },
               broadcastEnded: () {
+                di<BackgroundService>().endBackgroundTask();
                 participantsBloc.add(GetAllParticipants(broadcastId));
                 context.read<TimerCubit>().stop();
                 context.read<LiveBloc>().add(const LiveReset());

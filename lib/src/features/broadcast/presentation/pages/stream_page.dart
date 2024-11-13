@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class StreamPage extends HookWidget {
   const StreamPage({super.key});
@@ -24,7 +23,10 @@ class StreamPage extends HookWidget {
                 context.read<LiveBloc>().add(const GoFailure());
                 router.pop();
               },
-              streamConnected: (_) => socket.add(SocketJoinBroadcast(id)),
+              streamConnected: (_) async {
+                await di<BackgroundService>().invokeStreamInBackground();
+                socket.add(SocketJoinBroadcast(id));
+              },
             );
           },
         ),
@@ -42,15 +44,18 @@ class StreamPage extends HookWidget {
                 context.read<TimerCubit>().setAndStart(broadcast.startTime);
                 context.read<LiveBloc>().add(const LiveStarted());
                 context.read<LiveBloc>().add(const GoStreaming());
+                di<BackgroundService>().startBackgroundService();
               },
               messagesReceived: (chats) {
                 context.read<ChatBloc>().add(LoadChatMessages(chats));
               },
               endedBroadcast: (data) {
+                di<BackgroundService>().endBackgroundTask();
                 context.read<LiveBloc>().add(const LiveReset());
                 router.go(Routes.home);
               },
               broadcastLeft: () {
+                di<BackgroundService>().endBackgroundTask();
                 context.read<LiveBloc>().add(const LiveReset());
                 router.go(Routes.home);
               },

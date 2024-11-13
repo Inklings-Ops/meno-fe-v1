@@ -23,13 +23,23 @@ class BroadcastChatTab extends HookWidget {
             ),
           ),
           SafeArea(
-            child: SizedBox(
-              height: 52,
-              width: constraints.maxWidth,
-              child: ChatInputContainer(
-                broadcast: broadcast,
-                scrollController: scrollController,
-              ),
+            child: Column(
+              children: [
+                BlocBuilder<ChatBloc, ChatState>(
+                  buildWhen: (p, c) => p.hideWelcomeNote != c.hideWelcomeNote,
+                  builder: (context, state) => !state.hideWelcomeNote
+                      ? const ChatWelcomeWidget()
+                      : const SizedBox(),
+                ),
+                SizedBox(
+                  height: 52,
+                  width: constraints.maxWidth,
+                  child: ChatInputContainer(
+                    broadcast: broadcast,
+                    scrollController: scrollController,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
