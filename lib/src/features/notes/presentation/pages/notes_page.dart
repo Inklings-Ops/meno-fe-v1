@@ -38,24 +38,27 @@ class _AddNewNoteActionButton extends StatelessWidget {
 
     return BlocBuilder<NotesBloc, NotesState>(
       buildWhen: (p, c) => p != c,
-      builder: (context, state) {
-        if (state.notes.isEmpty) return const SizedBox();
-
-        return InkWell(
-          onTap: () => router.push(Routes.noteEditor),
-          child: Row(
-            children: [
-              Icon(MIcons.plus, size: 22, color: colors.primary),
-              Spaces.horizontalMicro,
-              MText(
-                'Add New Note',
-                style: textTheme.captionMedium,
-                color: colors.primary,
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        failure: (failure) => const SizedBox(),
+        loadSuccess: (notes) {
+          if (notes.isEmpty) return const SizedBox();
+          return InkWell(
+            onTap: () => router.push(Routes.noteEditor),
+            child: Row(
+              children: [
+                Icon(MIcons.plus, size: 22, color: colors.primary),
+                Spaces.horizontalMicro,
+                MText(
+                  'Add New Note',
+                  style: textTheme.captionMedium,
+                  color: colors.primary,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

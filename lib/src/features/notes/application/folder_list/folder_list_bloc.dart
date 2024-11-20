@@ -3,7 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 part 'folder_list_bloc.freezed.dart';
+
 part 'folder_list_event.dart';
+
 part 'folder_list_state.dart';
 
 class FolderListBloc extends Bloc<FolderListEvent, FolderListState> {
@@ -16,10 +18,11 @@ class FolderListBloc extends Bloc<FolderListEvent, FolderListState> {
     on<_GetFolderAndUpdateList>(_onGetFolderAndUpdateList);
     on<_DeleteFolder>(_onDeleteFolder);
     on<_AddToFolder>(_onAddToFolder);
-  }
-  final INoteFacade _facade;
 
-void init() => add(const FolderListEvent.getAllFolders());
+    add(const FolderListEvent.getAllFolders());
+  }
+
+  final INoteFacade _facade;
 
   bool get hasFolders {
     if (state is _Success) {

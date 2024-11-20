@@ -14,6 +14,7 @@ export 'm_notes_back_button.dart';
 export 'note_body_widget.dart';
 export 'note_card.dart';
 export 'note_card_options_modal.dart';
+export 'note_editor/note_editor.dart';
 export 'note_list_widget.dart';
 export 'note_widget.dart';
 export 'remove_note_from_folder_alert_dialog.dart';

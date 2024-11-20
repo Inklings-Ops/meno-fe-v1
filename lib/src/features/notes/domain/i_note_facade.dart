@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/meno.dart';
 
 import 'package:meno_fe_v1/src/features/notes/domain/entities/folder.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
@@ -6,6 +7,8 @@ import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.d
 import 'package:meno_fe_v1/src/features/notes/domain/value_objects/folder_title.dart';
 
 abstract class INoteFacade {
+  Stream<List<Note?>> allNotesStream();
+
   Future<Either<NoteException, List<Note?>>> getAllNotes({
     String? keywords,
     String? noteId,
@@ -25,7 +28,7 @@ abstract class INoteFacade {
     bool? pinned,
   });
 
-  Future<Either<NoteException, Unit>> deleteNote(Note note);
+  Future<Either<NoteException, Unit>> deleteNote(Uid<Note> noteId);
 
   Future<Either<NoteException, Note>> addNoteToFolder({
     required String noteId,

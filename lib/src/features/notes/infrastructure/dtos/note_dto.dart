@@ -1,23 +1,31 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
+import 'package:objectbox/objectbox.dart';
 
 part 'note_dto.freezed.dart';
+
 part 'note_dto.g.dart';
 
 @Freezed(addImplicitFinal: false)
 @JsonSerializable(explicitToJson: true, createFactory: false)
 class NoteDto with _$NoteDto {
+  @Entity(realClass: NoteDto)
   factory NoteDto({
-    @JsonKey(name: 'id') required String uid,
     required String title,
     required String content,
+    @FolderToOneConverter() required ToOne<FolderDto?> folder,
+    @NoteCreatorToOneConverter() required ToOne<NoteCreatorDto?> creator,
+    @JsonKey(name: 'id') required String uid,
+    @Id(assignable: true)
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    int? id,
     bool? pinned,
-    FolderDto? folder,
-    NoteCreatorDto? creator,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    @Property(type: PropertyType.date) DateTime? createdAt,
+    @Property(type: PropertyType.date) DateTime? updatedAt,
   }) = _NoteDto;
+
+  NoteDto._();
 
   factory NoteDto.fromJson(Map<String, dynamic> json) =>
       _$NoteDtoFromJson(json);
@@ -35,8 +43,8 @@ extension NoteDtoToDomain on NoteDto {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: folder?.toDomain,
-      creator: creator?.toDomain,
+      folder: folder.target?.toDomain,
+      creator: creator.target?.toDomain,
     );
   }
 }
@@ -50,8 +58,8 @@ extension NoteDomainToDto on Note {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: folder?.toDto,
-      creator: creator?.toDto,
+      folder: ToOne(target: folder?.toDto),
+      creator: ToOne(target: creator?.toDto),
     );
   }
 }

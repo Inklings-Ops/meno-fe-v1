@@ -5,7 +5,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteEditorPage extends StatefulWidget {
-  const NoteEditorPage({super.key, this.note});
+  const NoteEditorPage({required this.note, super.key});
 
   final Note? note;
 
@@ -14,155 +14,85 @@ class NoteEditorPage extends StatefulWidget {
 }
 
 class _NoteEditorPageState extends State<NoteEditorPage> {
-  QuillController controller = QuillController.basic();
-  FocusNode quillFocusNode = FocusNode();
-  final scrollController = ScrollController();
+  late TextEditingController titleController;
+  late QuillController contentController;
+  late FocusNode quillFocusNode;
+  late ScrollController scrollController;
+  late QuillEditorConfigurations quillConfigurations;
 
   @override
   void didChangeDependencies() {
     if (widget.note != null) {
-      final json = jsonDecode(widget.note!.content.getOr()) as List<dynamic>;
-      controller.document = Document.fromJson(json);
-    }
+      titleController.text = widget.note!.title.getOr();
 
+      final json = jsonDecode(widget.note!.content.getOr()) as List<dynamic>;
+      contentController.document = Document.fromJson(json);
+    }
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
     super.initState();
-    controller.addListener(() {
-      final content = jsonEncode(controller.document.toDelta().toJson());
-      context.read<NoteFormCubit>().contentChanged(content);
+
+    titleController = TextEditingController();
+    contentController = QuillController.basic();
+    quillFocusNode = FocusNode();
+    scrollController = ScrollController();
+    quillConfigurations = QuillEditorConfigurations(
+      controller: contentController,
+      expands: true,
+    );
+
+    titleController.addListener(() {
+      final title = titleController.text;
+      context.read<NoteEditorBloc>().add(NoteTitleChanged(NoteTitle(title)));
+    });
+
+    contentController.addListener(() {
+      final con = jsonEncode(contentController.document.toDelta().toJson());
+      context.read<NoteEditorBloc>().add(NoteContentChanged(NoteContent(con)));
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-    final textTheme = MTextTheme.of(context)!;
-    return BlocListener<NoteFormCubit, NoteFormState>(
-      listenWhen: (p, c) => p.option != c.option,
-      listener: (context, state) {
-        state.option.fold(
-          () {},
-          (either) => either.fold(
-            (exception) => context.showNoteError(exception),
-            (_) => context.read<NotesBloc>().add(const NotesEvent.getNotes()),
-          ),
-        );
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 42,
-          leadingWidth: 90,
-          leading: const MNotesBackButton(title: 'Notes'),
-          actions: [
-            BlocBuilder<NoteFormCubit, NoteFormState>(
-              buildWhen: (p, c) => p.loading != c.loading,
-              builder: (context, state) {
-                return InkWell(
-                  onTap: state.loading
-                      ? null
-                      : context.read<NoteFormCubit>().onSubmit,
-                  child: MText(
-                    state.loading ? 'Saving...' : 'Done',
-                    color: colors.primary,
-                    style: textTheme.captionMedium,
-                  ),
-                );
-              },
-            ),
-            Spaces.horizontalLarge,
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              Spaces.verticalLarge,
-              _TitleField(initialNote: widget.note),
-              Spaces.verticalLarge,
-              Expanded(
-                child: QuillEditor(
-                  focusNode: quillFocusNode,
-                  scrollController: scrollController,
-                  configurations: QuillEditorConfigurations(
-                    controller: controller,
-                    expands: true,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('de'),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: SizedBox(
-          height: 56,
-          child: Card(
-            color: colors.surfaceTint,
-            shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
-            child: QuillToolbar.simple(
-              configurations: QuillSimpleToolbarConfigurations(
-                controller: controller,
-                showRedo: false,
-                showUndo: false,
-                showFontFamily: false,
-                showFontSize: false,
-                showStrikeThrough: false,
-                showInlineCode: false,
-                showSubscript: false,
-                showSuperscript: false,
-                showColorButton: false,
-                showBackgroundColorButton: false,
-                showClearFormat: false,
-                showDividers: false,
-                showHeaderStyle: false,
-                showListCheck: false,
-                showCodeBlock: false,
-                showLink: false,
-                showSearchButton: false,
-                showQuote: false,
-                showLeftAlignment: false,
-                showRightAlignment: false,
-                showClipboardCut: false,
-                showClipboardCopy: false,
-                showClipboardPaste: false,
-                showCenterAlignment: false,
-                showIndent: false,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  void dispose() {
+    quillFocusNode.dispose();
+    scrollController.dispose();
+    titleController.dispose();
+    contentController.dispose();
+    super.dispose();
   }
-}
-
-class _TitleField extends StatelessWidget {
-  const _TitleField({this.initialNote});
-  final Note? initialNote;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return TextFormField(
-      style: textTheme.heading3Bold,
-      initialValue: initialNote?.title.getOr(),
-      onChanged: context.watch<NoteFormCubit>().titleChanged,
-      textInputAction: TextInputAction.next,
-      decoration: const InputDecoration(
-        border: InputBorder.none,
-        errorBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-        focusedErrorBorder: InputBorder.none,
-        hintText: 'Enter Title',
-        contentPadding: EdgeInsets.zero,
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 42,
+        leadingWidth: 90,
+        leading: const MNotesBackButton(title: 'Notes'),
+        actions: const [NoteEditorAutosaveWidget(), Spaces.horizontalLarge],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
+        child: Column(
+          children: [
+            Spaces.verticalLarge,
+            NoteTitleField(controller: titleController),
+            Spaces.verticalLarge,
+            Expanded(
+              child: QuillEditor(
+                focusNode: quillFocusNode,
+                scrollController: scrollController,
+                configurations: quillConfigurations,
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: NoteEditorToolbar(
+        controller: contentController,
       ),
     );
   }

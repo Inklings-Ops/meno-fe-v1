@@ -1,98 +1,101 @@
-import 'dart:convert';
-
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/dtos.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/objectbox.g.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 @injectable
 class NoteLocalDatasource {
-  NoteLocalDatasource({required SharedPreferences pref}) : _pref = pref;
-  final SharedPreferences _pref;
+  NoteLocalDatasource({
+    required ObjectBoxService objectBox,
+  }) : _objectBox = objectBox;
 
-  static const String notesKey = 'Note_Key';
+  final ObjectBoxService _objectBox;
 
-  Future<void> saveNoteList(List<NoteDto?> notes) async {
-    final noteList = notes.map((n) => jsonEncode(n?.toJson())).toList();
-    await _pref.setStringList(notesKey, noteList);
+  Box<NoteDto> get _noteBox => _objectBox.noteBox;
+
+  Box<FolderDto> get _folderBox => _objectBox.folderBox;
+
+  Stream<List<NoteDto?>> allNotesStream() {
+    final notes = _noteBox
+        .query()
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
+    return notes;
   }
 
-  Future<List<NoteDto?>> getAllNotes() async {
-    final noteList = _pref.getStringList(notesKey);
-    if (noteList != null) {
-      return noteList.map((n) {
-        final decodedJson = jsonDecode(n) as Map<String, dynamic>;
-        return NoteDto.fromJson(decodedJson);
-      }).toList();
-    } else {
-      return [];
-    }
+  List<NoteDto?> getAllNotes() {
+    final notes = _noteBox.getAll();
+    return notes;
   }
 
-  Future<void> getAllFolders() async {
-    // final folderBox = _objectbox.store.box<FolderDto?>();
-    // return folderBox.getAll();
+  List<FolderDto?> getAllFolders() {
+    final folders = _folderBox.getAll();
+    return folders;
   }
 
-  Future<NoteDto?> getNote(String id) async {
-    return null;
-
-    // final noteBox = _objectbox.store.box<NoteDto?>();
-
-    // final builder = noteBox.query(NoteDto_.uid.equals(id));
-
-    // Query<NoteDto?> query = builder.build();
-    // final note = query.findFirst();
-
-    // return note;
+  List<NoteDto?> getNotesFromFolder(String folderId) {
+    final query = _folderBox.query(FolderDto_.id.equals(folderId)).build();
+    final folder = query.findFirst();
+    final notes = folder?.notes;
+    return notes ?? [];
   }
 
-  Future<FolderDto?> getFolder(String id) async {
-    return null;
-
-    // final folderBox = _objectbox.store.box<FolderDto?>();
-
-    // final builder = folderBox.query(FolderDto_.id.equals(id));
-
-    // Query<FolderDto?> query = builder.build();
-    // final folder = query.findFirst();
-
-    // return folder;
-  }
-
-  Future<NoteDto> storeNote(NoteDto note) async {
-    final notes = await getAllNotes();
-    notes.add(note);
-    await saveNoteList(notes);
+  NoteDto? getNote(String noteId) {
+    final query = _noteBox.query(NoteDto_.uid.equals(noteId)).build();
+    final note = query.findFirst();
+    query.close();
     return note;
   }
 
-  Future<void> storeAllNotes(List<NoteDto> notes) async {
-    // final noteBox = _objectbox.store.box<NoteDto?>();
-
-    // try {
-    //   const batchSize = 10000;
-    //   final totalNotes = notes.length;
-
-    //   for (var i = 0; i < totalNotes; i += batchSize) {
-    //    final end = (i + batchSize < totalNotes) ? i + batchSize : totalNotes;
-    //     final batch = notes.sublist(i, end);
-    //     noteBox.putMany(batch);
-    //   }
-    // } on ObjectBoxException catch (e) {
-    //   throw ObjectBoxException(e.message);
-    // }
+  FolderDto? getFolder(String folderId) {
+    final query = _folderBox.query(FolderDto_.id.equals(folderId)).build();
+    final folder = query.findFirst();
+    query.close();
+    return folder;
   }
 
-  void deleteFolder(String folderId) {
-    // final folderBox = _objectbox.store.box<FolderDto?>();
-    // final builder = folderBox.query(FolderDto_.id.equals(folderId));
-    // return builder.build().removeAsync();
+  void storeNote(NoteDto note) {
+    final result = _noteBox.put(note);
+    Logger().e('Note stored locally => $result');
+  }
+
+  void storeFolder(FolderDto folder) {
+    _objectBox.folderBox.put(folder);
   }
 
   void deleteNote(String noteId) {
-    // final noteBox = _objectbox.store.box<NoteDto?>();
-    // final builder = noteBox.query(NoteDto_.uid.equals(noteId));
-    // return builder.build().removeAsync();
-    return;
+    final query = _noteBox.query(NoteDto_.uid.equals(noteId)).build();
+    final note = query.findFirst();
+    query.close();
+    if (note != null && note.id != null) {
+      _noteBox.remove(note.id!);
+    }
+  }
+
+  void deleteFolder(String folderId) {
+    final query = _folderBox.query(FolderDto_.id.equals(folderId)).build();
+    final folder = query.findFirst();
+    query.close();
+    if (folder != null && folder.dbId != null) {
+      _folderBox.remove(folder.dbId!);
+    }
+  }
+
+  void addNoteToFolder(String folderId, NoteDto note) {
+    final query = _folderBox.query(FolderDto_.id.equals(folderId)).build();
+    final folder = query.findFirst();
+    if (folder != null) {
+      folder.notes.add(note);
+      _folderBox.put(folder);
+    }
+  }
+
+  void removeNoteFromFolder(String folderId, String noteId) {
+    final folder = getFolder(folderId);
+    if (folder != null) {
+      folder.notes.removeWhere((note) => note?.uid == noteId);
+      _folderBox.put(folder);
+    }
   }
 }

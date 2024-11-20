@@ -114,23 +114,6 @@ class BibleLocalDatasource {
     required int chapter,
     required String translation,
   }) {
-    // final verseBox = _objectBox.verseBox;
-    // QueryBuilder<VerseDto> builder = verseBox.query(
-    //   VerseDto_.bookName.equals(book) &
-    //       VerseDto_.chapter.equals(chapter) &
-    //       VerseDto_.translation.equals(translation),
-    // );
-
-    // builder.backlinkMany(
-    //   BibleDto_.verses,
-    //   BibleDto_.translation.equals(translation),
-    // );
-
-    // Query<VerseDto> query = builder.order(VerseDto_.verse).build();
-    // List<VerseDto> verses = query.find();
-    // query.close();
-    // return verses;
-
     final verseBox = _objectBox.verseBox;
     final builder = verseBox.query(
       VerseDto_.translation.equals(translation) &

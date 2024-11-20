@@ -7,7 +7,9 @@ part 'folder.freezed.dart';
 @freezed
 class Folder with _$Folder {
   factory Folder({
-    required String id, required FolderTitle title, int? dbId,
+    required String id,
+    required FolderTitle title,
+    int? dbId,
     int? numberOfNotes,
     bool? pinned,
     DateTime? createdAt,
@@ -15,5 +17,4 @@ class Folder with _$Folder {
   }) = _Folder;
 
   factory Folder.empty() => Folder(id: '', title: FolderTitle(''));
-  
 }

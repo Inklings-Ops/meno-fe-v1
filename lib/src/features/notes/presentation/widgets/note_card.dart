@@ -7,7 +7,9 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCard extends StatelessWidget {
   const NoteCard({
-    required this.note, required this.onTap, super.key,
+    required this.note,
+    required this.onTap,
+    super.key,
     this.showAddButton = false,
     this.selected = false,
     this.folder,

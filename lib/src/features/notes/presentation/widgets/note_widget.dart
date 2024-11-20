@@ -35,8 +35,12 @@ class NoteWidget extends StatelessWidget {
               color: foreground,
             ),
             BlocBuilder<NotesBloc, NotesState>(
+              buildWhen: (previous, current) => previous != current,
               builder: (context, state) => MText(
-                state.notes.length.toString(),
+                state.maybeWhen(
+                  orElse: () => '0',
+                  loadSuccess: (notes) => notes.length.toString(),
+                ),
                 style: textTheme.heading2Medium,
                 color: foreground,
               ),

@@ -126,10 +126,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
-    gh.factory<_i933.NoteLocalDatasource>(
-        () => _i933.NoteLocalDatasource(pref: gh<_i460.SharedPreferences>()));
     gh.factory<_i664.BibleLocalDatasource>(() =>
         _i664.BibleLocalDatasource(objectBox: gh<_i116.ObjectBoxService>()));
+    gh.factory<_i933.NoteLocalDatasource>(() =>
+        _i933.NoteLocalDatasource(objectBox: gh<_i264.ObjectBoxService>()));
     await gh.factoryAsync<_i941.NotificationService>(
       () {
         final i = _i941.NotificationService(

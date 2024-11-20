@@ -98,10 +98,17 @@ final router = GoRouter(
       path: Routes.noteEditor,
       builder: (context, state) {
         final note = state.extra as Note?;
-        return BlocProvider.value(
-          value: NoteFormCubit(facade: di<INoteFacade>(), initialNote: note),
+        return BlocProvider(
+          create: (_) => NoteEditorBloc(
+            facade: di<INoteFacade>(),
+            initialNote: note,
+          ),
           child: NoteEditorPage(note: note),
         );
+      },
+      onExit: (context, state) {
+        context.read<NotesBloc>().add(const ReloadNotes());
+        return false;
       },
     ),
     GoRoute(

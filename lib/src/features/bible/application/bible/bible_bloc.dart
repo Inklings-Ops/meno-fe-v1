@@ -15,10 +15,11 @@ class BibleBloc extends Bloc<BibleEvent, BibleState> {
     on<_Download>(_onDownload);
     on<_Initialize>(_initialize);
     on<_GetVerses>(_onGetVerses);
+
+    add(const BibleEvent.initialize());
   }
   final IBibleFacade _facade;
-  void init() => add(const BibleEvent.initialize());
-  
+
   List<MapEntry<String, int>> get books => _facade.books.entries.toList();
 
   Future<void> _onDownload(_Download event, Emitter<BibleState> emit) async {
@@ -28,14 +29,18 @@ class BibleBloc extends Bloc<BibleEvent, BibleState> {
     );
 
     return response.fold(
-      (failure) => emit(state.copyWith(
-        loading: false,
-        downloadOption: some(response),
-      ),),
-      (success) => emit(state.copyWith(
-        loading: false,
-        downloadOption: some(response),
-      ),),
+      (failure) => emit(
+        state.copyWith(
+          loading: false,
+          downloadOption: some(response),
+        ),
+      ),
+      (success) => emit(
+        state.copyWith(
+          loading: false,
+          downloadOption: some(response),
+        ),
+      ),
     );
   }
 

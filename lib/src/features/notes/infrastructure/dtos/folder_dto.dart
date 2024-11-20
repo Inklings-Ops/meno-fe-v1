@@ -1,9 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/notes/infrastructure/dtos/note_dto.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:objectbox/objectbox.dart';
 
 part 'folder_dto.freezed.dart';
+
 part 'folder_dto.g.dart';
 
 @Freezed(addImplicitFinal: false)
@@ -11,11 +11,13 @@ part 'folder_dto.g.dart';
 class FolderDto with _$FolderDto {
   @Entity(realClass: FolderDto)
   factory FolderDto({
-    @Unique() required String id, required String title, @Id() int? dbId,
+    @Unique() required String id,
+    required String title,
+    @FolderNotesToManyConverter() required ToMany<NoteDto?> notes,
+    @Id() int? dbId,
     int? numberOfNotes,
     bool? pinned,
     @Property(type: PropertyType.date) DateTime? createdAt,
-    List<NoteDto?>? notes,
   }) = _FolderDto;
 
   FolderDto._();
@@ -36,7 +38,7 @@ extension FolderDtoToDomain on FolderDto {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: notes?.map((e) => e?.toDomain).toList(),
+      notes: notes.map((e) => e?.toDomain).toList(),
     );
   }
 }
@@ -50,7 +52,7 @@ extension FolderToDto on Folder {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: notes?.map((e) => e?.toDto).toList(),
+      notes: ToMany(items: notes?.map((e) => e?.toDto).toList()),
     );
   }
 }

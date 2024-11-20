@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -10,6 +12,9 @@ class ObjectBoxService {
   ObjectBoxService._create(this.store) {
     _bibleBox = store.box<BibleDto>();
     _verseBox = store.box<VerseDto>();
+    _noteBox = store.box<NoteDto>();
+    _folderBox = store.box<FolderDto>();
+    _noteCreatorBox = store.box<NoteCreatorDto>();
   }
   late final Store store;
 
@@ -18,6 +23,15 @@ class ObjectBoxService {
 
   late Box<VerseDto> _verseBox;
   Box<VerseDto> get verseBox => _verseBox;
+
+  late Box<NoteDto> _noteBox;
+  Box<NoteDto> get noteBox => _noteBox;
+
+  late Box<FolderDto> _folderBox;
+  Box<FolderDto> get folderBox => _folderBox;
+
+  late Box<NoteCreatorDto> _noteCreatorBox;
+  Box<NoteCreatorDto> get noteCreatorBox => _noteCreatorBox;
 
   /// Create an instance of ObjectBox to use throughout the app.
   static Future<ObjectBoxService> create() async {

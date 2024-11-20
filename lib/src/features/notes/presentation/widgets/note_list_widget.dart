@@ -13,39 +13,24 @@ class NoteListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<NotesBloc>();
-
-    return BlocListener<NoteFormCubit, NoteFormState>(
-      listenWhen: (p, c) => p.option != c.option,
-      listener: (context, state) {
-        state.option.fold(
-          () {},
-          (either) => either.fold((l) => null, (newNote) => null),
-        );
-      },
-      child: BlocBuilder<NotesBloc, NotesState>(
-        bloc: bloc,
-        buildWhen: (p, c) => p != c,
-        builder: (context, state) {
-          if (state.isLoading) return const MLoadingIndicator.box();
-
-          if (!state.isLoading && state.exception != null) {
-            return const NoteListFailureWidget();
-          }
-
-          if (state.notes.isEmpty) return const EmptyNoteListWidget();
-
+    return BlocBuilder<NotesBloc, NotesState>(
+      buildWhen: (previous, current) => previous != current,
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const MLoadingIndicator.box(),
+        failure: (failure) => const NoteListFailureWidget(),
+        loadSuccess: (notes) {
+          if (notes.isEmpty) return const EmptyNoteListWidget();
           return ListView.separated(
             primary: false,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.only(bottom: 16),
-            itemCount: state.notes.length,
+            itemCount: notes.length,
             separatorBuilder: (context, index) => Spaces.verticalLarge,
             itemBuilder: (context, index) => NoteCard(
-              note: state.notes[index]!,
+              note: notes[index]!,
               showAddButton: showAddButton,
-              onTap: () => _handleOnTapNote(context, note: state.notes[index]),
+              onTap: () => _handleOnTapNote(context, note: notes[index]),
             ),
           );
         },
@@ -87,16 +72,14 @@ class NoteListFailureWidget extends StatelessWidget {
               textStyle: textTheme.microMedium,
               foregroundColor: colors.onBackground,
               iconColor: colors.onBackground,
-              shape: const RoundedRectangleBorder(
-                borderRadius: Corners.sm,
-              ),
+              shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               side: BorderSide(
                 color: colors.outlineVariant3!,
                 width: 1.50,
               ),
             ),
             onPressed: () =>
-                context.read<NotesBloc>().add(const NotesEvent.getNotes()),
+                context.read<NotesBloc>().add(const GetNotesRequested()),
           ),
         ),
       ],

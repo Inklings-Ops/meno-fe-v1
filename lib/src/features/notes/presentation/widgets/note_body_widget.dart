@@ -13,7 +13,7 @@ class NoteBodyWidget extends StatelessWidget {
 
     return RefreshIndicator.adaptive(
       onRefresh: () async => switch (selectedIndex.value) {
-        0 => notesBloc.add(const NotesEvent.getNotes()),
+        0 => notesBloc.add(const GetNotesRequested()),
         1 => foldersBloc.add(const FolderListEvent.getAllFolders()),
         _ => null,
       },

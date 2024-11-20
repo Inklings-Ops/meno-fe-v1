@@ -37,7 +37,7 @@ extension MDialogX on BuildContext {
       context: this,
       builder: (context) => DeleteNoteAlertDialog(
         onDelete: () => context
-          ..read<NotesBloc>().add(NotesEvent.deleteNote(note))
+          ..read<NotesBloc>().add(DeleteNoteRequested(note.uid))
           ..read<FolderListBloc>().add(const FolderListEvent.getAllFolders())
           ..pop()
           ..pop(),
@@ -78,9 +78,10 @@ extension MDialogX on BuildContext {
           // );
         },
         child: DeleteNoteFromFolderAlertDialog(
-          onDelete: () => context
-              .read<NotesBloc>()
-              .add(NotesEvent.removeFromFolder(note.folder!, note)),
+          onDelete: () {},
+          // onDelete: () => context
+          //     .read<NotesBloc>()
+          //     .add(NotesEvent.removeFromFolder(note.folder!, note)),
         ),
       ),
     );

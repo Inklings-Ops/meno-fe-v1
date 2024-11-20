@@ -3,7 +3,8 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class DeleteNoteAlertDialog extends StatelessWidget {
   const DeleteNoteAlertDialog({
-    required this.onDelete, super.key,
+    required this.onDelete,
+    super.key,
     this.onCancel,
   });
   final VoidCallback onDelete;
@@ -34,7 +35,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
         ),
         SizedBox(
           height: 40,
-          child: bloc.state.isLoading
+          child: bloc.state is NotesLoadInProgress
               ? const MLoadingIndicator.four()
               : MDangerButton(
                   label: 'Delete',

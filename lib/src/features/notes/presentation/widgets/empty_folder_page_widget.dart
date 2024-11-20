@@ -64,40 +64,29 @@ class _AllNotesModal extends HookWidget {
 
     final selectedNote = useState<Note?>(null);
 
-    return BlocListener<NotesBloc, NotesState>(
-      listenWhen: (p, c) => p != c,
-      listener: (context, state) {
-        // state.whenOrNull(success: (notes) => context.pop());
-      },
-      child: MModal(
-        title: 'Add to Folder',
-        builder: (context) => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Spaces.verticalLarge,
-            Expanded(
-              child: BlocBuilder<NotesBloc, NotesState>(
-                bloc: bloc,
-                buildWhen: (p, c) => p != c,
-                builder: (context, state) {
-                  if (state.isLoading) return const MLoadingIndicator.box();
-
-                  if (!state.isLoading && state.exception != null) {
-                    return const NoteListFailureWidget();
-                  }
-
-                  if (state.notes.isEmpty) return const EmptyNoteListWidget();
-
-                  final list =
-                      state.notes.where((e) => e?.folder == null).toList();
-
+    return MModal(
+      title: 'Add to Folder',
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Spaces.verticalLarge,
+          Expanded(
+            child: BlocBuilder<NotesBloc, NotesState>(
+              bloc: bloc,
+              buildWhen: (p, c) => p != c,
+              builder: (context, state) => state.maybeWhen(
+                orElse: () => const EmptyNoteListWidget(),
+                loadInProgress: () => const MLoadingIndicator.box(),
+                failure: (failure) => const NoteListFailureWidget(),
+                loadSuccess: (notes) {
+                  final list = notes.where((e) => e?.folder == null).toList();
                   return ListView.separated(
                     primary: false,
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(bottom: 16),
                     itemCount: list.length,
-                    separatorBuilder: (context, i) => const SizedBox(height: 6),
+                    separatorBuilder: (_, i) => const SizedBox(height: 6),
                     itemBuilder: (context, i) => NoteCard(
                       note: list[i]!,
                       showAddButton: true,
@@ -115,18 +104,18 @@ class _AllNotesModal extends HookWidget {
                 },
               ),
             ),
-            if (selectedNote.value != null) ...[
-              Spaces.verticalLarge,
-              MPrimaryButton(
-                label: 'Done',
-                loading: bloc.state.isLoading,
-                onPressed: () => bloc.add(
-                  NotesEvent.addToFolder(folder, selectedNote.value!),
-                ),
-              ),
-            ],
+          ),
+          if (selectedNote.value != null) ...[
+            Spaces.verticalLarge,
+            MPrimaryButton(
+              label: 'Done',
+              // loading: bloc.state.isLoading,
+              onPressed: () {
+                //TODO: add note to folder
+              },
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

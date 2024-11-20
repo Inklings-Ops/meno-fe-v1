@@ -13,7 +13,7 @@ class MNotesBackButton extends StatelessWidget {
       height: 18,
       padding: const EdgeInsets.only(left: 16),
       child: GestureDetector(
-        onTap: () => Navigator.maybePop(context),
+        onTap: () => router.pop(context),
         child: Row(
           children: [
             const Icon(MIcons.chevron_left, size: 16),

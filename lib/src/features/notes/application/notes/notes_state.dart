@@ -2,16 +2,11 @@ part of 'notes_bloc.dart';
 
 @freezed
 class NotesState with _$NotesState {
-  const factory NotesState({
-    required List<Note?> notes,
-    required bool isLoading,
-    NoteException? exception,
-  }) = _NotesState;
+  const factory NotesState.initial() = NotesInitial;
 
-  factory NotesState.initial() {
-    return const NotesState(
-      notes: [],
-      isLoading: false,
-    );
-  }
+  const factory NotesState.loadInProgress() = NotesLoadInProgress;
+
+  const factory NotesState.loadSuccess(List<Note?> notes) = NotesLoadSuccess;
+
+  const factory NotesState.failure(NoteException failure) = NotesFailure;
 }

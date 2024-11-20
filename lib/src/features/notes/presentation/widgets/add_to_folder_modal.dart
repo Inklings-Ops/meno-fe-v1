@@ -68,11 +68,12 @@ class AddToFolderModal extends HookWidget {
               Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
-                loading: noteListBloc.state.isLoading,
+                loading: noteListBloc.state is NotesLoadInProgress,
                 onPressed: () {
-                  noteListBloc.add(
-                    NotesEvent.addToFolder(selectedFolder.value!, note),
-                  );
+                  // TODO:
+                  // noteListBloc.add(
+                  //   NotesEvent.addToFolder(selectedFolder.value!, note),
+                  // );
                 },
               ),
             ],

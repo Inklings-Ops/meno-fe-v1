@@ -3,11 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
- 
+import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:objectbox/objectbox.dart';
 
 @Injectable(as: INoteFacade)
 class NoteFacade implements INoteFacade {
-
   NoteFacade({
     required NetworkService network,
     required NoteLocalDatasource local,
@@ -18,6 +18,14 @@ class NoteFacade implements INoteFacade {
   final NetworkService _network;
   final NoteLocalDatasource _local;
   final NoteRemoteDatasource _remote;
+
+  @override
+  Stream<List<Note?>> allNotesStream() {
+    final notes = _local
+        .allNotesStream()
+        .map((dtos) => dtos.map((dto) => dto?.toDomain).toList());
+    return notes;
+  }
 
   @override
   Future<Either<NoteException, Note>> createNote(Note note) async {
@@ -74,12 +82,12 @@ class NoteFacade implements INoteFacade {
   }
 
   @override
-  Future<Either<NoteException, Unit>> deleteNote(Note note) async {
+  Future<Either<NoteException, Unit>> deleteNote(Uid<Note> noteId) async {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
       try {
-        final uidStr = note.uid.value.getOrElse(() => 'Invalid id');
+        final uidStr = noteId.value.getOrElse(() => 'Invalid id');
         await _remote.deleteNote(uidStr);
         return right(unit);
       } on DioException catch (e) {
@@ -202,7 +210,7 @@ class NoteFacade implements INoteFacade {
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
     int? page = 1,
-    int? size = 50,
+    int? size = 6,
   }) async {
     if (!(await _network.isConnected)) {
       // final noteDtos = await _local.getAllNotes();
@@ -262,7 +270,7 @@ class NoteFacade implements INoteFacade {
         );
         final folderResponse = response.data;
         final folder = folderResponse!.folder.copyWith(
-          notes: folderResponse.notes,
+          notes: ToMany(items: folderResponse.notes),
         );
         return right(folder.toDomain);
       } on DioException catch (e) {
@@ -387,8 +395,5 @@ class NoteFacade implements INoteFacade {
   }
 
   @override
-  Future<void> saveNoteLocally(Note note) async {
-    final dto = note.toDto;
-    await _local.storeNote(dto);
-  }
+  Future<void> saveNoteLocally(Note note) async {}
 }
