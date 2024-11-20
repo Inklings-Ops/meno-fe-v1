@@ -2,16 +2,21 @@ part of 'live_kit_bloc.dart';
 
 @freezed
 class LiveKitState with _$LiveKitState {
-  const factory LiveKitState.initial() = LiveKitInitial;
-  const factory LiveKitState.loadInProgress() = LiveKitLoadInProgress;
-  const factory LiveKitState.broadcastConnected({
-    required Room room,
-    @Default(true) bool microphoneEnabled,
-  }) = LiveKitBroadcastConnected;
-  const factory LiveKitState.streamConnected({
-    required Room room,
-  }) = LiveKitStreamConnected;
-  const factory LiveKitState.connectionFailed({
-    required String error,
-  }) = LiveKitConnectionFailed;
+  const factory LiveKitState({
+    @Default(false) bool micEnabled,
+    @Default(LiveKitDisconnected()) LiveKitStatus status,
+  }) = _LiveKitState;
+}
+
+@freezed
+class LiveKitStatus with _$LiveKitStatus {
+  const factory LiveKitStatus.disconnected() = LiveKitDisconnected;
+
+  const factory LiveKitStatus.connecting() = LiveKitConnecting;
+
+  const factory LiveKitStatus.broadcastConnected() = LiveKitBroadcastConnected;
+
+  const factory LiveKitStatus.streamConnected() = LiveKitStreamConnected;
+
+  const factory LiveKitStatus.failed(String error) = LiveKitConnectionFailed;
 }

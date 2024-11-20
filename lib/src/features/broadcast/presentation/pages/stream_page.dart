@@ -17,13 +17,14 @@ class StreamPage extends HookWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
+          listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
-            state.whenOrNull(
-              connectionFailed: (error) {
+            state.status.whenOrNull(
+              failed: (error) {
                 context.read<LiveBloc>().add(const GoFailure());
                 router.pop();
               },
-              streamConnected: (_) async {
+              streamConnected: () async {
                 await di<BackgroundService>().invokeStreamInBackground();
                 socket.add(SocketJoinBroadcast(id));
               },

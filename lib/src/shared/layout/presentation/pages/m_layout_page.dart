@@ -33,6 +33,7 @@ class MLayoutPage extends HookWidget {
         context.read<SocketBloc>().add(SocketConnect(token!));
         di<PermissionsService>().requestNotificationsPermissions();
         di<IBibleFacade>().init();
+        di<IBibleFacade>().onlineTranslations(retrieveOnline: true);
         firebaseMessaging.getInitialMessage().then(onInitialMessage);
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -62,8 +63,9 @@ class MLayoutPage extends HookWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
+          listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
-            state.whenOrNull(connectionFailed: context.showErrorSnackBar);
+            state.status.whenOrNull(failed: context.showErrorSnackBar);
           },
         ),
         BlocListener<SocketBloc, SocketState>(
