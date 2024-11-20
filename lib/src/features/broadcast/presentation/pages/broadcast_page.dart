@@ -7,6 +7,27 @@ class BroadcastPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bibleFacade = di<IBibleFacade>();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => BibleBloc(facade: bibleFacade)),
+        BlocProvider(create: (_) => VersesCubit(facade: bibleFacade)),
+        BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFacade)),
+        BlocProvider(create: (_) => TranslationsCubit(facade: bibleFacade)),
+      ],
+      child: const BroadcastPageView(),
+    );
+  }
+}
+
+class BroadcastPageView extends HookWidget {
+  const BroadcastPageView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    useAutomaticKeepAlive();
+    final controller = useTabController(initialLength: 4);
+
     final broadcastId = context.read<BroadcastBloc>().state.broadcast.id;
 
     final participantsBloc = context.read<ParticipantsBloc>();
@@ -15,13 +36,14 @@ class BroadcastPage extends StatelessWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
+          listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
-            state.whenOrNull(
-              connectionFailed: (error) {
+            state.status.whenOrNull(
+              failed: (error) {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.showErrorSnackBar(error);
               },
-              broadcastConnected: (room, microphoneEnabled) async {
+              broadcastConnected: () async {
                 await di<BackgroundService>().invokeBroadcastInBackground();
                 socket.add(SocketStartBroadcast(broadcastId));
               },
@@ -57,18 +79,50 @@ class BroadcastPage extends StatelessWidget {
           },
         ),
       ],
-      child: const LiveScaffold(
-        tabs: [
-          Tab(text: 'Broadcast'),
-          Tab(text: 'Chats'),
-          Tab(text: 'Live Bible'),
-          Tab(text: 'Notes'),
-        ],
-        tabViews: [
-          BroadcastTab(),
-          BroadcastChatTab(),
-          LiveBibleTab(),
-          NotesTab(),
+      child: Stack(
+        children: [
+          MScaffold(
+            padding: EdgeInsets.zero,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(56),
+              child: SafeArea(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  constraints: const BoxConstraints(minHeight: 32),
+                  child: TabBar(
+                    controller: controller,
+                    tabs: const [
+                      Tab(text: 'Broadcast'),
+                      Tab(text: 'Chats'),
+                      Tab(text: 'Live Bible'),
+                      Tab(text: 'Notes'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            body: MTabBarView(
+              controller: controller,
+              children: const [
+                BroadcastTab(),
+                BroadcastChatTab(),
+                LiveBibleTab(),
+                NotesTab(),
+              ],
+              onPageChanged: (_) => FocusScope.of(context).unfocus(),
+            ),
+          ),
+          BlocBuilder<LiveBloc, LiveState>(
+            builder: (context, state) => state.maybeWhen(
+              orElse: () => const SizedBox(),
+              loading: () => ColoredBox(
+                color: Colors.black.withOpacity(0.8),
+                child: const SizedBox.expand(
+                  child: Center(child: MLoadingIndicator(130, 130)),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

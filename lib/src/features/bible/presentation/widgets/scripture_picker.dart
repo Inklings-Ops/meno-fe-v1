@@ -40,7 +40,10 @@ class _ScriptureTranslation extends StatelessWidget {
         return _Container(
           content: translation.abbreviation.toUpperCase(),
           onTap: () => context.showModal<void>(
-            const BibleTranslationsModal(),
+            BlocProvider.value(
+              value: context.read<TranslationsCubit>(),
+              child: const BibleTranslationsModal(),
+            ),
             isScrollControlled: true,
             useRootNavigator: true,
           ),
@@ -60,7 +63,10 @@ class _ScriptureReference extends StatelessWidget {
       builder: (context, state) => _Container(
         content: state.reference,
         onTap: () => context.showModal<void>(
-          const BibleBooksModal(),
+          BlocProvider.value(
+            value: context.read<ScripturePickerCubit>(),
+            child: const BibleBooksModal(),
+          ),
           isScrollControlled: true,
           useRootNavigator: true,
         ),
@@ -110,6 +116,7 @@ class _PreviousAndNextButton extends StatelessWidget {
 
 class _Container extends StatelessWidget {
   const _Container({required this.content, required this.onTap});
+
   final String content;
   final VoidCallback onTap;
 

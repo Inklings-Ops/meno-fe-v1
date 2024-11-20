@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 

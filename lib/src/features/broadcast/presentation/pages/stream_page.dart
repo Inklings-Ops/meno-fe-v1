@@ -2,8 +2,26 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-class StreamPage extends HookWidget {
+class StreamPage extends StatelessWidget {
   const StreamPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bibleFacade = di<IBibleFacade>();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => BibleBloc(facade: bibleFacade)),
+        BlocProvider(create: (_) => VersesCubit(facade: bibleFacade)),
+        BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFacade)),
+        BlocProvider(create: (_) => TranslationsCubit(facade: bibleFacade)),
+      ],
+      child: const StreamPageView(),
+    );
+  }
+}
+
+class StreamPageView extends HookWidget {
+  const StreamPageView({super.key});
 
   @override
   Widget build(BuildContext context) {

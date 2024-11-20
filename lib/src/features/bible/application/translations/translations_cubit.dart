@@ -57,10 +57,10 @@ class TranslationsCubit extends Cubit<TranslationsState> {
     );
   }
 
-  Future<void> init() async {
-    getOfflineTranslations();
-    await getTranslations();
-  }
+  // Future<void> init() async {
+  //   getOfflineTranslations();
+  //   await getTranslations();
+  // }
 
   Future<void> downloadTranslation(Translation translation) async {
     final previousTranslation = state.selectedTranslation;

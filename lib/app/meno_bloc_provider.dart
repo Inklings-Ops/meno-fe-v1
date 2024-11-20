@@ -18,16 +18,8 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(create: (_) => LiveBloc(liveKit: di<LiveKitService>())),
         BlocProvider(create: (_) => AccountBloc(facade: di<IAuthFacade>())),
         BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),
-        BlocProvider(create: (_) => FolderFormCubit(facade: di<INoteFacade>())),
-        BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),
         BlocProvider(create: (_) => ChatBloc(facade: di<IChatFacade>())),
-        BlocProvider(create: (_) => VersesCubit(facade: di<IBibleFacade>())),
-        BlocProvider(create: (_) => BibleBloc(facade: di<IBibleFacade>())),
-        BlocProvider(create: (_) => NotesBloc(facade: di<INoteFacade>())),
-        BlocProvider(create: (_) => FolderListBloc(facade: di<INoteFacade>())),
-        BlocProvider(
-          create: (_) => OnboardingCubit(facade: di<ISettingsFacade>()),
-        ),
+        BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),
         BlocProvider(
           create: (_) => BroadcastBloc(facade: di<IBroadcastFacade>()),
         ),
@@ -35,21 +27,27 @@ class MenoBlocProvider extends StatelessWidget {
           create: (_) => ParticipantsBloc(facade: di<IBroadcastFacade>()),
         ),
         BlocProvider(
-          create: (_) => ScripturePickerCubit(facade: di<IBibleFacade>()),
+          create: (_) => OnboardingCubit(facade: di<ISettingsFacade>()),
         ),
+        // TODO(gettoknowdavid): move folder bloc
+        BlocProvider(create: (_) => FolderFormCubit(facade: di<INoteFacade>())),
+        BlocProvider(create: (_) => FolderListBloc(facade: di<INoteFacade>())),
         BlocProvider(
           create: (_) => FolderCubit(
             facade: di<INoteFacade>(),
             folder: Folder.empty(),
           ),
         ),
+
+        // TODO(gettoknowdavid): move notes bloc
+        BlocProvider(create: (_) => NotesBloc(facade: di<INoteFacade>())),
+
+        // TODO(gettoknowdavid): move Bible blocs
+
         BlocProvider(
           create: (_) => RecentlyLiveCubit(
             facade: di<IBroadcastFacade>(),
           )..fetch(),
-        ),
-        BlocProvider(
-          create: (_) => TranslationsCubit(facade: di<IBibleFacade>())..init(),
         ),
       ],
       child: child,
