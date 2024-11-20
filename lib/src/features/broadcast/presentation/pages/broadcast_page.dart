@@ -10,10 +10,9 @@ class BroadcastPage extends StatelessWidget {
     final bibleFacade = di<IBibleFacade>();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => BibleBloc(facade: bibleFacade)),
         BlocProvider(create: (_) => VersesCubit(facade: bibleFacade)),
         BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFacade)),
-        BlocProvider(create: (_) => TranslationsCubit(facade: bibleFacade)),
+        BlocProvider(create: (_) => TransBloc(facade: bibleFacade)),
       ],
       child: const BroadcastPageView(),
     );

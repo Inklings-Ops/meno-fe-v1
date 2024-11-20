@@ -32,8 +32,7 @@ class MLayoutPage extends HookWidget {
         );
         context.read<SocketBloc>().add(SocketConnect(token!));
         di<PermissionsService>().requestNotificationsPermissions();
-        di<IBibleFacade>().init();
-        di<IBibleFacade>().onlineTranslations(retrieveOnline: true);
+        di<IBibleFacade>().initialize();
         firebaseMessaging.getInitialMessage().then(onInitialMessage);
         FirebaseMessaging.onMessage.listen(showFlutterNotification);
         FirebaseMessaging.onMessageOpenedApp.listen((message) {

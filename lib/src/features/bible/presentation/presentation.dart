@@ -1,4 +1,3 @@
-export 'pages/bible_books_page.dart';
 export 'pages/bible_page.dart';
 export 'widgets/bible_books_modal.dart';
 export 'widgets/bible_translations_modal.dart';

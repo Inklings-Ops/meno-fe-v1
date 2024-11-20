@@ -5,9 +5,9 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/gen/assets.gen.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
-import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/data_helper.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/services/objectbox_service.dart';
 
@@ -18,11 +18,11 @@ class BibleLocalDatasource {
   }) : _objectBox = objectBox;
   final ObjectBoxService _objectBox;
 
-  Store get _store => _objectBox.store;
-
   bool get isBibleEmpty => _objectBox.isBibleEmpty;
 
-  Map<String, String> get translations => {
+  bool get hasTranslations => _objectBox.hasTranslations;
+
+  Map<String, String> get _translationsMap => {
         'kjv': 'King James Version',
         'amp': 'Amplified Bible',
         'asv': 'American Standard Version',
@@ -101,12 +101,35 @@ class BibleLocalDatasource {
         'Revelation': 21,
       };
 
-  List<TranslationDto> getTranslations() {
-    final bibleBox = _store.box<BibleDto>();
-    final bibles = bibleBox.getAll();
+  Future<void> storeTranslations() async {
+    final translations = _translationsMap.entries
+        .map((e) => TranslationDto(name: e.value, abbreviation: e.key))
+        .toList();
+    await _objectBox.storeTranslations(translations);
+  }
 
-    final translations = bibles.map((e) => e.translation).toList();
-    return translations.map(handleFullTranslations).toList();
+  Future<void> updateTranslationWithDownloaded(String abbreviation) async {
+    final translationBox = _objectBox.translationBox;
+    final query = translationBox
+        .query(TranslationDto_.abbreviation.equals(abbreviation))
+        .build();
+    final translation = query.findFirst();
+    query.close();
+    if (translation == null) return;
+    final updatedTranslation = translation.copyWith(downloaded: true);
+    final result = translationBox.put(updatedTranslation);
+    Logger().f('OBJECT BOX UPDATE TRANSLATION => $result');
+    return;
+  }
+
+  List<TranslationDto> getTranslations(bool downloaded) {
+    final translationBox = _objectBox.translationBox;
+    final query = translationBox
+        .query(TranslationDto_.downloaded.equals(downloaded))
+        .build();
+    final translations = query.find();
+    query.close();
+    return translations;
   }
 
   List<VerseDto> getVerses({
@@ -161,10 +184,6 @@ class BibleLocalDatasource {
 
   Future<void> storeBible(List<VerseDto> verses, String translation) {
     return _objectBox.storeBible(verses, translation);
-  }
-
-  Future<void> storeTranslations(List<TranslationDto> translations) {
-    return _objectBox.storeTranslations(translations);
   }
 
   Future<List<VerseDto>> loadFallbackBible() async {

@@ -13,9 +13,8 @@ class TranslationDto with _$TranslationDto {
     required String name,
     required String abbreviation,
     @Id(assignable: true) int? id,
+    @Default(false) bool downloaded,
   }) = _TranslationDto;
-
-  TranslationDto._();
 
   factory TranslationDto.fromJson(Map<String, dynamic> json) =>
       _$TranslationDtoFromJson(json);
@@ -30,6 +29,7 @@ extension TranslationDtoX on TranslationDto {
       id: id,
       name: name,
       abbreviation: abbreviation,
+      downloaded: downloaded,
     );
   }
 }

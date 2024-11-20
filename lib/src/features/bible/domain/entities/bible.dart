@@ -7,6 +7,8 @@ part 'bible.freezed.dart';
 @freezed
 class Bible with _$Bible {
   factory Bible({
-    required String translation, required List<Verse> verses, int? id,
+    required String translation,
+    required List<Verse> verses,
+    int? id,
   }) = _Bible;
 }

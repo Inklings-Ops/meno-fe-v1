@@ -108,7 +108,7 @@ final router = GoRouter(
       },
       onExit: (context, state) {
         context.read<NotesBloc>().add(const ReloadNotes());
-        return false;
+        return true;
       },
     ),
     GoRoute(

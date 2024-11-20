@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/entities/entities.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/exceptions/exceptions.dart';
 
@@ -15,9 +14,9 @@ abstract class IBibleFacade {
 
   /// A list of [Translation] objects representing all available translations
   /// of the Bible
-  Future<List<Translation>> onlineTranslations({bool retrieveOnline = false});
+  List<Translation> get storedTranslations;
 
-  List<Translation> get offlineTranslations;
+  List<Translation> get otherTranslations;
 
   /// Retrieves a [Chapter] object representing the specified chapter of a book
   /// in a given translation.
@@ -66,13 +65,12 @@ abstract class IBibleFacade {
   /// Calls the remote data source to download the full Bible data if there is
   /// an update available,
   /// or if prompted by the user.
-  Future<Either<BibleException, Translation>> sync({
-    required String translation,
-    void Function(int, int)? onProgress,
-    CancelToken cancel,
-  });
+  Future<Either<BibleException, Translation>> downloadBible(String translation);
 
-  Future<Either<BibleException, Unit>> syncFallback();
+  void cancelBibleDownload(String translation);
 
-  Future<void> init();
+  /// A Stream that exposes the download progress of the Bible
+  Stream<double?> get downloadBibleProgress;
+
+  Future<void> initialize();
 }

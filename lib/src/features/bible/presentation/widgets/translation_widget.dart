@@ -3,22 +3,17 @@ import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 class TranslationWidget extends HookWidget {
   const TranslationWidget({
-    required this.translation, super.key,
-    this.progress,
+    required this.translation,
+    super.key,
     this.onDownload,
-    this.onCancel,
-    this.onTap,
+    this.onChange,
     this.isOffline = true,
-    this.loading = false,
   });
 
   final Translation translation;
-  final VoidCallback? onTap;
-  final bool isOffline;
-  final double? progress;
+  final VoidCallback? onChange;
   final VoidCallback? onDownload;
-  final VoidCallback? onCancel;
-  final bool loading;
+  final bool isOffline;
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +21,14 @@ class TranslationWidget extends HookWidget {
     final textTheme = MTextTheme.of(context)!;
 
     final isSelected = context.select(
-      (TranslationsCubit bloc) => bloc.state.selectedTranslation == translation,
+      (TransBloc bloc) => bloc.state.selectedTranslation == translation,
     );
     final abbreviation = translation.abbreviation.toUpperCase();
-    final isDownloading = useState(false);
-    final bloc = context.read<TranslationsCubit>();
+
     final borderRadius = BorderRadius.circular(24);
+
     return InkWell(
-      onTap: () {
-        if (isOffline) {
-          bloc.changeTranslation(translation);
-        } else {
-          isDownloading.value = !isDownloading.value;
-          bloc.downloadTranslation(translation).whenComplete(() {
-            isDownloading.value = false;
-          });
-        }
-      },
+      onTap: isOffline ? onChange : onDownload,
       borderRadius: borderRadius,
       child: Container(
         height: 66,
@@ -63,13 +49,7 @@ class TranslationWidget extends HookWidget {
                 ],
               ),
             ),
-            if (!isOffline)
-              _DownloadButton(
-                onDownload: onDownload!,
-                progress: progress!,
-                onCancel: onCancel!,
-                loading: isDownloading.value,
-              ),
+            if (!isOffline) _DownloadButton(translation: translation),
           ],
         ),
       ),
@@ -78,48 +58,61 @@ class TranslationWidget extends HookWidget {
 }
 
 class _DownloadButton extends StatelessWidget {
-  const _DownloadButton({
-    required this.progress,
-    required this.onDownload,
-    required this.onCancel,
-    this.loading = false,
-  });
+  const _DownloadButton({required this.translation});
 
-  final double progress;
-  final VoidCallback onDownload;
-  final VoidCallback onCancel;
-  final bool loading;
+  final Translation translation;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: 40,
-      child: loading
-          ? _ProgressIndicator(progress: progress, onCancel: onCancel)
-          : IconButton(
-              iconSize: 24,
-              padding: EdgeInsets.zero,
-              icon: const Icon(Icons.download_outlined),
-              onPressed: !loading ? onDownload : null,
-            ),
+    final bloc = context.read<TransBloc>();
+    return BlocBuilder<TransBloc, TransState>(
+      buildWhen: (p, c) =>
+          p.downloading != c.downloading ||
+          p.downloadProgress != c.downloadProgress ||
+          p.downloadingTranslation != c.downloadingTranslation,
+      builder: (context, state) {
+        final progress = state.downloadProgress;
+        final loading = state.downloading;
+        final downloadingTrans = state.downloadingTranslation?.abbreviation;
+        final isTransDownloading = downloadingTrans == translation.abbreviation;
+        final isDownloading = loading && isTransDownloading;
+        return SizedBox.square(
+          dimension: 40,
+          child: isDownloading
+              ? _ProgressIndicator(translation: translation, progress: progress)
+              : IconButton(
+                  iconSize: 24,
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.download_outlined),
+                  onPressed: !isDownloading
+                      ? () => bloc.add(DownloadTranslation(translation))
+                      : null,
+                ),
+        );
+      },
     );
   }
 }
 
 class _ProgressIndicator extends StatelessWidget {
-  const _ProgressIndicator({required this.progress, required this.onCancel});
+  const _ProgressIndicator({
+    required this.progress,
+    required this.translation,
+  });
+
+  final Translation translation;
   final double progress;
-  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final bloc = context.read<TransBloc>();
     return Stack(
       alignment: Alignment.center,
       children: [
         CircularProgressIndicator(value: progress, strokeCap: StrokeCap.round),
         IconButton(
-          onPressed: onCancel,
+          onPressed: () => bloc.add(CancelTranslationDownload(translation)),
           padding: EdgeInsets.zero,
           iconSize: 20,
           style: IconButton.styleFrom(foregroundColor: colors.error),

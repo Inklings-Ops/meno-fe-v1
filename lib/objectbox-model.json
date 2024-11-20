@@ -115,7 +115,7 @@
     },
     {
       "id": "4:7169909356960278486",
-      "lastPropertyId": "3:7120011828430201575",
+      "lastPropertyId": "4:6005744779695785772",
       "name": "TranslationDto",
       "properties": [
         {
@@ -133,6 +133,11 @@
           "id": "3:7120011828430201575",
           "name": "abbreviation",
           "type": 9
+        },
+        {
+          "id": "4:6005744779695785772",
+          "name": "downloaded",
+          "type": 1
         }
       ],
       "relations": []

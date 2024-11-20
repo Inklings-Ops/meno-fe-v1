@@ -33,7 +33,7 @@ class _ScriptureTranslation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TranslationsCubit, TranslationsState>(
+    return BlocBuilder<TransBloc, TransState>(
       buildWhen: (p, c) => p.selectedTranslation != c.selectedTranslation,
       builder: (context, state) {
         final translation = state.selectedTranslation;
@@ -41,7 +41,7 @@ class _ScriptureTranslation extends StatelessWidget {
           content: translation.abbreviation.toUpperCase(),
           onTap: () => context.showModal<void>(
             BlocProvider.value(
-              value: context.read<TranslationsCubit>(),
+              value: context.read<TransBloc>(),
               child: const BibleTranslationsModal(),
             ),
             isScrollControlled: true,

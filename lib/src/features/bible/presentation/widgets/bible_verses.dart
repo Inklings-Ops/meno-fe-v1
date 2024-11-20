@@ -8,15 +8,18 @@ class BibleVerses extends HookWidget {
   Widget build(BuildContext context) {
     final bloc = context.watch<VersesCubit>();
     final scriptureCubit = context.watch<ScripturePickerCubit>();
-    final transCubit = context.watch<TranslationsCubit>();
+    final transCubit = context.watch<TransBloc>();
 
-    useEffect(() {
-      final book = scriptureCubit.state.book;
-      final chapter = scriptureCubit.state.chapter;
-      final transAbb = transCubit.state.selectedTranslation.abbreviation;
-      bloc.getVerses(book: book, chapter: chapter, translation: transAbb);
-      return null;
-    }, const [],);
+    useEffect(
+      () {
+        final book = scriptureCubit.state.book;
+        final chapter = scriptureCubit.state.chapter;
+        final transAbb = transCubit.state.selectedTranslation.abbreviation;
+        bloc.getVerses(book: book, chapter: chapter, translation: transAbb);
+        return null;
+      },
+      const [],
+    );
 
     return MultiBlocListener(
       listeners: [
@@ -31,10 +34,9 @@ class BibleVerses extends HookWidget {
             );
           },
         ),
-        BlocListener<TranslationsCubit, TranslationsState>(
+        BlocListener<TransBloc, TransState>(
           bloc: transCubit,
-          listenWhen: (p, c) =>
-              p.selectedTranslation != c.selectedTranslation && !c.loading,
+          listenWhen: (p, c) => p.selectedTranslation != c.selectedTranslation,
           listener: (context, state) {
             bloc.getVerses(
               book: scriptureCubit.state.book,

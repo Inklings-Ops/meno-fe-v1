@@ -150,6 +150,10 @@ extension GetItInjectableX on _i174.GetIt {
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
         storage: gh<_i535.SecureStorageService>()));
+    gh.factory<_i720.IBibleFacade>(() => _i442.BibleFacade(
+          local: gh<_i150.BibleLocalDatasource>(),
+          network: gh<_i463.NetworkService>(),
+        ));
     gh.lazySingleton<_i305.INetworkFacade>(() => _i479.NetworkFacade(
         connectivity: gh<_i973.InternetConnectionChecker>()));
     gh.lazySingleton<_i586.MediaService>(
@@ -172,17 +176,6 @@ extension GetItInjectableX on _i174.GetIt {
           local: gh<_i1042.NoteLocalDatasource>(),
           remote: gh<_i1042.NoteRemoteDatasource>(),
         ));
-    await gh.factoryAsync<_i720.IBibleFacade>(
-      () {
-        final i = _i442.BibleFacade(
-          local: gh<_i150.BibleLocalDatasource>(),
-          remote: gh<_i150.BibleRemoteDatasource>(),
-          network: gh<_i463.NetworkService>(),
-        );
-        return i.initialize().then((_) => i);
-      },
-      preResolve: true,
-    );
     gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
           remote: gh<_i506.ChatRemoteDatasource>(),
           network: gh<_i264.NetworkService>(),
