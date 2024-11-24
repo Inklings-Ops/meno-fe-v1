@@ -4,6 +4,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class NoteCard extends StatelessWidget {
   const NoteCard({
@@ -24,15 +25,11 @@ class NoteCard extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
-    final json = jsonDecode(note.content.getOr()) as List<dynamic>;
-    final content = Document.fromJson(json).toPlainText();
+    final content = _getContent(note.content);
 
-
-    final formattedDate =
-        DateFormat('d MMM yyyy').format(note.updatedAt ?? note.createdAt!);
-        
-    final formattedTime =
-        DateFormat('h:mm a').format(note.updatedAt ?? note.createdAt!);
+    final timeStamp = note.updatedAt ?? note.createdAt ?? DateTime.now();
+    final formattedDate = DateFormat('d MMM yyyy').format(timeStamp);
+    final formattedTime = DateFormat('h:mm a').format(timeStamp);
 
     return ConstrainedBox(
       constraints: const BoxConstraints.tightForFinite(),
@@ -62,13 +59,15 @@ class NoteCard extends StatelessWidget {
                       ),
                       Spaces.verticalSmall,
                       if (note.folder != null) ...[
-                        Row(
-                          children: [
-                            MTag(
-                              title: note.folder!.title.getOr(),
-                              style: textTheme.microMedium,
-                            ),
-                          ],
+                        Skeleton.leaf(
+                          child: Row(
+                            children: [
+                              MTag(
+                                title: note.folder!.title.getOr(),
+                                style: textTheme.microMedium,
+                              ),
+                            ],
+                          ),
                         ),
                         Spaces.verticalSmall,
                       ],
@@ -140,4 +139,15 @@ class _MoreButton extends StatelessWidget {
       ),
     );
   }
+}
+
+String _getContent(NoteContent content) {
+  String value;
+  try {
+    final json = content.getOr();
+    value = Document.fromJson(jsonDecode(json) as List<dynamic>).toPlainText();
+  } catch (e) {
+    value = BoneMock.longParagraph;
+  }
+  return value;
 }

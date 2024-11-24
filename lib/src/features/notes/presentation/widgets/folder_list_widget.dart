@@ -13,13 +13,7 @@ class FolderListWidget extends StatelessWidget {
       builder: (context, state) => RefreshIndicator.adaptive(
         onRefresh: () async => bloc.add(const GetAllFolders()),
         child: state.maybeWhen(
-          orElse: () {
-            final fakeFolders = List.filled(
-              3,
-              Folder(id: 'id', title: FolderTitle(BoneMock.title)),
-            );
-            return Skeletonizer(child: FolderList(folders: fakeFolders));
-          },
+          orElse: () => Skeletonizer(child: FolderList(folders: fakeFolders)),
           failed: (_) => const FolderListFailureWidget(),
           loaded: (folders) {
             if (folders.isEmpty) return const EmptyFolderListWidget();
