@@ -56,7 +56,7 @@ class MModalTitleBar extends StatelessWidget {
                 if (showCloseButton)
                   MIconButton(
                     icon: const Icon(MIcons.x_close),
-                    color: MColorScheme.of(context)?.onBackground,
+                    color: MColorScheme.of(context)?.onBackgroundVariant,
                     onPressed: () => Navigator.pop(context),
                   ),
               ],

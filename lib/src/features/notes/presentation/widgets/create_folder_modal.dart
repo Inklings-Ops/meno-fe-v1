@@ -49,16 +49,19 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
         padding: MediaQuery.viewInsetsOf(context),
         child: MModal(
           title: isEdit ? 'Rename Your Folder' : 'Give Your Folder a Name',
-          builder: (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 10),
-              _TitleField(initialTitle: widget.initialFolder?.title),
-              const SizedBox(height: 6),
-              const _SubmitButton(),
-              Spaces.verticalXXLarge,
-            ],
+          builder: (context) => ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 292),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 10),
+                _TitleField(initialTitle: widget.initialFolder?.title),
+                const SizedBox(height: 56),
+                const _SubmitButton(),
+                Spaces.verticalXXLarge,
+              ],
+            ),
           ),
         ),
       ),
@@ -73,6 +76,7 @@ class _TitleField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).inputDecorationTheme;
+    final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
     final border = UnderlineInputBorder(
@@ -104,6 +108,9 @@ class _TitleField extends StatelessWidget {
         errorBorder: errorBorder,
         focusedErrorBorder: errorBorder,
         disabledBorder: disabledBorder,
+        hintStyle: textTheme.heading1Regular?.copyWith(
+          color: colors.onBackgroundVariant,
+        ),
       ),
     );
   }

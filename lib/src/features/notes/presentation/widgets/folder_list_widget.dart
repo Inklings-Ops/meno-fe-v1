@@ -1,5 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderListWidget extends StatelessWidget {
   const FolderListWidget({super.key});
@@ -12,26 +13,39 @@ class FolderListWidget extends StatelessWidget {
       builder: (context, state) => RefreshIndicator.adaptive(
         onRefresh: () async => bloc.add(const GetAllFolders()),
         child: state.maybeWhen(
-          orElse: () => const MLoadingIndicator.box(),
+          orElse: () {
+            final fakeFolders = List.filled(
+              3,
+              Folder(id: 'id', title: FolderTitle(BoneMock.title)),
+            );
+            return Skeletonizer(child: FolderList(folders: fakeFolders));
+          },
           failed: (_) => const FolderListFailureWidget(),
           loaded: (folders) {
             if (folders.isEmpty) return const EmptyFolderListWidget();
-            return ListView.separated(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(Insets.lg),
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: folders.length,
-              separatorBuilder: (context, index) => Spaces.verticalLarge,
-              itemBuilder: (context, i) {
-                final folder = folders[i];
-                return FolderListTile(
-                  folder: folder!,
-                  onTap: () => router.push(Routes.folder, extra: folder),
-                );
-              },
-            );
+            return FolderList(folders: folders);
           },
         ),
+      ),
+    );
+  }
+}
+
+class FolderList extends StatelessWidget {
+  const FolderList({required this.folders, super.key});
+  final List<Folder?> folders;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(Insets.lg),
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: folders.length,
+      separatorBuilder: (context, index) => Spaces.verticalLarge,
+      itemBuilder: (context, index) => FolderListTile(
+        folder: folders[index]!,
+        onTap: () => router.push(Routes.folder, extra: folders[index]),
       ),
     );
   }
