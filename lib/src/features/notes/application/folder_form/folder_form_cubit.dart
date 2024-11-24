@@ -14,10 +14,12 @@ class FolderFormCubit extends Cubit<FolderFormState> {
   final INoteFacade _facade;
 
   void init(Folder initialFolder) {
-    emit(FolderFormState.initial().copyWith(
-      initialFolder: initialFolder,
-      title: initialFolder.title,
-    ),);
+    emit(
+      FolderFormState.initial().copyWith(
+        initialFolder: initialFolder,
+        title: initialFolder.title,
+      ),
+    );
   }
 
   void titleChanged(String title) {
@@ -37,10 +39,12 @@ class FolderFormCubit extends Cubit<FolderFormState> {
               title: state.title,
             );
 
-      emit(state.copyWith(
-        option: some(result),
-        loading: false,
-      ),);
+      emit(
+        state.copyWith(
+          option: some(result),
+          loading: false,
+        ),
+      );
     }
   }
 }

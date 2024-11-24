@@ -9,12 +9,12 @@ class NoteBodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final notesBloc = context.read<NotesBloc>();
-    final foldersBloc = context.read<FolderListBloc>();
+    final foldersBloc = context.read<FoldersBloc>();
 
     return RefreshIndicator.adaptive(
       onRefresh: () async => switch (selectedIndex.value) {
         0 => notesBloc.add(const GetNotesRequested()),
-        1 => foldersBloc.add(const FolderListEvent.getAllFolders()),
+        1 => foldersBloc.add(const GetAllFolders()),
         _ => null,
       },
       child: SingleChildScrollView(

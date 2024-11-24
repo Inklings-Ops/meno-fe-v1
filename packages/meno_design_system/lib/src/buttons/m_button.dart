@@ -1,3 +1,5 @@
+// ignore_for_file: use_if_null_to_convert_nulls_to_bools
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -47,9 +49,16 @@ abstract class MButton extends StatelessWidget {
   const MButton({
     required String label,
     required VoidCallback? onPressed,
+    bool? loading,
     Key? key,
     ButtonStyle? style,
-  }) : this._(key: key, label: label, onPressed: onPressed, style: style);
+  }) : this._(
+          key: key,
+          label: label,
+          onPressed: loading == true ? null : onPressed,
+          style: style,
+          loading: loading,
+        );
 
   /// Creates a button with an icon and text.
   ///
@@ -71,6 +80,7 @@ abstract class MButton extends StatelessWidget {
     Key? key,
     MButtonIconPlacement iconPlacement = MButtonIconPlacement.left,
     ButtonStyle? style,
+    bool loading = false,
   }) : this._(
           key: key,
           onPressed: onPressed,
@@ -78,6 +88,7 @@ abstract class MButton extends StatelessWidget {
           icon: icon,
           iconPlacement: iconPlacement,
           style: style,
+          loading: loading,
         );
 
   const MButton._({
@@ -87,6 +98,7 @@ abstract class MButton extends StatelessWidget {
     this.icon,
     this.iconPlacement = MButtonIconPlacement.left,
     this.style,
+    this.loading,
   });
 
   /// The text label for the button.
@@ -94,13 +106,13 @@ abstract class MButton extends StatelessWidget {
 
   /// The icon to be displayed alongside the text.
   ///
-  /// This property is optional. If null, the button will display only the text 
+  /// This property is optional. If null, the button will display only the text
   /// label.
   final Widget? icon;
 
   /// The placement of the icon relative to the text.
   ///
-  /// Defaults to [MButtonIconPlacement.left], which places the icon to the 
+  /// Defaults to [MButtonIconPlacement.left], which places the icon to the
   /// left of the text.
   final MButtonIconPlacement iconPlacement;
 
@@ -109,6 +121,9 @@ abstract class MButton extends StatelessWidget {
 
   /// The style to customize the appearance of the button.
   final ButtonStyle? style;
+
+  /// The loading state of the button
+  final bool? loading;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +139,10 @@ abstract class MButton extends StatelessWidget {
       child = MText(label);
     }
 
-    return buildButton(context, child);
+    return buildButton(
+      context,
+      loading == true ? const MLoadingIndicator.four() : child,
+    );
   }
 
   /// Subclasses should implement this method to define the button's appearance.
@@ -140,7 +158,7 @@ abstract class MButton extends StatelessWidget {
 
 /// A button widget that displays an icon and text in a row.
 ///
-/// This widget is used internally by [MButton] to render the icon and text 
+/// This widget is used internally by [MButton] to render the icon and text
 /// with the specified placement.
 class _MButtonWithIcon extends StatelessWidget {
   /// Creates an instance of [_MButtonWithIcon].

@@ -1,13 +1,11 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 
-class BroadcastChatTab extends HookWidget {
-  const BroadcastChatTab({super.key});
+class ChatTab extends HookWidget {
+  const ChatTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final broadcast = context.read<BroadcastBloc>().state.broadcast;
     final scrollController = useScrollController();
 
     return LayoutBuilder(
@@ -16,10 +14,7 @@ class BroadcastChatTab extends HookWidget {
           Expanded(
             child: Align(
               alignment: Alignment.topCenter,
-              child: ChatList(
-                broadcast: broadcast,
-                scrollController: scrollController,
-              ),
+              child: ChatList(scrollController: scrollController),
             ),
           ),
           SafeArea(
@@ -34,10 +29,7 @@ class BroadcastChatTab extends HookWidget {
                 SizedBox(
                   height: 52,
                   width: constraints.maxWidth,
-                  child: ChatInputContainer(
-                    broadcast: broadcast,
-                    scrollController: scrollController,
-                  ),
+                  child: ChatInputContainer(scrollController: scrollController),
                 ),
               ],
             ),

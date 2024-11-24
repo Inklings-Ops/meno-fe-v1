@@ -2,9 +2,7 @@ part of 'chat_bloc.dart';
 
 @freezed
 class ChatEvent with _$ChatEvent {
-  const factory ChatEvent.getChatMessages(
-    Uid<Broadcast> broadcastId,
-  ) = GetChatMessages;
+  const factory ChatEvent.initialize(Broadcast broadcast) = InitializeChat;
 
   const factory ChatEvent.loadMessages(List<Chat?> chats) = LoadChatMessages;
 

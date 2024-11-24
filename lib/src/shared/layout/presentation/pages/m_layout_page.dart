@@ -64,12 +64,16 @@ class MLayoutPage extends HookWidget {
         BlocListener<LiveKitBloc, LiveKitState>(
           listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
-            state.status.whenOrNull(failed: context.showErrorSnackBar);
+            state.status.whenOrNull(
+              failed: (error, isStream) => context.showErrorSnackBar,
+            );
           },
         ),
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
-            state.whenOrNull(error: context.showErrorSnackBar);
+            state.whenOrNull(
+              error: (error, isStream) => context.showErrorSnackBar,
+            );
           },
         ),
       ],

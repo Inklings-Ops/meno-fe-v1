@@ -63,11 +63,11 @@ class FolderWidget extends StatelessWidget {
                 color: foregroundColor ?? foreground,
               )
             else
-              BlocBuilder<FolderListBloc, FolderListState>(
+              BlocBuilder<FoldersBloc, FoldersState>(
                 builder: (context, state) => MText(
                   state.maybeWhen(
                     orElse: () => '0',
-                    success: (folders) => folders.length.toString(),
+                    loaded: (folders) => folders.length.toString(),
                   ),
                   style: valueStyle ?? textTheme.heading2Medium,
                   color: foreground,

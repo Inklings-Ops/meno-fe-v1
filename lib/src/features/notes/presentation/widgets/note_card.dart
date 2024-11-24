@@ -12,14 +12,12 @@ class NoteCard extends StatelessWidget {
     super.key,
     this.showAddButton = false,
     this.selected = false,
-    this.folder,
   });
 
   final Note note;
   final VoidCallback onTap;
   final bool showAddButton;
   final bool selected;
-  final Folder? folder;
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +27,12 @@ class NoteCard extends StatelessWidget {
     final json = jsonDecode(note.content.getOr()) as List<dynamic>;
     final content = Document.fromJson(json).toPlainText();
 
-    final formattedDate = DateFormat('d MMM yyyy').format(note.createdAt!);
-    final formattedTime = DateFormat('h:mm a').format(note.createdAt!);
 
-    final noteFolder = note.folder ?? folder;
+    final formattedDate =
+        DateFormat('d MMM yyyy').format(note.updatedAt ?? note.createdAt!);
+        
+    final formattedTime =
+        DateFormat('h:mm a').format(note.updatedAt ?? note.createdAt!);
 
     return ConstrainedBox(
       constraints: const BoxConstraints.tightForFinite(),
@@ -45,7 +45,7 @@ class NoteCard extends StatelessWidget {
           shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
           margin: EdgeInsets.zero,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(Insets.lg),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -61,11 +61,11 @@ class NoteCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Spaces.verticalSmall,
-                      if (noteFolder != null) ...[
+                      if (note.folder != null) ...[
                         Row(
                           children: [
                             MTag(
-                              title: noteFolder.title.getOr(),
+                              title: note.folder!.title.getOr(),
                               style: textTheme.microMedium,
                             ),
                           ],
@@ -112,7 +112,7 @@ class NoteCard extends StatelessWidget {
                     ),
                   )
                 else
-                  _MoreButton(note: note.copyWith(folder: folder)),
+                  _MoreButton(note: note),
               ],
             ),
           ),
@@ -124,13 +124,11 @@ class NoteCard extends StatelessWidget {
 
 class _MoreButton extends StatelessWidget {
   const _MoreButton({required this.note});
-
   final Note note;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-
     return SizedBox.square(
       dimension: 16,
       child: IconButton(
@@ -138,12 +136,7 @@ class _MoreButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         color: colors.onDisabledContainer,
         iconSize: 20,
-        onPressed: () {
-          context.showModal<void>(
-            NoteCardOptionsModal(note: note),
-            useRootNavigator: true,
-          );
-        },
+        onPressed: () => router.push(Routes.noteCardOptionsModal, extra: note),
       ),
     );
   }

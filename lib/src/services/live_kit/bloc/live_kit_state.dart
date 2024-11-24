@@ -18,5 +18,8 @@ class LiveKitStatus with _$LiveKitStatus {
 
   const factory LiveKitStatus.streamConnected() = LiveKitStreamConnected;
 
-  const factory LiveKitStatus.failed(String error) = LiveKitConnectionFailed;
+  const factory LiveKitStatus.failed({
+    required String error,
+    @Default(false) bool isStream,
+  }) = LiveKitConnectionFailed;
 }

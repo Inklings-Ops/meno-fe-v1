@@ -32,58 +32,27 @@ extension MDialogX on BuildContext {
     );
   }
 
-  Future<bool?> showDeleteNoteDialog(Note note) {
+  // Future<Note?> showDeleteNoteDialog(Note note) {
+  //   return showDialog<Note?>(
+  //     context: this,
+  //     builder: (context) => DeleteNoteAlertDialog(note: note),
+  //   );
+  // }
+
+  Future<bool?> showDeleteFolderDialog(Folder folder) {
     return showDialog<bool>(
       context: this,
-      builder: (context) => DeleteNoteAlertDialog(
-        onDelete: () => context
-          ..read<NotesBloc>().add(DeleteNoteRequested(note.uid))
-          ..read<FolderListBloc>().add(const FolderListEvent.getAllFolders())
-          ..pop()
-          ..pop(),
+      builder: (context) => DeleteFolderAlertDialog(
+        onDelete: () {},
+        folder: folder,
       ),
     );
   }
 
-  Future<bool?> showDeleteFolderDialog(Folder f) {
-    return showDialog<bool>(
-      context: this,
-      builder: (context) => BlocListener<FolderListBloc, FolderListState>(
-        listenWhen: (c, p) => p != c,
-        listener: (context, state) => state.whenOrNull(
-          success: (folders) => context.go(Routes.notes),
-        ),
-        child: DeleteFolderAlertDialog(
-          onDelete: () {
-            context.read<FolderListBloc>().add(FolderListEvent.deleteFolder(f));
-          },
-        ),
-      ),
-    );
-  }
-
-  Future<bool?> showRemoveNoteFromFolderDialog(Note note) {
-    return showDialog<bool>(
-      context: this,
-      builder: (context) => BlocListener<NotesBloc, NotesState>(
-        listener: (context, state) {
-          // state.whenOrNull(
-          //   success: (_) {
-          //     context
-          //         .read<FolderListBloc>()
-          //         .add(const FolderListEvent.getAllFolders());
-          //     context.pop();
-          //     context.pop();
-          //   },
-          // );
-        },
-        child: DeleteNoteFromFolderAlertDialog(
-          onDelete: () {},
-          // onDelete: () => context
-          //     .read<NotesBloc>()
-          //     .add(NotesEvent.removeFromFolder(note.folder!, note)),
-        ),
-      ),
-    );
-  }
+  // Future<bool?> showRemoveNoteFromFolderDialog(Note note) {
+  //   return showDialog<bool>(
+  //     context: this,
+  //     builder: (context) => RemoveNoteFromFolderAlertDialog(),
+  //   );
+  // }
 }

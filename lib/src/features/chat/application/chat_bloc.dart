@@ -4,16 +4,12 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
 part 'chat_bloc.freezed.dart';
-
 part 'chat_event.dart';
-
 part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc({required IChatFacade facade})
-      : _facade = facade,
-        super(const ChatState(chats: [])) {
-    on<GetChatMessages>(_onGetChatMessages);
+  ChatBloc() : super(ChatState(chats: [], broadcast: Broadcast.empty())) {
+    on<InitializeChat>(_onInitializeChat);
     on<NewChatReceived>(_onNewChatReceived);
     on<ChatDeletePressed>(_onChatDeletePressed);
     on<ChatEditPressed>(_onChatEditPressed);
@@ -25,14 +21,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<HideChatWelcomeNote>(_onHideWelcomeNote);
   }
 
-  final IChatFacade _facade;
+  final _initialState = ChatState(chats: [], broadcast: Broadcast.empty());
 
-  Future<void> _onGetChatMessages(
-    GetChatMessages event,
+  Future<void> _onInitializeChat(
+    InitializeChat event,
     Emitter<ChatState> emit,
   ) async {
-    final failureOrMessages = await _facade.getChatMessages(event.broadcastId);
-    failureOrMessages.fold((failure) {}, (messages) {});
+    emit(state.copyWith(broadcast: event.broadcast));
   }
 
   void _onNewChatReceived(NewChatReceived event, Emitter<ChatState> emit) {
@@ -49,7 +44,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onChatEditPressed(ChatEditPressed event, Emitter<ChatState> emit) {}
 
   Future<void> _onChatReset(ChatReset event, Emitter<ChatState> emit) async {
-    emit(const ChatState(chats: []));
+    emit(_initialState);
   }
 
   void _onContentChanged(ContentChanged event, Emitter<ChatState> emit) {

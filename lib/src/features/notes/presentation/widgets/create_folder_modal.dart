@@ -24,7 +24,6 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
   Widget build(BuildContext context) {
     final isEdit = widget.initialFolder != null;
 
-    final folderListBloc = context.read<FolderListBloc>();
 
     return BlocListener<FolderFormCubit, FolderFormState>(
       listenWhen: (p, c) => p.option != c.option,
@@ -39,9 +38,8 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
                   ..pop()
                   ..pop();
               } else {
-                context.pop();
-                folderListBloc.add(FolderListEvent.updateList(folder));
-                router.push(Routes.folder, extra: folder);
+                router.pop(folder);
+                // router.push(Routes.folder, extra: folder);
               }
             },
           ),

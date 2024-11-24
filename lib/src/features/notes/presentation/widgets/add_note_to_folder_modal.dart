@@ -1,31 +1,26 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-class AddToFolderModal extends HookWidget {
-  const AddToFolderModal({required this.note, super.key});
+class AddNoteToFolderModal extends HookWidget {
+  const AddNoteToFolderModal({required this.note, super.key});
 
   final Note note;
 
   @override
   Widget build(BuildContext context) {
-    final noteListBloc = context.watch<NotesBloc>();
-    final folderListBloc = context.watch<FolderListBloc>();
+    final watcher = context.watch<NotesWatcherBloc>();
+    final loading = watcher.state is NoteWatcherLoading;
 
     final selectedFolder = useState<Folder?>(null);
 
-    return BlocListener<NotesBloc, NotesState>(
-      bloc: noteListBloc,
-      listenWhen: (p, c) => p != c,
+    return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listener: (context, state) {
-        // if (selectedFolder.value != null) {
-        //   state.whenOrNull(
-        //     success: (_) {
-        //       folderListBloc.add(const FolderListEvent.getAllFolders());
-        //       context.pop();
-        //       context.pop();
-        //     },
-        //   );
-        // }
+        state.whenOrNull(
+          noteAddedToFolder: (note, folder) {
+            context.read<NotesBloc>().add(NoteReceived(note));
+            router.pop(note);
+          },
+        );
       },
       child: MModal(
         title: 'Add to Folder',
@@ -33,17 +28,13 @@ class AddToFolderModal extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: BlocBuilder<FolderListBloc, FolderListState>(
-                bloc: folderListBloc,
+              child: BlocBuilder<FoldersBloc, FoldersState>(
                 buildWhen: (p, c) => p != c,
                 builder: (context, state) => state.when(
-                  failure: (_) => const FolderListFailureWidget(),
+                  failed: (_) => const FolderListFailureWidget(),
                   loading: () => const MLoadingIndicator.box(),
-                  success: (folders) {
-                    if (folders.isEmpty) {
-                      return const EmptyFolderListWidget();
-                    }
-
+                  loaded: (folders) {
+                    if (folders.isEmpty) return const EmptyFolderListWidget();
                     return ListView.separated(
                       primary: false,
                       shrinkWrap: true,
@@ -52,11 +43,13 @@ class AddToFolderModal extends HookWidget {
                       itemCount: folders.length,
                       separatorBuilder: (_, i) => Spaces.verticalLarge,
                       itemBuilder: (context, i) {
-                        final folder = folders[i]!;
+                        final folder = folders[i];
                         return FolderListTile(
-                          folder: folder,
+                          folder: folder!,
                           selected: selectedFolder.value?.id == folder.id,
-                          onTap: () => selectedFolder.value = folder,
+                          onTap: !loading
+                              ? () => selectedFolder.value = folder
+                              : null,
                         );
                       },
                     );
@@ -68,12 +61,10 @@ class AddToFolderModal extends HookWidget {
               Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
-                loading: noteListBloc.state is NotesLoadInProgress,
+                loading: loading,
+                disabled: selectedFolder.value == null,
                 onPressed: () {
-                  // TODO:
-                  // noteListBloc.add(
-                  //   NotesEvent.addToFolder(selectedFolder.value!, note),
-                  // );
+                  watcher.add(AddNoteToFolder(note, selectedFolder.value!));
                 },
               ),
             ],

@@ -34,9 +34,9 @@ class FolderListFailureWidget extends StatelessWidget {
                 width: 1.50,
               ),
             ),
-            onPressed: () => context
-                .read<FolderListBloc>()
-                .add(const FolderListEvent.getAllFolders()),
+            onPressed: () {
+              context.read<FoldersBloc>().add(const GetAllFolders());
+            },
           ),
         ),
       ],

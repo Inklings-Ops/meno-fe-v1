@@ -37,7 +37,7 @@ class StreamPageView extends HookWidget {
           listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
             state.status.whenOrNull(
-              failed: (error) {
+              failed: (error, _) {
                 context.read<LiveBloc>().add(const GoFailure());
                 router.pop();
               },
@@ -51,7 +51,7 @@ class StreamPageView extends HookWidget {
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
             state.whenOrNull(
-              error: (error) {
+              error: (error, _) {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.read<LiveKitBloc>().add(const LiveKitDisconnect());
                 router.pop();

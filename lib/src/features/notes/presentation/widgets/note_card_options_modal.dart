@@ -8,6 +8,7 @@ class NoteCardOptionsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+    final folders = context.read<FoldersBloc>();
 
     return MModal(
       builder: (context) => Column(
@@ -17,17 +18,31 @@ class NoteCardOptionsModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Remove from Folder',
-              onTap: () => context.showRemoveNoteFromFolderDialog(note),
+              onTap: () async {
+                final result = await router.push(
+                  Routes.remoteNoteFromFolderDialog,
+                  extra: note,
+                );
+                if (result == true) {
+                  folders.add(const GetAllFolders());
+                  router.pop();
+                }
+              },
             )
           else
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Add to Folder',
-              onTap: () => context.showModal<void>(
-                AddToFolderModal(note: note),
-                useRootNavigator: true,
-                isScrollControlled: true,
-              ),
+              onTap: () async {
+                final result = await router.push(
+                  Routes.addNoteToFolderModal,
+                  extra: note,
+                );
+                if (result != null) {
+                  folders.add(const GetAllFolders());
+                  router.pop();
+                }
+              },
             ),
           Spaces.verticalSmall,
           const MModalListTile(
@@ -44,7 +59,10 @@ class NoteCardOptionsModal extends StatelessWidget {
             leading: Icon(MIcons.trash, color: colors.error),
             title: 'Delete',
             titleColor: colors.error,
-            onTap: () => context.showDeleteNoteDialog(note),
+            onTap: () async {
+              final r = await router.push(Routes.deleteNoteDialog, extra: note);
+              if (r == true) router.pop();
+            },
           ),
           Spaces.verticalSmall,
         ],

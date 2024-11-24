@@ -20,6 +20,7 @@ class MDangerButton extends MButton {
     required super.label,
     required super.onPressed,
     super.key,
+    super.loading,
     super.style,
   });
 

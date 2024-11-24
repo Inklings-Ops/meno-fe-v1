@@ -4,13 +4,8 @@ import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class ChatInputContainer extends HookWidget {
-  const ChatInputContainer({
-    required this.broadcast,
-    required this.scrollController,
-    super.key,
-  });
+  const ChatInputContainer({required this.scrollController, super.key});
 
-  final Broadcast broadcast;
   final ScrollController scrollController;
 
   @override
@@ -40,7 +35,7 @@ class ChatInputContainer extends HookWidget {
                 onPressed: () => bloc.add(const ToggleShowReactions()),
               ),
               _SendButton(
-                broadcastId: broadcast.id,
+                broadcastId: bloc.state.broadcast.id,
                 scrollController: scrollController,
               ),
             ],

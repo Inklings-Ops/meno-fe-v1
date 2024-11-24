@@ -1813,7 +1813,7 @@ packages:
     source: hosted
     version: "3.0.0"
   skeletonizer:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: skeletonizer
       sha256: "3b202e4fa9c49b017d368fb0e570d4952bcd19972b67b2face071bdd68abbfae"

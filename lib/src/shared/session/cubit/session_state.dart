@@ -83,6 +83,18 @@ extension SessionStateX on SessionState {
         Routes.recentlyLive,
         Routes.settings,
         Routes.endedBroadcast,
+        Routes.broadcastTab,
+        Routes.chatTab,
+        Routes.bibleTab,
+        Routes.notesTab,
+        Routes.noteTabEditor,
+        Routes.noteSection,
+        Routes.folderSection,
+        Routes.noteCardOptionsModal,
+        Routes.addNoteToFolderModal,
+        Routes.folderFormModal,
+        Routes.deleteNoteDialog,
+        Routes.remoteNoteFromFolderDialog,
       ],
     );
   }

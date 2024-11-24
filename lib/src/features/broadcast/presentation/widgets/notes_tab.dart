@@ -51,3 +51,36 @@ class NotesTab extends HookWidget {
     );
   }
 }
+
+class NoteList extends StatelessWidget {
+  const NoteList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<NotesBloc, NotesState>(
+      buildWhen: (previous, current) => previous != current,
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const MLoadingIndicator.box(),
+        failure: (failure) => const NoteListFailureWidget(),
+        loadSuccess: (notes) {
+          if (notes.isEmpty) return const EmptyNoteListWidget();
+          return ListView.separated(
+            primary: false,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 16),
+            itemCount: notes.length,
+            separatorBuilder: (context, index) => Spaces.verticalLarge,
+            itemBuilder: (context, index) {
+              final note = notes[index]!;
+              return NoteCard(
+                note: note,
+                onTap: () => router.push(Routes.noteTabEditor, extra: note),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

@@ -1,27 +1,17 @@
 import 'dart:async';
 
-import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/meno.dart';
-
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
+part 'note_editor_bloc.freezed.dart';
 part 'note_editor_event.dart';
-
 part 'note_editor_state.dart';
 
-part 'note_editor_bloc.freezed.dart';
-
 class NoteEditorBloc extends Bloc<NoteEditorEvent, NoteEditorState> {
-  NoteEditorBloc({
-    required INoteFacade facade,
-    Note? initialNote,
-  })  : _facade = facade,
-        super(
-          NoteEditorState(
-            note: initialNote ?? Note.empty(),
-            isEditing: initialNote != null,
-          ),
-        ) {
+  NoteEditorBloc({required INoteFacade facade})
+      : _facade = facade,
+        super(NoteLoaded(Note.empty())) {
+    on<InitializeNoteEditor>(_onInit);
     on<NoteTitleChanged>(_onTitleChanged);
     on<NoteContentChanged>(_onContentChanged);
     on<NoteSaveRequested>(_onNoteSaveRequested);
@@ -30,37 +20,56 @@ class NoteEditorBloc extends Bloc<NoteEditorEvent, NoteEditorState> {
 
   final INoteFacade _facade;
 
+  bool get isNoteEmpty {
+    return state.maybeWhen(
+      orElse: () => true,
+      loaded: (note) => !(note.title.isValid && note.content.isValid),
+    );
+  }
+
+  bool get isDoneEditingAndValid {
+    return state.maybeWhen(
+      orElse: () => false,
+      loaded: (note) => note.uid.isValid && note.title.isValid,
+    );
+  }
+
+  void _onInit(InitializeNoteEditor event, Emitter<NoteEditorState> emit) {
+    return emit(NoteLoaded(event.note));
+  }
+
   void _onTitleChanged(NoteTitleChanged event, Emitter<NoteEditorState> emit) {
-    emit(state.copyWith(note: state.note.copyWith(title: event.title)));
+    if (state is! NoteLoaded) return;
+    final note = (state as NoteLoaded).note.copyWith(title: event.title);
+    return emit(NoteLoaded(note));
   }
 
   void _onContentChanged(
     NoteContentChanged event,
     Emitter<NoteEditorState> emit,
   ) {
-    emit(state.copyWith(note: state.note.copyWith(content: event.content)));
+    if (state is! NoteLoaded) return;
+    final note = (state as NoteLoaded).note.copyWith(content: event.content);
+    return emit(NoteLoaded(note));
   }
 
   Future<void> _onNoteSaveRequested(
     NoteSaveRequested event,
     Emitter<NoteEditorState> emit,
   ) async {
-    late Either<NoteException, Note> failureOrNote;
+    if (state is NoteSaveInProgress) return;
 
-    emit(state.copyWith(status: NoteEditorStatus.loading));
+    final note = (state as NoteLoaded).note;
 
-    if (state.note.failureOption.isNone()) {
-      failureOrNote = state.isEditing
-          ? await _facade.updateNote(note: state.note)
-          : await _facade.createNote(state.note);
+    emit(const NoteSaveInProgress());
+
+    if (note.title.isValid) {
+      final failureOrNote = note.uid.isValid
+          ? await _facade.updateNote(note: note)
+          : await _facade.createNote(note);
+
+      emit(failureOrNote.fold(NoteEditorFailure.new, NoteSaved.new));
     }
-
-    emit(
-      failureOrNote.fold(
-        (f) => state.copyWith(status: NoteEditorStatus.failure, failure: f),
-        (n) => state.copyWith(status: NoteEditorStatus.saved, note: n),
-      ),
-    );
   }
 
   void _onExited(NoteEditorExited event, Emitter<NoteEditorState> emit) {}

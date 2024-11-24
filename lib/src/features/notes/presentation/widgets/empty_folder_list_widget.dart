@@ -52,7 +52,10 @@ class _CreateNewFolderButton extends StatelessWidget {
           ),
         ),
         onPressed: () => context.showModal<void>(
-          const CreateFolderModal(),
+          BlocProvider.value(
+            value: context.read<FoldersBloc>(),
+            child: const CreateFolderModal(),
+          ),
           useRootNavigator: true,
           isScrollControlled: true,
         ),

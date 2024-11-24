@@ -4,8 +4,6 @@ import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 

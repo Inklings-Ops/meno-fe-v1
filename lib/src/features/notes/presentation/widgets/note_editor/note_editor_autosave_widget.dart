@@ -9,18 +9,17 @@ class NoteEditorAutosaveWidget extends StatelessWidget {
     final bloc = context.read<NoteEditorBloc>();
 
     return BlocBuilder<NoteEditorBloc, NoteEditorState>(
-      buildWhen: (p, c) => p.status != c.status,
-      builder: (context, state) {
-        final loading = state.status == NoteEditorStatus.loading;
-        return InkWell(
-          onTap: loading ? null : () => bloc.add(const NoteSaveRequested()),
-          child: MText(
-            loading ? 'Saving...' : 'Done',
-            color: MColorScheme.of(context)!.primary,
-            style: MTextTheme.of(context)!.captionMedium,
-          ),
-        );
-      },
+      buildWhen: (p, c) => p is NoteSaveInProgress != c is NoteSaveInProgress,
+      builder: (context, state) => InkWell(
+        onTap: () => state.whenOrNull(
+          loaded: (_) => bloc.add(const NoteSaveRequested()),
+        ),
+        child: MText(
+          state.maybeWhen(orElse: () => 'Done', saving: () => 'Saving...'),
+          color: MColorScheme.of(context)!.primary,
+          style: MTextTheme.of(context)!.captionMedium,
+        ),
+      ),
     );
   }
 }

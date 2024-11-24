@@ -76,6 +76,7 @@ extension MSnackBarExtensions on BuildContext {
     return showErrorSnackBar(
       exception.maybeMap(
         orElse: () => '',
+        message: (value) => value.message,
         networkError: (_) => MErrorMessages.networkError,
         serverError: (_) => MErrorMessages.serverError,
         timeOutError: (_) => MErrorMessages.timeOutError,

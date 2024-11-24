@@ -90,7 +90,7 @@ class _AllNotesModal extends HookWidget {
                     itemBuilder: (context, i) => NoteCard(
                       note: list[i]!,
                       showAddButton: true,
-                      folder: folder,
+                      // folder: folder,
                       selected: selectedNote.value?.uid == list[i]?.uid,
                       onTap: () {
                         if (selectedNote.value != null) {

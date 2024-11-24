@@ -55,7 +55,7 @@ class CreateBroadcastView extends HookWidget {
               },
               broadcastStarted: () {
                 liveKit.add(LiveKitBroadcast(state.broadcast.broadcastToken!));
-                router.replace<void>(Routes.broadcast);
+                router.replace<void>(Routes.broadcastTab);
               },
             );
           },

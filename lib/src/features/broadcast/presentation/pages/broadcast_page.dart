@@ -38,7 +38,7 @@ class BroadcastPageView extends HookWidget {
           listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
             state.status.whenOrNull(
-              failed: (error) {
+              failed: (error, _) {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.showErrorSnackBar(error);
               },
@@ -52,7 +52,7 @@ class BroadcastPageView extends HookWidget {
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
             state.whenOrNull(
-              error: (error) {
+              error: (error, _) {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.showErrorSnackBar(error);
               },
@@ -104,7 +104,7 @@ class BroadcastPageView extends HookWidget {
               controller: controller,
               children: const [
                 BroadcastTab(),
-                BroadcastChatTab(),
+                ChatTab(),
                 LiveBibleTab(),
                 NotesTab(),
               ],

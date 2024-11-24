@@ -1,8 +1,21 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-class FolderPage extends HookWidget {
+class FolderPage extends StatelessWidget {
   const FolderPage({required this.folder, super.key});
+  final Folder folder;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: FolderCubit(facade: di<INoteFacade>(), folder: folder),
+      child: FolderPageView(folder: folder),
+    );
+  }
+}
+
+class FolderPageView extends HookWidget {
+  const FolderPageView({required this.folder, super.key});
   final Folder folder;
 
   @override
@@ -30,78 +43,67 @@ class FolderPage extends HookWidget {
 
     return RefreshIndicator(
       onRefresh: folderBloc.getAllNotes,
-      child: BlocListener<FolderFormCubit, FolderFormState>(
-        listenWhen: (p, c) => p.option != c.option,
-        listener: (context, state) {
-          state.option.fold(
-            () => null,
-            (either) => either.fold(
-              (_) => null,
-              (newFolder) => updatedFolder.value = newFolder,
-            ),
-          );
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 42,
-            leadingWidth: 90,
-            leading: const MNotesBackButton(title: 'Folders'),
-            actions: [
-              IconButton(
-                icon: const Icon(MIcons.dots_horizontal),
-                onPressed: () => context.showModal<void>(
-                  MModal(
-                    builder: (context) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MModalListTile(
-                          leading: const Icon(MIcons.edit_05),
-                          title: 'Rename Folder',
-                          onTap: () => context
-                            ..pop()
-                            ..showModal<void>(
-                              CreateFolderModal(initialFolder: folder),
-                              isScrollControlled: true,
-                              useRootNavigator: true,
-                            ),
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 42,
+          leadingWidth: 90,
+          leading: const MNotesBackButton(title: 'Folders'),
+          actions: [
+            IconButton(
+              icon: const Icon(MIcons.dots_horizontal),
+              onPressed: () => context.showModal<void>(
+                MModal(
+                  builder: (context) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MModalListTile(
+                        leading: const Icon(MIcons.edit_05),
+                        title: 'Rename Folder',
+                        onTap: () async {
+                          router.pop();
+                          await router.push(
+                            Routes.folderFormModal,
+                            extra: folder,
+                          );
+                          // TODO(David): Handle action on folder rename
+                        },
+                      ),
+                      Spaces.verticalSmall,
+                      MModalListTile(
+                        leading: Icon(MIcons.trash, color: colors.error),
+                        title: 'Delete',
+                        titleColor: colors.error,
+                        onTap: () => context.showDeleteFolderDialog(
+                          updatedFolder.value,
                         ),
-                        Spaces.verticalSmall,
-                        MModalListTile(
-                          leading: Icon(MIcons.trash, color: colors.error),
-                          title: 'Delete',
-                          titleColor: colors.error,
-                          onTap: () => context.showDeleteFolderDialog(
-                            updatedFolder.value,
-                          ),
-                        ),
-                        Spaces.verticalLarge,
-                      ],
-                    ),
+                      ),
+                      Spaces.verticalLarge,
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                FolderWidget(
-                  value: '$numberOfNotes notes',
-                  title: isNewFolder
-                      ? updatedFolder.value.title.getOr()
-                      : folder.title.getOr(),
-                  titleStyle: textTheme.subheadingMedium,
-                  valueStyle: textTheme.captionMedium,
-                  backgroundColor: colors.primary,
-                  foregroundColor: colors.onPrimary,
-                  height: 88,
-                ),
-                Spaces.verticalXLarge,
-                _NotesList(folder: folder),
-              ],
             ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              FolderWidget(
+                value: '$numberOfNotes notes',
+                title: isNewFolder
+                    ? updatedFolder.value.title.getOr()
+                    : folder.title.getOr(),
+                titleStyle: textTheme.subheadingMedium,
+                valueStyle: textTheme.captionMedium,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
+                height: 88,
+              ),
+              Spaces.verticalXLarge,
+              _NotesList(folder: folder),
+            ],
           ),
         ),
       ),
@@ -130,7 +132,7 @@ class _NotesList extends StatelessWidget {
             itemCount: folder.notes!.length,
             itemBuilder: (context, i) => NoteCard(
               note: folder.notes![i]!,
-              folder: folder,
+              // folder: folder,
               onTap: () {},
             ),
           );

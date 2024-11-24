@@ -9,9 +9,7 @@ import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 part 'socket_bloc.freezed.dart';
-
 part 'socket_event.dart';
-
 part 'socket_state.dart';
 
 class SocketBloc extends Bloc<SocketEvent, SocketState> {
@@ -90,9 +88,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           (json) => json as dynamic,
         );
         if (response.error != null) {
-          add(SocketUpdateState(SocketError(response.error!)));
+          _addUpdateState(SocketError(error: response.error!));
         } else {
-          add(const SocketUpdateState(SocketBroadcastStarted()));
+          _addUpdateState(const SocketBroadcastStarted());
         }
       },
     );
@@ -109,9 +107,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           (json) => json as dynamic,
         );
         if (response.error != null) {
-          add(SocketUpdateState(SocketError(response.error!)));
+          _addUpdateState(SocketError(error: response.error!));
         } else {
-          add(const SocketUpdateState(SocketBroadcastEnded()));
+          _addUpdateState(const SocketBroadcastEnded());
         }
       },
     );
@@ -128,9 +126,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           (json) => json as dynamic,
         );
         if (response.error != null) {
-          add(SocketUpdateState(SocketError(response.error!)));
+          _addUpdateState(SocketError(error: response.error!, isStream: true));
         } else {
-          add(const SocketUpdateState(SocketBroadcastJoined()));
+          _addUpdateState(const SocketBroadcastJoined());
         }
       },
     );
@@ -150,9 +148,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           (json) => json as dynamic,
         );
         if (response.error != null) {
-          add(SocketUpdateState(SocketError(response.error!)));
+          _addUpdateState(SocketError(error: response.error!));
         } else {
-          add(const SocketUpdateState(SocketBroadcastLeft()));
+          _addUpdateState(const SocketBroadcastLeft());
         }
       },
     );
@@ -168,7 +166,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           (json) => ChatListDto.fromJson(json as Map<String, dynamic>),
         );
         if (response.error != null) {
-          add(SocketUpdateState(SocketError(response.error!)));
+          add(SocketUpdateState(SocketError(error: response.error!)));
         } else {
           final dtos = response.data!.chatMessages;
           final chatMessages = dtos.map((chat) => chat?.toDomain).toList();
@@ -239,4 +237,6 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   void _onUpdateState(SocketUpdateState event, Emitter<SocketState> emit) {
     emit(event.newState);
   }
+
+  void _addUpdateState(SocketState state) => add(SocketUpdateState(state));
 }

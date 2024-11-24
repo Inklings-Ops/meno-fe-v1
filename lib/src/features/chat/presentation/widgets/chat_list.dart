@@ -5,13 +5,8 @@ import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatList extends StatelessWidget {
-  const ChatList({
-    required this.broadcast,
-    required this.scrollController,
-    super.key,
-  });
+  const ChatList({required this.scrollController, super.key});
 
-  final Broadcast broadcast;
   final ScrollController scrollController;
 
   @override
@@ -34,10 +29,7 @@ class ChatList extends StatelessWidget {
           shrinkWrap: true,
           separatorBuilder: (context, _) => Spaces.verticalLarge,
           itemCount: state.chats.length,
-          itemBuilder: (context, i) => _ChatBubble(
-            broadcast: broadcast,
-            chat: state.chats[i]!,
-          ),
+          itemBuilder: (context, i) => _ChatBubble(chat: state.chats[i]!),
         ),
       ),
     );
@@ -45,13 +37,13 @@ class ChatList extends StatelessWidget {
 }
 
 class _ChatBubble extends StatelessWidget {
-  const _ChatBubble({required this.broadcast, required this.chat});
+  const _ChatBubble({required this.chat});
 
-  final Broadcast broadcast;
   final Chat chat;
 
   @override
   Widget build(BuildContext context) {
+    final broadcast = context.read<ChatBloc>().state.broadcast;
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),

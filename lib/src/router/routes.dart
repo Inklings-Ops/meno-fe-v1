@@ -33,6 +33,22 @@ class Routes {
   static const String folder = '/folder';
   static const String settings = '/settings';
   static const String endedBroadcast = '/endedBroadcast';
+
+  static const String broadcastTab = '/broadcast-tab';
+  static const String chatTab = '/chat-tab';
+  static const String bibleTab = '/bible-tab';
+  static const String notesTab = '/notes-tab';
+  static const String noteTabEditor = '/note-tab-editor';
+
+  static const String noteSection = '/notes-section';
+  static const String folderSection = '/folder-section';
+
+  static const String noteCardOptionsModal = '/note-card-options-modal';
+  static const String addNoteToFolderModal = '/add-note-to-folder-modal';
+  static const String folderFormModal = '/create-new-folder-modal';
+
+  static const String deleteNoteDialog = '/delete-note-dialog';
+  static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
 }
 class ModalPage<T> extends Page<void> {
   const ModalPage({
@@ -63,6 +79,33 @@ class ModalPage<T> extends Page<void> {
       enableDrag: enableDrag,
       showDragHandle: true,
       useSafeArea: true,
+      settings: this,
+    );
+  }
+}
+
+
+class DialogPage<T> extends Page<void> {
+  const DialogPage({
+    required this.builder,
+    super.key,
+    this.barrierDismissible = true,
+    this.barrierColor,
+  });
+
+  final WidgetBuilder builder;
+  final bool barrierDismissible;
+  final Color? barrierColor;
+
+  @override
+  Route<T> createRoute(BuildContext context) {
+    return DialogRoute<T>(
+      context: context,
+      builder: builder,
+      settings: this,
+      useSafeArea: false,
+      barrierDismissible: barrierDismissible,
+      barrierColor: barrierColor ?? Colors.black54,
     );
   }
 }

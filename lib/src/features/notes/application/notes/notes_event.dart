@@ -14,7 +14,12 @@ class NotesEvent with _$NotesEvent {
 
   const factory NotesEvent.reload() = ReloadNotes;
 
-  const factory NotesEvent.deleteNoteRequested(
-    Uid<Note> noteId,
-  ) = DeleteNoteRequested;
+  const factory NotesEvent.noteReceived(Note note) = NoteReceived;
+
+  const factory NotesEvent.noteRemoved(Note note) = NoteRemoved;
+
+  const factory NotesEvent.updateNoteWithFolder({
+    required Note note,
+    required Folder folder,
+  }) = UpdateNoteWithFolder;
 }

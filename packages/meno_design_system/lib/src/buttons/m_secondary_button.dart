@@ -46,9 +46,9 @@ class MSecondaryButton extends MButton {
     required super.label,
     required super.onPressed,
     super.key,
-    this.loading = false,
+    bool loading = false,
     super.style,
-  });
+  }): _loading = loading;
 
   /// Creates an instance of [MSecondaryButton] with an icon.
   ///
@@ -69,14 +69,17 @@ class MSecondaryButton extends MButton {
     required super.onPressed,
     super.key,
     super.iconPlacement = MButtonIconPlacement.left,
-    this.loading = false,
+    bool loading = false,
     super.style,
-  }) : super.icon();
+  }) : _loading = loading, super.icon();
 
   /// Indicates whether the button is in a loading state. When true, a loading
   /// indicator is displayed instead of the button's child.
   /// Defaults to false.
-  final bool loading;
+  final bool _loading;
+
+  @override
+  bool get loading => _loading;
 
   @override
   Widget buildButton(BuildContext context, Widget child) {

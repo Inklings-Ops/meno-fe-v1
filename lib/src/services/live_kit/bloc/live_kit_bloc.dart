@@ -38,7 +38,13 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
         ),
       );
     } catch (error) {
-      emit(state.copyWith(status: LiveKitConnectionFailed(error.toString())));
+      emit(
+        state.copyWith(
+          status: LiveKitConnectionFailed(
+            error: error.toString(),
+          ),
+        ),
+      );
     }
   }
 
@@ -51,7 +57,14 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
       await _liveKit.stream(event.token);
       emit(state.copyWith(status: const LiveKitStreamConnected()));
     } catch (error) {
-      emit(state.copyWith(status: LiveKitConnectionFailed(error.toString())));
+      emit(
+        state.copyWith(
+          status: LiveKitConnectionFailed(
+            error: error.toString(),
+            isStream: true,
+          ),
+        ),
+      );
     }
   }
 

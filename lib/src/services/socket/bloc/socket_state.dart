@@ -8,7 +8,10 @@ class SocketState with _$SocketState {
 
   const factory SocketState.disconnected() = SocketDisconnected;
 
-  const factory SocketState.error(String error) = SocketError;
+  const factory SocketState.error({
+    required String error,
+    @Default(false) bool isStream,
+  }) = SocketError;
 
   const factory SocketState.loading() = SocketLoading;
 

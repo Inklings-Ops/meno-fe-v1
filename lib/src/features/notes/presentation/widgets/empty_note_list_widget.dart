@@ -1,4 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class EmptyNoteListWidget extends StatelessWidget {
   const EmptyNoteListWidget({super.key});
@@ -6,20 +7,23 @@ class EmptyNoteListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return SizedBox(
-      width: 266,
-      height: 224,
-      child: Column(
-        children: [
-          Assets.images.newFile.image(height: 120, width: 160),
-          MText(
-            'Welcome! Start writing down everything you take in.',
-            style: textTheme.bodyRegular,
-            textAlign: TextAlign.center,
-          ),
-          Spaces.verticalXLarge,
-          const AddNewNoteButton(),
-        ],
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SizedBox(
+        width: 266,
+        height: 224,
+        child: Column(
+          children: [
+            Assets.images.newFile.image(height: 120, width: 160),
+            MText(
+              'Welcome! Start writing down everything you take in.',
+              style: textTheme.bodyRegular,
+              textAlign: TextAlign.center,
+            ),
+            Spaces.verticalXLarge,
+            const AddNewNoteButton(),
+          ],
+        ),
       ),
     );
   }
@@ -50,7 +54,11 @@ class AddNewNoteButton extends StatelessWidget {
             width: 1.50,
           ),
         ),
-        onPressed: () => router.push(Routes.noteEditor),
+        onPressed: () async {
+          final bloc = context.read<NotesBloc>();
+          final newNote = await router.push<Note?>(Routes.noteEditor);
+          if (newNote != null) return bloc.add(NoteReceived(newNote));
+        },
       ),
     );
   }
