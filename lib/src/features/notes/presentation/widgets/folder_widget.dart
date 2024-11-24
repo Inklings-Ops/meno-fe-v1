@@ -1,5 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderWidget extends StatelessWidget {
   const FolderWidget({
@@ -34,46 +35,51 @@ class FolderWidget extends StatelessWidget {
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
 
-    return RawMaterialButton(
-      onPressed: onTap,
-      shape: const _FolderBorder(),
-      fillColor: backgroundColor ?? background,
-      elevation: 0,
-      hoverElevation: 0,
-      focusElevation: 0,
-      highlightElevation: 0,
-      child: Container(
-        height: height ?? 94,
-        width: size.width,
-        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            MText(
-              title ?? 'Folders',
-              style: titleStyle ?? textTheme.captionMedium,
-              color: foregroundColor ?? foreground,
-            ),
-            if (value != null)
+    final loading = context.watch<FoldersBloc>().state is FoldersLoading;
+
+    return Skeletonizer(
+      enabled: loading,
+      child: RawMaterialButton(
+        onPressed: loading ? null : onTap,
+        shape: const _FolderBorder(),
+        fillColor: backgroundColor ?? background,
+        elevation: 0,
+        hoverElevation: 0,
+        focusElevation: 0,
+        highlightElevation: 0,
+        child: Container(
+          height: height ?? 94,
+          width: size.width,
+          padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               MText(
-                value!,
-                style: valueStyle ?? textTheme.heading2Medium,
+                title ?? 'Folders',
+                style: titleStyle ?? textTheme.captionMedium,
                 color: foregroundColor ?? foreground,
-              )
-            else
-              BlocBuilder<FoldersBloc, FoldersState>(
-                builder: (context, state) => MText(
-                  state.maybeWhen(
-                    orElse: () => '0',
-                    loaded: (folders) => folders.length.toString(),
-                  ),
-                  style: valueStyle ?? textTheme.heading2Medium,
-                  color: foreground,
-                ),
               ),
-          ],
+              if (value != null)
+                MText(
+                  value!,
+                  style: valueStyle ?? textTheme.heading2Medium,
+                  color: foregroundColor ?? foreground,
+                )
+              else
+                BlocBuilder<FoldersBloc, FoldersState>(
+                  builder: (context, state) => MText(
+                    state.maybeWhen(
+                      orElse: () => '0',
+                      loaded: (folders) => folders.length.toString(),
+                    ),
+                    style: valueStyle ?? textTheme.heading2Medium,
+                    color: foreground,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
