@@ -17,6 +17,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
         state.whenOrNull(
           noteDeleted: (note) {
             context.read<NotesBloc>().add(NoteRemoved(note));
+            context.read<FoldersBloc>().add(const GetAllFolders());
             router.pop(true);
           },
           failure: (exception) {

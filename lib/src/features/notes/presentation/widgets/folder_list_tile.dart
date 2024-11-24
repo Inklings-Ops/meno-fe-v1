@@ -7,12 +7,12 @@ class FolderListTile extends StatelessWidget {
     required this.folder,
     super.key,
     this.onTap,
-    this.selected = false,
+    this.isSelected = false,
   });
 
   final Folder folder;
   final VoidCallback? onTap;
-  final bool selected;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class FolderListTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: colors.surfaceTint,
           borderRadius: Corners.lg,
-          border: selected ? border : null,
+          border: isSelected ? border : null,
         ),
         child: Row(
           children: [

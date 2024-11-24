@@ -8,7 +8,6 @@ class NoteCardOptionsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final folders = context.read<FoldersBloc>();
 
     return MModal(
       builder: (context) => Column(
@@ -18,31 +17,13 @@ class NoteCardOptionsModal extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Remove from Folder',
-              onTap: () async {
-                final result = await router.push(
-                  Routes.remoteNoteFromFolderDialog,
-                  extra: note,
-                );
-                if (result == true) {
-                  folders.add(const GetAllFolders());
-                  router.pop();
-                }
-              },
+              onTap: _removeFromFolder,
             )
           else
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Add to Folder',
-              onTap: () async {
-                final result = await router.push(
-                  Routes.addNoteToFolderModal,
-                  extra: note,
-                );
-                if (result != null) {
-                  folders.add(const GetAllFolders());
-                  router.pop();
-                }
-              },
+              onTap: _addToFolder,
             ),
           Spaces.verticalSmall,
           const MModalListTile(
@@ -59,14 +40,26 @@ class NoteCardOptionsModal extends StatelessWidget {
             leading: Icon(MIcons.trash, color: colors.error),
             title: 'Delete',
             titleColor: colors.error,
-            onTap: () async {
-              final r = await router.push(Routes.deleteNoteDialog, extra: note);
-              if (r == true) router.pop();
-            },
+            onTap: _deleteNote,
           ),
           Spaces.verticalSmall,
         ],
       ),
     );
+  }
+
+  Future<void> _addToFolder() async {
+    final result = await router.push(Routes.addNoteToFolderModal, extra: note);
+    if (result == true) return router.pop();
+  }
+
+  Future<void> _deleteNote() async {
+    final result = await router.push(Routes.deleteNoteDialog, extra: note);
+    if (result == true) router.pop();
+  }
+
+  Future<void> _removeFromFolder() async {
+    final r = await router.push(Routes.remoteNoteFromFolderDialog, extra: note);
+    if (r == true) return router.pop();
   }
 }

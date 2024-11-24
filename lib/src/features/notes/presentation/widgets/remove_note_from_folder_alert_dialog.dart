@@ -2,11 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
-  const RemoveNoteFromFolderAlertDialog({
-    required this.note,
-    super.key,
-  });
-
+  const RemoveNoteFromFolderAlertDialog({required this.note, super.key});
   final Note note;
 
   @override
@@ -21,6 +17,7 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
         state.whenOrNull(
           noteRemovedFromFolder: (note, folder) {
             context.read<NotesBloc>().add(NoteReceived(note));
+            context.read<FoldersBloc>().add(const GetAllFolders());
             router.pop(true);
           },
           failure: (exception) {

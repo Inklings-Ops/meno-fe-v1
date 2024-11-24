@@ -48,7 +48,10 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
           } else {
             folderNotes[index] = note;
           }
-          final folder = event.folder.copyWith(notes: folderNotes);
+          final folder = event.folder.copyWith(
+            notes: folderNotes,
+            numberOfNotes: folderNotes.length,
+          );
           return NoteAddedToFolder(note: note, folder: folder);
         },
       ),

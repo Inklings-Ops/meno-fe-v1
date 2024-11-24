@@ -11,14 +11,19 @@ class AddNoteToFolderModal extends HookWidget {
     final watcher = context.watch<NotesWatcherBloc>();
     final loading = watcher.state is NoteWatcherLoading;
 
-    final selectedFolder = useState<Folder?>(null);
+    final pickedF = useState<Folder?>(null);
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listener: (context, state) {
         state.whenOrNull(
           noteAddedToFolder: (note, folder) {
             context.read<NotesBloc>().add(NoteReceived(note));
-            router.pop(note);
+            context.read<FoldersBloc>().add(const GetAllFolders());
+            router.pop(true);
+          },
+          failure: (exception) {
+            context.showNoteError(exception);
+            router.pop(false);
           },
         );
       },
@@ -46,10 +51,8 @@ class AddNoteToFolderModal extends HookWidget {
                         final folder = folders[i];
                         return FolderListTile(
                           folder: folder!,
-                          selected: selectedFolder.value?.id == folder.id,
-                          onTap: !loading
-                              ? () => selectedFolder.value = folder
-                              : null,
+                          isSelected: pickedF.value?.id == folder.id,
+                          onTap: !loading ? () => pickedF.value = folder : null,
                         );
                       },
                     );
@@ -57,15 +60,15 @@ class AddNoteToFolderModal extends HookWidget {
                 ),
               ),
             ),
-            if (selectedFolder.value != null) ...[
+            if (pickedF.value != null) ...[
               Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: loading,
-                disabled: selectedFolder.value == null,
-                onPressed: () {
-                  watcher.add(AddNoteToFolder(note, selectedFolder.value!));
-                },
+                disabled: pickedF.value == null,
+                onPressed: () => watcher.add(
+                  AddNoteToFolder(note, pickedF.value!),
+                ),
               ),
             ],
           ],

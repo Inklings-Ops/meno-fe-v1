@@ -78,19 +78,18 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
 
       if (folders.isEmpty) {
         add(const GetAllFolders());
-        return;
-      }
-
-      final index = folders.indexWhere((f) => f?.id == event.newFolder.id);
-      final updatedFolders = [...folders];
-
-      if (index != -1) {
-        updatedFolders[index] = event.newFolder;
       } else {
-        updatedFolders.insert(0, event.newFolder);
-      }
+        final index = folders.indexWhere((f) => f?.id == event.newFolder.id);
+        final updatedFolders = [...folders];
 
-      emit(FoldersLoaded(updatedFolders));
+        if (index != -1) {
+          updatedFolders[index] = event.newFolder;
+        } else {
+          updatedFolders.insert(0, event.newFolder);
+        }
+
+        emit(FoldersLoaded(updatedFolders));
+      }
     }
   }
 
