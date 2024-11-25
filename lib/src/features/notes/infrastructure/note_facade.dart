@@ -32,8 +32,8 @@ class NoteFacade implements INoteFacade {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
-      final titleStr = note.title.value.getOrElse(() => 'Invalid title');
-      final contentStr = note.content.value.getOrElse(() => 'Invalid content');
+      final titleStr = note.title.value.getOrElse(() => 'Unknown Title');
+      final contentStr = note.content.value.getOrElse(() => 'Unknown content');
 
       try {
         final response = await _remote.createNote(
@@ -101,12 +101,12 @@ class NoteFacade implements INoteFacade {
   }
 
   @override
-  Future<Either<NoteException, Unit>> deleteFolder(String folderId) async {
+  Future<Either<NoteException, Unit>> deleteFolder(Uid<Folder> folderId) async {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
       try {
-        await _remote.deleteFolder(folderId);
+        await _remote.deleteFolder(folderId.getOr());
         return right(unit);
       } on DioException catch (e) {
         if (e.message != null) {
@@ -120,16 +120,16 @@ class NoteFacade implements INoteFacade {
 
   @override
   Future<Either<NoteException, Note>> addNoteToFolder({
-    required String noteId,
-    required String folderId,
+    required Uid<Note> noteId,
+    required Uid<Folder> folderId,
   }) async {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.addNoteToFolder(
-          noteId: noteId,
-          folderId: folderId,
+          noteId: noteId.getOr(),
+          folderId: folderId.getOr(),
         );
 
         return right(response.data!.toDomain);
@@ -144,12 +144,11 @@ class NoteFacade implements INoteFacade {
   }
 
   @override
-  Future<Either<NoteException, Folder>> createFolder(FolderTitle title) async {
+  Future<Either<NoteException, Folder>> createFolder(Folder folder) async {
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
     } else {
-      final titleValue = title.getOr();
-
+      final titleValue = folder.title.value.getOrElse(() => 'Unknown folder');
       try {
         final response = await _remote.createFolder(title: titleValue);
         return right(response.data!.toDomain);
@@ -166,7 +165,7 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, List<Folder?>>> getAllFolders({
     String? title,
-    String? folderId,
+    Uid<Folder>? folderId,
     bool? pinned,
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
@@ -182,7 +181,7 @@ class NoteFacade implements INoteFacade {
       try {
         final response = await _remote.getAllFolders(
           title: title,
-          folderId: folderId,
+          folderId: folderId?.getOr(),
           pinned: pinned,
           sortBy: sortBy,
           orderBy: orderBy,
@@ -205,7 +204,7 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, List<Note?>>> getAllNotes({
     String? keywords,
-    String? noteId,
+    Uid<Note>? noteId,
     bool? pinned,
     String? sortBy = 'createdAt',
     String? orderBy = 'DESC',
@@ -221,7 +220,7 @@ class NoteFacade implements INoteFacade {
       try {
         final response = await _remote.getAllNotes(
           keywords: keywords,
-          noteId: noteId,
+          noteId: noteId?.getOr(),
           pinned: pinned,
           sortBy: sortBy,
           orderBy: orderBy,
@@ -244,7 +243,7 @@ class NoteFacade implements INoteFacade {
 
   @override
   Future<Either<NoteException, Folder?>> getFolderWithNotes({
-    required String folderId,
+    required Uid<Folder> folderId,
     String? keywords,
     bool? pinned,
     String? sortBy = 'createdAt',
@@ -260,7 +259,7 @@ class NoteFacade implements INoteFacade {
     } else {
       try {
         final response = await _remote.getFolderWithNotes(
-          folderId: folderId,
+          folderId: folderId.getOr(),
           keywords: keywords,
           pinned: pinned,
           sortBy: sortBy,
@@ -285,7 +284,7 @@ class NoteFacade implements INoteFacade {
 
   @override
   Future<Either<NoteException, Folder?>> getFolder({
-    required String folderId,
+    required Uid<Folder> folderId,
     String? keywords,
     bool? pinned,
   }) async {
@@ -297,7 +296,7 @@ class NoteFacade implements INoteFacade {
     } else {
       try {
         final response = await _remote.getFolder(
-          folderId: folderId,
+          folderId: folderId.getOr(),
           keywords: keywords,
           pinned: pinned,
         );
@@ -338,8 +337,8 @@ class NoteFacade implements INoteFacade {
 
   @override
   Future<Either<NoteException, Unit>> removeNoteFromFolder({
-    required String noteId,
-    required String folderId,
+    required Uid<Note> noteId,
+    required Uid<Folder> folderId,
   }) async {
     if (!(await _network.isConnected)) {
       // how to remove item from folder on ObjectBox
@@ -347,8 +346,8 @@ class NoteFacade implements INoteFacade {
     } else {
       try {
         await _remote.removeNoteFromFolder(
-          noteId: noteId,
-          folderId: folderId,
+          noteId: noteId.getOr(),
+          folderId: folderId.getOr(),
         );
         return right(unit);
       } on DioException catch (e) {
@@ -363,8 +362,7 @@ class NoteFacade implements INoteFacade {
 
   @override
   Future<Either<NoteException, Folder>> updateFolder({
-    required String id,
-    FolderTitle? title,
+    required Folder folder,
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
@@ -377,13 +375,12 @@ class NoteFacade implements INoteFacade {
     } else {
       try {
         final response = await _remote.updateFolder(
-          folderId: id,
-          title: title?.getOr(),
+          folderId: folder.id.getOr(),
+          title: folder.title.value.getOrElse(() => 'Unknown folder'),
           pinned: pinned,
         );
         final dto = response.data;
-        final folder = dto!.toDomain;
-        return right(folder);
+        return right(dto!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
           return left(NoteException.message(e.message!));

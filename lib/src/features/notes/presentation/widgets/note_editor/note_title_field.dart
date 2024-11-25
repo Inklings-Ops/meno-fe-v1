@@ -27,6 +27,7 @@ class NoteTitleField extends HookWidget {
         style: MTextTheme.of(context)!.heading3Bold,
         controller: textController,
         textInputAction: TextInputAction.next,
+        enabled: state is! NoteSaveInProgress,
         onChanged: (value) => bloc.add(NoteTitleChanged(NoteTitle(value))),
         validator: (_) => state.whenOrNull(
           loaded: (note) => context.validator(note.title.value),

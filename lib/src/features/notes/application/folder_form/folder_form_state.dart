@@ -1,19 +1,11 @@
-part of 'folder_form_cubit.dart';
+part of 'folder_form_bloc.dart';
 
 @freezed
 class FolderFormState with _$FolderFormState {
-  const factory FolderFormState({
-    required FolderTitle title,
-    required bool loading,
-    required Option<Either<NoteException, Folder>> option,
-    Folder? initialFolder,
-  }) = _FolderFormState;
-
-  factory FolderFormState.initial() {
-    return FolderFormState(
-      title: FolderTitle(''),
-      loading: false,
-      option: none(),
-    );
-  }
+  const factory FolderFormState.loaded(Folder folder) = FolderFormLoaded;
+  const factory FolderFormState.submitting() = FolderFormSubmitInProgress;
+  const factory FolderFormState.submitted(Folder folder) = FolderFormSubmitted;
+  const factory FolderFormState.failure(
+    NoteException exception,
+  ) = FolderFormFailure;
 }

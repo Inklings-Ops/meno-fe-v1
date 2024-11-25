@@ -8,17 +8,20 @@ class FolderListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<FoldersBloc>();
-    return BlocBuilder<FoldersBloc, FoldersState>(
-      buildWhen: (p, c) => p != c,
-      builder: (context, state) => RefreshIndicator.adaptive(
-        onRefresh: () async => bloc.add(const GetAllFolders()),
-        child: state.maybeWhen(
-          orElse: () => Skeletonizer(child: FolderList(folders: fakeFolders)),
-          failed: (_) => const FolderListFailureWidget(),
-          loaded: (folders) {
-            if (folders.isEmpty) return const EmptyFolderListWidget();
-            return FolderList(folders: folders);
-          },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
+      child: BlocBuilder<FoldersBloc, FoldersState>(
+        buildWhen: (p, c) => p != c,
+        builder: (context, state) => RefreshIndicator.adaptive(
+          onRefresh: () async => bloc.add(const GetAllFolders()),
+          child: state.maybeWhen(
+            orElse: () => Skeletonizer(child: FolderList(folders: fakeFolders)),
+            failed: (_) => const FolderListFailureWidget(),
+            loaded: (folders) {
+              if (folders.isEmpty) return const EmptyFolderListWidget();
+              return FolderList(folders: folders);
+            },
+          ),
         ),
       ),
     );
@@ -33,7 +36,6 @@ class FolderList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
-      padding: const EdgeInsets.all(Insets.lg),
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: folders.length,
       separatorBuilder: (context, index) => Spaces.verticalLarge,

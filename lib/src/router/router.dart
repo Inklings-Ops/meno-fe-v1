@@ -65,7 +65,13 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.folder,
-      builder: (context, state) => FolderPage(folder: state.extra! as Folder),
+      builder: (context, state) => BlocProvider(
+        create: (context) => FolderCubit(
+          facade: di<INoteFacade>(),
+          folder: state.extra! as Folder,
+        )..getAllNotes(),
+        child: const FolderPage(),
+      ),
     ),
     GoRoute(
       path: Routes.loading,
@@ -148,13 +154,18 @@ final router = GoRouter(
     GoRoute(
       path: Routes.folderFormModal,
       parentNavigatorKey: rootNavigatorKey,
-      pageBuilder: (context, state) => ModalPage<dynamic>(
-        isScrollControlled: true,
-        child: BlocProvider(
-          create: (_) => FolderFormCubit(facade: di<INoteFacade>()),
-          child: CreateFolderModal(initialFolder: state.extra as Folder?),
-        ),
-      ),
+      pageBuilder: (context, state) {
+        final folder = state.extra as Folder? ?? Folder.empty();
+        return ModalPage<dynamic>(
+          isScrollControlled: true,
+          child: BlocProvider(
+            create: (_) => FolderFormBloc(
+              facade: di<INoteFacade>(),
+            )..add(InitializeFolderForm(folder)),
+            child: CreateFolderModal(initialFolder: folder),
+          ),
+        );
+      },
     ),
     GoRoute(
       path: Routes.noteCardOptionsModal,

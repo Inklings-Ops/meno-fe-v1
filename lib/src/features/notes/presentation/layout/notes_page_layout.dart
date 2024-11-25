@@ -1,5 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/widgets/layout/folder_search_box.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/widgets/layout/note_search_box.dart';
 
 class NotesPageLayout extends StatefulWidget {
   const NotesPageLayout({
@@ -62,6 +64,11 @@ class _NotesPageLayoutState extends State<NotesPageLayout> {
               ],
             ),
           ),
+          switch (currentIndex) {
+            0 => const NoteSearchBox(),
+            1 => const FolderSearchBox(),
+            _ => const SizedBox(height: Insets.lg),
+          },
           Expanded(
             child: PageView(
               onPageChanged: widget.navigationShell.goBranch,

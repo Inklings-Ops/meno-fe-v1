@@ -1,48 +1,23 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-class CreateFolderModal extends StatefulWidget {
+class CreateFolderModal extends StatelessWidget {
   const CreateFolderModal({super.key, this.initialFolder});
-
   final Folder? initialFolder;
 
   @override
-  State<CreateFolderModal> createState() => _CreateFolderModalState();
-}
-
-class _CreateFolderModalState extends State<CreateFolderModal> {
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.initialFolder != null) {
-      context.read<FolderFormCubit>().init(widget.initialFolder!);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isEdit = widget.initialFolder != null;
+    final isEdit = initialFolder != null;
 
-
-    return BlocListener<FolderFormCubit, FolderFormState>(
-      listenWhen: (p, c) => p.option != c.option,
+    return BlocListener<FolderFormBloc, FolderFormState>(
+      listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
-        state.option.fold(
-          () {},
-          (either) => either.fold(
-            (failure) => context.showNoteError(failure),
-            (folder) {
-              if (isEdit) {
-                context
-                  ..pop()
-                  ..pop();
-              } else {
-                router.pop(folder);
-                // router.push(Routes.folder, extra: folder);
-              }
-            },
-          ),
+        state.whenOrNull(
+          failure: context.showNoteError,
+          submitted: (folder) {
+            context.read<FoldersBloc>().add(UpdateFolderList(folder));
+            router.pop(folder);
+          },
         );
       },
       child: Padding(
@@ -51,14 +26,14 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
           title: isEdit ? 'Rename Your Folder' : 'Give Your Folder a Name',
           builder: (context) => ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 292),
-            child: Column(
+            child: const Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 10),
-                _TitleField(initialTitle: widget.initialFolder?.title),
-                const SizedBox(height: 56),
-                const _SubmitButton(),
+                SizedBox(height: 10),
+                FolderFormTitleField(),
+                SizedBox(height: 56),
+                _SubmitButton(),
                 Spaces.verticalXXLarge,
               ],
             ),
@@ -69,15 +44,16 @@ class _CreateFolderModalState extends State<CreateFolderModal> {
   }
 }
 
-class _TitleField extends StatelessWidget {
-  const _TitleField({this.initialTitle});
-  final FolderTitle? initialTitle;
+class FolderFormTitleField extends HookWidget {
+  const FolderFormTitleField({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).inputDecorationTheme;
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
+
+    final textController = useTextEditingController();
 
     final border = UnderlineInputBorder(
       borderSide: BorderSide(color: theme.border!.borderSide.color),
@@ -91,25 +67,43 @@ class _TitleField extends StatelessWidget {
       borderSide: BorderSide(color: theme.disabledBorder!.borderSide.color),
     );
 
-    final bloc = context.watch<FolderFormCubit>();
+    final bloc = context.watch<FolderFormBloc>();
 
-    return TextFormField(
-      autofocus: true,
-      style: textTheme.heading1Regular,
-      initialValue: initialTitle?.getOr(),
-      textAlign: TextAlign.center,
-      onChanged: bloc.titleChanged,
-      enabled: !bloc.state.loading,
-      decoration: InputDecoration(
-        hintText: 'Title',
-        border: border,
-        enabledBorder: border,
-        focusedBorder: border,
-        errorBorder: errorBorder,
-        focusedErrorBorder: errorBorder,
-        disabledBorder: disabledBorder,
-        hintStyle: textTheme.heading1Regular?.copyWith(
-          color: colors.onBackgroundVariant,
+    return BlocConsumer<FolderFormBloc, FolderFormState>(
+      listenWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+        bloc.state.whenOrNull(
+          loaded: (folder) {
+            if (folder.title.isValid) {
+              textController.text = folder.title.getOr();
+            } else {
+              textController.text = '';
+            }
+          },
+        );
+      },
+      buildWhen: (previous, current) => previous != current,
+      builder: (context, state) => TextFormField(
+        autofocus: true,
+        style: textTheme.heading1Regular,
+        controller: textController,
+        textAlign: TextAlign.center,
+        enabled: state is! FolderFormSubmitInProgress,
+        onChanged: (value) => bloc.add(FolderTitleChanged(FolderTitle(value))),
+        validator: (_) => state.whenOrNull(
+          loaded: (folder) => context.validator(folder.title.value),
+        ),
+        decoration: InputDecoration(
+          hintText: 'Title',
+          border: border,
+          enabledBorder: border,
+          focusedBorder: border,
+          errorBorder: errorBorder,
+          focusedErrorBorder: errorBorder,
+          disabledBorder: disabledBorder,
+          hintStyle: textTheme.heading1Regular?.copyWith(
+            color: colors.onBackgroundVariant,
+          ),
         ),
       ),
     );
@@ -121,14 +115,22 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<FolderFormCubit>();
-    final isEdit = bloc.state.initialFolder != null;
-
-    return MPrimaryButton(
-      label: isEdit ? 'Rename Folder' : 'Create Folder',
-      loading: bloc.state.loading,
-      disabled: bloc.state.loading || !bloc.state.title.isValid,
-      onPressed: bloc.onSubmit,
+    final bloc = context.read<FolderFormBloc>();
+    return BlocBuilder<FolderFormBloc, FolderFormState>(
+      builder: (context, state) => MPrimaryButton(
+        label: state.maybeWhen(
+          orElse: () => '',
+          failure: (_) => 'Try again',
+          loaded: (f) => f.id.isValid ? 'Rename Folder' : 'Create Folder',
+          submitted: (f) => 'Done',
+        ),
+        loading: state is FolderFormSubmitInProgress,
+        disabled: state.maybeWhen(
+          orElse: () => true,
+          loaded: (folder) => !folder.title.isValid,
+        ),
+        onPressed: () => bloc.add(const SubmitFolderForm()),
+      ),
     );
   }
 }

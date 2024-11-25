@@ -10,42 +10,50 @@ class FolderCubit extends Cubit<FolderState> {
     required INoteFacade facade,
     required Folder folder,
   })  : _facade = facade,
-        super(FolderState.success(folder));
+        super(FolderLoaded(folder));
   final INoteFacade _facade;
 
-  Future<void> getAllNotes() async {
-    if (state is _Success) {
-      final folderId = (state as _Success).folder.id;
+  void renameFolder(Folder folder) {
+    if (state is FolderLoaded) {
+      final currentFolder = (state as FolderLoaded).folder;
+      final renamedFolder = currentFolder.copyWith(title: folder.title);
+      emit(FolderLoaded(renamedFolder));
+    }
+  }
 
-      emit(const _Loading());
+  Future<void> getAllNotes() async {
+    if (state is FolderLoaded) {
+      final folderId = (state as FolderLoaded).folder.id;
+
+      emit(const FolderLoadInProgress());
 
       final result = await _facade.getFolderWithNotes(folderId: folderId);
 
       result.fold(
-        (error) => emit(_Failure(error)),
-        (folder) => emit(_Success(folder!)),
+        (error) => emit(FolderFailure(error)),
+        (folder) => emit(FolderLoaded(folder!)),
       );
     }
   }
 
   Future<void> addToFolder(Note note, Folder folder) async {
-    final folder = (state as _Success).folder;
+    final folder = (state as FolderLoaded).folder;
     final notes = [...folder.notes ?? []];
 
-    emit(const _Loading());
+    emit(const FolderLoadInProgress());
 
     final result = await _facade.addNoteToFolder(
-      noteId: note.uid.getOr(),
+      noteId: note.uid,
       folderId: folder.id,
     );
 
     return result.fold(
-      (failure) => emit(_Failure(failure)),
+      (failure) => emit(FolderFailure(failure)),
       (note) {
         final index = notes.indexWhere((note) => note?.uid == note!.uid);
         if (index != -1) {
           notes[index] = note;
-          emit(_Success(folder.copyWith(notes: [])));
+          emit(FolderLoaded(folder.copyWith(notes: [])));
         }
       },
     );

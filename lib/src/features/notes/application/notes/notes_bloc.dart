@@ -14,7 +14,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         super(const NotesInitial()) {
     on<GetNotesRequested>(_onGetNotes);
     on<ReloadNotes>(_onReload);
-    on<UpdateNoteWithFolder>(_onUpdateNoteWithFolder);
     on<NoteReceived>(_onNoteReceived);
     on<NoteRemoved>(_onNoteRemoved);
 
@@ -64,39 +63,5 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       oldNotes[index] = event.note;
     }
     emit(NotesLoadSuccess(oldNotes));
-  }
-
-  Future<void> _onUpdateNoteWithFolder(
-    UpdateNoteWithFolder event,
-    Emitter<NotesState> emit,
-  ) async {
-    // if (state is! NotesLoadSuccess) return;
-    // final notes = List<Note?>.from((state as NotesLoadSuccess).notes);
-
-    // emit(const NotesLoadInProgress());
-
-    // late Either<NoteException, Note> result;
-    //  if(event.folder !=null) {
-    //   result = await _facade.addNoteToFolder(
-    //   noteId: event.note.uid.getOr(),
-    //   folderId: event.folder.id,
-    // );
-    //  } else {
-    //   result = await _facade.removeNoteFromFolder(
-    //   noteId: event.note.uid.getOr(),
-    //   folderId: event.folder.id,
-    // );
-    //  }
-
-    // return result.fold(
-    //   (failure) => emit(NotesFailure(failure)),
-    //   (note) {
-    //     final index = notes.indexWhere((e) => e?.uid == note.uid);
-    //     if (index != -1) {
-    //       notes[index] = note;
-    //       return emit(NotesLoadSuccess(notes));
-    //     }
-    //   },
-    // );
   }
 }

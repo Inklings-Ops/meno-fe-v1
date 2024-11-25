@@ -15,33 +15,30 @@ class NoteWidget extends StatelessWidget {
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
 
-    final loading = context.watch<NotesBloc>().state is NotesLoadInProgress;
-
-    return Skeletonizer(
-      enabled: loading,
-      child: RawMaterialButton(
-        onPressed: loading ? null : onTap,
-        child: Container(
-          height: 88,
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MText(
-                'Notes',
-                style: textTheme.captionMedium,
-                color: foreground,
-              ),
-              BlocBuilder<NotesBloc, NotesState>(
-                buildWhen: (previous, current) => previous != current,
-                builder: (context, state) => MText(
+    return RawMaterialButton(
+      onPressed: onTap,
+      child: Container(
+        height: 88,
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            MText(
+              'Notes',
+              style: textTheme.captionMedium,
+              color: foreground,
+            ),
+            BlocBuilder<NotesBloc, NotesState>(
+              builder: (context, state) => Skeletonizer(
+                enabled: state is NotesLoadInProgress,
+                child: MText(
                   state.maybeWhen(
                     orElse: () => '0',
                     loadSuccess: (notes) => notes.length.toString(),
@@ -50,8 +47,8 @@ class NoteWidget extends StatelessWidget {
                   color: foreground,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

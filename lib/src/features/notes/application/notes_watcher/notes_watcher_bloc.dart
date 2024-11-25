@@ -33,7 +33,7 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
     emit(const NoteWatcherLoading());
 
     final result = await _facade.addNoteToFolder(
-      noteId: event.note.uid.getOr(),
+      noteId: event.note.uid,
       folderId: event.folder.id,
     );
 
@@ -65,7 +65,7 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
     emit(const NoteWatcherLoading());
 
     final result = await _facade.removeNoteFromFolder(
-      noteId: event.note.uid.getOr(),
+      noteId: event.note.uid,
       folderId: event.folder.id,
     );
 

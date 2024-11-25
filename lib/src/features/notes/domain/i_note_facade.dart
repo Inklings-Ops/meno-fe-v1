@@ -1,17 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/meno.dart';
-
 import 'package:meno_fe_v1/src/features/notes/domain/entities/folder.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/value_objects/folder_title.dart';
 
 abstract class INoteFacade {
   Stream<List<Note?>> allNotesStream();
 
   Future<Either<NoteException, List<Note?>>> getAllNotes({
     String? keywords,
-    String? noteId,
+    Uid<Note>? noteId,
     bool? pinned,
     String? sortBy,
     String? orderBy,
@@ -31,18 +29,18 @@ abstract class INoteFacade {
   Future<Either<NoteException, Unit>> deleteNote(Uid<Note> noteId);
 
   Future<Either<NoteException, Note>> addNoteToFolder({
-    required String noteId,
-    required String folderId,
+    required Uid<Note> noteId,
+    required Uid<Folder> folderId,
   });
 
   Future<Either<NoteException, Unit>> removeNoteFromFolder({
-    required String noteId,
-    required String folderId,
+    required Uid<Note> noteId,
+    required Uid<Folder> folderId,
   });
 
   Future<Either<NoteException, List<Folder?>>> getAllFolders({
     String? title,
-    String? folderId,
+    Uid<Folder>? folderId,
     bool? pinned,
     String? sortBy,
     String? orderBy,
@@ -50,16 +48,16 @@ abstract class INoteFacade {
     int? size,
   });
 
-  Future<Either<NoteException, Folder>> createFolder(FolderTitle title);
+  Future<Either<NoteException, Folder>> createFolder(Folder folder);
 
   Future<Either<NoteException, Folder?>> getFolder({
-    required String folderId,
+    required Uid<Folder> folderId,
     String? keywords,
     bool? pinned,
   });
 
   Future<Either<NoteException, Folder?>> getFolderWithNotes({
-    required String folderId,
+    required Uid<Folder> folderId,
     String? keywords,
     bool? pinned,
     String? sortBy,
@@ -69,12 +67,11 @@ abstract class INoteFacade {
   });
 
   Future<Either<NoteException, Folder>> updateFolder({
-    required String id,
-    FolderTitle? title,
+    required Folder folder,
     bool? pinned,
   });
 
-  Future<Either<NoteException, Unit>> deleteFolder(String folderId);
+  Future<Either<NoteException, Unit>> deleteFolder(Uid<Folder> folderId);
 
   Future<void> saveNoteLocally(Note note);
 }

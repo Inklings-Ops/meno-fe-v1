@@ -9,7 +9,7 @@ class FoldersEvent with _$FoldersEvent {
   ) = UpdateFolderList;
   
   const factory FoldersEvent.getFolderAndUpdateList(
-    String id,
+    Uid<Folder> folderId,
   ) = GetFolderAndUpdateList;
   
   const factory FoldersEvent.deleteFolder(Folder folder) = DeleteFolder;

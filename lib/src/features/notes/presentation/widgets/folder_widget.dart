@@ -3,28 +3,10 @@ import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderWidget extends StatelessWidget {
-  const FolderWidget({
-    super.key,
-    this.value,
-    this.valueStyle,
-    this.title,
-    this.titleStyle,
-    this.onTap,
-    this.selected = false,
-    this.backgroundColor,
-    this.foregroundColor,
-    this.height,
-  });
+  const FolderWidget({super.key, this.onTap, this.selected = false});
 
-  final String? value;
-  final TextStyle? valueStyle;
-  final String? title;
-  final TextStyle? titleStyle;
   final VoidCallback? onTap;
   final bool selected;
-  final MColor? backgroundColor;
-  final MColor? foregroundColor;
-  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +19,14 @@ class FolderWidget extends StatelessWidget {
 
     return RawMaterialButton(
       onPressed: onTap,
-      shape: const _FolderBorder(),
-      fillColor: backgroundColor ?? background,
+      shape: const FolderWidgetBorder(),
+      fillColor: background,
       elevation: 0,
       hoverElevation: 0,
       focusElevation: 0,
       highlightElevation: 0,
       child: Container(
-        height: height ?? 94,
+        height: 94,
         width: size.width,
         padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
         child: Column(
@@ -52,31 +34,20 @@ class FolderWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MText(
-              title ?? 'Folders',
-              style: titleStyle ?? textTheme.captionMedium,
-              color: foregroundColor ?? foreground,
-            ),
-            if (value != null)
-              MText(
-                value!,
-                style: valueStyle ?? textTheme.heading2Medium,
-                color: foregroundColor ?? foreground,
-              )
-            else
-              BlocBuilder<FoldersBloc, FoldersState>(
-                builder: (context, state) => Skeletonizer(
-                  enabled: state is FoldersLoading,
-                  child: MText(
-                    state.maybeWhen(
-                      orElse: () => '0',
-                      loaded: (folders) => folders.length.toString(),
-                    ),
-                    style: valueStyle ?? textTheme.heading2Medium,
-                    color: foreground,
+            MText('Folders', style: textTheme.captionMedium, color: foreground),
+            BlocBuilder<FoldersBloc, FoldersState>(
+              builder: (context, state) => Skeletonizer(
+                enabled: state is FoldersLoading,
+                child: MText(
+                  state.maybeWhen(
+                    orElse: () => '0',
+                    loaded: (folders) => folders.length.toString(),
                   ),
+                  style: textTheme.heading2Medium,
+                  color: foreground,
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -84,8 +55,8 @@ class FolderWidget extends StatelessWidget {
   }
 }
 
-class _FolderBorder extends OutlinedBorder {
-  const _FolderBorder({super.side});
+class FolderWidgetBorder extends OutlinedBorder {
+  const FolderWidgetBorder({super.side});
 
   Path customBorderPath(Rect rect) {
     const r = 20.0;
@@ -107,7 +78,7 @@ class _FolderBorder extends OutlinedBorder {
 
   @override
   OutlinedBorder copyWith({BorderSide? side}) =>
-      _FolderBorder(side: side ?? this.side);
+      FolderWidgetBorder(side: side ?? this.side);
 
   @override
   Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
@@ -136,5 +107,5 @@ class _FolderBorder extends OutlinedBorder {
   }
 
   @override
-  ShapeBorder scale(double t) => _FolderBorder(side: side.scale(t));
+  ShapeBorder scale(double t) => FolderWidgetBorder(side: side.scale(t));
 }

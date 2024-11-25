@@ -8,12 +8,12 @@ final fakeNotes = List.filled(
     uid: Uid.fromString('uniqueIdStr'),
     title: NoteTitle(BoneMock.title),
     content: NoteContent(BoneMock.longParagraph),
-    folder: Folder(id: 'id', title: FolderTitle(BoneMock.name)),
+    folder: Folder(id: Uid.fromString('id'), title: FolderTitle(BoneMock.name)),
     createdAt: DateTime.now(),
   ),
 );
 
 final fakeFolders = List.filled(
   3,
-  Folder(id: 'id', title: FolderTitle(BoneMock.title)),
+  Folder(id: Uid.fromString('id'), title: FolderTitle(BoneMock.title)),
 );

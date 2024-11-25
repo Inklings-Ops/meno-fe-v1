@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 part 'folders_bloc.freezed.dart';
 part 'folders_event.dart';
@@ -53,7 +54,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
 
       emit(const FoldersLoading());
 
-      final result = await _facade.getFolder(folderId: event.id);
+      final result = await _facade.getFolder(folderId: event.folderId);
 
       return result.fold(
         (failure) => emit(FoldersLoadFailed(failure)),

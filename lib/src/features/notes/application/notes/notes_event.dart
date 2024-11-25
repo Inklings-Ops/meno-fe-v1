@@ -4,7 +4,7 @@ part of 'notes_bloc.dart';
 class NotesEvent with _$NotesEvent {
   const factory NotesEvent.getNotesRequested({
     String? keywords,
-    String? noteId,
+    Uid<Note>? noteId,
     bool? pinned,
     String? sortBy,
     String? orderBy,
@@ -17,9 +17,4 @@ class NotesEvent with _$NotesEvent {
   const factory NotesEvent.noteReceived(Note note) = NoteReceived;
 
   const factory NotesEvent.noteRemoved(Note note) = NoteRemoved;
-
-  const factory NotesEvent.updateNoteWithFolder({
-    required Note note,
-    required Folder folder,
-  }) = UpdateNoteWithFolder;
 }
