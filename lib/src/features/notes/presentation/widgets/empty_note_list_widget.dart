@@ -7,11 +7,9 @@ class EmptyNoteListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return Align(
-      alignment: Alignment.topCenter,
+    return Center(
       child: SizedBox(
         width: 266,
-        height: 224,
         child: Column(
           children: [
             Assets.images.newFile.image(height: 120, width: 160),
@@ -46,9 +44,7 @@ class AddNewNoteButton extends StatelessWidget {
           textStyle: textTheme.microMedium,
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
-          shape: const RoundedRectangleBorder(
-            borderRadius: Corners.sm,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
           side: BorderSide(
             color: colors.outlineVariant3!,
             width: 1.50,

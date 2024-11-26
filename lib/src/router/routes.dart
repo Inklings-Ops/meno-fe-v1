@@ -48,6 +48,7 @@ class Routes {
   static const String folderFormModal = '/create-new-folder-modal';
 
   static const String deleteNoteDialog = '/delete-note-dialog';
+  static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
 }
 class ModalPage<T> extends Page<void> {

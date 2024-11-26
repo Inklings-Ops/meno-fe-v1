@@ -250,30 +250,35 @@ class NoteFacade implements INoteFacade {
     String? orderBy = 'DESC',
     int? page = 1,
     int? size = 50,
+    CancelToken? cancelToken,
   }) async {
+    final folderIdString = folderId.getOr();
+    final localFolder = _local.getFolder(folderIdString);
+    if (localFolder != null) return right(localFolder.toDomain);
+
     if (!(await _network.isConnected)) {
-      // final folderDto = await _local.getFolder(folderId);
-      // final folder = folderDto?.toDomain;
-      // return right(folder);
       return left(const NoteException.networkError());
     } else {
       try {
         final response = await _remote.getFolderWithNotes(
-          folderId: folderId.getOr(),
+          folderId: folderIdString,
           keywords: keywords,
           pinned: pinned,
           sortBy: sortBy,
           orderBy: orderBy,
           page: page,
           size: size,
+          cancelToken: cancelToken,
         );
-        final folderResponse = response.data;
-        final folder = folderResponse!.folder.copyWith(
-          notes: ToMany(items: folderResponse.notes),
-        );
-        return right(folder.toDomain);
+        final resNotes = response.data!.notes;
+        final notes = ToMany<NoteDto>()..addAll(resNotes.whereType<NoteDto>());
+        final folderWithNotes = response.data!.folder.copyWith(notes: notes);
+        _local.storeFolder(folderWithNotes);
+        return right(folderWithNotes.toDomain);
       } on DioException catch (e) {
-        if (e.message != null) {
+        if (CancelToken.isCancel(e)) {
+          return left(const NoteException.message('Request cancelled'));
+        } else if (e.message != null) {
           return left(NoteException.message(e.message!));
         } else {
           return left(const NoteException.unknownError());

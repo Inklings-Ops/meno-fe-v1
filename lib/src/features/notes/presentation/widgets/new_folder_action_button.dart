@@ -17,9 +17,9 @@ class NewFolderActionButton extends StatelessWidget {
           if (folders.isEmpty) return const SizedBox();
           return InkWell(
             onTap: () async {
+              final bloc = context.read<FoldersBloc>();
               final folder = await router.push<Folder?>(Routes.folderFormModal);
-              if (!context.mounted && folder == null) return;
-              context.read<FoldersBloc>().add(UpdateFolderList(folder!));
+              if (folder != null) return bloc.add(UpdateFolderList(folder));
             },
             child: Row(
               children: [

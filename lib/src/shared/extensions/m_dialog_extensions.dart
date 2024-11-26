@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
-import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 extension MDialogX on BuildContext {
   Future<void> showLoadingDialog() {
@@ -39,15 +38,12 @@ extension MDialogX on BuildContext {
   //   );
   // }
 
-  Future<bool?> showDeleteFolderDialog(Folder folder) {
-    return showDialog<bool>(
-      context: this,
-      builder: (context) => DeleteFolderAlertDialog(
-        onDelete: () {},
-        folder: folder,
-      ),
-    );
-  }
+  // Future<bool?> showDeleteFolderDialog(Folder folder) {
+  //   return showDialog<bool>(
+  //     context: this,
+  //     builder: (context) => DeleteFolderAlertDialog(folder: folder),
+  //   );
+  // }
 
   // Future<bool?> showRemoveNoteFromFolderDialog(Note note) {
   //   return showDialog<bool>(

@@ -14,7 +14,7 @@ class Folder with _$Folder {
     int? numberOfNotes,
     bool? pinned,
     DateTime? createdAt,
-    List<Note?>? notes,
+    @Default([]) List<Note?> notes,
   }) = _Folder;
 
   factory Folder.empty() => Folder(

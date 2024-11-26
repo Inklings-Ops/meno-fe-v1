@@ -10,6 +10,8 @@ class NotesWatcherState with _$NotesWatcherState {
 
   const factory NotesWatcherState.noteDeleted(Note note) = NoteDeleted;
 
+  const factory NotesWatcherState.folderDeleted(Folder folder) = FolderDeleted;
+
   const factory NotesWatcherState.noteAddedToFolder({
     required Note note,
     required Folder folder,

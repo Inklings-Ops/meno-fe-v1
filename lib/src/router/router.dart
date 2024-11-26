@@ -66,10 +66,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.folder,
       builder: (context, state) => BlocProvider(
-        create: (context) => FolderCubit(
+        create: (context) => FolderBloc(
           facade: di<INoteFacade>(),
           folder: state.extra! as Folder,
-        )..getAllNotes(),
+        )..add(const GetFolderNotes()),
         child: const FolderPage(),
       ),
     ),
@@ -205,6 +205,18 @@ final router = GoRouter(
     ),
 
     GoRoute(
+      path: Routes.deleteFolderDialog,
+      pageBuilder: (context, state) => DialogPage<void>(
+        key: state.pageKey,
+        barrierDismissible: false,
+        builder: (context) => BlocProvider(
+          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
+          child: DeleteFolderAlertDialog(folder: state.extra! as Folder),
+        ),
+      ),
+    ),
+
+    GoRoute(
       path: Routes.remoteNoteFromFolderDialog,
       pageBuilder: (context, state) => DialogPage<void>(
         key: state.pageKey,
@@ -333,7 +345,7 @@ final router = GoRouter(
                 return MultiBlocProvider(
                   providers: [
                     BlocProvider(
-                      create: (_) => FolderCubit(
+                      create: (_) => FolderBloc(
                         facade: f,
                         folder: Folder.empty(),
                       ),

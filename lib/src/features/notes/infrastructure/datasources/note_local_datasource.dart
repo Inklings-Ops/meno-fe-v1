@@ -1,5 +1,4 @@
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -56,8 +55,7 @@ class NoteLocalDatasource {
   }
 
   void storeNote(NoteDto note) {
-    final result = _noteBox.put(note);
-    Logger().e('Note stored locally => $result');
+    _noteBox.put(note);
   }
 
   void storeFolder(FolderDto folder) {
@@ -94,7 +92,7 @@ class NoteLocalDatasource {
   void removeNoteFromFolder(String folderId, String noteId) {
     final folder = getFolder(folderId);
     if (folder != null) {
-      folder.notes.removeWhere((note) => note?.uid == noteId);
+      folder.notes.removeWhere((note) => note.uid == noteId);
       _folderBox.put(folder);
     }
   }

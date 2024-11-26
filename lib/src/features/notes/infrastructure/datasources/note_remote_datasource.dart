@@ -20,6 +20,7 @@ abstract class NoteRemoteDatasource {
     @Query('orderBy') String? orderBy = 'DESC',
     @Query('page') int? page = 1,
     @Query('size') int? size = 1,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @POST('/api/v1/notes')
@@ -76,6 +77,7 @@ abstract class NoteRemoteDatasource {
     @Query('includeNotes') bool includeNotes = false,
     @Query('keywords') String? keywords,
     @Query('pinned') bool? pinned,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @GET('/api/v1/folders/{folderId}')
@@ -88,6 +90,7 @@ abstract class NoteRemoteDatasource {
     @Query('orderBy') String? orderBy = 'DESC',
     @Query('page') int? page = 1,
     @Query('size') int? size = 1,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @PUT('/api/v1/folders/{folderId}')

@@ -1,9 +1,11 @@
-part of 'folder_cubit.dart';
+part of 'folder_bloc.dart';
 
 @freezed
 class FolderState with _$FolderState {
-  const factory FolderState.loading() = FolderLoadInProgress;
-  const factory FolderState.loadingNotes() = FolderNotesLoadInProgress;
-  const factory FolderState.loaded(Folder folder) = FolderLoaded;
-  const factory FolderState.failure(NoteException error) = FolderFailure;
+  const factory FolderState({
+    required Folder folder,
+    @Default([]) List<Note?> notes,
+    @Default(false) bool isLoadingNotes,
+    NoteException? exception,
+  }) = _FolderState;
 }

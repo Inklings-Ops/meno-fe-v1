@@ -15,7 +15,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     on<GetAllFolders>(_onGetAllFolders);
     on<UpdateFolderList>(_onUpdateFolderList);
     on<GetFolderAndUpdateList>(_onGetFolderAndUpdateList);
-    on<DeleteFolder>(_onDeleteFolder);
+    on<FolderRemoved>(_onFolderRemoved);
 
     add(const GetAllFolders());
   }
@@ -77,38 +77,25 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
       final currentState = state as FoldersLoaded;
       final folders = currentState.folders;
 
-      if (folders.isEmpty) {
-        add(const GetAllFolders());
+      final index = folders.indexWhere((f) => f?.id == event.newFolder.id);
+      final updatedFolders = [...folders];
+
+      if (index != -1) {
+        updatedFolders[index] = event.newFolder;
       } else {
-        final index = folders.indexWhere((f) => f?.id == event.newFolder.id);
-        final updatedFolders = [...folders];
-
-        if (index != -1) {
-          updatedFolders[index] = event.newFolder;
-        } else {
-          updatedFolders.insert(0, event.newFolder);
-        }
-
-        emit(FoldersLoaded(updatedFolders));
+        updatedFolders.insert(0, event.newFolder);
       }
+
+      emit(FoldersLoaded(updatedFolders));
     }
   }
 
-  Future<void> _onDeleteFolder(
-    DeleteFolder event,
-    Emitter<FoldersState> emit,
-  ) async {
-    final folders = [...(state as FoldersLoaded).folders];
+  void _onFolderRemoved(FolderRemoved event, Emitter<FoldersState> emit) {
+    if (state is! FoldersLoaded) return;
 
-    emit(const FoldersLoading());
-    final result = await _facade.deleteFolder(event.folder.id);
-
-    return result.fold(
-      (failure) => emit(FoldersLoadFailed(failure)),
-      (_) {
-        folders.removeWhere((folder) => folder?.id == event.folder.id);
-        emit(FoldersLoaded(folders));
-      },
-    );
+    final folderId = event.folder.id;
+    final oldFolders = List<Folder?>.from((state as FoldersLoaded).folders);
+    final newFolders = oldFolders.where((e) => e!.id != folderId).toList();
+    return emit(FoldersLoaded(newFolders));
   }
 }

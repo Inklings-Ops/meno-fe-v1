@@ -7,20 +7,21 @@ class EmptyFolderListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return SizedBox(
-      width: 266,
-      height: 224,
-      child: Column(
-        children: [
-          Assets.images.folder.image(height: 120, width: 160),
-          MText(
-            'Welcome! Organize your notes better through folders.',
-            style: textTheme.bodyRegular,
-            textAlign: TextAlign.center,
-          ),
-          Spaces.verticalXLarge,
-          const _CreateNewFolderButton(),
-        ],
+    return Center(
+      child: SizedBox(
+        width: 266,
+        child: Column(
+          children: [
+            Assets.images.folder.image(height: 120, width: 160),
+            MText(
+              'Welcome! Organize your notes better through folders.',
+              style: textTheme.bodyRegular,
+              textAlign: TextAlign.center,
+            ),
+            Spaces.verticalXLarge,
+            const _CreateNewFolderButton(),
+          ],
+        ),
       ),
     );
   }
@@ -43,22 +44,17 @@ class _CreateNewFolderButton extends StatelessWidget {
           textStyle: textTheme.microMedium,
           foregroundColor: colors.onBackground,
           iconColor: colors.onBackground,
-          shape: const RoundedRectangleBorder(
-            borderRadius: Corners.sm,
-          ),
+          shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
           side: BorderSide(
             color: colors.outlineVariant3!,
             width: 1.50,
           ),
         ),
-        onPressed: () => context.showModal<void>(
-          BlocProvider.value(
-            value: context.read<FoldersBloc>(),
-            child: const CreateFolderModal(),
-          ),
-          useRootNavigator: true,
-          isScrollControlled: true,
-        ),
+        onPressed: () async {
+          final bloc = context.read<FoldersBloc>();
+          final newFolder = await router.push<Folder?>(Routes.folderFormModal);
+          if (newFolder != null) return bloc.add(UpdateFolderList(newFolder));
+        },
       ),
     );
   }

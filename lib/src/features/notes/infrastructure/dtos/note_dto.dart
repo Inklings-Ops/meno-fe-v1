@@ -4,7 +4,6 @@ import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 import 'package:objectbox/objectbox.dart';
 
 part 'note_dto.freezed.dart';
-
 part 'note_dto.g.dart';
 
 @Freezed(addImplicitFinal: false)
@@ -14,8 +13,8 @@ class NoteDto with _$NoteDto {
   factory NoteDto({
     required String title,
     required String content,
-    @FolderToOneConverter() required ToOne<FolderDto?> folder,
-    @NoteCreatorToOneConverter() required ToOne<NoteCreatorDto?> creator,
+    @_FolderConverter() required ToOne<FolderDto> folder,
+    @_CreatorConverter() required ToOne<NoteCreatorDto> creator,
     @JsonKey(name: 'id') required String uid,
     @Id(assignable: true)
     @JsonKey(includeFromJson: false, includeToJson: false)
@@ -33,6 +32,37 @@ class NoteDto with _$NoteDto {
   @override
   Map<String, dynamic> toJson() => _$NoteDtoToJson(this);
 }
+
+typedef _Map = Map<String, dynamic>;
+
+class _FolderConverter implements JsonConverter<ToOne<FolderDto>, _Map?> {
+  const _FolderConverter();
+
+  @override
+  ToOne<FolderDto> fromJson(_Map? json) {
+    return ToOne<FolderDto>(
+      target: json == null ? null : FolderDto.fromJson(json),
+    );
+  }
+
+  @override
+  _Map? toJson(ToOne<FolderDto> rel) => rel.target?.toJson();
+}
+
+class _CreatorConverter implements JsonConverter<ToOne<NoteCreatorDto>, _Map?> {
+  const _CreatorConverter();
+
+  @override
+  ToOne<NoteCreatorDto> fromJson(_Map? json) {
+    return ToOne<NoteCreatorDto>(
+      target: json == null ? null : NoteCreatorDto.fromJson(json),
+    );
+  }
+
+  @override
+  _Map? toJson(ToOne<NoteCreatorDto> rel) => rel.target?.toJson();
+}
+
 
 extension NoteDtoToDomain on NoteDto {
   Note get toDomain {
@@ -58,8 +88,8 @@ extension NoteDomainToDto on Note {
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
-      folder: ToOne(target: folder?.toDto),
-      creator: ToOne(target: creator?.toDto),
+      folder: ToOne()..target = folder?.toDto,
+      creator: ToOne()..target = creator?.toDto,
     );
   }
 }

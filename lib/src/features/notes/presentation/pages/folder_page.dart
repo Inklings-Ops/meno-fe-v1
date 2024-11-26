@@ -9,16 +9,11 @@ class FolderPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<FolderCubit>();
-    final hasNoNotes = context.select<FolderCubit, bool>(
-      (bloc) => bloc.state.maybeWhen(
-        orElse: () => true,
-        loaded: (folder) => folder.notes == null || folder.notes!.isEmpty,
-      ),
-    );
+    final bloc = context.read<FolderBloc>();
+    final hasNotes = context.select((FolderBloc b) => b.state.notes.isNotEmpty);
 
     return RefreshIndicator(
-      onRefresh: bloc.getAllNotes,
+      onRefresh: () async => bloc.add(const GetFolderNotes()),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 42,
@@ -33,10 +28,8 @@ class FolderPage extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const FolderPageFolderWidget(),
-              if (hasNoNotes)
-                Spaces.verticalLarge
-              else ...[
-                Spaces.verticalLarge,
+              Spaces.verticalLarge,
+              if (!hasNotes) ...[
                 const FolderPageSearchBox(),
                 Spaces.verticalLarge,
               ],
@@ -55,14 +48,13 @@ class FolderPageOptionsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final folder = context.select<FolderCubit, Folder?>(
-      (bloc) => bloc.state.whenOrNull(loaded: (folder) => folder),
-    );
+    final folder = context.select((FolderBloc bloc) => bloc.state.folder);
+
     return IconButton(
       icon: const Icon(MIcons.dots_horizontal),
       onPressed: () => context.showModal<void>(
         BlocProvider.value(
-          value: context.read<FolderCubit>(),
+          value: context.read<FolderBloc>(),
           child: MModal(
             builder: (context) => Column(
               mainAxisSize: MainAxisSize.min,
@@ -70,18 +62,14 @@ class FolderPageOptionsButton extends StatelessWidget {
                 MModalListTile(
                   leading: const Icon(MIcons.edit_05),
                   title: 'Rename Folder',
-                  onTap: folder != null
-                      ? () async => _rename(context, folder)
-                      : null,
+                  onTap: () async => _renameFolder(context, folder),
                 ),
                 Spaces.verticalSmall,
                 MModalListTile(
                   leading: Icon(MIcons.trash, color: colors.error),
                   title: 'Delete',
                   titleColor: colors.error,
-                  onTap: folder != null
-                      ? () => context.showDeleteFolderDialog(folder)
-                      : null,
+                  onTap: () async => _deleteFolder(context, folder),
                 ),
                 Spaces.verticalLarge,
               ],
@@ -92,11 +80,18 @@ class FolderPageOptionsButton extends StatelessWidget {
     );
   }
 
-  Future<void> _rename(BuildContext context, Folder folder) async {
-    final bloc = context.read<FolderCubit>();
+  Future<void> _deleteFolder(BuildContext context, Folder f) async {
+    router.pop();
+    final r = await router.push<bool>(Routes.deleteFolderDialog, extra: f);
+    if (r == false) return;
+    return router.pop();
+  }
+
+  Future<void> _renameFolder(BuildContext context, Folder folder) async {
+    final bloc = context.read<FolderBloc>();
     final r = await router.push<Folder?>(Routes.folderFormModal, extra: folder);
     if (r == null) return;
-    bloc.renameFolder(r);
+    bloc.add(RenameFolder(r));
     return router.pop();
   }
 }

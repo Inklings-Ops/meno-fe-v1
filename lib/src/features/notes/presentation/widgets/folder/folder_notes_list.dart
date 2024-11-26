@@ -7,16 +7,19 @@ class FolderNotesList extends StatelessWidget {
   const FolderNotesList({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FolderCubit, FolderState>(
-      builder: (context, state) => state.maybeWhen(
-        failure: (_) => const _FailureWidget(),
-        orElse: () => Skeletonizer(child: NotesList(notes: fakeNotes)),
-        loaded: (folder) {
-          final hasNoNotes = folder.notes == null || folder.notes!.isEmpty;
-          if (hasNoNotes) return EmptyFolderPageWidget(folder: folder);
-          return NotesList(notes: folder.notes!);
-        },
-      ),
+    return BlocBuilder<FolderBloc, FolderState>(
+      builder: (context, state) {
+        if (state.isLoadingNotes) {
+          return Skeletonizer(child: NotesList(notes: fakeNotes));
+        }
+
+        if (state.exception != null) return const _FailureWidget();
+
+        final notes = state.notes;
+        if (notes.isEmpty) return const EmptyFolderPageWidget();
+
+        return NotesList(notes: notes);
+      },
     );
   }
 }
@@ -54,7 +57,9 @@ class _FailureWidget extends StatelessWidget {
                   width: 1.50,
                 ),
               ),
-              onPressed: context.read<FolderCubit>().getAllNotes,
+              onPressed: () {
+                context.read<FolderBloc>().add(const GetFolderNotes());
+              },
             ),
           ),
         ],

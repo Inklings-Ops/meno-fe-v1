@@ -94,6 +94,7 @@ extension SessionStateX on SessionState {
         Routes.addNoteToFolderModal,
         Routes.folderFormModal,
         Routes.deleteNoteDialog,
+        Routes.deleteFolderDialog,
         Routes.remoteNoteFromFolderDialog,
       ],
     );

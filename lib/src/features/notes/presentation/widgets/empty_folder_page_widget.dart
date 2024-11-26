@@ -2,14 +2,15 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class EmptyFolderPageWidget extends StatelessWidget {
-  const EmptyFolderPageWidget({required this.folder, super.key});
-
-  final Folder folder;
+  const EmptyFolderPageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
+
+    final folder = context.select((FolderBloc bloc) => bloc.state.folder);
+    
     return SizedBox(
       width: 266,
       height: 224,
@@ -32,9 +33,7 @@ class EmptyFolderPageWidget extends StatelessWidget {
                 textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,
                 iconColor: colors.onBackground,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: Corners.sm,
-                ),
+                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 side: BorderSide(
                   color: colors.outlineVariant3!,
                   width: 1.50,

@@ -31,53 +31,6 @@
       ]
     },
     {
-      "id": "2:7152408318697978449",
-      "lastPropertyId": "6:5288904703217754373",
-      "name": "FolderDto",
-      "properties": [
-        {
-          "id": "1:5530438505547100374",
-          "name": "dbId",
-          "type": 6,
-          "flags": 1
-        },
-        {
-          "id": "2:6359406913206748239",
-          "name": "id",
-          "type": 9,
-          "flags": 2080,
-          "indexId": "2:3849086408071749516"
-        },
-        {
-          "id": "3:1569092191293009057",
-          "name": "title",
-          "type": 9
-        },
-        {
-          "id": "4:7651108989065356563",
-          "name": "numberOfNotes",
-          "type": 6
-        },
-        {
-          "id": "5:8670490899133921565",
-          "name": "pinned",
-          "type": 1
-        },
-        {
-          "id": "6:5288904703217754373",
-          "name": "createdAt",
-          "type": 10
-        }
-      ],
-      "relations": [
-        {
-          "id": "2:5324280874500865012",
-          "name": "notes",
-          "targetId": "6:8191384144066649883"
-        }
-      ]
-    },
-    {
       "id": "3:6165989933030982391",
       "lastPropertyId": "5:176261304164733206",
       "name": "NoteCreatorDto",
@@ -245,17 +198,75 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "7:1463868008002584663",
+      "lastPropertyId": "6:3236264639777119615",
+      "name": "FolderDto",
+      "properties": [
+        {
+          "id": "1:5097052934399463857",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4552657908826776943",
+          "name": "id",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "6:7203647670141158040"
+        },
+        {
+          "id": "3:8064072978706605745",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:4536258919518542972",
+          "name": "numberOfNotes",
+          "type": 6
+        },
+        {
+          "id": "5:2836093190935682335",
+          "name": "pinned",
+          "type": 1
+        },
+        {
+          "id": "6:3236264639777119615",
+          "name": "createdAt",
+          "type": 10
+        }
+      ],
+      "relations": [
+        {
+          "id": "3:6910226163510987267",
+          "name": "notes",
+          "targetId": "6:8191384144066649883"
+        }
+      ]
     }
   ],
-  "lastEntityId": "6:8191384144066649883",
-  "lastIndexId": "5:5307777015597871419",
-  "lastRelationId": "2:5324280874500865012",
+  "lastEntityId": "7:1463868008002584663",
+  "lastIndexId": "6:7203647670141158040",
+  "lastRelationId": "3:6910226163510987267",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    7152408318697978449
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
-  "retiredRelationUids": [],
+  "retiredPropertyUids": [
+    5530438505547100374,
+    6359406913206748239,
+    1569092191293009057,
+    7651108989065356563,
+    8670490899133921565,
+    5288904703217754373
+  ],
+  "retiredRelationUids": [
+    5324280874500865012
+  ],
   "version": 1
 }

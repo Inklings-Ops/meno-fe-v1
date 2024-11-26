@@ -1,10 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/uid.dart';
 import 'package:objectbox/objectbox.dart';
 
 part 'folder_dto.freezed.dart';
-
 part 'folder_dto.g.dart';
 
 @Freezed(addImplicitFinal: false)
@@ -14,7 +14,7 @@ class FolderDto with _$FolderDto {
   factory FolderDto({
     @Unique() required String id,
     required String title,
-    @FolderNotesToManyConverter() required ToMany<NoteDto?> notes,
+    @_NotesConverter() required ToMany<NoteDto> notes,
     @Id() int? dbId,
     int? numberOfNotes,
     bool? pinned,
@@ -30,8 +30,29 @@ class FolderDto with _$FolderDto {
   Map<String, dynamic> toJson() => _$FolderDtoToJson(this);
 }
 
+typedef _Map = List<Map<String, dynamic>>;
+
+class _NotesConverter implements JsonConverter<ToMany<NoteDto>, _Map?> {
+  const _NotesConverter();
+
+  @override
+  ToMany<NoteDto> fromJson(List<Map<String, dynamic>>? json) {
+    return ToMany<NoteDto>(
+      items: json == null ? [] : json.map(NoteDto.fromJson).toList(),
+    );
+  }
+
+  @override
+  List<Map<String, dynamic>>? toJson(ToMany<NoteDto> rel) {
+    return rel.map((NoteDto obj) => obj.toJson()).toList();
+  }
+}
+
 extension FolderDtoToDomain on FolderDto {
   Folder get toDomain {
+    Logger().f(
+      'From `toDomain` ext. => ${notes.map((f) => f.toDomain).toList()}',
+    );
     return Folder(
       dbId: dbId,
       id: Uid.fromString(id),
@@ -39,7 +60,7 @@ extension FolderDtoToDomain on FolderDto {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: notes.map((e) => e?.toDomain).toList(),
+      notes: notes.map((note) => note.toDomain).toList(),
     );
   }
 }
@@ -53,7 +74,8 @@ extension FolderToDto on Folder {
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: ToMany(items: notes?.map((e) => e?.toDto).toList()),
+      notes: ToMany()
+        ..addAll(notes.isNotEmpty ? notes.map((e) => e!.toDto).toList() : []),
     );
   }
 }

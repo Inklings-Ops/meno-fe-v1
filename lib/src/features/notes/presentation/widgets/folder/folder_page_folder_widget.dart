@@ -10,48 +10,43 @@ class FolderPageFolderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
-    return BlocBuilder<FolderCubit, FolderState>(
-      builder: (context, state) => RawMaterialButton(
-        onPressed: null,
-        shape: const FolderWidgetBorder(),
-        fillColor: colors.primary,
-        elevation: 0,
-        hoverElevation: 0,
-        focusElevation: 0,
-        highlightElevation: 0,
-        child: Container(
-          height: 88,
-          width: double.infinity,
-          padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Skeletonizer(
-                enabled: state is FolderLoadInProgress,
-                child: MText(
-                  state.maybeWhen(
-                    orElse: () => 'Unknown title',
-                    loaded: (folder) => folder.title.getOr(),
-                  ),
-                  style: textTheme.subheadingMedium,
-                  color: colors.onPrimary,
-                ),
+    return RawMaterialButton(
+      onPressed: null,
+      shape: const FolderWidgetBorder(),
+      fillColor: colors.primary,
+      elevation: 0,
+      hoverElevation: 0,
+      focusElevation: 0,
+      highlightElevation: 0,
+      child: Container(
+        height: 88,
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            BlocSelector<FolderBloc, FolderState, String>(
+              selector: (state) => state.folder.title.getOr(),
+              builder: (context, folderName) => MText(
+                folderName,
+                style: textTheme.subheadingMedium,
+                color: colors.onPrimary,
               ),
-              Skeletonizer(
-                enabled: state is FolderLoadInProgress,
+            ),
+            BlocBuilder<FolderBloc, FolderState>(
+              buildWhen: (p, c) => p.isLoadingNotes != c.isLoadingNotes,
+              builder: (context, state) => Skeletonizer(
+                enabled: state.isLoadingNotes,
                 child: MText(
-                  state.maybeWhen(
-                    orElse: () => 'No notes',
-                    loaded: (f) => _formatNotesNumber(f.numberOfNotes ?? 0),
-                  ),
+                  _formatNotesNumber(state.notes.length),
                   style: textTheme.captionMedium,
                   color: colors.onPrimary,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

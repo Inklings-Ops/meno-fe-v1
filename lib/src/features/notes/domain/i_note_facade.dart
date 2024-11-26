@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/folder.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
@@ -64,6 +65,7 @@ abstract class INoteFacade {
     String? orderBy,
     int? page,
     int? size,
+    CancelToken? cancelToken,
   });
 
   Future<Either<NoteException, Folder>> updateFolder({

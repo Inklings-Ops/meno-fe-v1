@@ -11,6 +11,7 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
       : _facade = facade,
         super(const NoteWatcherInitial()) {
     on<DeleteNote>(_onDeleteNote);
+    on<DeleteFolder>(_onDeleteFolder);
     on<AddNoteToFolder>(_onAddNoteToFolder);
     on<RemoveNoteFromFolder>(_onRemoveNoteFromFolder);
   }
@@ -22,8 +23,17 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
     Emitter<NotesWatcherState> emit,
   ) async {
     emit(const NoteWatcherLoading());
-    final result = await _facade.deleteNote(event.note.uid);
-    emit(result.fold(NoteWatcherFailed.new, (_) => NoteDeleted(event.note)));
+    final fOrU = await _facade.deleteNote(event.note.uid);
+    emit(fOrU.fold(NoteWatcherFailed.new, (_) => NoteDeleted(event.note)));
+  }
+
+  Future<void> _onDeleteFolder(
+    DeleteFolder event,
+    Emitter<NotesWatcherState> emit,
+  ) async {
+    emit(const NoteWatcherLoading());
+    final fOrU = await _facade.deleteFolder(event.folder.id);
+    emit(fOrU.fold(NoteWatcherFailed.new, (_) => FolderDeleted(event.folder)));
   }
 
   Future<void> _onAddNoteToFolder(
@@ -41,7 +51,7 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
       result.fold(
         NoteWatcherFailed.new,
         (note) {
-          final folderNotes = List<Note?>.from(event.folder.notes ?? []);
+          final folderNotes = List<Note?>.from(event.folder.notes);
           final index = folderNotes.indexWhere((n) => n?.uid == note.uid);
           if (index == -1) {
             folderNotes.add(note);
@@ -73,7 +83,7 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
       result.fold(
         NoteWatcherFailed.new,
         (_) {
-          final folderNotes = List<Note?>.from(event.folder.notes ?? []);
+          final folderNotes = List<Note?>.from(event.folder.notes);
           folderNotes.remove(event.note);
 
           final note = event.note.copyWith(folder: null);

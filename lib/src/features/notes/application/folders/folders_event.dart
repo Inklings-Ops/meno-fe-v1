@@ -12,5 +12,5 @@ class FoldersEvent with _$FoldersEvent {
     Uid<Folder> folderId,
   ) = GetFolderAndUpdateList;
   
-  const factory FoldersEvent.deleteFolder(Folder folder) = DeleteFolder;
+  const factory FoldersEvent.folderRemoved(Folder folder) = FolderRemoved;
 }
