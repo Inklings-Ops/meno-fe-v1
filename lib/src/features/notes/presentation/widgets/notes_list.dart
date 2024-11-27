@@ -5,32 +5,36 @@ class NotesList extends StatelessWidget {
   const NotesList({
     required this.notes,
     this.showAddButton = false,
+    this.onNoteTap,
+    this.onOptionTap,
+    this.selectedNote,
     super.key,
   });
 
   final List<Note?> notes;
   final bool showAddButton;
+  final void Function(Note)? onNoteTap;
+  final void Function(Note)? onOptionTap;
+  final Note? selectedNote;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
-      // padding: const EdgeInsets.all(Insets.lg),
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: notes.length,
       separatorBuilder: (context, index) => Spaces.verticalLarge,
-      itemBuilder: (context, index) => NoteCard(
-        note: notes[index]!,
-        showAddButton: showAddButton,
-        onTap: () async {
-          final bloc = context.read<NotesBloc>();
-          final newNote = await router.push<Note?>(
-            Routes.noteEditor,
-            extra: notes[index],
-          );
-          if (newNote != null) return bloc.add(NoteReceived(newNote));
-        },
-      ),
+      itemBuilder: (context, index) {
+        final note = notes[index]!;
+        return NoteCard(
+          key: ValueKey(note.uid),
+          note: note,
+          showAddButton: showAddButton,
+          selected: selectedNote?.uid == note.uid,
+          onTap: () async => onNoteTap?.call(note),
+          onOptionsTap: () => onOptionTap?.call(note),
+        );
+      },
     );
   }
 }

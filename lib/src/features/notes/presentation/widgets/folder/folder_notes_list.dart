@@ -18,8 +18,26 @@ class FolderNotesList extends StatelessWidget {
         final notes = state.notes;
         if (notes.isEmpty) return const EmptyFolderPageWidget();
 
-        return NotesList(notes: notes);
+        return NotesList(
+          notes: notes,
+          onNoteTap: (note) => _onNoteTap(context, note),
+          onOptionTap: (note) => _onOptionsTap(note, state.folder),
+        );
       },
+    );
+  }
+
+  Future<void> _onNoteTap(BuildContext context, Note note) async {
+    final bloc = context.read<NotesBloc>();
+    final newNote = await router.push<Note?>(Routes.noteEditor, extra: note);
+    if (newNote != null) return bloc.add(NoteReceived(newNote));
+  }
+
+  Future<void> _onOptionsTap(Note note, Folder folder) async {
+    final noteWithFolder = note.copyWith(folder: folder);
+    await router.push(
+      Routes.noteCardOptionsModal,
+      extra: {'note': noteWithFolder, 'folderId': folder.id},
     );
   }
 }

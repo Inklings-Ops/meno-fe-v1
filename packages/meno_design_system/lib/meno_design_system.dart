@@ -17,6 +17,8 @@ export 'src/buttons/m_text_button.dart';
 export 'src/cards/m_card.dart';
 export 'src/dividers/m_divider.dart';
 export 'src/dividers/m_dot.dart';
+export 'src/gen/assets.gen.dart';
+export 'src/gen/fonts.gen.dart';
 export 'src/input_fields/input_fields.dart';
 export 'src/input_fields/m_otp_field.dart';
 export 'src/input_fields/m_text_area.dart';

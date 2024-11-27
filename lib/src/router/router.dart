@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder/add_folder_notes_modal.dart';
 
 part 'routes.dart';
 
@@ -170,22 +171,45 @@ final router = GoRouter(
     GoRoute(
       path: Routes.noteCardOptionsModal,
       parentNavigatorKey: rootNavigatorKey,
-      pageBuilder: (context, state) => ModalPage<dynamic>(
-        child: BlocProvider(
-          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
-          child: NoteCardOptionsModal(note: state.extra! as Note),
-        ),
-        isScrollControlled: true,
-      ),
+      pageBuilder: (context, state) {
+        final extra = state.extra! as Map<String, dynamic>;
+        return ModalPage<dynamic>(
+          isScrollControlled: true,
+          child: NoteCardOptionsModal(
+            note: extra['note'] as Note,
+            folderId: extra['folderId'] as Uid<Folder>?,
+          ),
+        );
+      },
     ),
     GoRoute(
       path: Routes.addNoteToFolderModal,
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) => ModalPage<dynamic>(
-        child: BlocProvider(
-          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
-          child: AddNoteToFolderModal(note: state.extra! as Note),
-        ),
+        child: AddNoteToFolderModal(note: state.extra! as Note),
+        isScrollControlled: true,
+      ),
+    ),
+    GoRoute(
+      path: Routes.moveNoteToFolderModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) {
+        final extra = state.extra! as Map<String, dynamic>;
+        return ModalPage<dynamic>(
+          isScrollControlled: true,
+          child: MoveNoteToFolderModal(
+            note: extra['note'] as Note,
+            folderId: extra['folderId'] as Uid<Folder>,
+          ),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: Routes.notesModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => ModalPage<dynamic>(
+        child: AddNotesToFolderModal(folder: state.extra! as Folder),
         isScrollControlled: true,
       ),
     ),
@@ -197,10 +221,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => DialogPage<void>(
         key: state.pageKey,
         barrierDismissible: false,
-        builder: (context) => BlocProvider(
-          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
-          child: DeleteNoteAlertDialog(note: state.extra! as Note),
-        ),
+        builder: (context) => DeleteNoteAlertDialog(note: state.extra! as Note),
       ),
     ),
 
@@ -209,10 +230,7 @@ final router = GoRouter(
       pageBuilder: (context, state) => DialogPage<void>(
         key: state.pageKey,
         barrierDismissible: false,
-        builder: (context) => BlocProvider(
-          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
-          child: DeleteFolderAlertDialog(folder: state.extra! as Folder),
-        ),
+        builder: (_) => DeleteFolderAlertDialog(folder: state.extra! as Folder),
       ),
     ),
 
@@ -221,9 +239,8 @@ final router = GoRouter(
       pageBuilder: (context, state) => DialogPage<void>(
         key: state.pageKey,
         barrierDismissible: false,
-        builder: (context) => BlocProvider(
-          create: (context) => NotesWatcherBloc(facade: di<INoteFacade>()),
-          child: RemoveNoteFromFolderAlertDialog(note: state.extra! as Note),
+        builder: (context) => RemoveNoteFromFolderAlertDialog(
+          note: state.extra! as Note,
         ),
       ),
     ),

@@ -47,7 +47,7 @@ class FolderListTile extends StatelessWidget {
                     color: colors.primary!,
                     child: Center(
                       child: Icon(
-                        MIcons.file,
+                        MIcons.file_02,
                         size: 20,
                         color: colors.onPrimary,
                       ),
@@ -124,7 +124,7 @@ class FolderListTileSkeleton extends StatelessWidget {
                       color: colors.primary!,
                       child: Center(
                         child: Icon(
-                          MIcons.file,
+                          MIcons.file_02,
                           size: 20,
                           color: colors.onPrimary,
                         ),

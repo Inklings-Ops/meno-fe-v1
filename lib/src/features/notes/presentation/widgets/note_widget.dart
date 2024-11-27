@@ -17,6 +17,7 @@ class NoteWidget extends StatelessWidget {
 
     return RawMaterialButton(
       onPressed: onTap,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
         height: 88,
         width: double.infinity,

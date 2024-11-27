@@ -3,8 +3,8 @@ import 'package:meno_fe_v1/meno.dart';
 const List<Destination> _destinations = [
   Destination(icon: Icon(MIcons.home_04), label: 'Home'),
   Destination(icon: Icon(MIcons.compass), label: 'Discover'),
-  Destination(icon: Icon(MIcons.file), label: 'Notes'),
-  Destination(icon: Icon(MIcons.user_circle), label: 'Profile'),
+  Destination(icon: Icon(MIcons.file_02), label: 'Notes'),
+  Destination(icon: Icon(MIcons.user), label: 'Profile'),
 ];
 
 class SideNavRail extends StatelessWidget {

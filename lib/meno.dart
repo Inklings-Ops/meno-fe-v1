@@ -12,8 +12,6 @@ export 'package:hydrated_bloc/hydrated_bloc.dart';
 export 'package:meno_design_system/meno_design_system.dart';
 export 'package:meno_fe_v1/app/meno_bloc_provider.dart';
 export 'package:meno_fe_v1/firebase_options.dart';
-export 'package:meno_fe_v1/gen/assets.gen.dart';
-export 'package:meno_fe_v1/gen/fonts.gen.dart';
 export 'package:meno_fe_v1/src/core/core.dart';
 export 'package:meno_fe_v1/src/core/network/network.dart';
 export 'package:meno_fe_v1/src/dependency_injector/injector.dart';

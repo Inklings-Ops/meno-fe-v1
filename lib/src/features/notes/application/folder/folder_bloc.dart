@@ -16,6 +16,7 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
     on<RenameFolder>(_onRenameFolder);
     on<GetFolderNotes>(_onGetNotes);
     on<CancelFolderRequest>(_onCancel);
+    on<UpdateFolderNotes>(_onUpdateFolderNotes);
   }
 
   final INoteFacade _facade;
@@ -57,28 +58,21 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
     );
   }
 
-  // Future<void> addToFolder(Note note, Folder folder) async {
-  //   final folder = (state as FolderLoaded).folder;
-  //   final notes = [...folder.notes ?? []];
+  void _onUpdateFolderNotes(
+    UpdateFolderNotes event,
+    Emitter<FolderState> emit,
+  ) {
+    final notes = List<Note?>.from(state.notes);
+    final index = notes.indexWhere((n) => n?.uid == event.note.uid);
 
-  //   emit(const FolderLoadInProgress());
-
-  //   final result = await _facade.addNoteToFolder(
-  //     noteId: note.uid,
-  //     folderId: folder.id,
-  //   );
-
-  //   return result.fold(
-  //     (failure) => emit(FolderFailure(failure)),
-  //     (note) {
-  //       final index = notes.indexWhere((note) => note?.uid == note!.uid);
-  //       if (index != -1) {
-  //         notes[index] = note;
-  //         emit(FolderLoaded(folder.copyWith(notes: [])));
-  //       }
-  //     },
-  //   );
-  // }
+    if (index == -1) {
+      notes.insert(0, event.note);
+      emit(state.copyWith(notes: notes));
+    } else {
+      final newNotes = notes.where((n) => n?.uid != event.note.uid).toList();
+      emit(state.copyWith(notes: newNotes));
+    }
+  }
 
   void _onCancel(CancelFolderRequest event, Emitter<FolderState> emit) {
     if (_cancelToken != null && !_cancelToken!.isCancelled) {

@@ -57,7 +57,7 @@ class DetailsPage extends StatelessWidget {
             Spaces.verticalLarge,
             MPrimaryButton.icon(
               label: 'Restream',
-              icon: const Icon(MIcons.play_arrow),
+              icon: const Icon(MIcons.play_circle),
               onPressed: () {},
             ),
             const SizedBox(height: 40),

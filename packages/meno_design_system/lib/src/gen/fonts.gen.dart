@@ -10,9 +10,11 @@
 class FontFamily {
   FontFamily._();
 
+  static const String package = 'meno_design_system';
+
   /// Font family: MIcons
-  static const String mIcons = 'MIcons';
+  static const String mIcons = 'packages/$package/MIcons';
 
   /// Font family: SFProDisplay
-  static const String sFProDisplay = 'SFProDisplay';
+  static const String sFProDisplay = 'packages/$package/SFProDisplay';
 }

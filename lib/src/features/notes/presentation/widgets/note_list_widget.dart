@@ -21,11 +21,26 @@ class NoteListWidget extends StatelessWidget {
             failure: (failure) => const NoteListFailureWidget(),
             loadSuccess: (notes) {
               if (notes.isEmpty) return const EmptyNoteListWidget();
-              return NotesList(notes: notes, showAddButton: showAddButton);
+              return NotesList(
+                notes: notes,
+                showAddButton: showAddButton,
+                onNoteTap: (note) => _onNoteTap(context, note),
+                onOptionTap: _onOptionsTap,
+              );
             },
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _onNoteTap(BuildContext context, Note note) async {
+    final bloc = context.read<NotesBloc>();
+    final newNote = await router.push<Note?>(Routes.noteEditor, extra: note);
+    if (newNote != null) return bloc.add(NoteReceived(newNote));
+  }
+
+  Future<void> _onOptionsTap(Note note) {
+    return router.push(Routes.noteCardOptionsModal, extra: {'note':note});
   }
 }

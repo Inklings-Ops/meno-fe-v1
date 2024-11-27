@@ -7,9 +7,10 @@
 // ignore_for_file: type=lint
 // ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart' as _svg;
+import 'package:vector_graphics/vector_graphics.dart' as _vg;
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
@@ -36,6 +37,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/flame.png
   AssetGenImage get flame => const AssetGenImage('assets/images/flame.png');
 
+  /// File path: assets/images/folder.png
+  AssetGenImage get folder => const AssetGenImage('assets/images/folder.png');
+
   /// File path: assets/images/geometric lines.svg
   SvgGenImage get geometricLines =>
       const SvgGenImage('assets/images/geometric lines.svg');
@@ -46,6 +50,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/high voltage.png
   AssetGenImage get highVoltage =>
       const AssetGenImage('assets/images/high voltage.png');
+
+  /// File path: assets/images/ic_launcher.png
+  AssetGenImage get icLauncher =>
+      const AssetGenImage('assets/images/ic_launcher.png');
 
   /// File path: assets/images/live_for_you.png
   AssetGenImage get liveForYou =>
@@ -61,6 +69,9 @@ class $AssetsImagesGen {
   SvgGenImage get logoLight =>
       const SvgGenImage('assets/images/logo-light.svg');
 
+  /// File path: assets/images/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/images/logo.png');
+
   /// File path: assets/images/meno-purple.png
   AssetGenImage get menoPurple =>
       const AssetGenImage('assets/images/meno-purple.png');
@@ -68,6 +79,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/meno-white.png
   AssetGenImage get menoWhite =>
       const AssetGenImage('assets/images/meno-white.png');
+
+  /// File path: assets/images/new-file.png
+  AssetGenImage get newFile =>
+      const AssetGenImage('assets/images/new-file.png');
 
   /// File path: assets/images/onboarding-1.png
   AssetGenImage get onboarding1 =>
@@ -97,6 +112,10 @@ class $AssetsImagesGen {
   AssetGenImage get sparkles =>
       const AssetGenImage('assets/images/sparkles.png');
 
+  /// File path: assets/images/splash-logo.png
+  AssetGenImage get splashLogo =>
+      const AssetGenImage('assets/images/splash-logo.png');
+
   /// File path: assets/images/success.png
   AssetGenImage get success => const AssetGenImage('assets/images/success.png');
 
@@ -112,6 +131,9 @@ class $AssetsImagesGen {
   AssetGenImage get writingHand =>
       const AssetGenImage('assets/images/writing hand.png');
 
+  /// Directory path: assets/images
+  String get path => 'assets/images';
+
   /// List of all assets
   List<dynamic> get values => [
         celebrate,
@@ -120,15 +142,19 @@ class $AssetsImagesGen {
         facebook,
         fingerSnap,
         flame,
+        folder,
         geometricLines,
         google,
         highVoltage,
+        icLauncher,
         liveForYou,
         loading,
         logoDark,
         logoLight,
+        logo,
         menoPurple,
         menoWhite,
+        newFile,
         onboarding1,
         onboarding2,
         onboarding3,
@@ -136,6 +162,7 @@ class $AssetsImagesGen {
         raisingHands,
         redHeart,
         sparkles,
+        splashLogo,
         success,
         thumbsUp,
         wavingHand,
@@ -143,16 +170,41 @@ class $AssetsImagesGen {
       ];
 }
 
+class $AssetsJsonGen {
+  const $AssetsJsonGen();
+
+  /// File path: assets/json/kjv.json
+  String get kjv => 'packages/meno_design_system/assets/json/kjv.json';
+
+  /// Directory path: assets/json
+  String get path => 'assets/json';
+
+  /// List of all assets
+  List<String> get values => [kjv];
+}
+
 class Assets {
   Assets._();
 
+  static const String package = 'meno_design_system';
+
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsJsonGen json = $AssetsJsonGen();
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName);
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
+
+  static const String package = 'meno_design_system';
+
+  final Size? size;
+  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -172,9 +224,10 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
-    String? package,
+    @Deprecated('Do not specify package for a generated library asset')
+    String? package = package,
     FilterQuality filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
@@ -209,7 +262,8 @@ class AssetGenImage {
 
   ImageProvider provider({
     AssetBundle? bundle,
-    String? package,
+    @Deprecated('Do not specify package for a generated library asset')
+    String? package = package,
   }) {
     return AssetImage(
       _assetName,
@@ -220,19 +274,35 @@ class AssetGenImage {
 
   String get path => _assetName;
 
-  String get keyName => _assetName;
+  String get keyName => 'packages/meno_design_system/$_assetName';
 }
 
 class SvgGenImage {
-  const SvgGenImage(this._assetName);
+  const SvgGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  }) : _isVecFormat = false;
+
+  const SvgGenImage.vec(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  }) : _isVecFormat = true;
 
   final String _assetName;
+  final Size? size;
+  final Set<String> flavors;
+  final bool _isVecFormat;
 
-  SvgPicture svg({
+  static const String package = 'meno_design_system';
+
+  _svg.SvgPicture svg({
     Key? key,
     bool matchTextDirection = false,
     AssetBundle? bundle,
-    String? package,
+    @Deprecated('Do not specify package for a generated library asset')
+    String? package = package,
     double? width,
     double? height,
     BoxFit fit = BoxFit.contain,
@@ -241,19 +311,32 @@ class SvgGenImage {
     WidgetBuilder? placeholderBuilder,
     String? semanticsLabel,
     bool excludeFromSemantics = false,
-    SvgTheme theme = const SvgTheme(),
+    _svg.SvgTheme? theme,
     ColorFilter? colorFilter,
     Clip clipBehavior = Clip.hardEdge,
     @deprecated Color? color,
     @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
     @deprecated bool cacheColorFilter = false,
   }) {
-    return SvgPicture.asset(
-      _assetName,
+    final _svg.BytesLoader loader;
+    if (_isVecFormat) {
+      loader = _vg.AssetBytesLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+      );
+    } else {
+      loader = _svg.SvgAssetLoader(
+        _assetName,
+        assetBundle: bundle,
+        packageName: package,
+        theme: theme,
+      );
+    }
+    return _svg.SvgPicture(
+      loader,
       key: key,
       matchTextDirection: matchTextDirection,
-      bundle: bundle,
-      package: package,
       width: width,
       height: height,
       fit: fit,
@@ -262,10 +345,8 @@ class SvgGenImage {
       placeholderBuilder: placeholderBuilder,
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
-      theme: theme,
-      colorFilter: colorFilter,
-      color: color,
-      colorBlendMode: colorBlendMode,
+      colorFilter: colorFilter ??
+          (color == null ? null : ColorFilter.mode(color, colorBlendMode)),
       clipBehavior: clipBehavior,
       cacheColorFilter: cacheColorFilter,
     );
@@ -273,5 +354,5 @@ class SvgGenImage {
 
   String get path => _assetName;
 
-  String get keyName => _assetName;
+  String get keyName => 'packages/meno_design_system/$_assetName';
 }

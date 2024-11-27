@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/gen/assets.gen.dart';
 
 /// Enum representing different types of app bars.
 enum _AppBarVariant { home, primary, secondary }

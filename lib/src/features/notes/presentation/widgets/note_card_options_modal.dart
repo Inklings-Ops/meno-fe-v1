@@ -2,8 +2,13 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
 class NoteCardOptionsModal extends StatelessWidget {
-  const NoteCardOptionsModal({required this.note, super.key});
+  const NoteCardOptionsModal({
+    required this.note,
+    this.folderId ,
+    super.key,
+  });
   final Note note;
+  final Uid<Folder>? folderId;
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +18,17 @@ class NoteCardOptionsModal extends StatelessWidget {
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (folderId != null) ...[
+            MModalListTile(
+              leading: const Icon(MIcons.file_02),
+              title: 'Move Note',
+              onTap: _moveNote,
+            ),
+            Spaces.verticalSmall,
+          ],
           if (note.folder != null)
             MModalListTile(
-              leading: const Icon(MIcons.plus),
+              leading: const Icon(MIcons.x_close),
               title: 'Remove from Folder',
               onTap: _removeFromFolder,
             )
@@ -46,6 +59,14 @@ class NoteCardOptionsModal extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _moveNote() async {
+    final result = await router.push(
+      Routes.moveNoteToFolderModal,
+      extra: {'note': note, 'folderId': folderId},
+    );
+    if (result == true) return router.pop();
   }
 
   Future<void> _addToFolder() async {

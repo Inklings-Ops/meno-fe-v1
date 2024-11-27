@@ -253,8 +253,8 @@ class NoteFacade implements INoteFacade {
     CancelToken? cancelToken,
   }) async {
     final folderIdString = folderId.getOr();
-    final localFolder = _local.getFolder(folderIdString);
-    if (localFolder != null) return right(localFolder.toDomain);
+    // final localFolder = _local.getFolder(folderIdString);
+    // if (localFolder != null) return right(localFolder.toDomain);
 
     if (!(await _network.isConnected)) {
       return left(const NoteException.networkError());
@@ -273,7 +273,7 @@ class NoteFacade implements INoteFacade {
         final resNotes = response.data!.notes;
         final notes = ToMany<NoteDto>()..addAll(resNotes.whereType<NoteDto>());
         final folderWithNotes = response.data!.folder.copyWith(notes: notes);
-        _local.storeFolder(folderWithNotes);
+        // _local.storeFolder(folderWithNotes);
         return right(folderWithNotes.toDomain);
       } on DioException catch (e) {
         if (CancelToken.isCancel(e)) {

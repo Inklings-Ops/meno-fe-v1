@@ -19,6 +19,9 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(create: (_) => AccountBloc(facade: di<IAuthFacade>())),
         BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),
         BlocProvider(create: (_) => NotesBloc(facade: di<INoteFacade>())),
+        BlocProvider(
+          create: (_) => NotesWatcherBloc(facade: di<INoteFacade>()),
+        ),
         BlocProvider(create: (_) => FoldersBloc(facade: di<INoteFacade>())),
         BlocProvider(create: (_) => ChatBloc()),
         BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),

@@ -92,6 +92,8 @@ extension SessionStateX on SessionState {
         Routes.folderSection,
         Routes.noteCardOptionsModal,
         Routes.addNoteToFolderModal,
+        Routes.moveNoteToFolderModal,
+        Routes.notesModal,
         Routes.folderFormModal,
         Routes.deleteNoteDialog,
         Routes.deleteFolderDialog,

@@ -10,7 +10,7 @@ class EmptyFolderPageWidget extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
 
     final folder = context.select((FolderBloc bloc) => bloc.state.folder);
-    
+
     return SizedBox(
       width: 266,
       height: 224,
@@ -39,81 +39,9 @@ class EmptyFolderPageWidget extends StatelessWidget {
                   width: 1.50,
                 ),
               ),
-              onPressed: () => context.showModal<void>(
-                _AllNotesModal(folder: folder),
-                isScrollControlled: true,
-                useRootNavigator: true,
-              ),
+              onPressed: () => router.push(Routes.notesModal, extra: folder),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AllNotesModal extends HookWidget {
-  const _AllNotesModal({required this.folder});
-
-  final Folder folder;
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = context.watch<NotesBloc>();
-
-    final selectedNote = useState<Note?>(null);
-
-    return MModal(
-      title: 'Add to Folder',
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Spaces.verticalLarge,
-          Expanded(
-            child: BlocBuilder<NotesBloc, NotesState>(
-              bloc: bloc,
-              buildWhen: (p, c) => p != c,
-              builder: (context, state) => state.maybeWhen(
-                orElse: () => const EmptyNoteListWidget(),
-                loadInProgress: () => const MLoadingIndicator.box(),
-                failure: (failure) => const NoteListFailureWidget(),
-                loadSuccess: (notes) {
-                  final list = notes.where((e) => e?.folder == null).toList();
-                  return ListView.separated(
-                    primary: false,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(bottom: 16),
-                    itemCount: list.length,
-                    separatorBuilder: (_, i) => const SizedBox(height: 6),
-                    itemBuilder: (context, i) => NoteCard(
-                      note: list[i]!,
-                      showAddButton: true,
-                      // folder: folder,
-                      selected: selectedNote.value?.uid == list[i]?.uid,
-                      onTap: () {
-                        if (selectedNote.value != null) {
-                          selectedNote.value = null;
-                        } else {
-                          selectedNote.value = list[i];
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          if (selectedNote.value != null) ...[
-            Spaces.verticalLarge,
-            MPrimaryButton(
-              label: 'Done',
-              // loading: bloc.state.isLoading,
-              onPressed: () {
-                //TODO: add note to folder
-              },
-            ),
-          ],
         ],
       ),
     );

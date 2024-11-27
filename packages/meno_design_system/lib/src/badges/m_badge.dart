@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/gen/assets.gen.dart';
 import 'package:meno_design_system/src/m_internal.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

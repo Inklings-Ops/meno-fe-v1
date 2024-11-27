@@ -6,7 +6,6 @@ import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
-import 'package:meno_fe_v1/gen/assets.gen.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/services/objectbox_service.dart';
@@ -194,7 +193,7 @@ class BibleLocalDatasource {
 
   static Future<List<VerseDto>> _loadJSONAsset(RootIsolateToken token) async {
     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-    final jsonStr = await rootBundle.loadString(Assets.json.kjv);
+    final jsonStr = await rootBundle.loadString('assets/');
 
     final decodedJson = jsonDecode(jsonStr) as Map<String, dynamic>;
     final data = decodedJson['data'] as List<dynamic>;

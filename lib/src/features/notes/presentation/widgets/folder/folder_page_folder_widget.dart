@@ -36,7 +36,7 @@ class FolderPageFolderWidget extends StatelessWidget {
               ),
             ),
             BlocBuilder<FolderBloc, FolderState>(
-              buildWhen: (p, c) => p.isLoadingNotes != c.isLoadingNotes,
+              buildWhen: (p, c) => p.notes != c.notes,
               builder: (context, state) => Skeletonizer(
                 enabled: state.isLoadingNotes,
                 child: MText(

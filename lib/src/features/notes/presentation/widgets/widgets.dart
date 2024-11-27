@@ -11,6 +11,7 @@ export 'folder_list_tile.dart';
 export 'folder_list_widget.dart';
 export 'folder_widget.dart';
 export 'm_notes_back_button.dart';
+export 'move_note_to_folder_modal.dart';
 export 'new_folder_action_button.dart';
 export 'new_note_action_button.dart';
 export 'note_body_widget.dart';

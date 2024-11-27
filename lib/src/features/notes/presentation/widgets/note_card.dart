@@ -10,6 +10,7 @@ class NoteCard extends StatelessWidget {
   const NoteCard({
     required this.note,
     required this.onTap,
+    required this.onOptionsTap,
     super.key,
     this.showAddButton = false,
     this.selected = false,
@@ -17,6 +18,7 @@ class NoteCard extends StatelessWidget {
 
   final Note note;
   final VoidCallback onTap;
+  final VoidCallback onOptionsTap;
   final bool showAddButton;
   final bool selected;
 
@@ -111,31 +113,20 @@ class NoteCard extends StatelessWidget {
                     ),
                   )
                 else
-                  _MoreButton(note: note),
+                  SizedBox.square(
+                    dimension: 16,
+                    child: IconButton(
+                      icon: const Icon(MIcons.dots_vertical),
+                      padding: EdgeInsets.zero,
+                      color: colors.onDisabledContainer,
+                      iconSize: 20,
+                      onPressed: onOptionsTap,
+                    ),
+                  ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _MoreButton extends StatelessWidget {
-  const _MoreButton({required this.note});
-  final Note note;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-    return SizedBox.square(
-      dimension: 16,
-      child: IconButton(
-        icon: const Icon(MIcons.dots_vertical),
-        padding: EdgeInsets.zero,
-        color: colors.onDisabledContainer,
-        iconSize: 20,
-        onPressed: () => router.push(Routes.noteCardOptionsModal, extra: note),
       ),
     );
   }

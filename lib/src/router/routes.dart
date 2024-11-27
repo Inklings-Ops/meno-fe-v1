@@ -45,7 +45,9 @@ class Routes {
 
   static const String noteCardOptionsModal = '/note-card-options-modal';
   static const String addNoteToFolderModal = '/add-note-to-folder-modal';
+  static const String moveNoteToFolderModal = '/move-note-to-folder-modal';
   static const String folderFormModal = '/create-new-folder-modal';
+  static const String notesModal = '/notes-modal';
 
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_design_system/src/gen/fonts.gen.dart';
 
 /// A utility class for creating and accessing theme data based on the
 /// application's brightness setting.
