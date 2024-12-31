@@ -58,9 +58,9 @@ class _LiveCard extends HookWidget {
             if (broadcast.creatorId == myUid) return;
             context.showJoinLiveBroadcastModal(broadcast);
           },
-          live: () => router.push(Routes.broadcast, extra: broadcast),
-          streaming: () => router.push(Routes.stream),
-          reconnecting: () => router.push(Routes.stream),
+          live: () => router.push(Routes.broadcastTab, extra: broadcast),
+          streaming: () => router.push(Routes.broadcastTab, extra: true),
+          reconnecting: () => router.push(Routes.broadcastTab, extra: true),
         );
       },
     );

@@ -9,7 +9,13 @@ class LiveLayoutListeners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final liveBloc = context.watch<LiveBloc>();
+    final chat = context.read<ChatBloc>();
+    final live = context.read<LiveBloc>();
+    final livekit = context.read<LiveKitBloc>();
+    final participants = context.read<ParticipantsBloc>();
+    final socket = context.read<SocketBloc>();
+    final timer = context.read<TimerCubit>();
+
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
@@ -17,21 +23,19 @@ class LiveLayoutListeners extends StatelessWidget {
           listener: (context, state) {
             state.status.whenOrNull(
               failed: (error, isStream) {
-                context.read<LiveBloc>().add(const GoFailure());
+                live.add(const GoFailure());
                 context.showErrorSnackBar(error);
                 if (isStream) return router.pop();
               },
               broadcastConnected: () async {
                 final bId = context.read<BroadcastBloc>().state.broadcast.id;
                 await di<BackgroundService>().invokeBroadcastInBackground();
-                if (!context.mounted) return;
-                context.read<SocketBloc>().add(SocketStartBroadcast(bId));
+                socket.add(SocketStartBroadcast(bId));
               },
               streamConnected: () async {
                 final bId = context.read<StreamBloc>().state.broadcast.id;
                 await di<BackgroundService>().invokeStreamInBackground();
-                if (!context.mounted) return;
-                context.read<SocketBloc>().add(SocketJoinBroadcast(bId));
+                socket.add(SocketJoinBroadcast(bId));
               },
             );
           },
@@ -40,53 +44,52 @@ class LiveLayoutListeners extends StatelessWidget {
           listener: (context, state) {
             state.whenOrNull(
               error: (error, isStream) {
-                context.read<LiveBloc>().add(const GoFailure());
-                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-                isStream ? router.pop() : context.showErrorSnackBar(error);
+                live.add(const GoFailure());
+                livekit.add(const LiveKitDisconnect());
+                context.showErrorSnackBar(error);
+                if (isStream) return router.pop();
               },
               broadcastStarted: () {
                 final broadcast = context.read<BroadcastBloc>().state.broadcast;
-                final bId = broadcast.id;
-                context.read<ChatBloc>().add(InitializeChat(broadcast));
-                context.read<SocketBloc>().add(SocketGetMessages(bId));
-                context.read<ParticipantsBloc>().add(GetLiveParticipants(bId));
-                context.read<TimerCubit>().start();
-                context.read<LiveBloc>().add(const LiveStarted());
-                context.read<LiveBloc>().add(const GoLive());
+                chat.add(InitializeChat(broadcast));
+                socket.add(SocketGetMessages(broadcast.id));
+                participants.add(GetLiveParticipants(broadcast.id));
+                timer.start();
+                live.add(const LiveStarted());
+                live.add(const GoLive());
                 di<BackgroundService>().startBackgroundService();
               },
               broadcastEnded: () {
-                final bId = context.read<BroadcastBloc>().state.broadcast.id;
+                final broadcast = context.read<BroadcastBloc>().state.broadcast;
                 di<BackgroundService>().endBackgroundTask();
-                context.read<ParticipantsBloc>().add(GetAllParticipants(bId));
-                context.read<TimerCubit>().stop();
-                context.read<LiveBloc>().add(const LiveReset());
+                participants.add(GetAllParticipants(broadcast.id));
+                timer.stop();
+                live.add(const LiveReset());
                 router.replace<void>(Routes.endedBroadcast);
               },
               broadcastJoined: () {
                 final broadcast = context.read<StreamBloc>().state.broadcast;
-                final bId = broadcast.id;
-                context.read<SocketBloc>().add(SocketGetMessages(bId));
-                context.read<ChatBloc>().add(InitializeChat(broadcast));
-                context.read<ParticipantsBloc>().add(GetLiveParticipants(bId));
-                context.read<TimerCubit>().setAndStart(broadcast.startTime);
-                context.read<LiveBloc>().add(const LiveStarted());
-                context.read<LiveBloc>().add(const GoStreaming());
+                socket.add(SocketGetMessages(broadcast.id));
+                chat.add(InitializeChat(broadcast));
+                participants.add(GetLiveParticipants(broadcast.id));
+                timer.setAndStart(broadcast.startTime);
+                live.add(const LiveStarted());
+                live.add(const GoStreaming());
                 di<BackgroundService>().startBackgroundService();
               },
               broadcastLeft: () {
                 di<BackgroundService>().endBackgroundTask();
-                context.read<LiveBloc>().add(const LiveReset());
+                live.add(const LiveReset());
                 router.go(Routes.home);
               },
               endedBroadcast: (data) {
-                if (liveBloc.state is Live) return;
+                if (live.state is Live) return;
                 di<BackgroundService>().endBackgroundTask();
-                context.read<LiveBloc>().add(const LiveReset());
+                live.add(const LiveReset());
                 router.go(Routes.home);
               },
               messagesReceived: (chats) {
-                context.read<ChatBloc>().add(LoadChatMessages(chats));
+                chat.add(LoadChatMessages(chats));
               },
             );
           },

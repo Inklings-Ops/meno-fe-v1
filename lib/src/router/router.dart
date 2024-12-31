@@ -40,14 +40,6 @@ final router = GoRouter(
   redirect: _handleRedirect,
   routes: [
     GoRoute(
-      path: Routes.broadcast,
-      builder: (context, state) => const BroadcastPage(),
-    ),
-    GoRoute(
-      path: Routes.stream,
-      builder: (context, state) => const StreamPage(),
-    ),
-    GoRoute(
       path: Routes.createBroadcast,
       builder: (context, state) => const CreateBroadcastPage(),
     ),
@@ -427,8 +419,8 @@ final router = GoRouter(
 );
 
 extension GoRouteX on GoRouter {
-  void popAndPush(String location) {
+  void popAndPush(String location, {Object? extra}) {
     pop();
-    push(location);
+    push(location, extra: extra);
   }
 }

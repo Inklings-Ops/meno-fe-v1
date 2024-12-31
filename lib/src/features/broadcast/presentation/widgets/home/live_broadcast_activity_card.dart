@@ -19,13 +19,13 @@ class LiveBroadcastActivityCard extends StatelessWidget {
           broadcast: broadcast,
           actionButtonLabel: 'End',
           action: () => onBroadcastEnd(context, broadcast.id),
-          onTap: () => router.push<void>(Routes.broadcast),
+          onTap: () => router.push<void>(Routes.broadcastTab),
         ),
         reconnecting: () => ActivityCard(
           badgeTitle: 'Reconnecting',
           broadcast: broadcast,
           actionButtonLabel: 'End',
-          onTap: () => router.push<void>(Routes.broadcast),
+          onTap: () => router.push<void>(Routes.broadcastTab),
         ),
       ),
     );

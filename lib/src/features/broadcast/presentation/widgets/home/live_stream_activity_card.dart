@@ -17,13 +17,13 @@ class LiveStreamActivityCard extends StatelessWidget {
           broadcast: broadcast,
           actionButtonLabel: 'Leave',
           action: () => onBroadcastLeave(context, broadcast.id),
-          onTap: () => router.push<void>(Routes.stream),
+          onTap: () => router.push<void>(Routes.broadcastTab, extra: true),
         ),
         reconnecting: () => ActivityCard(
           badgeTitle: 'Reconnecting',
           broadcast: broadcast,
           actionButtonLabel: 'Leave',
-          onTap: () => router.push<void>(Routes.stream),
+          onTap: () => router.push<void>(Routes.broadcastTab, extra: true),
         ),
       ),
     );
