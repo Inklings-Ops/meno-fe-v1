@@ -66,21 +66,21 @@ class NoteCardOptionsModal extends StatelessWidget {
       Routes.moveNoteToFolderModal,
       extra: {'note': note, 'folderId': folderId},
     );
-    if (result == true) return router.pop();
+    if (result == true) return router.pop(result);
   }
 
   Future<void> _addToFolder() async {
     final result = await router.push(Routes.addNoteToFolderModal, extra: note);
-    if (result == true) return router.pop();
+    if (result == true) return router.pop(result);
   }
 
   Future<void> _deleteNote() async {
     final result = await router.push(Routes.deleteNoteDialog, extra: note);
-    if (result == true) router.pop();
+    if (result == true) router.pop(result);
   }
 
   Future<void> _removeFromFolder() async {
     final r = await router.push(Routes.remoteNoteFromFolderDialog, extra: note);
-    if (r == true) return router.pop();
+    if (r == true) return router.pop(r);
   }
 }

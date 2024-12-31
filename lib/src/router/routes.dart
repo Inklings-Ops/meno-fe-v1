@@ -38,7 +38,8 @@ class Routes {
   static const String chatTab = '/chat-tab';
   static const String bibleTab = '/bible-tab';
   static const String notesTab = '/notes-tab';
-  static const String noteTabEditor = '/note-tab-editor';
+  static const String notesTabEditor = 'notes-tab-editor';
+  static const String notesTabEditorFull = '/notes-tab/notes-tab-editor';
 
   static const String noteSection = '/notes-section';
   static const String folderSection = '/folder-section';

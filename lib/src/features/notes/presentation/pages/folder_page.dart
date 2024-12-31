@@ -1,8 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder/folder_notes_list.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder/folder_page_folder_widget.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder/folder_page_search_box.dart';
 
 class FolderPage extends HookWidget {
   const FolderPage({super.key});

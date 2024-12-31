@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/features/notes/presentation/widgets/folder/add_folder_notes_modal.dart';
 
 part 'routes.dart';
 
@@ -257,7 +256,6 @@ final router = GoRouter(
             BlocProvider(create: (_) => VersesCubit(facade: bibleFac)),
             BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFac)),
             BlocProvider(create: (_) => TransBloc(facade: bibleFac)),
-            BlocProvider(create: (_) => NotesBloc(facade: di<INoteFacade>())),
           ],
           child: LiveLayout(
             key: broadcastLayoutKey,
@@ -306,7 +304,7 @@ final router = GoRouter(
               routes: [
                 GoRoute(
                   parentNavigatorKey: notesTabKey,
-                  path: Routes.noteTabEditor,
+                  path: Routes.notesTabEditor,
                   builder: (context, state) {
                     final note = state.extra as Note? ?? Note.empty();
                     return BlocProvider(

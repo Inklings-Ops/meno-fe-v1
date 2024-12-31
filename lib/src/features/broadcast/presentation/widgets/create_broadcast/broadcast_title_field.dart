@@ -6,13 +6,17 @@ class BroadcastTitleField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.select<LiveBloc, bool>(
+      (bloc) => bloc.state is LiveLoading,
+    );
+
     return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
-      buildWhen: (p, c) => p.title != c.title || p.loading != c.loading,
+      buildWhen: (p, c) => p.title != c.title || isLoading,
       builder: (context, state) => MTextFormField(
         label: 'Broadcast title',
         hint: "Jim Halpert's live audio",
         required: true,
-        enabled: !state.loading,
+        enabled: !isLoading,
         textInputAction: TextInputAction.next,
         onChanged: context.read<BroadcastFormCubit>().titleChanged,
         validator: (_) => context.validator(state.title.value),

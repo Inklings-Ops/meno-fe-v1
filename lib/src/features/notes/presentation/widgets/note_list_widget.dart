@@ -4,8 +4,17 @@ import 'package:meno_fe_v1/src/features/notes/presentation/widgets/notes_list.da
 import 'package:skeletonizer/skeletonizer.dart';
 
 class NoteListWidget extends StatelessWidget {
-  const NoteListWidget({super.key, this.showAddButton = false});
+  const NoteListWidget({
+    super.key,
+    this.showAddButton = false,
+    this.isForLiveScaffold = false,
+  });
+
   final bool showAddButton;
+
+  /// Flag to set when the notes list is to be displayed from a Live
+  /// Broadcast or Live Stream scaffold.
+  final bool isForLiveScaffold;
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +45,18 @@ class NoteListWidget extends StatelessWidget {
 
   Future<void> _onNoteTap(BuildContext context, Note note) async {
     final bloc = context.read<NotesBloc>();
-    final newNote = await router.push<Note?>(Routes.noteEditor, extra: note);
-    if (newNote != null) return bloc.add(NoteReceived(newNote));
+    Note? newN;
+
+    if (isForLiveScaffold) {
+      newN = await router.push<Note?>(Routes.notesTabEditorFull, extra: note);
+    } else {
+      newN = await router.push<Note?>(Routes.noteEditor, extra: note);
+    }
+
+    if (newN != null) return bloc.add(NoteReceived(newN));
   }
 
   Future<void> _onOptionsTap(Note note) {
-    return router.push(Routes.noteCardOptionsModal, extra: {'note':note});
+    return router.push(Routes.noteCardOptionsModal, extra: {'note': note});
   }
 }

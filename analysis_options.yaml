@@ -14,4 +14,6 @@ analyzer:
     inference_failure_on_instance_creation: ignore
     invalid_annotation_target: ignore
     one_member_abstracts: ignore
+    strict_raw_type: ignore
+    unused_element: ignore
     # library_private_types_in_public_api: ignore

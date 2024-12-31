@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/application/application.dart';
@@ -12,7 +13,7 @@ class BroadcastStartStopButton extends StatelessWidget {
     return BlocBuilder<LiveBloc, LiveState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const _Button('Start'),
-        reconnecting: () => const _Button('Stop'),
+        reconnecting: () => _Button('Stop', onTap: () => stop(context)),
         loading: () => const _Button('Start', loading: true),
         live: () => _Button('Stop', onTap: () => stop(context)),
         failure: () => _Button('Start', onTap: () => start(context)),
@@ -36,6 +37,7 @@ class BroadcastStartStopButton extends StatelessWidget {
         context.read<LiveKitBloc>().add(const LiveKitDisconnect());
         context.read<ChatBloc>().add(const ChatReset());
         context.read<LiveBloc>().add(const LiveReset());
+        Logger().w('Went through the stop command');
       }
     });
   }

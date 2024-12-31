@@ -5,6 +5,7 @@ export 'delete_note_alert_dialog.dart';
 export 'empty_folder_list_widget.dart';
 export 'empty_folder_page_widget.dart';
 export 'empty_note_list_widget.dart';
+export 'folder/folder.dart';
 export 'folder_clipper.dart';
 export 'folder_list_failure_widget.dart';
 export 'folder_list_tile.dart';

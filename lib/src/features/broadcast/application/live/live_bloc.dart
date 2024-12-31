@@ -23,7 +23,8 @@ class LiveBloc extends Bloc<LiveEvent, LiveState> {
       if (_subscription != null) return;
       _subscription = liveKit.eventsStream.listen(_onData);
     });
-    on<LiveReset>((event, emit) {
+    on<LiveReset>((event, emit) async {
+      await _subscription?.cancel();
       _subscription = null;
       emit(const OffAir());
     });

@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -59,6 +60,7 @@ class LiveLayoutListeners extends StatelessWidget {
                 context.read<ParticipantsBloc>().add(GetAllParticipants(bId));
                 context.read<TimerCubit>().stop();
                 context.read<LiveBloc>().add(const LiveReset());
+                Logger().w('Went through the ended side effect');
                 router.replace<void>(Routes.endedBroadcast);
               },
               broadcastJoined: () {

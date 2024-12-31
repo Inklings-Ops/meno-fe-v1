@@ -7,16 +7,19 @@ class BroadcastDescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.select<LiveBloc, bool>(
+      (bloc) => bloc.state is LiveLoading,
+    );
+
     return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
-      buildWhen: (p, c) =>
-          p.description != c.description || p.loading != c.loading,
+      buildWhen: (p, c) => p.description != c.description || isLoading,
       builder: (context, state) => MTextArea(
         label: 'About broadcast',
         hint: 'Enter a brief description',
         maxLines: 5,
         maxLength: 244,
         controller: controller,
-        enabled: !state.loading,
+        enabled: !isLoading,
         onChanged: context.read<BroadcastFormCubit>().descriptionChanged,
         validator: (_) => state.description != null
             ? context.validator(state.description!.value)
