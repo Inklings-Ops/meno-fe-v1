@@ -2,6 +2,7 @@ name: meno_design_system
 description: A new Flutter package project.
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
@@ -9,7 +10,11 @@ environment:
 
 dependencies:
   cached_network_image: ^3.3.0
-  figma_squircle: ^0.5.3
+  # figma_squircle: ^0.5.3
+  figma_squircle: # It was on 0.5.3 before being broken by Flutter 3.27.0. This is a fork that fixes it.
+    git:
+      url: https://github.com/Ax0elz/figma_squircle
+      ref: 5f1ad5aaccdf31fc398fc141979ea845a0f45383 # The ref that fixes the issue
   flutter:
     sdk: flutter
   flutter_gen: ^5.3.1

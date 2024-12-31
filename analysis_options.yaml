@@ -4,9 +4,9 @@ linter:
   public_member_api_docs: false
 analyzer:
   exclude:
-    - lib/objectbox.g.dart
-    - "**/*.g.dart"
-    - "**/*.freezed.dart"
+    # - lib/objectbox.g.dart
+    # - "**/*.g.dart"
+    # - "**/*.freezed.dart"
   errors:
     avoid_js_rounded_ints: ignore
     avoid_positional_boolean_parameters: ignore
