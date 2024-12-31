@@ -10,7 +10,7 @@ class LiveLoadingIndicatorOverlay extends StatelessWidget {
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         loading: () => ColoredBox(
-          color: Colors.black.withOpacity(0.8),
+          color: Colors.black.withValues(alpha: 0.8),
           child: const SizedBox.expand(
             child: Center(child: MLoadingIndicator(130, 130)),
           ),

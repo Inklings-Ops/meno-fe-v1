@@ -61,6 +61,6 @@ class SettingsListTile extends StatelessWidget {
   }
 
   Color? resolveDisabledWithOpacity(Color? color) {
-    return !isDisabled ? color : color?.withOpacity(0.5);
+    return !isDisabled ? color : color?.withValues(alpha: 0.5);
   }
 }

@@ -50,11 +50,12 @@ class MMicrophoneButton extends StatelessWidget {
       icon: isMicrophoneEnabled
           ? const Icon(MIcons.microphone)
           : const Icon(MIcons.microphone_off),
-      color: isDisabled ? colors.primary?.withOpacity(0.4) : colors.primary,
+      color:
+          isDisabled ? colors.primary?.withValues(alpha: 0.4) : colors.primary,
       isFilled: true,
       iconSize: 20,
       size: 40,
-      fillColor: colors.primary?.withOpacity(0.1),
+      fillColor: colors.primary?.withValues(alpha: 0.1),
       onPressed: onTap,
       isDisabled: isDisabled,
     );

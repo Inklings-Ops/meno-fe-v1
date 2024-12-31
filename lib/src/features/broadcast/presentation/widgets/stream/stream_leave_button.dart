@@ -29,7 +29,7 @@ class StreamLeaveButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         foregroundColor: colors.error,
         iconColor: colors.error,
-        backgroundColor: colors.errorContainer?.withOpacity(0.3),
+        backgroundColor: colors.errorContainer?.withValues(alpha: 0.3),
         fixedSize: const Size(159, 40),
         padding: const EdgeInsets.symmetric(
           horizontal: Insets.lg,

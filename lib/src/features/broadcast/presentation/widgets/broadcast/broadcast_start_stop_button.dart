@@ -69,8 +69,8 @@ class _Button extends StatelessWidget {
     final isStart = label == 'Start';
 
     final backgroundColor = isStart
-        ? colors.primaryContainer?.withOpacity(0.3)
-        : colors.errorContainer?.withOpacity(0.3);
+        ? colors.primaryContainer?.withValues(alpha: 0.3)
+        : colors.errorContainer?.withValues(alpha: 0.3);
 
     final foregroundColor = isStart ? colors.primary : colors.error;
 

@@ -26,7 +26,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
             label: 'Cancel',
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(
-              foregroundColor: colors.onDisabled?.withOpacity(0.5),
+              foregroundColor: colors.onDisabled?.withValues(alpha: 0.5),
               shape: const RoundedRectangleBorder(borderRadius: borderRadius),
             ),
           ),

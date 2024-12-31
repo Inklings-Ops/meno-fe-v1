@@ -40,7 +40,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
               label: 'Cancel',
               onPressed: () => context.pop(false),
               style: TextButton.styleFrom(
-                foregroundColor: colorScheme.onDisabled?.withOpacity(0.5),
+                foregroundColor: colorScheme.onDisabled?.withValues(alpha: 0.5),
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               ),
             ),
