@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'chat_bloc.freezed.dart';
 part 'chat_event.dart';
@@ -15,10 +16,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatEditPressed>(_onChatEditPressed);
     on<ChatReset>(_onChatReset);
     on<LoadChatMessages>(_onLoadChatMessages);
-    on<ContentChanged>(_onContentChanged);
     on<ClearChatContent>(_onClearChatContent);
     on<ToggleShowReactions>(_onToggleReactions);
     on<HideChatWelcomeNote>(_onHideWelcomeNote);
+    on<ContentChanged>(
+      _onContentChanged,
+      transformer: debounce(const Duration(milliseconds: 300)),
+    );
   }
 
   final _initialState = ChatState(chats: [], broadcast: Broadcast.empty());
@@ -53,7 +57,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onClearChatContent(ClearChatContent event, Emitter<ChatState> emit) {
-    emit(state.copyWith(content: null));
+    emit(state.copyWith(content: null, hasContent: false));
   }
 
   void _onToggleReactions(ToggleShowReactions event, Emitter<ChatState> emit) {
@@ -62,5 +66,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void _onHideWelcomeNote(HideChatWelcomeNote event, Emitter<ChatState> emit) {
     emit(state.copyWith(hideWelcomeNote: true));
+  }
+
+  EventTransformer<E> debounce<E>(Duration duration) {
+    return (events, mapper) => events.debounceTime(duration).switchMap(mapper);
   }
 }

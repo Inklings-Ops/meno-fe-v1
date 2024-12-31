@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -10,6 +9,7 @@ class LiveLayoutListeners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final liveBloc = context.watch<LiveBloc>();
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
@@ -18,7 +18,8 @@ class LiveLayoutListeners extends StatelessWidget {
             state.status.whenOrNull(
               failed: (error, isStream) {
                 context.read<LiveBloc>().add(const GoFailure());
-                isStream ? router.pop() : context.showErrorSnackBar(error);
+                context.showErrorSnackBar(error);
+                if (isStream) return router.pop();
               },
               broadcastConnected: () async {
                 final bId = context.read<BroadcastBloc>().state.broadcast.id;
@@ -60,7 +61,6 @@ class LiveLayoutListeners extends StatelessWidget {
                 context.read<ParticipantsBloc>().add(GetAllParticipants(bId));
                 context.read<TimerCubit>().stop();
                 context.read<LiveBloc>().add(const LiveReset());
-                Logger().w('Went through the ended side effect');
                 router.replace<void>(Routes.endedBroadcast);
               },
               broadcastJoined: () {
@@ -80,6 +80,7 @@ class LiveLayoutListeners extends StatelessWidget {
                 router.go(Routes.home);
               },
               endedBroadcast: (data) {
+                if (liveBloc.state is Live) return;
                 di<BackgroundService>().endBackgroundTask();
                 context.read<LiveBloc>().add(const LiveReset());
                 router.go(Routes.home);

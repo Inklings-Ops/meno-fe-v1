@@ -29,7 +29,6 @@ class BroadcastPageView extends HookWidget {
 
     final broadcastId = context.read<BroadcastBloc>().state.broadcast.id;
 
-    final participantsBloc = context.read<ParticipantsBloc>();
     final socket = context.watch<SocketBloc>();
 
     return MultiBlocListener(
@@ -45,34 +44,6 @@ class BroadcastPageView extends HookWidget {
               broadcastConnected: () async {
                 await di<BackgroundService>().invokeBroadcastInBackground();
                 socket.add(SocketStartBroadcast(broadcastId));
-              },
-            );
-          },
-        ),
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              error: (error, _) {
-                context.read<LiveBloc>().add(const GoFailure());
-                context.showErrorSnackBar(error);
-              },
-              broadcastStarted: () {
-                socket.add(SocketGetMessages(broadcastId));
-                participantsBloc.add(GetLiveParticipants(broadcastId));
-                context.read<TimerCubit>().start();
-                context.read<LiveBloc>().add(const LiveStarted());
-                context.read<LiveBloc>().add(const GoLive());
-                di<BackgroundService>().startBackgroundService();
-              },
-              broadcastEnded: () {
-                di<BackgroundService>().endBackgroundTask();
-                participantsBloc.add(GetAllParticipants(broadcastId));
-                context.read<TimerCubit>().stop();
-                context.read<LiveBloc>().add(const LiveReset());
-                router.replace<void>(Routes.endedBroadcast);
-              },
-              messagesReceived: (chats) {
-                context.read<ChatBloc>().add(LoadChatMessages(chats));
               },
             );
           },

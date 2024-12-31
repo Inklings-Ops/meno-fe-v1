@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/chat/presentation/widgets/reaction_button.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatInputContainer extends HookWidget {
   const ChatInputContainer({required this.scrollController, super.key});
@@ -14,6 +14,23 @@ class ChatInputContainer extends HookWidget {
 
     final bloc = context.watch<ChatBloc>();
 
+    final textEditingController = useTextEditingController();
+
+    useEffect(
+      () {
+        void listener() {
+          final newContent = textEditingController.text;
+          if (bloc.state.content != newContent) {
+            bloc.add(ContentChanged(newContent));
+          }
+        }
+
+        textEditingController.addListener(listener);
+        return () => textEditingController.removeListener(listener);
+      },
+      [textEditingController, bloc],
+    );
+
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.passthrough,
@@ -24,7 +41,21 @@ class ChatInputContainer extends HookWidget {
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           child: Row(
             children: [
-              const Expanded(child: _InputField()),
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    controller: textEditingController,
+                    style: MTextTheme.of(context)!.captionRegular,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: Insets.md,
+                      ),
+                      hintText: 'Type your comment here...',
+                    ),
+                  ),
+                ),
+              ),
               Spaces.horizontalLarge,
               MIconButton(
                 size: 40,
@@ -35,8 +66,8 @@ class ChatInputContainer extends HookWidget {
                 onPressed: () => bloc.add(const ToggleShowReactions()),
               ),
               _SendButton(
-                broadcastId: bloc.state.broadcast.id,
                 scrollController: scrollController,
+                textEditingController: textEditingController,
               ),
             ],
           ),
@@ -46,36 +77,19 @@ class ChatInputContainer extends HookWidget {
   }
 }
 
-class _InputField extends StatelessWidget {
-  const _InputField();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: TextFormField(
-        style: MTextTheme.of(context)!.captionRegular,
-        onChanged: (v) => context.read<ChatBloc>().add(ContentChanged(v)),
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: Insets.md),
-          hintText: 'Type your comment here...',
-        ),
-      ),
-    );
-  }
-}
-
 class _SendButton extends StatelessWidget {
   const _SendButton({
-    required this.broadcastId,
     required this.scrollController,
+    required this.textEditingController,
   });
 
-  final Uid<Broadcast> broadcastId;
   final ScrollController scrollController;
+  final TextEditingController textEditingController;
 
   @override
   Widget build(BuildContext context) {
+    final broadcastId = context.select((ChatBloc b) => b.state.broadcast.id);
+
     final colors = MColorScheme.of(context)!;
 
     final currentUserId = context.read<SessionCubit>().state.maybeWhen(
@@ -107,7 +121,7 @@ class _SendButton extends StatelessWidget {
         curve: Curves.easeInOut,
       );
 
-      chat.add(const ClearChatContent());
+      textEditingController.clear();
     }
 
     return BlocBuilder<ChatBloc, ChatState>(

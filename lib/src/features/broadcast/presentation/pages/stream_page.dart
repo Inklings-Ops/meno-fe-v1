@@ -39,6 +39,7 @@ class StreamPageView extends HookWidget {
             state.status.whenOrNull(
               failed: (error, _) {
                 context.read<LiveBloc>().add(const GoFailure());
+                context.showErrorSnackBar(error);
                 router.pop();
               },
               streamConnected: () async {
@@ -57,8 +58,9 @@ class StreamPageView extends HookWidget {
                 router.pop();
               },
               broadcastJoined: () {
-                context.read<SocketBloc>().add(SocketGetMessages(id));
+                context.read<ChatBloc>().add(InitializeChat(broadcast));
                 context.read<ParticipantsBloc>().add(GetLiveParticipants(id));
+                context.read<SocketBloc>().add(SocketGetMessages(id));
                 context.read<TimerCubit>().setAndStart(broadcast.startTime);
                 context.read<LiveBloc>().add(const LiveStarted());
                 context.read<LiveBloc>().add(const GoStreaming());
