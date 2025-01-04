@@ -40,6 +40,31 @@ abstract class IBroadcastFacade {
     Uid<Broadcast> id,
   );
 
+  Future<Either<BroadcastException, BroadcastListEntity>> nowLiveBroadcasts({
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+  });
+
+  Future<Either<BroadcastException, BroadcastListEntity>>
+      recentlyLiveBroadcasts({
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+    String? endTimeGT,
+    String? endTimeLT,
+  });
+
+  Future<Either<BroadcastException, BroadcastListEntity>> search({
+    String? keywords,
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+  });
+
   Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
     /// Status of the broadcast
     /// Example : active or inactive

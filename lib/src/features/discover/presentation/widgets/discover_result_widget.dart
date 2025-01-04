@@ -33,7 +33,7 @@ class _AllBroadcastsView extends HookWidget {
   const _AllBroadcastsView();
 
   Future<List<Broadcast?>> nowLive() async {
-    final fOrS = await di<IDiscoverFacade>().fetchNowLive();
+    final fOrS = await di<IBroadcastFacade>().nowLiveBroadcasts();
     return fOrS.fold((l) => [], (r) => r.broadcasts);
   }
 
@@ -41,7 +41,7 @@ class _AllBroadcastsView extends HookWidget {
     final now = DateTime.now();
     final oneDayAgo = now.subtract(const Duration(days: 100));
 
-    final fOrS = await di<IDiscoverFacade>().fetchRecentlyLive(
+    final fOrS = await di<IBroadcastFacade>().recentlyLiveBroadcasts(
       endTimeGT: oneDayAgo.toIso8601String(),
       endTimeLT: now.toIso8601String(),
     );

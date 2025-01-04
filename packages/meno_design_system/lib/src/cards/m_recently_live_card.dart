@@ -27,13 +27,11 @@ class MRecentlyLiveCard extends StatelessWidget {
   /// Parameters:
   /// - [title]: The title of the recently live content.
   /// - [host]: The name of the host of the recently live content.
-  /// - [loading]: A boolean indicating if the card is in a loading state.
   /// - [key]: An optional key to identify the widget.
   /// - [imageUrl]: An optional URL for an image to be displayed in the card.
   /// - [onTap]: An optional callback function to be invoked when the card is
   /// tapped.
   const MRecentlyLiveCard({
-    required this.loading,
     this.title,
     this.host,
     super.key,
@@ -53,9 +51,6 @@ class MRecentlyLiveCard extends StatelessWidget {
   /// A callback function to be invoked when the card is tapped.
   final VoidCallback? onTap;
 
-  /// A boolean indicating if the card is in a loading state.
-  final bool loading;
-
   @override
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
@@ -71,30 +66,23 @@ class MRecentlyLiveCard extends StatelessWidget {
     Widget? placeholder;
 
     DecorationImage? image;
-    if (loading) {
-      image = null;
-      placeholder = null;
+    if (hasImage) {
+      image = DecorationImage(
+        image: CachedNetworkImageProvider(imageUrl!),
+        fit: BoxFit.cover,
+      );
     } else {
-      if (hasImage) {
-        image = DecorationImage(
-          image: CachedNetworkImageProvider(imageUrl!),
-          fit: BoxFit.cover,
-        );
-      } else {
-        placeholder = Assets.images.logoLight.svg(
-          colorFilter: colorFilter,
-          height: 32,
-        );
-      }
+      placeholder = Assets.images.logoLight.svg(
+        colorFilter: colorFilter,
+        height: 32,
+      );
     }
 
     return GestureDetector(
       onTap: onTap,
       child: _Container(
         children: [
-          Skeletonizer(
-            enabled: loading,
-            containersColor: isLight ? MColor.grey30 : MColor.grey400,
+          Skeleton.leaf(
             child: Container(
               width: 148,
               height: 88,
@@ -103,34 +91,28 @@ class MRecentlyLiveCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isLight ? MColor.grey30 : MColor.grey400,
                 borderRadius: Corners.md,
-                image: loading ? null : image,
+                image: image,
               ),
               child: !hasImage ? placeholder : null,
             ),
           ),
           Spaces.verticalMedium,
-          Skeletonizer(
-            enabled: loading,
-            child: MText(
-              loading ? BoneMock.fullName : title!,
-              style: styles.titleStyle,
-              color: styles.titleColor,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          MText(
+            title!,
+            style: styles.titleStyle,
+            color: styles.titleColor,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Spaces.verticalMicro,
-          Skeletonizer(
-            enabled: loading,
-            child: MText(
-              loading ? BoneMock.name : host!,
-              style: styles.hostStyle,
-              color: styles.hostColor,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          MText(
+            host ?? '',
+            style: styles.hostStyle,
+            color: styles.hostColor,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

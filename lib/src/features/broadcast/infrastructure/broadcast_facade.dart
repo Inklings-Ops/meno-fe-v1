@@ -253,4 +253,99 @@ class BroadcastFacade implements IBroadcastFacade {
 
     return const BroadcastException.serverError();
   }
+
+  @override
+  Future<Either<BroadcastException, BroadcastListEntity>> nowLiveBroadcasts({
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    try {
+      final response = await _remote.getBroadcasts(
+        endTimeExist: false,
+        startTimeExist: true,
+        include: 'totalListeners',
+        status: 'active',
+        sortBy: sortBy ?? 'startTime',
+        orderBy: orderBy ?? 'DESC',
+        page: page ?? 1,
+        size: size ?? 6,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<BroadcastException, BroadcastListEntity>>
+      recentlyLiveBroadcasts({
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+    String? endTimeGT,
+    String? endTimeLT,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    final now = DateTime.now();
+    final oneDayAgo = now.subtract(const Duration(days: 100));
+
+    try {
+      final response = await _remote.getBroadcasts(
+        endTimeExist: true,
+        include: 'totalListeners',
+        status: 'active',
+        sortBy: sortBy ?? 'endTime',
+        orderBy: orderBy ?? 'DESC',
+        page: page ?? 1,
+        size: size ?? 6,
+        endTimeGT: endTimeGT ?? oneDayAgo.toIso8601String(),
+        endTimeLT: endTimeLT ?? now.toIso8601String(),
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<BroadcastException, BroadcastListEntity>> search({
+    String? keywords,
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    try {
+      final response = await _remote.getBroadcasts(
+        keywords: keywords,
+        sortBy: sortBy ?? 'startTime',
+        orderBy: orderBy ?? 'DESC',
+        page: page ?? 1,
+        size: size ?? 6,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
+  }
 }

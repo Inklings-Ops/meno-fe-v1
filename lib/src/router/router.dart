@@ -139,6 +139,10 @@ final router = GoRouter(
       path: Routes.othersProfile,
       builder: (_, state) => OthersProfilePage(userId: state.extra! as String),
     ),
+    GoRoute(
+      path: Routes.nowLive,
+      builder: (context, state) => const NowLivePage(),
+    ),
 
     /// Modals
     ///

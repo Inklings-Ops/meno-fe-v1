@@ -4,7 +4,9 @@ import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 class DiscoverBroadcastGridView extends HookWidget {
   const DiscoverBroadcastGridView({
-    required this.broadcasts, required this.filter, super.key,
+    required this.broadcasts,
+    required this.filter,
+    super.key,
   });
   final List<Broadcast?> broadcasts;
   final Filter filter;
@@ -44,7 +46,10 @@ class _NowLiveCard extends StatelessWidget {
     return MCard.live(
       title: broadcast.title.getOr(),
       imageUrl: broadcast.imageUrl,
-      host: broadcast.fullName,
+      host: broadcast.creator?.fullName ??
+          broadcast.fullName ??
+          broadcast.creatorFullName ??
+          '',
       liveCount: broadcast.totalListeners,
     );
   }
@@ -59,7 +64,10 @@ class _RecentlyLiveCard extends StatelessWidget {
     return MCard.recentlyLive(
       title: broadcast.title.getOr(),
       imageUrl: broadcast.imageUrl,
-      host: broadcast.fullName,
+      host: broadcast.creator?.fullName ??
+          broadcast.fullName ??
+          broadcast.creatorFullName ??
+          '',
     );
   }
 }

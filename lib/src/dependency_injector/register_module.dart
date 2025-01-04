@@ -26,11 +26,6 @@ abstract class RegisterModule {
   }
 
   @lazySingleton
-  DiscoverRemoteDatasource get discoverRemoteDatasource {
-    return DiscoverRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
-  }
-
-  @lazySingleton
   NotificationRemoteDatasource get notificationRemoteDatasource {
     return NotificationRemoteDatasource(dio, baseUrl: Env.menoApiUrl);
   }

@@ -1,6 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/discover/discover.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AllBroadcastsWidget extends StatelessWidget {
   const AllBroadcastsWidget({super.key});
@@ -11,28 +11,26 @@ class AllBroadcastsWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Spaces.verticalXLarge,
-        BlocBuilder<DAllCubit, DAllState>(
-          buildWhen: (p, c) =>
-              p.isNowLiveLoading != c.isNowLiveLoading ||
-              p.nowLive != c.nowLive,
-          builder: (context, state) => _Grid(
-            title: 'Now Live',
-            onSeeAll: () {},
-            broadcasts: state.nowLive,
-            isLoading: state.isNowLiveLoading,
-            isNowLive: true,
+        BlocBuilder<LiveBroadcastsBloc, LiveBroadcastsState>(
+          builder: (context, state) => state.maybeWhen(
+            orElse: () => const EmptyListWidget(),
+            loading: () => _Grid(
+              broadcasts: fakeBroadcasts,
+              loading: true,
+              isNowLive: true,
+            ),
+            loaded: (broadcasts) => _Grid(
+              broadcasts: broadcasts,
+              isNowLive: true,
+            ),
           ),
         ),
         Spaces.verticalXXLarge,
-        BlocBuilder<DAllCubit, DAllState>(
-          buildWhen: (p, c) =>
-              p.isRecentlyLiveLoading != c.isRecentlyLiveLoading ||
-              p.recentlyLive != c.recentlyLive,
-          builder: (context, state) => _Grid(
-            title: 'Recently Live',
-            onSeeAll: () => router.push(Routes.recentlyLive),
-            broadcasts: state.recentlyLive,
-            isLoading: state.isRecentlyLiveLoading,
+        BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
+          builder: (context, state) => state.maybeWhen(
+            orElse: () => const EmptyListWidget(),
+            loading: () => _Grid(broadcasts: fakeBroadcasts, loading: true),
+            success: (broadcasts) => _Grid(broadcasts: broadcasts),
           ),
         ),
         Spaces.verticalXXLarge,
@@ -43,64 +41,71 @@ class AllBroadcastsWidget extends StatelessWidget {
 
 class _Grid extends HookWidget {
   const _Grid({
-    required this.title,
-    required this.onSeeAll,
     required this.broadcasts,
-    required this.isLoading,
+    this.loading = false,
     this.isNowLive = false,
   });
-  final String title;
-  final VoidCallback onSeeAll;
+
   final List<Broadcast?> broadcasts;
-  final bool isLoading;
+  final bool loading;
   final bool isNowLive;
+
   @override
   Widget build(BuildContext context) {
-    late Widget child;
-    if (isLoading) {
-      child = const MLoadingIndicator.box();
-    } else if (!isLoading && broadcasts.isEmpty) {
-      child = const EmptyListWidget();
-    } else {
-      child = GridView.builder(
-        scrollDirection: Axis.horizontal,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 24,
-          crossAxisSpacing: 24,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        shrinkWrap: true,
-        primary: false,
-        itemCount: broadcasts.length,
-        itemBuilder: (context, i) {
-          final broadcast = broadcasts[i]!;
-          if (isNowLive) {
-            return MCard.live(
-              title: broadcast.title.getOr(),
-              imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName,
-              liveCount: broadcast.totalListeners,
-              onTap: () => context.showJoinLiveBroadcastModal(broadcast),
-            );
-          } else {
-            return MCard.recentlyLive(
-              title: broadcast.title.getOr(),
-              imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName,
-              onTap: () => router.push(Routes.details, extra: broadcast),
-            );
-          }
-        },
-      );
-    }
-
+    final title = isNowLive ? 'Now Live' : 'Recently Live';
+    void onSeeAll() => isNowLive
+        ? router.push(Routes.nowLive)
+        : router.push(Routes.recentlyLive);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _Header(title: title, onSeeAll: onSeeAll),
         Spaces.verticalXLarge,
-        LimitedBox(maxHeight: 376, child: child),
+        LimitedBox(
+          maxHeight: 376,
+          child: Skeletonizer(
+            enabled: loading,
+            child: GridView.builder(
+              scrollDirection: Axis.horizontal,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 24,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+              primary: false,
+              itemCount: broadcasts.length,
+              itemBuilder: (context, index) {
+                final broadcast = broadcasts[index]!;
+
+                final title = broadcast.title.getOr();
+                final imageUrl = broadcast.imageUrl;
+                final host = broadcast.creator?.fullName ??
+                    broadcast.fullName ??
+                    broadcast.creatorFullName ??
+                    '';
+
+                if (isNowLive) {
+                  return MCard.live(
+                    title: title,
+                    imageUrl: imageUrl,
+                    host: host,
+                    liveCount: broadcast.totalListeners,
+                    onTap: () => context.showJoinLiveBroadcastModal(broadcast),
+                  );
+                } else {
+                  return MCard.recentlyLive(
+                    title: title,
+                    imageUrl: imageUrl,
+                    host: host,
+                    onTap: () => router.push(Routes.details, extra: broadcast),
+                  );
+                }
+              },
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -8,7 +8,7 @@ class FilterState with _$FilterState {
     required int page,
     required bool isLoading,
     required bool hasMore,
-    DiscoverException? exception,
+    BroadcastException? exception,
   }) = _SearchState;
 
   factory FilterState.initial() {

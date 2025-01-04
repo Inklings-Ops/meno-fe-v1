@@ -2,7 +2,6 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 /// A widget that represents a card for live content.
 ///
@@ -37,7 +36,6 @@ class MLiveCard extends StatelessWidget {
   /// - [onTap]: An optional callback function to be invoked when the card is
   /// tapped.
   const MLiveCard({
-    required this.loading,
     this.title,
     this.host,
     super.key,
@@ -61,16 +59,13 @@ class MLiveCard extends StatelessWidget {
   /// A callback function to be invoked when the card is tapped.
   final VoidCallback? onTap;
 
-  /// A boolean indicating if the card is in a loading state.
-  final bool loading;
-
   @override
   Widget build(BuildContext context) {
     final styles = MCardStyles.of(context)!;
 
     String? count;
 
-    if (!loading && liveCount != null && liveCount != 0) {
+    if (liveCount != null && liveCount != 0) {
       count = NumberFormat.compactCurrency(
         decimalDigits: 0,
         symbol: '',
@@ -84,44 +79,34 @@ class MLiveCard extends StatelessWidget {
         children: [
           _Container(
             children: [
-              MAvatar(radius: 44, url: imageUrl, loading: loading),
+              MAvatar(radius: 44, url: imageUrl),
               Spaces.verticalMedium,
-              Skeletonizer(
-                enabled: loading,
-                child: SizedBox(
-                  height: 24,
-                  child: MText(
-                    loading ? BoneMock.name : title!,
-                    style: styles.titleStyle,
-                    color: styles.titleColor,
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              Spaces.verticalMicro,
-              Skeletonizer(
-                enabled: loading,
+              SizedBox(
+                height: 24,
                 child: MText(
-                  loading ? BoneMock.name : host!,
-                  style: styles.hostStyle,
-                  color: styles.hostColor,
+                  title!,
+                  style: styles.titleStyle,
+                  color: styles.titleColor,
                   maxLines: 1,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                 ),
+              ),
+              Spaces.verticalMicro,
+              MText(
+                host!,
+                style: styles.hostStyle,
+                color: styles.hostColor,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
           Positioned(
             top: 8,
             left: 16,
-            child: MBadge.live(
-              count: count,
-              showBorder: true,
-              loading: loading,
-            ),
+            child: MBadge.live(count: count, showBorder: true),
           ),
         ],
       ),

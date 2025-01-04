@@ -8,7 +8,7 @@ part 'recently_live_event.dart';
 
 part 'recently_live_state.dart';
 
-const size = 6;
+const _size = 6;
 
 class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
   RecentlyLiveCubit({
@@ -21,7 +21,7 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
     emit(const RecentlyLiveState.loading());
 
     final result = await _facade.getBroadcasts(
-      size: size,
+      size: _size,
       orderBy: 'DESC',
       sortBy: 'endTime',
       endTimeExist: true,
@@ -43,11 +43,11 @@ class RecentlyLiveCubit extends Cubit<RecentlyLiveState> {
       emit(RecentlyLiveState.loadingMore(loadedState.broadcasts));
 
       final result = await _facade.getBroadcasts(
-        size: size,
+        size: _size,
         orderBy: 'DESC',
         sortBy: 'endTime',
         endTimeExist: true,
-        page: loadedState.broadcasts.length ~/ size + 1,
+        page: loadedState.broadcasts.length ~/ _size + 1,
       );
 
       return result.fold(

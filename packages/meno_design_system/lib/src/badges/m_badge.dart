@@ -85,7 +85,6 @@ class MBadge extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 20),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           showBorder: showBorder,
-          loading: loading,
         );
 
   /// Creates an off-air badge with predefined styles.
@@ -177,7 +176,6 @@ class MBadge extends StatelessWidget {
     this.constraints,
     this.showLoader = false,
     this.showBorder = false,
-    this.loading = false,
   });
 
   /// The background color of the badge.
@@ -216,9 +214,6 @@ class MBadge extends StatelessWidget {
   /// Whether to show a border around the badge.
   final bool showBorder;
 
-  /// Loading boolean
-  final bool loading;
-
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
@@ -241,15 +236,14 @@ class MBadge extends StatelessWidget {
       );
     }
 
-    return Skeletonizer(
-      enabled: loading,
+    return Skeleton.leaf(
       child: Container(
         height: height,
         width: width,
         padding: padding,
         constraints: constraints,
         decoration: ShapeDecoration(
-          color: loading ? null : color ?? colors.error,
+          color: color ?? colors.error,
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius ?? BorderRadius.zero,
             side: showBorder

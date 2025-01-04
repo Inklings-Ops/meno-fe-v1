@@ -17,3 +17,20 @@ final fakeFolders = List.filled(
   3,
   Folder(id: Uid.fromString('id'), title: FolderTitle(BoneMock.title)),
 );
+
+final fakeBroadcastParticipant = BroadcastParticipant(
+  id: '1',
+  fullName: BoneMock.name,
+);
+
+final fakeBroadcastParticipants = List.filled(3, fakeBroadcastParticipant);
+
+final fakeBroadcasts = List.filled(
+  3,
+  Broadcast(
+    id: Uid.fromString('uniqueIdStr'),
+    title: SingleLineString(BoneMock.title),
+    description: BroadcastDescription(BoneMock.longParagraph),
+    creator: fakeBroadcastParticipant,
+  ),
+);

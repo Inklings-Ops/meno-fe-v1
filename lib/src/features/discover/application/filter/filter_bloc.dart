@@ -9,14 +9,14 @@ part 'filter_event.dart';
 part 'filter_state.dart';
 
 class FilterBloc extends Bloc<FilterEvent, FilterState> {
-  FilterBloc({required IDiscoverFacade facade})
+  FilterBloc({required IBroadcastFacade facade})
       : _facade = facade,
         super(FilterState.initial()) {
     on<FilterFetched>(_onFilterFetched);
     on<FilterRefreshed>(_onFilterRefreshed);
     on<FilterChanged>(_onFilterChanged);
   }
-  final IDiscoverFacade _facade;
+  final IBroadcastFacade _facade;
 
   void init() => add(const FilterFetched(1));
 
@@ -78,14 +78,14 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     return add(const FilterRefreshed());
   }
 
-  Future<Either<DiscoverException, DiscoverResult>> _fetch(
+  Future<Either<BroadcastException, BroadcastListEntity>> _fetch(
     Filter filter,
     int page,
   ) async {
     return switch (filter) {
-      Filter.recentlyLive => _facade.fetchRecentlyLive(page: page),
-      Filter.nowLive => _facade.fetchNowLive(page: page),
-      Filter.all => _facade.fetchBroadcasts(page: page),
+      Filter.recentlyLive => _facade.recentlyLiveBroadcasts(page: page),
+      Filter.nowLive => _facade.nowLiveBroadcasts(page: page),
+      Filter.all => _facade.getBroadcasts(page: page),
     };
   }
 }

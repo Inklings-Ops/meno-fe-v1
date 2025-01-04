@@ -120,30 +120,28 @@ class MAvatar extends StatelessWidget {
       backgroundImage = FileImage(file!);
     }
 
-    final Widget avatar = Skeletonizer(
-      enabled: loading,
-      containersColor: colors.surfaceShade,
-      child: CircleAvatar(
-        radius: radius,
-        foregroundImage: foregroundImage,
-        backgroundImage: backgroundImage,
-        backgroundColor: colors.surfaceShade,
-        child: placeholder,
-      ),
+    final Widget avatar = CircleAvatar(
+      radius: radius,
+      foregroundImage: foregroundImage,
+      backgroundImage: backgroundImage,
+      backgroundColor: colors.surfaceShade,
+      child: placeholder,
     );
 
-    return GestureDetector(
-      onTap: onTap,
-      child: !hasBorder
-          ? avatar
-          : CircleAvatar(
-              radius: radius,
-              backgroundColor: colors.outlineVariant3,
-              child: Padding(
-                padding: const EdgeInsets.all(1.50),
-                child: avatar,
+    return Skeleton.leaf(
+      child: GestureDetector(
+        onTap: onTap,
+        child: !hasBorder
+            ? avatar
+            : CircleAvatar(
+                radius: radius,
+                backgroundColor: colors.outlineVariant3,
+                child: Padding(
+                  padding: const EdgeInsets.all(1.50),
+                  child: avatar,
+                ),
               ),
-            ),
+      ),
     );
   }
 }

@@ -39,6 +39,11 @@ class MenoBlocProvider extends StatelessWidget {
             facade: di<IBroadcastFacade>(),
           )..fetch(),
         ),
+        BlocProvider(
+          create: (_) => LiveBroadcastsBloc(
+            facade: di<IBroadcastFacade>(),
+          )..init(),
+        ),
       ],
       child: child,
     );

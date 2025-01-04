@@ -24,6 +24,7 @@ class Routes {
   static const String notes = '/notes';
   static const String myProfile = '/my-profile';
   static const String othersProfile = '/others-profile';
+  static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
   static const String details = '/details';
   static const String notifications = '/notifications';

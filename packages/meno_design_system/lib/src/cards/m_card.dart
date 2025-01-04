@@ -20,7 +20,6 @@ import 'package:meno_design_system/src/cards/cards.dart';
 ///   onTap: () {
 ///     // Handle card tap
 ///   },
-///   loading: false,
 /// );
 /// ```
 class MCard extends MStyledCard {
@@ -34,7 +33,6 @@ class MCard extends MStyledCard {
   /// - [liveCount]: An optional count of live viewers or participants.
   /// - [onTap]: An optional callback function to be invoked when the card is
   /// tapped.
-  /// - [loading]: A boolean indicating if the card is in a loading state.
   factory MCard.live({
     Key? key,
     String? title,
@@ -42,7 +40,6 @@ class MCard extends MStyledCard {
     String? imageUrl,
     int? liveCount,
     VoidCallback? onTap,
-    bool loading,
   }) = _LiveCard;
 
   /// Factory constructor for creating a recently live card.
@@ -54,14 +51,12 @@ class MCard extends MStyledCard {
   /// - [imageUrl]: An optional URL for an image to be displayed in the card.
   /// - [onTap]: An optional callback function to be invoked when the card is
   /// tapped.
-  /// - [loading]: A boolean indicating if the card is in a loading state.
   factory MCard.recentlyLive({
     Key? key,
     String? title,
     String? host,
     String? imageUrl,
     VoidCallback? onTap,
-    bool loading,
   }) = _RecentlyLiveCard;
 
   const MCard._({
@@ -70,7 +65,6 @@ class MCard extends MStyledCard {
     super.key,
     super.subtitle,
     super.onTap,
-    super.loading,
   });
 }
 
@@ -82,7 +76,6 @@ class _LiveCard extends MCard {
     String? imageUrl,
     int? liveCount,
     super.onTap,
-    super.loading,
   }) : super._(
           child: MLiveCard(
             title: title,
@@ -90,7 +83,6 @@ class _LiveCard extends MCard {
             imageUrl: imageUrl,
             liveCount: liveCount,
             onTap: onTap,
-            loading: loading,
           ),
         );
 }
@@ -102,14 +94,12 @@ class _RecentlyLiveCard extends MCard {
     String? host,
     String? imageUrl,
     VoidCallback? onTap,
-    bool loading = false,
   }) : super._(
           child: MRecentlyLiveCard(
             title: title,
             host: host,
             imageUrl: imageUrl,
             onTap: onTap,
-            loading: loading,
           ),
         );
 }

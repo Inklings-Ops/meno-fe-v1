@@ -78,6 +78,7 @@ extension SessionStateX on SessionState {
         Routes.notifications,
         Routes.myProfile,
         Routes.othersProfile,
+        Routes.nowLive,
         Routes.recentlyLive,
         Routes.settings,
         Routes.endedBroadcast,

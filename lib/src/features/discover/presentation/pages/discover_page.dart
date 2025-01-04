@@ -1,4 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
 class DiscoverPage extends StatelessWidget {
@@ -8,20 +9,9 @@ class DiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => SearchBloc(facade: di<IDiscoverFacade>())),
+        BlocProvider(create: (_) => SearchBloc(facade: di<IBroadcastFacade>())),
         BlocProvider(
-          create: (_) => DAllCubit(facade: di<IDiscoverFacade>())..init(),
-        ),
-        BlocProvider(
-          create: (_) => DNowLiveCubit(facade: di<IDiscoverFacade>())..fetch(1),
-        ),
-        BlocProvider(
-          create: (_) => DRecentlyLiveCubit(
-            facade: di<IDiscoverFacade>(),
-          )..fetch(1),
-        ),
-        BlocProvider(
-          create: (_) => FilterBloc(facade: di<IDiscoverFacade>())..init(),
+          create: (_) => FilterBloc(facade: di<IBroadcastFacade>())..init(),
         ),
       ],
       child: const DiscoverView(),
@@ -100,28 +90,36 @@ class DiscoverView extends HookWidget {
     );
   }
 
-  Future<void> refresh(BuildContext context, Filter filter) async {
+  Future<dynamic> refresh(BuildContext context, Filter filter) async {
     return switch (filter) {
-      Filter.all => Future.wait([
-          context.read<DAllCubit>().refreshNowLive(),
-          context.read<DAllCubit>().refreshRecentlyLive(),
-        ]),
-      Filter.nowLive => context.read<DNowLiveCubit>().refresh(),
-      Filter.recentlyLive => context.read<DRecentlyLiveCubit>().refresh(),
+      Filter.all => Future.wait([_nowLive(context), _recentlyLive(context)]),
+      Filter.nowLive => _nowLive(context),
+      Filter.recentlyLive => _recentlyLive(context),
     };
   }
 
+  Future<dynamic> _nowLive(BuildContext context) async {
+    final nowLiveBloc = context.read<LiveBroadcastsBloc>();
+    final nowLive = nowLiveBloc.stream.first;
+    nowLiveBloc.add(const GetLiveBroadcasts());
+    return Future<dynamic>.value(nowLive);
+  }
+
+  Future<dynamic> _recentlyLive(BuildContext context) async {
+    final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
+    final recentlyLive = recentlyLiveBloc.stream.first;
+    await recentlyLiveBloc.fetch();
+    return Future<dynamic>.value(recentlyLive);
+  }
+
   Future<void> fetchMore(BuildContext context, Filter filter) async {
-    final nowLiveBloc = context.read<DNowLiveCubit>();
-    final recentlyLiveBloc = context.read<DRecentlyLiveCubit>();
+    final nowLive = context.read<LiveBroadcastsBloc>();
+    final recentlyLive = context.read<RecentlyLiveCubit>();
 
-    final nowLivePage = nowLiveBloc.state.page + 1;
-    final recentlyLivePage = recentlyLiveBloc.state.page + 1;
-
-    return await switch (filter) {
+    return switch (filter) {
       Filter.all => null,
-      Filter.nowLive => nowLiveBloc.fetch(nowLivePage),
-      Filter.recentlyLive => recentlyLiveBloc.fetch(recentlyLivePage),
+      Filter.nowLive => nowLive.add(const GetMoreLiveBroadcasts()),
+      Filter.recentlyLive => recentlyLive.fetchMore(),
     };
   }
 }

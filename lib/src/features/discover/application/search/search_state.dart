@@ -9,7 +9,7 @@ class SearchState with _$SearchState {
     required String? keyword,
     required List<Broadcast?> searchResults,
     required bool isSearchingMore,
-    DiscoverException? exception,
+    BroadcastException? exception,
   }) = _SearchState;
 
   factory SearchState.initial() {

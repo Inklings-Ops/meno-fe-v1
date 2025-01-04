@@ -34,8 +34,6 @@ import '../features/broadcast/broadcast.dart' as _i625;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i1031;
 import '../features/chat/chat.dart' as _i506;
 import '../features/chat/infrastructure/chat_facade.dart' as _i536;
-import '../features/discover/discover.dart' as _i515;
-import '../features/discover/infrastructure/discover_facade.dart' as _i115;
 import '../features/features.dart' as _i1009;
 import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
     as _i933;
@@ -101,8 +99,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.authRemoteDatasource);
     gh.lazySingleton<_i1009.BroadcastRemoteDatasource>(
         () => registerModule.broadcastRemoteDatasource);
-    gh.lazySingleton<_i1009.DiscoverRemoteDatasource>(
-        () => registerModule.discoverRemoteDatasource);
     gh.lazySingleton<_i1009.NotificationRemoteDatasource>(
         () => registerModule.notificationRemoteDatasource);
     gh.lazySingleton<_i1009.NoteRemoteDatasource>(
@@ -142,10 +138,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i463.NetworkService>(
         () => _i463.NetworkService(gh<_i973.InternetConnectionChecker>()));
-    gh.factory<_i515.IDiscoverFacade>(() => _i115.DiscoverFacade(
-          remote: gh<_i515.DiscoverRemoteDatasource>(),
-          network: gh<_i463.NetworkService>(),
-        ));
     gh.factory<_i882.AuthLocalDatasource>(() =>
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
