@@ -1,40 +1,15 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
-import 'package:meno_fe_v1/src/services/media_service.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => MyProfileCubit(
-            facade: di<IProfileFacade>(),
-            session: di<ISessionContext>(),
-          ),
-        ),
-        BlocProvider(
-          create: (_) => ProfileFormCubit(
-            facade: di<IProfileFacade>(),
-            media: di<MediaService>(),
-          ),
-        ),
-      ],
-      child: const MyProfileView(),
-    );
-  }
-}
-
-class MyProfileView extends StatelessWidget {
-  const MyProfileView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     final bloc = context.read<MyProfileCubit>();
     final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
+    
 
     Future<void> onRefresh() async {
       final myProfile = bloc.stream.first;
@@ -199,7 +174,7 @@ class CustomContent extends HookWidget {
             controller: tabController,
             children: [
               const ProfileRecentBroadcastsTab(),
-              EmptyStateWidget(actionTitle: 'Broadcasts', action: () {}),
+              const ProfileAllBroadcastsTab(),
               EmptyStateWidget(actionTitle: 'Favorites', action: () {}),
               EmptyStateWidget(actionTitle: 'Recordings', action: () {}),
             ],

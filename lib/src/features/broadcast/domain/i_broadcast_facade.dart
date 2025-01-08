@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/entities.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/exceptions/broadcast_exception.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/value_objects/value_objects.dart';
@@ -49,6 +50,17 @@ abstract class IBroadcastFacade {
 
   Future<Either<BroadcastException, BroadcastListEntity>>
       recentlyLiveBroadcasts({
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+    String? endTimeGT,
+    String? endTimeLT,
+  });
+
+  Future<Either<BroadcastException, BroadcastListEntity>>
+      userRecentlyLiveBroadcasts({
+    required Uid<User> userId,
     int? page,
     int? size,
     String? sortBy,

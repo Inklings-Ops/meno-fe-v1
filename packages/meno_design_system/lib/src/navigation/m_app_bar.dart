@@ -45,6 +45,7 @@ class MAppBar extends _AppBar {
     VoidCallback? onBackPressed,
     bool centerTitle,
     List<Widget>? actions,
+    bool showBottomBorder,
   }) = _SecondaryAppBar;
 
   /// Creates a home app bar with the given title.
@@ -222,6 +223,7 @@ class _SecondaryAppBar extends MAppBar {
     super.onBackPressed,
     super.centerTitle = false,
     super.actions,
+    bool showBottomBorder = false,
   }) : super._(
           variant: _AppBarVariant.secondary,
           child: _SecondaryAppBarImpl(
@@ -229,6 +231,7 @@ class _SecondaryAppBar extends MAppBar {
             onBackPressed: onBackPressed,
             centerTitle: centerTitle,
             actions: actions,
+            showBottomBorder: showBottomBorder,
           ),
         );
 }
@@ -261,17 +264,30 @@ class _SecondaryAppBarImpl extends StatelessWidget {
     this.onBackPressed,
     this.centerTitle = false,
     this.actions,
+    this.showBottomBorder = false,
   });
+
   final String title;
   final VoidCallback? onBackPressed;
   final bool centerTitle;
   final List<Widget>? actions;
+  final bool showBottomBorder;
 
   @override
   Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context)!;
     return AppBar(
       leading: const MBackButton(),
       centerTitle: centerTitle,
+      bottom: !showBottomBorder
+          ? null
+          : PreferredSize(
+              preferredSize: const Size(double.infinity, 1),
+              child: ColoredBox(
+                color: colors.onBackgroundVariant!.withValues(alpha: 0.5),
+                child: const SizedBox(height: 1, width: double.infinity),
+              ),
+            ),
       title: MText(
         title,
         overflow: TextOverflow.ellipsis,

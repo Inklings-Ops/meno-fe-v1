@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
@@ -339,6 +340,45 @@ class BroadcastFacade implements IBroadcastFacade {
         orderBy: orderBy ?? 'DESC',
         page: page ?? 1,
         size: size ?? 6,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      final error = _getError(e);
+      return left(error);
+    } on TimeoutException {
+      return left(const BroadcastException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<BroadcastException, BroadcastListEntity>>
+      userRecentlyLiveBroadcasts({
+    required Uid<User> userId,
+    int? page,
+    int? size,
+    String? sortBy,
+    String? orderBy,
+    String? endTimeGT,
+    String? endTimeLT,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const BroadcastException.networkError());
+
+    final now = DateTime.now();
+    final oneDayAgo = now.subtract(const Duration(days: 100));
+
+    try {
+      final response = await _remote.getBroadcasts(
+        endTimeExist: true,
+        include: 'totalListeners',
+        status: 'active',
+        sortBy: sortBy ?? 'endTime',
+        orderBy: orderBy ?? 'DESC',
+        page: page ?? 1,
+        size: size ?? 6,
+        endTimeGT: endTimeGT ?? oneDayAgo.toIso8601String(),
+        endTimeLT: endTimeLT ?? now.toIso8601String(),
+        creatorId: userId.getOr(),
       );
       return right(response.data!.toDomain);
     } on DioException catch (e) {

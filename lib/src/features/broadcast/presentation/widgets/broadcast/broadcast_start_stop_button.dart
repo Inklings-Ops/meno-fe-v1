@@ -14,6 +14,7 @@ class BroadcastStartStopButton extends StatelessWidget {
       builder: (context, state) => state.maybeWhen(
         orElse: () => const _Button('Start'),
         reconnecting: () => _Button('Stop', onTap: () => stop(context)),
+        offAir: () => _Button('Stop', onTap: () => stop(context)),
         loading: () => const _Button('Start', loading: true),
         live: () => _Button('Stop', onTap: () => stop(context)),
         failure: () => _Button('Start', onTap: () => start(context)),

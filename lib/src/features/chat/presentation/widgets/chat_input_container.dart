@@ -126,7 +126,7 @@ class _SendButton extends StatelessWidget {
 
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (context, state) {
-        if (state.hasContent && isLive) {
+        if (textEditingController.text.isNotEmpty && isLive) {
           return Column(
             children: [
               Spaces.horizontalSmall,

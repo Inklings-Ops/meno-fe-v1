@@ -19,3 +19,4 @@ export 'package:meno_fe_v1/src/router/router.dart';
 export 'package:meno_fe_v1/src/shared/shared.dart';
 export 'package:provider/provider.dart' hide Dispose;
 export 'package:responsive_framework/responsive_framework.dart';
+export 'package:skeletonizer/skeletonizer.dart';

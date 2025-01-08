@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:get_time_ago/get_time_ago.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -36,7 +37,6 @@ class MRecentlyLiveListTile extends StatelessWidget {
   /// - [endTime]: The end time of the recently live event.
   /// - [creator]: The creator of the recently live event.
   /// - [imageUrl]: An optional URL for the event image.
-  /// - [loading]: A boolean indicating whether the loading state is active.
   /// Defaults to false.
   /// - [onTap]: A callback function to handle tap events.
   const MRecentlyLiveListTile({
@@ -45,7 +45,6 @@ class MRecentlyLiveListTile extends StatelessWidget {
     this.endTime,
     this.creator,
     this.imageUrl,
-    this.loading = false,
     this.onTap,
   });
 
@@ -60,10 +59,6 @@ class MRecentlyLiveListTile extends StatelessWidget {
 
   /// An optional URL for the event image.
   final String? imageUrl;
-
-  /// A boolean indicating whether the loading state is active.
-  /// Defaults to false.
-  final bool loading;
 
   /// A callback function to handle tap events.
   final VoidCallback? onTap;
@@ -81,43 +76,32 @@ class MRecentlyLiveListTile extends StatelessWidget {
         borderRadius: Corners.squircleLg,
       ),
       minLeadingWidth: 12,
-      leading: _Artwork(imageUrl: imageUrl, loading: loading),
+      leading: _Artwork(imageUrl: imageUrl),
       title: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Skeletonizer(
-            enabled: loading,
-            child: MText(
-              loading
-                  ? BoneMock.date
-                  : endTime?.toIso8601String() ?? 'A while back',
-              style: textTheme.captionRegular,
-              color: colors.onBackgroundVariant,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          MText(
+            endTime != null ? GetTimeAgo.parse(endTime!) : 'A while back',
+            style: textTheme.captionRegular,
+            color: colors.onBackgroundVariant,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Spaces.verticalMicro,
-          Skeletonizer(
-            enabled: loading,
-            child: MText(
-              loading ? BoneMock.name : title!,
-              style: textTheme.captionMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          MText(
+            title!,
+            style: textTheme.captionMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Spaces.verticalMicro,
-          Skeletonizer(
-            enabled: loading,
-            child: MText(
-              loading ? BoneMock.name : creator!,
-              style: textTheme.captionRegular,
-              color: colors.onBackgroundVariant,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          MText(
+            creator!,
+            style: textTheme.captionRegular,
+            color: colors.onBackgroundVariant,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -126,9 +110,8 @@ class MRecentlyLiveListTile extends StatelessWidget {
 }
 
 class _Artwork extends StatelessWidget {
-  const _Artwork({this.imageUrl, this.loading = false});
+  const _Artwork({this.imageUrl});
   final String? imageUrl;
-  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +121,7 @@ class _Artwork extends StatelessWidget {
       colors.onSurfaceShade!,
       BlendMode.srcIn,
     );
+
     Widget? imageWidget;
 
     if (imageUrl == null) {
@@ -150,12 +134,10 @@ class _Artwork extends StatelessWidget {
     } else {
       imageWidget = CachedNetworkImage(
         imageUrl: imageUrl!,
-        placeholder: (context, url) => Skeletonizer(
-          child: Container(
-            width: 79,
-            height: 68,
-            decoration: const BoxDecoration(borderRadius: Corners.md),
-          ),
+        placeholder: (context, url) => Container(
+          width: 79,
+          height: 68,
+          decoration: const BoxDecoration(borderRadius: Corners.md),
         ),
         imageBuilder: (context, image) => DecoratedBox(
           decoration: BoxDecoration(
@@ -166,13 +148,12 @@ class _Artwork extends StatelessWidget {
       );
     }
 
-    return Skeletonizer(
-      enabled: loading,
+    return Skeleton.leaf(
       child: Container(
         width: 79,
         height: 68,
         color: colors.background,
-        child: loading ? null : imageWidget,
+        child: imageWidget,
       ),
     );
   }

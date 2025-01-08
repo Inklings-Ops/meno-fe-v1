@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -137,7 +138,32 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.othersProfile,
-      builder: (_, state) => OthersProfilePage(userId: state.extra! as String),
+      builder: (_, state) {
+        final userId = Uid<User>.fromString(state.extra! as String);
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => OthersProfileCubit(
+                facade: di<IProfileFacade>(),
+                userId: state.extra! as String,
+              )..fetch(),
+            ),
+            BlocProvider(
+              create: (_) => UsersRecentBroadcastsBloc(
+                facade: di<IBroadcastFacade>(),
+                userId: userId,
+              )..add(const GetUsersRecentBroadcasts()),
+            ),
+            BlocProvider(
+              create: (_) => UsersAllBroadcastsBloc(
+                facade: di<IBroadcastFacade>(),
+                userId: userId,
+              )..add(const GetUsersBroadcasts()),
+            ),
+          ],
+          child: const OthersProfilePage(),
+        );
+      },
     ),
     GoRoute(
       path: Routes.nowLive,
@@ -397,7 +423,40 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.myProfile,
-              builder: (context, state) => const MyProfilePage(),
+              builder: (context, state) {
+                final userId = context.select<SessionCubit, Uid<User>?>(
+                  (b) => b.state.whenOrNull(authenticated: (u, _) => u.id),
+                );
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (_) => MyProfileCubit(
+                        facade: di<IProfileFacade>(),
+                        session: di<ISessionContext>(),
+                      ),
+                    ),
+                    BlocProvider(
+                      create: (_) => ProfileFormCubit(
+                        facade: di<IProfileFacade>(),
+                        media: di<MediaService>(),
+                      ),
+                    ),
+                    BlocProvider(
+                      create: (_) => UsersRecentBroadcastsBloc(
+                        facade: di<IBroadcastFacade>(),
+                        userId: userId!,
+                      )..add(const GetUsersRecentBroadcasts()),
+                    ),
+                    BlocProvider(
+                      create: (_) => UsersAllBroadcastsBloc(
+                        facade: di<IBroadcastFacade>(),
+                        userId: userId!,
+                      )..add(const GetUsersBroadcasts()),
+                    ),
+                  ],
+                  child: const MyProfilePage(),
+                );
+              },
             ),
           ],
         ),

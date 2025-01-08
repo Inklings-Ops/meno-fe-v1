@@ -2,29 +2,29 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/profile/profile.dart';
 
-class ProfileRecentBroadcastsTab extends HookWidget {
-  const ProfileRecentBroadcastsTab({super.key});
+class ProfileAllBroadcastsTab extends HookWidget {
+  const ProfileAllBroadcastsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<UsersRecentBroadcastsBloc>();
+    final bloc = context.read<UsersAllBroadcastsBloc>();
 
-    // final scrollController = useScrollController();
+    final scrollController = useScrollController();
 
-    // useEffect(
-    //   () {
-    //     scrollController.addListener(() {
-    //       if (scrollController.position.pixels >=
-    //           scrollController.position.maxScrollExtent - 300) {
-    //         bloc.add(const GetMoreUsersRecentBroadcasts());
-    //       }
-    //     });
-    //     return () {};
-    //   },
-    //   const [],
-    // );
+    useEffect(
+      () {
+        scrollController.addListener(() {
+          if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 300) {
+            bloc.add(const GetMoreUsersBroadcasts());
+          }
+        });
+        return () {};
+      },
+      const [],
+    );
 
-    return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
+    return BlocBuilder<UsersAllBroadcastsBloc, UsersAllBroadcastsState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => EmptyStateWidget(
           actionTitle: 'Broadcasts',

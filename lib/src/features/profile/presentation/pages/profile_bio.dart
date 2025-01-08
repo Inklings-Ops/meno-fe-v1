@@ -14,7 +14,7 @@ class ProfileBio extends StatelessWidget {
     );
 
     return ReadMoreText(
-      bio?.getOr() ?? 'No bio',
+      bio?.getOrE('No bio') ?? 'No bio',
       style: textTheme.captionRegular,
       trimLines: 3,
       trimMode: TrimMode.Line,
