@@ -86,7 +86,7 @@ class _Scaffold extends HookWidget {
                           ],
                         ),
                         Spaces.verticalLarge,
-                        Container(
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: ProfileBio(bio: profile.bio),
                         ),
@@ -122,7 +122,6 @@ class _Scaffold extends HookWidget {
             primary: false,
             slivers: [
               SliverFillRemaining(
-                fillOverscroll: true,
                 child: Padding(
                   padding: MediaQuery.viewInsetsOf(context),
                   child: TabBarView(

@@ -7,16 +7,32 @@ class ProfileRecentBroadcastsTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => EmptyStateWidget(
-          actionTitle: 'Broadcasts',
-          action: () {},
+    final profileBloc = context.read<MyProfileCubit>();
+    final recentlyLiveBloc = context.read<UsersRecentBroadcastsBloc>();
+
+    Future<void> onRefresh() async {
+      final myProfile = profileBloc.stream.first;
+      await profileBloc.fetch();
+
+      final recentlyLive = recentlyLiveBloc.stream.first;
+      recentlyLiveBloc.add(const GetUsersRecentBroadcasts());
+
+      await Future.wait([myProfile, recentlyLive]);
+    }
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
+        builder: (context, state) => state.maybeWhen(
+          orElse: () => EmptyStateWidget(
+            actionTitle: 'Broadcasts',
+            action: () {},
+          ),
+          loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
+          loaded: (broadcasts) => _List(broadcasts: broadcasts),
+          loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
+          loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
         ),
-        loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-        loaded: (broadcasts) => _List(broadcasts: broadcasts),
-        loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
-        loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
       ),
     );
   }
@@ -51,7 +67,7 @@ class _List extends StatelessWidget {
                 onTap: () => router.push(Routes.details, extra: broadcast),
               );
             }
-          
+
             return const _LoadMoreWidget();
           },
         ),

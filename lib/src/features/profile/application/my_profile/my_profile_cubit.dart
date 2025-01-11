@@ -6,7 +6,7 @@ import 'package:meno_fe_v1/src/features/features.dart';
 part 'my_profile_cubit.freezed.dart';
 part 'my_profile_state.dart';
 
-class MyProfileCubit extends Cubit<MyProfileState> {
+class   MyProfileCubit extends Cubit<MyProfileState> {
   MyProfileCubit({
     required IProfileFacade facade,
     required ISessionContext session,

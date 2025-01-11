@@ -9,7 +9,6 @@ class MyProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<MyProfileCubit>();
     final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
-    
 
     Future<void> onRefresh() async {
       final myProfile = bloc.stream.first;
@@ -42,12 +41,11 @@ class MyProfilePage extends StatelessWidget {
       child: BlocBuilder<MyProfileCubit, MyProfileState>(
         bloc: bloc,
         builder: (context, state) => Scaffold(
-          body: RefreshIndicator(
-            onRefresh: onRefresh,
-            child: state.when(
-              loading: () => const Center(child: MLoadingIndicator.box()),
-              success: (profile) => CustomContent(profile: profile),
-              failure: (exception) => Text(
+          body: state.when(
+            loading: () => _Scaffold(profile: fakeProfile, loading: true),
+            success: (profile) => _Scaffold(profile: profile),
+            failure: (exception) => Center(
+              child: Text(
                 exception.maybeWhen(
                   message: (message) => message,
                   networkError: () => MErrorMessages.networkError,
@@ -64,123 +62,138 @@ class MyProfilePage extends StatelessWidget {
   }
 }
 
-class CustomContent extends HookWidget {
-  const CustomContent({required this.profile, super.key});
+class _Scaffold extends HookWidget {
+  const _Scaffold({required this.profile, this.loading = false, super.key});
   final Profile profile;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
     final tabController = useTabController(initialLength: 4);
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          floating: true,
-          pinned: true,
-          snap: true,
-          expandedHeight: 340,
-          backgroundColor: colors.background,
-          leading: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: Insets.lg),
-              child: ColoredBox(
-                color: colors.secondary!,
-                child: const SizedBox(height: 30, width: 3),
-              ),
-            ),
-          ),
-          titleTextStyle: textTheme.heading3Bold,
-          leadingWidth: 23,
-          collapsedHeight: 58,
-          titleSpacing: 0,
-          title: GestureDetector(
-            onTap: context.showSwitchAccountSheet<void>,
-            child: Row(
-              children: [
-                MText(profile.fullName.getOr(), color: colors.onBackground),
-                Spaces.horizontalSmall,
-                const Icon(MIcons.chevron_down, size: 24),
-              ],
-            ),
-          ),
-          actions: [
-            MIconButton(
-              icon: const Icon(MIcons.settings),
-              color: colors.primary,
-              onPressed: () => router.push(Routes.settings),
-            ),
-            Spaces.horizontalLarge,
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(32),
-            child: SizedBox(
-              height: 32,
-              child: TabBar(
-                controller: tabController,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                labelStyle: textTheme.captionMedium,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                labelPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
+
+    
+
+    return Skeletonizer(
+      enabled: loading,
+      child: Scaffold(
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              expandedHeight: 340,
+              backgroundColor: colors.background,
+              pinned: true,
+              leading: Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: Insets.lg),
+                  child: ColoredBox(
+                    color: colors.secondary!,
+                    child: const SizedBox(height: 30, width: 3),
+                  ),
                 ),
-                tabs: const [
-                  Tab(text: 'Recent broadcasts'),
-                  Tab(text: 'All broadcasts'),
-                  Tab(text: 'Favorites'),
-                  Tab(text: 'Recordings'),
-                ],
               ),
-            ),
-          ),
-          flexibleSpace: FlexibleSpaceBar(
-            background: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight),
-                child: Column(
+              titleTextStyle: textTheme.heading3Bold,
+              leadingWidth: 23,
+              collapsedHeight: 58,
+              titleSpacing: 0,
+              title: GestureDetector(
+                onTap: context.showSwitchAccountSheet<void>,
+                child: Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          MAvatar(radius: 40, url: profile.imageUrl),
-                          const SizedBox(width: 24),
-                          Expanded(child: ProfileStats(stats: profile.stats)),
-                        ],
-                      ),
-                    ),
-                    Spaces.verticalLarge,
-                    const AccountUpgradeSection(),
-                    Spaces.verticalLarge,
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ProfileBio(bio: profile.bio),
-                    ),
-                    Spaces.verticalLarge,
-                    const ProfileButtons(),
-                    Spaces.verticalLarge,
+                    MText(profile.fullName.getOr(), color: colors.onBackground),
+                    Spaces.horizontalSmall,
+                    const Icon(MIcons.chevron_down, size: 24),
                   ],
                 ),
               ),
+              actions: [
+                MIconButton(
+                  icon: const Icon(MIcons.settings),
+                  color: colors.primary,
+                  onPressed: () => router.push(Routes.settings),
+                ),
+                Spaces.horizontalLarge,
+              ],
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(32),
+                child: Container(
+                  color: colors.background,
+                  height: 32,
+                  child: TabBar(
+                    controller: tabController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    labelStyle: textTheme.captionMedium,
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    labelPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Recent broadcasts'),
+                      Tab(text: 'All broadcasts'),
+                      Tab(text: 'Favorites'),
+                      Tab(text: 'Recordings'),
+                    ],
+                  ),
+                ),
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                background: SafeArea(
+                  child: SingleChildScrollView(
+                    padding:
+                        const EdgeInsets.fromLTRB(16, kToolbarHeight, 16, 0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            MAvatar(radius: 40, url: profile.imageUrl),
+                            const SizedBox(width: 24),
+                            Expanded(child: ProfileStats(stats: profile.stats)),
+                          ],
+                        ),
+                        Spaces.verticalLarge,
+                        const AccountUpgradeSection(),
+                        Spaces.verticalLarge,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: ProfileBio(bio: profile.bio),
+                        ),
+                        Spaces.verticalLarge,
+                        const ProfileButtons(),
+                        Spaces.verticalLarge,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-        SliverFillRemaining(
-          child: TabBarView(
-            controller: tabController,
-            children: [
-              const ProfileRecentBroadcastsTab(),
-              const ProfileAllBroadcastsTab(),
-              EmptyStateWidget(actionTitle: 'Favorites', action: () {}),
-              EmptyStateWidget(actionTitle: 'Recordings', action: () {}),
+          ],
+          body: CustomScrollView(
+            primary: false,
+            slivers: [
+              SliverFillRemaining(
+                child: Padding(
+                  padding: MediaQuery.viewInsetsOf(context),
+                  child: TabBarView(
+                    controller: tabController,
+                    children: [
+                      const ProfileRecentBroadcastsTab(),
+                      const ProfileAllBroadcastsTab(),
+                      EmptyStateWidget(
+                          actionTitle: 'Favorites', action: () {}),
+                      EmptyStateWidget(
+                          actionTitle: 'Recordings', action: () {}),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
