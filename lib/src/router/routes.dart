@@ -48,11 +48,14 @@ class Routes {
   static const String moveNoteToFolderModal = '/move-note-to-folder-modal';
   static const String folderFormModal = '/create-new-folder-modal';
   static const String notesModal = '/notes-modal';
+  static const String othersProfileOptionsModal =
+      '/others-profile-options-modal';
 
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
 }
+
 class ModalPage<T> extends Page<void> {
   const ModalPage({
     required this.child,
@@ -86,7 +89,6 @@ class ModalPage<T> extends Page<void> {
     );
   }
 }
-
 
 class DialogPage<T> extends Page<void> {
   const DialogPage({

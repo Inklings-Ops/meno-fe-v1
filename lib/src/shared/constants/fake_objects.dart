@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 final fakeNotes = List.filled(
   3,
@@ -33,4 +32,11 @@ final fakeBroadcasts = List.filled(
     description: BroadcastDescription(BoneMock.longParagraph),
     creator: fakeBroadcastParticipant,
   ),
+);
+
+final fakeProfile = Profile(
+  id: 'id',
+  fullName: SingleLineString(BoneMock.name),
+  bio: Bio(BoneMock.paragraph),
+  stats: UserStats(broadcasts: 0, subscribers: 0, subscriptions: 0),
 );

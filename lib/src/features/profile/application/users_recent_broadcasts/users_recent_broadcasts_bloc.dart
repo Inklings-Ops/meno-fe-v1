@@ -6,7 +6,7 @@ part 'users_recent_broadcasts_bloc.freezed.dart';
 part 'users_recent_broadcasts_event.dart';
 part 'users_recent_broadcasts_state.dart';
 
-const _size = 26;
+const _size = 6;
 
 class UsersRecentBroadcastsBloc
     extends Bloc<UsersRecentBroadcastsEvent, UsersRecentBroadcastsState> {

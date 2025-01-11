@@ -98,6 +98,7 @@ extension SessionStateX on SessionState {
         Routes.deleteNoteDialog,
         Routes.deleteFolderDialog,
         Routes.remoteNoteFromFolderDialog,
+        Routes.othersProfileOptionsModal,
       ],
     );
   }

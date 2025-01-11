@@ -7,23 +7,6 @@ class ProfileRecentBroadcastsTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<UsersRecentBroadcastsBloc>();
-
-    // final scrollController = useScrollController();
-
-    // useEffect(
-    //   () {
-    //     scrollController.addListener(() {
-    //       if (scrollController.position.pixels >=
-    //           scrollController.position.maxScrollExtent - 300) {
-    //         bloc.add(const GetMoreUsersRecentBroadcasts());
-    //       }
-    //     });
-    //     return () {};
-    //   },
-    //   const [],
-    // );
-
     return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => EmptyStateWidget(
@@ -32,24 +15,8 @@ class ProfileRecentBroadcastsTab extends HookWidget {
         ),
         loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
         loaded: (broadcasts) => _List(broadcasts: broadcasts),
-        loadingMore: (broadcasts) => Column(
-          children: [
-            _List(broadcasts: broadcasts),
-            const Align(child: MLoadingIndicator.box()),
-          ],
-        ),
-        loadedLast: (broadcasts) => Column(
-          children: [
-            _List(broadcasts: broadcasts),
-            Spaces.verticalLarge,
-            MText(
-              'You’ve reached the end 🎉',
-              style: MTextTheme.of(context)?.captionRegular,
-              color: MColorScheme.of(context)?.onBackgroundVariant,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+        loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
+        loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
       ),
     );
   }
@@ -62,28 +29,57 @@ class _List extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: loading,
-      child: ListView.separated(
-        primary: false,
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-        separatorBuilder: (context, index) => Spaces.verticalLarge,
-        itemCount: broadcasts.length,
-        itemBuilder: (context, index) {
-          final broadcast = broadcasts[index]!;
-          return MRecentlyLiveListTile(
-            title: broadcast.title.getOr(),
-            creator: broadcast.creator?.fullName ??
-                broadcast.fullName ??
-                broadcast.creatorFullName ??
-                '',
-            endTime: broadcast.endTime,
-            imageUrl: broadcast.imageUrl,
-            onTap: () => router.push(Routes.details, extra: broadcast),
-          );
-        },
+    return Material(
+      child: Skeletonizer(
+        enabled: loading,
+        child: ListView.separated(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 56),
+          separatorBuilder: (context, index) => Spaces.verticalLarge,
+          itemCount: broadcasts.length + 1,
+          itemBuilder: (context, index) {
+            if (index < broadcasts.length) {
+              final broadcast = broadcasts[index]!;
+              return MRecentlyLiveListTile(
+                title: broadcast.title.getOr(),
+                creator: broadcast.creator?.fullName ??
+                    broadcast.fullName ??
+                    broadcast.creatorFullName ??
+                    '',
+                endTime: broadcast.endTime,
+                imageUrl: broadcast.imageUrl,
+                onTap: () => router.push(Routes.details, extra: broadcast),
+              );
+            }
+          
+            return const _LoadMoreWidget();
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadMoreWidget extends StatelessWidget {
+  const _LoadMoreWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<UsersRecentBroadcastsBloc>();
+    return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => const SizedBox(),
+        loaded: (_) => TextButton(
+          onPressed: () => bloc.add(const GetMoreUsersRecentBroadcasts()),
+          child: const MText('Load more'),
+        ),
+        loadingMore: (broadcasts) => const MLoadingIndicator.box(),
+        loadedLast: (broadcasts) => MText(
+          'You’ve reached the end 🎉',
+          style: MTextTheme.of(context)?.captionRegular,
+          color: MColorScheme.of(context)?.onBackgroundVariant,
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

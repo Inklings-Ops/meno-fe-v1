@@ -225,12 +225,19 @@ final router = GoRouter(
         );
       },
     ),
-
     GoRoute(
       path: Routes.notesModal,
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) => ModalPage<dynamic>(
         child: AddNotesToFolderModal(folder: state.extra! as Folder),
+        isScrollControlled: true,
+      ),
+    ),
+    GoRoute(
+      path: Routes.othersProfileOptionsModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => const ModalPage<dynamic>(
+        child: OthersProfileOptionsModal(),
         isScrollControlled: true,
       ),
     ),
