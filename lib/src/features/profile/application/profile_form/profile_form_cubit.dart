@@ -25,6 +25,15 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
     return (state.fullName?.isValid ?? false) || (state.bio?.isValid ?? false);
   }
 
+  void initializeWithProfile(Profile profile) {
+    emit(
+      state.copyWith(
+        fullName: profile.fullName,
+        bio: profile.bio,
+      ),
+    );
+  }
+
   Future<void> avatarChanged(bool fromGallery) async {
     final file = await _media.getImage(fromGallery: fromGallery);
     if (file != null) {

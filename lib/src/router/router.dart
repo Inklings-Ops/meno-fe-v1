@@ -241,6 +241,23 @@ final router = GoRouter(
         isScrollControlled: true,
       ),
     ),
+    GoRoute(
+      path: Routes.editProfileModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) {
+        final profile = state.extra! as Profile;
+        return ModalPage<dynamic>(
+          child: BlocProvider(
+            create: (context) => ProfileFormCubit(
+              facade: di<IProfileFacade>(),
+              media: di<MediaService>(),
+            )..initializeWithProfile(profile),
+            child: const EditProfileModal(),
+          ),
+          isScrollControlled: true,
+        );
+      },
+    ),
 
     /// Dialogs
     ///

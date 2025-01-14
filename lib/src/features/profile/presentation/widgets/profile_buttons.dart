@@ -8,6 +8,11 @@ class ProfileButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
     final textStyle = MTextTheme.of(context)!.microMedium;
+    final profile = context.select<MyProfileCubit, Profile?>(
+      (bloc) => bloc.state.whenOrNull(
+        success: (profile) => profile,
+      ),
+    );
     return SizedBox(
       height: 32,
       child: Row(
@@ -16,7 +21,10 @@ class ProfileButtons extends StatelessWidget {
             child: MPrimaryButton.icon(
               label: 'Edit profile',
               icon: const Icon(MIcons.edit_05),
-              onPressed: () {},
+              onPressed: () => router.push(
+                Routes.editProfileModal,
+                extra: profile,
+              ),
               style: ElevatedButton.styleFrom(
                 textStyle: textStyle,
                 shape: shape,

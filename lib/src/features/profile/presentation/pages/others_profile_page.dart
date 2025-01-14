@@ -127,8 +127,8 @@ class _Scaffold extends HookWidget {
                   child: TabBarView(
                     controller: tabController,
                     children: const [
-                      ProfileRecentBroadcastsTab(),
-                      ProfileAllBroadcastsTab(),
+                      _RecentBroadcastsTab(),
+                      _AllBroadcastsTab(),
                     ],
                   ),
                 ),
@@ -137,6 +137,56 @@ class _Scaffold extends HookWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _RecentBroadcastsTab extends StatelessWidget {
+  const _RecentBroadcastsTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final profileBloc = context.read<OthersProfileCubit>();
+    final recentlyLiveBloc = context.read<UsersRecentBroadcastsBloc>();
+
+    Future<void> onRefresh() async {
+      final myProfile = profileBloc.stream.first;
+      await profileBloc.fetch();
+
+      final recentlyLive = recentlyLiveBloc.stream.first;
+      recentlyLiveBloc.add(const GetUsersRecentBroadcasts());
+
+      await Future.wait([myProfile, recentlyLive]);
+    }
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: const ProfileRecentBroadcastsTab(),
+    );
+  }
+}
+
+class _AllBroadcastsTab extends StatelessWidget {
+  const _AllBroadcastsTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final profileBloc = context.read<OthersProfileCubit>();
+    final allBroadcastsBloc = context.read<UsersAllBroadcastsBloc>();
+
+    Future<void> onRefresh() async {
+      final myProfile = profileBloc.stream.first;
+      await profileBloc.fetch();
+
+      final allBroadcasts = allBroadcastsBloc.stream.first;
+      allBroadcastsBloc.add(const GetUsersBroadcasts());
+
+      await Future.wait([myProfile, allBroadcasts]);
+    }
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: const ProfileAllBroadcastsTab(),
     );
   }
 }

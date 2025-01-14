@@ -1,4 +1,5 @@
 export 'account_upgrade_section.dart';
+export 'edit_profile_modal.dart';
 export 'empty_state_widget.dart';
 export 'others_profile_options_modal.dart';
 export 'profile_all_broadcasts_tab.dart';

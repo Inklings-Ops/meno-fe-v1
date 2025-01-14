@@ -7,32 +7,16 @@ class ProfileAllBroadcastsTab extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileBloc = context.read<MyProfileCubit>();
-    final allBroadcastsBloc = context.read<UsersAllBroadcastsBloc>();
-
-    Future<void> onRefresh() async {
-      final myProfile = profileBloc.stream.first;
-      await profileBloc.fetch();
-
-      final allBroadcasts = allBroadcastsBloc.stream.first;
-      allBroadcastsBloc.add(const GetUsersBroadcasts());
-
-      await Future.wait([myProfile, allBroadcasts]);
-    }
-
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: BlocBuilder<UsersAllBroadcastsBloc, UsersAllBroadcastsState>(
-        builder: (context, state) => state.maybeWhen(
-          orElse: () => EmptyStateWidget(
-            actionTitle: 'Broadcasts',
-            action: () {},
-          ),
-          loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-          loaded: (broadcasts) => _List(broadcasts: broadcasts),
-          loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
-          loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
+    return BlocBuilder<UsersAllBroadcastsBloc, UsersAllBroadcastsState>(
+      builder: (context, state) => state.maybeWhen(
+        orElse: () => EmptyStateWidget(
+          actionTitle: 'Broadcasts',
+          action: () {},
         ),
+        loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
+        loaded: (broadcasts) => _List(broadcasts: broadcasts),
+        loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
+        loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
       ),
     );
   }
