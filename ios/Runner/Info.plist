@@ -49,6 +49,8 @@
 		<true/>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Meno is using your microphone</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Meno wants to access your photos</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>audio</string>
