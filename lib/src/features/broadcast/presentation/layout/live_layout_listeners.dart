@@ -65,7 +65,11 @@ class LiveLayoutListeners extends StatelessWidget {
                 participants.add(GetAllParticipants(broadcast.id));
                 timer.stop();
                 live.add(const LiveReset());
-                router.replace<void>(Routes.endedBroadcast);
+                if (router.state!.name == Routes.broadcastTab) {
+                  router.replace<void>(Routes.endedBroadcast);
+                } else {
+                  router.push<void>(Routes.endedBroadcast);
+                }
               },
               broadcastJoined: () {
                 final broadcast = context.read<StreamBloc>().state.broadcast;

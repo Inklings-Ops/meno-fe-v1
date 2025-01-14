@@ -28,11 +28,6 @@ class BroadcastStartStopButton extends StatelessWidget {
       if (result != true) return;
       if (context.mounted) {
         context.read<ParticipantsBloc>().add(GetAllParticipants(broadcast.id));
-        if (router.state!.name == Routes.broadcastTab) {
-          router.replace<void>(Routes.endedBroadcast);
-        } else {
-          router.push<void>(Routes.endedBroadcast);
-        }
         context.read<SocketBloc>().add(SocketEndBroadcast(broadcast.id));
         context.read<TimerCubit>().stop();
         context.read<LiveKitBloc>().add(const LiveKitDisconnect());
