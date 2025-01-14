@@ -15,6 +15,10 @@ class ChatBubble extends StatelessWidget {
 
     final timeStamp = GetTimeAgo.parse(chat.createdAt);
 
+    final currentUserId = context.select<SessionCubit, String?>(
+      (b) => b.state.whenOrNull(authenticated: (user, _) => user.id.getOr()),
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -27,6 +31,9 @@ class ChatBubble extends StatelessWidget {
               radius: 12,
               url: chat.imageUrl,
               hasBorder: false,
+              onTap: currentUserId == chat.senderId
+                  ? null
+                  : () => showUserInfo(context),
             ),
           ),
           Spaces.horizontalSmall,
@@ -73,16 +80,6 @@ class ChatBubble extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    // Timeago(
-                    //   builder: (_, value) => MText(
-                    //     value,
-                    //     style: textTheme.microMedium,
-                    //     color: colors.onBackgroundVariant,
-                    //     maxLines: 1,
-                    //     overflow: TextOverflow.ellipsis,
-                    //   ),
-                    //   date: chat.createdAt,
-                    // ),
                   ],
                 ),
                 Spaces.verticalMicro,
@@ -118,37 +115,16 @@ class ChatBubble extends StatelessWidget {
 
   Future<dynamic> showUserInfo(BuildContext context) async {
     return context.showModal(
-      _UserInfoModel(chat: chat),
+      MUserInfoModal(
+        fullName: chat.fullName,
+        imageUrl: chat.imageUrl,
+        onSubscribe: () {},
+        onViewAccount: () => router.push(
+          Routes.othersProfile,
+          extra: chat.senderId,
+        ),
+      ),
       isScrollControlled: true,
     );
   }
 }
-
-class _UserInfoModel extends StatelessWidget {
-  const _UserInfoModel({required this.chat});
-  final Chat chat;
-
-  @override
-  Widget build(BuildContext context) {
-    return MUserInfoModal(
-      fullName: chat.fullName,
-      imageUrl: chat.imageUrl,
-      onSubscribe: () {},
-      onViewAccount: () {},
-    );
-  }
-}
-
-// String formatDate(DateTime date) {
-//   final difference = DateTime.now().difference(date.toLocal());
-
-//   if (difference.inMinutes < 60) {
-//     return '${difference.inMinutes} minutes ago';
-//   } else if (difference.inHours < 24) {
-//     return '${difference.inHours} hours ago';
-//   } else if (difference.inDays < 7) {
-//     return '${difference.inDays} days ago';
-//   } else {
-//     return DateFormat.jm().format(date);
-//   }
-// }
