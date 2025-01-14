@@ -14,4 +14,10 @@ abstract class IProfileFacade {
   Future<Either<AuthException, Profile>> getProfile(UserID id);
 
   Future<Either<AuthException, Profile?>> getAuthProfile();
+
+  // Future<Either<AuthException, Unit>> subscribe(Uid<User> userId);
+
+  // Future<Either<AuthException, Unit>> unsubscribe(Uid<User> userId);
+
+  // Future<Option<int>> getSubscribers();
 }

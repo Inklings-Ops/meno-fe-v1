@@ -23,7 +23,8 @@ class MenoBlocProvider extends StatelessWidget {
           create: (_) => NotesWatcherBloc(facade: di<INoteFacade>()),
         ),
         BlocProvider(create: (_) => FoldersBloc(facade: di<INoteFacade>())),
-        BlocProvider(create: (_) => ChatBloc()),
+        BlocProvider(create: (_) => ChatInputCubit()),
+        BlocProvider(create: (_) => ChatListBloc()),
         BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),
         BlocProvider(
           create: (_) => BroadcastBloc(facade: di<IBroadcastFacade>()),

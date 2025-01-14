@@ -20,7 +20,7 @@ class ChatTab extends HookWidget {
           SafeArea(
             child: Column(
               children: [
-                BlocBuilder<ChatBloc, ChatState>(
+                BlocBuilder<ChatInputCubit, ChatInputState>(
                   buildWhen: (p, c) => p.hideWelcomeNote != c.hideWelcomeNote,
                   builder: (context, state) => !state.hideWelcomeNote
                       ? const ChatWelcomeWidget()

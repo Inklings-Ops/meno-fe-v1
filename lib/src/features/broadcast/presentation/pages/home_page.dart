@@ -40,7 +40,7 @@ class HomePage extends HookWidget {
             context.read<LiveBloc>().add(const LiveReset());
             context.read<LiveKitBloc>().add(const LiveKitDisconnect());
             context.read<ParticipantsBloc>().add(const ParticipantsReset());
-            context.read<ChatBloc>().add(const ChatReset());
+            context.read<ChatListBloc>().add(const ChatReset());
             context.read<StreamBloc>().add(const StreamReset());
             context.read<TimerCubit>().dispose();
             context.showErrorSnackBar(data.reason.message);
@@ -49,7 +49,7 @@ class HomePage extends HookWidget {
             context.read<LiveBloc>().add(const LiveReset());
             context.read<LiveKitBloc>().add(const LiveKitDisconnect());
             context.read<ParticipantsBloc>().add(const ParticipantsReset());
-            context.read<ChatBloc>().add(const ChatReset());
+            context.read<ChatListBloc>().add(const ChatReset());
             context.read<StreamBloc>().add(const StreamReset());
             context.read<TimerCubit>().dispose();
           },

@@ -51,9 +51,7 @@ class ChatWelcomeWidget extends StatelessWidget {
                   height: Insets.lg,
                   child: MTextButton(
                     label: 'OK, THANK YOU',
-                    onPressed: () {
-                      context.read<ChatBloc>().add(const HideChatWelcomeNote());
-                    },
+                    onPressed: context.read<ChatInputCubit>().hideWelcomeNote,
                     style: TextButton.styleFrom(
                       textStyle: textTheme.microMedium,
                       padding: EdgeInsets.zero,

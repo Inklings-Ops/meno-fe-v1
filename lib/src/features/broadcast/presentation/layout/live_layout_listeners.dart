@@ -9,7 +9,7 @@ class LiveLayoutListeners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chat = context.read<ChatBloc>();
+    final chat = context.read<ChatListBloc>();
     final live = context.read<LiveBloc>();
     final livekit = context.read<LiveKitBloc>();
     final participants = context.read<ParticipantsBloc>();
@@ -51,7 +51,7 @@ class LiveLayoutListeners extends StatelessWidget {
               },
               broadcastStarted: () {
                 final broadcast = context.read<BroadcastBloc>().state.broadcast;
-                chat.add(InitializeChat(broadcast));
+                chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));
                 timer.start();
@@ -74,7 +74,7 @@ class LiveLayoutListeners extends StatelessWidget {
               broadcastJoined: () {
                 final broadcast = context.read<StreamBloc>().state.broadcast;
                 socket.add(SocketGetMessages(broadcast.id));
-                chat.add(InitializeChat(broadcast));
+                chat.add(InitializeChatList(broadcast));
                 participants.add(GetLiveParticipants(broadcast.id));
                 timer.setAndStart(broadcast.startTime);
                 live.add(const LiveStarted());

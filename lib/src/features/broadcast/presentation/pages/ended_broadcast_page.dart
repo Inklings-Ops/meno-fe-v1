@@ -13,7 +13,7 @@ class EndedBroadcastPage extends HookWidget {
     useEffect(
       () {
         context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-        context.read<ChatBloc>().add(const ChatReset());
+        context.read<ChatListBloc>().add(const ChatReset());
         return;
       },
       const [],

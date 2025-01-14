@@ -12,50 +12,19 @@ class ChatInputContainer extends HookWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
 
-    final bloc = context.watch<ChatBloc>();
-
-    final textEditingController = useTextEditingController();
-
-    useEffect(
-      () {
-        void listener() {
-          final newContent = textEditingController.text;
-          if (bloc.state.content != newContent) {
-            bloc.add(ContentChanged(newContent));
-          }
-        }
-
-        textEditingController.addListener(listener);
-        return () => textEditingController.removeListener(listener);
-      },
-      [textEditingController, bloc],
-    );
+    final chatListBloc = context.watch<ChatListBloc>();
 
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.passthrough,
       children: [
-        if (bloc.state.showReactions) const ReactionButton(),
+        if (chatListBloc.state.showReactions) const ReactionButton(),
         Container(
           alignment: Alignment.topCenter,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           child: Row(
             children: [
-              Expanded(
-                child: SizedBox(
-                  height: 40,
-                  child: TextFormField(
-                    controller: textEditingController,
-                    style: MTextTheme.of(context)!.captionRegular,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: Insets.md,
-                      ),
-                      hintText: 'Type your comment here...',
-                    ),
-                  ),
-                ),
-              ),
+              const Expanded(child: _ChatTextField()),
               Spaces.horizontalLarge,
               MIconButton(
                 size: 40,
@@ -63,13 +32,10 @@ class ChatInputContainer extends HookWidget {
                 icon: const Icon(Icons.face),
                 isFilled: true,
                 fillColor: colors.outlineVariant2,
-                onPressed: () => bloc.add(const ToggleShowReactions()),
+                onPressed: () => chatListBloc.add(const ToggleShowReactions()),
               ),
               Spaces.horizontalSmall,
-              _SendButton(
-                scrollController: scrollController,
-                textEditingController: textEditingController,
-              ),
+              _SendButton(scrollController: scrollController),
             ],
           ),
         ),
@@ -78,27 +44,52 @@ class ChatInputContainer extends HookWidget {
   }
 }
 
-class _SendButton extends StatelessWidget {
-  const _SendButton({
-    required this.scrollController,
-    required this.textEditingController,
-  });
-
-  final ScrollController scrollController;
-  final TextEditingController textEditingController;
+class _ChatTextField extends HookWidget {
+  const _ChatTextField();
 
   @override
   Widget build(BuildContext context) {
-    final broadcastId = context.select((ChatBloc b) => b.state.broadcast.id);
+    final inputBloc = context.watch<ChatInputCubit>();
+    final controller = useTextEditingController(text: inputBloc.state.content);
 
+    useEffect(
+      () {
+        controller.text = inputBloc.state.content ?? '';
+        return null;
+      },
+      [inputBloc.state.content],
+    );
+
+    return SizedBox(
+      height: 40,
+      child: TextFormField(
+        style: MTextTheme.of(context)!.captionRegular,
+        controller: controller,
+        onChanged: inputBloc.contentChanged,
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: Insets.md),
+          hintText: 'Type your comment here...',
+        ),
+      ),
+    );
+  }
+}
+
+class _SendButton extends StatelessWidget {
+  const _SendButton({required this.scrollController});
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
+
+    final chatInputBloc = context.watch<ChatInputCubit>();
+    final chatListBloc = context.watch<ChatListBloc>();
 
     final currentUserId = context.read<SessionCubit>().state.maybeWhen(
           orElse: () => '',
           authenticated: (user, token) => user.id.getOr(),
         );
-
-    final chat = context.watch<ChatBloc>();
 
     final isLive = [
       const Live(),
@@ -109,8 +100,8 @@ class _SendButton extends StatelessWidget {
     void sendMessage() {
       final event = SocketSendMessage(
         senderId: currentUserId,
-        broadcastId: broadcastId.getOr(),
-        content: chat.state.content!,
+        broadcastId: chatListBloc.state.broadcast.id.getOr(),
+        content: chatInputBloc.state.content!,
         createdAt: DateTime.timestamp().toIso8601String(),
       );
 
@@ -122,12 +113,14 @@ class _SendButton extends StatelessWidget {
         curve: Curves.easeInOut,
       );
 
-      textEditingController.clear();
+      chatInputBloc.clearContent();
     }
 
-    return BlocBuilder<ChatBloc, ChatState>(
+    return BlocBuilder<ChatInputCubit, ChatInputState>(
+      bloc: chatInputBloc,
       builder: (context, state) {
-        if (textEditingController.text.isNotEmpty && isLive) {
+        final content = state.content;
+        if (content != null && isLive) {
           return Column(
             children: [
               Spaces.horizontalSmall,

@@ -31,7 +31,7 @@ class BroadcastStartStopButton extends StatelessWidget {
         context.read<SocketBloc>().add(SocketEndBroadcast(broadcast.id));
         context.read<TimerCubit>().stop();
         context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-        context.read<ChatBloc>().add(const ChatReset());
+        context.read<ChatListBloc>().add(const ChatReset());
         context.read<LiveBloc>().add(const LiveReset());
         Logger().w('Went through the stop command');
       }

@@ -11,7 +11,7 @@ class ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ChatBloc>();
+    final bloc = context.read<ChatListBloc>();
 
     return BlocListener<SocketBloc, SocketState>(
       listenWhen: (previous, current) => previous != current,
@@ -20,7 +20,7 @@ class ChatList extends StatelessWidget {
           newMessage: (chat) => bloc.add(NewChatReceived(chat)),
         );
       },
-      child: BlocBuilder<ChatBloc, ChatState>(
+      child: BlocBuilder<ChatListBloc, ChatListState>(
         buildWhen: (previous, current) => previous.chats != current.chats,
         builder: (context, state) => ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: Insets.lg),
@@ -43,22 +43,25 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final broadcast = context.read<ChatBloc>().state.broadcast;
+    final broadcast = context.read<ChatListBloc>().state.broadcast;
     return BlocBuilder<SessionCubit, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
-        authenticated: (user, _) => GestureDetector(
-          onLongPress: () {
-            final isSender = user.id.getOr() == chat.senderId;
-            final isHost = user.id.getOr() == broadcast.creator!.id;
-            if (isSender) {
-              showOtherChatOptions(context);
-            } else {
-              showOtherChatOptions(context, isHost: isHost);
-            }
-          },
-          child: ChatBubble(chat: chat),
-        ),
+        authenticated: (user, _) {
+          final currentUserId = user.id.getOr();
+          final senderId = chat.senderId;
+          return GestureDetector(
+            onLongPress: () {
+              final isHost = user.id.getOr() == broadcast.creator!.id;
+              if (currentUserId == senderId) {
+                showMyChatOptions(context);
+              } else {
+                showOtherChatOptions(context, isHost: isHost);
+              }
+            },
+            child: ChatBubble(chat: chat),
+          );
+        },
       ),
     );
   }
@@ -97,7 +100,7 @@ class _ChatBubble extends StatelessWidget {
     bool isHost = false,
   }) async {
     final colors = MColorScheme.of(context)!;
-    final bloc = context.read<ChatBloc>();
+    final bloc = context.read<ChatListBloc>();
     return context.showModal(
       isScrollControlled: true,
       MModal(
