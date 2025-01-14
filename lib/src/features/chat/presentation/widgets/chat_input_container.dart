@@ -65,6 +65,7 @@ class ChatInputContainer extends HookWidget {
                 fillColor: colors.outlineVariant2,
                 onPressed: () => bloc.add(const ToggleShowReactions()),
               ),
+              Spaces.horizontalSmall,
               _SendButton(
                 scrollController: scrollController,
                 textEditingController: textEditingController,
