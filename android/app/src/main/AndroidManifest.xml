@@ -2,7 +2,7 @@
           xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -65,12 +65,12 @@
                 android:resource="@color/colorAccent"/>
         <service
                 android:name="id.flutter.flutter_background_service.BackgroundService"
-                android:foregroundServiceType="microphone|connectedDevice"
+                android:foregroundServiceType="microphone|connectedDevice|specialUse"
         />
         <service
                 android:name="de.julianassmann.flutter_background.IsolateHolderService"
                 android:enabled="true"
                 android:exported="false"
-                android:foregroundServiceType="microphone|connectedDevice"/>
+                android:foregroundServiceType="microphone|connectedDevice|specialUse"/>
     </application>
 </manifest>

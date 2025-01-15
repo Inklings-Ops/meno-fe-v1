@@ -9,6 +9,13 @@ import 'package:meno_fe_v1/meno.dart';
 Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
+
+  if (service is IOSServiceInstance) {
+    service.on(MKeys.broadcastBackgroundTask).listen((event) async {
+      // await service.();
+    });
+  }
+
   return true;
 }
 
@@ -34,17 +41,6 @@ Future<void> onStart(ServiceInstance service) async {
       await service.stopSelf();
     });
   }
-
-  // Timer.periodic(const Duration(seconds: 1), (timer) async {
-  //   if (service is AndroidServiceInstance) {
-  //     if (await service.isForegroundService()) {
-  //       await service.setForegroundNotificationInfo(
-  //         title: 'Meno',
-  //         content: 'Meno is running in the background',
-  //       );
-  //     }
-  //   }
-  // });
 }
 
 @lazySingleton
@@ -53,7 +49,11 @@ class BackgroundService {
 
   Future<void> initializeBackgroundService() async {
     await _service.configure(
-      iosConfiguration: IosConfiguration(autoStart: false),
+      iosConfiguration: IosConfiguration(
+        autoStart: false,
+        onForeground: onStart,
+        onBackground: onIosBackground,
+      ),
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         isForegroundMode: false,

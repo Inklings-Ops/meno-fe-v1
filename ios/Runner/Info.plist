@@ -70,5 +70,9 @@
 		<key>FDAllFilesDownloadedMessage</key>
 		<string>All files have been downloaded</string>	
 		<!-- End of the Flutter Downloader configurations -->
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>dev.flutter.background.refresh</string>
+		</array>
 	</dict>
 </plist>

@@ -62,6 +62,8 @@ class _Card extends HookWidget {
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
       onTap: () {
+        // TODO(gettoknowdavid): Implement proper routing for when a broadcast is live as the host and streamer
+        // TODO(gettoknowdavid): Fix issue with removing changing live state once the user taps on the `Join` broadcast button
         final myUid = session.whenOrNull(authenticated: (u, _) => u.id.getOr());
         final isHost =
             broadcast.creatorId == myUid || broadcast.creator?.id == myUid;
