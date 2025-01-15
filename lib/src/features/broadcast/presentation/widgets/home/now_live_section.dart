@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class NowLiveSection extends StatelessWidget {
   const NowLiveSection({super.key});
@@ -63,18 +62,32 @@ class _Card extends HookWidget {
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
       onTap: () {
-        live.state.maybeWhen(
-          orElse: () {
-            final myUid = session.whenOrNull(
-              authenticated: (user, _) => user.id.getOr(),
-            );
-            if (broadcast.creatorId == myUid) return;
-            context.showJoinLiveBroadcastModal(broadcast);
-          },
-          live: () => router.push(Routes.broadcastTab, extra: broadcast),
-          streaming: () => router.push(Routes.broadcastTab, extra: true),
-          reconnecting: () => router.push(Routes.broadcastTab, extra: true),
-        );
+        final myUid = session.whenOrNull(authenticated: (u, _) => u.id.getOr());
+        final isHost =
+            broadcast.creatorId == myUid || broadcast.creator?.id == myUid;
+
+        if (isHost && live.state is Live) {
+          router.push(Routes.broadcastTab, extra: broadcast);
+          return;
+        }
+
+        if (isHost && (live.state is Streaming || live.state is Reconnecting)) {
+          router.push(Routes.broadcastTab, extra: true);
+          return;
+        }
+
+        context.showJoinLiveBroadcastModal(broadcast);
+        return;
+
+        // live.state.maybeWhen(
+        //   orElse: () {
+        //     if (broadcast.creatorId == myUid) return;
+        //     context.showJoinLiveBroadcastModal(broadcast);
+        //   },
+        //   live: () => router.push(Routes.broadcastTab, extra: broadcast),
+        //   streaming: () => router.push(Routes.broadcastTab, extra: true),
+        //   reconnecting: () => router.push(Routes.broadcastTab, extra: true),
+        // );
       },
     );
   }
