@@ -234,7 +234,7 @@ class _AllBroadcastsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileBloc = context.read<OthersProfileCubit>();
+    final profileBloc = context.read<MyProfileCubit>();
     final allBroadcastsBloc = context.read<UsersAllBroadcastsBloc>();
 
     Future<void> onRefresh() async {
