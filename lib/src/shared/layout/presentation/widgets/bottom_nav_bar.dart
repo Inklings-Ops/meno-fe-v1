@@ -33,21 +33,26 @@ class BottomNavBar extends StatelessWidget {
       child: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: onTap,
-        destinations: destinationWidgets(),
+        destinations: destinationWidgets(context),
       ),
     );
   }
 
-  List<Widget> destinationWidgets() {
+  List<Widget> destinationWidgets(BuildContext context) {
     final widgets = <Widget>[];
     final itemCount = _destinations.length;
+
     for (var i = 0; i < itemCount; i++) {
       if (i == 2) {
         widgets.add(
           Microphone(
-            onTap: () {
-              di<PermissionsService>().requestMicrophonePermissions();
-              router.push(Routes.createBroadcast);
+            onTap: () async {
+              if (!context.mounted) return;
+              final permissions = di<PermissionsService>();
+              final result = await permissions.requestMicPermissions(context);
+              if (result) {
+                router.push(Routes.createBroadcast);
+              } else {}
             },
           ),
         );

@@ -11,6 +11,7 @@ class MLayoutPage extends HookWidget {
     required this.currentRoute,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('MLayout'));
+
   final StatefulNavigationShell shell;
   final String? currentRoute;
 
@@ -23,25 +24,31 @@ class MLayoutPage extends HookWidget {
       initMessage.value = value?.data.toString();
     }
 
+    final permissions = di<PermissionsService>();
+
     useEffect(
       () {
+        // Initialize the Bible and start parsing the KJV to store in the DB
+        di<IBibleFacade>().initialize();
+
+        // Retrieve the auth token and use it to connect to the Socket
         final token = context.select<SessionCubit, Token?>(
-          (bloc) => bloc.state.whenOrNull(
-            authenticated: (user, token) => token,
-          ),
+          (bloc) => bloc.state.whenOrNull(authenticated: (_, token) => token),
         );
         context.read<SocketBloc>().add(SocketConnect(token!));
-        di<PermissionsService>().requestNotificationsPermissions();
-        di<IBibleFacade>().initialize();
-        firebaseMessaging.getInitialMessage().then(onInitialMessage);
-        FirebaseMessaging.onMessage.listen(showFlutterNotification);
-        FirebaseMessaging.onMessageOpenedApp.listen((message) {
-          router.push(Routes.notifications);
+
+        // Request/Check for notifications permissions and initialize FCM
+        permissions.requestNotificationsPermissions(context).then((perm) async {
+          if (perm) {
+            await firebaseMessaging.getInitialMessage().then(onInitialMessage);
+            FirebaseMessaging.onMessage.listen(showFlutterNotification);
+            FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
+            await handleFCMToken();
+          }
         });
-        handleFCMToken();
         return null;
       },
-      [firebaseMessaging, initMessage],
+      [firebaseMessaging, initMessage, permissions],
     );
 
     final index = shell.currentIndex;
@@ -65,14 +72,14 @@ class MLayoutPage extends HookWidget {
           listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
             state.status.whenOrNull(
-              failed: (error, isStream) => context.showErrorSnackBar,
+              failed: (error, _) => context.showErrorSnackBar(error),
             );
           },
         ),
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
             state.whenOrNull(
-              error: (error, isStream) => context.showErrorSnackBar,
+              error: (error, _) => context.showErrorSnackBar(error),
             );
           },
         ),

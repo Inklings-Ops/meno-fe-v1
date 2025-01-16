@@ -159,8 +159,6 @@ class MTextTheme extends ThemeExtension<MTextTheme> {
   /// Provides the Global Font Family
   static const String fontFamily = FontFamily.sFProDisplay;
 
-
-
   @override
   ThemeExtension<MTextTheme> copyWith({
     TextStyle? heading1Regular,
@@ -324,7 +322,7 @@ class _Typography {
   late final bodyRegular = _font(16, height: 24);
   late final bodyMedium = bodyRegular.copyWith(fontWeight: FontWeight.w600);
   late final bodyBold = bodyRegular.copyWith(fontWeight: FontWeight.w700);
-  late final captionRegular = _font(14, height: 16);
+  late final captionRegular = _font(14, height: 18);
   late final captionMedium = captionRegular.copyWith(
     fontWeight: FontWeight.w600,
   );

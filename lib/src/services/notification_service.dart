@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
 import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
@@ -68,6 +69,10 @@ void showFlutterNotification(RemoteMessage message) {
   }
 }
 
+void openNotifications(RemoteMessage message) {
+  router.push(Routes.notifications);
+}
+
 Future<void> handleFCMToken() async {
   const storage = FlutterSecureStorage();
   final fcmToken = await FirebaseMessaging.instance.getToken();
@@ -76,7 +81,6 @@ Future<void> handleFCMToken() async {
 
 @Injectable()
 class NotificationService {
-
   NotificationService({
     required FirebaseMessaging firebaseMessaging,
     required SecureStorageService storageService,

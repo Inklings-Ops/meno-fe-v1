@@ -31,6 +31,28 @@ extension MDialogX on BuildContext {
     );
   }
 
+  Future<bool?> showPermissionsRequestDialog({
+    required String title,
+    required String message,
+    required VoidCallback onTryAgain,
+  }) {
+    return showDialog<bool>(
+      context: this,
+      builder: (context) => PermissionsRequestDialog(
+        title: title,
+        message: message,
+        onTryAgain: onTryAgain,
+      ),
+    );
+  }
+
+  Future<bool?> showPermissionRedirectDialog(String message) {
+    return showDialog<bool>(
+      context: this,
+      builder: (_) => PermissionsSettingsRedirectionDialog(message: message),
+    );
+  }
+
   // Future<Note?> showDeleteNoteDialog(Note note) {
   //   return showDialog<Note?>(
   //     context: this,
