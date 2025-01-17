@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/features/notes/presentation/widgets/notes_list.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class NoteListWidget extends StatelessWidget {
   const NoteListWidget({

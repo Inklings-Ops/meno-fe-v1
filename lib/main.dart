@@ -12,7 +12,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   await configureDependencies();
-  await di<BackgroundService>().initializeBackgroundService();
+  // await di<BackgroundService>().initializeBackgroundService();
   Bloc.observer = MenoBlocObserver(log: Logger());
   runApp(
     DevicePreview(

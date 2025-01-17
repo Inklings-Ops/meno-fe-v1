@@ -57,7 +57,6 @@ import '../features/settings/infrastructure/datasources/settings_local_datasourc
     as _i385;
 import '../features/settings/infrastructure/settings_facade.dart' as _i838;
 import '../features/settings/settings.dart' as _i709;
-import '../services/background_service.dart' as _i879;
 import '../services/jwt_service.dart' as _i431;
 import '../services/live_kit/live_kit_service.dart' as _i691;
 import '../services/media_service.dart' as _i586;
@@ -119,7 +118,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.secureStorage);
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
-    gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
+    // gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i664.BibleLocalDatasource>(() =>

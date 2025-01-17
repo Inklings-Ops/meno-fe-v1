@@ -1,11 +1,8 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
-import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
 late AndroidNotificationChannel channel;

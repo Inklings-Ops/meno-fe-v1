@@ -75,7 +75,6 @@ class MBadge extends StatelessWidget {
     String? count,
     bool showLoader = false,
     bool showBorder = false,
-    bool loading = false,
   }) : this._(
           key: key,
           value: 'LIVE',

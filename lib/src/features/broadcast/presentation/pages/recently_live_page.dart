@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class RecentlyLivePage extends HookWidget {
   const RecentlyLivePage({super.key});

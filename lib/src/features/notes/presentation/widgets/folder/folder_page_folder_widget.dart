@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderPageFolderWidget extends StatelessWidget {
   const FolderPageFolderWidget({super.key});
