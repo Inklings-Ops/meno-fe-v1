@@ -6,9 +6,8 @@ import 'package:meno_design_system/meno_design_system.dart';
 /// A widget that represents a card for live content.
 ///
 /// This card displays information about live content, including the title,
-/// host, and an optional image. It also supports showing a live count and
-/// handles loading state through the [loading] property. The card can handle
-/// tap gestures through the [onTap] callback.
+/// host, and an optional image. It also supports showing a live count. 
+/// The card can handle tap gestures through the [onTap] callback.
 ///
 /// Example usage:
 /// ```dart
@@ -29,7 +28,6 @@ class MLiveCard extends StatelessWidget {
   /// Parameters:
   /// - [title]: The title of the live content.
   /// - [host]: The name of the host of the live content.
-  /// - [loading]: A boolean indicating if the card is in a loading state.
   /// - [key]: An optional key to identify the widget.
   /// - [imageUrl]: An optional URL for an image to be displayed in the card.
   /// - [liveCount]: An optional count of live viewers or participants.

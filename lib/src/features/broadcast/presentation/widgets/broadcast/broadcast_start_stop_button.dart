@@ -1,4 +1,3 @@
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/application/application.dart';
@@ -33,7 +32,6 @@ class BroadcastStartStopButton extends StatelessWidget {
         context.read<LiveKitBloc>().add(const LiveKitDisconnect());
         context.read<ChatListBloc>().add(const ChatReset());
         context.read<LiveBloc>().add(const LiveReset());
-        Logger().w('Went through the stop command');
       }
     });
   }

@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:flutter_background/flutter_background.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -19,42 +15,7 @@ class LiveLayoutListeners extends StatelessWidget {
     final participants = context.read<ParticipantsBloc>();
     final socket = context.read<SocketBloc>();
     final timer = context.read<TimerCubit>();
-
-    Future<void> requestBackgroundPermission([bool isRetry = false]) async {
-      if (Platform.isAndroid) {
-        try {
-          var isPermitted = await FlutterBackground.hasPermissions;
-          if (!isRetry) {
-            const androidConfig = FlutterBackgroundAndroidConfig(
-              notificationTitle: 'Live Broadcast',
-              notificationText: 'A broadast/stream is live now',
-            );
-            isPermitted = await FlutterBackground.initialize(
-              androidConfig: androidConfig,
-            );
-          }
-          if (isPermitted && !FlutterBackground.isBackgroundExecutionEnabled) {
-            await FlutterBackground.enableBackgroundExecution();
-          }
-        } catch (e) {
-          if (!isRetry) {
-            const dur = Duration(seconds: 1);
-            return Future.delayed(dur, () => requestBackgroundPermission(true));
-          }
-          Logger().e('Could not start background process');
-        }
-      }
-    }
-
-    Future<void> disableBackgroundProcess() async {
-      if (Platform.isAndroid) {
-        try {
-          await FlutterBackground.disableBackgroundExecution();
-        } catch (e) {
-          Logger().e('Could not stop background process');
-        }
-      }
-    }
+    final background = di<BackgroundService>();
 
     return MultiBlocListener(
       listeners: [
@@ -67,17 +28,13 @@ class LiveLayoutListeners extends StatelessWidget {
                 context.showErrorSnackBar(error);
                 if (isStream) return router.pop();
               },
-              broadcastConnected: () async {
-                final bId = context.read<BroadcastBloc>().state.broadcast.id;
-                // await di<BackgroundService>().invokeBroadcastInBackground();
-                await requestBackgroundPermission();
-                socket.add(SocketStartBroadcast(bId));
+              broadcastConnected: () {
+                final broadcast = context.read<BroadcastBloc>().state.broadcast;
+                socket.add(SocketStartBroadcast(broadcast.id));
               },
-              streamConnected: () async {
-                final bId = context.read<StreamBloc>().state.broadcast.id;
-                // await di<BackgroundService>().invokeStreamInBackground();
-                await requestBackgroundPermission();
-                socket.add(SocketJoinBroadcast(bId));
+              streamConnected: () {
+                final broadcast = context.read<StreamBloc>().state.broadcast;
+                socket.add(SocketJoinBroadcast(broadcast.id));
               },
             );
           },
@@ -91,7 +48,7 @@ class LiveLayoutListeners extends StatelessWidget {
                 context.showErrorSnackBar(error);
                 if (isStream) return router.pop();
               },
-              broadcastStarted: () {
+              broadcastStarted: () async {
                 final broadcast = context.read<BroadcastBloc>().state.broadcast;
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
@@ -99,21 +56,20 @@ class LiveLayoutListeners extends StatelessWidget {
                 timer.start();
                 live.add(const LiveStarted());
                 live.add(const GoLive());
-                // di<BackgroundService>().startBackgroundService();
+                await background.startBroadcastBackgroundProcess(broadcast);
               },
-              broadcastEnded: () {
+              broadcastEnded: () async {
                 final broadcast = context.read<BroadcastBloc>().state.broadcast;
-                // di<BackgroundService>().endBackgroundTask();
                 participants.add(GetAllParticipants(broadcast.id));
                 timer.stop();
                 live.add(const LiveReset());
                 if (router.state!.name == Routes.broadcastTab) {
-                  router.replace<void>(Routes.endedBroadcast);
+                  await router.replace<void>(Routes.endedBroadcast);
                 } else {
-                  router.push<void>(Routes.endedBroadcast);
+                  await router.push<void>(Routes.endedBroadcast);
                 }
               },
-              broadcastJoined: () {
+              broadcastJoined: () async {
                 final broadcast = context.read<StreamBloc>().state.broadcast;
                 socket.add(SocketGetMessages(broadcast.id));
                 chat.add(InitializeChatList(broadcast));
@@ -121,20 +77,26 @@ class LiveLayoutListeners extends StatelessWidget {
                 timer.setAndStart(broadcast.startTime);
                 live.add(const LiveStarted());
                 live.add(const GoStreaming());
-                // di<BackgroundService>().startBackgroundService();
+                await background.startBroadcastBackgroundProcess(broadcast);
               },
               broadcastLeft: () async {
-                // di<BackgroundService>().endBackgroundTask();
-                await disableBackgroundProcess();
                 live.add(const LiveReset());
+                participants.add(const ParticipantsReset());
+                chat.add(const ChatReset());
+                context.read<StreamBloc>().add(const StreamReset());
+                await timer.dispose();
                 router.go(Routes.home);
               },
               endedBroadcast: (data) async {
                 if (live.state is Live) return;
-                // di<BackgroundService>().endBackgroundTask();
-                await disableBackgroundProcess();
                 live.add(const LiveReset());
+                livekit.add(const LiveKitDisconnect());
+                participants.add(const ParticipantsReset());
+                chat.add(const ChatReset());
+                context.read<StreamBloc>().add(const StreamReset());
+                context.showErrorSnackBar(data.reason.message);
                 router.go(Routes.home);
+                await timer.dispose();
               },
               messagesReceived: (chats) {
                 chat.add(LoadChatMessages(chats));

@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -24,10 +27,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
-            android:label="meno_fe_v1"
+            android:label="Menō"
             android:name="${applicationName}"
             android:icon="@mipmap/ic_launcher"
-            android:usesCleartextTraffic="true">
+            android:usesCleartextTraffic="true"
+            android:enableOnBackInvokedCallback="true">
         <activity
                 android:name=".MainActivity"
                 android:exported="true"
@@ -71,6 +75,6 @@
                 android:name="de.julianassmann.flutter_background.IsolateHolderService"
                 android:enabled="true"
                 android:exported="false"
-                android:foregroundServiceType="microphone|connectedDevice|specialUse"/>
+                android:foregroundServiceType="microphone|connectedDevice"/>
     </application>
 </manifest>

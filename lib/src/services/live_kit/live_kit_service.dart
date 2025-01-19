@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:livekit_client/livekit_client.dart';
@@ -10,26 +11,59 @@ export 'package:livekit_client/livekit_client.dart';
 
 @lazySingleton
 class LiveKitService extends Object with Disposable {
-  late Room room;
+  final room = Room();
+
   late EventsListener<RoomEvent> listener;
 
   late BehaviorSubject<RoomEvent> _events;
 
   Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
 
-  Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
-    final completer = Completer<Room>();
+  Future<Either<LiveKitException, Unit>> _connectFamily({
+    required String token,
+    bool isHost = false,
+  }) async {
+    await room.disconnect();
 
+    _events = BehaviorSubject<RoomEvent>();
+
+    listener = room.createListener();
+    _setupListener();
+
+    try {
+      await room.prepareConnection(Env.menoLiveKitUrl, token);
+      await room.connect(
+        Env.menoLiveKitUrl,
+        token,
+        fastConnectOptions: FastConnectOptions(
+          microphone: TrackOption(enabled: isHost),
+        ),
+      );
+
+      return right(unit);
+    } on LiveKitException catch (e) {
+      return left(e);
+    }
+  }
+
+  /// Start a broadcast session.
+  Future<Either<LiveKitException, Unit>> broadcast2(String token) =>
+      _connectFamily(token: token, isHost: true);
+
+  /// Start a streaming session for viewers.
+  Future<Either<LiveKitException, Unit>> stream2(String token) =>
+      _connectFamily(token: token);
+
+  Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
     // Create a new room
-    room = Room();
     _events = BehaviorSubject<RoomEvent>();
 
     // Set a Listener for the Room Events before connecting
     listener = room.createListener(synchronized: true);
+    _setupListener();
 
     try {
-      // Try to connect to the room
-      // This will throw an Exception if it fails for any reason.
+      // Connect to the room
       await room.connect(
         Env.menoLiveKitUrl,
         broadcastToken,
@@ -38,13 +72,11 @@ class LiveKitService extends Object with Disposable {
         ),
       );
 
-      _setupListener();
-      completer.complete(room);
-    } on Exception {
-      completer.completeError('Failed to connect. Please try again later.');
+      return room; // Return the connected room
+    } catch (e) {
+      await removeListener();
+      throw Exception('Failed to connect. Please try again. => $e');
     }
-
-    return completer.future;
   }
 
   /// Sets up the event listener for the room.

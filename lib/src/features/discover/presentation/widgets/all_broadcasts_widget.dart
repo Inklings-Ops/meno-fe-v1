@@ -78,26 +78,16 @@ class _Grid extends HookWidget {
               itemBuilder: (context, index) {
                 final broadcast = broadcasts[index]!;
 
-                final title = broadcast.title.getOr();
-                final imageUrl = broadcast.imageUrl;
-                final host = broadcast.creator?.fullName ??
-                    broadcast.fullName ??
-                    broadcast.creatorFullName ??
-                    '';
-
                 if (isNowLive) {
-                  return MCard.live(
-                    title: title,
-                    imageUrl: imageUrl,
-                    host: host,
-                    liveCount: broadcast.totalListeners,
-                    onTap: () => context.showJoinLiveBroadcastModal(broadcast),
-                  );
+                  return LiveBroadcastCard(broadcast: broadcast);
                 } else {
                   return MCard.recentlyLive(
-                    title: title,
-                    imageUrl: imageUrl,
-                    host: host,
+                    title: broadcast.title.getOr(),
+                    imageUrl: broadcast.imageUrl,
+                    host: broadcast.creator?.fullName ??
+                        broadcast.fullName ??
+                        broadcast.creatorFullName ??
+                        '',
                     onTap: () => router.push(Routes.details, extra: broadcast),
                   );
                 }

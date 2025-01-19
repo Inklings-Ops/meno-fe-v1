@@ -1,6 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class LiveBroadcastActivityCard extends StatelessWidget {
   const LiveBroadcastActivityCard({super.key});
@@ -33,9 +33,15 @@ class LiveBroadcastActivityCard extends StatelessWidget {
 
   void onBroadcastEnd(BuildContext context, Uid<Broadcast> broadcastId) {
     final socket = context.read<SocketBloc>();
+    final livekit = context.read<LiveKitBloc>();
     context.showEndBroadcastDialog().then((value) {
-      if (value == null || value == false) return;
-      return socket.add(SocketEndBroadcast(broadcastId));
+      if (value == null || value == false) {
+        return;
+      } else {
+        socket.add(SocketEndBroadcast(broadcastId));
+        livekit.add(const LiveKitDisconnect());
+        return;
+      }
     });
   }
 }

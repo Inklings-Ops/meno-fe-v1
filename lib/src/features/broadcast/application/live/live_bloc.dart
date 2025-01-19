@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
 part 'live_event.dart';
@@ -32,16 +32,17 @@ class LiveBloc extends Bloc<LiveEvent, LiveState> {
 
   StreamSubscription<RoomEvent>? _subscription;
 
-  void _onData(RoomEvent roomEvent) {
-    if (roomEvent is RoomConnectedEvent) {
+  void _onData(RoomEvent e) {
+    if (e is RoomConnectedEvent) {
       add(const GoLive());
-    } else if (roomEvent is RoomReconnectedEvent) {
+    } else if (e is RoomReconnectedEvent) {
       add(const GoLive());
-    } else if (roomEvent is RoomDisconnectedEvent) {
-      add(const GoOffAir());
-    } else if (roomEvent is RoomReconnectingEvent) {
+    } else if (e is RoomDisconnectedEvent) {
+      // add(const GoOffAir());
+    } else if (e is RoomReconnectingEvent || e is RoomAttemptReconnectEvent) {
       add(const GoReconnecting());
     } else {
+      Logger().e(e);
       return;
     }
   }

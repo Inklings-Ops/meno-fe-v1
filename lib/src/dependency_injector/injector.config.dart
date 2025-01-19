@@ -19,6 +19,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../../meno.dart' as _i1014;
 import '../core/network/domain/i_network_facade.dart' as _i305;
 import '../core/network/infrastructure/network_facade.dart' as _i479;
 import '../features/auth/auth.dart' as _i236;
@@ -32,6 +33,8 @@ import '../features/bible/infrastructure/datasources/local/bible_local_datasourc
     as _i664;
 import '../features/broadcast/broadcast.dart' as _i625;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i1031;
+import '../features/broadcast/infrastructure/datasources/broadcast_local_datasource.dart'
+    as _i396;
 import '../features/chat/chat.dart' as _i506;
 import '../features/chat/infrastructure/chat_facade.dart' as _i536;
 import '../features/features.dart' as _i1009;
@@ -57,6 +60,7 @@ import '../features/settings/infrastructure/datasources/settings_local_datasourc
     as _i385;
 import '../features/settings/infrastructure/settings_facade.dart' as _i838;
 import '../features/settings/settings.dart' as _i709;
+import '../services/background_service.dart' as _i879;
 import '../services/jwt_service.dart' as _i431;
 import '../services/live_kit/live_kit_service.dart' as _i691;
 import '../services/media_service.dart' as _i586;
@@ -118,7 +122,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.secureStorage);
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
-    // gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
+    gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i664.BibleLocalDatasource>(() =>
@@ -128,7 +132,7 @@ extension GetItInjectableX on _i174.GetIt {
     await gh.factoryAsync<_i941.NotificationService>(
       () {
         final i = _i941.NotificationService(
-          firebaseMessaging: gh<_i892.FirebaseMessaging>(),
+          firebaseMessaging: gh<_i1014.FirebaseMessaging>(),
           storageService: gh<_i535.SecureStorageService>(),
         );
         return i.initialize().then((_) => i);
@@ -141,6 +145,9 @@ extension GetItInjectableX on _i174.GetIt {
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
         storage: gh<_i535.SecureStorageService>()));
+    gh.factory<_i396.BroadcastLocalDatasource>(() =>
+        _i396.BroadcastLocalDatasource(
+            storage: gh<_i264.SecureStorageService>()));
     gh.factory<_i720.IBibleFacade>(() => _i442.BibleFacade(
           local: gh<_i150.BibleLocalDatasource>(),
           network: gh<_i463.NetworkService>(),
@@ -152,10 +159,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i385.SettingsLocalDatasource>(() =>
         _i385.SettingsLocalDatasource(
             preferences: gh<_i460.SharedPreferences>()));
-    gh.factory<_i625.IBroadcastFacade>(() => _i1031.BroadcastFacade(
-          remote: gh<_i625.BroadcastRemoteDatasource>(),
-          network: gh<_i264.NetworkService>(),
-        ));
     gh.lazySingleton<_i168.INotificationFacade>(() => _i734.NotificationFacade(
           remoteDatasource: gh<_i589.NotificationRemoteDatasource>(),
           networkService: gh<_i463.NetworkService>(),
@@ -169,6 +172,11 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
           remote: gh<_i506.ChatRemoteDatasource>(),
+          network: gh<_i264.NetworkService>(),
+        ));
+    gh.factory<_i625.IBroadcastFacade>(() => _i1031.BroadcastFacade(
+          remote: gh<_i625.BroadcastRemoteDatasource>(),
+          local: gh<_i625.BroadcastLocalDatasource>(),
           network: gh<_i264.NetworkService>(),
         ));
     await gh.factoryAsync<_i236.IAuthFacade>(

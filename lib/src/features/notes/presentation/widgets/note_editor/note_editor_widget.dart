@@ -13,7 +13,6 @@ class NoteEditorWidget extends StatefulWidget {
   State<NoteEditorWidget> createState() => _NoteEditorWidgetState();
 }
 
-
 class _NoteEditorWidgetState extends State<NoteEditorWidget> {
   late QuillController contentController;
   late FocusNode quillFocusNode;
@@ -43,6 +42,7 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
             ],
             Expanded(
               child: QuillEditor(
+                controller: contentController,
                 focusNode: quillFocusNode,
                 scrollController: scrollController,
                 configurations: quillConfigurations,
@@ -64,20 +64,21 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
     }
     final textTheme = MTextTheme.of(context)!;
     quillConfigurations = QuillEditorConfigurations(
-      controller: contentController,
       placeholder: 'Start writing...',
       expands: true,
       customStyles: DefaultStyles(
         paragraph: DefaultTextBlockStyle(
           textTheme.captionRegular!,
-          const VerticalSpacing(8, 0),
-          const VerticalSpacing(0, 0),
+          const HorizontalSpacing(8, 0),
+          VerticalSpacing.zero,
+          VerticalSpacing.zero,
           null,
         ),
         placeHolder: DefaultTextBlockStyle(
           textTheme.captionRegular!,
-          const VerticalSpacing(8, 0),
-          const VerticalSpacing(0, 0),
+          const HorizontalSpacing(8, 0),
+          VerticalSpacing.zero,
+          VerticalSpacing.zero,
           null,
         ),
       ),

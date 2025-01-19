@@ -12,10 +12,14 @@ import 'package:meno_fe_v1/src/shared/shared.dart';
 class BroadcastFacade implements IBroadcastFacade {
   BroadcastFacade({
     required BroadcastRemoteDatasource remote,
+    required BroadcastLocalDatasource local,
     required NetworkService network,
   })  : _remote = remote,
+        _local = local,
         _network = network;
+
   final BroadcastRemoteDatasource _remote;
+  final BroadcastLocalDatasource _local;
   final NetworkService _network;
 
   @override
@@ -183,6 +187,7 @@ class BroadcastFacade implements IBroadcastFacade {
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
       final response = await _remote.startBroadcast(broadcastId: idStr);
+      await _local.saveBroadcastDetails(response.data);
       return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -387,5 +392,18 @@ class BroadcastFacade implements IBroadcastFacade {
     } on TimeoutException {
       return left(const BroadcastException.timeOutError());
     }
+  }
+
+  @override
+  Future<bool> get hasSavedBroadcast => _local.hasBroadcast;
+
+  @override
+  Future<void> clearSavedBroadcastDetails() => _local.clearBroadcastDetails();
+
+  @override
+  Future<Option<Broadcast>> getSavedBroadcastDetails() async {
+    final dto = await _local.getBroadcastDetails();
+    if (dto == null) return none();
+    return some(dto.toDomain);
   }
 }

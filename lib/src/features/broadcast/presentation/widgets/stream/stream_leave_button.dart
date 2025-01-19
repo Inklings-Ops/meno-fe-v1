@@ -1,6 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class StreamLeaveButton extends StatelessWidget {
   const StreamLeaveButton({super.key});
@@ -20,6 +20,7 @@ class StreamLeaveButton extends StatelessWidget {
           if (value != true) return;
           if (context.mounted) {
             socket.add(SocketLeaveBroadcast(broadcast.id));
+            context.read<LiveKitBloc>().add(const LiveKitDisconnect());
             context.read<LiveBloc>().add(const LiveReset());
             router.go(Routes.home);
           }

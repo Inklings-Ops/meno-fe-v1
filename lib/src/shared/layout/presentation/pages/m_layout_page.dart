@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 import 'package:meno_fe_v1/src/services/notification_service.dart';
 import 'package:meno_fe_v1/src/services/permissions_service.dart';
 import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
@@ -66,28 +65,9 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<LiveKitBloc, LiveKitState>(
-          listenWhen: (p, c) => p.status != c.status,
-          listener: (context, state) {
-            state.status.whenOrNull(
-              failed: (error, _) => context.showErrorSnackBar(error),
-            );
-          },
-        ),
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              error: (error, _) => context.showErrorSnackBar(error),
-            );
-          },
-        ),
-      ],
-      child: Scaffold(
-        body: Row(children: [sideNavRail, Expanded(child: shell)]),
-        bottomNavigationBar: bottomNavBar,
-      ),
+    return Scaffold(
+      body: Row(children: [sideNavRail, Expanded(child: shell)]),
+      bottomNavigationBar: bottomNavBar,
     );
   }
 

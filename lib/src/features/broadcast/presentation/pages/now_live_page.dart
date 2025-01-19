@@ -85,19 +85,7 @@ class _List extends StatelessWidget {
           childAspectRatio: 159.50 / 176,
         ),
         padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
-        itemBuilder: (context, i) {
-          final broadcast = broadcasts[i]!;
-          return MCard.live(
-            title: broadcast.title.getOr(),
-            imageUrl: broadcast.imageUrl,
-            host: broadcast.creator?.fullName ??
-                broadcast.fullName ??
-                broadcast.creatorFullName ??
-                '',
-            liveCount: broadcast.totalListeners,
-            onTap: () => context.showJoinLiveBroadcastModal(broadcast),
-          );
-        },
+        itemBuilder: (_, i) => LiveBroadcastCard(broadcast: broadcasts[i]!),
         itemCount: broadcasts.length,
         shrinkWrap: true,
         primary: false,

@@ -1,8 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
-import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
 class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
@@ -56,18 +54,17 @@ class _MenoAppState extends State<MenoApp> {
   }
 
   void _onStateChanged(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.detached:
-        context.read<NetworkCubit>().close();
-        context.read<LiveKitBloc>().close();
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.paused:
-        context.read<NetworkCubit>().close();
-      case AppLifecycleState.resumed:
-      case AppLifecycleState.inactive:
-        if (context.read<NetworkCubit>().isClosed) {
-          context.read<NetworkCubit>();
-        }
-    }
+    // switch (state) {
+    //   case AppLifecycleState.detached:
+    //     context.read<NetworkCubit>().close();
+    //   case AppLifecycleState.hidden:
+    //   case AppLifecycleState.paused:
+    //     context.read<NetworkCubit>().close();
+    //   case AppLifecycleState.resumed:
+    //   case AppLifecycleState.inactive:
+    //     if (context.read<NetworkCubit>().isClosed) {
+    //       context.read<NetworkCubit>();
+    //     }
+    // }
   }
 }

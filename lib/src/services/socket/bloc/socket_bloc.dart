@@ -13,7 +13,10 @@ part 'socket_event.dart';
 part 'socket_state.dart';
 
 class SocketBloc extends Bloc<SocketEvent, SocketState> {
-  SocketBloc() : super(const SocketDisconnected()) {
+  SocketBloc({
+    required IBroadcastFacade broadcast,
+  })  : _broadcast = broadcast,
+        super(const SocketDisconnected()) {
     on<SocketConnect>(_onConnect);
     on<SocketDisconnect>(_onDisconnect);
     on<SocketStartBroadcast>(_onStartBroadcast);
@@ -32,6 +35,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<SocketUpdateState>(_onUpdateState);
     on<SocketGetMessages>(_onGetMessages);
   }
+
+  final IBroadcastFacade _broadcast;
 
   io.Socket? _socket;
 
@@ -109,6 +114,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         if (response.error != null) {
           _addUpdateState(SocketError(error: response.error!));
         } else {
+          _broadcast.clearSavedBroadcastDetails();
           _addUpdateState(const SocketBroadcastEnded());
         }
       },

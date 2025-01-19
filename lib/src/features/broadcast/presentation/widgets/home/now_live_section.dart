@@ -45,55 +45,7 @@ class NowLiveSection extends StatelessWidget {
   }
 }
 
-class _Card extends HookWidget {
-  const _Card({required this.broadcast});
-  final Broadcast broadcast;
 
-  @override
-  Widget build(BuildContext context) {
-    final live = context.watch<LiveBloc>();
-    final session = context.read<SessionCubit>().state;
-    return MCard.live(
-      title: broadcast.title.getOr(),
-      host: broadcast.creator?.fullName ??
-          broadcast.fullName ??
-          broadcast.creatorFullName ??
-          '',
-      imageUrl: broadcast.imageUrl,
-      liveCount: broadcast.totalListeners,
-      onTap: () {
-        // TODO(gettoknowdavid): Implement proper routing for when a broadcast is live as the host and streamer
-        // TODO(gettoknowdavid): Fix issue with removing changing live state once the user taps on the `Join` broadcast button
-        final myUid = session.whenOrNull(authenticated: (u, _) => u.id.getOr());
-        final isHost =
-            broadcast.creatorId == myUid || broadcast.creator?.id == myUid;
-
-        if (isHost && live.state is Live) {
-          router.push(Routes.broadcastTab, extra: broadcast);
-          return;
-        }
-
-        if (isHost && (live.state is Streaming || live.state is Reconnecting)) {
-          router.push(Routes.broadcastTab, extra: true);
-          return;
-        }
-
-        context.showJoinLiveBroadcastModal(broadcast);
-        return;
-
-        // live.state.maybeWhen(
-        //   orElse: () {
-        //     if (broadcast.creatorId == myUid) return;
-        //     context.showJoinLiveBroadcastModal(broadcast);
-        //   },
-        //   live: () => router.push(Routes.broadcastTab, extra: broadcast),
-        //   streaming: () => router.push(Routes.broadcastTab, extra: true),
-        //   reconnecting: () => router.push(Routes.broadcastTab, extra: true),
-        // );
-      },
-    );
-  }
-}
 
 class _List extends StatelessWidget {
   const _List({required this.broadcasts, super.key, this.loading = false});
@@ -110,7 +62,7 @@ class _List extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
         separatorBuilder: (context, i) => const SizedBox(width: 24),
         itemCount: broadcasts.length,
-        itemBuilder: (_, i) => _Card(broadcast: broadcasts[i]!),
+        itemBuilder: (_, i) => LiveBroadcastCard(broadcast: broadcasts[i]!),
         primary: false,
         shrinkWrap: true,
       ),

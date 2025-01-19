@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/permissions_service.dart';
 
@@ -47,12 +49,15 @@ class BottomNavBar extends StatelessWidget {
         widgets.add(
           Microphone(
             onTap: () async {
-              if (!context.mounted) return;
-              final permissions = di<PermissionsService>();
-              final result = await permissions.requestMicPermissions(context);
-              if (result) {
-                router.push(Routes.createBroadcast);
-              } else {}
+              final micPermissionGranted = await _handleMicPermission(context);
+              if (!micPermissionGranted) return;
+
+              if (Platform.isAndroid && context.mounted) {
+                final bgGranted = await _handleBackgroundPermission(context);
+                if (!bgGranted) return;
+              }
+
+              await router.push(Routes.createBroadcast);
             },
           ),
         );
@@ -67,5 +72,23 @@ class BottomNavBar extends StatelessWidget {
       );
     }
     return widgets;
+  }
+
+  Future<bool> _handleMicPermission(BuildContext context) async {
+    try {
+      final permissions = di<PermissionsService>();
+      final granted = await permissions.requestMicPermissions(context);
+      if (!granted && context.mounted) {
+        final permissions = di<PermissionsService>();
+        await permissions.promptRedirect(context, 'Microphone');
+      }
+      return granted;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _handleBackgroundPermission(BuildContext context) async {
+    return di<PermissionsService>().requestBackgroundProcesses(context);
   }
 }

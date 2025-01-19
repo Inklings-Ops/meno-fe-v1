@@ -45,5 +45,21 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   Future<void> _onBroadcastReconnectRequested(
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
-  ) async {}
+  ) async {
+    emit(state.copyWith(status: const _LoadInProgress()));
+    final option = await _facade.getSavedBroadcastDetails();
+    emit(
+      option.fold(
+        () => state.copyWith(
+          status: const LiveBroadcastStatus.failure(
+            BroadcastException.message('No saved broadcast'),
+          ),
+        ),
+        (broadcast) => state.copyWith(
+          broadcast: broadcast,
+          status: const _BroadcastStarted(),
+        ),
+      ),
+    );
+  }
 }

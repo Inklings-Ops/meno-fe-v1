@@ -127,4 +127,10 @@ abstract class IBroadcastFacade {
     /// Equal to start time
     bool? startTimeExist,
   });
+
+  Future<bool> get hasSavedBroadcast;
+
+  Future<Option<Broadcast>> getSavedBroadcastDetails();
+
+  Future<void> clearSavedBroadcastDetails();
 }

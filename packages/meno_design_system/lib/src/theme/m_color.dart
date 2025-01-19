@@ -126,12 +126,12 @@ class MColor extends Color {
         return _scaleAlpha(b, t);
       } else {
         return MColor._(
-          Color.fromARGB(
-            _clampInt(_lerpInt(a.alpha, b.alpha, t).toInt(), 0, 255),
-            _clampInt(_lerpInt(a.red, b.red, t).toInt(), 0, 255),
-            _clampInt(_lerpInt(a.green, b.green, t).toInt(), 0, 255),
-            _clampInt(_lerpInt(a.blue, b.blue, t).toInt(), 0, 255),
-          ).value,
+          Color.from(
+            alpha: _clampInt(_lerpInt(a.a, b.a, t), 0, 255),
+            red: _clampInt(_lerpInt(a.r, b.r, t), 0, 255),
+            green: _clampInt(_lerpInt(a.g, b.g, t), 0, 255),
+            blue: _clampInt(_lerpInt(a.b, b.b, t), 0, 255),
+          ).toARGB32(),
         );
       }
     }
@@ -141,12 +141,12 @@ class MColor extends Color {
 /// Linearly interpolate between two integers.
 ///
 /// Same as lerpDouble but specialized for non-null `int` type.
-double _lerpInt(int a, int b, double t) {
+double _lerpInt(num a, num b, double t) {
   return a + (b - a) * t;
 }
 
 /// Same as [num.clamp] but specialized for non-null [int].
-int _clampInt(int value, int min, int max) {
+double _clampInt(double value, double min, double max) {
   assert(min <= max, 'max must be greater or equals to the min');
   if (value < min) {
     return min;
@@ -159,6 +159,24 @@ int _clampInt(int value, int min, int max) {
 
 MColor _scaleAlpha(MColor a, double factor) {
   return MColor._(
-    a.withAlpha((a.alpha * factor).round().clamp(0, 255)).value,
+    a.withAlpha((a.a * factor).round().clamp(0, 255)).toARGB32(),
   );
+}
+
+extension ColorEx on Color {
+  int get intAlpha => _floatToInt8(a);
+  int get intRed => _floatToInt8(r);
+  int get intGreen => _floatToInt8(g);
+  int get intBlue => _floatToInt8(b);
+
+  int _floatToInt8(double x) {
+    return (x * 255.0).round() & 0xff;
+  }
+
+  int toARGB32() {
+    return _floatToInt8(a) << 24 |
+        _floatToInt8(r) << 16 |
+        _floatToInt8(g) << 8 |
+        _floatToInt8(b) << 0;
+  }
 }

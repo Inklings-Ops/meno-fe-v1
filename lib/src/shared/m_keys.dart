@@ -7,7 +7,10 @@ class MKeys {
   static const String fcmToken = '_fcm_Token';
   static const String settings = '_settings_';
   static const String notificationChannelId = '_meno_notification_channel_';
+  static const String broadcastDetailsKey = '_broadcast_details_key_';
   static const int notificationId = 888;
+
+
   static const String broadcastBackgroundTask = '_broadcast_background_task_';
   static const String streamBackgroundTask = '_stream_background_task_';
   static const String endBackgroundTask = '_end_background_task_';

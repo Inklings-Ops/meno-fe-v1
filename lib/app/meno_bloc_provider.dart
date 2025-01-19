@@ -12,9 +12,16 @@ class MenoBlocProvider extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => di<SessionCubit>()),
-        BlocProvider(create: (_) => SocketBloc()),
+        BlocProvider(
+          create: (_) => SocketBloc(broadcast: di<IBroadcastFacade>()),
+        ),
         BlocProvider(create: (_) => TimerCubit()),
-        BlocProvider(create: (_) => LiveKitBloc(liveKit: di<LiveKitService>())),
+        BlocProvider(
+          create: (_) => LiveKitBloc(
+            liveKit: di<LiveKitService>(),
+            background: di<BackgroundService>(),
+          ),
+        ),
         BlocProvider(create: (_) => LiveBloc(liveKit: di<LiveKitService>())),
         BlocProvider(create: (_) => AccountBloc(facade: di<IAuthFacade>())),
         BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),

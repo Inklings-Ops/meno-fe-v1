@@ -3,21 +3,18 @@ import 'package:meno_fe_v1/meno.dart';
 
 class NoteEditorToolbar extends StatelessWidget {
   const NoteEditorToolbar({required this.controller, super.key});
-
   final QuillController controller;
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
     return SizedBox(
       height: 56,
       child: Card(
-        color: colors.surfaceTint,
+        color: MColorScheme.of(context)!.surfaceTint,
         shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
         child: QuillToolbar.simple(
-          configurations: QuillSimpleToolbarConfigurations(
-            controller: controller,
+          controller: controller,
+          configurations: const QuillSimpleToolbarConfigurations(
             showRedo: false,
             showUndo: false,
             showFontFamily: false,

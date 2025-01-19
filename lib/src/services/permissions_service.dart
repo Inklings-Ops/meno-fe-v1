@@ -1,3 +1,7 @@
+
+// ignore_for_file: join_return_with_assignment
+
+import 'package:flutter_background/flutter_background.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -7,22 +11,41 @@ const _maxRetries = 5;
 @singleton
 class PermissionsService {
   bool _notificationPermissionStatus = false;
-  bool get notificationPermissionStatus => _notificationPermissionStatus;
-
   bool _microphonePermissionStatus = false;
-  bool get microphonePermissionStatus => _microphonePermissionStatus;
+  bool _backgroundPermissionStatus = false;
 
   int _retryCount = 0;
+  bool get microphonePermissionStatus => _microphonePermissionStatus;
+  bool get notificationPermissionStatus => _notificationPermissionStatus;
+  bool get backgroundPermissionStatus => _backgroundPermissionStatus;
 
-  Future<bool> requestNotificationsPermissions(BuildContext context) async {
-    await _handlePermissionsRequest(
-      context: context,
-      permission: Permission.notification,
-      onGranted: () => _notificationPermissionStatus = true,
-      title: 'Notifications',
-      message: 'Notifications permission is needed to start a broadcast.',
-    );
-    return _notificationPermissionStatus;
+  Future<bool> _requestBackgroundProceses() async {
+    var result = await FlutterBackground.hasPermissions;
+    result = await FlutterBackground.initialize().then((value) async {
+      if (!value) return FlutterBackground.initialize();
+      return result;
+    });
+    return result;
+  }
+
+  Future<bool> requestBackgroundProcesses(BuildContext context) async {
+    _backgroundPermissionStatus = await _requestBackgroundProceses();
+    if (context.mounted) {
+      if (!_backgroundPermissionStatus) {
+        await context.showPermissionsRequestDialog(
+          title: 'Background Processes',
+          message: 'Allow Menō to run in the background',
+          onTryAgain: () async {
+            router.pop();
+            final status = await _requestBackgroundProceses();
+            if (status) {
+              _retryCount = 0;
+            }
+          },
+        );
+      }
+    }
+    return _backgroundPermissionStatus;
   }
 
   Future<bool> requestMicPermissions(BuildContext context) async {
@@ -34,6 +57,17 @@ class PermissionsService {
       message: 'Microphone permission is needed to start a broadcast.',
     );
     return _microphonePermissionStatus;
+  }
+
+  Future<bool> requestNotificationsPermissions(BuildContext context) async {
+    await _handlePermissionsRequest(
+      context: context,
+      permission: Permission.notification,
+      onGranted: () => _notificationPermissionStatus = true,
+      title: 'Notifications',
+      message: 'Notifications permission is needed to start a broadcast.',
+    );
+    return _notificationPermissionStatus;
   }
 
   Future<void> _handlePermissionsRequest({
@@ -53,11 +87,21 @@ class PermissionsService {
           message: message,
         );
       } else if (permissionStatus.isPermanentlyDenied) {
-        await _promptRedirect(context, title);
+        await promptRedirect(context, title);
       } else {
         onGranted();
         _retryCount = 0;
       }
+    }
+  }
+
+  Future<void> promptRedirect(BuildContext context, String title) async {
+    final shouldRedirect = await context.showPermissionRedirectDialog(
+      '''You need to enable $title permissions in Settings to use this feature. Would you like to open Settings now?''',
+    );
+
+    if (shouldRedirect != null && shouldRedirect == true) {
+      await openAppSettings();
     }
   }
 
@@ -85,15 +129,5 @@ class PermissionsService {
         }
       },
     );
-  }
-
-  Future<void> _promptRedirect(BuildContext context, String message) async {
-    final shouldRedirect = await context.showPermissionRedirectDialog(
-      '''You need to enable $message permissions in Settings to use this feature. Would you like to open Settings now?''',
-    );
-
-    if (shouldRedirect != null && shouldRedirect == true) {
-      await openAppSettings();
-    }
   }
 }
