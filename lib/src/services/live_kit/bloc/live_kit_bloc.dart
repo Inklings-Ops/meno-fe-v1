@@ -5,17 +5,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'live_kit_bloc.freezed.dart';
-
 part 'live_kit_event.dart';
-
 part 'live_kit_state.dart';
 
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
-  LiveKitBloc({
-    required LiveKitService liveKit,
-    required BackgroundService background,
-  })  : _liveKit = liveKit,
-        _background = background,
+  LiveKitBloc({required LiveKitService liveKit})
+      : _liveKit = liveKit,
         super(const LiveKitState()) {
     on<LiveKitBroadcast>(_onBroadcast);
     on<LiveKitStream>(_onStream);
@@ -24,7 +19,6 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   }
 
   final LiveKitService _liveKit;
-  final BackgroundService _background;
 
   bool get isLoading => state.status is LiveKitConnecting;
 
@@ -81,7 +75,6 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     LiveKitDisconnect event,
     Emitter<LiveKitState> emit,
   ) async {
-    await _background.stopBroadcastBackgroundProccess();
     await _liveKit.disconnect();
     emit(state.copyWith(status: const LiveKitDisconnected()));
   }

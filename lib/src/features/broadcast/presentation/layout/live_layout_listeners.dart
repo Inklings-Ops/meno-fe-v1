@@ -2,20 +2,22 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
-class LiveLayoutListeners extends StatelessWidget {
+class LiveLayoutListeners extends HookWidget {
   const LiveLayoutListeners({required this.child, super.key});
 
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final chat = context.read<ChatListBloc>();
-    final live = context.read<LiveBloc>();
-    final livekit = context.read<LiveKitBloc>();
-    final participants = context.read<ParticipantsBloc>();
-    final socket = context.read<SocketBloc>();
-    final timer = context.read<TimerCubit>();
-    final background = di<BackgroundService>();
+    final chat = context.watch<ChatListBloc>();
+    final live = context.watch<LiveBloc>();
+    final livekit = context.watch<LiveKitBloc>();
+    final participants = context.watch<ParticipantsBloc>();
+    final socket = context.watch<SocketBloc>();
+    final timer = context.watch<TimerCubit>();
+
+    final broadcastBloc = context.watch<BroadcastBloc>();
+    final streamBloc = context.watch<StreamBloc>();
 
     return MultiBlocListener(
       listeners: [
@@ -29,11 +31,11 @@ class LiveLayoutListeners extends StatelessWidget {
                 if (isStream) return router.pop();
               },
               broadcastConnected: () {
-                final broadcast = context.read<BroadcastBloc>().state.broadcast;
+                final broadcast = broadcastBloc.state.broadcast;
                 socket.add(SocketStartBroadcast(broadcast.id));
               },
               streamConnected: () {
-                final broadcast = context.read<StreamBloc>().state.broadcast;
+                final broadcast = streamBloc.state.broadcast;
                 socket.add(SocketJoinBroadcast(broadcast.id));
               },
             );
@@ -48,18 +50,17 @@ class LiveLayoutListeners extends StatelessWidget {
                 context.showErrorSnackBar(error);
                 if (isStream) return router.pop();
               },
-              broadcastStarted: () async {
-                final broadcast = context.read<BroadcastBloc>().state.broadcast;
+              broadcastStarted: () {
+                final broadcast = broadcastBloc.state.broadcast;
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));
                 timer.start();
                 live.add(const LiveStarted());
                 live.add(const GoLive());
-                await background.startBroadcastBackgroundProcess(broadcast);
               },
               broadcastEnded: () async {
-                final broadcast = context.read<BroadcastBloc>().state.broadcast;
+                final broadcast = broadcastBloc.state.broadcast;
                 participants.add(GetAllParticipants(broadcast.id));
                 timer.stop();
                 live.add(const LiveReset());
@@ -69,34 +70,34 @@ class LiveLayoutListeners extends StatelessWidget {
                   await router.push<void>(Routes.endedBroadcast);
                 }
               },
-              broadcastJoined: () async {
-                final broadcast = context.read<StreamBloc>().state.broadcast;
+              broadcastJoined: () {
+                final broadcast = streamBloc.state.broadcast;
                 socket.add(SocketGetMessages(broadcast.id));
                 chat.add(InitializeChatList(broadcast));
                 participants.add(GetLiveParticipants(broadcast.id));
                 timer.setAndStart(broadcast.startTime);
                 live.add(const LiveStarted());
                 live.add(const GoStreaming());
-                await background.startBroadcastBackgroundProcess(broadcast);
               },
-              broadcastLeft: () async {
+              broadcastLeft: () {
                 live.add(const LiveReset());
                 participants.add(const ParticipantsReset());
                 chat.add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                await timer.dispose();
+                timer.dispose();
+                streamBloc.add(const StreamReset());
                 router.go(Routes.home);
               },
-              endedBroadcast: (data) async {
-                if (live.state is Live) return;
-                live.add(const LiveReset());
-                livekit.add(const LiveKitDisconnect());
-                participants.add(const ParticipantsReset());
-                chat.add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                context.showErrorSnackBar(data.reason.message);
-                router.go(Routes.home);
-                await timer.dispose();
+              endedBroadcast: (data) {
+                if (live.state is Streaming) {
+                  live.add(const LiveReset());
+                  livekit.add(const LiveKitDisconnect());
+                  participants.add(const ParticipantsReset());
+                  chat.add(const ChatReset());
+                  streamBloc.add(const StreamReset());
+                  timer.dispose();
+                  context.showErrorSnackBar(data.reason.message);
+                  router.go(Routes.home);
+                }
               },
               messagesReceived: (chats) {
                 chat.add(LoadChatMessages(chats));

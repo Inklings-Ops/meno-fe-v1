@@ -9,7 +9,6 @@ class HomePage extends HookWidget {
   Widget build(BuildContext context) {
     final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
     final liveBroadcastsCubit = context.read<LiveBroadcastsBloc>();
-    final liveKit = context.read<LiveKitBloc>();
 
     Future<void> onRefresh() async {
       final liveBroadcasts = liveBroadcastsCubit.stream.first;

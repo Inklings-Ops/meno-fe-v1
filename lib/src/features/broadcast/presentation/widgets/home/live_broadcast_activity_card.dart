@@ -38,6 +38,7 @@ class LiveBroadcastActivityCard extends StatelessWidget {
       if (value == null || value == false) {
         return;
       } else {
+        di<BackgroundService>().stopBroadcastBackgroundProcess();
         socket.add(SocketEndBroadcast(broadcastId));
         livekit.add(const LiveKitDisconnect());
         return;

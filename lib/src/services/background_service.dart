@@ -36,7 +36,7 @@ class BackgroundService {
     return false;
   }
 
-  Future<void> stopBroadcastBackgroundProccess() async {
+  Future<void> stopBroadcastBackgroundProcess() async {
     if (Platform.isAndroid) {
       try {
         await FlutterBackground.disableBackgroundExecution();

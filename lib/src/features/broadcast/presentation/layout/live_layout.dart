@@ -26,23 +26,23 @@ class _LiveLayoutState extends State<LiveLayout>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return LiveLayoutListeners(
-      child: Stack(
-        children: [
-          Scaffold(
-            appBar: BroadcastAppBar(
-              controller: controller,
-              onTabTap: widget.navigationShell.goBranch,
-            ),
-            body: MTabBarView(
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: BroadcastAppBar(
+            controller: controller,
+            onTabTap: widget.navigationShell.goBranch,
+          ),
+          body: LiveLayoutListeners(
+            child: MTabBarView(
               controller: controller,
               children: widget.children,
               onPageChanged: (_) => FocusScope.of(context).unfocus(),
             ),
           ),
-          const LiveLoadingIndicatorOverlay(),
-        ],
-      ),
+        ),
+        const LiveLoadingIndicatorOverlay(),
+      ],
     );
   }
 

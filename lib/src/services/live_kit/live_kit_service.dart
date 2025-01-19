@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:livekit_client/livekit_client.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 export 'package:livekit_client/livekit_client.dart';
@@ -23,7 +23,7 @@ class LiveKitService extends Object with Disposable {
     required String token,
     bool isHost = false,
   }) async {
-    await room.disconnect();
+    // await room.disconnect();
 
     _events = BehaviorSubject<RoomEvent>();
 
@@ -31,14 +31,10 @@ class LiveKitService extends Object with Disposable {
     _setupListener();
 
     try {
-      await room.prepareConnection(Env.menoLiveKitUrl, token);
-      await room.connect(
-        Env.menoLiveKitUrl,
-        token,
-        fastConnectOptions: FastConnectOptions(
-          microphone: TrackOption(enabled: isHost),
-        ),
-      );
+      // await room.prepareConnection(Env.menoLiveKitUrl, token);
+      await room.connect(Env.menoLiveKitUrl, token);
+
+      await room.localParticipant?.setMicrophoneEnabled(isHost);
 
       return right(unit);
     } on LiveKitException catch (e) {
@@ -95,9 +91,7 @@ class LiveKitService extends Object with Disposable {
 
   /// Disconnects from the room, ensuring resources are freed.
   Future<void> disconnect() async {
-    if (room.connectionState == ConnectionState.connected) {
-      await Future.wait([room.disconnect(), removeListener()]);
-    }
+    await Future.wait([room.disconnect(), removeListener()]);
   }
 
   /// Removes the listener from the room events.

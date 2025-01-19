@@ -1,7 +1,6 @@
 import UIKit
 import Flutter
 import flutter_downloader
-import flutter_background_service_ios
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,7 +8,6 @@ import flutter_background_service_ios
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    SwiftFlutterBackgroundServicePlugin.taskIdentifier = "com.inklings.meno"
     GeneratedPluginRegistrant.register(with: self)
     FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

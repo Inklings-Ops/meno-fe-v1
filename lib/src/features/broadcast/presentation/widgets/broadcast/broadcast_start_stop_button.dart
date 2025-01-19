@@ -2,6 +2,7 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/application/application.dart';
 import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class BroadcastStartStopButton extends StatelessWidget {
@@ -26,6 +27,7 @@ class BroadcastStartStopButton extends StatelessWidget {
     return context.showEndBroadcastDialog().then((result) {
       if (result != true) return;
       if (context.mounted) {
+        di<BackgroundService>().stopBroadcastBackgroundProcess();
         context.read<ParticipantsBloc>().add(GetAllParticipants(broadcast.id));
         context.read<SocketBloc>().add(SocketEndBroadcast(broadcast.id));
         context.read<TimerCubit>().stop();
