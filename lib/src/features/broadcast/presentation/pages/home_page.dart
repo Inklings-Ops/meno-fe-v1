@@ -56,16 +56,6 @@ class HomePage extends HookWidget {
             );
           },
         ),
-        BlocListener<BroadcastBloc, BroadcastState>(
-          listener: (context, state) {
-            state.status.whenOrNull(
-              failure: (error) {
-                context.read<LiveBloc>().add(const GoFailure());
-                context.showBroadcastError(error);
-              },
-            );
-          },
-        ),
       ],
       child: Scaffold(
         appBar: const HomeAppBar(),

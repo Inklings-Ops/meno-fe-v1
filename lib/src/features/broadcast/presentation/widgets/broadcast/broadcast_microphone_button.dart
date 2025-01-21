@@ -12,13 +12,6 @@ class BroadcastMicrophoneButton extends StatelessWidget {
         isMicrophoneEnabled: state.micEnabled,
         onTap: () => bloc.add(const LiveKitToggleMute()),
       ),
-      // builder: (context, state) => state.status.maybeWhen(
-      //   orElse: () => const MMicrophoneButton(isDisabled: true),
-      //   broadcastConnected: () => MMicrophoneButton(
-      //     isMicrophoneEnabled: state.micEnabled,
-      //     onTap: () => bloc.add(const LiveKitToggleMute()),
-      //   ),
-      // ),
     );
   }
 }
