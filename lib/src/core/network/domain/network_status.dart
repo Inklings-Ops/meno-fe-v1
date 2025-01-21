@@ -8,4 +8,7 @@ enum NetworkStatus {
 
   /// The device is not connected to the internet.
   disconnected,
+
+  /// The device is connected but the connection is slow
+  slow,
 }

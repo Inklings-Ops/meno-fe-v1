@@ -1,24 +1,21 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/meno.dart' hide Notification;
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
-
-class NotificationsPage extends HookConsumerWidget {
+class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifications = ref.watch(notificationsNotifierProvider);
-
-    return RefreshIndicator(
-      onRefresh: () => ref.read(notificationsNotifierProvider.future),
-      child: notifications.when(
-        data: (_) =>
-            _Content(notifications: ref.watch(sortNotificationsProvider)),
-        error: (_, __) => const Text('Oops, something unexpected happened'),
-        loading: () => const Center(child: CircularProgressIndicator()),
-      ),
-    );
+  Widget build(BuildContext context) {
+    // return RefreshIndicator(
+    //   onRefresh: () => ref.read(notificationsNotifierProvider.future),
+    //   child: notifications.when(
+    //     data: (_) =>
+    //         _Content(notifications: ref.watch(sortNotificationsProvider)),
+    //     error: (_, __) => const Text('Oops, something unexpected happened'),
+    //     loading: () => const Center(child: CircularProgressIndicator()),
+    //   ),
+    // );
+    return const Text('Oops');
   }
 }
 

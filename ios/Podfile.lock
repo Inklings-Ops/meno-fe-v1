@@ -1,34 +1,34 @@
 PODS:
   - connectivity_plus (0.0.1):
     - Flutter
-    - ReachabilitySwift
+    - FlutterMacOS
   - device_info_plus (0.0.1):
     - Flutter
-  - Firebase/CoreOnly (11.2.0):
-    - FirebaseCore (= 11.2.0)
-  - Firebase/Messaging (11.2.0):
+  - Firebase/CoreOnly (11.6.0):
+    - FirebaseCore (~> 11.6.0)
+  - Firebase/Messaging (11.6.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 11.2.0)
-  - firebase_core (3.6.0):
-    - Firebase/CoreOnly (= 11.2.0)
+    - FirebaseMessaging (~> 11.6.0)
+  - firebase_core (3.10.0):
+    - Firebase/CoreOnly (= 11.6.0)
     - Flutter
-  - firebase_messaging (15.1.3):
-    - Firebase/Messaging (= 11.2.0)
+  - firebase_messaging (15.2.0):
+    - Firebase/Messaging (= 11.6.0)
     - firebase_core
     - Flutter
-  - FirebaseCore (11.2.0):
-    - FirebaseCoreInternal (~> 11.0)
+  - FirebaseCore (11.6.0):
+    - FirebaseCoreInternal (~> 11.6.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreInternal (11.4.2):
+  - FirebaseCoreInternal (11.6.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseInstallations (11.4.0):
-    - FirebaseCore (~> 11.0)
+  - FirebaseInstallations (11.6.0):
+    - FirebaseCore (~> 11.6.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
-  - FirebaseMessaging (11.2.0):
-    - FirebaseCore (~> 11.0)
+  - FirebaseMessaging (11.6.0):
+    - FirebaseCore (~> 11.6.0)
     - FirebaseInstallations (~> 11.0)
     - GoogleDataTransport (~> 10.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 8.0)
@@ -37,21 +37,17 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 8.0)
     - nanopb (~> 3.30910.0)
   - Flutter (1.0.0)
-  - flutter_background_service_ios (0.0.3):
-    - Flutter
-  - flutter_downloader (0.0.1):
-    - Flutter
-  - flutter_keyboard_visibility (0.0.1):
+  - flutter_keyboard_visibility_temp_fork (0.0.1):
     - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
-  - flutter_native_splash (0.0.1):
+  - flutter_native_splash (2.4.3):
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
-  - flutter_webrtc (0.9.36):
+  - flutter_webrtc (0.12.2):
     - Flutter
-    - WebRTC-SDK (= 114.5735.08)
+    - WebRTC-SDK (= 125.6422.06)
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -84,47 +80,45 @@ PODS:
     - GoogleUtilities/Privacy
   - image_picker_ios (0.0.1):
     - Flutter
-  - livekit_client (1.5.6):
+  - livekit_client (2.3.5):
     - Flutter
-    - WebRTC-SDK (= 114.5735.08)
+    - flutter_webrtc
+    - WebRTC-SDK (= 125.6422.06)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
   - nanopb/decode (3.30910.0)
   - nanopb/encode (3.30910.0)
-  - ObjectBox (1.9.2)
+  - ObjectBox (4.0.1)
   - objectbox_flutter_libs (0.0.1):
     - Flutter
-    - ObjectBox (= 1.9.2)
+    - ObjectBox (= 4.0.1)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
   - PromisesObjC (2.4.0)
-  - ReachabilitySwift (5.2.4)
+  - quill_native_bridge_ios (0.0.1):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - smart_auth (0.0.1):
-    - Flutter
   - sqflite (0.0.3):
     - Flutter
     - FlutterMacOS
   - Toast (4.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - WebRTC-SDK (114.5735.08)
+  - WebRTC-SDK (125.6422.06)
 
 DEPENDENCIES:
-  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
-  - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
-  - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
-  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
+  - flutter_keyboard_visibility_temp_fork (from `.symlinks/plugins/flutter_keyboard_visibility_temp_fork/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -135,8 +129,8 @@ DEPENDENCIES:
   - objectbox_flutter_libs (from `.symlinks/plugins/objectbox_flutter_libs/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - quill_native_bridge_ios (from `.symlinks/plugins/quill_native_bridge_ios/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - smart_auth (from `.symlinks/plugins/smart_auth/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
@@ -152,13 +146,12 @@ SPEC REPOS:
     - nanopb
     - ObjectBox
     - PromisesObjC
-    - ReachabilitySwift
     - Toast
     - WebRTC-SDK
 
 EXTERNAL SOURCES:
   connectivity_plus:
-    :path: ".symlinks/plugins/connectivity_plus/ios"
+    :path: ".symlinks/plugins/connectivity_plus/darwin"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_core:
@@ -167,12 +160,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
-  flutter_background_service_ios:
-    :path: ".symlinks/plugins/flutter_background_service_ios/ios"
-  flutter_downloader:
-    :path: ".symlinks/plugins/flutter_downloader/ios"
-  flutter_keyboard_visibility:
-    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
+  flutter_keyboard_visibility_temp_fork:
+    :path: ".symlinks/plugins/flutter_keyboard_visibility_temp_fork/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_native_splash:
@@ -193,52 +182,49 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  quill_native_bridge_ios:
+    :path: ".symlinks/plugins/quill_native_bridge_ios/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  smart_auth:
-    :path: ".symlinks/plugins/smart_auth/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
-  device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
-  Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
-  firebase_core: 2bedc3136ec7c7b8561c6123ed0239387b53f2af
-  firebase_messaging: 15d114e1a41fc31e4fbabcd48d765a19eec94a38
-  FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
-  FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
-  FirebaseInstallations: 6ef4a1c7eb2a61ee1f74727d7f6ce2e72acf1414
-  FirebaseMessaging: c9ec7b90c399c7a6100297e9d16f8a27fc7f7152
+  connectivity_plus: 2256d3e20624a7749ed21653aafe291a46446fee
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
+  firebase_core: 2337982fb78ee4d8d91e608b0a3d4f44346a93c8
+  firebase_messaging: f3bddfa28c2cad70b3341bf461e987a24efd28d6
+  FirebaseCore: 48b0dd707581cf9c1a1220da68223fb0a562afaa
+  FirebaseCoreInternal: d98ab91e2d80a56d7b246856a8885443b302c0c2
+  FirebaseInstallations: efc0946fc756e4d22d8113f7c761948120322e8c
+  FirebaseMessaging: e1aca1fcc23e8b9eddb0e33f375ff90944623021
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
-  flutter_downloader: b7301ae057deadd4b1650dc7c05375f10ff12c39
-  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
-  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
-  flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
-  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  flutter_webrtc: 55df3aaa802114dad390191a46c2c8d535751268
-  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
+  flutter_keyboard_visibility_temp_fork: 95b2d534bacf6ac62e7fcbe5c2a9e2c2a17ce06f
+  flutter_local_notifications: 395056b3175ba4f08480a7c5de30cd36d69827e4
+  flutter_native_splash: 6cad9122ea0fad137d23137dd14b937f3e90b145
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  flutter_webrtc: 9216845e00f7910a3fe8687116e448fe50e98a97
+  fluttertoast: 76fea30fcf04176325f6864c87306927bd7d2038
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
-  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
-  livekit_client: 381ed3cad6ba0b6ffbfffcf1b5db95ad1e61ffa2
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  livekit_client: 0e10a0d93da8d51dadf103f88652f657464e0a41
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  ObjectBox: 46757a559717ab49b1cc0612eaff82b705acf394
-  objectbox_flutter_libs: 103f3a273b594cb664255086a386740bc179f97d
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  ObjectBox: 0bc4bb75eea85f6af06b369148b334c2056bbc29
+  objectbox_flutter_libs: 3af037f7cc35e687acca01f1f6da6cb6c2abc22b
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  ReachabilitySwift: 32793e867593cfc1177f5d16491e3a197d2fccda
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  smart_auth: 4bedbc118723912d0e45a07e8ab34039c19e04f2
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  quill_native_bridge_ios: f47af4b14e7757968486641656c5d23250cee521
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  sqflite: c35dad70033b8862124f8337cc994a809fcd9fa3
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  WebRTC-SDK: c24d2a6c9f571f2ed42297cb8ffba9557093142b
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
+  WebRTC-SDK: 79942c006ea64f6fb48d7da8a4786dfc820bc1db
 
-PODFILE CHECKSUM: f23fe4a31bd0ae6433f755333d1a5c5025bc1957
+PODFILE CHECKSUM: b6f4313f2ef21fd1f253923f7ce17acf756affff
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

@@ -1,5 +1,4 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:meno_fe_v1/meno.dart';
 
 class MenoApp extends StatefulWidget {
@@ -15,29 +14,27 @@ class _MenoAppState extends State<MenoApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-      child: MaterialApp.router(
-        locale: DevicePreview.locale(context),
-        debugShowCheckedModeBanner: false,
-        routerDelegate: router.routerDelegate,
-        routeInformationParser: router.routeInformationParser,
-        routeInformationProvider: router.routeInformationProvider,
-        theme: MTheme.light,
-        darkTheme: MTheme.dark,
-        builder: (context, child) {
-          child = toastBuilder(context, child);
+    return MaterialApp.router(
+      locale: DevicePreview.locale(context),
+      debugShowCheckedModeBanner: false,
+      routerDelegate: router.routerDelegate,
+      routeInformationParser: router.routeInformationParser,
+      routeInformationProvider: router.routeInformationProvider,
+      theme: MTheme.light,
+      darkTheme: MTheme.dark,
+      builder: (context, child) {
+        child = toastBuilder(context, child);
 
-          return ResponsiveBreakpoints.builder(
-            breakpoints: const [
-              Breakpoint(start: 0, end: 450, name: PHONE),
-              Breakpoint(start: 451, end: 600, name: MOBILE),
-              Breakpoint(start: 601, end: 800, name: TABLET),
-              Breakpoint(start: 801, end: 1920, name: DESKTOP),
-            ],
-            child: DevicePreview.appBuilder(context, child),
-          );
-        },
-      ),
+        return ResponsiveBreakpoints.builder(
+          breakpoints: const [
+            Breakpoint(start: 0, end: 450, name: PHONE),
+            Breakpoint(start: 451, end: 600, name: MOBILE),
+            Breakpoint(start: 601, end: 800, name: TABLET),
+            Breakpoint(start: 801, end: 1920, name: DESKTOP),
+          ],
+          child: DevicePreview.appBuilder(context, child),
+        );
+      },
     );
   }
 
