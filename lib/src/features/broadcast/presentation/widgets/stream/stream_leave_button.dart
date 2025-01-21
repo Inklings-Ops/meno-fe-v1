@@ -19,6 +19,7 @@ class StreamLeaveButton extends StatelessWidget {
         context.showLeaveBroadcastDialog().then((value) {
           if (value != true) return;
           if (context.mounted) {
+            di<BackgroundService>().stopBroadcastBackgroundProcess();
             socket.add(SocketLeaveBroadcast(broadcast.id));
             context.read<LiveKitBloc>().add(const LiveKitDisconnect());
             context.read<LiveBloc>().add(const LiveReset());

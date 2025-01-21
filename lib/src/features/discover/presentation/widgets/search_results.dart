@@ -60,7 +60,7 @@ class _ResultList extends StatelessWidget {
             imageUrl: broadcast.imageUrl,
             host: broadcast.fullName,
             liveCount: broadcast.totalListeners,
-            onTap: () => context.showJoinLiveBroadcastModal(broadcast),
+            onTap: () => router.push(Routes.preStreamModal, extra: broadcast),
           );
         }
 

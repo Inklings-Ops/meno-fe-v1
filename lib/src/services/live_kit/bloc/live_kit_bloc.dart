@@ -8,6 +8,9 @@ part 'live_kit_bloc.freezed.dart';
 part 'live_kit_event.dart';
 part 'live_kit_state.dart';
 
+      const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
+
+
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   LiveKitBloc({required LiveKitService liveKit})
       : _liveKit = liveKit,
@@ -26,39 +29,57 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     LiveKitBroadcast event,
     Emitter<LiveKitState> emit,
   ) async {
-    emit(state.copyWith(status: const LiveKitConnecting()));
-    final result = await _liveKit.broadcast2(event.token);
-    emit(
-      result.fold(
-        (failure) => state.copyWith(
-          micEnabled: false,
-          status: LiveKitConnectionFailed(error: failure.message),
+    final token = event.token;
+    if (token == null) {
+       emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(error: nullBroadcastTokenErrorMessage,),
         ),
-        (success) => state.copyWith(
-          micEnabled: true,
-          status: const LiveKitBroadcastConnected(),
+      );
+    } else {
+      emit(state.copyWith(status: const LiveKitConnecting()));
+      final result = await _liveKit.broadcast2(token);
+      emit(
+        result.fold(
+          (failure) => state.copyWith(
+            micEnabled: false,
+            status: LiveKitConnectionFailed(error: failure.message),
+          ),
+          (success) => state.copyWith(
+            micEnabled: true,
+            status: const LiveKitBroadcastConnected(),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Future<void> _onStream(
     LiveKitStream event,
     Emitter<LiveKitState> emit,
   ) async {
-    emit(state.copyWith(status: const LiveKitConnecting()));
-    final result = await _liveKit.stream2(event.token);
-    emit(
-      result.fold(
-        (failure) => state.copyWith(
-          status: LiveKitConnectionFailed(
-            error: failure.message,
-            isStream: true,
-          ),
+    final token = event.token;
+    if (token == null) {
+      emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(error: nullBroadcastTokenErrorMessage,),
         ),
-        (success) => state.copyWith(status: const LiveKitStreamConnected()),
-      ),
-    );
+      );
+    } else {
+      emit(state.copyWith(status: const LiveKitConnecting()));
+      final result = await _liveKit.stream2(token);
+      emit(
+        result.fold(
+          (failure) => state.copyWith(
+            status: LiveKitConnectionFailed(
+              error: failure.message,
+              isStream: true,
+            ),
+          ),
+          (success) => state.copyWith(status: const LiveKitStreamConnected()),
+        ),
+      );
+    }
   }
 
   Future<void> _onMuteToggled(
@@ -84,4 +105,6 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     await _liveKit.dispose();
     return super.close();
   }
+
+ 
 }

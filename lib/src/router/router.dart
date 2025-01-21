@@ -174,6 +174,14 @@ final router = GoRouter(
     ///
     /// Folder Form Modal: Shows the modal to create a new folder
     GoRoute(
+      path: Routes.preStreamModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => ModalPage<dynamic>(
+        isScrollControlled: true,
+        child: PreStreamModal(broadcast: state.extra! as Broadcast),
+      ),
+    ),
+    GoRoute(
       path: Routes.folderFormModal,
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) {

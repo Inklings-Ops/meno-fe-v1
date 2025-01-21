@@ -25,7 +25,7 @@ class LiveBroadcastCard extends StatelessWidget {
           return;
         } else {
           live.maybeWhen(
-            orElse: () => context.showJoinLiveBroadcastModal(broadcast),
+            orElse: () => router.push(Routes.preStreamModal, extra:broadcast),
             streaming: () => router.push(Routes.broadcastTab, extra: true),
             reconnecting: () => router.push(Routes.broadcastTab, extra: true),
           );

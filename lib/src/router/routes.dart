@@ -43,6 +43,7 @@ class Routes {
   static const String noteSection = '/notes-section';
   static const String folderSection = '/folder-section';
 
+  static const String preStreamModal = '/pre-stream-modal';
   static const String noteCardOptionsModal = '/note-card-options-modal';
   static const String addNoteToFolderModal = '/add-note-to-folder-modal';
   static const String moveNoteToFolderModal = '/move-note-to-folder-modal';

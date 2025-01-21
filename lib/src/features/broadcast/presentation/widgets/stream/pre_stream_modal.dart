@@ -1,6 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/background_service.dart';
 import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
+import 'package:meno_fe_v1/src/services/socket/socket.dart';
 
 class PreStreamModal extends HookWidget {
   const PreStreamModal({required this.broadcast, super.key});
@@ -9,20 +11,44 @@ class PreStreamModal extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<StreamBloc, StreamState>(
-      listener: (context, state) {
-        state.status.whenOrNull(
-          failure: (error) {
-            context.read<LiveBloc>().add(const GoFailure());
-            context.showBroadcastError(error);
+    final background = di<BackgroundService>();
+    final livekit = context.read<LiveKitBloc>();
+    final live = context.watch<LiveBloc>();
+    final socket = context.watch<SocketBloc>();
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<StreamBloc, StreamState>(
+          listener: (context, state) {
+            state.status.whenOrNull(
+              failure: (error) {
+                context.read<LiveBloc>().add(const GoFailure());
+                context.showBroadcastError(error);
+              },
+              streamJoined: () {
+                final broadcast = state.broadcast;
+                background.startBroadcastBackgroundProcess(broadcast);
+                livekit.add(LiveKitStream(token: broadcast.broadcastToken));
+              },
+            );
           },
-          streamJoined: () {
-            final token = state.broadcast.broadcastToken!;
-            context.read<LiveKitBloc>().add(LiveKitStream(token));
-            router.popAndPush(Routes.broadcastTab, extra: true);
+        ),
+        BlocListener<LiveKitBloc, LiveKitState>(
+          listener: (context, state) {
+            state.status.whenOrNull(
+              failed: (error, isStream) {
+                background.stopBroadcastBackgroundProcess();
+                live.add(const GoFailure());
+                context.showErrorSnackBar(error);
+              },
+              streamConnected: () {
+                socket.add(SocketJoinBroadcast(broadcast.id));
+                router.popAndPush(Routes.broadcastTab, extra: true);
+              },
+            );
           },
-        );
-      },
+        ),
+      ],
       child: MModal(
         title: 'Stream',
         builder: (context) => DraggableScrollableSheet(

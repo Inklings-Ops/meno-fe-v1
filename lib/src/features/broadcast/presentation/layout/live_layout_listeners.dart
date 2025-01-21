@@ -22,21 +22,15 @@ class LiveLayoutListeners extends HookWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
-          listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
             state.status.whenOrNull(
               failed: (error, isStream) {
                 live.add(const GoFailure());
                 context.showErrorSnackBar(error);
-                if (isStream) return router.pop();
               },
               broadcastConnected: () {
                 final broadcast = broadcastBloc.state.broadcast;
                 socket.add(SocketStartBroadcast(broadcast.id));
-              },
-              streamConnected: () {
-                final broadcast = streamBloc.state.broadcast;
-                socket.add(SocketJoinBroadcast(broadcast.id));
               },
             );
           },

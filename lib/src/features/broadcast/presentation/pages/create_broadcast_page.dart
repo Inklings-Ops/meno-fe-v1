@@ -56,7 +56,7 @@ class CreateBroadcastView extends HookWidget {
               broadcastStarted: () async {
                 final broadcast = broadcastBloc.state.broadcast;
                 await background.startBroadcastBackgroundProcess(broadcast);
-                liveKit.add(LiveKitBroadcast(state.broadcast.broadcastToken!));
+                liveKit.add(LiveKitBroadcast(token: broadcast.broadcastToken));
                 await router.replace<void>(Routes.broadcastTab);
               },
             );

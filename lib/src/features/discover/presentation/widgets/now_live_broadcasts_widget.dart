@@ -76,7 +76,7 @@ class _List extends StatelessWidget {
                 broadcast.creatorFullName ??
                 '',
             liveCount: broadcast.totalListeners,
-            onTap: () => context.showJoinLiveBroadcastModal(broadcast),
+            onTap: () => router.push(Routes.preStreamModal, extra: broadcast),
           );
         },
         itemCount: broadcasts.length,

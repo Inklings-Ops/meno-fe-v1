@@ -95,8 +95,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.obj,
       preResolve: true,
     );
-    gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
+    gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i179.PermissionsService>(() => _i179.PermissionsService());
     gh.lazySingleton<_i1009.AuthRemoteDatasource>(
         () => registerModule.authRemoteDatasource);
@@ -120,9 +120,9 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
-    gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
-    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
+    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
+    gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i664.BibleLocalDatasource>(() =>
@@ -143,11 +143,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i463.NetworkService(gh<_i973.InternetConnectionChecker>()));
     gh.factory<_i882.AuthLocalDatasource>(() =>
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
+    gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
+        storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i396.BroadcastLocalDatasource>(() =>
         _i396.BroadcastLocalDatasource(
             storage: gh<_i264.SecureStorageService>()));
-    gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
-        storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i720.IBibleFacade>(() => _i442.BibleFacade(
           local: gh<_i150.BibleLocalDatasource>(),
           network: gh<_i463.NetworkService>(),

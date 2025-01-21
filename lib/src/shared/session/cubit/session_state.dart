@@ -100,6 +100,7 @@ extension SessionStateX on SessionState {
         Routes.remoteNoteFromFolderDialog,
         Routes.othersProfileOptionsModal,
         Routes.editProfileModal,
+        Routes.preStreamModal,
       ],
     );
   }

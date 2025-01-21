@@ -40,7 +40,7 @@ class BroadcastStartStopButton extends StatelessWidget {
     context.read<LiveBloc>().add(const GoLoading());
     final broadcast = context.read<BroadcastBloc>().state.broadcast;
     final liveKit = context.read<LiveKitBloc>();
-    liveKit.add(LiveKitBroadcast(broadcast.broadcastToken!));
+    liveKit.add(LiveKitBroadcast(token: broadcast.broadcastToken));
   }
 }
 

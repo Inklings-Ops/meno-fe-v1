@@ -1,7 +1,6 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class LiveStreamActivityCard extends StatelessWidget {
   const LiveStreamActivityCard({super.key});
@@ -37,6 +36,7 @@ class LiveStreamActivityCard extends StatelessWidget {
       if (value == null || value == false) {
         return;
       } else {
+        di<BackgroundService>().stopBroadcastBackgroundProcess();
         socket.add(SocketLeaveBroadcast(broadcastId));
         livekit.add(const LiveKitDisconnect());
         return;
