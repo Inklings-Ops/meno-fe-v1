@@ -33,6 +33,15 @@ class LiveLayoutListeners extends HookWidget {
                 final broadcast = broadcastBloc.state.broadcast;
                 socket.add(SocketStartBroadcast(broadcast.id));
               },
+              broadcastReconnected: () {
+                final broadcast = broadcastBloc.state.broadcast;
+                chat.add(InitializeChatList(broadcast));
+                socket.add(SocketGetMessages(broadcast.id));
+                participants.add(GetLiveParticipants(broadcast.id));
+                timer.start();
+                timer.setAndStart(broadcast.startTime);
+                live.add(const GoLive());
+              },
             );
           },
         ),

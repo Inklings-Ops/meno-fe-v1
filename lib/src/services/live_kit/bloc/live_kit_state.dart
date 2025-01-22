@@ -15,8 +15,11 @@ class LiveKitStatus with _$LiveKitStatus {
   const factory LiveKitStatus.connecting() = LiveKitConnecting;
 
   const factory LiveKitStatus.broadcastConnected() = LiveKitBroadcastConnected;
+  const factory LiveKitStatus.broadcastReconnected() =
+      LiveKitBroadcastReconnected;
 
   const factory LiveKitStatus.streamConnected() = LiveKitStreamConnected;
+  const factory LiveKitStatus.streamReconnected() = LiveKitStreamReconnected;
 
   const factory LiveKitStatus.failed({
     required String error,

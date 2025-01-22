@@ -57,6 +57,8 @@ class Routes {
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
+  static const String leaveAndJoinDialog =
+      '/leave-and-join-stream-dialog';
 }
 
 class ModalPage<T> extends Page<void> {

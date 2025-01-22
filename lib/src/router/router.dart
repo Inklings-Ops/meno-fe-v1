@@ -301,6 +301,15 @@ final router = GoRouter(
         ),
       ),
     ),
+    GoRoute(
+      path: Routes.leaveAndJoinDialog,
+      pageBuilder: (context, state) => DialogPage<void>(
+        key: state.pageKey,
+        builder: (context) => LeaveAndJoinDialog(
+          broadcast: state.extra! as Broadcast,
+        ),
+      ),
+    ),
 
     /// Shell Routes
     ///

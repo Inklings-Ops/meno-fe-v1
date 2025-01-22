@@ -1,8 +1,7 @@
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/notification_service.dart';
-import 'package:meno_fe_v1/src/services/permissions_service.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 
 class MLayoutPage extends HookWidget {
   const MLayoutPage({
@@ -65,9 +64,51 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return Scaffold(
-      body: Row(children: [sideNavRail, Expanded(child: shell)]),
-      bottomNavigationBar: bottomNavBar,
+    final broadcastBloc = context.read<BroadcastBloc>();
+    final livekit = context.read<LiveKitBloc>();
+    final live = context.read<LiveBloc>();
+    final background = di<BackgroundService>();
+    // final streamBloc = context.read<StreamBloc>();
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SocketBloc, SocketState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              hostReconnected: (value) {
+                Logger().f('Host reconnected => //');
+                live.add(const GoLoading());
+                broadcastBloc.add(const BroadcastReconnectRequested());
+              },
+            );
+          },
+        ),
+        BlocListener<BroadcastBloc, BroadcastState>(
+          listener: (context, state) {
+            state.status.whenOrNull(
+              failure: (error) {
+                live.add(const GoFailure());
+                context.showBroadcastError(error);
+              },
+              broadcastStarted: () async {
+                final broadcast = broadcastBloc.state.broadcast;
+                await background.startBroadcastBackgroundProcess(broadcast);
+                livekit.add(
+                  LiveKitBroadcast(
+                    token: broadcast.broadcastToken,
+                    isReconnect: true,
+                  ),
+                );
+                await router.push<void>(Routes.broadcastTab);
+              },
+            );
+          },
+        ),
+      ],
+      child: Scaffold(
+        body: Row(children: [sideNavRail, Expanded(child: shell)]),
+        bottomNavigationBar: bottomNavBar,
+      ),
     );
   }
 

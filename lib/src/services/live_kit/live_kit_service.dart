@@ -23,6 +23,9 @@ class LiveKitService extends Object with Disposable {
     required String token,
     bool isHost = false,
   }) async {
+    if (room.connectionState == ConnectionState.connected) {
+      await room.disconnect();
+    }
     _events = BehaviorSubject<RoomEvent>();
     listener = room.createListener();
     _setupListener();

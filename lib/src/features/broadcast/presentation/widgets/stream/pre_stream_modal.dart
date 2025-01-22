@@ -23,6 +23,9 @@ class PreStreamModal extends HookWidget {
             state.status.whenOrNull(
               failure: (error) {
                 context.read<LiveBloc>().add(const GoFailure());
+                error.whenOrNull(
+                  message: (message) => showLeaveJoinDialog(context, message),
+                );
                 context.showBroadcastError(error);
               },
               streamJoined: (token) {
@@ -85,6 +88,23 @@ class PreStreamModal extends HookWidget {
         ),
       ),
     );
+  }
+
+  Future<void> showLeaveJoinDialog(BuildContext context, String message) async {
+    final hasLeave = message.contains('leave');
+    final isNotRoute = router.state?.path != Routes.leaveAndJoinDialog;
+    if (hasLeave && isNotRoute) {
+      final response = await router.push<String?>(
+        Routes.leaveAndJoinDialog,
+        extra: broadcast,
+      );
+      if (response == 'rejoin' && context.mounted) {
+        context.read<LiveBloc>().add(const GoLoading());
+        context.read<StreamBloc>().add(StreamJoinPressed(broadcast.id));
+      } else {
+        router.pop();
+      }
+    }
   }
 }
 

@@ -102,6 +102,7 @@ extension SessionStateX on SessionState {
         Routes.editProfileModal,
         Routes.preStreamModal,
         Routes.chatPage,
+        Routes.leaveAndJoinDialog,
       ],
     );
   }

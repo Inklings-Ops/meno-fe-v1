@@ -48,7 +48,9 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
           ),
           (success) => state.copyWith(
             micEnabled: true,
-            status: const LiveKitBroadcastConnected(),
+            status: event.isReconnect
+                ? const LiveKitBroadcastReconnected()
+                : const LiveKitBroadcastConnected(),
           ),
         ),
       );
@@ -79,7 +81,11 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
               isStream: true,
             ),
           ),
-          (success) => state.copyWith(status: const LiveKitStreamConnected()),
+          (success) => state.copyWith(
+            status: event.isReconnect
+                ? const LiveKitStreamReconnected()
+                : const LiveKitStreamConnected(),
+          ),
         ),
       );
     }
