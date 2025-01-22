@@ -137,6 +137,10 @@ final router = GoRouter(
       builder: (context, state) => const ResetPasswordSuccessPage(),
     ),
     GoRoute(
+      path: Routes.chatPage,
+      builder: (context, state) => const ChatPage(),
+    ),
+    GoRoute(
       path: Routes.othersProfile,
       builder: (_, state) {
         final userId = Uid<User>.fromString(state.extra! as String);

@@ -5,7 +5,6 @@ import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatInputContainer extends HookWidget {
   const ChatInputContainer({required this.scrollController, super.key});
-
   final ScrollController scrollController;
 
   @override
@@ -22,20 +21,25 @@ class ChatInputContainer extends HookWidget {
         Container(
           alignment: Alignment.topCenter,
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-          child: Row(
+          child: Column(
             children: [
-              const Expanded(child: _ChatTextField()),
-              Spaces.horizontalLarge,
-              MIconButton(
-                size: 40,
-                iconSize: 20,
-                icon: const Icon(Icons.face),
-                isFilled: true,
-                fillColor: colors.outlineVariant2,
-                onPressed: () => chatListBloc.add(const ToggleShowReactions()),
+              Row(
+                children: [
+                  const Expanded(child: _ChatTextField()),
+                  Spaces.horizontalLarge,
+                  MIconButton(
+                    size: 40,
+                    iconSize: 20,
+                    icon: const Icon(Icons.face),
+                    isFilled: true,
+                    fillColor: colors.outlineVariant2,
+                    onPressed: () =>
+                        chatListBloc.add(const ToggleShowReactions()),
+                  ),
+                  Spaces.horizontalSmall,
+                  _SendButton(scrollController: scrollController),
+                ],
               ),
-              Spaces.horizontalSmall,
-              _SendButton(scrollController: scrollController),
             ],
           ),
         ),
@@ -97,13 +101,28 @@ class _SendButton extends StatelessWidget {
       const Reconnecting(),
     ].contains(context.watch<LiveBloc>().state);
 
-    void sendMessage() {
-      final event = SocketSendMessage(
-        senderId: currentUserId,
-        broadcastId: chatListBloc.state.broadcast.id.getOr(),
-        content: chatInputBloc.state.content!,
-        createdAt: DateTime.timestamp().toIso8601String(),
-      );
+    final inputState = chatInputBloc.state;
+    final isEditing = inputState.isEditing && inputState.initialChat != null;
+
+    void submit() {
+      late SocketEvent event;
+      if (isEditing) {
+        final chat = inputState.initialChat!;
+        event = SocketEditMessage(
+          id: chat.id,
+          senderId: chat.sender?.id ?? chat.senderId ?? currentUserId,
+          broadcastId: chat.broadcastId,
+          content: chatInputBloc.state.content!,
+          createdAt: DateTime.timestamp().toIso8601String(),
+        );
+      } else {
+        event = SocketSendMessage(
+          senderId: currentUserId,
+          broadcastId: chatListBloc.state.broadcast.id.getOr(),
+          content: chatInputBloc.state.content!,
+          createdAt: DateTime.timestamp().toIso8601String(),
+        );
+      }
 
       context.read<SocketBloc>().add(event);
 
@@ -114,6 +133,7 @@ class _SendButton extends StatelessWidget {
       );
 
       chatInputBloc.clearContent();
+      chatInputBloc.stopEditing();
     }
 
     return BlocBuilder<ChatInputCubit, ChatInputState>(
@@ -131,7 +151,7 @@ class _SendButton extends StatelessWidget {
                 color: colors.onPrimary,
                 size: 40,
                 iconSize: 20,
-                onPressed: sendMessage,
+                onPressed: submit,
               ),
             ],
           );

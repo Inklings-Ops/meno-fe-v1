@@ -8,8 +8,7 @@ part 'live_kit_bloc.freezed.dart';
 part 'live_kit_event.dart';
 part 'live_kit_state.dart';
 
-      const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
-
+const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
 
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   LiveKitBloc({required LiveKitService liveKit})
@@ -31,14 +30,16 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   ) async {
     final token = event.token;
     if (token == null) {
-       emit(
+      emit(
         state.copyWith(
-          status: const LiveKitConnectionFailed(error: nullBroadcastTokenErrorMessage,),
+          status: const LiveKitConnectionFailed(
+            error: nullBroadcastTokenErrorMessage,
+          ),
         ),
       );
     } else {
       emit(state.copyWith(status: const LiveKitConnecting()));
-      final result = await _liveKit.broadcast2(token);
+      final result = await _liveKit.broadcast(token);
       emit(
         result.fold(
           (failure) => state.copyWith(
@@ -62,12 +63,14 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     if (token == null) {
       emit(
         state.copyWith(
-          status: const LiveKitConnectionFailed(error: nullBroadcastTokenErrorMessage,),
+          status: const LiveKitConnectionFailed(
+            error: nullBroadcastTokenErrorMessage,
+          ),
         ),
       );
     } else {
       emit(state.copyWith(status: const LiveKitConnecting()));
-      final result = await _liveKit.stream2(token);
+      final result = await _liveKit.stream(token);
       emit(
         result.fold(
           (failure) => state.copyWith(
@@ -105,6 +108,4 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     await _liveKit.dispose();
     return super.close();
   }
-
- 
 }

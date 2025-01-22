@@ -26,11 +26,12 @@ class ChatTab extends HookWidget {
                       ? const ChatWelcomeWidget()
                       : const SizedBox(),
                 ),
-                SizedBox(
-                  height: 52,
-                  width: constraints.maxWidth,
-                  child: ChatInputContainer(scrollController: scrollController),
-                ),
+                // Container(
+                //   color: Colors.pink,
+                //   height: 370,
+                //   width: constraints.maxWidth,
+                //   child: ChatInputContainer(scrollController: scrollController),
+                // ),
               ],
             ),
           ),

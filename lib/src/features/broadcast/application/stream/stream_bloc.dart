@@ -31,7 +31,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       (joinBroadcast) => emit(
         state.copyWith(
           broadcast: joinBroadcast.broadcast,
-          status: const _StreamJoined(),
+          status: _StreamJoined(joinBroadcast.broadcastToken),
         ),
       ),
     );

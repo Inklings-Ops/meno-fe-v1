@@ -22,6 +22,7 @@ class LiveLayoutListeners extends HookWidget {
     return MultiBlocListener(
       listeners: [
         BlocListener<LiveKitBloc, LiveKitState>(
+          listenWhen: (p, c) => p.status != c.status,
           listener: (context, state) {
             state.status.whenOrNull(
               failed: (error, isStream) {

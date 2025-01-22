@@ -101,6 +101,7 @@ extension SessionStateX on SessionState {
         Routes.othersProfileOptionsModal,
         Routes.editProfileModal,
         Routes.preStreamModal,
+        Routes.chatPage,
       ],
     );
   }

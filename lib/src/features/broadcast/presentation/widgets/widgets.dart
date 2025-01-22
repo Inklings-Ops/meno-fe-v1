@@ -9,6 +9,7 @@ export 'broadcast_participant_list.dart';
 export 'broadcast_participants_modal.dart';
 export 'broadcast_status_widget.dart';
 export 'broadcast_title.dart';
+export 'chat_tab.dart';
 export 'create_broadcast/create_broadcast.dart';
 export 'ended_broadcast/ended_broadcast.dart';
 export 'home/home.dart';

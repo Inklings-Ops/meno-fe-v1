@@ -19,23 +19,16 @@ class LiveKitService extends Object with Disposable {
 
   Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
 
-  Future<Either<LiveKitException, Unit>> _connectFamily({
+  Future<Either<LiveKitException, Unit>> _connect({
     required String token,
     bool isHost = false,
   }) async {
-    // await room.disconnect();
-
     _events = BehaviorSubject<RoomEvent>();
-
     listener = room.createListener();
     _setupListener();
-
     try {
-      // await room.prepareConnection(Env.menoLiveKitUrl, token);
       await room.connect(Env.menoLiveKitUrl, token);
-
       await room.localParticipant?.setMicrophoneEnabled(isHost);
-
       return right(unit);
     } on LiveKitException catch (e) {
       return left(e);
@@ -43,46 +36,15 @@ class LiveKitService extends Object with Disposable {
   }
 
   /// Start a broadcast session.
-  Future<Either<LiveKitException, Unit>> broadcast2(String token) =>
-      _connectFamily(token: token, isHost: true);
+  Future<Either<LiveKitException, Unit>> broadcast(String token) =>
+      _connect(token: token, isHost: true);
 
   /// Start a streaming session for viewers.
-  Future<Either<LiveKitException, Unit>> stream2(String token) =>
-      _connectFamily(token: token);
-
-  Future<Room> _connect(String broadcastToken, [bool isHost = true]) async {
-    // Create a new room
-    _events = BehaviorSubject<RoomEvent>();
-
-    // Set a Listener for the Room Events before connecting
-    listener = room.createListener(synchronized: true);
-    _setupListener();
-
-    try {
-      // Connect to the room
-      await room.connect(
-        Env.menoLiveKitUrl,
-        broadcastToken,
-        fastConnectOptions: FastConnectOptions(
-          microphone: TrackOption(enabled: isHost),
-        ),
-      );
-
-      return room; // Return the connected room
-    } catch (e) {
-      await removeListener();
-      throw Exception('Failed to connect. Please try again. => $e');
-    }
-  }
+  Future<Either<LiveKitException, Unit>> stream(String token) =>
+      _connect(token: token);
 
   /// Sets up the event listener for the room.
   void _setupListener() => listener.listen(_events.add);
-
-  /// Start a broadcast session.
-  Future<Room> broadcast(String broadcastToken) => _connect(broadcastToken);
-
-  /// Start a streaming session for viewers.
-  Future<Room> stream(String broadcastToken) => _connect(broadcastToken, false);
 
   /// Mute or unmute the local participant's microphone.
   Future<void> mute({required bool enabled}) async {

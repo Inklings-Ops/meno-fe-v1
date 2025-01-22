@@ -11,7 +11,8 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   ChatListBloc() : super(ChatListState(broadcast: Broadcast.empty())) {
     on<InitializeChatList>(_onInitialize);
     on<NewChatReceived>(_onNewChatReceived);
-    on<ChatDeletePressed>(_onChatDelete);
+    on<EditedChatReceived>(_onEditedChatReceived);
+    on<DeletedChatRemoved>(_onChatDelete);
     on<ChatReset>(_onChatReset);
     on<LoadChatMessages>(_onLoadMessages);
     on<ToggleShowReactions>(_onToggleReactions);
@@ -28,11 +29,28 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     emit(state.copyWith(chats: [event.chat, ...oldMessages]));
   }
 
+  void _onEditedChatReceived(
+    EditedChatReceived event,
+    Emitter<ChatListState> emit,
+  ) {
+    final oldMessages = List<Chat?>.from(state.chats);
+    final updatedChats = oldMessages.map((chat) {
+      if (chat?.id == event.chat.id) return event.chat;
+      return chat;
+    }).toList();
+    emit(state.copyWith(chats: updatedChats));
+  }
+
   void _onLoadMessages(LoadChatMessages event, Emitter<ChatListState> emit) {
     emit(state.copyWith(chats: event.chats));
   }
 
-  void _onChatDelete(ChatDeletePressed event, Emitter<ChatListState> emit) {}
+  void _onChatDelete(DeletedChatRemoved event, Emitter<ChatListState> emit) {
+    final oldMessages = List<Chat?>.from(state.chats);
+    final updatedMessages =
+        oldMessages.where((chat) => chat?.id != event.chat.id).toList();
+    emit(state.copyWith(chats: updatedMessages));
+  }
 
   void _onChatReset(ChatReset event, Emitter<ChatListState> emit) {
     emit(_initialState);

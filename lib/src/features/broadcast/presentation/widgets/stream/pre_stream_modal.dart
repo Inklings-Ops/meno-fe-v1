@@ -25,10 +25,9 @@ class PreStreamModal extends HookWidget {
                 context.read<LiveBloc>().add(const GoFailure());
                 context.showBroadcastError(error);
               },
-              streamJoined: () {
-                final broadcast = state.broadcast;
-                background.startBroadcastBackgroundProcess(broadcast);
-                livekit.add(LiveKitStream(token: broadcast.broadcastToken));
+              streamJoined: (token) {
+                background.startBroadcastBackgroundProcess(state.broadcast);
+                livekit.add(LiveKitStream(token: token));
               },
             );
           },

@@ -18,6 +18,8 @@ class ChatList extends StatelessWidget {
       listener: (context, state) {
         state.whenOrNull(
           newMessage: (chat) => bloc.add(NewChatReceived(chat)),
+          editedMessage: (chat) => bloc.add(EditedChatReceived(chat)),
+          deletedMessage: (chat) => bloc.add(DeletedChatRemoved(chat)),
         );
       },
       child: BlocBuilder<ChatListBloc, ChatListState>(
@@ -56,7 +58,11 @@ class _ChatBubble extends StatelessWidget {
               if (currentUserId == senderId) {
                 showMyChatOptions(context);
               } else {
-                showOtherChatOptions(context, isHost: isHost);
+                showOtherChatOptions(
+                  chat: chat,
+                  context: context,
+                  isHost: isHost,
+                );
               }
             },
             child: ChatBubble(chat: chat),
@@ -79,7 +85,10 @@ class _ChatBubble extends StatelessWidget {
             MModalListTile(
               leading: const Icon(MIcons.edit_05),
               title: 'Edit',
-              onTap: () {},
+              onTap: () {
+                router.pop<void>();
+                context.read<ChatInputCubit>().startEditing(chat);
+              },
             ),
             Spaces.verticalLarge,
             MModalListTile(
@@ -95,12 +104,13 @@ class _ChatBubble extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showOtherChatOptions(
-    BuildContext context, {
+  Future<dynamic> showOtherChatOptions({
+    required BuildContext context,
+    required Chat chat,
     bool isHost = false,
   }) async {
     final colors = MColorScheme.of(context)!;
-    final bloc = context.read<ChatListBloc>();
+
     return context.showModal(
       isScrollControlled: true,
       MModal(
@@ -114,7 +124,18 @@ class _ChatBubble extends StatelessWidget {
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
                 title: 'Delete',
-                onTap: () => bloc.add(ChatDeletePressed(chat)),
+                onTap: () {
+                  final socket = context.read<SocketBloc>();
+                  socket.add(
+                    SocketDeleteMessage(
+                      id: chat.id,
+                      senderId: chat.sender?.id ?? chat.senderId ?? '',
+                      broadcastId: chat.broadcastId,
+                      content: chat.content.getOr(),
+                      createdAt: chat.createdAt.toIso8601String(),
+                    ),
+                  );
+                },
                 titleColor: colors.error,
               )
             else

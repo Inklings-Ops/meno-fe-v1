@@ -10,7 +10,10 @@ class ChatListEvent with _$ChatListEvent {
 
   const factory ChatListEvent.newChatReceived(Chat chat) = NewChatReceived;
 
-  const factory ChatListEvent.chatDeletePressed(Chat chat) = ChatDeletePressed;
+  const factory ChatListEvent.editedChatReceived(Chat chat) =
+      EditedChatReceived;
+
+  const factory ChatListEvent.deletedChatRemoved(Chat chat) = DeletedChatRemoved;
 
   const factory ChatListEvent.reset() = ChatReset;
 

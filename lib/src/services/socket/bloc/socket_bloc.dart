@@ -24,6 +24,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<SocketJoinBroadcast>(_onJoinBroadcast);
     on<SocketLeaveBroadcast>(_onLeaveBroadcast);
     on<SocketSendMessage>(_onSendMessage);
+    on<SocketEditMessage>(_onEditMessage);
     on<_NewParticipant>(_onNewParticipant);
     on<_ParticipantLeft>(_onParticipantLeft);
     on<_EndedBroadcast>(_onEndedBroadcast);
@@ -32,6 +33,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<_HostReconnected>(_onHostReconnected);
     on<_Notification>(_onNotification);
     on<_NewMessage>(_onNewMessage);
+    on<_EditedMessage>(_onEditedMessage);
     on<SocketUpdateState>(_onUpdateState);
     on<SocketGetMessages>(_onGetMessages);
   }
@@ -64,6 +66,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       'hostReconnected': (data) => add(_HostReconnected(data)),
       'notification': (data) => add(_Notification(data)),
       'newMessage': (data) => add(_NewMessage(data)),
+      'editedMessage': (data) => add(_EditedMessage(data)),
+      // TODO(gettoknowdavid, devgson): Confirm the name of this event
+      'deletedMessage': (data) => add(_DeletedMessage(data)),
     });
   }
 
@@ -194,6 +199,32 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     );
   }
 
+  void _onEditMessage(SocketEditMessage event, Emitter<SocketState> emit) {
+    _socket?.emitWithAck(
+      'editChatMessage',
+      {
+        'id': event.id,
+        'senderId': event.senderId,
+        'broadcastId': event.broadcastId,
+        'content': event.content,
+        'createdAt': event.createdAt,
+      },
+    );
+  }
+
+  void _onDeleteMessage(SocketDeleteMessage event, Emitter<SocketState> emit) {
+    _socket?.emitWithAck(
+      'deleteChatMessage',
+      {
+        'id': event.id,
+        'senderId': event.senderId,
+        'broadcastId': event.broadcastId,
+        'content': event.content,
+        'createdAt': event.createdAt,
+      },
+    );
+  }
+
   void _onNewParticipant(_NewParticipant event, Emitter<SocketState> emit) {
     final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
     final dto = BroadcastParticipantDto.fromJson(decoded);
@@ -238,6 +269,18 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
     final dto = ChatDto.fromJson(decoded);
     emit(SocketNewMessageReceived(dto.toDomain));
+  }
+
+  void _onEditedMessage(_EditedMessage event, Emitter<SocketState> emit) {
+    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
+    final dto = ChatDto.fromJson(decoded);
+    emit(SocketEditedMessageReceived(dto.toDomain));
+  }
+
+  void _onDeletedMessage(_DeletedMessage event, Emitter<SocketState> emit) {
+    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
+    final dto = ChatDto.fromJson(decoded);
+    emit(SocketDeletedMessageRemoved(dto.toDomain));
   }
 
   void _onUpdateState(SocketUpdateState event, Emitter<SocketState> emit) {

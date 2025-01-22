@@ -57,7 +57,8 @@ class DiscoverButton extends StatelessWidget {
       child: MSecondaryButton.icon(
         label: 'Discover',
         icon: const Icon(MIcons.compass),
-        onPressed: () => router.go(Routes.discover),
+        onPressed: () => router.push(Routes.chatPage),
+        // onPressed: () => router.go(Routes.discover),
         style: OutlinedButton.styleFrom(
           textStyle: textTheme.microMedium,
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),

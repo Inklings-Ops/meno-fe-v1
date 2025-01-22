@@ -10,10 +10,11 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
+
     final broadcast = context.watch<BroadcastBloc>().state.broadcast;
     final isHost = broadcast.creator!.id == chat.senderId;
 
-    final timeStamp = GetTimeAgo.parse(chat.createdAt);
+    final timeStamp = GetTimeAgo.parse(chat.updatedAt ?? chat.createdAt);
 
     final currentUserId = context.select<SessionCubit, String?>(
       (b) => b.state.whenOrNull(authenticated: (user, _) => user.id.getOr()),
@@ -74,7 +75,7 @@ class ChatBubble extends StatelessWidget {
                     ),
                     Spaces.horizontalMicro,
                     MText(
-                      timeStamp,
+                      chat.updatedAt != null ? 'Edited $timeStamp' : timeStamp,
                       style: textTheme.microMedium,
                       color: colors.onBackgroundVariant,
                       maxLines: 1,
