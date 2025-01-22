@@ -32,7 +32,6 @@ class Routes {
   static const String folder = '/folder';
   static const String settings = '/settings';
   static const String endedBroadcast = '/endedBroadcast';
-  static const String chatPage = '/chatPage';
 
   static const String broadcastTab = '/broadcast-tab';
   static const String chatTab = '/chat-tab';

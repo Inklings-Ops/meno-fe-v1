@@ -1,5 +1,4 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class LiveForYou extends StatelessWidget {
   const LiveForYou({super.key});
@@ -58,8 +57,7 @@ class DiscoverButton extends StatelessWidget {
       child: MSecondaryButton.icon(
         label: 'Discover',
         icon: const Icon(MIcons.compass),
-        onPressed: () => di<LiveKitService>().disconnect(),
-        // onPressed: () => router.go(Routes.discover),
+        onPressed: () => router.go(Routes.discover),
         style: OutlinedButton.styleFrom(
           textStyle: textTheme.microMedium,
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
