@@ -40,23 +40,25 @@ class MModal extends StatelessWidget {
         ? const EdgeInsets.only(top: 48, bottom: 8)
         : const EdgeInsets.only(bottom: 8);
 
-    return Container(
-      width: MediaQuery.sizeOf(context).width,
-      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Stack(
-        children: [
-          if (title != null)
-            Positioned.fill(
-              child: MModalTitleBar(
-                title: title!,
-                showCloseButton: showCloseButton,
+    return SafeArea(
+      child: Container(
+        width: MediaQuery.sizeOf(context).width,
+        padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Stack(
+          children: [
+            if (title != null)
+              Positioned.fill(
+                child: MModalTitleBar(
+                  title: title!,
+                  showCloseButton: showCloseButton,
+                ),
               ),
+            Padding(
+              padding: effectiveContentPadding,
+              child: builder(context),
             ),
-          Padding(
-            padding: effectiveContentPadding,
-            child: builder(context),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

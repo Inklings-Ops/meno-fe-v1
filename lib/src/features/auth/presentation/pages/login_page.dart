@@ -35,7 +35,6 @@ class LoginView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final email = context.select(
       (SessionCubit bloc) => bloc.state.whenOrNull(
         partiallyAuthenticated: (user) => user.email.getOr(),
@@ -60,8 +59,8 @@ class LoginView extends HookWidget {
             (success) {
               context.read<SessionCubit>().init();
               context.read<RecentlyLiveCubit>().fetch();
-              // context.read<AccountBloc>().init();
-              // context.read<MyProfileCubit>().fetch();
+              context.read<AccountBloc>().init();
+              context.read<MyProfileCubit>().fetch();
             },
           ),
         );
