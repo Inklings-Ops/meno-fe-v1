@@ -26,9 +26,8 @@ import '../features/auth/auth.dart' as _i236;
 import '../features/auth/infrastructure/auth_facade.dart' as _i790;
 import '../features/auth/infrastructure/datasources/auth_local_datasource.dart'
     as _i882;
-import '../features/bible/domain/domain.dart' as _i720;
+import '../features/bible/bible.dart' as _i652;
 import '../features/bible/infrastructure/bible_facade.dart' as _i442;
-import '../features/bible/infrastructure/datasources/datasources.dart' as _i150;
 import '../features/bible/infrastructure/datasources/local/bible_local_datasource.dart'
     as _i664;
 import '../features/broadcast/broadcast.dart' as _i625;
@@ -141,6 +140,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i463.NetworkService>(
         () => _i463.NetworkService(gh<_i973.InternetConnectionChecker>()));
+    gh.factory<_i652.IBibleFacade>(() => _i442.BibleFacade(
+          local: gh<_i652.BibleLocalDatasource>(),
+          remote: gh<_i1009.BibleRemoteDatasource>(),
+          network: gh<_i463.NetworkService>(),
+        ));
     gh.factory<_i882.AuthLocalDatasource>(() =>
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
@@ -148,10 +152,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i396.BroadcastLocalDatasource>(() =>
         _i396.BroadcastLocalDatasource(
             storage: gh<_i264.SecureStorageService>()));
-    gh.factory<_i720.IBibleFacade>(() => _i442.BibleFacade(
-          local: gh<_i150.BibleLocalDatasource>(),
-          network: gh<_i463.NetworkService>(),
-        ));
     gh.lazySingleton<_i305.INetworkFacade>(() => _i479.NetworkFacade(
         connectivity: gh<_i973.InternetConnectionChecker>()));
     gh.lazySingleton<_i586.MediaService>(

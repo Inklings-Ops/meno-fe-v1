@@ -318,7 +318,6 @@ final router = GoRouter(
           providers: [
             BlocProvider(create: (_) => VersesCubit(facade: bibleFac)),
             BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFac)),
-            BlocProvider(create: (_) => TransBloc(facade: bibleFac)),
           ],
           child: LiveLayout(
             key: broadcastLayoutKey,
@@ -407,8 +406,8 @@ final router = GoRouter(
           navigatorKey: discoverKey,
           routes: [
             GoRoute(
-              path: Routes.discover,
-              builder: (context, state) => const DiscoverPage(),
+              path: Routes.biblePage,
+              builder: (context, state) => const BiblePage(),
             ),
           ],
         ),

@@ -48,7 +48,7 @@ class _Scaffold extends HookWidget {
             SliverAppBar(
               title: MText(profile.fullName.getOr()),
               centerTitle: true,
-              expandedHeight: loading ? 320 : 287,
+              expandedHeight: loading ? 320 : 320,
               pinned: true,
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(32),

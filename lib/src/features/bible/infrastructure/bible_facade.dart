@@ -1,40 +1,43 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/bible/infrastructure/bible_worker_isolate.dart';
-import 'package:meno_fe_v1/src/features/bible/infrastructure/datasources/datasources.dart';
-import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/features/bible/bible.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
+import 'package:rxdart/rxdart.dart';
 
 @Injectable(as: IBibleFacade)
 class BibleFacade implements IBibleFacade {
   BibleFacade({
     required BibleLocalDatasource local,
+    required BibleRemoteDatasource remote,
     required NetworkService network,
   })  : _local = local,
+        _remote = remote,
         _network = network;
 
   final BibleLocalDatasource _local;
+  final BibleRemoteDatasource _remote;
   final NetworkService _network;
 
-  BibleWorkerIsolate? _worker;
+  final _progressController = BehaviorSubject<int>.seeded(0);
 
   @override
   Future<void> initialize() async {
     if (!_local.isBibleEmpty) return;
 
     final jsonStr = await rootBundle.loadString(Assets.json.kjv);
-    _worker = await BibleWorkerIsolate.spawn();
 
-    final verseDtos = await _worker?.parseBible(jsonStr);
-    await _local.storeBible(verseDtos ?? [], 'kjv');
+    const translation = 'kjv';
+    final verseDtos = await _remote.parse(jsonStr, translation);
+    await _local.storeBible(verseDtos ?? [], translation);
 
     await _local.storeTranslations();
-    await _local.updateTranslationWithDownloaded('kjv');
+    await _local.updateTranslationWithDownloaded(translation);
 
-    _worker?.close();
-    _worker = null;
+    _remote.closeIsolate();
     return;
   }
 
@@ -99,19 +102,23 @@ class BibleFacade implements IBibleFacade {
       return left(const BibleException.networkError());
     } else {
       try {
-        _worker = await BibleWorkerIsolate.spawn();
-        final verseDtos = await _worker?.downloadBible(translation);
+        final verseDtos = await _remote.download(
+          translation: translation,
+          onProgress: (received, total) {
+            final progress = total > 0 ? (received * 100 ~/ total) : 0;
+            _progressController.add(progress);
+          },
+        );
 
         await _local.storeBible(verseDtos ?? [], translation);
         await _local.updateTranslationWithDownloaded(translation);
         final translationDomain = Translation.fromAbbreviation(translation);
 
-        _worker?.close();
-        _worker = null;
-
-        // Job 5:12, 19-22
+        _remote.closeIsolate();
 
         return right(translationDomain);
+      } on DioException catch (e) {
+        return left(BibleException.message(e.toString()));
       } on Exception catch (e) {
         return left(BibleException.message(e.toString()));
       }
@@ -119,10 +126,7 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  Stream<double?> get downloadBibleProgress {
-    if (_worker == null) return const Stream<double?>.empty();
-    return _worker!.progressStream;
-  }
+  Stream<int> get downloadBibleProgress => _progressController.stream;
 
   @override
   List<Translation> get storedTranslations {
@@ -137,11 +141,10 @@ class BibleFacade implements IBibleFacade {
   }
 
   @override
-  void cancelBibleDownload(String translation) {
-    if (_worker == null) return;
-
-    _worker?.cancelDownload(translation);
-    _worker?.close();
-    _worker = null;
+  void cancelDownload() {
+    if (!_remote.isIsolateOpen) return;
+    _remote.cancelDownload();
+    _remote.closeIsolate();
+    return;
   }
 }

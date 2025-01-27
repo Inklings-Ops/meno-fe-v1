@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meno_design_system/meno_design_system.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
-import 'package:meno_fe_v1/src/shared/extensions/extensions.dart';
 
 class BibleTranslationsModal extends StatelessWidget {
   const BibleTranslationsModal({super.key});
@@ -10,13 +7,21 @@ class BibleTranslationsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    return BlocListener<TransBloc, TransState>(
+    final translationBloc = context.read<TranslationBloc>();
+    final translationsBloc = context.read<TranslationsBloc>();
+    return BlocListener<BibleDownloaderBloc, BibleDownloaderState>(
       listener: (context, state) {
-        state.downloadOption.fold(
+        state.option.fold(
           () => null,
           (either) => either.fold(
             context.showBibleError,
-            (r) => null,
+            (translation) {
+              final localTrans = translationsBloc.state.localTranslations;
+              if (localTrans.contains(translation)) return;
+              translationBloc.add(ChangeTranslation(translation));
+              translationsBloc.add(UpdateTranslations(translation));
+              return router.pop<void>();
+            },
           ),
         );
       },
@@ -46,22 +51,21 @@ class OfflineBibleTranslationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<TransBloc>();
-    return BlocBuilder<TransBloc, TransState>(
-      bloc: bloc,
+    final translationBloc = context.read<TranslationBloc>();
+    return BlocBuilder<TranslationsBloc, TranslationsState>(
       builder: (context, state) => ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
-        itemCount: state.storedTranslations.length,
+        itemCount: state.localTranslations.length,
         separatorBuilder: (context, i) => Spaces.verticalLarge,
         itemBuilder: (context, index) {
-          final translation = state.storedTranslations[index];
+          final translation = state.localTranslations[index];
           return TranslationWidget(
             key: ObjectKey(translation.name),
             translation: translation,
             onChange: () {
-              bloc.add(ChangeTranslation(translation));
+              translationBloc.add(ChangeTranslation(translation));
               Navigator.pop(context);
             },
           );
@@ -76,22 +80,22 @@ class OnlineBibleTranslationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.watch<TransBloc>();
-    return BlocBuilder<TransBloc, TransState>(
-      bloc: bloc,
+    final bibleDownloader = context.watch<BibleDownloaderBloc>();
+    return BlocBuilder<TranslationsBloc, TranslationsState>(
       builder: (context, state) => ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         primary: false,
-        itemCount: state.otherTranslations.length,
+        itemCount: state.remoteTranslations.length,
         separatorBuilder: (context, i) => Spaces.verticalLarge,
         itemBuilder: (context, index) {
-          final translation = state.otherTranslations[index];
+          final translation = state.remoteTranslations[index];
+          final abbreviation = translation.abbreviation;
           return TranslationWidget(
             key: ObjectKey(translation),
             translation: translation,
             isOffline: false,
-            onDownload: () => bloc.add(DownloadTranslation(translation)),
+            onDownload: () => bibleDownloader.add(DownloadBible(abbreviation)),
           );
         },
       ),

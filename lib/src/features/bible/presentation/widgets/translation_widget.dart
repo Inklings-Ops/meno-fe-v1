@@ -20,15 +20,15 @@ class TranslationWidget extends HookWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
-    final isSelected = context.select(
-      (TransBloc bloc) => bloc.state.selectedTranslation == translation,
+    final abbreviation = translation.abbreviation;
+    final isSelected = context.select<TranslationBloc, bool>(
+      (bloc) => bloc.state.translation.abbreviation == abbreviation,
     );
-    final abbreviation = translation.abbreviation.toUpperCase();
 
     final borderRadius = BorderRadius.circular(24);
 
     return InkWell(
-      onTap: isOffline ? onChange : onDownload,
+      onTap: isOffline ? onChange : () {},
       borderRadius: borderRadius,
       child: Container(
         height: 66,
@@ -44,7 +44,10 @@ class TranslationWidget extends HookWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MText(abbreviation, style: textTheme.bodyMedium),
+                  MText(
+                    abbreviation.toUpperCase(),
+                    style: textTheme.bodyMedium,
+                  ),
                   MText(translation.name, style: textTheme.microRegular),
                 ],
               ),
@@ -64,29 +67,24 @@ class _DownloadButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<TransBloc>();
-    return BlocBuilder<TransBloc, TransState>(
+    final bloc = context.read<BibleDownloaderBloc>();
+    final abbreviation = translation.abbreviation;
+    return BlocBuilder<BibleDownloaderBloc, BibleDownloaderState>(
       buildWhen: (p, c) =>
           p.downloading != c.downloading ||
-          p.downloadProgress != c.downloadProgress ||
-          p.downloadingTranslation != c.downloadingTranslation,
+          p.progress != c.progress ||
+          p.translation != c.translation,
       builder: (context, state) {
-        final progress = state.downloadProgress;
-        final loading = state.downloading;
-        final downloadingTrans = state.downloadingTranslation?.abbreviation;
-        final isTransDownloading = downloadingTrans == translation.abbreviation;
-        final isDownloading = loading && isTransDownloading;
+        final loading = state.downloading && state.translation == abbreviation;
         return SizedBox.square(
           dimension: 40,
-          child: isDownloading
-              ? _ProgressIndicator(translation: translation, progress: progress)
+          child: loading
+              ? const _ProgressIndicator()
               : IconButton(
                   iconSize: 24,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.download_outlined),
-                  onPressed: !isDownloading
-                      ? () => bloc.add(DownloadTranslation(translation))
-                      : null,
+                  onPressed: () => bloc.add(DownloadBible(abbreviation)),
                 ),
         );
       },
@@ -95,24 +93,23 @@ class _DownloadButton extends StatelessWidget {
 }
 
 class _ProgressIndicator extends StatelessWidget {
-  const _ProgressIndicator({
-    required this.progress,
-    required this.translation,
-  });
-
-  final Translation translation;
-  final double progress;
+  const _ProgressIndicator();
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
-    final bloc = context.read<TransBloc>();
+    final bloc = context.read<BibleDownloaderBloc>();
     return Stack(
       alignment: Alignment.center,
       children: [
-        CircularProgressIndicator(value: progress, strokeCap: StrokeCap.round),
+        BlocBuilder<BibleDownloaderBloc, BibleDownloaderState>(
+          builder: (context, state) => CircularProgressIndicator(
+            value: state.progress.toDouble() / 100,
+            strokeCap: StrokeCap.round,
+          ),
+        ),
         IconButton(
-          onPressed: () => bloc.add(CancelTranslationDownload(translation)),
+          onPressed: () => bloc.add(const CancelBibleDownload()),
           padding: EdgeInsets.zero,
           iconSize: 20,
           style: IconButton.styleFrom(foregroundColor: colors.error),

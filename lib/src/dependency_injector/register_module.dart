@@ -37,7 +37,7 @@ abstract class RegisterModule {
 
   @lazySingleton
   BibleRemoteDatasource get bibleRemoteDatasource {
-    return BibleRemoteDatasource(dio, baseUrl: Env.bibleApiUrl);
+    return BibleRemoteDatasource(dio: dio);
   }
 
   @lazySingleton
