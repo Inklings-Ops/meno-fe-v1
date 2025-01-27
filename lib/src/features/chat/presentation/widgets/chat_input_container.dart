@@ -113,7 +113,8 @@ class _SendButton extends StatelessWidget {
           senderId: chat.sender?.id ?? chat.senderId ?? currentUserId,
           broadcastId: chat.broadcastId,
           content: chatInputBloc.state.content!,
-          createdAt: DateTime.timestamp().toIso8601String(),
+          createdAt: chat.createdAt.toIso8601String(),
+          updatedAt: DateTime.timestamp().toIso8601String(),
         );
       } else {
         event = SocketSendMessage(

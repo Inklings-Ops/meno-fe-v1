@@ -208,6 +208,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         'broadcastId': event.broadcastId,
         'content': event.content,
         'createdAt': event.createdAt,
+        'updatedAt': event.updatedAt,
       },
     );
   }

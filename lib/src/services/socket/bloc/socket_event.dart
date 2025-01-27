@@ -43,6 +43,7 @@ class SocketEvent with _$SocketEvent {
     required String broadcastId,
     required String content,
     required String createdAt,
+    required String updatedAt,
   }) = SocketEditMessage;
 
   const factory SocketEvent.deleteChatMessage({

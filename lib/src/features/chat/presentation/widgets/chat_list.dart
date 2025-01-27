@@ -56,11 +56,11 @@ class _ChatBubble extends StatelessWidget {
             onLongPress: () {
               final isHost = user.id.getOr() == broadcast.creator!.id;
               if (currentUserId == senderId) {
-                showMyChatOptions(context);
+                showMyChatOptions(context, chat: chat);
               } else {
                 showOtherChatOptions(
+                  context,
                   chat: chat,
-                  context: context,
                   isHost: isHost,
                 );
               }
@@ -72,7 +72,17 @@ class _ChatBubble extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showMyChatOptions(BuildContext context) {
+  bool isMessageEditable(Chat chat) {
+    final now = DateTime.now();
+    final difference = now.difference(chat.updatedAt ?? chat.createdAt);
+    return difference.inMinutes < 15;
+  }
+
+  Future<dynamic> showMyChatOptions(
+    BuildContext context, {
+    required Chat chat,
+  }) {
+    final isEditable = isMessageEditable(chat);
     return context.showModal(
       isScrollControlled: true,
       MModal(
@@ -82,15 +92,17 @@ class _ChatBubble extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Spaces.verticalSmall,
-            MModalListTile(
-              leading: const Icon(MIcons.edit_05),
-              title: 'Edit',
-              onTap: () {
-                router.pop<void>();
-                context.read<ChatInputCubit>().startEditing(chat);
-              },
-            ),
-            Spaces.verticalLarge,
+            if (isEditable) ...[
+              MModalListTile(
+                leading: const Icon(MIcons.edit_05),
+                title: 'Edit',
+                onTap: () {
+                  router.pop<void>();
+                  context.read<ChatInputCubit>().startEditing(chat);
+                },
+              ),
+              Spaces.verticalLarge,
+            ],
             MModalListTile(
               leading: const Icon(MIcons.trash),
               title: 'Delete',
@@ -104,8 +116,8 @@ class _ChatBubble extends StatelessWidget {
     );
   }
 
-  Future<dynamic> showOtherChatOptions({
-    required BuildContext context,
+  Future<dynamic> showOtherChatOptions(
+    BuildContext context, {
     required Chat chat,
     bool isHost = false,
   }) async {
