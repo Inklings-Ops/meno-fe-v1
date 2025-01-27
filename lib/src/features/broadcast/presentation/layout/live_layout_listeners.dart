@@ -38,7 +38,6 @@ class LiveLayoutListeners extends HookWidget {
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));
-                timer.start();
                 timer.setAndStart(broadcast.startTime);
                 live.add(const GoLive());
               },

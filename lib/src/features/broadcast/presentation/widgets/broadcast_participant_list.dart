@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class BroadcastParticipantList extends StatelessWidget {
@@ -10,6 +10,14 @@ class BroadcastParticipantList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.watch<ParticipantsBloc>();
+
+    final currentUser = context.select(
+      (SessionCubit bloc) => bloc.state.maybeWhen(
+        orElse: User.empty,
+        authenticated: (user, token) => user,
+      ),
+    );
+
     return BlocListener<SocketBloc, SocketState>(
       listener: (context, state) {
         state.whenOrNull(
@@ -45,11 +53,14 @@ class BroadcastParticipantList extends StatelessWidget {
               return ParticipantItem(
                 key: ValueKey(participant.id),
                 participant: participant,
-                onTap: () => context.showModal<void>(
-                  ParticipantInfoModal(participant: participant),
-                  isScrollControlled: true,
-                  useRootNavigator: true,
-                ),
+                onTap: () {
+                  if (participant.id == currentUser.id.getOr()) return;
+                  context.showModal<void>(
+                    ParticipantInfoModal(participant: participant),
+                    isScrollControlled: true,
+                    useRootNavigator: true,
+                  );
+                },
               );
             },
           );

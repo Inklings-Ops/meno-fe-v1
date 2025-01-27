@@ -25,6 +25,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<SocketLeaveBroadcast>(_onLeaveBroadcast);
     on<SocketSendMessage>(_onSendMessage);
     on<SocketEditMessage>(_onEditMessage);
+    on<SocketDeleteMessage>(_onDeleteMessage);
     on<_NewParticipant>(_onNewParticipant);
     on<_ParticipantLeft>(_onParticipantLeft);
     on<_EndedBroadcast>(_onEndedBroadcast);
@@ -34,6 +35,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<_Notification>(_onNotification);
     on<_NewMessage>(_onNewMessage);
     on<_EditedMessage>(_onEditedMessage);
+    on<_DeletedMessage>(_onDeletedMessage);
     on<SocketUpdateState>(_onUpdateState);
     on<SocketGetMessages>(_onGetMessages);
   }

@@ -11,14 +11,11 @@ class ChatBubble extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
 
-    final broadcast = context.watch<BroadcastBloc>().state.broadcast;
-    final isHost = broadcast.creator!.id == chat.senderId;
+    final broadcast = getBroadcastFromContext(context);
+    final isHost =
+        (broadcast.creatorId ?? broadcast.creator?.id) == chat.senderId;
 
     final timeStamp = GetTimeAgo.parse(chat.updatedAt ?? chat.createdAt);
-
-    final currentUserId = context.select<SessionCubit, String?>(
-      (b) => b.state.whenOrNull(authenticated: (user, _) => user.id.getOr()),
-    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -32,9 +29,7 @@ class ChatBubble extends StatelessWidget {
               radius: 12,
               url: chat.imageUrl,
               hasBorder: false,
-              onTap: currentUserId == chat.senderId
-                  ? null
-                  : () => showUserInfo(context),
+              onTap: () => showUserInfo(context),
             ),
           ),
           Spaces.horizontalSmall,
@@ -46,7 +41,7 @@ class ChatBubble extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: !isHost ? () => showUserInfo(context) : null,
+                      onTap: () => showUserInfo(context),
                       child: MText(
                         chat.fullName ?? chat.sender?.fullName ?? '',
                         style: textTheme.microMedium,
@@ -115,6 +110,12 @@ class ChatBubble extends StatelessWidget {
   }
 
   Future<dynamic> showUserInfo(BuildContext context) async {
+    final currentUserId = context.read<SessionCubit>().state.whenOrNull(
+          authenticated: (user, token) => user.id.getOr(),
+        );
+
+    if (currentUserId == chat.senderId) return;
+
     return context.showModal(
       MUserInfoModal(
         fullName: chat.fullName,
@@ -128,4 +129,17 @@ class ChatBubble extends StatelessWidget {
       isScrollControlled: true,
     );
   }
+}
+
+Broadcast getBroadcastFromContext(BuildContext context) {
+  final broadcastBloc = context.read<BroadcastBloc>().state;
+  final streamBloc = context.read<StreamBloc>().state;
+
+  if (broadcastBloc.broadcast != Broadcast.empty()) {
+    return broadcastBloc.broadcast;
+  } else if (streamBloc.broadcast != Broadcast.empty()) {
+    return streamBloc.broadcast;
+  }
+
+  throw Exception('No valid broadcast found in either bloc');
 }

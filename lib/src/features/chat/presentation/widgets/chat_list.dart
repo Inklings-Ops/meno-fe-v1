@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_if_null_to_convert_nulls_to_bools
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
@@ -78,6 +78,22 @@ class _ChatBubble extends StatelessWidget {
     return difference.inMinutes < 15;
   }
 
+  Future<void> handleDeleteMessage(BuildContext context, Chat chat) async {
+    final result = await context.showDeleteCommentDialog();
+    if (result == true && context.mounted) {
+      final socket = context.read<SocketBloc>();
+      return socket.add(
+        SocketDeleteMessage(
+          id: chat.id,
+          senderId: chat.sender?.id ?? chat.senderId ?? '',
+          broadcastId: chat.broadcastId,
+          content: chat.content.getOr(),
+          createdAt: chat.createdAt.toIso8601String(),
+        ),
+      );
+    }
+  }
+
   Future<dynamic> showMyChatOptions(
     BuildContext context, {
     required Chat chat,
@@ -85,32 +101,37 @@ class _ChatBubble extends StatelessWidget {
     final isEditable = isMessageEditable(chat);
     return context.showModal(
       isScrollControlled: true,
-      MModal(
-        title: 'My Comment',
-        builder: (context) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Spaces.verticalSmall,
-            if (isEditable) ...[
+      BlocListener<SocketBloc, SocketState>(
+        listener: (context, state) {
+          state.whenOrNull(deletedMessage: (chat) => router.pop());
+        },
+        child: MModal(
+          title: 'My Comment',
+          builder: (context) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Spaces.verticalSmall,
+              if (isEditable) ...[
+                MModalListTile(
+                  leading: const Icon(MIcons.edit_05),
+                  title: 'Edit',
+                  onTap: () {
+                    router.pop<void>();
+                    context.read<ChatInputCubit>().startEditing(chat);
+                  },
+                ),
+                Spaces.verticalLarge,
+              ],
               MModalListTile(
-                leading: const Icon(MIcons.edit_05),
-                title: 'Edit',
-                onTap: () {
-                  router.pop<void>();
-                  context.read<ChatInputCubit>().startEditing(chat);
-                },
+                leading: const Icon(MIcons.trash),
+                title: 'Delete',
+                onTap: () async => handleDeleteMessage(context, chat),
+                titleColor: MColorScheme.of(context)!.error,
               ),
               Spaces.verticalLarge,
             ],
-            MModalListTile(
-              leading: const Icon(MIcons.trash),
-              title: 'Delete',
-              onTap: () => context.showDeleteCommentDialog(),
-              titleColor: MColorScheme.of(context)!.error,
-            ),
-            Spaces.verticalLarge,
-          ],
+          ),
         ),
       ),
     );
@@ -136,18 +157,7 @@ class _ChatBubble extends StatelessWidget {
               MModalListTile(
                 leading: Icon(MIcons.trash, color: colors.error),
                 title: 'Delete',
-                onTap: () {
-                  final socket = context.read<SocketBloc>();
-                  socket.add(
-                    SocketDeleteMessage(
-                      id: chat.id,
-                      senderId: chat.sender?.id ?? chat.senderId ?? '',
-                      broadcastId: chat.broadcastId,
-                      content: chat.content.getOr(),
-                      createdAt: chat.createdAt.toIso8601String(),
-                    ),
-                  );
-                },
+                onTap: () async => handleDeleteMessage(context, chat),
                 titleColor: colors.error,
               )
             else
