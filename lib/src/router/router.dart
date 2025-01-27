@@ -406,8 +406,8 @@ final router = GoRouter(
           navigatorKey: discoverKey,
           routes: [
             GoRoute(
-              path: Routes.biblePage,
-              builder: (context, state) => const BiblePage(),
+              path: Routes.discover,
+              builder: (context, state) => const DiscoverPage(),
             ),
           ],
         ),
