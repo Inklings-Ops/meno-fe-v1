@@ -62,7 +62,7 @@ abstract class IAuthFacade {
   /// object and the right value is a `Unit` object.
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false});
 
-  bool isTokenExpired(String token);
+  bool isTokenValid(String token);
 
   /// Logs the user in with their email address and password.
   ///
@@ -106,7 +106,9 @@ abstract class IAuthFacade {
     required Password newPassword,
   });
 
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);
+  Future<void> removeAccount(Uid<User> userId);
+
+  Future<Either<AuthException, UserCredential>> switchAccount(Uid<User> userId);
 
   Future<Either<AuthException, Unit>> verifyEmailAddress({
     required Email email,

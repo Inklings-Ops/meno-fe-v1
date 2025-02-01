@@ -1,7 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/chat/presentation/widgets/reaction_button.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatInputContainer extends HookWidget {
   const ChatInputContainer({required this.scrollController, super.key});
@@ -11,39 +9,40 @@ class ChatInputContainer extends HookWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context)!;
 
-    final chatListBloc = context.watch<ChatListBloc>();
-
-    return Stack(
-      clipBehavior: Clip.none,
-      fit: StackFit.passthrough,
-      children: [
-        if (chatListBloc.state.showReactions) const ReactionButton(),
-        Container(
-          alignment: Alignment.topCenter,
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-          child: Column(
+    return Container(
+      alignment: Alignment.topCenter,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Column(
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  const Expanded(child: _ChatTextField()),
-                  Spaces.horizontalLarge,
-                  MIconButton(
+              const Expanded(child: _ChatTextField()),
+              Spaces.horizontalLarge,
+              HorizontalPopupMenu(
+                icon: MIconButton(
+                  size: 40,
+                  iconSize: 20,
+                  icon: const Icon(Icons.face),
+                  isFilled: true,
+                  fillColor: colors.outlineVariant2,
+                ),
+                items: mainReactions.map((reaction) {
+                  return MIconButton(
                     size: 40,
                     iconSize: 20,
-                    icon: const Icon(Icons.face),
+                    icon: reaction.icon,
                     isFilled: true,
                     fillColor: colors.outlineVariant2,
-                    onPressed: () =>
-                        chatListBloc.add(const ToggleShowReactions()),
-                  ),
-                  Spaces.horizontalSmall,
-                  _SendButton(scrollController: scrollController),
-                ],
+                    onPressed: () {},
+                  );
+                }).toList(),
               ),
+              Spaces.horizontalSmall,
+              ChatSendButton(scrollController: scrollController),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -54,6 +53,7 @@ class _ChatTextField extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final inputBloc = context.watch<ChatInputCubit>();
+    final focusNode = useFocusNode();
     final controller = useTextEditingController(text: inputBloc.state.content);
 
     useEffect(
@@ -64,101 +64,23 @@ class _ChatTextField extends HookWidget {
       [inputBloc.state.content],
     );
 
-    return SizedBox(
-      height: 40,
-      child: TextFormField(
-        style: MTextTheme.of(context)!.captionRegular,
-        controller: controller,
-        onChanged: inputBloc.contentChanged,
-        decoration: const InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: Insets.md),
-          hintText: 'Type your comment here...',
+    return TextFormField(
+      focusNode: focusNode,
+      style: MTextTheme.of(context)!.captionRegular,
+      controller: controller,
+      onChanged: inputBloc.contentChanged,
+      maxLines: 5,
+      minLines: 1,
+      maxLength: 244,
+      keyboardType: TextInputType.multiline,
+      decoration: const InputDecoration(
+        hintText: 'Type your comment here...',
+        counter: SizedBox(),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: Insets.sm,
+          horizontal: Insets.md,
         ),
       ),
-    );
-  }
-}
-
-class _SendButton extends StatelessWidget {
-  const _SendButton({required this.scrollController});
-  final ScrollController scrollController;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
-    final chatInputBloc = context.watch<ChatInputCubit>();
-    final chatListBloc = context.watch<ChatListBloc>();
-
-    final currentUserId = context.read<SessionCubit>().state.maybeWhen(
-          orElse: () => '',
-          authenticated: (user, token) => user.id.getOr(),
-        );
-
-    final isLive = [
-      const Live(),
-      const Streaming(),
-      const Reconnecting(),
-    ].contains(context.watch<LiveBloc>().state);
-
-    final inputState = chatInputBloc.state;
-    final isEditing = inputState.isEditing && inputState.initialChat != null;
-
-    void submit() {
-      late SocketEvent event;
-      if (isEditing) {
-        final chat = inputState.initialChat!;
-        event = SocketEditMessage(
-          id: chat.id,
-          senderId: chat.sender?.id ?? chat.senderId ?? currentUserId,
-          broadcastId: chat.broadcastId,
-          content: chatInputBloc.state.content!,
-          createdAt: chat.createdAt.toIso8601String(),
-          updatedAt: DateTime.timestamp().toIso8601String(),
-        );
-      } else {
-        event = SocketSendMessage(
-          senderId: currentUserId,
-          broadcastId: chatListBloc.state.broadcast.id.getOr(),
-          content: chatInputBloc.state.content!,
-          createdAt: DateTime.timestamp().toIso8601String(),
-        );
-      }
-
-      context.read<SocketBloc>().add(event);
-
-      scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-
-      chatInputBloc.clearContent();
-      chatInputBloc.stopEditing();
-    }
-
-    return BlocBuilder<ChatInputCubit, ChatInputState>(
-      bloc: chatInputBloc,
-      builder: (context, state) {
-        final content = state.content;
-        if (content != null && isLive) {
-          return Column(
-            children: [
-              Spaces.horizontalSmall,
-              MIconButton(
-                icon: const Icon(MIcons.send),
-                isFilled: true,
-                fillColor: colors.primary,
-                color: colors.onPrimary,
-                size: 40,
-                iconSize: 20,
-                onPressed: submit,
-              ),
-            ],
-          );
-        }
-        return const SizedBox();
-      },
     );
   }
 }

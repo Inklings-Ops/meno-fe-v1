@@ -25,7 +25,7 @@ class LiveBroadcastCard extends StatelessWidget {
           return;
         } else {
           live.maybeWhen(
-            orElse: () => router.push(Routes.preStreamModal, extra:broadcast),
+            orElse: () => router.push(Routes.preStreamModal, extra: broadcast),
             streaming: () => router.push(Routes.broadcastTab, extra: true),
             reconnecting: () => router.push(Routes.broadcastTab, extra: true),
           );
@@ -36,7 +36,7 @@ class LiveBroadcastCard extends StatelessWidget {
   }
 
   bool isHost(BuildContext context) {
-    final session = context.read<SessionCubit>().state;
+    final session = context.read<SessionBloc>().state;
     final myUid = session.whenOrNull(authenticated: (u, _) => u.id.getOr());
     return broadcast.creatorId == myUid || broadcast.creator?.id == myUid;
   }

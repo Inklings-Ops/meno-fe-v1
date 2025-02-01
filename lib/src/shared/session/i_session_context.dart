@@ -4,7 +4,9 @@ import 'package:meno_fe_v1/src/features/auth/auth.dart';
 abstract class ISessionContext {
   Future<void> logout();
 
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);
+  Future<Either<AuthException, UserCredential>> switchAccount(
+    UserCredential credential,
+  );
 
   bool get isOnboarded;
 

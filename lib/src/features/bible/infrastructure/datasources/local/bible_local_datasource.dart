@@ -5,7 +5,6 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/objectbox.g.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/services/objectbox_service.dart';
@@ -117,7 +116,6 @@ class BibleLocalDatasource {
     if (translation == null) return;
     final updatedTranslation = translation.copyWith(downloaded: true);
     final result = translationBox.put(updatedTranslation);
-    Logger().f('OBJECT BOX UPDATE TRANSLATION => $result');
     return;
   }
 

@@ -9,7 +9,7 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
+      (SessionBloc bloc) => bloc.state.maybeWhen(
         orElse: User.empty,
         authenticated: (user, token) => user,
       ),
@@ -78,7 +78,7 @@ class DetailsPageOptionsModal extends StatelessWidget {
     final colors = MColorScheme.of(context)!;
     final textTheme = MTextTheme.of(context)!;
     final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
+      (SessionBloc bloc) => bloc.state.maybeWhen(
         orElse: User.empty,
         authenticated: (user, token) => user,
       ),

@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
 part 'account_bloc.freezed.dart';
@@ -9,33 +8,25 @@ part 'account_event.dart';
 part 'account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
-  AccountBloc({required IAuthFacade facade})
-      : _facade = facade,
-        super(const _AccountInitial()) {
+  AccountBloc({required ISessionContext session})
+      : _session = session,
+        super(AccountState.initial()) {
     on<AccountInitialized>(_onInitialize);
     on<AccountSwitchRequested>(_onSwitchAccount);
-    _subscription = _facade.userChanges.listen(
-      (_) => add(const AccountInitialized()),
-    );
   }
-  final IAuthFacade _facade;
-  late final StreamSubscription<UserCredential?> _subscription;
-
-  void init() => add(const AccountInitialized());
+  final ISessionContext _session;
 
   Future<void> _onInitialize(
     AccountInitialized event,
     Emitter<AccountState> emit,
   ) async {
-    emit(const AccountLoading());
-    final allCredentials = await _getAllCredentials();
-    final credential = _facade.credential!;
-    emit(
-      AccountLoadSuccess(
-        currentCredential: credential,
-        allCredentials: allCredentials,
-      ),
-    );
+    final allCreds = await _session.allCredentials;
+    final cred = _session.credential ?? UserCredential.empty();
+    if (allCreds.isNotEmpty && allCreds.length > 1) {
+      emit(AccountLoaded(allCredentials: allCreds, credential: cred));
+    } else {
+      emit(const SingleAccountLoaded());
+    }
   }
 
   Future<void> _onSwitchAccount(
@@ -43,26 +34,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     Emitter<AccountState> emit,
   ) async {
     emit(const AccountLoading());
-    final fOrS = await _facade.switchAccount(event.credential);
+    final fOrS = await _session.switchAccount(event.credential);
     emit(
-      await fOrS.fold(
-        AccountLoadFailure.new,
-        (r) async => AccountLoadSuccess(
-          currentCredential: event.credential,
-          allCredentials: await _getAllCredentials(),
-        ),
+      fOrS.fold(
+        AccountFailure.new,
+        (credential) => AccountLoaded(credential: credential),
       ),
     );
-  }
-
-  Future<List<UserCredential>> _getAllCredentials() async {
-    final credentialsMap = await _facade.allCredentials;
-    return credentialsMap?.values.toList() ?? [];
-  }
-
-  @override
-  Future<void> close() {
-    _subscription.cancel();
-    return super.close();
   }
 }

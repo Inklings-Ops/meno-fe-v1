@@ -110,7 +110,7 @@ class ChatBubble extends StatelessWidget {
   }
 
   Future<dynamic> showUserInfo(BuildContext context) async {
-    final currentUserId = context.read<SessionCubit>().state.whenOrNull(
+    final currentUserId = context.read<SessionBloc>().state.whenOrNull(
           authenticated: (user, token) => user.id.getOr(),
         );
 

@@ -6,13 +6,13 @@ import 'package:meno_fe_v1/src/features/features.dart';
 part 'my_profile_cubit.freezed.dart';
 part 'my_profile_state.dart';
 
-class   MyProfileCubit extends Cubit<MyProfileState> {
+class MyProfileCubit extends Cubit<MyProfileState> {
   MyProfileCubit({
     required IProfileFacade facade,
     required ISessionContext session,
   })  : _facade = facade,
         _session = session,
-        super(const MyProfileState.loading()) {
+        super(MyProfileLoaded(Profile.empty())) {
     _subscription = _session.userChanges.listen((_) async => fetch());
   }
 
@@ -22,6 +22,7 @@ class   MyProfileCubit extends Cubit<MyProfileState> {
   late final StreamSubscription<UserCredential?> _subscription;
 
   Future<void> fetch() async {
+    emit(const MyProfileState.loading());
     final failureOrProfile = await _facade.getAuthProfile();
     return failureOrProfile.fold(
       (exception) => emit(MyProfileFailed(exception)),

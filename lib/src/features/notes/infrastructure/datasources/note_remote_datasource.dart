@@ -5,11 +5,14 @@ import 'package:retrofit/retrofit.dart';
 
 part 'note_remote_datasource.g.dart';
 
+@injectable
 @RestApi()
 abstract class NoteRemoteDatasource {
   @factoryMethod
-  factory NoteRemoteDatasource(Dio dio, {String baseUrl}) =
-      _NoteRemoteDatasource;
+  factory NoteRemoteDatasource(
+    Dio dio, {
+    @Named('baseUrl') String baseUrl,
+  }) = _NoteRemoteDatasource;
 
   @GET('/api/v1/notes/')
   Future<NoteResponse<NoteListResponse>> getAllNotes({

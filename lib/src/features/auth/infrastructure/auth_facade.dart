@@ -30,7 +30,7 @@ class AuthFacade implements IAuthFacade {
   @override
   @PostConstruct(preResolve: true)
   Future<void> init() async {
-    final dto = await _local.getUserCredential();
+    final dto = await _local.getAuthCredential();
     final credential = dto?.toDomain;
     _credentialSubject.add(credential);
     _tokenSubject.add(credential?.token);
@@ -38,13 +38,12 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<Map<String, UserCredential>?> get allCredentials async {
-    final map = await _local.getAllUserCredentials;
+    final map = await _local.getAllUserCredentials();
     if (map != null) {
       final userCredentialsMap = map.map((key, value) {
         final userCredentials = value.toDomain;
         return MapEntry(key, userCredentials);
       });
-
       return userCredentialsMap;
     }
     return null;
@@ -55,8 +54,8 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<User> get user async {
-    final userDto = await _local.getCurrentUser;
-    final userDomain = userDto?.toDomain;
+    final userDto = await _local.getAuthCredential();
+    final userDomain = userDto?.user.toDomain;
     return userDomain ?? User.empty();
   }
 
@@ -72,7 +71,10 @@ class AuthFacade implements IAuthFacade {
   Token? get userToken => _tokenSubject.valueOrNull;
 
   @override
-  bool isTokenExpired(String token) => _jwt.isExpired(token);
+  bool isTokenValid(String? token) {
+    if (token == null) return false;
+    return _jwt.isExpired(token);
+  }
 
   @override
   Future<Either<AuthException, UserCredential>> login({
@@ -88,9 +90,12 @@ class AuthFacade implements IAuthFacade {
     try {
       final response = await _remote.login(email: emailStr, password: pwdStr);
       final credential = response.data!.toDomain;
+
       _credentialSubject.add(credential);
       _tokenSubject.add(credential.token);
-      await _local.storeAuthCombined(response.data!);
+
+      await _local.storeCredentials(response.data!);
+
       return right(credential);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
@@ -110,7 +115,17 @@ class AuthFacade implements IAuthFacade {
   Future<void> logout() async {
     _credentialSubject.add(null);
     _tokenSubject.add(null);
-    await _local.deleteCurrentUserCredential();
+  }
+
+  @override
+  Future<void> removeAccount(Uid<User> userId) async {
+    await _local.deleteAuthCredential();
+    await _local.deleteAuthToken();
+
+    if (credential?.user.id == userId) {
+      _credentialSubject.add(null);
+      _tokenSubject.add(null);
+    }
   }
 
   @override
@@ -141,7 +156,7 @@ class AuthFacade implements IAuthFacade {
       final credential = response.data!.toDomain;
       _credentialSubject.add(credential);
       _tokenSubject.add(credential.token);
-      await _local.storeAuthCombined(response.data!);
+      await _local.storeCredentials(response.data!);
       return right(credential);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
@@ -212,14 +227,28 @@ class AuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential c) async {
-    if ((c.token?.isActive ?? false) == true) {
-      _credentialSubject.add(c);
-      _tokenSubject.add(c.token);
-      await _local.storeAuthCombined(c.toDto);
-      return right(unit);
-    } else {
-      return left(const AuthException.userTokenExpired());
+  Future<Either<AuthException, UserCredential>> switchAccount(
+    Uid<User> userId,
+  ) async {
+    final allCreds = await _local.getAllUserCredentials();
+    if (allCreds == null) return left(const NoUserAccountFound());
+
+    final credentialDto = allCreds[userId.getOr()];
+    if (credentialDto == null) return left(const NoUserAccountFound());
+
+    final credential = credentialDto.toDomain;
+
+    final token = credential.token;
+    if (!(token?.isActive ?? false)) return left(const UserTokenExpired());
+
+    try {
+      await _local.storeCredentials(credentialDto, isCurrent: true);
+      _credentialSubject.add(credential);
+      _tokenSubject.add(credential.token);
+
+      return right(credential);
+    } catch (e) {
+      return left(AuthException.message(e.toString()));
     }
   }
 

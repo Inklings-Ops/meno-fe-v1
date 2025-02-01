@@ -46,7 +46,7 @@ class _ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final broadcast = context.read<ChatListBloc>().state.broadcast;
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) {

@@ -11,16 +11,30 @@ class MenoBlocProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => di<SessionCubit>()),
+        BlocProvider(create: (_) => di<SessionBloc>()),
+        BlocProvider(
+          lazy: false,
+          create: (_) => MyProfileCubit(
+            facade: di<IProfileFacade>(),
+            session: di<ISessionContext>(),
+          )..fetch(),
+        ),
+        BlocProvider(
+          create: (_) => AccountBloc(session: di<ISessionContext>()),
+        ),
         BlocProvider(
           create: (_) => SocketBloc(broadcast: di<IBroadcastFacade>()),
         ),
         BlocProvider(create: (_) => TimerCubit()),
         BlocProvider(create: (_) => LiveKitBloc(liveKit: di<LiveKitService>())),
         BlocProvider(create: (_) => LiveBloc(liveKit: di<LiveKitService>())),
-        BlocProvider(create: (_) => AccountBloc(facade: di<IAuthFacade>())),
         BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),
-        BlocProvider(create: (_) => NotesBloc(facade: di<INoteFacade>())),
+        BlocProvider(
+          lazy: false,
+          create: (_) => NotesBloc(
+            facade: di<INoteFacade>(),
+          )..add(const GetNotesRequested()),
+        ),
         BlocProvider(
           create: (_) => NotesWatcherBloc(facade: di<INoteFacade>()),
         ),
@@ -33,7 +47,12 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(
           create: (_) => BibleDownloaderBloc(facade: di<IBibleFacade>()),
         ),
-        BlocProvider(create: (_) => FoldersBloc(facade: di<INoteFacade>())),
+        BlocProvider(
+          lazy: false,
+          create: (_) => FoldersBloc(
+            facade: di<INoteFacade>(),
+          )..add(const GetAllFolders()),
+        ),
         BlocProvider(create: (_) => ChatInputCubit()),
         BlocProvider(create: (_) => ChatListBloc()),
         BlocProvider(create: (_) => StreamBloc(facade: di<IBroadcastFacade>())),

@@ -47,6 +47,7 @@ class MModalListTile extends StatelessWidget {
     this.onTap,
     this.titleColor,
     this.loading = false,
+    this.contentPadding,
   });
 
   /// The title of the list tile.
@@ -71,6 +72,9 @@ class MModalListTile extends StatelessWidget {
   /// A boolean indicating whether the loading state is active. Defaults to
   /// false.
   final bool loading;
+
+  /// Content padding for the list tile
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +120,8 @@ class MModalListTile extends StatelessWidget {
                   ? IconTheme(data: iconTheme, child: Icon(trailing))
                   : null,
             ),
-            contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+            contentPadding:
+                contentPadding ?? const EdgeInsets.fromLTRB(12, 0, 12, 0),
           ),
           if (showDivider)
             const MDivider(

@@ -12,7 +12,7 @@ class BroadcastParticipantList extends StatelessWidget {
     final bloc = context.watch<ParticipantsBloc>();
 
     final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
+      (SessionBloc bloc) => bloc.state.maybeWhen(
         orElse: User.empty,
         authenticated: (user, token) => user,
       ),

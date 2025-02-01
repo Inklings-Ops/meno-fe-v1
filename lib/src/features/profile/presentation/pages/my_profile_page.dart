@@ -1,9 +1,43 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/services/media_service.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final userId = context.select<SessionBloc, Uid<User>?>(
+      (b) => b.state.whenOrNull(authenticated: (u, _) => u.id),
+    );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => ProfileFormCubit(
+            facade: di<IProfileFacade>(),
+            media: di<MediaService>(),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => UsersRecentBroadcastsBloc(
+            facade: di<IBroadcastFacade>(),
+            userId: userId!,
+          )..add(const GetUsersRecentBroadcasts()),
+        ),
+        BlocProvider(
+          create: (_) => UsersAllBroadcastsBloc(
+            facade: di<IBroadcastFacade>(),
+            userId: userId!,
+          )..add(const GetUsersBroadcasts()),
+        ),
+      ],
+      child: const MyProfileView(),
+    );
+  }
+}
+
+class MyProfileView extends StatelessWidget {
+  const MyProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,24 +54,28 @@ class MyProfilePage extends StatelessWidget {
       await Future.wait([myProfile, recentlyLive]);
     }
 
-    return BlocListener<ProfileFormCubit, ProfileFormState>(
-      listener: (context, state) {
-        state.onEdited.fold(
-          () => null,
-          (either) => either.fold(
-            (failure) => context.showErrorSnackBar(
-              failure.maybeWhen(
-                message: (message) => message,
-                networkError: () => MErrorMessages.networkError,
-                serverError: () => MErrorMessages.serverError,
-                timeOutError: () => MErrorMessages.timeOutError,
-                orElse: () => MErrorMessages.unknownError,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ProfileFormCubit, ProfileFormState>(
+          listener: (context, state) {
+            state.onEdited.fold(
+              () => null,
+              (either) => either.fold(
+                (failure) => context.showErrorSnackBar(
+                  failure.maybeWhen(
+                    message: (message) => message,
+                    networkError: () => MErrorMessages.networkError,
+                    serverError: () => MErrorMessages.serverError,
+                    timeOutError: () => MErrorMessages.timeOutError,
+                    orElse: () => MErrorMessages.unknownError,
+                  ),
+                ),
+                (success) => bloc.fetch(),
               ),
-            ),
-            (success) => bloc.fetch(),
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ],
       child: BlocBuilder<MyProfileCubit, MyProfileState>(
         bloc: bloc,
         builder: (context, state) => Scaffold(
@@ -97,7 +135,7 @@ class _Scaffold extends HookWidget {
               collapsedHeight: 58,
               titleSpacing: 0,
               title: GestureDetector(
-                onTap: context.showSwitchAccountSheet<void>,
+                onTap: () => router.push(Routes.switchAccountModal),
                 child: Row(
                   children: [
                     MText(profile.fullName.getOr(), color: colors.onBackground),

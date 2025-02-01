@@ -10,12 +10,15 @@ import 'package:retrofit/retrofit.dart';
 part 'auth_remote_datasource.g.dart';
 
 /// A remote data source for authentication.
+@injectable
 @RestApi()
 abstract class AuthRemoteDatasource {
   /// Creates a new `AuthRemoteDatasource` object.
   @factoryMethod
-  factory AuthRemoteDatasource(Dio dio, {String baseUrl}) =
-      _AuthRemoteDatasource;
+  factory AuthRemoteDatasource(
+    Dio dio, {
+    @Named('baseUrl') String baseUrl,
+  }) = _AuthRemoteDatasource;
 
   @POST('/api/v1/users/password/change')
   Future<AuthResponse<UserCredentialDto>> changePassword({

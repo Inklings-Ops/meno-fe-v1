@@ -30,20 +30,19 @@ class ProfileFacade implements IProfileFacade {
     Bio? bio,
     Avatar? avatar,
   }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    final userId = await _local.getAuthUserId();
+    if (userId == null) return left(const AuthException.message('No user'));
+
     final fullNameValue = fullName?.getOr();
     final bioValue = bio?.getOr();
     final avatarValue = avatar?.getOr();
 
-    final (credentials, hasNetwork) = await (
-      _local.getUserCredential(),
-      _network.isConnected,
-    ).wait;
-
-    if (hasNetwork) return left(const AuthException.networkError());
-
     try {
       final response = await _remote.editProfile(
-        userId: credentials!.user.id,
+        userId: userId,
         fullName: fullNameValue,
         bio: bioValue,
         image: avatarValue,
@@ -62,9 +61,8 @@ class ProfileFacade implements IProfileFacade {
 
   @override
   Future<Either<AuthException, Profile>> getProfile(UserID id) async {
-    if (!(await _network.isConnected)) {
-      return left(const AuthException.networkError());
-    }
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
 
     try {
       final response = await _remote.getProfile(id);
@@ -101,23 +99,24 @@ class ProfileFacade implements IProfileFacade {
 
   @override
   Future<Either<AuthException, Profile?>> getAuthProfile() async {
-    final (credentials, hasNetwork, hasProfile) = await (
-      _local.getUserCredential(),
-      _network.isConnected,
-      _local.hasLocalProfile,
-    ).wait;
+    final hasLocalProfile = await _local.hasLocalProfile;
+    final isConnected = await _network.isConnected;
 
-    if (!hasNetwork && !hasProfile) {
-      return left(const AuthException.networkError());
-    }
-
-    if (!hasNetwork && hasProfile) {
+    if (!isConnected && hasLocalProfile) {
       final dto = await _local.getProfile();
       return right(dto?.toDomain);
     }
 
+    if (!isConnected && !hasLocalProfile) {
+      return left(const AuthException.networkError());
+    }
+
+    final userId = await _local.getAuthUserId();
+    if (userId == null) return left(const AuthException.message('No user'));
+
     try {
-      final response = await _remote.getProfile(credentials!.user.id);
+      final response = await _remote.getProfile(userId);
+      await _local.storeProfile(response.data!);
       return right(response.data?.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);

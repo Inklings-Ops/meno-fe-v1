@@ -37,6 +37,13 @@ class SocketEvent with _$SocketEvent {
     required String createdAt,
   }) = SocketSendMessage;
 
+  const factory SocketEvent.sendChatReaction({
+    required String senderId,
+    required String broadcastId,
+    required String content,
+    required String createdAt,
+  }) = SocketSendChatReaction;
+
   const factory SocketEvent.editMessage({
     required String id,
     required String senderId,
@@ -73,4 +80,6 @@ class SocketEvent with _$SocketEvent {
   const factory SocketEvent.editedMessage(dynamic data) = _EditedMessage;
 
   const factory SocketEvent.deletedMessage(dynamic data) = _DeletedMessage;
+
+  const factory SocketEvent.newChatReaction(dynamic data) = _NewChatReaction;
 }

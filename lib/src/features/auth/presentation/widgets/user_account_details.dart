@@ -7,7 +7,7 @@ class UserAccountDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         partiallyAuthenticated: (user) => _Widget(action: action, user: user),

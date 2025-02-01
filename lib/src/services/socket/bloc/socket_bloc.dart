@@ -38,6 +38,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<_DeletedMessage>(_onDeletedMessage);
     on<SocketUpdateState>(_onUpdateState);
     on<SocketGetMessages>(_onGetMessages);
+    on<SocketSendChatReaction>(_onSendChatReaction);
+    on<_NewChatReaction>(_onNewChatReaction);
   }
 
   final IBroadcastFacade _broadcast;
@@ -69,8 +71,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       'notification': (data) => add(_Notification(data)),
       'newMessage': (data) => add(_NewMessage(data)),
       'editedMessage': (data) => add(_EditedMessage(data)),
-      // TODO(gettoknowdavid, devgson): Confirm the name of this event
       'deletedMessage': (data) => add(_DeletedMessage(data)),
+      'newReaction': (data) => add(_NewChatReaction(data)),
     });
   }
 
@@ -228,6 +230,21 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     );
   }
 
+  void _onSendChatReaction(
+    SocketSendChatReaction event,
+    Emitter<SocketState> emit,
+  ) {
+    _socket?.emitWithAck(
+      'sendChatMessage',
+      {
+        'senderId': event.senderId,
+        'broadcastId': event.broadcastId,
+        'content': event.content,
+        'createdAt': event.createdAt,
+      },
+    );
+  }
+
   void _onNewParticipant(_NewParticipant event, Emitter<SocketState> emit) {
     final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
     final dto = BroadcastParticipantDto.fromJson(decoded);
@@ -284,6 +301,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
     final dto = ChatDto.fromJson(decoded);
     emit(SocketDeletedMessageRemoved(dto.toDomain));
+  }
+
+  void _onNewChatReaction(_NewChatReaction event, Emitter<SocketState> emit) {
+    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
+    final dto = ChatDto.fromJson(decoded);
+    emit(SocketNewChatReactionReceived(dto.toDomain));
   }
 
   void _onUpdateState(SocketUpdateState event, Emitter<SocketState> emit) {

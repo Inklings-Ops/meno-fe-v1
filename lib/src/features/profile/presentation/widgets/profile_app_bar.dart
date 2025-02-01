@@ -23,7 +23,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 23,
       titleSpacing: 0,
       title: GestureDetector(
-        onTap: () => context.showSwitchAccountSheet<void>(),
+        onTap: () => router.push(Routes.switchAccountModal),
         child: Row(
           children: [
             MText(name, color: colors.onBackground),

@@ -16,15 +16,37 @@ class AuthLocalDatasource {
   /// The secure storage service.
   final SecureStorageService _storage;
 
+  // Future<UserCredentialDto?> getUserCredentialById(String id) async {
+  //   final credentialMap = await getAllUserCredentials();
+  //   return credentialMap?[id];
+  // }
+
   /// Deletes all auth data from the local storage.
   Future<void> deleteAll() => _storage.deleteAll();
 
-  Future<void> deleteCurrentUserCredential() =>
-      _storage.delete(MKeys.authUserCredentialKey);
+  Future<void> deleteAuthCredential() async {
+    try {
+      final authUserId = await getAuthUserId();
+      final allCredentials = await getAllUserCredentials();
+      if (allCredentials != null && authUserId != null) {
+        allCredentials.remove(authUserId);
+        await _saveCredentialsMap(allCredentials);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
-  Future<Map<String, UserCredentialDto>?> get getAllUserCredentials async {
-    final encodedString = await _storage.read(MKeys.allUserCredentialsKey);
+  Future<void> deleteAuthToken() async {
+    try {
+      return _storage.delete(MKeys.authToken);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
+  Future<Map<String, UserCredentialDto>?> getAllUserCredentials() async {
+    final encodedString = await _storage.read(MKeys.allCredentials);
     if (encodedString != null) {
       final decodedMap = jsonDecode(encodedString) as Map<String, dynamic>;
       final userCredentialsMap = decodedMap.map(
@@ -38,45 +60,43 @@ class AuthLocalDatasource {
     return null;
   }
 
-  Future<UserDto?> get getCurrentUser async {
-    final credential = await getUserCredential();
-    return credential?.user;
+  Future<UserCredentialDto?> getAuthCredential() async {
+    final allCredentials = await getAllUserCredentials();
+    if (allCredentials == null) return null;
+    final authUserId = await getAuthUserId();
+    return allCredentials[authUserId];
   }
 
-  Future<String?> get getCurrentUserToken async {
-    final credential = await getUserCredential();
+  Future<String?> getAuthToken() async {
+    final credential = await getAuthCredential();
     return credential?.token;
   }
 
-  Future<UserCredentialDto?> getUserCredential() async {
-    final jsonString = await _storage.read(MKeys.authUserCredentialKey);
-    if (jsonString == null) return null;
-    final decodedJson = jsonDecode(jsonString) as Map<String, dynamic>;
-    return UserCredentialDto.fromJson(decodedJson);
+  Future<String?> getAuthUserId() async {
+    final authUserId = await _storage.read(MKeys.authUserId);
+    return authUserId;
   }
 
-  Future<UserCredentialDto?> getUserCredentialById(String id) async {
-    final credentialMap = await getAllUserCredentials;
-    return credentialMap?[id];
+  Future<void> storeCredentials(
+    UserCredentialDto credential, {
+    bool isCurrent = true,
+  }) async {
+    final userId = credential.user.id;
+    final credentialsMap = await getAllUserCredentials() ?? {};
+    credentialsMap[userId] = credential;
+    try {
+      if (isCurrent) {
+        await _storage.write(MKeys.authUserId, value: userId);
+        await _storage.write(MKeys.authToken, value: credential.token);
+      }
+      await _saveCredentialsMap(credentialsMap);
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
-  Future<void> storeAuthUserCredentials(UserCredentialDto dto) async {
-    final encodedString = jsonEncode(dto.toJson());
-    await _storage.write(MKeys.authUserCredentialKey, value: encodedString);
-  }
-
-  Future<void> storeAllUserCredentials(UserCredentialDto dto) async {
-    final credentialsMap = await getAllUserCredentials ?? {};
-    credentialsMap[dto.user.id] = dto;
-
-    final encodedString = jsonEncode(credentialsMap);
-    await _storage.write(MKeys.allUserCredentialsKey, value: encodedString);
-  }
-
-  Future<void> storeAuthCombined(UserCredentialDto dto) async {
-    await Future.wait([
-      storeAuthUserCredentials(dto),
-      storeAllUserCredentials(dto),
-    ]);
+  Future<void> _saveCredentialsMap(Map<String, UserCredentialDto>? map) async {
+    final encodedString = jsonEncode(map);
+    return _storage.write(MKeys.allCredentials, value: encodedString);
   }
 }

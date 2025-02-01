@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
+@injectable
 class BibleRemoteDatasource {
   BibleRemoteDatasource({required Dio dio}) : _dio = dio;
   final Dio _dio;

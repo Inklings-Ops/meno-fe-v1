@@ -10,12 +10,15 @@ import 'package:retrofit/retrofit.dart';
 part 'profile_remote_datasource.g.dart';
 
 /// A remote data source for profile of the user.
+@injectable
 @RestApi()
 abstract class ProfileRemoteDatasource {
   /// Creates a new `ProfileRemoteDatasource` object.
   @factoryMethod
-  factory ProfileRemoteDatasource(Dio dio, {String baseUrl}) =
-      _ProfileRemoteDatasource;
+  factory ProfileRemoteDatasource(
+    Dio dio, {
+    @Named('baseUrl') String baseUrl,
+  }) = _ProfileRemoteDatasource;
 
   @PUT('/api/v1/users/{userId}/profile')
   @MultiPart()

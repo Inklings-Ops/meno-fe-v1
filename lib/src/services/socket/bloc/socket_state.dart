@@ -66,4 +66,8 @@ class SocketState with _$SocketState {
   const factory SocketState.deletedMessage(
     Chat chat,
   ) = SocketDeletedMessageRemoved;
+
+  const factory SocketState.newReaction(
+    Chat chat,
+  ) = SocketNewChatReactionReceived;
 }

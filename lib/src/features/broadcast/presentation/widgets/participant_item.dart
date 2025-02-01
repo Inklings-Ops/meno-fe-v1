@@ -104,7 +104,7 @@ class _HostTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) {
@@ -125,7 +125,7 @@ class _CoHostTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) {

@@ -29,7 +29,7 @@ final noteSectionKey = GlobalKey<NavigatorState>();
 final folderSectionKey = GlobalKey<NavigatorState>();
 
 FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
-  final status = di<SessionCubit>().state;
+  final status = di<SessionBloc>().authState.value;
   final isAllowedPath = status.allowedPaths.contains(state.fullPath);
   if (!isAllowedPath) return status.redirectPath;
   return null;
@@ -37,7 +37,7 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
 
 final router = GoRouter(
   navigatorKey: rootNavigatorKey,
-  refreshListenable: di<SessionCubit>(),
+  refreshListenable: di<SessionBloc>().authState,
   redirect: _handleRedirect,
   routes: [
     GoRoute(
@@ -266,6 +266,17 @@ final router = GoRouter(
         );
       },
     ),
+    GoRoute(
+      path: Routes.switchAccountModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => ModalPage<dynamic>(
+        child: BlocProvider.value(
+          value: context.read<AccountBloc>()..add(const AccountInitialized()),
+          child: const MSwitchAccountModal(),
+        ),
+        isScrollControlled: true,
+      ),
+    ),
 
     /// Dialogs
     ///
@@ -463,40 +474,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.myProfile,
-              builder: (context, state) {
-                final userId = context.select<SessionCubit, Uid<User>?>(
-                  (b) => b.state.whenOrNull(authenticated: (u, _) => u.id),
-                );
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) => MyProfileCubit(
-                        facade: di<IProfileFacade>(),
-                        session: di<ISessionContext>(),
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (_) => ProfileFormCubit(
-                        facade: di<IProfileFacade>(),
-                        media: di<MediaService>(),
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (_) => UsersRecentBroadcastsBloc(
-                        facade: di<IBroadcastFacade>(),
-                        userId: userId!,
-                      )..add(const GetUsersRecentBroadcasts()),
-                    ),
-                    BlocProvider(
-                      create: (_) => UsersAllBroadcastsBloc(
-                        facade: di<IBroadcastFacade>(),
-                        userId: userId!,
-                      )..add(const GetUsersBroadcasts()),
-                    ),
-                  ],
-                  child: const MyProfilePage(),
-                );
-              },
+              builder: (context, state) => const MyProfilePage(),
             ),
           ],
         ),

@@ -30,19 +30,19 @@ class MLayoutPage extends HookWidget {
         di<IBibleFacade>().initialize();
 
         // Retrieve the auth token and use it to connect to the Socket
-        final token = context.select<SessionCubit, Token?>(
+        final token = context.select<SessionBloc, Token?>(
           (bloc) => bloc.state.whenOrNull(authenticated: (_, token) => token),
         );
         context.read<SocketBloc>().add(SocketConnect(token!));
 
         // Request/Check for notifications permissions and initialize FCM
         permissions.requestNotificationsPermissions(context).then((perm) async {
-          if (perm) {
-            await firebaseMessaging.getInitialMessage().then(onInitialMessage);
-            FirebaseMessaging.onMessage.listen(showFlutterNotification);
-            FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
-            await handleFCMToken();
-          }
+          // if (perm) {
+          //   await firebaseMessaging.getInitialMessage().then(onInitialMessage);
+          //   FirebaseMessaging.onMessage.listen(showFlutterNotification);
+          //   FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
+          //   await handleFCMToken();
+          // }
         });
         return null;
       },
@@ -64,19 +64,34 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    final broadcastBloc = context.read<BroadcastBloc>();
     final livekit = context.read<LiveKitBloc>();
     final live = context.read<LiveBloc>();
     final background = di<BackgroundService>();
-    // final streamBloc = context.read<StreamBloc>();
+    final broadcastBloc = context.read<BroadcastBloc>();
 
     return MultiBlocListener(
       listeners: [
+        BlocListener<SessionBloc, SessionState>(
+          listener: (context, state) {
+            state.whenOrNull(
+              authenticated: (user, token) {
+                context.read<RecentlyLiveCubit>().fetch();
+                context
+                    .read<LiveBroadcastsBloc>()
+                    .add(const GetLiveBroadcasts());
+                context.read<AccountBloc>().add(const AccountInitialized());
+                context.read<NotesBloc>().add(const GetNotesRequested());
+                context.read<FoldersBloc>().add(const GetAllFolders());
+                context.read<MyProfileCubit>().fetch();
+              },
+            );
+          },
+        ),
         BlocListener<SocketBloc, SocketState>(
           listener: (context, state) {
             state.whenOrNull(
+              connected: () => Logger().w('CONNECTED TO SOCKET'),
               hostReconnected: (value) {
-                Logger().f('Host reconnected => //');
                 live.add(const GoLoading());
                 broadcastBloc.add(const BroadcastReconnectRequested());
               },
@@ -104,10 +119,34 @@ class MLayoutPage extends HookWidget {
             );
           },
         ),
+        BlocListener<AccountBloc, AccountState>(
+          listenWhen: (p, c) => p is AccountLoaded != c is AccountLoaded,
+          listener: (context, state) {
+            state.whenOrNull(
+              loaded: (credential, _) => router.refresh(),
+              failure: (failure) => context
+                ..pop()
+                ..showLoginError(failure),
+            );
+          },
+        )
       ],
-      child: Scaffold(
-        body: Row(children: [sideNavRail, Expanded(child: shell)]),
-        bottomNavigationBar: bottomNavBar,
+      child: BlocBuilder<AccountBloc, AccountState>(
+        buildWhen: (p, c) => p is AccountLoading != c is AccountLoading,
+        builder: (context, state) => state.maybeWhen(
+          loading: () => const Scaffold(
+            body: ColoredBox(
+              color: Colors.black,
+              child: SizedBox.expand(
+                child: Center(child: MLoadingIndicator(130, 130)),
+              ),
+            ),
+          ),
+          orElse: () => Scaffold(
+            body: Row(children: [sideNavRail, Expanded(child: shell)]),
+            bottomNavigationBar: bottomNavBar,
+          ),
+        ),
       ),
     );
   }

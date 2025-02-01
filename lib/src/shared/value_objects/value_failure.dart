@@ -14,5 +14,6 @@ class ValueFailure<T> with _$ValueFailure<T> {
   ) = InvalidPassword<T>;
   const factory ValueFailure.multiline() = Multiline<T>;
   const factory ValueFailure.lengthExceeded(int max) = LengthExceeded<T>;
+  const factory ValueFailure.invalidToken() = InvalidToken<T>;
   const factory ValueFailure.tokenExpired() = TokenExpired<T>;
 }

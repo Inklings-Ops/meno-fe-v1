@@ -2,7 +2,6 @@ import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_list_tile.dart';
 import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_section.dart';
 
-
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -99,7 +98,8 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Logout',
                   leadingIcon: MIcons.log_out,
-                  onTap: context.read<SessionCubit>().logout,
+                  onTap: () =>
+                      context.read<SessionBloc>().add(const SessionLogout()),
                 ),
                 SettingsListTile(
                   title: 'Delete Account',

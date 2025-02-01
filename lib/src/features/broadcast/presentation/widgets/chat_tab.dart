@@ -27,11 +27,7 @@ class ChatTab extends HookWidget {
                       : const SizedBox(),
                 ),
                 const EditingMessageWidget(),
-                SizedBox(
-                  height: 52,
-                  width: constraints.maxWidth,
-                  child: ChatInputContainer(scrollController: scrollController),
-                ),
+                ChatInputContainer(scrollController: scrollController),
               ],
             ),
           ),

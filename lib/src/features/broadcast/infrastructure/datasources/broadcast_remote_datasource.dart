@@ -8,13 +8,14 @@ import 'package:retrofit/retrofit.dart';
 
 part 'broadcast_remote_datasource.g.dart';
 
+@injectable
 @RestApi()
 abstract class BroadcastRemoteDatasource {
   /// Creates a new `BroadcastRemoteDatasource` object.
   @factoryMethod
   factory BroadcastRemoteDatasource(
     Dio dio, {
-    String baseUrl,
+    @Named('baseUrl') String baseUrl,
   }) = _BroadcastRemoteDatasource;
 
   @POST('/api/v1/broadcasts')

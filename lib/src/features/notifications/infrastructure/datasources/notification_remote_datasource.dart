@@ -5,11 +5,14 @@ import 'package:retrofit/retrofit.dart';
 
 part 'notification_remote_datasource.g.dart';
 
+@injectable
 @RestApi()
 abstract class NotificationRemoteDatasource {
   @factoryMethod
-  factory NotificationRemoteDatasource(Dio dio, {String baseUrl}) =
-      _NotificationRemoteDatasource;
+  factory NotificationRemoteDatasource(
+    Dio dio, {
+    @Named('baseUrl') String baseUrl,
+  }) = _NotificationRemoteDatasource;
 
   @GET('/api/v1/notifications')
   Future<NotificationResponse> getNotifications({
