@@ -229,7 +229,7 @@ extension GetItInjectableX on _i174.GetIt {
           local: gh<_i517.ProfileLocalDatasource>(),
           network: gh<_i463.NetworkService>(),
         ));
-    gh.lazySingleton<_i246.INotificationFacade>(() => _i734.NotificationFacade(
+    gh.factory<_i246.INotificationFacade>(() => _i734.NotificationFacade(
           remoteDatasource: gh<_i246.NotificationRemoteDatasource>(),
           networkService: gh<_i463.NetworkService>(),
         ));

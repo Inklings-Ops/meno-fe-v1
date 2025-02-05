@@ -106,7 +106,12 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.notifications,
-      builder: (context, state) => const NotificationsPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => NotificationsBloc(
+          facade: di<INotificationFacade>(),
+        )..add(const GetNotifications()),
+        child: const NotificationsPage(),
+      ),
     ),
     GoRoute(
       path: Routes.onboarding,
@@ -277,6 +282,17 @@ final router = GoRouter(
         isScrollControlled: true,
       ),
     ),
+    GoRoute(
+      path: Routes.broadcastInfoModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) {
+        final broadcast = context.read<BroadcastBloc>().state.broadcast;
+        return ModalPage<dynamic>(
+          child: BroadcastInfoModal(broadcast: broadcast),
+          isScrollControlled: true,
+        );
+      },
+    ),
 
     /// Dialogs
     ///
@@ -322,6 +338,7 @@ final router = GoRouter(
     ///
     /// Live Broadcast/Stream Shell Route
     StatefulShellRoute(
+      parentNavigatorKey: rootNavigatorKey,
       builder: (context, state, navigationShell) => navigationShell,
       navigatorContainerBuilder: (context, navigationShell, children) {
         final bibleFac = di<IBibleFacade>();

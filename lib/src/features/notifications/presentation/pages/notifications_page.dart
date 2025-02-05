@@ -6,25 +6,43 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return RefreshIndicator(
-    //   onRefresh: () => ref.read(notificationsNotifierProvider.future),
-    //   child: notifications.when(
-    //     data: (_) =>
-    //         _Content(notifications: ref.watch(sortNotificationsProvider)),
-    //     error: (_, __) => const Text('Oops, something unexpected happened'),
-    //     loading: () => const Center(child: CircularProgressIndicator()),
-    //   ),
-    // );
-    return const MScaffold(
-      appBar: _AppBar(),
-      body: Text('Oops'),
+    final bloc = context.watch<NotificationsBloc>();
+
+    Future<void> onRefresh() async {
+      final notifications = bloc.stream.first;
+      bloc.add(const GetNotifications());
+      await notifications;
+    }
+
+    return RefreshIndicator.adaptive(
+      onRefresh: onRefresh,
+      child: MScaffold(
+        appBar: const _AppBar(),
+        body: BlocBuilder<NotificationsBloc, NotificationsState>(
+          builder: (context, state) => state.when(
+            empty: () => const Center(child: Text('Nothing to see here')),
+            loading: () => _Content(
+              notifications: fakeNotifications,
+              loading: true,
+            ),
+            loaded: (notifications) => _Content(notifications: notifications),
+            failure: (exception) => Text(
+              exception.maybeWhen(
+                message: (message) => message,
+                orElse: () => "Something's not right",
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _Content extends StatelessWidget {
-  const _Content({required this.notifications});
+  const _Content({required this.notifications, this.loading = false});
   final Map<NotificationCategory, List<Notification?>> notifications;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +51,9 @@ class _Content extends StatelessWidget {
     final thisWeek = notifications[NotificationCategory.thisWeek];
     final older = notifications[NotificationCategory.older];
 
-    return MScaffold(
-      appBar: const _AppBar(),
-      body: CustomScrollView(
+    return Skeletonizer(
+      enabled: loading,
+      child: CustomScrollView(
         slivers: [
           SliverList(
             delegate: SliverChildListDelegate([

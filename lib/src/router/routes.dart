@@ -54,6 +54,7 @@ class Routes {
       '/others-profile-options-modal';
   static const String editProfileModal = '/edit-profile-modal';
   static const String switchAccountModal = '/switch-account-modal';
+  static const String broadcastInfoModal = '/broadcast-info-modal';
 
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';

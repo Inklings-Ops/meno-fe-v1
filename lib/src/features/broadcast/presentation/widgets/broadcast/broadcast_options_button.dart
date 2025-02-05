@@ -1,5 +1,4 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
 class BroadcastOptionsButton extends StatelessWidget {
   const BroadcastOptionsButton({super.key});
@@ -16,13 +15,8 @@ class BroadcastOptionsButton extends StatelessWidget {
         side: BorderSide(color: colors.outlineVariant3!),
         shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
       ),
-      onPressed: () => context.showModal<void>(
-        BroadcastInfoModal(
-          broadcast: context.read<BroadcastBloc>().state.broadcast,
-        ),
-        isScrollControlled: true,
-        useRootNavigator: true,
-      ),
+      onPressed: () =>
+          rootNavigatorKey.currentContext?.push(Routes.broadcastInfoModal),
     );
   }
 }

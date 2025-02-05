@@ -104,6 +104,7 @@ extension SessionStateX on SessionState {
         Routes.leaveAndJoinDialog,
         Routes.biblePage,
         Routes.switchAccountModal,
+        Routes.broadcastInfoModal,
       ],
     );
   }

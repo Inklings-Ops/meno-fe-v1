@@ -50,6 +50,7 @@ class MNavigationStyles extends ThemeExtension<MNavigationStyles> {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
         backgroundColor: colors.background,
         toolbarHeight: 56,
         titleTextStyle: textTheme.bodyMedium,

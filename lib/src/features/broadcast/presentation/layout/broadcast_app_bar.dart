@@ -10,6 +10,7 @@ class BroadcastAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
+        color: Colors.transparent,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         constraints: const BoxConstraints(minHeight: 32),
         child: TabBar(

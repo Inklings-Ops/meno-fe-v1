@@ -4,16 +4,16 @@
 
 // part 'notifications_notifier.g.dart';
 
-enum NotificationCategory { today, thisWeek, older, none }
+// enum NotificationCategory { today, thisWeek, older, none }
 
-extension NotificationCategoryX on NotificationCategory {
-  String get toName => switch (this) {
-        NotificationCategory.none => 'None',
-        NotificationCategory.today => 'Today',
-        NotificationCategory.older => 'Older',
-        NotificationCategory.thisWeek => 'This Week',
-      };
-}
+// extension NotificationCategoryX on NotificationCategory {
+//   String get toName => switch (this) {
+//         NotificationCategory.none => 'None',
+//         NotificationCategory.today => 'Today',
+//         NotificationCategory.older => 'Older',
+//         NotificationCategory.thisWeek => 'This Week',
+//       };
+// }
 
 // @riverpod
 // Map<NotificationCategory, List<Notification?>> sortNotifications(
