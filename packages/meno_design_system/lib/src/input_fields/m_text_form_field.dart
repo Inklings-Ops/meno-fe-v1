@@ -276,7 +276,7 @@ class _MTextFormFieldState extends State<MTextFormField> {
 
   TextFormField _buildTextFormField(
     MTextFieldStyle styles,
-    MColor iconColor,
+    Color iconColor,
     FormFieldState<String?> field,
   ) {
     return TextFormField(
@@ -341,7 +341,7 @@ class _EyeIcon extends StatelessWidget {
 class _PrefixIcon extends StatelessWidget {
   const _PrefixIcon({required this.icon, this.color});
   final IconData icon;
-  final MColor? color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

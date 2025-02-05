@@ -13,9 +13,7 @@ class LiveNotificationCard extends StatelessWidget {
       padding: styles.nCardContentPadding,
       decoration: ShapeDecoration(
         color: styles.nBackgroundColor,
-        shape: SmoothRectangleBorder(
-          borderRadius: Corners.squircleLg,
-        ),
+        shape: SmoothRectangleBorder(borderRadius: Corners.squircleLg),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,13 +27,13 @@ class LiveNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MText(
-                  notification.content.title!,
+                  notification.content!.title!,
                   style: styles.nTitleTextStyle,
                   maxLines: 4,
                 ),
                 const SizedBox(height: 14),
                 MText(
-                  DateHelpers.calculateTimeAgo(notification.createdAt),
+                  DateHelpers.calculateTimeAgo(notification.createdAt!),
                   style: styles.nSubtitleTextStyle,
                   color: styles.nSubtitleColor,
                 ),
@@ -49,9 +47,9 @@ class LiveNotificationCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: Corners.md,
               border: Border.all(),
-              image: notification.content.imageUrl != null
+              image: notification.content?.imageUrl != null
                   ? DecorationImage(
-                      image: NetworkImage(notification.content.imageUrl!),
+                      image: NetworkImage(notification.content!.imageUrl!),
                       fit: BoxFit.cover,
                     )
                   : null,

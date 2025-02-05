@@ -61,7 +61,7 @@ class _Widget extends StatelessWidget {
                   MText(
                     'Switch account',
                     style: textTheme.captionMedium,
-                    color: MColorScheme.of(context)?.primary,
+                    color: MColorScheme.of(context).primary,
                   ),
                 ],
               ],

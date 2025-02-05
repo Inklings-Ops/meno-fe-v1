@@ -9,7 +9,7 @@ class DiscoverPaginationIndicator extends StatelessWidget {
   final bool hasMore;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [

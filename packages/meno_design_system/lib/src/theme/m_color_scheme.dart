@@ -176,175 +176,175 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
   final Brightness? brightness;
 
   /// The [primary] color
-  final MColor? primary;
+  final Color? primary;
 
   /// The [onPrimary] color
-  final MColor? onPrimary;
+  final Color? onPrimary;
 
   /// The [primaryContainer] color
-  final MColor? primaryContainer;
+  final Color? primaryContainer;
 
   /// The [onPrimaryContainer] color
-  final MColor? onPrimaryContainer;
+  final Color? onPrimaryContainer;
 
   /// The [secondary] color
-  final MColor? secondary;
+  final Color? secondary;
 
   /// The [onSecondary] color
-  final MColor? onSecondary;
+  final Color? onSecondary;
 
   /// The [secondaryContainer] color
-  final MColor? secondaryContainer;
+  final Color? secondaryContainer;
 
   /// The [onSecondaryContainer] color
-  final MColor? onSecondaryContainer;
+  final Color? onSecondaryContainer;
 
   /// The [tertiary] color
-  final MColor? tertiary;
+  final Color? tertiary;
 
   /// The [onTertiary] color
-  final MColor? onTertiary;
+  final Color? onTertiary;
 
   /// The [tertiaryContainer] color
-  final MColor? tertiaryContainer;
+  final Color? tertiaryContainer;
 
   /// The [onTertiaryContainer] color
-  final MColor? onTertiaryContainer;
+  final Color? onTertiaryContainer;
 
   /// The [error] color
-  final MColor? error;
+  final Color? error;
 
   /// The [onError] color
-  final MColor? onError;
+  final Color? onError;
 
   /// The [errorContainer] color
-  final MColor? errorContainer;
+  final Color? errorContainer;
 
   /// The [onErrorContainer] color
-  final MColor? onErrorContainer;
+  final Color? onErrorContainer;
 
   /// The [informational] color
-  final MColor? informational;
+  final Color? informational;
 
   /// The [onInformational] color
-  final MColor? onInformational;
+  final Color? onInformational;
 
   /// The [informationalContainer] color
-  final MColor? informationalContainer;
+  final Color? informationalContainer;
 
   /// The [onInformationalContainer] color
-  final MColor? onInformationalContainer;
+  final Color? onInformationalContainer;
 
   /// The [warning] color
-  final MColor? warning;
+  final Color? warning;
 
   /// The [onWarning] color
-  final MColor? onWarning;
+  final Color? onWarning;
 
   /// The [warningContainer] color
-  final MColor? warningContainer;
+  final Color? warningContainer;
 
   /// The [onWarningContainer] color
-  final MColor? onWarningContainer;
+  final Color? onWarningContainer;
 
   /// The [success] color
-  final MColor? success;
+  final Color? success;
 
   /// The [onSuccess] color
-  final MColor? onSuccess;
+  final Color? onSuccess;
 
   /// The [successContainer] color
-  final MColor? successContainer;
+  final Color? successContainer;
 
   /// The [onSuccessContainer] color
-  final MColor? onSuccessContainer;
+  final Color? onSuccessContainer;
 
   /// The [notification] color
-  final MColor? notification;
+  final Color? notification;
 
   /// The [onNotification] color
-  final MColor? onNotification;
+  final Color? onNotification;
 
   /// The [inActive] color
-  final MColor? inActive;
+  final Color? inActive;
 
   /// The [onInActive] color
-  final MColor? onInActive;
+  final Color? onInActive;
 
   /// The [inActiveContainer] color
-  final MColor? inActiveContainer;
+  final Color? inActiveContainer;
 
   /// The [onInActiveContainer] color
-  final MColor? onInActiveContainer;
+  final Color? onInActiveContainer;
 
   /// The [disabled] color
-  final MColor? disabled;
+  final Color? disabled;
 
   /// The [onDisabled] color
-  final MColor? onDisabled;
+  final Color? onDisabled;
 
   /// The [disabledContainer] color
-  final MColor? disabledContainer;
+  final Color? disabledContainer;
 
   /// The [onDisabledContainer] color
-  final MColor? onDisabledContainer;
+  final Color? onDisabledContainer;
 
   /// The [background] color
-  final MColor? background;
+  final Color? background;
 
   /// The [onBackground] color
-  final MColor? onBackground;
+  final Color? onBackground;
 
   /// The [onBackgroundProminent] color
-  final MColor? onBackgroundProminent;
+  final Color? onBackgroundProminent;
 
   /// The [onBackgroundVariant] color
-  final MColor? onBackgroundVariant;
+  final Color? onBackgroundVariant;
 
   /// The [surface] color
-  final MColor? surface;
+  final Color? surface;
 
   /// The [onSurface] color
-  final MColor? onSurface;
+  final Color? onSurface;
 
   /// The [surfaceTint] color
-  final MColor? surfaceTint;
+  final Color? surfaceTint;
 
   /// The [surfaceShade] color
-  final MColor? surfaceShade;
+  final Color? surfaceShade;
 
   /// The [onSurfaceShade] color
-  final MColor? onSurfaceShade;
+  final Color? onSurfaceShade;
 
   /// The [inverseSurface] color
-  final MColor? inverseSurface;
+  final Color? inverseSurface;
 
   /// The [onInverseSurface] color
-  final MColor? onInverseSurface;
+  final Color? onInverseSurface;
 
   /// The [inversePrimary] color
-  final MColor? inversePrimary;
+  final Color? inversePrimary;
 
   /// The [onInversePrimary] color
-  final MColor? onInversePrimary;
+  final Color? onInversePrimary;
 
   /// The [scrim] color
-  final MColor? scrim;
+  final Color? scrim;
 
   /// The [shadow] color
-  final MColor? shadow;
+  final Color? shadow;
 
   /// The [outline] color
-  final MColor? outline;
+  final Color? outline;
 
   /// The [outlineVariant1] color
-  final MColor? outlineVariant1;
+  final Color? outlineVariant1;
 
   /// The [outlineVariant2] color
-  final MColor? outlineVariant2;
+  final Color? outlineVariant2;
 
   /// The [outlineVariant3] color
-  final MColor? outlineVariant3;
+  final Color? outlineVariant3;
 
   @override
   ThemeExtension<MColorScheme> copyWith({
@@ -480,87 +480,81 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
     if (other is! MColorScheme) return this;
     return MColorScheme(
       brightness: other.brightness,
-      primary: MColor.lerp(primary, other.primary, t),
-      onPrimary: MColor.lerp(onPrimary, other.onPrimary, t),
-      primaryContainer:
-          MColor.lerp(primaryContainer, other.primaryContainer, t),
+      primary: Color.lerp(primary, other.primary, t),
+      onPrimary: Color.lerp(onPrimary, other.onPrimary, t),
+      primaryContainer: Color.lerp(primaryContainer, other.primaryContainer, t),
       onPrimaryContainer:
-          MColor.lerp(onPrimaryContainer, other.onPrimaryContainer, t),
-      secondary: MColor.lerp(secondary, other.secondary, t),
-      onSecondary: MColor.lerp(onSecondary, other.onSecondary, t),
+          Color.lerp(onPrimaryContainer, other.onPrimaryContainer, t),
+      secondary: Color.lerp(secondary, other.secondary, t),
+      onSecondary: Color.lerp(onSecondary, other.onSecondary, t),
       secondaryContainer:
-          MColor.lerp(secondaryContainer, other.secondaryContainer, t),
+          Color.lerp(secondaryContainer, other.secondaryContainer, t),
       onSecondaryContainer:
-          MColor.lerp(onSecondaryContainer, other.onSecondaryContainer, t),
-      tertiary: MColor.lerp(tertiary, other.tertiary, t),
-      onTertiary: MColor.lerp(onTertiary, other.onTertiary, t),
+          Color.lerp(onSecondaryContainer, other.onSecondaryContainer, t),
+      tertiary: Color.lerp(tertiary, other.tertiary, t),
+      onTertiary: Color.lerp(onTertiary, other.onTertiary, t),
       tertiaryContainer:
-          MColor.lerp(tertiaryContainer, other.tertiaryContainer, t),
+          Color.lerp(tertiaryContainer, other.tertiaryContainer, t),
       onTertiaryContainer:
-          MColor.lerp(onTertiaryContainer, other.onTertiaryContainer, t),
-      error: MColor.lerp(error, other.error, t),
-      onError: MColor.lerp(onError, other.onError, t),
-      errorContainer: MColor.lerp(errorContainer, other.errorContainer, t),
-      onErrorContainer:
-          MColor.lerp(onErrorContainer, other.onErrorContainer, t),
-      informational: MColor.lerp(informational, other.informational, t),
-      onInformational: MColor.lerp(onInformational, other.onInformational, t),
+          Color.lerp(onTertiaryContainer, other.onTertiaryContainer, t),
+      error: Color.lerp(error, other.error, t),
+      onError: Color.lerp(onError, other.onError, t),
+      errorContainer: Color.lerp(errorContainer, other.errorContainer, t),
+      onErrorContainer: Color.lerp(onErrorContainer, other.onErrorContainer, t),
+      informational: Color.lerp(informational, other.informational, t),
+      onInformational: Color.lerp(onInformational, other.onInformational, t),
       informationalContainer:
-          MColor.lerp(informationalContainer, other.informationalContainer, t),
-      onInformationalContainer: MColor.lerp(
+          Color.lerp(informationalContainer, other.informationalContainer, t),
+      onInformationalContainer: Color.lerp(
         onInformationalContainer,
         other.onInformationalContainer,
         t,
       ),
-      warning: MColor.lerp(warning, other.warning, t),
-      onWarning: MColor.lerp(onWarning, other.onWarning, t),
-      warningContainer:
-          MColor.lerp(warningContainer, other.warningContainer, t),
+      warning: Color.lerp(warning, other.warning, t),
+      onWarning: Color.lerp(onWarning, other.onWarning, t),
+      warningContainer: Color.lerp(warningContainer, other.warningContainer, t),
       onWarningContainer:
-          MColor.lerp(onWarningContainer, other.onWarningContainer, t),
-      success: MColor.lerp(success, other.success, t),
-      onSuccess: MColor.lerp(onSuccess, other.onSuccess, t),
-      successContainer:
-          MColor.lerp(successContainer, other.successContainer, t),
+          Color.lerp(onWarningContainer, other.onWarningContainer, t),
+      success: Color.lerp(success, other.success, t),
+      onSuccess: Color.lerp(onSuccess, other.onSuccess, t),
+      successContainer: Color.lerp(successContainer, other.successContainer, t),
       onSuccessContainer:
-          MColor.lerp(onSuccessContainer, other.onSuccessContainer, t),
-      notification: MColor.lerp(notification, other.notification, t),
-      onNotification: MColor.lerp(onNotification, other.onNotification, t),
-      inActive: MColor.lerp(inActive, other.inActive, t),
-      onInActive: MColor.lerp(onInActive, other.onInActive, t),
+          Color.lerp(onSuccessContainer, other.onSuccessContainer, t),
+      notification: Color.lerp(notification, other.notification, t),
+      onNotification: Color.lerp(onNotification, other.onNotification, t),
+      inActive: Color.lerp(inActive, other.inActive, t),
+      onInActive: Color.lerp(onInActive, other.onInActive, t),
       inActiveContainer:
-          MColor.lerp(inActiveContainer, other.inActiveContainer, t),
+          Color.lerp(inActiveContainer, other.inActiveContainer, t),
       onInActiveContainer:
-          MColor.lerp(onInActiveContainer, other.onInActiveContainer, t),
-      disabled: MColor.lerp(disabled, other.disabled, t),
-      onDisabled: MColor.lerp(onDisabled, other.onDisabled, t),
+          Color.lerp(onInActiveContainer, other.onInActiveContainer, t),
+      disabled: Color.lerp(disabled, other.disabled, t),
+      onDisabled: Color.lerp(onDisabled, other.onDisabled, t),
       disabledContainer:
-          MColor.lerp(disabledContainer, other.disabledContainer, t),
+          Color.lerp(disabledContainer, other.disabledContainer, t),
       onDisabledContainer:
-          MColor.lerp(onDisabledContainer, other.onDisabledContainer, t),
-      background: MColor.lerp(background, other.background, t),
-      onBackground: MColor.lerp(onBackground, other.onBackground, t),
+          Color.lerp(onDisabledContainer, other.onDisabledContainer, t),
+      background: Color.lerp(background, other.background, t),
+      onBackground: Color.lerp(onBackground, other.onBackground, t),
       onBackgroundProminent:
-          MColor.lerp(onBackgroundProminent, other.onBackgroundProminent, t),
+          Color.lerp(onBackgroundProminent, other.onBackgroundProminent, t),
       onBackgroundVariant:
-          MColor.lerp(onBackgroundVariant, other.onBackgroundVariant, t),
-      surface: MColor.lerp(surface, other.surface, t),
-      onSurface: MColor.lerp(onSurface, other.onSurface, t),
-      surfaceTint: MColor.lerp(surfaceTint, other.surfaceTint, t),
-      surfaceShade: MColor.lerp(surfaceShade, other.surfaceShade, t),
-      onSurfaceShade: MColor.lerp(onSurfaceShade, other.onSurfaceShade, t),
-      inverseSurface: MColor.lerp(inverseSurface, other.inverseSurface, t),
-      onInverseSurface:
-          MColor.lerp(onInverseSurface, other.onInverseSurface, t),
-      inversePrimary: MColor.lerp(inversePrimary, other.inversePrimary, t),
-      onInversePrimary:
-          MColor.lerp(onInversePrimary, other.onInversePrimary, t),
-      scrim: MColor.lerp(scrim, other.scrim, t),
-      shadow: MColor.lerp(shadow, other.shadow, t),
-      outline: MColor.lerp(outline, other.outline, t),
-      outlineVariant1: MColor.lerp(outlineVariant1, other.outlineVariant1, t),
-      outlineVariant2: MColor.lerp(outlineVariant2, other.outlineVariant2, t),
-      outlineVariant3: MColor.lerp(outlineVariant3, other.outlineVariant3, t),
+          Color.lerp(onBackgroundVariant, other.onBackgroundVariant, t),
+      surface: Color.lerp(surface, other.surface, t),
+      onSurface: Color.lerp(onSurface, other.onSurface, t),
+      surfaceTint: Color.lerp(surfaceTint, other.surfaceTint, t),
+      surfaceShade: Color.lerp(surfaceShade, other.surfaceShade, t),
+      onSurfaceShade: Color.lerp(onSurfaceShade, other.onSurfaceShade, t),
+      inverseSurface: Color.lerp(inverseSurface, other.inverseSurface, t),
+      onInverseSurface: Color.lerp(onInverseSurface, other.onInverseSurface, t),
+      inversePrimary: Color.lerp(inversePrimary, other.inversePrimary, t),
+      onInversePrimary: Color.lerp(onInversePrimary, other.onInversePrimary, t),
+      scrim: Color.lerp(scrim, other.scrim, t),
+      shadow: Color.lerp(shadow, other.shadow, t),
+      outline: Color.lerp(outline, other.outline, t),
+      outlineVariant1: Color.lerp(outlineVariant1, other.outlineVariant1, t),
+      outlineVariant2: Color.lerp(outlineVariant2, other.outlineVariant2, t),
+      outlineVariant3: Color.lerp(outlineVariant3, other.outlineVariant3, t),
     );
   }
 
@@ -584,8 +578,10 @@ class MColorScheme extends ThemeExtension<MColorScheme> {
   ///
   /// Returns the [MColorScheme] extension if found, or null if no
   /// [MColorScheme] extension is available in the closest [Theme] instance.
-  static MColorScheme? of(BuildContext context) {
-    return Theme.of(context).extension<MColorScheme>();
+  static MColorScheme of(BuildContext context) {
+    final brightness = MediaQuery.platformBrightnessOf(context);
+    return Theme.of(context).extension<MColorScheme>() ??
+        MColorScheme.$default(brightness);
   }
 
   /// Creates the [ColorScheme] based the [MColorScheme] extension

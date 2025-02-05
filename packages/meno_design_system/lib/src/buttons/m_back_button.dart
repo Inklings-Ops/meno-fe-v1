@@ -52,7 +52,7 @@ class MBackButton extends _ActionButton {
   const factory MBackButton.withText({
     Key? key,
     String? title,
-    MColor? iconColor,
+    Color? iconColor,
     TextStyle? textStyle,
     VoidCallback? onPressed,
   }) = _MBackButtonWithText;
@@ -108,7 +108,7 @@ abstract class _ActionButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   /// The color of the button.
-  final MColor? color;
+  final Color? color;
 
   /// The text to display next to the icon (if applicable).
   final String? title;
@@ -177,6 +177,6 @@ class _MBackButtonWithText extends MBackButton {
     super.title = 'Back',
     super.textStyle,
     super.onPressed,
-    MColor? iconColor,
+    Color? iconColor,
   }) : super._(variant: _ActionButtonVariant.withText, color: iconColor);
 }

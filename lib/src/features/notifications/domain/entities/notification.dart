@@ -7,11 +7,11 @@ part 'notification.freezed.dart';
 
 @freezed
 class Notification with _$Notification {
-  factory Notification({
-    required String id,
-    required NotificationType type,
-    required bool read,
-    required NotificationContent content,
-    required DateTime createdAt,
+  const factory Notification({
+    String? id,
+    NotificationType? type,
+    @Default(false) bool read,
+    NotificationContent? content,
+    DateTime? createdAt,
   }) = _Notification;
 }

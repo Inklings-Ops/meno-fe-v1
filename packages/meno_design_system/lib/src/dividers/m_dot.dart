@@ -15,7 +15,7 @@ class MDot extends StatelessWidget {
   final double dimension;
 
   /// The color of the dot.
-  final MColor? color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

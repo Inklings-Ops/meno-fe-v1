@@ -11,12 +11,12 @@ extension MSnackBarExtensions on BuildContext {
     final textTheme = MTextTheme.of(this)!;
     return ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
-        backgroundColor: colorScheme?.error,
+        backgroundColor: colorScheme.error,
         behavior: SnackBarBehavior.floating,
         content: MText(
           message,
           style: textTheme.captionRegular,
-          color: colorScheme?.onError,
+          color: colorScheme.onError,
         ),
       ),
     );

@@ -75,7 +75,7 @@ class _PreviousAndNextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final bloc = context.watch<ScripturePickerCubit>();
     return Row(
       children: [
@@ -117,7 +117,7 @@ class _Container extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return InkWell(
       onTap: onTap,

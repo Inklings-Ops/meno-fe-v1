@@ -16,7 +16,7 @@ class BookWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     const borderRadius = Corners.sm;
     final bloc = context.watch<ScripturePickerCubit>();
     final isSelected = useState<bool>(bloc.state.book == bookName);

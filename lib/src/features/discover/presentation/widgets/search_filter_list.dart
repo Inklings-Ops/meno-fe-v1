@@ -9,7 +9,7 @@ class SearchFilterList extends StatelessWidget {
   final ValueChanged<Filter> onSelected;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     const filters = Filter.values;
     return ListView.separated(

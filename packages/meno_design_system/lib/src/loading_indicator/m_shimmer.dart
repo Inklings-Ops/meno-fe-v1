@@ -75,7 +75,7 @@ class MShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final isCircle = shape == BoxShape.circle;
     final effectiveBorderRadius = BorderRadius.circular(borderRadius ?? 4);
     return Shimmer.fromColors(

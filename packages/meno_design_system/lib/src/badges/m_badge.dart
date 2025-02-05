@@ -96,8 +96,8 @@ class MBadge extends StatelessWidget {
           height: 20,
           constraints: const BoxConstraints(minHeight: 20),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          color: MColorScheme.of(context)?.disabledContainer,
-          valueColor: MColorScheme.of(context)?.onDisabled,
+          color: MColorScheme.of(context).disabledContainer,
+          valueColor: MColorScheme.of(context).onDisabled,
         );
 
   /// Creates a reconnecting badge with predefined styles.
@@ -110,8 +110,8 @@ class MBadge extends StatelessWidget {
           height: 20,
           constraints: const BoxConstraints(minHeight: 20),
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          color: MColorScheme.of(context)?.errorContainer,
-          valueColor: MColorScheme.of(context)?.onErrorContainer,
+          color: MColorScheme.of(context).errorContainer,
+          valueColor: MColorScheme.of(context).onErrorContainer,
         );
 
   /// Creates a new badge with a customizable value.
@@ -127,7 +127,7 @@ class MBadge extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 16),
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           borderRadius: const BorderRadius.all(Radius.circular(4)),
-          valueColor: MColorScheme.of(context)?.primary,
+          valueColor: MColorScheme.of(context).primary,
           color: MInternal.resolve(
             Theme.of(context).brightness == Brightness.light,
             MColor.newBadgeLight,
@@ -178,7 +178,7 @@ class MBadge extends StatelessWidget {
   });
 
   /// The background color of the badge.
-  final MColor? color;
+  final Color? color;
 
   /// The text to display on the badge.
   final String? value;
@@ -190,7 +190,7 @@ class MBadge extends StatelessWidget {
   final TextStyle? textStyle;
 
   /// The color of the badge text.
-  final MColor? valueColor;
+  final Color? valueColor;
 
   /// The border radius of the badge.
   final BorderRadius? borderRadius;
@@ -215,7 +215,7 @@ class MBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     Widget? child;
 
@@ -256,7 +256,7 @@ class MBadge extends StatelessWidget {
   }
 
   Widget _buildText(BuildContext context, {required String content}) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final effectiveTextStyle = textStyle ?? textTheme.microMedium;
     return MText(

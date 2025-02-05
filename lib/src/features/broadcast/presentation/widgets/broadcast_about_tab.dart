@@ -26,7 +26,7 @@ class BroadcastAboutTab extends StatelessWidget {
           if (description != null)
             MText(
               description!,
-              color: MColorScheme.of(context)!.onDisabledContainer,
+              color: MColorScheme.of(context).onDisabledContainer,
             ),
         ],
       ),

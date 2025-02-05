@@ -127,7 +127,7 @@ class _ChatBubble extends StatelessWidget {
                 leading: const Icon(MIcons.trash),
                 title: 'Delete',
                 onTap: () async => handleDeleteMessage(context, chat),
-                titleColor: MColorScheme.of(context)!.error,
+                titleColor: MColorScheme.of(context).error,
               ),
               Spaces.verticalLarge,
             ],
@@ -142,7 +142,7 @@ class _ChatBubble extends StatelessWidget {
     required Chat chat,
     bool isHost = false,
   }) async {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     return context.showModal(
       isScrollControlled: true,

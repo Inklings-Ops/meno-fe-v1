@@ -6,7 +6,7 @@ part 'notification_data.freezed.dart';
 
 @freezed
 class NotificationData with _$NotificationData {
-  factory NotificationData({
+  const factory NotificationData({
     required List<Notification?> notifications,
     required int totalPages,
     required int currentPage,

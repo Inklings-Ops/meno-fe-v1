@@ -13,7 +13,7 @@ extension MBottomSheetsX on BuildContext {
       context: this,
       builder: (context) => Material(child: child),
       constraints: constraints,
-      backgroundColor: MColorScheme.of(this)?.background,
+      backgroundColor: MColorScheme.of(this).background,
       isScrollControlled: isScrollControlled ?? false,
       useRootNavigator: useRootNavigator ?? false,
       isDismissible: isDismissible ?? true,

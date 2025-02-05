@@ -20,6 +20,7 @@ class MLayoutPage extends HookWidget {
 
     void onInitialMessage(RemoteMessage? value) {
       initMessage.value = value?.data.toString();
+      Logger().w(initMessage.value);
     }
 
     final permissions = di<PermissionsService>();
@@ -35,15 +36,11 @@ class MLayoutPage extends HookWidget {
         );
         context.read<SocketBloc>().add(SocketConnect(token!));
 
-        // Request/Check for notifications permissions and initialize FCM
-        permissions.requestNotificationsPermissions(context).then((perm) async {
-          // if (perm) {
-          //   await firebaseMessaging.getInitialMessage().then(onInitialMessage);
-          //   FirebaseMessaging.onMessage.listen(showFlutterNotification);
-          //   FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
-          //   await handleFCMToken();
-          // }
-        });
+        firebaseMessaging.getInitialMessage().then(onInitialMessage);
+        FirebaseMessaging.onMessage.listen(showFlutterNotification);
+        FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
+        handleFCMToken();
+
         return null;
       },
       [firebaseMessaging, initMessage, permissions],
@@ -129,7 +126,7 @@ class MLayoutPage extends HookWidget {
                 ..showLoginError(failure),
             );
           },
-        )
+        ),
       ],
       child: BlocBuilder<AccountBloc, AccountState>(
         buildWhen: (p, c) => p is AccountLoading != c is AccountLoading,

@@ -73,7 +73,7 @@ class _HorizontalPopupMenuState extends State<HorizontalPopupMenu> {
                   height: 56,
                   padding: const EdgeInsets.all(Insets.sm),
                   decoration: BoxDecoration(
-                    color: MColorScheme.of(context)?.background,
+                    color: MColorScheme.of(context).background,
                     borderRadius: Corners.circle,
                   ),
                   child: Row(

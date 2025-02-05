@@ -50,7 +50,7 @@ class FolderFormTitleField extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).inputDecorationTheme;
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final textController = useTextEditingController();

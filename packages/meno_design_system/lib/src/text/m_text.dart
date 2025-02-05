@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meno_design_system/meno_design_system.dart';
 
 /// A widget that displays styled text with customizable properties.
 ///
@@ -38,7 +37,7 @@ class MText extends StatelessWidget {
   final String data;
 
   /// The color of the text.
-  final MColor? color;
+  final Color? color;
 
   /// An optional style to apply to the text.
   ///
@@ -62,7 +61,7 @@ class MText extends StatelessWidget {
   final TextDecoration? decoration;
 
   /// The color of the text decoration.
-  final MColor? decorationColor;
+  final Color? decorationColor;
 
   /// The thickness of the text decoration.
   final double? decorationThickness;

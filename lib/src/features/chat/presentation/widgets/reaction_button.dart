@@ -7,7 +7,7 @@ class MReactionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     return Container(
       height: 56,

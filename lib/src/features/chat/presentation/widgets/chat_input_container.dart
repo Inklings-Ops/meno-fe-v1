@@ -7,7 +7,7 @@ class ChatInputContainer extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     return Container(
       alignment: Alignment.topCenter,

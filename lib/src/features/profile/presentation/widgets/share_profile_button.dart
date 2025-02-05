@@ -6,7 +6,7 @@ class ShareProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
 
     return MSecondaryButton.icon(

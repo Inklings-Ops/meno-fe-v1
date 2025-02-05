@@ -65,7 +65,7 @@ class MRecentlyLiveListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     return ListTile(
@@ -115,7 +115,7 @@ class _Artwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     final colorFilter = ColorFilter.mode(
       colors.onSurfaceShade!,

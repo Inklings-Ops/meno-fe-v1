@@ -24,7 +24,7 @@ class StreamOptionsButton extends StatelessWidget {
   const StreamOptionsButton({super.key});
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final bloc = context.watch<StreamBloc>();
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),

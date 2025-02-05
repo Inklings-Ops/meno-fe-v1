@@ -12,7 +12,7 @@ class BroadcastInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return MModal(
       builder: (context) => Column(

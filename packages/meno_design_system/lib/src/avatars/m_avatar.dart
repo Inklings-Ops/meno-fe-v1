@@ -89,7 +89,7 @@ class MAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     final hasUrl = url != null;
     final hasFile = file != null;

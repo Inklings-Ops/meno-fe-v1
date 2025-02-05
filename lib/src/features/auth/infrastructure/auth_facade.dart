@@ -242,7 +242,7 @@ class AuthFacade implements IAuthFacade {
     if (!(token?.isActive ?? false)) return left(const UserTokenExpired());
 
     try {
-      await _local.storeCredentials(credentialDto, isCurrent: true);
+      await _local.storeCredentials(credentialDto);
       _credentialSubject.add(credential);
       _tokenSubject.add(credential.token);
 

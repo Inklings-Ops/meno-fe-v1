@@ -105,31 +105,31 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
   final TextStyle? counterTextStyle;
 
   /// The field's text color
-  final MColor? textColor;
+  final Color? textColor;
 
   /// The field's icon color
-  final MColor? iconColor;
+  final Color? iconColor;
 
   /// The field's fill color in the normal state
-  final MColor? fillColor;
+  final Color? fillColor;
 
   /// The field's fill color in the disabled state
-  final MColor? fillColorDisabled;
+  final Color? fillColorDisabled;
 
   /// The field's counter container background color
-  final MColor? counterBgColor;
+  final Color? counterBgColor;
 
   /// The field's counter text color
-  final MColor? counterTextColor;
+  final Color? counterTextColor;
 
   /// The field's counter container background color in the disabled state
-  final MColor? counterBgColorDisabled;
+  final Color? counterBgColorDisabled;
 
   /// The field's counter text color in the disabled state
-  final MColor? counterTextColorDisabled;
+  final Color? counterTextColorDisabled;
 
   /// The field's error text color in the error state
-  final MColor? errorColor;
+  final Color? errorColor;
 
   /// The field's border
   final InputBorder? border;
@@ -170,15 +170,15 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
     TextStyle? hintTextStyle,
     TextStyle? labelTextStyle,
     TextStyle? counterTextStyle,
-    MColor? textColor,
-    MColor? iconColor,
-    MColor? fillColor,
-    MColor? fillColorDisabled,
-    MColor? counterBgColor,
-    MColor? counterTextColor,
-    MColor? counterBgColorDisabled,
-    MColor? counterTextColorDisabled,
-    MColor? errorColor,
+    Color? textColor,
+    Color? iconColor,
+    Color? fillColor,
+    Color? fillColorDisabled,
+    Color? counterBgColor,
+    Color? counterTextColor,
+    Color? counterBgColorDisabled,
+    Color? counterTextColorDisabled,
+    Color? errorColor,
     InputBorder? border,
     InputBorder? borderFocused,
     InputBorder? borderDisabled,
@@ -217,22 +217,22 @@ class MTextFieldStyle extends ThemeExtension<MTextFieldStyle> {
       labelTextStyle: TextStyle.lerp(labelTextStyle, other?.labelTextStyle, t),
       counterTextStyle:
           TextStyle.lerp(counterTextStyle, other?.counterTextStyle, t),
-      textColor: MColor.lerp(textColor, other?.textColor, t),
-      iconColor: MColor.lerp(iconColor, other?.iconColor, t),
-      fillColor: MColor.lerp(fillColor, other?.fillColor, t),
+      textColor: Color.lerp(textColor, other?.textColor, t),
+      iconColor: Color.lerp(iconColor, other?.iconColor, t),
+      fillColor: Color.lerp(fillColor, other?.fillColor, t),
       fillColorDisabled:
-          MColor.lerp(fillColorDisabled, other?.fillColorDisabled, t),
-      counterBgColor: MColor.lerp(counterBgColor, other?.counterBgColor, t),
+          Color.lerp(fillColorDisabled, other?.fillColorDisabled, t),
+      counterBgColor: Color.lerp(counterBgColor, other?.counterBgColor, t),
       counterTextColor:
-          MColor.lerp(counterTextColor, other?.counterTextColor, t),
+          Color.lerp(counterTextColor, other?.counterTextColor, t),
       counterBgColorDisabled:
-          MColor.lerp(counterBgColorDisabled, other?.counterBgColorDisabled, t),
-      counterTextColorDisabled: MColor.lerp(
+          Color.lerp(counterBgColorDisabled, other?.counterBgColorDisabled, t),
+      counterTextColorDisabled: Color.lerp(
         counterTextColorDisabled,
         other?.counterTextColorDisabled,
         t,
       ),
-      errorColor: MColor.lerp(errorColor, other?.errorColor, t),
+      errorColor: Color.lerp(errorColor, other?.errorColor, t),
       border: border,
       borderFocused: borderFocused,
       borderDisabled: borderDisabled,

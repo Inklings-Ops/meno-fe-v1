@@ -15,7 +15,10 @@ class NotificationsPage extends StatelessWidget {
     //     loading: () => const Center(child: CircularProgressIndicator()),
     //   ),
     // );
-    return const Text('Oops');
+    return const MScaffold(
+      appBar: _AppBar(),
+      body: Text('Oops'),
+    );
   }
 }
 

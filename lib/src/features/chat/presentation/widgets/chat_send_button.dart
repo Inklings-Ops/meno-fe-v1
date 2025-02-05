@@ -3,12 +3,12 @@ import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatSendButton extends StatelessWidget {
-  const ChatSendButton({required this.scrollController});
+  const ChatSendButton({required this.scrollController, super.key});
   final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     final chatInputBloc = context.watch<ChatInputCubit>();
     final chatListBloc = context.watch<ChatListBloc>();

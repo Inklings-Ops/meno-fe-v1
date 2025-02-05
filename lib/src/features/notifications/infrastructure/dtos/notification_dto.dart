@@ -14,12 +14,12 @@ part 'notification_dto.g.dart';
   includeIfNull: false,
 )
 class NotificationDto with _$NotificationDto {
-  factory NotificationDto({
-    required String id,
-    required NotificationType type,
-    required bool read,
-    required NotificationContentDto content,
-    required DateTime createdAt,
+  const factory NotificationDto({
+    String? id,
+    NotificationType? type,
+    @Default(false) bool read,
+    NotificationContentDto? content,
+    DateTime? createdAt,
   }) = _NotificationDto;
 
   factory NotificationDto.fromJson(Map<String, dynamic> json) =>
@@ -35,7 +35,7 @@ extension NotificationDtoToDomain on NotificationDto {
       id: id,
       type: type,
       read: read,
-      content: content.toDomain,
+      content: content?.toDomain,
       createdAt: createdAt,
     );
   }
@@ -46,7 +46,7 @@ extension NotificationToDto on Notification {
       id: id,
       type: type,
       read: read,
-      content: content.toDto,
+      content: content?.toDto,
       createdAt: createdAt,
     );
   }

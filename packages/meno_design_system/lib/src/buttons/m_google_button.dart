@@ -40,7 +40,7 @@ class MGoogleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return MSecondaryButton.icon(
       label: title,
       icon: Assets.images.google.svg(),

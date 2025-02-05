@@ -12,7 +12,7 @@ class SubscribeButton extends StatelessWidget {
       icon: const Icon(MIcons.users_check),
       onPressed: () {},
       style: OutlinedButton.styleFrom(
-        side: BorderSide(color: MColorScheme.of(context)!.primary!),
+        side: BorderSide(color: MColorScheme.of(context).primary!),
         textStyle: MTextTheme.of(context)!.microMedium,
         shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
       ),

@@ -85,7 +85,7 @@ class ModalPage<T> extends Page<void> {
     return ModalBottomSheetRoute<T>(
       builder: (context) => Material(child: child),
       constraints: constraints,
-      backgroundColor: MColorScheme.of(context)?.background,
+      backgroundColor: MColorScheme.of(context).background,
       isScrollControlled: isScrollControlled,
       isDismissible: isDismissible,
       enableDrag: enableDrag,

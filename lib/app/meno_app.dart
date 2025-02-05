@@ -1,6 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class MenoApp extends StatefulWidget {
@@ -12,7 +13,6 @@ class MenoApp extends StatefulWidget {
 
 class _MenoAppState extends State<MenoApp> {
   late final AppLifecycleListener _listener;
-  final toastBuilder = FToastBuilder();
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,6 @@ class _MenoAppState extends State<MenoApp> {
       theme: MTheme.light,
       darkTheme: MTheme.dark,
       builder: (context, child) {
-        child = toastBuilder(context, child);
-
         return ResponsiveBreakpoints.builder(
           breakpoints: const [
             Breakpoint(start: 0, end: 450, name: PHONE),
@@ -34,7 +32,36 @@ class _MenoAppState extends State<MenoApp> {
             Breakpoint(start: 601, end: 800, name: TABLET),
             Breakpoint(start: 801, end: 1920, name: DESKTOP),
           ],
-          child: DevicePreview.appBuilder(context, child),
+          child: DevicePreview.appBuilder(
+            context,
+            BlocListener<SocketBloc, SocketState>(
+              listener: (context, state) {
+                state.whenOrNull(
+                  notification: (notification) async {
+                    final colors = MColorScheme.of(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: NotificationSnackBarContent(
+                          notification: notification,
+                        ),
+                        dismissDirection: DismissDirection.up,
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 30),
+                        backgroundColor: colors.background,
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                        margin: EdgeInsets.only(
+                          bottom: MediaQuery.sizeOf(context).height - 270,
+                          left: 16,
+                          right: 16,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: child,
+            ),
+          ),
         );
       },
     );

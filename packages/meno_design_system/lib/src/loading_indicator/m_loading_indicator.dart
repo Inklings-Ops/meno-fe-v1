@@ -105,7 +105,7 @@ class _BoxLoadingIndicator extends MLoadingIndicator {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final dimension = MediaQuery.sizeOf(context).width * 0.2;
     return Center(
       child: Container(

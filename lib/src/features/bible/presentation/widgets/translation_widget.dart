@@ -17,7 +17,7 @@ class TranslationWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final abbreviation = translation.abbreviation;
@@ -97,7 +97,7 @@ class _ProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final bloc = context.read<BibleDownloaderBloc>();
     return Stack(
       alignment: Alignment.center,

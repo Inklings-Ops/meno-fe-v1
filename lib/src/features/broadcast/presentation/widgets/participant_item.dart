@@ -59,7 +59,7 @@ class _ParticipantAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return SizedBox.square(
       dimension: 48,
       child: Stack(

@@ -75,7 +75,7 @@ class DetailsPageOptionsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final currentUser = context.select(
       (SessionBloc bloc) => bloc.state.maybeWhen(
@@ -144,7 +144,7 @@ class _Artwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     const borderRadius = Corners.lg;
 
     final colorFilter = ColorFilter.mode(
@@ -190,7 +190,7 @@ class _Creator extends StatelessWidget {
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return SizedBox(
       height: 16,
       child: MTextButton.icon(
@@ -242,7 +242,7 @@ class _Time extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

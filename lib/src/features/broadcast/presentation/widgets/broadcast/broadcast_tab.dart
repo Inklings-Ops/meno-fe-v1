@@ -107,7 +107,7 @@ class _BroadcastCreator extends StatelessWidget {
       key: const ValueKey('BroadcastCreator'),
       broadcast.creator!.fullName,
       style: textTheme.captionRegular,
-      color: MColorScheme.of(context)!.onDisabledContainer,
+      color: MColorScheme.of(context).onDisabledContainer,
     );
   }
 }

@@ -6,7 +6,7 @@ class BroadcastOptionsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return IconButton.outlined(
       icon: const Icon(MIcons.dots_horizontal),
       iconSize: 20,

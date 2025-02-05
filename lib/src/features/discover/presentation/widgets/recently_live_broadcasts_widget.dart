@@ -28,7 +28,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
             MText(
               'You’ve reached the end 🎉',
               style: MTextTheme.of(context)!.captionRegular,
-              color: MColorScheme.of(context)!.onBackgroundVariant,
+              color: MColorScheme.of(context).onBackgroundVariant,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 28),

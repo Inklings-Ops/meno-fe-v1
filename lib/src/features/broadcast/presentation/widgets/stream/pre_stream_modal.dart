@@ -77,7 +77,7 @@ class PreStreamModal extends HookWidget {
                       onTap: () {},
                       child: MText(
                         'See all',
-                        color: MColorScheme.of(context)!.onBackgroundVariant,
+                        color: MColorScheme.of(context).onBackgroundVariant,
                       ),
                     ),
                   ),

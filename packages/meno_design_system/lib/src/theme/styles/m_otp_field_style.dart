@@ -63,16 +63,16 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
   final TextStyle? textStyle;
 
   /// The color of the text in the OTP field.
-  final MColor? textColor;
+  final Color? textColor;
 
   /// The fill color of the OTP field.
-  final MColor? fillColor;
+  final Color? fillColor;
 
   /// The fill color of the OTP field when disabled.
-  final MColor? fillColorDisabled;
+  final Color? fillColorDisabled;
 
   /// The color of the OTP field when there is an error.
-  final MColor? errorColor;
+  final Color? errorColor;
 
   /// The border of the OTP field.
   final BoxBorder? border;
@@ -107,10 +107,10 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
   @override
   ThemeExtension<MOtpFieldStyles> copyWith({
     TextStyle? textStyle,
-    MColor? textColor,
-    MColor? fillColor,
-    MColor? fillColorDisabled,
-    MColor? errorColor,
+    Color? textColor,
+    Color? fillColor,
+    Color? fillColorDisabled,
+    Color? errorColor,
     BoxBorder? border,
     BoxBorder? borderFocused,
     BoxBorder? borderError,
@@ -131,11 +131,11 @@ class MOtpFieldStyles extends ThemeExtension<MOtpFieldStyles> {
   ThemeExtension<MOtpFieldStyles> lerp(MOtpFieldStyles? other, double t) {
     return MOtpFieldStyles(
       textStyle: TextStyle.lerp(textStyle, other?.textStyle, t),
-      textColor: MColor.lerp(textColor, other?.textColor, t),
-      fillColor: MColor.lerp(fillColor, other?.fillColor, t),
+      textColor: Color.lerp(textColor, other?.textColor, t),
+      fillColor: Color.lerp(fillColor, other?.fillColor, t),
       fillColorDisabled:
-          MColor.lerp(fillColorDisabled, other?.fillColorDisabled, t),
-      errorColor: MColor.lerp(errorColor, other?.errorColor, t),
+          Color.lerp(fillColorDisabled, other?.fillColorDisabled, t),
+      errorColor: Color.lerp(errorColor, other?.errorColor, t),
       border: BoxBorder.lerp(border, other?.border, t),
       borderFocused: BoxBorder.lerp(borderFocused, other?.borderFocused, t),
       borderError: BoxBorder.lerp(borderError, other?.borderError, t),

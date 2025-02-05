@@ -31,7 +31,7 @@ class MReadMoreText extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final effectiveMaxLines = useState(maxLines);
     final isReadMore = useState(false);

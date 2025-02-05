@@ -16,7 +16,7 @@ class NoteEditorAutosaveWidget extends StatelessWidget {
         ),
         child: MText(
           state.maybeWhen(orElse: () => 'Done', saving: () => 'Saving...'),
-          color: MColorScheme.of(context)!.primary,
+          color: MColorScheme.of(context).primary,
           style: MTextTheme.of(context)!.captionMedium,
         ),
       ),

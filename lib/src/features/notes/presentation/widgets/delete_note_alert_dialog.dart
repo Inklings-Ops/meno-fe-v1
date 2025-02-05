@@ -7,7 +7,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colorScheme = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final watcher = context.watch<NotesWatcherBloc>();

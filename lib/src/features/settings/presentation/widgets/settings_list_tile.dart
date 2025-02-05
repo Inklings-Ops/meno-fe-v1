@@ -19,12 +19,12 @@ class SettingsListTile extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback onTap;
   final bool showDivider;
-  final MColor? titleColor;
-  final MColor? iconColor;
+  final Color? titleColor;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
@@ -56,7 +56,7 @@ class SettingsListTile extends StatelessWidget {
     );
   }
 
-  MColor? resolveDisabled(MColor? main, MColor? disabled) {
+  Color? resolveDisabled(Color? main, Color? disabled) {
     return !isDisabled ? main : disabled;
   }
 

@@ -8,7 +8,7 @@ class PreStreamArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
     final hasImage = imageUrl != null;
 

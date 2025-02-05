@@ -20,7 +20,7 @@ class DiscoverSearchBar extends StatelessWidget {
   final bool autofocus;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     return Padding(

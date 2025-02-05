@@ -75,13 +75,13 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
   }
 
   /// The background color of the card.
-  final MColor? backgroundColor;
+  final Color? backgroundColor;
 
   /// The color of the card title.
-  final MColor? titleColor;
+  final Color? titleColor;
 
   /// The color of the host text in the card.
-  final MColor? hostColor;
+  final Color? hostColor;
 
   /// The text style for the card title.
   final TextStyle? titleStyle;
@@ -90,10 +90,10 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
   final TextStyle? hostStyle;
 
   /// The color of the subtitle text in the card.
-  final MColor? nSubtitleColor;
+  final Color? nSubtitleColor;
 
   /// The background color for a nested card.
-  final MColor? nBackgroundColor;
+  final Color? nBackgroundColor;
 
   /// The padding for the content inside a nested card.
   final EdgeInsetsGeometry? nCardContentPadding;
@@ -138,13 +138,13 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
 
   @override
   ThemeExtension<MCardStyles> copyWith({
-    MColor? backgroundColor,
-    MColor? titleColor,
-    MColor? hostColor,
+    Color? backgroundColor,
+    Color? titleColor,
+    Color? hostColor,
     TextStyle? titleStyle,
     TextStyle? hostStyle,
-    MColor? nSubtitleColor,
-    MColor? nBackgroundColor,
+    Color? nSubtitleColor,
+    Color? nBackgroundColor,
     EdgeInsetsGeometry? nCardContentPadding,
     BorderRadiusGeometry? nBorderRadius,
     TextStyle? nTitleTextStyle,
@@ -169,14 +169,13 @@ class MCardStyles extends ThemeExtension<MCardStyles> {
   ThemeExtension<MCardStyles> lerp(MCardStyles? other, double t) {
     if (other is! MCardStyles) return this;
     return MCardStyles(
-      backgroundColor: MColor.lerp(backgroundColor, other.backgroundColor, t),
-      titleColor: MColor.lerp(titleColor, other.titleColor, t),
-      hostColor: MColor.lerp(hostColor, other.hostColor, t),
+      backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
+      titleColor: Color.lerp(titleColor, other.titleColor, t),
+      hostColor: Color.lerp(hostColor, other.hostColor, t),
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
       hostStyle: TextStyle.lerp(hostStyle, other.hostStyle, t),
-      nSubtitleColor: MColor.lerp(nSubtitleColor, other.nSubtitleColor, t),
-      nBackgroundColor:
-          MColor.lerp(nBackgroundColor, other.nBackgroundColor, t),
+      nSubtitleColor: Color.lerp(nSubtitleColor, other.nSubtitleColor, t),
+      nBackgroundColor: Color.lerp(nBackgroundColor, other.nBackgroundColor, t),
       nCardContentPadding: EdgeInsetsGeometry.lerp(
         nCardContentPadding,
         other.nCardContentPadding,

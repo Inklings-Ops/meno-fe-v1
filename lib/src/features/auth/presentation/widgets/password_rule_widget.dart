@@ -6,7 +6,7 @@ class PasswordRulesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return BlocSelector<RegisterCubit, RegisterState, Password>(
       bloc: context.watch<RegisterCubit>(),
       selector: (state) => state.password,
@@ -45,13 +45,13 @@ class PasswordRulesWidget extends StatelessWidget {
 class _RuleItem extends StatelessWidget {
   const _RuleItem({required this.rule, this.color});
   final PasswordRule rule;
-  final MColor? color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final unsetColor = MColorScheme.of(context)?.error;
+    final unsetColor = MColorScheme.of(context).error;
     final setColor = isLight ? MColor.success300 : MColor.success200;
     final ruleColor = !rule.isValid ? unsetColor : setColor;
     return Visibility(

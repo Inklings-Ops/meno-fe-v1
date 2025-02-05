@@ -44,13 +44,13 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
   }
 
   /// The color of the drag handle.
-  final MColor? dragHandleColor;
+  final Color? dragHandleColor;
 
   /// The background color of the modal.
-  final MColor? backgroundColor;
+  final Color? backgroundColor;
 
   /// The background color of the modal when it is in a modal state.
-  final MColor? modalBackgroundColor;
+  final Color? modalBackgroundColor;
 
   /// Retrieves the [MModalStyles] extension from the closest [Theme] instance
   /// that encloses the given [context].
@@ -94,9 +94,9 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
 
   @override
   ThemeExtension<MModalStyles> copyWith({
-    MColor? dragHandleColor,
-    MColor? backgroundColor,
-    MColor? modalBackgroundColor,
+    Color? dragHandleColor,
+    Color? backgroundColor,
+    Color? modalBackgroundColor,
   }) {
     return MModalStyles(
       dragHandleColor: dragHandleColor ?? this.dragHandleColor,
@@ -112,10 +112,10 @@ class MModalStyles extends ThemeExtension<MModalStyles> {
   ) {
     if (other is! MModalStyles) return this;
     return MModalStyles(
-      dragHandleColor: MColor.lerp(dragHandleColor, other.dragHandleColor, t),
-      backgroundColor: MColor.lerp(backgroundColor, other.backgroundColor, t),
+      dragHandleColor: Color.lerp(dragHandleColor, other.dragHandleColor, t),
+      backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
       modalBackgroundColor:
-          MColor.lerp(modalBackgroundColor, other.modalBackgroundColor, t),
+          Color.lerp(modalBackgroundColor, other.modalBackgroundColor, t),
     );
   }
 }

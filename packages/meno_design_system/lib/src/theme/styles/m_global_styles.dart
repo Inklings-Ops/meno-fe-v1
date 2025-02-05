@@ -54,7 +54,7 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
   }
 
   /// The color of the dividers.
-  final MColor? dividerColor;
+  final Color? dividerColor;
 
   /// The theme for SnackBars.
   final SnackBarThemeData? snackBarTheme;
@@ -113,7 +113,7 @@ class MGlobalStyles extends ThemeExtension<MGlobalStyles> {
   ) {
     if (other is! MGlobalStyles) return this;
     return MGlobalStyles(
-      dividerColor: MColor.lerp(dividerColor, other.dividerColor, t),
+      dividerColor: Color.lerp(dividerColor, other.dividerColor, t),
       checkboxTheme:
           CheckboxThemeData.lerp(checkboxTheme, other.checkboxTheme, t),
       snackBarTheme:

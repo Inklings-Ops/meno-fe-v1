@@ -8,7 +8,7 @@ class ChapterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     const borderRadius = Corners.sm;
 
     return InkWell(

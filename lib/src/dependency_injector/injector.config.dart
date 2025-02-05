@@ -52,13 +52,11 @@ import '../features/notes/infrastructure/datasources/note_remote_datasource.dart
     as _i309;
 import '../features/notes/infrastructure/note_facade.dart' as _i176;
 import '../features/notes/notes.dart' as _i1042;
-import '../features/notifications/domain/i_notification_facade.dart' as _i168;
 import '../features/notifications/infrastructure/datasources/notification_remote_datasource.dart'
     as _i589;
-import '../features/notifications/infrastructure/mapper/notifications_mapper.dart'
-    as _i236;
 import '../features/notifications/infrastructure/notification_facade.dart'
     as _i734;
+import '../features/notifications/notifications.dart' as _i246;
 import '../features/profile/domain/domain.dart' as _i74;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
     as _i517;
@@ -106,7 +104,6 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
-    gh.singleton<_i236.NotificationsMapper>(() => _i236.NotificationsMapper());
     gh.singleton<_i179.PermissionsService>(() => _i179.PermissionsService());
     gh.lazySingleton<_i973.InternetConnectionChecker>(
         () => registerModule.internetChecker);
@@ -196,10 +193,6 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i361.Dio>(),
               baseUrl: gh<String>(instanceName: 'baseUrl'),
             ));
-    gh.lazySingleton<_i168.INotificationFacade>(() => _i734.NotificationFacade(
-          remoteDatasource: gh<_i589.NotificationRemoteDatasource>(),
-          networkService: gh<_i463.NetworkService>(),
-        ));
     gh.factory<_i1042.INoteFacade>(() => _i176.NoteFacade(
           network: gh<_i264.NetworkService>(),
           local: gh<_i1042.NoteLocalDatasource>(),
@@ -235,6 +228,10 @@ extension GetItInjectableX on _i174.GetIt {
           remote: gh<_i212.ProfileRemoteDatasource>(),
           local: gh<_i517.ProfileLocalDatasource>(),
           network: gh<_i463.NetworkService>(),
+        ));
+    gh.lazySingleton<_i246.INotificationFacade>(() => _i734.NotificationFacade(
+          remoteDatasource: gh<_i246.NotificationRemoteDatasource>(),
+          networkService: gh<_i463.NetworkService>(),
         ));
     gh.factory<_i44.ISessionContext>(() => _i320.SessionContext(
           authFacade: gh<_i236.IAuthFacade>(),

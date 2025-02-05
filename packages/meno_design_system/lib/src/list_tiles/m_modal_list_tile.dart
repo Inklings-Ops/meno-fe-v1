@@ -67,7 +67,7 @@ class MModalListTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   /// The color of the title text.
-  final MColor? titleColor;
+  final Color? titleColor;
 
   /// A boolean indicating whether the loading state is active. Defaults to
   /// false.
@@ -78,7 +78,7 @@ class MModalListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final iconTheme = IconThemeData(

@@ -24,7 +24,7 @@ class LiveForYou extends StatelessWidget {
                       '''Hello there! You are not subscribed to any broadcasts yet.''',
                       maxLines: 2,
                       style: textTheme.captionRegular,
-                      color: MColorScheme.of(context)?.onDisabledContainer,
+                      color: MColorScheme.of(context).onDisabledContainer,
                     ),
                     Spaces.verticalLarge,
                     const DiscoverButton(),

@@ -7,7 +7,7 @@ class NowLiveSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final bloc = context.read<LiveBroadcastsBloc>();
 
     return Column(

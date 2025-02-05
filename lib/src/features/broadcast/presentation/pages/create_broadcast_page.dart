@@ -22,7 +22,7 @@ class CreateBroadcastView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final formKey = useMemoized(GlobalKey<FormState>.new);
 
     final broadcastBloc = context.watch<BroadcastBloc>();

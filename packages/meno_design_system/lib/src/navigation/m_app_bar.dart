@@ -167,7 +167,7 @@ class _PrimaryAppBarImpl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final styles = MNavigationStyles.of(context)!;
     final colorFilter = ColorFilter.mode(styles.accentColor!, BlendMode.srcIn);
@@ -275,7 +275,7 @@ class _SecondaryAppBarImpl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return AppBar(
       leading: const MBackButton(),
       centerTitle: centerTitle,
@@ -292,7 +292,7 @@ class _SecondaryAppBarImpl extends StatelessWidget {
         title,
         overflow: TextOverflow.ellipsis,
         maxLines: 1,
-        color: MColorScheme.of(context)?.onBackground,
+        color: MColorScheme.of(context).onBackground,
       ),
       actions: actions,
     );

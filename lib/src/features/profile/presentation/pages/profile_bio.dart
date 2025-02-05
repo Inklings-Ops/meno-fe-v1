@@ -10,7 +10,7 @@ class ProfileBio extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
     final style = textTheme.captionMedium?.copyWith(
-      color: MColorScheme.of(context)!.onBackgroundVariant,
+      color: MColorScheme.of(context).onBackgroundVariant,
     );
 
     return ReadMoreText(
