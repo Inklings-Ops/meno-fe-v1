@@ -1,1 +1,2 @@
-export 'page/settings_page.dart';
+export 'page/page.dart';
+export 'widgets/widgets.dart';

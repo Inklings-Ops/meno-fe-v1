@@ -115,7 +115,7 @@ class BibleLocalDatasource {
     query.close();
     if (translation == null) return;
     final updatedTranslation = translation.copyWith(downloaded: true);
-    final result = translationBox.put(updatedTranslation);
+    translationBox.put(updatedTranslation);
     return;
   }
 

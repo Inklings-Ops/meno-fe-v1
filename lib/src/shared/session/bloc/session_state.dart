@@ -105,6 +105,10 @@ extension SessionStateX on SessionState {
         Routes.biblePage,
         Routes.switchAccountModal,
         Routes.broadcastInfoModal,
+        Routes.notificationSettings,
+        Routes.securitySettings,
+        Routes.about,
+        Routes.logoutConfirmationDialog,
       ],
     );
   }

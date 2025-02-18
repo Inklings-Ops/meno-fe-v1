@@ -41,7 +41,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Notifications',
                   leadingIcon: MIcons.bell,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.notificationSettings),
                 ),
                 SettingsListTile(
                   title: 'Dark Mode',
@@ -71,7 +71,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Security',
                   leadingIcon: MIcons.shield,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.securitySettings),
                   showDivider: false,
                 ),
               ],
@@ -83,7 +83,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'About Meno',
                   leadingIcon: MIcons.users,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.about),
                 ),
                 SettingsListTile(
                   title: 'FAQs',
@@ -98,8 +98,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Logout',
                   leadingIcon: MIcons.log_out,
-                  onTap: () =>
-                      context.read<SessionBloc>().add(const SessionLogout()),
+                  onTap: () => router.push(Routes.logoutConfirmationDialog),
                 ),
                 SettingsListTile(
                   title: 'Delete Account',

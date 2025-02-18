@@ -174,6 +174,27 @@ final router = GoRouter(
       path: Routes.nowLive,
       builder: (context, state) => const NowLivePage(),
     ),
+    GoRoute(
+      path: Routes.settings,
+      builder: (context, state) => const SettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.notificationSettings,
+      builder: (context, state) => const NotificationsSettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.securitySettings,
+      builder: (context, state) => const SecuritySettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.about,
+      builder: (context, state) => const AboutPage(),
+    ),
+
+    GoRoute(
+      path: Routes.notificationSettings,
+      builder: (context, state) => const NotificationsSettingsPage(),
+    ),
 
     /// Modals
     ///
@@ -331,6 +352,13 @@ final router = GoRouter(
         builder: (context) => LeaveAndJoinDialog(
           broadcast: state.extra! as Broadcast,
         ),
+      ),
+    ),
+    GoRoute(
+      path: Routes.logoutConfirmationDialog,
+      pageBuilder: (context, state) => DialogPage<void>(
+        key: state.pageKey,
+        builder: (context) => const LogoutConfirmationDialog(),
       ),
     ),
 
@@ -500,14 +528,6 @@ final router = GoRouter(
             GoRoute(
               path: Routes.webCreateBroadcast,
               builder: (context, state) => const CreateBroadcastPage(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.settings,
-              builder: (context, state) => const SettingsPage(),
             ),
           ],
         ),

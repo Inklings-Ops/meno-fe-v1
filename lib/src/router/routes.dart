@@ -31,6 +31,9 @@ class Routes {
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';
+  static const String notificationSettings = '/settings/notifications';
+  static const String securitySettings = '/settings/security';
+  static const String about = '/settings/about';
   static const String endedBroadcast = '/endedBroadcast';
   static const String biblePage = '/bible-page';
 
@@ -59,8 +62,9 @@ class Routes {
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
-  static const String leaveAndJoinDialog =
-      '/leave-and-join-stream-dialog';
+  static const String leaveAndJoinDialog = '/leave-and-join-stream-dialog';
+  static const String logoutConfirmationDialog =
+      '/logout-confirmation-dialog';
 }
 
 class ModalPage<T> extends Page<void> {
