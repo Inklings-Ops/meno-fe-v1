@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class EditProfileModal extends StatelessWidget {
   const EditProfileModal({super.key});
@@ -8,7 +8,22 @@ class EditProfileModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ProfileFormCubit, ProfileFormState>(
       listener: (context, state) {
-        // TODO: implement listener
+        state.onEdited.fold(
+          () => null,
+          (failureOrSuccess) => failureOrSuccess.fold(
+            (exception) => context.showErrorSnackBar(
+              exception.maybeMap(
+                orElse: () => '',
+                message: (value) => value.message,
+                networkError: (_) => MErrorMessages.networkError,
+                serverError: (_) => MErrorMessages.serverError,
+                timeOutError: (_) => MErrorMessages.timeOutError,
+                unknownError: (_) => MErrorMessages.unknownError,
+              ),
+            ),
+            (success) => router.pop(),
+          ),
+        );
       },
       child: MModal(
         title: 'Edit profile details',

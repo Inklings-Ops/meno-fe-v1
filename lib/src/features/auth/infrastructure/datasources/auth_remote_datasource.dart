@@ -89,4 +89,13 @@ abstract class AuthRemoteDatasource {
     @Field() required String email,
     @Field() required String code,
   });
+
+  @PUT('/api/v1/users/{userId}/profile')
+  @MultiPart()
+  Future<AuthResponse<UserDto>> editProfile({
+    @Path('userId') required String userId,
+    @Part() String? fullName,
+    @Part() String? bio,
+    @Part(name: 'image', contentType: 'image/png') File? image,
+  });
 }

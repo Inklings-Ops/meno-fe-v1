@@ -15,6 +15,7 @@ class MyProfilePage extends StatelessWidget {
         BlocProvider(
           create: (_) => ProfileFormCubit(
             facade: di<IProfileFacade>(),
+            authFacade: di<IAuthFacade>(),
             media: di<MediaService>(),
           ),
         ),

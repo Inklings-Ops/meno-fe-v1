@@ -227,6 +227,50 @@ class AuthFacade implements IAuthFacade {
   }
 
   @override
+  Future<Either<AuthException, Unit>> editProfile({
+    SingleLineString? fullName,
+    Bio? bio,
+    Avatar? avatar,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    final userId = await _local.getAuthUserId();
+    if (userId == null) return left(const AuthException.message('No user'));
+
+    final fullNameValue = fullName?.getOr();
+    final bioValue = bio?.getOr();
+    final avatarValue = avatar?.getOr();
+
+    try {
+      final response = await _remote.editProfile(
+        userId: userId,
+        fullName: fullNameValue,
+        bio: bioValue,
+        image: avatarValue,
+      );
+
+      final userDto = response.data;
+      if (userDto == null) return left(const AuthException.message('No user'));
+
+      final currentCredential = _credentialSubject.value;
+      final updated = currentCredential?.copyWith(user: userDto.toDomain);
+      if (updated == null) return left(const AuthException.message('No user'));
+
+      _credentialSubject.add(updated);
+      _tokenSubject.add(updated.token);
+
+      await _local.storeCredentials(updated.toDto);
+
+      return right(unit);
+    } on DioException catch (e) {
+      return left(AuthException.message(e.message ?? 'Unknown error'));
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
   Future<Either<AuthException, UserCredential>> switchAccount(
     Uid<User> userId,
   ) async {

@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_list_tile.dart';
-import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_section.dart';
+import 'package:meno_fe_v1/src/features/settings/settings.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -8,7 +7,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-
+    final bloc = context.watch<SettingsBloc>();
     return MScaffold(
       appBar: MAppBar.primary(title: 'Settings'),
       body: SingleChildScrollView(
@@ -46,14 +45,24 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Dark Mode',
                   leadingIcon: Icons.dark_mode_outlined,
-                  onTap: () {},
-                  trailing: Switch(value: false, onChanged: (value) {}),
+                  trailing: Switch(
+                    value: bloc.state.themeMode == ThemeMode.dark,
+                    onChanged: (value) {
+                      if (value) {
+                        bloc.add(const ChangeTheme(ThemeMode.dark));
+                      } else {
+                        bloc.add(const ChangeTheme(ThemeMode.light));
+                      }
+                    },
+                  ),
                 ),
                 SettingsListTile(
                   title: 'Location',
                   leadingIcon: Icons.pin_outlined,
-                  onTap: () {},
-                  trailing: Switch(value: true, onChanged: (value) {}),
+                  trailing: Switch(
+                    value: bloc.state.useLocation,
+                    onChanged: (v) => bloc.add(ToggleLocationServices(v)),
+                  ),
                   showDivider: false,
                 ),
               ],

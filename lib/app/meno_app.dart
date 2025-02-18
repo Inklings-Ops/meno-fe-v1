@@ -2,6 +2,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
+import 'package:meno_fe_v1/src/features/settings/application/settings/settings_bloc.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 
 class MenoApp extends StatefulWidget {
@@ -16,6 +17,9 @@ class _MenoAppState extends State<MenoApp> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.select<SettingsBloc, ThemeMode>(
+      (bloc) => bloc.state.themeMode,
+    );
     return MaterialApp.router(
       locale: DevicePreview.locale(context),
       debugShowCheckedModeBanner: false,
@@ -24,6 +28,7 @@ class _MenoAppState extends State<MenoApp> {
       routeInformationProvider: router.routeInformationProvider,
       theme: MTheme.light,
       darkTheme: MTheme.dark,
+      themeMode: themeMode,
       builder: (context, child) {
         return ResponsiveBreakpoints.builder(
           breakpoints: const [

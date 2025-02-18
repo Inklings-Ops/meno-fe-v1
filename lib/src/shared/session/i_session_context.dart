@@ -15,4 +15,6 @@ abstract class ISessionContext {
   Future<List<UserCredential>> get allCredentials;
 
   Stream<UserCredential?> get userChanges;
+
+  Future<void> refresh();
 }

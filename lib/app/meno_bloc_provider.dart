@@ -11,6 +11,7 @@ class MenoBlocProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => SettingsBloc()),
         BlocProvider(create: (_) => di<SessionBloc>()),
         BlocProvider(
           lazy: false,

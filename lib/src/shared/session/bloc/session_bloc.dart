@@ -19,6 +19,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
         super(const SessionLoading()) {
     on<SessionStarted>(_onStarted);
     on<SessionLogout>(_onLogout);
+    on<SessionRefresh>(_onRefresh);
   }
 
   final ISessionContext _session;
@@ -35,16 +36,14 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   @PostConstruct(preResolve: true)
   Future<void> init() async => add(const SessionStarted());
 
+
   Future<void> _onStarted(
     SessionStarted event,
     Emitter<SessionState> emit,
   ) async {
-    return emit.forEach(
+    await emit.forEach(
       _session.userChanges,
-      onData: (credential) {
-        final sessionState = _determineState(_session.isOnboarded, credential);
-        return sessionState;
-      },
+      onData: (credential) => _determineState(_session.isOnboarded, credential),
       onError: (error, stackTrace) {
         // Handle errors appropriately, perhaps emit an error state.
         debugPrint('Error in SessionBloc stream: $error, $stackTrace');
@@ -55,6 +54,13 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   void _onLogout(SessionLogout event, Emitter<SessionState> emit) {
     unawaited(_session.logout());
+  }
+
+  Future<void> _onRefresh(
+    SessionRefresh event,
+    Emitter<SessionState> emit,
+  ) async {
+    await _session.refresh();
   }
 
   SessionState _determineState(bool isOnboarded, UserCredential? credential) {

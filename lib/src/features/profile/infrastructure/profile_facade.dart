@@ -9,7 +9,6 @@ import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profi
 import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_remote_datasource.dart';
 import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 @LazySingleton(as: IProfileFacade)
 class ProfileFacade implements IProfileFacade {
@@ -23,41 +22,6 @@ class ProfileFacade implements IProfileFacade {
   final ProfileRemoteDatasource _remote;
   final ProfileLocalDatasource _local;
   final NetworkService _network;
-
-  @override
-  Future<Either<AuthException, Unit>> editProfile({
-    SingleLineString? fullName,
-    Bio? bio,
-    Avatar? avatar,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final userId = await _local.getAuthUserId();
-    if (userId == null) return left(const AuthException.message('No user'));
-
-    final fullNameValue = fullName?.getOr();
-    final bioValue = bio?.getOr();
-    final avatarValue = avatar?.getOr();
-
-    try {
-      final response = await _remote.editProfile(
-        userId: userId,
-        fullName: fullNameValue,
-        bio: bioValue,
-        image: avatarValue,
-      );
-
-      await _local.storeProfile(response.data!);
-
-      return right(unit);
-    } on DioException catch (e) {
-      final error = _getError(e);
-      return left(error);
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
 
   @override
   Future<Either<AuthException, Profile>> getProfile(UserID id) async {

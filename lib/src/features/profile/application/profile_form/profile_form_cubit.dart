@@ -14,22 +14,25 @@ part 'profile_form_state.dart';
 class ProfileFormCubit extends Cubit<ProfileFormState> {
   ProfileFormCubit({
     required IProfileFacade facade,
+    required IAuthFacade authFacade,
     required MediaService media,
   })  : _facade = facade,
+        _authFacade = authFacade,
         _media = media,
         super(ProfileFormState.initial());
   final IProfileFacade _facade;
+  final IAuthFacade _authFacade;
   final MediaService _media;
 
   bool? get isValid {
     return (state.fullName?.isValid ?? false) || (state.bio?.isValid ?? false);
   }
 
-  void initializeWithProfile(Profile profile) {
+  void initializeWithProfile(Profile? profile) {
     emit(
       state.copyWith(
-        fullName: profile.fullName,
-        bio: profile.bio,
+        fullName: profile?.fullName,
+        bio: profile?.bio,
       ),
     );
   }
@@ -51,7 +54,7 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
 
     emit(state.copyWith(loading: true, onEdited: none()));
 
-    final result = await _facade.editProfile(
+    final result = await _authFacade.editProfile(
       avatar: state.avatar,
       bio: state.bio,
       fullName: state.fullName,

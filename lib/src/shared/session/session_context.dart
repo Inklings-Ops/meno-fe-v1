@@ -38,4 +38,7 @@ class SessionContext implements ISessionContext {
   ) {
     return _authFacade.switchAccount(credential.user.id);
   }
+
+  @override
+  Future<void> refresh() => _authFacade.init();
 }
