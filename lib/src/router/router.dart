@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -281,11 +280,9 @@ final router = GoRouter(
       pageBuilder: (context, state) {
         final profile = state.extra as Profile?;
         return ModalPage<dynamic>(
-          child: BlocProvider(
-            create: (context) => ProfileFormCubit(
-              authFacade: di<IAuthFacade>(),
-              media: di<MediaService>(),
-            )..initializeWithProfile(profile),
+          child: BlocProvider.value(
+            value: BlocProvider.of<ProfileFormCubit>(context)
+              ..initializeWithProfile(profile),
             child: const EditProfileModal(),
           ),
           isScrollControlled: true,

@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/media_service.dart';
 
 class MyProfilePage extends StatelessWidget {
   const MyProfilePage({super.key});
@@ -12,13 +11,6 @@ class MyProfilePage extends StatelessWidget {
     );
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => ProfileFormCubit(
-            facade: di<IProfileFacade>(),
-            authFacade: di<IAuthFacade>(),
-            media: di<MediaService>(),
-          ),
-        ),
         BlocProvider(
           create: (_) => UsersRecentBroadcastsBloc(
             facade: di<IBroadcastFacade>(),

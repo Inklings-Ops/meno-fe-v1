@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
 
 abstract class IProfileFacade {
   /// Retrieves the user's profile with the given [UserID]

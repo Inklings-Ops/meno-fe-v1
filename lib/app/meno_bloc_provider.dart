@@ -76,6 +76,12 @@ class MenoBlocProvider extends StatelessWidget {
             facade: di<IBroadcastFacade>(),
           )..init(),
         ),
+        BlocProvider(
+          create: (_) => ProfileFormCubit(
+            authFacade: di<IAuthFacade>(),
+            media: di<MediaService>(),
+          ),
+        ),
       ],
       child: child,
     );
