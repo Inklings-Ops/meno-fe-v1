@@ -8,9 +8,26 @@ abstract class IProfileFacade {
 
   Future<Either<AuthException, Profile?>> getAuthProfile();
 
-  // Future<Either<AuthException, Unit>> subscribe(Uid<User> userId);
+  /// Returns a list of user profiles that are subscribed to the 
+  /// [subscriptionId]
+  Future<Either<AuthException, SubscribersList>> getSubscribers({
+    required String subscriptionId,
+    String? include,
+    String? keywords,
+    int? page,
+    int? size,
+  });
 
-  // Future<Either<AuthException, Unit>> unsubscribe(Uid<User> userId);
+  /// Returns list of users profiles the [subscriberId] is subscribed to
+  Future<Either<AuthException, SubscribersList>> getSubscriptions({
+    required String subscriberId,
+    String? include,
+    String? keywords,
+    int? page,
+    int? size,
+  });
 
-  // Future<Option<int>> getSubscribers();
+  Future<Either<AuthException, Unit>> subscribe(String userId);
+
+  Future<Either<AuthException, Unit>> unsubscribe(String userId);
 }

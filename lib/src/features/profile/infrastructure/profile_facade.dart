@@ -1,13 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_local_datasource.dart';
-import 'package:meno_fe_v1/src/features/profile/infrastructure/datasources/profile_remote_datasource.dart';
-import 'package:meno_fe_v1/src/features/profile/infrastructure/dtos/profile_dto.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
 
 @LazySingleton(as: IProfileFacade)
@@ -85,6 +83,112 @@ class ProfileFacade implements IProfileFacade {
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> subscribe(String userId) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      await _remote.subscribe(userId: userId);
+      return right(unit);
+    } on DioException catch (e) {
+      log(e.toString());
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> unsubscribe(String userId) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      await _remote.unsubscribe(userId: userId);
+      return right(unit);
+    } on DioException catch (e) {
+      log(e.toString());
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, SubscribersList>> getSubscribers({
+    required String subscriptionId,
+    String? include,
+    String? keywords,
+    int? page,
+    int? size,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      final response = await _remote.subcribers(
+        subscriptionId: subscriptionId,
+        include: 'numberOfSubscribers',
+        keywords: keywords,
+        page: page,
+        size: size,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, SubscribersList>> getSubscriptions({
+    required String subscriberId,
+    String? include,
+    String? keywords,
+    int? page,
+    int? size,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      final response = await _remote.subcribers(
+        subscriberId: subscriberId,
+        include: 'numberOfSubscribers',
+        keywords: keywords,
+        page: page,
+        size: size,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
     } on TimeoutException {
       return left(const AuthException.timeOutError());
     }

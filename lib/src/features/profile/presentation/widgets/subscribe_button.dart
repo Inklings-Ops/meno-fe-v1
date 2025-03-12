@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
-class SubscribeButton extends StatelessWidget {
+class SubscribeButton extends HookWidget {
   const SubscribeButton({
     required this.profile,
     this.style,
@@ -20,39 +20,56 @@ class SubscribeButton extends StatelessWidget {
 
     final isSubscribedToUser = profile.isSubscribedToUser ?? false;
     final subscribed = profile.subscribed ?? false;
-    final effectiveIsSubcribedToUser = isSubscribedToUser || subscribed;
+    final effectiveSubscriptionStatus = isSubscribedToUser || subscribed;
+    final isSubscribed = useState(effectiveSubscriptionStatus);
 
     final defaultStyle = OutlinedButton.styleFrom(
       textStyle: textTheme.microMedium,
       fixedSize: const Size(double.infinity, Insets.xxl),
       side: BorderSide(color: MColorScheme.of(context).primary!),
       shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
-      backgroundColor:
-          effectiveIsSubcribedToUser ? colors.primary : Colors.transparent,
-      foregroundColor:
-          effectiveIsSubcribedToUser ? colors.onPrimary : colors.primary,
+      backgroundColor: isSubscribed.value ? colors.primary : Colors.transparent,
+      foregroundColor: isSubscribed.value ? colors.onPrimary : colors.primary,
     );
 
     final icon = Icon(
-      effectiveIsSubcribedToUser ? MIcons.user_minus_01 : MIcons.user_check,
-      color: effectiveIsSubcribedToUser ? colors.onPrimary : colors.primary,
+      isSubscribed.value ? MIcons.user_minus_01 : MIcons.user_check,
+      color: isSubscribed.value ? colors.onPrimary : colors.primary,
     );
 
-    final label = effectiveIsSubcribedToUser ? 'Unsubscribe' : 'Subscribe';
+    final label = isSubscribed.value ? 'Unsubscribe' : 'Subscribe';
 
-    return Skeleton.unite(
-      child: showIcon
-          ? MSecondaryButton.icon(
-              label: label,
-              icon: icon,
-              onPressed: () {},
-              style: style ?? defaultStyle,
-            )
-          : MSecondaryButton(
-              label: label,
-              onPressed: () {},
-              style: style ?? defaultStyle,
-            ),
+    final bloc = context.watch<SubscriptionBloc>();
+
+    void handleSubscription() {
+      isSubscribed.value = !isSubscribed.value;
+      if (isSubscribed.value) {
+        bloc.add(Unsubscribe(profile));
+      } else {
+        bloc.add(Subscribe(profile));
+      }
+    }
+    return BlocListener<SubscriptionBloc, SubscriptionState>(
+      listener: (context, state) {
+        if (state.exception != null &&
+            isSubscribed.value != effectiveSubscriptionStatus) {
+          isSubscribed.value = effectiveSubscriptionStatus;
+        }
+      },
+      child: Skeleton.unite(
+        child: showIcon
+            ? MSecondaryButton.icon(
+                label: label,
+                icon: icon,
+                onPressed: handleSubscription,
+                style: style ?? defaultStyle,
+              )
+            : MSecondaryButton(
+                label: label,
+                onPressed: handleSubscription,
+                style: style ?? defaultStyle,
+              ),
+      ),
     );
   }
 }

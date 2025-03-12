@@ -82,6 +82,12 @@ class MenoBlocProvider extends StatelessWidget {
             media: di<MediaService>(),
           ),
         ),
+        BlocProvider(
+          create: (_) => SubscriptionBloc(
+            facade: di<IProfileFacade>(),
+            session: di<ISessionContext>(),
+          )..init,
+        ),
       ],
       child: child,
     );

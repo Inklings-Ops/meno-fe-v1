@@ -57,13 +57,13 @@ import '../features/notifications/infrastructure/datasources/notification_remote
 import '../features/notifications/infrastructure/notification_facade.dart'
     as _i734;
 import '../features/notifications/notifications.dart' as _i246;
-import '../features/profile/domain/domain.dart' as _i74;
 import '../features/profile/infrastructure/datasources/profile_local_datasource.dart'
     as _i517;
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart'
     as _i212;
 import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i865;
 import '../features/profile/infrastructure/profile_facade.dart' as _i920;
+import '../features/profile/profile.dart' as _i443;
 import '../features/settings/infrastructure/datasources/settings_local_datasource.dart'
     as _i385;
 import '../features/settings/infrastructure/settings_facade.dart' as _i838;
@@ -224,9 +224,9 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
-    gh.lazySingleton<_i74.IProfileFacade>(() => _i920.ProfileFacade(
-          remote: gh<_i212.ProfileRemoteDatasource>(),
-          local: gh<_i517.ProfileLocalDatasource>(),
+    gh.lazySingleton<_i443.IProfileFacade>(() => _i920.ProfileFacade(
+          remote: gh<_i443.ProfileRemoteDatasource>(),
+          local: gh<_i443.ProfileLocalDatasource>(),
           network: gh<_i463.NetworkService>(),
         ));
     gh.factory<_i246.INotificationFacade>(() => _i734.NotificationFacade(

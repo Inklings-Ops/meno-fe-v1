@@ -52,7 +52,19 @@ class ProfileCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              SubscribeButton(profile: profile),
+              BlocListener<SubscriptionBloc, SubscriptionState>(
+                listener: (context, state) {
+                  if (state.exception != null) {
+                    context.showErrorSnackBar(
+                      state.exception!.maybeWhen(
+                        orElse: () => 'Unknown error',
+                        message: (message) => message,
+                      ),
+                    );
+                  }
+                },
+                child: SubscribeButton(profile: profile),
+              ),
             ],
           ),
         ),
