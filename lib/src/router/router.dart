@@ -283,7 +283,6 @@ final router = GoRouter(
         return ModalPage<dynamic>(
           child: BlocProvider(
             create: (context) => ProfileFormCubit(
-              facade: di<IProfileFacade>(),
               authFacade: di<IAuthFacade>(),
               media: di<MediaService>(),
             )..initializeWithProfile(profile),

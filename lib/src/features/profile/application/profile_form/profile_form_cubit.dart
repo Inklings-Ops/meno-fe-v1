@@ -13,14 +13,11 @@ part 'profile_form_state.dart';
 
 class ProfileFormCubit extends Cubit<ProfileFormState> {
   ProfileFormCubit({
-    required IProfileFacade facade,
     required IAuthFacade authFacade,
     required MediaService media,
-  })  : _facade = facade,
-        _authFacade = authFacade,
+  })  : _authFacade = authFacade,
         _media = media,
         super(ProfileFormState.initial());
-  final IProfileFacade _facade;
   final IAuthFacade _authFacade;
   final MediaService _media;
 
@@ -37,7 +34,7 @@ class ProfileFormCubit extends Cubit<ProfileFormState> {
     );
   }
 
-  Future<void> avatarChanged(bool fromGallery) async {
+  Future<void> avatarChanged({bool fromGallery = true}) async {
     final file = await _media.getImage(fromGallery: fromGallery);
     if (file != null) {
       emit(state.copyWith(avatar: Avatar(File(file.path)), hasChanges: true));

@@ -51,6 +51,7 @@ extension SessionStateX on SessionState {
         Routes.resetPassword,
         Routes.resetPwdOtp,
         Routes.resetPwdSuccess,
+        Routes.pickImageModal,
       ],
       partiallyAuthenticated: (user) => [
         Routes.register,
@@ -64,6 +65,7 @@ extension SessionStateX on SessionState {
         Routes.resetPwdOtp,
         Routes.resetPwdSuccess,
         Routes.partialLogin,
+        Routes.pickImageModal,
       ],
       authenticated: (user, token) => [
         Routes.home,
@@ -109,6 +111,7 @@ extension SessionStateX on SessionState {
         Routes.securitySettings,
         Routes.about,
         Routes.logoutConfirmationDialog,
+        Routes.pickImageModal,
       ],
     );
   }
