@@ -91,13 +91,18 @@ class _Scaffold extends HookWidget {
                           child: ProfileBio(bio: profile.bio),
                         ),
                         Spaces.verticalLarge,
-                        const SizedBox(
+                        SizedBox(
                           height: 35,
                           child: Row(
                             children: [
-                              Expanded(child: SubscribeButton()),
+                              Expanded(
+                                child: SubscribeButton(
+                                  profile: profile,
+                                  showIcon: true,
+                                ),
+                              ),
                               Spaces.horizontalLarge,
-                              Expanded(child: ShareProfileButton()),
+                              const Expanded(child: ShareProfileButton()),
                             ],
                           ),
                         ),

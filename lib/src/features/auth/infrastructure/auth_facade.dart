@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
@@ -349,5 +350,41 @@ class AuthFacade implements IAuthFacade {
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false}) {
     // (gettoknowdavid): implement googleSignIn
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AuthException, ProfilesList>> getProfiles({
+    String? userId,
+    String? include,
+    String? keywords,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      final response = await _remote.getProfiles(
+        keywords: keywords,
+        userId: userId,
+        include: 'subscribed',
+        sortBy: sortBy ?? 'fullName',
+        orderBy: orderBy ?? 'ASC',
+        page: page ?? 1,
+        size: size ?? 8,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
   }
 }

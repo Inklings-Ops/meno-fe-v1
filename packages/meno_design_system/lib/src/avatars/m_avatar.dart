@@ -131,16 +131,14 @@ class MAvatar extends StatelessWidget {
     return Skeleton.leaf(
       child: GestureDetector(
         onTap: onTap,
-        child: !hasBorder
-            ? avatar
-            : CircleAvatar(
-                radius: radius,
-                backgroundColor: colors.outlineVariant3,
-                child: Padding(
-                  padding: const EdgeInsets.all(1.50),
-                  child: avatar,
-                ),
-              ),
+        child: CircleAvatar(
+          radius: radius,
+          backgroundColor: colors.outlineVariant3,
+          child: Padding(
+            padding: hasBorder ? const EdgeInsets.all(1.50) : EdgeInsets.zero,
+            child: avatar,
+          ),
+        ),
       ),
     );
   }

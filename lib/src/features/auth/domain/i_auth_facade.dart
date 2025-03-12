@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
@@ -119,5 +120,15 @@ abstract class IAuthFacade {
     SingleLineString? fullName,
     Bio? bio,
     Avatar? avatar,
+  });
+
+  Future<Either<AuthException, ProfilesList>> getProfiles({
+    String? userId,
+    String? include,
+    String? keywords,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
   });
 }

@@ -9,9 +9,8 @@ class ProfileAllBroadcastsTab extends HookWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UsersAllBroadcastsBloc, UsersAllBroadcastsState>(
       builder: (context, state) => state.maybeWhen(
-        orElse: () => EmptyStateWidget(
-          actionTitle: 'Broadcasts',
-          action: () {},
+        orElse: () => Center(
+          child: EmptyStateWidget(actionTitle: 'Broadcasts', action: () {}),
         ),
         loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
         loaded: (broadcasts) => _List(broadcasts: broadcasts),

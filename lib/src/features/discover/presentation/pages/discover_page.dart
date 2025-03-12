@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/discover/discover.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class DiscoverPage extends StatelessWidget {
   const DiscoverPage({super.key});
@@ -9,7 +8,12 @@ class DiscoverPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => SearchBloc(facade: di<IBroadcastFacade>())),
+        BlocProvider(
+          create: (_) => SearchBloc(facade: di<IBroadcastFacade>()),
+        ),
+        BlocProvider(
+          create: (_) => AccountsSearchBloc(facade: di<IAuthFacade>()),
+        ),
         BlocProvider(
           create: (_) => FilterBloc(facade: di<IBroadcastFacade>())..init(),
         ),
@@ -44,8 +48,14 @@ class DiscoverView extends HookWidget {
       const [],
     );
 
+    void onSearchBarTapped() => isSearching.value = true;
+    void onSearchCancelled() => isSearching.value = false;
+
     if (isSearching.value) {
-      return SearchPage(onCancel: () => isSearching.value = false);
+      return switch (filter.value) {
+        Filter.accounts => AccountsSearchPage(onCancel: onSearchCancelled),
+        _ => BroadcastsSearchPage(onCancel: onSearchCancelled),
+      };
     }
 
     return MScaffold(
@@ -61,7 +71,10 @@ class DiscoverView extends HookWidget {
           child: Column(
             children: [
               const SizedBox(height: 6),
-              DiscoverSearchBar(onTap: () => isSearching.value = true),
+              switch (filter.value) {
+                Filter.accounts => AccountsSearchBar(onTap: onSearchBarTapped),
+                _ => DiscoverSearchBar(onTap: onSearchBarTapped),
+              },
               Spaces.verticalXLarge,
               LimitedBox(
                 maxHeight: 32,
@@ -84,6 +97,7 @@ class DiscoverView extends HookWidget {
             Filter.all => const AllBroadcastsWidget(),
             Filter.nowLive => const NowLiveBroadcastsWidget(),
             Filter.recentlyLive => const RecentlyLiveBroadcastsWidget(),
+            Filter.accounts => const SuggestAccountsWidget(),
           },
         ),
       ),
@@ -95,6 +109,7 @@ class DiscoverView extends HookWidget {
       Filter.all => Future.wait([_nowLive(context), _recentlyLive(context)]),
       Filter.nowLive => _nowLive(context),
       Filter.recentlyLive => _recentlyLive(context),
+      Filter.accounts => null,
     };
   }
 
@@ -120,6 +135,7 @@ class DiscoverView extends HookWidget {
       Filter.all => null,
       Filter.nowLive => nowLive.add(const GetMoreLiveBroadcasts()),
       Filter.recentlyLive => recentlyLive.fetchMore(),
+      Filter.accounts => null,
     };
   }
 }

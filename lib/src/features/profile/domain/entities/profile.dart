@@ -15,6 +15,10 @@ class Profile with _$Profile {
     UserStats? stats,
     bool? isSubscribedToUser,
     bool? verified,
+    int? numberOfBroadcasts,
+    int? numberOfSubscribers,
+    int? numberOfSubscriptions,
+    bool? subscribed,
   }) = _Profile;
 
   factory Profile.empty() => Profile(id: '', fullName: SingleLineString(''));

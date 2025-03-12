@@ -5,6 +5,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/features/auth/infrastructure/responses/auth_response.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'auth_remote_datasource.g.dart';
@@ -97,5 +98,16 @@ abstract class AuthRemoteDatasource {
     @Part() String? fullName,
     @Part() String? bio,
     @Part(name: 'image', contentType: 'image/png') File? image,
+  });
+
+  @GET('/api/v1/users/profiles')
+  Future<AuthResponse<ProfilesListDto>> getProfiles({
+    @Query('userId') String? userId,
+    @Query('include') String? include,
+    @Query('keywords') String? keywords,
+    @Query('sortBy') String? sortBy,
+    @Query('orderBy') String? orderBy,
+    @Query('page') int? page,
+    @Query('size') int? size,
   });
 }

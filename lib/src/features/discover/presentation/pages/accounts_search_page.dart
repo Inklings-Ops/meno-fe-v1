@@ -1,25 +1,28 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 
-class SearchPage extends HookWidget {
-  const SearchPage({required this.onCancel, super.key});
+class AccountsSearchPage extends HookWidget {
+  const AccountsSearchPage({required this.onCancel, super.key});
   final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
-    useEffect(() {
-      final bloc = context.read<SearchBloc>();
-      scrollController.addListener(() {
-        final pixels = scrollController.position.pixels;
-        final maxScrollExtent = scrollController.position.maxScrollExtent;
-        if (pixels >= maxScrollExtent && bloc.state.hasMore) {
-          final page = bloc.state.page + 1;
-          bloc.add(SearchResultsFetched(page));
-        }
-      });
-      return null;
-    }, const [],);
+    useEffect(
+      () {
+        final bloc = context.read<AccountsSearchBloc>();
+        scrollController.addListener(() {
+          final pixels = scrollController.position.pixels;
+          final maxScrollExtent = scrollController.position.maxScrollExtent;
+          if (pixels >= maxScrollExtent && bloc.state.hasMore) {
+            final page = bloc.state.page + 1;
+            bloc.add(AccountsSearchResultsFetched(page));
+          }
+        });
+        return null;
+      },
+      const [],
+    );
     return MScaffold(
       padding: EdgeInsets.zero,
       appBar: AppBar(
@@ -32,7 +35,9 @@ class SearchPage extends HookWidget {
             showCancelButton: true,
             onCancel: onCancel,
             onChanged: (value) {
-              context.read<SearchBloc>().add(SearchBarChanged(value));
+              context
+                  .read<AccountsSearchBloc>()
+                  .add(AccountsSearchBarChanged(value));
             },
           ),
         ),
@@ -40,7 +45,7 @@ class SearchPage extends HookWidget {
       body: SingleChildScrollView(
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        child: const SearchResults(),
+        child: const AccountsSearchResults(),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 
-class DiscoverSearchBar extends StatelessWidget {
-  const DiscoverSearchBar({
+class AccountsSearchBar extends StatelessWidget {
+  const AccountsSearchBar({
     super.key,
     this.onTap,
     this.onCancel,
@@ -35,7 +35,7 @@ class DiscoverSearchBar extends StatelessWidget {
                 autoFocus: autofocus,
                 onTap: onTap,
                 onChanged: onChanged,
-                hintText: 'Search broadcasts',
+                hintText: 'Search broadcasters',
                 hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
                 padding: const WidgetStatePropertyAll(
                   EdgeInsets.symmetric(horizontal: Insets.md),
