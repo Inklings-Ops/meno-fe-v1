@@ -59,16 +59,18 @@ class NoteEditorBloc extends Bloc<NoteEditorEvent, NoteEditorState> {
   ) async {
     if (state is NoteSaveInProgress) return;
 
-    final note = (state as NoteLoaded).note;
+    if (state is NoteLoaded) {
+      final note = (state as NoteLoaded).note;
 
-    emit(const NoteSaveInProgress());
+      emit(const NoteSaveInProgress());
 
-    if (note.title.isValid) {
-      final failureOrNote = note.uid.isValid
-          ? await _facade.updateNote(note: note)
-          : await _facade.createNote(note);
+      if (note.title.isValid) {
+        final failureOrNote = note.uid.isValid
+            ? await _facade.updateNote(note: note)
+            : await _facade.createNote(note);
 
-      emit(failureOrNote.fold(NoteEditorFailure.new, NoteSaved.new));
+        emit(failureOrNote.fold(NoteEditorFailure.new, NoteSaved.new));
+      }
     }
   }
 
