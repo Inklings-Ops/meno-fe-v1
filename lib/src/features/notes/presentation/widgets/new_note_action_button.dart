@@ -9,32 +9,35 @@ class NewNoteActionButton extends StatelessWidget {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return BlocBuilder<NotesBloc, NotesState>(
-      buildWhen: (p, c) => p != c,
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        failure: (failure) => const SizedBox(),
-        loadSuccess: (notes) {
-          if (notes.isEmpty) return const SizedBox();
-          return InkWell(
-            onTap: () async {
-              final bloc = context.read<NotesBloc>();
-              final newNote = await router.push<Note?>(Routes.noteEditor);
-              if (newNote != null) return bloc.add(NoteReceived(newNote));
-            },
-            child: Row(
-              children: [
-                Icon(MIcons.plus, size: 22, color: colors.primary),
-                Spaces.horizontalMicro,
-                MText(
-                  'Add New Note',
-                  style: textTheme.captionMedium,
-                  color: colors.primary,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+      builder: (context, state) {
+        switch (state.status) {
+          case NotesStatus.initial:
+          case NotesStatus.loading:
+          case NotesStatus.failure:
+            return const SizedBox();
+          case NotesStatus.loadingMore:
+          case NotesStatus.loadSuccess:
+            if (state.notes.isEmpty) return const SizedBox();
+            return InkWell(
+              onTap: () async {
+                final bloc = context.read<NotesBloc>();
+                final newNote = await router.push<Note?>(Routes.noteEditor);
+                if (newNote != null) return bloc.add(NoteReceived(newNote));
+              },
+              child: Row(
+                children: [
+                  Icon(MIcons.plus, size: 22, color: colors.primary),
+                  Spaces.horizontalMicro,
+                  MText(
+                    'Add New Note',
+                    style: textTheme.captionMedium,
+                    color: colors.primary,
+                  ),
+                ],
+              ),
+            );
+        }
+      },
     );
   }
 }
