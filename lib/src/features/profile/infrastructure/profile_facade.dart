@@ -92,7 +92,7 @@ class ProfileFacade implements IProfileFacade {
   Future<Either<AuthException, Unit>> subscribe(String userId) async {
     final isConnected = await _network.isConnected;
     if (!isConnected) return left(const AuthException.networkError());
-
+    log(userId);
     try {
       await _remote.subscribe(userId: userId);
       return right(unit);

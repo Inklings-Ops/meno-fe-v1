@@ -28,23 +28,32 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     add(const FetchSubscriptions());
   }
 
+  final Map<String, bool> subscribeMap = {};
+
   Future<void> _onSubscribe(
     Subscribe event,
     Emitter<SubscriptionState> emit,
   ) async {
+    final user = event.user;
+
+    subscribeMap[user.id] = true;
+
     emit(state.copyWith(loading: true, exception: null));
     final updatedSubscribers = List<Profile?>.from(state.subscribers)
       ..add(event.user);
     emit(state.copyWith(subscribers: updatedSubscribers));
-    final failureOrSuccess = await _facade.subscribe(event.user.id);
+    final failureOrSuccess = await _facade.subscribe(user.id);
     failureOrSuccess.fold(
-      (failure) => emit(
-        state.copyWith(
-          subscribers: updatedSubscribers..remove(event.user),
-          loading: false,
-          exception: failure,
-        ),
-      ),
+      (failure) {
+        subscribeMap.remove(user.id);
+        emit(
+          state.copyWith(
+            subscribers: updatedSubscribers..remove(user),
+            loading: false,
+            exception: failure,
+          ),
+        );
+      },
       (_) => emit(state.copyWith(loading: false)),
     );
   }
@@ -53,19 +62,23 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     Unsubscribe event,
     Emitter<SubscriptionState> emit,
   ) async {
+    subscribeMap[event.user.id] = false;
     emit(state.copyWith(loading: true, exception: null));
     final updatedSubscribers = List<Profile?>.from(state.subscribers)
       ..remove(event.user);
     emit(state.copyWith(subscribers: updatedSubscribers));
     final failureOrSuccess = await _facade.unsubscribe(event.user.id);
     failureOrSuccess.fold(
-      (failure) => emit(
-        state.copyWith(
-          subscribers: updatedSubscribers..add(event.user),
-          loading: false,
-          exception: failure,
-        ),
-      ),
+      (failure) {
+        subscribeMap.remove(event.user.id);
+        emit(
+          state.copyWith(
+            subscribers: updatedSubscribers..add(event.user),
+            loading: false,
+            exception: failure,
+          ),
+        );
+      },
       (_) => emit(state.copyWith(loading: false)),
     );
   }

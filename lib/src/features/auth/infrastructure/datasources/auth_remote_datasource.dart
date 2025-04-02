@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
-import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/dtos.dart';
 import 'package:meno_fe_v1/src/features/auth/infrastructure/responses/auth_response.dart';

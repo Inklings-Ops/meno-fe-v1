@@ -34,5 +34,7 @@ abstract class ProfileRemoteDatasource {
   Future<AuthResponse<dynamic>> subscribe({@Field() required String userId});
 
   @DELETE('/api/v1/subscribers')
-  Future<AuthResponse<dynamic>> unsubscribe({@Field() required String userId});
+  Future<AuthResponse<dynamic>> unsubscribe({
+    @Field('userId') required String userId,
+  });
 }
