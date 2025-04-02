@@ -17,7 +17,7 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
         state.whenOrNull(
           noteRemovedFromFolder: (note, folder) {
             context.read<NotesBloc>().add(NoteReceived(note));
-            context.read<FoldersBloc>().add(const GetAllFolders());
+            context.read<FoldersBloc>().add(const GetFoldersRequested());
             router.pop(true);
           },
           failure: (exception) {

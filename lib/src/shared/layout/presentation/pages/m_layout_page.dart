@@ -78,7 +78,7 @@ class MLayoutPage extends HookWidget {
                     .add(const GetLiveBroadcasts());
                 context.read<AccountBloc>().add(const AccountInitialized());
                 context.read<NotesBloc>().add(const GetNotesRequested());
-                context.read<FoldersBloc>().add(const GetAllFolders());
+                context.read<FoldersBloc>().add(const GetFoldersRequested());
                 context.read<MyProfileCubit>().fetch();
               },
             );

@@ -9,18 +9,22 @@ class FolderListWidget extends StatelessWidget {
     final bloc = context.read<FoldersBloc>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
-      child: BlocBuilder<FoldersBloc, FoldersState>(
-        buildWhen: (p, c) => p != c,
-        builder: (context, state) => RefreshIndicator.adaptive(
-          onRefresh: () async => bloc.add(const GetAllFolders()),
-          child: state.maybeWhen(
-            orElse: () => Skeletonizer(child: FolderList(folders: fakeFolders)),
-            failed: (_) => const FolderListFailureWidget(),
-            loaded: (folders) {
-              if (folders.isEmpty) return const EmptyFolderListWidget();
-              return FolderList(folders: folders);
-            },
-          ),
+      child: RefreshIndicator(
+        onRefresh: () async => bloc.add(const GetFoldersRequested()),
+        child: BlocBuilder<FoldersBloc, FoldersState>(
+          builder: (context, state) {
+            switch (state.status) {
+              case FoldersStatus.initial:
+              case FoldersStatus.loading:
+                return Skeletonizer(child: FolderList(folders: fakeFolders));
+              case FoldersStatus.failure:
+                return const FolderListFailureWidget();
+              case FoldersStatus.loadingMore:
+              case FoldersStatus.success:
+                if (state.folders.isEmpty) return const EmptyFolderListWidget();
+                return FolderList(folders: state.folders);
+            }
+          },
         ),
       ),
     );

@@ -10,31 +10,35 @@ class NewFolderActionButton extends StatelessWidget {
     final textTheme = MTextTheme.of(context)!;
 
     return BlocBuilder<FoldersBloc, FoldersState>(
-      buildWhen: (p, c) => p != c,
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        loaded: (folders) {
-          if (folders.isEmpty) return const SizedBox();
-          return InkWell(
-            onTap: () async {
-              final bloc = context.read<FoldersBloc>();
-              final folder = await router.push<Folder?>(Routes.folderFormModal);
-              if (folder != null) return bloc.add(UpdateFolderList(folder));
-            },
-            child: Row(
-              children: [
-                Icon(MIcons.plus, size: 22, color: colors.primary),
-                Spaces.horizontalMicro,
-                MText(
-                  'Add New Folder',
-                  style: textTheme.captionMedium,
-                  color: colors.primary,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+      builder: (context, state) {
+        switch (state.status) {
+          case FoldersStatus.failure:
+          case FoldersStatus.initial:
+          case FoldersStatus.loading:
+            return const SizedBox();
+          case FoldersStatus.loadingMore:
+          case FoldersStatus.success:
+            if (state.folders.isEmpty) return const SizedBox();
+            return InkWell(
+              onTap: () async {
+                final bloc = context.read<FoldersBloc>();
+                final fld = await router.push<Folder?>(Routes.folderFormModal);
+                if (fld != null) return bloc.add(UpdateFolderList(fld));
+              },
+              child: Row(
+                children: [
+                  Icon(MIcons.plus, size: 22, color: colors.primary),
+                  Spaces.horizontalMicro,
+                  MText(
+                    'Add New Folder',
+                    style: textTheme.captionMedium,
+                    color: colors.primary,
+                  ),
+                ],
+              ),
+            );
+        }
+      },
     );
   }
 }

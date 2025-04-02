@@ -25,7 +25,6 @@ class _NoteSearchBoxState extends State<NoteSearchBox> {
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
 
-    // Listen to the state to know when to show/hide or potentially clear
     final showSearch = context.select<NotesBloc, bool>(
       (bloc) =>
           bloc.state.status != NotesStatus.initial &&

@@ -52,7 +52,7 @@ class MenoBlocProvider extends StatelessWidget {
           lazy: false,
           create: (_) => FoldersBloc(
             facade: di<INoteFacade>(),
-          )..add(const GetAllFolders()),
+          )..add(const GetFoldersRequested()),
         ),
         BlocProvider(create: (_) => ChatInputCubit()),
         BlocProvider(create: (_) => ChatListBloc()),

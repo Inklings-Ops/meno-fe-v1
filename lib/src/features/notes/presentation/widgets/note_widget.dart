@@ -37,13 +37,12 @@ class NoteWidget extends StatelessWidget {
             ),
             BlocBuilder<NotesBloc, NotesState>(
               builder: (context, state) => Skeletonizer(
-                enabled: [
-                  NotesStatus.loading,
-                  NotesStatus.loadingMore,
-                ].contains(state.status),
+                enabled: state.status == NotesStatus.loading,
                 child: MText(
                   switch (state.status) {
-                    NotesStatus.loadSuccess => state.notes.length.toString(),
+                    NotesStatus.loadSuccess ||
+                    NotesStatus.loadingMore =>
+                      state.notes.length.toString(),
                     _ => '0',
                   },
                   style: textTheme.heading2Medium,

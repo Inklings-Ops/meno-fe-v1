@@ -11,14 +11,14 @@ class AddNoteToFolderModal extends HookWidget {
     final watcher = context.watch<NotesWatcherBloc>();
     final loading = watcher.state is NoteWatcherLoading;
 
-    final pickedF = useState<Folder?>(null);
+    final pickedFolder = useState<Folder?>(null);
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listener: (context, state) {
         state.whenOrNull(
           noteAddedToFolder: (note, folder) {
             context.read<NotesBloc>().add(NoteReceived(note));
-            context.read<FoldersBloc>().add(const GetAllFolders());
+            context.read<FoldersBloc>().add(const GetFoldersRequested());
             router.pop(true);
           },
           failure: (exception) {
@@ -35,39 +35,47 @@ class AddNoteToFolderModal extends HookWidget {
             Expanded(
               child: BlocBuilder<FoldersBloc, FoldersState>(
                 buildWhen: (p, c) => p != c,
-                builder: (context, state) => state.when(
-                  failed: (_) => const FolderListFailureWidget(),
-                  loading: () => const MLoadingIndicator.box(),
-                  loaded: (folders) {
-                    if (folders.isEmpty) return const EmptyFolderListWidget();
-                    return ListView.separated(
-                      primary: false,
-                      shrinkWrap: true,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 16),
-                      itemCount: folders.length,
-                      separatorBuilder: (_, i) => Spaces.verticalLarge,
-                      itemBuilder: (context, i) {
-                        final folder = folders[i];
-                        return FolderListTile(
-                          folder: folder!,
-                          isSelected: pickedF.value?.id == folder.id,
-                          onTap: !loading ? () => pickedF.value = folder : null,
-                        );
-                      },
-                    );
-                  },
-                ),
+                builder: (context, state) {
+                  final folders = state.folders;
+                  switch (state.status) {
+                    case FoldersStatus.initial:
+                    case FoldersStatus.failure:
+                      return const FolderListFailureWidget();
+                    case FoldersStatus.loading:
+                      return const MLoadingIndicator.box();
+                    case FoldersStatus.loadingMore:
+                    case FoldersStatus.success:
+                      if (folders.isEmpty) return const EmptyFolderListWidget();
+                      return ListView.separated(
+                        primary: false,
+                        shrinkWrap: true,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(bottom: 16),
+                        itemCount: folders.length,
+                        separatorBuilder: (_, i) => Spaces.verticalLarge,
+                        itemBuilder: (context, i) {
+                          final folder = folders[i];
+                          return FolderListTile(
+                            folder: folder!,
+                            isSelected: pickedFolder.value?.id == folder.id,
+                            onTap: !loading
+                                ? () => pickedFolder.value = folder
+                                : null,
+                          );
+                        },
+                      );
+                  }
+                },
               ),
             ),
-            if (pickedF.value != null) ...[
+            if (pickedFolder.value != null) ...[
               Spaces.verticalLarge,
               MPrimaryButton(
                 label: 'Done',
                 loading: loading,
-                disabled: pickedF.value == null,
+                disabled: pickedFolder.value == null,
                 onPressed: () => watcher.add(
-                  AddNoteToFolder(note, pickedF.value!),
+                  AddNoteToFolder(note, pickedFolder.value!),
                 ),
               ),
             ],
