@@ -11,28 +11,16 @@ class ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ChatListBloc>();
-
-    return BlocListener<SocketBloc, SocketState>(
-      listenWhen: (previous, current) => previous != current,
-      listener: (context, state) {
-        state.whenOrNull(
-          newMessage: (chat) => bloc.add(NewChatReceived(chat)),
-          editedMessage: (chat) => bloc.add(EditedChatReceived(chat)),
-          deletedMessage: (chat) => bloc.add(DeletedChatRemoved(chat)),
-        );
-      },
-      child: BlocBuilder<ChatListBloc, ChatListState>(
-        buildWhen: (previous, current) => previous.chats != current.chats,
-        builder: (context, state) => ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: Insets.lg),
-          controller: scrollController,
-          reverse: true,
-          shrinkWrap: true,
-          separatorBuilder: (context, _) => Spaces.verticalLarge,
-          itemCount: state.chats.length,
-          itemBuilder: (context, i) => _ChatBubble(chat: state.chats[i]!),
-        ),
+    return BlocBuilder<ChatListBloc, ChatListState>(
+      buildWhen: (previous, current) => previous.chats != current.chats,
+      builder: (context, state) => ListView.separated(
+        padding: const EdgeInsets.symmetric(vertical: Insets.lg),
+        controller: scrollController,
+        reverse: true,
+        shrinkWrap: true,
+        separatorBuilder: (context, _) => Spaces.verticalLarge,
+        itemCount: state.chats.length,
+        itemBuilder: (context, i) => _ChatBubble(chat: state.chats[i]!),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -25,7 +26,13 @@ class ChatFacade implements IChatFacade {
     if (!isConnected) return left(MErrorMessages.networkError);
 
     try {
-      final res = await _remote.chatMessages(broadcastId: broadcastId.getOr());
+      final res = await _remote.chatMessages(
+        broadcastId: broadcastId.getOr(),
+        orderBy: 'DESC',
+        page: 1,
+        size: 50,
+      );
+      Logger().w(res);
       final chats = res.data?.chatMessages.map((c) => c?.toDomain).toList();
       return right(chats ?? []);
     } catch (e) {
