@@ -18,7 +18,7 @@ class ParticipantItem extends StatelessWidget {
     final hasUser = participant != null;
     final isCohost = [Role.cohost, Role.COHOST].contains(participant?.role);
     final isHost = [Role.host, Role.HOST].contains(participant?.role);
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: SizedBox.square(
         dimension: 88,

@@ -95,12 +95,26 @@ class MLayoutPage extends HookWidget {
               connected: () => Logger().w('CONNECTED TO SOCKET'),
               hostReconnected: (value) {
                 live.add(const GoLoading());
+                context.showSnackBar('The host has been reconnected.');
                 broadcastBloc.add(const BroadcastReconnectRequested());
+              },
+              hostDisconnected: (value) {
+                context.showSnackBar('The host has been disconnected.');
               },
               newBroadcastListener: (participant) {
                 if (live.state is! Live) {
                   streamBloc.add(const StreamReconnectRequested());
+                } else {
+                  final userFullName = participant.fullName;
+                  context.showSnackBar('$userFullName joined the broadcast.');
                 }
+              },
+              endedBroadcast: (data) {
+                context.showSnackBar(data.reason.message);
+              },
+              broadcastListenerLeft: (participant) {
+                final userFullName = participant.fullName;
+                context.showSnackBar('$userFullName left the broadcast.');
               },
             );
           },
@@ -118,7 +132,8 @@ class MLayoutPage extends HookWidget {
                   final broadcast = broadcastBloc.state.broadcast;
                   await background.startBroadcastBackgroundProcess(broadcast);
                   final token = broadcast.broadcastToken;
-                  livekit.add(LiveKitBroadcast(token: token, isReconnect: true));
+                  livekit
+                      .add(LiveKitBroadcast(token: token, isReconnect: true));
                   await router.push<void>(Routes.broadcastTab);
                 },
               );

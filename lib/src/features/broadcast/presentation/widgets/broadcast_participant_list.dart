@@ -56,7 +56,13 @@ class BroadcastParticipantList extends StatelessWidget {
                 onTap: () {
                   if (participant.id == currentUser.id.getOr()) return;
                   context.showModal<void>(
-                    ParticipantInfoModal(participant: participant),
+                    BlocProvider(
+                      create: (_) => OthersProfileCubit(
+                        facade: di<IProfileFacade>(),
+                        userId: participant.id,
+                      )..fetch(),
+                      child: ParticipantInfoModal(participant: participant),
+                    ),
                     isScrollControlled: true,
                     useRootNavigator: true,
                   );
