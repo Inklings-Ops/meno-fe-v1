@@ -105,7 +105,10 @@ class _BroadcastCreator extends StatelessWidget {
     final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
     return MText(
       key: const ValueKey('BroadcastCreator'),
-      broadcast.creator!.fullName,
+      broadcast.creator?.fullName ??
+          broadcast.creatorFullName ??
+          broadcast.fullName ??
+          '',
       style: textTheme.captionRegular,
       color: MColorScheme.of(context).onDisabledContainer,
     );

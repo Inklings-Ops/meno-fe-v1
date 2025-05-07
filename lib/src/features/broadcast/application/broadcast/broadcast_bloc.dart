@@ -13,6 +13,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   BroadcastBloc({required IBroadcastFacade facade})
       : _facade = facade,
         super(BroadcastState.initial()) {
+    on<InitializeBroadcast>(_onInitializeBroadcast);
     on<BroadcastStartPressed>(_onBroadcastStartPressed);
     on<BroadcastReset>(_onBroadcastReset);
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
@@ -20,6 +21,19 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
 
   final IBroadcastFacade _facade;
   final _initialState = BroadcastState.initial();
+
+  Future<void> _onInitializeBroadcast(
+    InitializeBroadcast event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    emit(state.copyWith(status: const _LoadInProgress()));
+    emit(
+      state.copyWith(
+        broadcast: event.broadcast,
+        status: const _Initial(),
+      ),
+    );
+  }
 
   Future<void> _onBroadcastStartPressed(
     BroadcastStartPressed event,
@@ -46,7 +60,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    emit(state.copyWith(status: const _LoadInProgress()));
+    emit(state.copyWith(status: const _LoadInProgress(), isReconnect: true));
     final option = await _facade.getSavedBroadcastDetails();
     emit(
       option.fold(

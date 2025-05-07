@@ -5,6 +5,7 @@ class StreamState with _$StreamState {
   const factory StreamState({
     required Broadcast broadcast,
     @Default(_Initial()) LiveStreamStatus status,
+    @Default(false) bool isReconnect,
   }) = _StreamState;
 
   factory StreamState.initial() => StreamState(broadcast: Broadcast.empty());

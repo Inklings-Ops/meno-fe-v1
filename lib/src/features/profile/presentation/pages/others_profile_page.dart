@@ -29,7 +29,7 @@ class OthersProfilePage extends StatelessWidget {
 }
 
 class _Scaffold extends HookWidget {
-  const _Scaffold({required this.profile, super.key, this.loading = false});
+  const _Scaffold({required this.profile, this.loading = false});
   final Profile profile;
   final bool loading;
 
@@ -147,7 +147,7 @@ class _Scaffold extends HookWidget {
 }
 
 class _RecentBroadcastsTab extends StatelessWidget {
-  const _RecentBroadcastsTab({super.key});
+  const _RecentBroadcastsTab();
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +172,7 @@ class _RecentBroadcastsTab extends StatelessWidget {
 }
 
 class _AllBroadcastsTab extends StatelessWidget {
-  const _AllBroadcastsTab({super.key});
+  const _AllBroadcastsTab();
 
   @override
   Widget build(BuildContext context) {

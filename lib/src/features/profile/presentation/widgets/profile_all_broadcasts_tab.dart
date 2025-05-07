@@ -60,7 +60,7 @@ class _List extends StatelessWidget {
 }
 
 class _LoadMoreWidget extends StatelessWidget {
-  const _LoadMoreWidget({super.key});
+  const _LoadMoreWidget();
 
   @override
   Widget build(BuildContext context) {

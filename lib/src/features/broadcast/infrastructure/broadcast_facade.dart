@@ -112,6 +112,7 @@ class BroadcastFacade implements IBroadcastFacade {
 
   @override
   Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
+    String? id,
     String? status,
     String? include,
     bool? onlySubscriptions,
@@ -133,6 +134,7 @@ class BroadcastFacade implements IBroadcastFacade {
 
     try {
       final response = await _remote.getBroadcasts(
+        id: id,
         status: status,
         include: include,
         onlySubscriptions: onlySubscriptions,
@@ -168,6 +170,7 @@ class BroadcastFacade implements IBroadcastFacade {
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
       final response = await _remote.joinBroadcast(broadcastId: idStr);
+      await _local.saveStreamDetails(response.data);
       return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -403,6 +406,13 @@ class BroadcastFacade implements IBroadcastFacade {
   @override
   Future<Option<Broadcast>> getSavedBroadcastDetails() async {
     final dto = await _local.getBroadcastDetails();
+    if (dto == null) return none();
+    return some(dto.toDomain);
+  }
+
+  @override
+  Future<Option<JoinBroadcastEntity>> getSavedStreamDetails() async {
+    final dto = await _local.getStreamDetails();
     if (dto == null) return none();
     return some(dto.toDomain);
   }

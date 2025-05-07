@@ -1,7 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:meno_fe_v1/src/services/services.dart' hide StreamState;
 
 class MLayoutPage extends HookWidget {
   const MLayoutPage({
@@ -65,6 +65,11 @@ class MLayoutPage extends HookWidget {
     final live = context.read<LiveBloc>();
     final background = di<BackgroundService>();
     final broadcastBloc = context.read<BroadcastBloc>();
+    final streamBloc = context.read<StreamBloc>();
+    final chat = context.watch<ChatListBloc>();
+    final participants = context.watch<ParticipantsBloc>();
+    final socket = context.watch<SocketBloc>();
+    final timer = context.watch<TimerCubit>();
 
     return MultiBlocListener(
       listeners: [
@@ -92,28 +97,51 @@ class MLayoutPage extends HookWidget {
                 live.add(const GoLoading());
                 broadcastBloc.add(const BroadcastReconnectRequested());
               },
+              newBroadcastListener: (participant) {
+                if (live.state is! Live) {
+                  streamBloc.add(const StreamReconnectRequested());
+                }
+              },
             );
           },
         ),
         BlocListener<BroadcastBloc, BroadcastState>(
           listener: (context, state) {
-            state.status.whenOrNull(
-              failure: (error) {
-                live.add(const GoFailure());
-                context.showBroadcastError(error);
-              },
-              broadcastStarted: () async {
-                final broadcast = broadcastBloc.state.broadcast;
-                await background.startBroadcastBackgroundProcess(broadcast);
-                livekit.add(
-                  LiveKitBroadcast(
-                    token: broadcast.broadcastToken,
-                    isReconnect: true,
-                  ),
-                );
-                await router.push<void>(Routes.broadcastTab);
-              },
-            );
+            if (state.isReconnect) {
+              state.status.whenOrNull(
+                failure: (error) {
+                  live.add(const GoFailure());
+                  context.showBroadcastError(error);
+                },
+                broadcastStarted: () async {
+                  live.add(const GoLoading());
+                  final broadcast = broadcastBloc.state.broadcast;
+                  await background.startBroadcastBackgroundProcess(broadcast);
+                  final token = broadcast.broadcastToken;
+                  livekit.add(LiveKitBroadcast(token: token, isReconnect: true));
+                  await router.push<void>(Routes.broadcastTab);
+                },
+              );
+            }
+          },
+        ),
+        BlocListener<StreamBloc, StreamState>(
+          listener: (context, state) {
+            if (state.isReconnect) {
+              state.status.whenOrNull(
+                failure: (error) {
+                  live.add(const GoFailure());
+                  context.showBroadcastError(error);
+                },
+                streamJoined: (token) async {
+                  live.add(const GoLoading());
+                  final broadcast = streamBloc.state.broadcast;
+                  await background.startBroadcastBackgroundProcess(broadcast);
+                  livekit.add(LiveKitStream(token: token, isReconnect: true));
+                  await router.push<void>(Routes.broadcastTab, extra: true);
+                },
+              );
+            }
           },
         ),
         BlocListener<AccountBloc, AccountState>(

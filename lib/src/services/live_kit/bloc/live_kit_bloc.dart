@@ -11,8 +11,10 @@ part 'live_kit_state.dart';
 const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
 
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
-  LiveKitBloc({required LiveKitService liveKit})
+  LiveKitBloc(
+      {required LiveKitService liveKit, required NetworkService network})
       : _liveKit = liveKit,
+        _network = network,
         super(const LiveKitState()) {
     on<LiveKitBroadcast>(_onBroadcast);
     on<LiveKitStream>(_onStream);
@@ -21,6 +23,7 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   }
 
   final LiveKitService _liveKit;
+  final NetworkService _network;
 
   bool get isLoading => state.status is LiveKitConnecting;
 
@@ -28,66 +31,88 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     LiveKitBroadcast event,
     Emitter<LiveKitState> emit,
   ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) {
+      return emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(
+            error: 'No internet connection',
+          ),
+        ),
+      );
+    }
+
     final token = event.token;
     if (token == null) {
-      emit(
+      return emit(
         state.copyWith(
           status: const LiveKitConnectionFailed(
             error: nullBroadcastTokenErrorMessage,
           ),
         ),
       );
-    } else {
-      emit(state.copyWith(status: const LiveKitConnecting()));
-      final result = await _liveKit.broadcast(token);
-      emit(
-        result.fold(
-          (failure) => state.copyWith(
-            micEnabled: false,
-            status: LiveKitConnectionFailed(error: failure.message),
-          ),
-          (success) => state.copyWith(
-            micEnabled: true,
-            status: event.isReconnect
-                ? const LiveKitBroadcastReconnected()
-                : const LiveKitBroadcastConnected(),
-          ),
-        ),
-      );
     }
+    
+    emit(state.copyWith(status: const LiveKitConnecting()));
+    final result = await _liveKit.broadcast(token);
+    emit(
+      result.fold(
+        (failure) => state.copyWith(
+          micEnabled: false,
+          status: LiveKitConnectionFailed(error: failure.message),
+        ),
+        (success) => state.copyWith(
+          micEnabled: true,
+          status: event.isReconnect
+              ? const LiveKitBroadcastReconnected()
+              : const LiveKitBroadcastConnected(),
+        ),
+      ),
+    );
   }
 
   Future<void> _onStream(
     LiveKitStream event,
     Emitter<LiveKitState> emit,
   ) async {
-    final token = event.token;
-    if (token == null) {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) {
       emit(
         state.copyWith(
           status: const LiveKitConnectionFailed(
-            error: nullBroadcastTokenErrorMessage,
+            error: 'No internet connection',
           ),
         ),
       );
     } else {
-      emit(state.copyWith(status: const LiveKitConnecting()));
-      final result = await _liveKit.stream(token);
-      emit(
-        result.fold(
-          (failure) => state.copyWith(
-            status: LiveKitConnectionFailed(
-              error: failure.message,
-              isStream: true,
+      final token = event.token;
+      if (token == null) {
+        emit(
+          state.copyWith(
+            status: const LiveKitConnectionFailed(
+              error: nullBroadcastTokenErrorMessage,
             ),
           ),
-          (success) => state.copyWith(
-            status: event.isReconnect
-                ? const LiveKitStreamReconnected()
-                : const LiveKitStreamConnected(),
+        );
+      } else {
+        emit(state.copyWith(status: const LiveKitConnecting()));
+        final result = await _liveKit.stream(token);
+        emit(
+          result.fold(
+            (failure) => state.copyWith(
+              status: LiveKitConnectionFailed(
+                error: failure.message,
+                isStream: true,
+              ),
+            ),
+            (success) => state.copyWith(
+              status: event.isReconnect
+                  ? const LiveKitStreamReconnected()
+                  : const LiveKitStreamConnected(),
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 

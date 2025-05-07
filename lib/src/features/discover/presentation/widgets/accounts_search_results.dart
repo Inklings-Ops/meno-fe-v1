@@ -21,7 +21,7 @@ class AccountsSearchResults extends StatelessWidget {
 
         return Column(
           children: [
-            _ResultList(profiles: state.profiles),
+            _ResultList(profiles: state.profiles, loading: state.isLoading),
             Spaces.verticalXLarge,
             DiscoverPaginationIndicator(
               isLoading: bloc.state.isSearchingMore,
@@ -36,7 +36,7 @@ class AccountsSearchResults extends StatelessWidget {
 }
 
 class _ResultList extends StatelessWidget {
-  const _ResultList({required this.profiles, super.key, this.loading = false});
+  const _ResultList({required this.profiles, this.loading = false});
   final List<Profile?> profiles;
   final bool loading;
 

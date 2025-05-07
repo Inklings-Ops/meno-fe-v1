@@ -27,6 +27,7 @@ class LiveLayoutListeners extends HookWidget {
             state.status.whenOrNull(
               failed: (error, isStream) {
                 live.add(const GoFailure());
+                timer.reset();
                 context.showErrorSnackBar(error);
               },
               broadcastConnected: () {
@@ -40,6 +41,14 @@ class LiveLayoutListeners extends HookWidget {
                 participants.add(GetLiveParticipants(broadcast.id));
                 timer.setAndStart(broadcast.startTime);
                 live.add(const GoLive());
+              },
+              streamReconnected: () {
+                final broadcast = streamBloc.state.broadcast;
+                chat.add(InitializeChatList(broadcast));
+                socket.add(SocketGetMessages(broadcast.id));
+                participants.add(GetLiveParticipants(broadcast.id));
+                timer.setAndStart(broadcast.startTime);
+                live.add(const GoStreaming());
               },
             );
           },
@@ -67,7 +76,7 @@ class LiveLayoutListeners extends HookWidget {
                 participants.add(GetAllParticipants(broadcast.id));
                 timer.stop();
                 live.add(const LiveReset());
-                if (router.state!.name == Routes.broadcastTab) {
+                if (router.state.name == Routes.broadcastTab) {
                   await router.replace<void>(Routes.endedBroadcast);
                 } else {
                   await router.push<void>(Routes.endedBroadcast);
@@ -102,9 +111,10 @@ class LiveLayoutListeners extends HookWidget {
                   router.go(Routes.home);
                 }
               },
-              messagesReceived: (chats) {
-                chat.add(LoadChatMessages(chats));
-              },
+              messagesReceived: (chats) => chat.add(LoadChatMessages(chats)),
+              newMessage: (c) => chat.add(NewChatReceived(c)),
+              editedMessage: (c) => chat.add(EditedChatReceived(c)),
+              deletedMessage: (c) => chat.add(DeletedChatRemoved(c)),
             );
           },
         ),

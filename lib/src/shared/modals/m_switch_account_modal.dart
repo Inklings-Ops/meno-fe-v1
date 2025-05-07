@@ -28,7 +28,7 @@ class MSwitchAccountModal extends StatelessWidget {
 }
 
 class _LogInToExistingAccountContent extends StatelessWidget {
-  const _LogInToExistingAccountContent({super.key});
+  const _LogInToExistingAccountContent();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,6 @@ class _AllSavedCredentialsContent extends StatelessWidget {
   const _AllSavedCredentialsContent({
     required this.credentials,
     required this.selectedCredential,
-    super.key,
   });
 
   final List<UserCredential> credentials;

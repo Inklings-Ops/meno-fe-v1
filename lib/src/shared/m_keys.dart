@@ -8,6 +8,7 @@ class MKeys {
   static const String settings = '_settings_';
   static const String notificationChannelId = '_meno_notification_channel_';
   static const String broadcastDetailsKey = '_broadcast_details_key_';
+  static const String streamDetailsKey = '_stream_details_key_';
   static const int notificationId = 888;
 
   static const String allCredentials = '_all_credentials_';

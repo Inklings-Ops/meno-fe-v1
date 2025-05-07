@@ -92,7 +92,7 @@ class PreStreamModal extends HookWidget {
 
   Future<void> showLeaveJoinDialog(BuildContext context, String message) async {
     final hasLeave = message.contains('leave');
-    final isNotRoute = router.state?.path != Routes.leaveAndJoinDialog;
+    final isNotRoute = router.state.path != Routes.leaveAndJoinDialog;
     if (hasLeave && isNotRoute) {
       final response = await router.push<String?>(
         Routes.leaveAndJoinDialog,

@@ -40,7 +40,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.broadcasts, super.key, this.loading = false});
+  const _List({required this.broadcasts, this.loading = false});
   final List<Broadcast?> broadcasts;
   final bool loading;
 

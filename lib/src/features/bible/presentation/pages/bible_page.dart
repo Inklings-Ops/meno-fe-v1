@@ -18,7 +18,7 @@ class BiblePage extends StatelessWidget {
 }
 
 class _BibleView extends StatelessWidget {
-  const _BibleView({super.key});
+  const _BibleView();
 
   @override
   Widget build(BuildContext context) {

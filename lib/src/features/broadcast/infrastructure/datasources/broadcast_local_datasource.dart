@@ -28,9 +28,22 @@ class BroadcastLocalDatasource {
     return BroadcastDto.fromJson(decodedJson);
   }
 
+  Future<JoinBroadcastDto?> getStreamDetails() async {
+    final jsonString = await _storage.read(MKeys.streamDetailsKey);
+    if (jsonString == null) return null;
+    final decodedJson = jsonDecode(jsonString) as Map<String, dynamic>;
+    return JoinBroadcastDto.fromJson(decodedJson);
+  }
+
   Future<void> saveBroadcastDetails(BroadcastDto? dto) async {
     if (dto == null) return;
     final encodedString = jsonEncode(dto.toJson());
     return _storage.write(MKeys.broadcastDetailsKey, value: encodedString);
+  }
+
+  Future<void> saveStreamDetails(JoinBroadcastDto? dto) async {
+    if (dto == null) return;
+    final encodedString = jsonEncode(dto.toJson());
+    return _storage.write(MKeys.streamDetailsKey, value: encodedString);
   }
 }

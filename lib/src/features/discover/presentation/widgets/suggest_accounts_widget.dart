@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
@@ -36,12 +38,12 @@ class SuggestAccountsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _List(profiles: _profiles);
+    return _List(profiles: _profiles, loading: false);
   }
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.profiles, super.key, this.loading = false});
+  const _List({required this.profiles, this.loading = false});
   final List<Profile?> profiles;
   final bool loading;
 

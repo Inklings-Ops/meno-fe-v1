@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
@@ -11,7 +12,14 @@ export 'package:livekit_client/livekit_client.dart';
 
 @lazySingleton
 class LiveKitService extends Object with Disposable {
-  final room = Room();
+  final room = Room(
+    roomOptions: const RoomOptions(
+      defaultAudioPublishOptions: AudioPublishOptions(
+        name: 'microphone',
+        audioBitrate: AudioPreset.speech,
+      ),
+    ),
+  );
 
   late EventsListener<RoomEvent> listener;
 
@@ -26,14 +34,35 @@ class LiveKitService extends Object with Disposable {
     if (room.connectionState == ConnectionState.connected) {
       await room.disconnect();
     }
+    final url = Env.menoLiveKitUrl;
     _events = BehaviorSubject<RoomEvent>();
     listener = room.createListener();
     _setupListener();
     try {
-      await room.connect(Env.menoLiveKitUrl, token);
-      await room.localParticipant?.setMicrophoneEnabled(isHost);
+      log('Preparing the connection...');
+      await room.prepareConnection(url, token);
+
+      log('Connection prepared.');
+      final fastConnectOptions = FastConnectOptions(
+        microphone: isHost
+            ? const TrackOption(enabled: true)
+            : const TrackOption(enabled: false),
+      );
+
+      log('Connecting...');
+      await room.connect(
+        url,
+        token,
+        fastConnectOptions: fastConnectOptions,
+      );
+
+      if (isHost) {
+        await room.localParticipant?.setMicrophoneEnabled(true);
+      }
       return right(unit);
     } on LiveKitException catch (e) {
+      log('LiveKit: Connection failed.', error: e);
+      await disconnect();
       return left(e);
     }
   }

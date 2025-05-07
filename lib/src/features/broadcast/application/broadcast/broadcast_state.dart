@@ -5,6 +5,7 @@ class BroadcastState with _$BroadcastState {
   const factory BroadcastState({
     required Broadcast broadcast,
     @Default(false) bool hostDisconnected,
+    @Default(false) bool isReconnect,
     @Default(_Initial()) LiveBroadcastStatus status,
   }) = _BroadcastState;
 
