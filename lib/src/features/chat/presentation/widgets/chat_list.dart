@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, use_if_null_to_convert_nulls_to_bools
-
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -68,7 +66,7 @@ class _ChatBubble extends StatelessWidget {
 
   Future<void> handleDeleteMessage(BuildContext context, Chat chat) async {
     final result = await context.showDeleteCommentDialog();
-    if (result == true && context.mounted) {
+    if ((result ?? false) && context.mounted) {
       final socket = context.read<SocketBloc>();
       return socket.add(
         SocketDeleteMessage(

@@ -170,7 +170,6 @@ class BroadcastFacade implements IBroadcastFacade {
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
       final response = await _remote.joinBroadcast(broadcastId: idStr);
-      await _local.saveStreamDetails(response.data);
       return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -190,7 +189,6 @@ class BroadcastFacade implements IBroadcastFacade {
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
       final response = await _remote.startBroadcast(broadcastId: idStr);
-      await _local.saveBroadcastDetails(response.data);
       return right(response.data!.toDomain);
     } on DioException catch (e) {
       final error = _getError(e);
@@ -415,5 +413,15 @@ class BroadcastFacade implements IBroadcastFacade {
     final dto = await _local.getStreamDetails();
     if (dto == null) return none();
     return some(dto.toDomain);
+  }
+
+  @override
+  Future<void> saveBroadcastDetails(Broadcast broadcast) {
+    return _local.saveBroadcastDetails(broadcast.toDto);
+  }
+
+  @override
+  Future<void> saveStreamDetails(JoinBroadcastEntity entity) {
+    return _local.saveStreamDetails(entity.toDto);
   }
 }

@@ -29,9 +29,7 @@ Future<void> main() async {
   runApp(
     DevicePreview(
       enabled: false,
-      builder: (_) => const MenoBlocProvider(
-        child: MenoApp(),
-      ),
+      builder: (_) => const MenoBlocProvider(child: MenoApp()),
     ),
   );
 }

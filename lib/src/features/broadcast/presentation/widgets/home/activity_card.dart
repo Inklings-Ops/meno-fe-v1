@@ -40,7 +40,12 @@ class ActivityCard extends StatelessWidget {
                       _Badge(badgeTitle: badgeTitle),
                       const SizedBox(height: 2),
                       _Title(title: broadcast.title.getOr()),
-                      _CreatorName(fullName: broadcast.creator!.fullName),
+                      _CreatorName(
+                        fullName: broadcast.creator?.fullName ??
+                            broadcast.creatorFullName ??
+                            broadcast.fullName ??
+                            '',
+                      ),
                     ],
                   ),
                 ),

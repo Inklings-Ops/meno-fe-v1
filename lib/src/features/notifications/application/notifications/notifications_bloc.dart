@@ -35,14 +35,16 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   ) async {
     emit(const NotificationsLoading());
     final res = await _facade.getNotifications(page: 1, size: 50);
-    emit(res.fold(
-      NotificationsFailure.new,
-      (notifications) {
-        if (notifications.isEmpty) return const NotificationsEmpty();
-        final sortedNotifications = _sortNotifications(notifications);
-        return NotificationsLoaded(sortedNotifications);
-      },
-    ));
+    emit(
+      res.fold(
+        NotificationsFailure.new,
+        (notifications) {
+          if (notifications.isEmpty) return const NotificationsEmpty();
+          final sortedNotifications = _sortNotifications(notifications);
+          return NotificationsLoaded(sortedNotifications);
+        },
+      ),
+    );
   }
 
   Future<void> _onDelete(
@@ -71,7 +73,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   ) async {}
 
   Map<NotificationCategory, List<Notification>> _sortNotifications(
-      List<Notification?> notifications) {
+    List<Notification?> notifications,
+  ) {
     if (notifications.isNotEmpty) {
       final grouped = <NotificationCategory, List<Notification>>{};
       for (final notification in notifications) {

@@ -17,6 +17,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     on<BroadcastStartPressed>(_onBroadcastStartPressed);
     on<BroadcastReset>(_onBroadcastReset);
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
+    on<BroadcastSaveDetailsPressed>(_onBroadcastSaveDetailsPressed);
   }
 
   final IBroadcastFacade _facade;
@@ -75,5 +76,19 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         ),
       ),
     );
+  }
+
+  Future<void> _onBroadcastSaveDetailsPressed(
+    BroadcastSaveDetailsPressed event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    final token = state.broadcast.broadcastToken;
+    final id = state.broadcast.id.getOr();
+    final result = await _facade.getBroadcasts(id: id);
+    final broadcast = result.fold(
+      (l) => null,
+      (r) => r.broadcasts.first?.copyWith(broadcastToken: token),
+    );
+    if (broadcast != null) await _facade.saveBroadcastDetails(broadcast);
   }
 }

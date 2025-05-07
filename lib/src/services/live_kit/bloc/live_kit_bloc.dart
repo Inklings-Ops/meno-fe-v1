@@ -11,9 +11,10 @@ part 'live_kit_state.dart';
 const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
 
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
-  LiveKitBloc(
-      {required LiveKitService liveKit, required NetworkService network})
-      : _liveKit = liveKit,
+  LiveKitBloc({
+    required LiveKitService liveKit,
+    required NetworkService network,
+  })  : _liveKit = liveKit,
         _network = network,
         super(const LiveKitState()) {
     on<LiveKitBroadcast>(_onBroadcast);
@@ -52,14 +53,19 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
         ),
       );
     }
-    
+
     emit(state.copyWith(status: const LiveKitConnecting()));
     final result = await _liveKit.broadcast(token);
     emit(
       result.fold(
         (failure) => state.copyWith(
           micEnabled: false,
-          status: LiveKitConnectionFailed(error: failure.message),
+          status: LiveKitConnectionFailed(
+            error: failure.maybeMap(
+              orElse: () => 'Unknown error',
+              message: (value) => value.message,
+            ),
+          ),
         ),
         (success) => state.copyWith(
           micEnabled: true,
@@ -101,8 +107,11 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
           result.fold(
             (failure) => state.copyWith(
               status: LiveKitConnectionFailed(
-                error: failure.message,
                 isStream: true,
+                error: failure.maybeMap(
+                  orElse: () => 'Unknown error',
+                  message: (value) => value.message,
+                ),
               ),
             ),
             (success) => state.copyWith(

@@ -66,10 +66,6 @@ class MLayoutPage extends HookWidget {
     final background = di<BackgroundService>();
     final broadcastBloc = context.read<BroadcastBloc>();
     final streamBloc = context.read<StreamBloc>();
-    final chat = context.watch<ChatListBloc>();
-    final participants = context.watch<ParticipantsBloc>();
-    final socket = context.watch<SocketBloc>();
-    final timer = context.watch<TimerCubit>();
 
     return MultiBlocListener(
       listeners: [
@@ -101,11 +97,14 @@ class MLayoutPage extends HookWidget {
               hostDisconnected: (value) {
                 context.showSnackBar('The host has been disconnected.');
               },
-              newBroadcastListener: (participant) {
-                if (live.state is! Live) {
+              newBroadcastListener: (data) {
+                final isHost = [Role.HOST, Role.host].contains(data.role);
+                final isStreaming = live.state is Streaming;
+                if (!isStreaming && !isHost) {
+                  live.add(const GoLoading());
                   streamBloc.add(const StreamReconnectRequested());
                 } else {
-                  final userFullName = participant.fullName;
+                  final userFullName = data.fullName;
                   context.showSnackBar('$userFullName joined the broadcast.');
                 }
               },
@@ -128,7 +127,6 @@ class MLayoutPage extends HookWidget {
                   context.showBroadcastError(error);
                 },
                 broadcastStarted: () async {
-                  live.add(const GoLoading());
                   final broadcast = broadcastBloc.state.broadcast;
                   await background.startBroadcastBackgroundProcess(broadcast);
                   final token = broadcast.broadcastToken;

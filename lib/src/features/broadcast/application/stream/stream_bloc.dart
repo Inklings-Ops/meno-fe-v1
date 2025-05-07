@@ -15,6 +15,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
         super(StreamState.initial()) {
     on<StreamJoinPressed>(_onStreamJoinPressed);
     on<StreamReconnectRequested>(_onStreamReconnectRequested);
+    on<StreamSaveDetailsPressed>(_onStreamSaveDetailsPressed);
     on<StreamReset>(_onStreamReset);
   }
 
@@ -32,6 +33,7 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
       (joinBroadcast) => emit(
         state.copyWith(
           broadcast: joinBroadcast.broadcast,
+          broadcastToken: joinBroadcast.broadcastToken,
           status: _StreamJoined(joinBroadcast.broadcastToken),
         ),
       ),
@@ -55,11 +57,23 @@ class StreamBloc extends Bloc<StreamEvent, StreamState> {
             BroadcastException.message('No saved streams'),
           ),
         ),
-        (joinBroadcast) => state.copyWith(
-          broadcast: joinBroadcast.broadcast,
-          status: _StreamJoined(joinBroadcast.broadcastToken),
-        ),
+        (joinBroadcast) {
+          add(StreamSaveDetailsPressed(joinBroadcast));
+
+          return state.copyWith(
+            broadcast: joinBroadcast.broadcast,
+            broadcastToken: joinBroadcast.broadcastToken,
+            status: _StreamJoined(joinBroadcast.broadcastToken),
+          );
+        },
       ),
     );
+  }
+
+  Future<void> _onStreamSaveDetailsPressed(
+    StreamSaveDetailsPressed event,
+    Emitter<StreamState> emit,
+  ) async {
+    return _facade.saveStreamDetails(event.entity);
   }
 }

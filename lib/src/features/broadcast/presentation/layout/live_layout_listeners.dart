@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -26,6 +28,17 @@ class LiveLayoutListeners extends HookWidget {
           listener: (context, state) {
             state.status.whenOrNull(
               failed: (error, isStream) {
+                if (error.contains('Invalid Token')) {
+                  final broadcast = broadcastBloc.state.broadcast;
+                  di<BackgroundService>().stopBroadcastBackgroundProcess();
+                  socket.add(SocketEndBroadcast(broadcast.id));
+                  timer.reset();
+                  chat.add(const ChatReset());
+                  live.add(const LiveReset());
+                  livekit.add(const LiveKitDisconnect());
+                  router.go(Routes.home);
+                }
+
                 live.add(const GoFailure());
                 timer.reset();
                 context.showErrorSnackBar(error);
@@ -36,10 +49,11 @@ class LiveLayoutListeners extends HookWidget {
               },
               broadcastReconnected: () {
                 final broadcast = broadcastBloc.state.broadcast;
+                log('Came here...${broadcast.startTime}');
+                timer.setAndStart(broadcast.startTime);
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));
-                timer.setAndStart(broadcast.startTime);
                 live.add(const GoLive());
               },
               streamReconnected: () {
@@ -64,6 +78,7 @@ class LiveLayoutListeners extends HookWidget {
               },
               broadcastStarted: () {
                 final broadcast = broadcastBloc.state.broadcast;
+                broadcastBloc.add(const BroadcastSaveDetailsPressed());
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));

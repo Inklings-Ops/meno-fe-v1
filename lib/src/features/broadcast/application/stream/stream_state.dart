@@ -4,6 +4,7 @@ part of 'stream_bloc.dart';
 class StreamState with _$StreamState {
   const factory StreamState({
     required Broadcast broadcast,
+     String? broadcastToken,
     @Default(_Initial()) LiveStreamStatus status,
     @Default(false) bool isReconnect,
   }) = _StreamState;

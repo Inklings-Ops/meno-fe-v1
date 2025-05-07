@@ -1,5 +1,4 @@
 export 'application/application.dart';
-export 'application/notifications_notifier.dart';
 export 'domain/domain.dart';
 export 'domain/entities/entities.dart';
 export 'domain/entities/notification.dart';

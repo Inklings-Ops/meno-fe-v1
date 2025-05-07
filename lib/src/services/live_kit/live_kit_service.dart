@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -27,7 +28,7 @@ class LiveKitService extends Object with Disposable {
 
   Stream<RoomEvent> get eventsStream => _events.stream.asBroadcastStream();
 
-  Future<Either<LiveKitException, Unit>> _connect({
+  Future<Either<BroadcastException, Unit>> _connect({
     required String token,
     bool isHost = false,
   }) async {
@@ -61,18 +62,25 @@ class LiveKitService extends Object with Disposable {
       }
       return right(unit);
     } on LiveKitException catch (e) {
-      log('LiveKit: Connection failed.', error: e);
+      log('LiveKit: Connection failed.', error: e.message);
       await disconnect();
-      return left(e);
+      if (e.message.contains('invalid token')) {
+        return left(
+          const BroadcastException.message(
+            'Invalid Token: Unable to connect due to invalid token.',
+          ),
+        );
+      }
+      return left(BroadcastException.message(e.message));
     }
   }
 
   /// Start a broadcast session.
-  Future<Either<LiveKitException, Unit>> broadcast(String token) =>
+  Future<Either<BroadcastException, Unit>> broadcast(String token) =>
       _connect(token: token, isHost: true);
 
   /// Start a streaming session for viewers.
-  Future<Either<LiveKitException, Unit>> stream(String token) =>
+  Future<Either<BroadcastException, Unit>> stream(String token) =>
       _connect(token: token);
 
   /// Sets up the event listener for the room.

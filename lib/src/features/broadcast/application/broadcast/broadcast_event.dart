@@ -6,6 +6,8 @@ class BroadcastEvent with _$BroadcastEvent {
       InitializeBroadcast;
   const factory BroadcastEvent.start(Broadcast broadcast) =
       BroadcastStartPressed;
+  const factory BroadcastEvent.saveDetails() =
+      BroadcastSaveDetailsPressed;
   const factory BroadcastEvent.reconnect() =
       BroadcastReconnectRequested;
   const factory BroadcastEvent.reset() = BroadcastReset;

@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class HomePage extends HookWidget {
   const HomePage({super.key});
@@ -20,66 +19,28 @@ class HomePage extends HookWidget {
       await Future.wait([liveBroadcasts, recentlyLive]);
     }
 
-    final isStreaming = context.select<LiveBloc, bool>((bloc) {
-      return bloc.state.maybeWhen(orElse: () => false, streaming: () => true);
-    });
-
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              broadcastEnded: () {
-                final bId = context.read<BroadcastBloc>().state.broadcast.id;
-                context.read<ParticipantsBloc>().add(GetAllParticipants(bId));
-                context.read<TimerCubit>().stop();
-                context.read<LiveBloc>().add(const LiveReset());
-                router.push<void>(Routes.endedBroadcast);
-              },
-              endedBroadcast: (data) {
-                if (!isStreaming) return;
-                context.read<LiveBloc>().add(const LiveReset());
-                context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-                context.read<ParticipantsBloc>().add(const ParticipantsReset());
-                context.read<ChatListBloc>().add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                context.read<TimerCubit>().dispose();
-                context.showErrorSnackBar(data.reason.message);
-              },
-              broadcastLeft: () {
-                context.read<LiveBloc>().add(const LiveReset());
-                context.read<ParticipantsBloc>().add(const ParticipantsReset());
-                context.read<ChatListBloc>().add(const ChatReset());
-                context.read<StreamBloc>().add(const StreamReset());
-                context.read<TimerCubit>().dispose();
-              },
-            );
-          },
-        ),
-      ],
-      child: Scaffold(
-        appBar: const HomeAppBar(),
-        body: RefreshIndicator(
-          onRefresh: onRefresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            child: Column(
-              children: [
-                BlocBuilder<LiveBloc, LiveState>(
-                  builder: (context, state) => state.maybeWhen(
-                    orElse: () => Spaces.verticalXLarge,
-                    streaming: LiveStreamActivityCard.new,
-                    live: LiveBroadcastActivityCard.new,
-                  ),
+    return Scaffold(
+      appBar: const HomeAppBar(),
+      body: RefreshIndicator(
+        onRefresh: onRefresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          child: Column(
+            children: [
+              BlocBuilder<LiveBloc, LiveState>(
+                builder: (context, state) => state.maybeWhen(
+                  orElse: () => Spaces.verticalXLarge,
+                  streaming: LiveStreamActivityCard.new,
+                  live: LiveBroadcastActivityCard.new,
                 ),
-                const LiveForYou(),
-                const NowLiveSection(),
-                const RecentlyLiveSection(),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              const LiveForYou(),
+              const NowLiveSection(),
+              const RecentlyLiveSection(),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),

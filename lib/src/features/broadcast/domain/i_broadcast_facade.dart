@@ -137,4 +137,8 @@ abstract class IBroadcastFacade {
   Future<Option<JoinBroadcastEntity>> getSavedStreamDetails();
 
   Future<void> clearSavedBroadcastDetails();
+
+  Future<void> saveBroadcastDetails(Broadcast broadcast);
+  
+  Future<void> saveStreamDetails(JoinBroadcastEntity entity);
 }

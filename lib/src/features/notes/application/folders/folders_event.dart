@@ -16,7 +16,8 @@ class FoldersEvent with _$FoldersEvent {
   const factory FoldersEvent.fetchMoreFolders() = FetchMoreFolders;
 
   // Search input changed
-  const factory FoldersEvent.searchChanged(String keywords) = FolderSearchChanged;
+  const factory FoldersEvent.searchChanged(String keywords) =
+      FolderSearchChanged;
 
   // Reload first page, clear search
   const factory FoldersEvent.reloadFolders() = ReloadFolders;

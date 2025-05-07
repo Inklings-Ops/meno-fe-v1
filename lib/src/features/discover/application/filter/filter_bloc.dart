@@ -83,7 +83,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
     int page,
   ) async {
     return switch (filter) {
-      Filter.accounts => _facade.recentlyLiveBroadcasts(page: page), // TODO
+      Filter.accounts => _facade.recentlyLiveBroadcasts(page: page),
       Filter.recentlyLive => _facade.recentlyLiveBroadcasts(page: page),
       Filter.nowLive => _facade.nowLiveBroadcasts(page: page),
       Filter.all => _facade.getBroadcasts(page: page),
