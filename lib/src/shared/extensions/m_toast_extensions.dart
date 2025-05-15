@@ -4,7 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meno_fe_v1/src/core/network/presentation/network_toast.dart';
 
 extension MToastExtensions on BuildContext {
-  Widget _buildPosition(BuildContext context, Widget child) {
+  Widget _buildPosition(
+    BuildContext context,
+    Widget child,
+    ToastGravity? gravity,
+  ) {
     return Positioned(
       top: 24,
       left: 16,
