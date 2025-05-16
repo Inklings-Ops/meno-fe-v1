@@ -1,15 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
-// Manages authentication processes, acting as a gateway between the 
+// Manages authentication processes, acting as a gateway between the
 // application and authentication services.
 //
 // Implements the IAuthFacade interface, providing methods for:
 // - Initializing authentication
 // - Retrieving user credentials, token, and information
-// - Handling login, registration, logout, password reset, account switching, 
+// - Handling login, registration, logout, password reset, account switching,
 //   and OTP/email verification
 //
 // Relies on:
@@ -55,18 +56,18 @@ abstract class IAuthFacade {
 
   /// Signs the user in with Google.
   ///
-  /// If the user is not registered with Meno, they will be automatically 
+  /// If the user is not registered with Meno, they will be automatically
   /// registered.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthException` 
+  /// Returns an `Either` value, where the left value is a `AuthException`
   /// object and the right value is a `Unit` object.
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false});
 
-  bool isTokenExpired(String token);
+  bool isTokenValid(String token);
 
   /// Logs the user in with their email address and password.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthException` 
+  /// Returns an `Either` value, where the left value is a `AuthException`
   /// object and the right value is a `Unit` object.
   Future<Either<AuthException, UserCredential>> login({
     required Email email,
@@ -78,7 +79,7 @@ abstract class IAuthFacade {
 
   /// Registers a new user with Meno.
   ///
-  /// Returns an `Either` value, where the left value is a `AuthException` 
+  /// Returns an `Either` value, where the left value is a `AuthException`
   /// object and the right value is a `Unit` object.
   Future<Either<AuthException, UserCredential>> register({
     required SingleLineString fullName,
@@ -106,10 +107,28 @@ abstract class IAuthFacade {
     required Password newPassword,
   });
 
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);
+  Future<void> removeAccount(Uid<User> userId);
+
+  Future<Either<AuthException, UserCredential>> switchAccount(Uid<User> userId);
 
   Future<Either<AuthException, Unit>> verifyEmailAddress({
     required Email email,
     required String code,
+  });
+
+  Future<Either<AuthException, Unit>> editProfile({
+    SingleLineString? fullName,
+    Bio? bio,
+    Avatar? avatar,
+  });
+
+  Future<Either<AuthException, ProfilesList>> getProfiles({
+    String? userId,
+    String? include,
+    String? keywords,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
   });
 }

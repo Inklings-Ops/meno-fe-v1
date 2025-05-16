@@ -68,6 +68,8 @@ Either<ValueFailure<String>, String> validatePassword(String input) {
 }
 
 Either<ValueFailure<String>, String> validateTokenExpired(String input) {
+  if (input.isEmpty) return left(const ValueFailure.invalidToken());
+  
   final jwt = JWTService();
   final isTokenExpired = jwt.isExpired(input);
   if (isTokenExpired) {

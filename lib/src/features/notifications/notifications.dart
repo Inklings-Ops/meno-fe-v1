@@ -1,6 +1,4 @@
 export 'application/application.dart';
-export 'application/notification_providers.dart';
-export 'application/notifications_notifier.dart';
 export 'domain/domain.dart';
 export 'domain/entities/entities.dart';
 export 'domain/entities/notification.dart';
@@ -17,8 +15,6 @@ export 'infrastructure/dtos/notification_content_dto.dart';
 export 'infrastructure/dtos/notification_data_dto.dart';
 export 'infrastructure/dtos/notification_dto.dart';
 export 'infrastructure/infrastructure.dart';
-export 'infrastructure/mapper/mapper.dart';
-export 'infrastructure/mapper/notifications_mapper.dart';
 export 'infrastructure/notification_facade.dart';
 export 'infrastructure/responses/notification_response.dart';
 export 'infrastructure/responses/responses.dart';

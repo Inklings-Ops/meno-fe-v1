@@ -4,10 +4,11 @@ part 'broadcast_exception.freezed.dart';
 
 @freezed
 class BroadcastException with _$BroadcastException {
-  const factory BroadcastException.message(String message) = _Message;
-  const factory BroadcastException.serverError() = _ServerError;
-  const factory BroadcastException.networkError() = _NetworkError;
-  const factory BroadcastException.timeOutError() = _TimeOutError;
+  const factory BroadcastException.message(String message) =
+      BroadcastErrorMessage;
+  const factory BroadcastException.serverError() = BroadcastServerError;
+  const factory BroadcastException.networkError() = BroadcastNetworkError;
+  const factory BroadcastException.timeOutError() = BroadcastTimeOutError;
 }
 
 extension BroadcastExceptionX on Object {

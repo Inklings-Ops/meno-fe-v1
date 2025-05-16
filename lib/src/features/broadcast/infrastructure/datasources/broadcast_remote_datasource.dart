@@ -1,20 +1,20 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'broadcast_remote_datasource.g.dart';
 
+@injectable
 @RestApi()
 abstract class BroadcastRemoteDatasource {
   /// Creates a new `BroadcastRemoteDatasource` object.
   @factoryMethod
   factory BroadcastRemoteDatasource(
     Dio dio, {
-    String baseUrl,
+    @Named('baseUrl') String baseUrl,
   }) = _BroadcastRemoteDatasource;
 
   @POST('/api/v1/broadcasts')
@@ -65,6 +65,8 @@ abstract class BroadcastRemoteDatasource {
 
   @GET('/api/v1/broadcasts/')
   Future<BroadcastResponse<BroadcastListDto?>> getBroadcasts({
+    @Query('id') String? id,
+
     /// Status of the broadcast
     /// Example : active or inactive
     @Query('status') String? status,

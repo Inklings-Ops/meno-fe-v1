@@ -7,7 +7,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colorScheme = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final watcher = context.watch<NotesWatcherBloc>();
@@ -17,7 +17,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
         state.whenOrNull(
           noteDeleted: (note) {
             context.read<NotesBloc>().add(NoteRemoved(note));
-            context.read<FoldersBloc>().add(const GetAllFolders());
+            context.read<FoldersBloc>().add(const GetFoldersRequested());
             router.pop(true);
           },
           failure: (exception) {

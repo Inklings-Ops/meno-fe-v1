@@ -6,7 +6,7 @@ class RecentlyLiveSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,7 +53,7 @@ class _Card extends StatelessWidget {
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.broadcasts, super.key, this.loading = false});
+  const _List({required this.broadcasts, this.loading = false});
   final List<Broadcast?> broadcasts;
   final bool loading;
 

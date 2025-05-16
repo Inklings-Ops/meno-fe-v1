@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/uid.dart';
 import 'package:objectbox/objectbox.dart';
@@ -50,9 +49,6 @@ class _NotesConverter implements JsonConverter<ToMany<NoteDto>, _Map?> {
 
 extension FolderDtoToDomain on FolderDto {
   Folder get toDomain {
-    Logger().f(
-      'From `toDomain` ext. => ${notes.map((f) => f.toDomain).toList()}',
-    );
     return Folder(
       dbId: dbId,
       id: Uid.fromString(id),

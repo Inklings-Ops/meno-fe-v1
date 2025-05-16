@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 part 'routes.dart';
 
@@ -29,7 +28,7 @@ final noteSectionKey = GlobalKey<NavigatorState>();
 final folderSectionKey = GlobalKey<NavigatorState>();
 
 FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
-  final status = di<SessionCubit>().state;
+  final status = di<SessionBloc>().authState.value;
   final isAllowedPath = status.allowedPaths.contains(state.fullPath);
   if (!isAllowedPath) return status.redirectPath;
   return null;
@@ -37,7 +36,7 @@ FutureOr<String?> _handleRedirect(BuildContext context, GoRouterState state) {
 
 final router = GoRouter(
   navigatorKey: rootNavigatorKey,
-  refreshListenable: di<SessionCubit>(),
+  refreshListenable: di<SessionBloc>().authState,
   redirect: _handleRedirect,
   routes: [
     GoRoute(
@@ -106,7 +105,12 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.notifications,
-      builder: (context, state) => const NotificationsPage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => NotificationsBloc(
+          facade: di<INotificationFacade>(),
+        )..add(const GetNotifications()),
+        child: const NotificationsPage(),
+      ),
     ),
     GoRoute(
       path: Routes.onboarding,
@@ -169,10 +173,39 @@ final router = GoRouter(
       path: Routes.nowLive,
       builder: (context, state) => const NowLivePage(),
     ),
+    GoRoute(
+      path: Routes.settings,
+      builder: (context, state) => const SettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.notificationSettings,
+      builder: (context, state) => const NotificationsSettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.securitySettings,
+      builder: (context, state) => const SecuritySettingsPage(),
+    ),
+    GoRoute(
+      path: Routes.about,
+      builder: (context, state) => const AboutPage(),
+    ),
+
+    GoRoute(
+      path: Routes.notificationSettings,
+      builder: (context, state) => const NotificationsSettingsPage(),
+    ),
 
     /// Modals
     ///
     /// Folder Form Modal: Shows the modal to create a new folder
+    GoRoute(
+      path: Routes.preStreamModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => ModalPage<dynamic>(
+        isScrollControlled: true,
+        child: PreStreamModal(broadcast: state.extra! as Broadcast),
+      ),
+    ),
     GoRoute(
       path: Routes.folderFormModal,
       parentNavigatorKey: rootNavigatorKey,
@@ -245,15 +278,35 @@ final router = GoRouter(
       path: Routes.editProfileModal,
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) {
-        final profile = state.extra! as Profile;
+        final profile = state.extra as Profile?;
         return ModalPage<dynamic>(
-          child: BlocProvider(
-            create: (context) => ProfileFormCubit(
-              facade: di<IProfileFacade>(),
-              media: di<MediaService>(),
-            )..initializeWithProfile(profile),
+          child: BlocProvider.value(
+            value: BlocProvider.of<ProfileFormCubit>(context)
+              ..initializeWithProfile(profile),
             child: const EditProfileModal(),
           ),
+          isScrollControlled: true,
+        );
+      },
+    ),
+    GoRoute(
+      path: Routes.switchAccountModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => ModalPage<dynamic>(
+        child: BlocProvider.value(
+          value: context.read<AccountBloc>()..add(const AccountInitialized()),
+          child: const MSwitchAccountModal(),
+        ),
+        isScrollControlled: true,
+      ),
+    ),
+    GoRoute(
+      path: Routes.broadcastInfoModal,
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) {
+        final broadcast = context.read<BroadcastBloc>().state.broadcast;
+        return ModalPage<dynamic>(
+          child: BroadcastInfoModal(broadcast: broadcast),
           isScrollControlled: true,
         );
       },
@@ -289,11 +342,28 @@ final router = GoRouter(
         ),
       ),
     ),
+    GoRoute(
+      path: Routes.leaveAndJoinDialog,
+      pageBuilder: (context, state) => DialogPage<void>(
+        key: state.pageKey,
+        builder: (context) => LeaveAndJoinDialog(
+          broadcast: state.extra! as Broadcast,
+        ),
+      ),
+    ),
+    GoRoute(
+      path: Routes.logoutConfirmationDialog,
+      pageBuilder: (context, state) => DialogPage<void>(
+        key: state.pageKey,
+        builder: (context) => const LogoutConfirmationDialog(),
+      ),
+    ),
 
     /// Shell Routes
     ///
     /// Live Broadcast/Stream Shell Route
     StatefulShellRoute(
+      parentNavigatorKey: rootNavigatorKey,
       builder: (context, state, navigationShell) => navigationShell,
       navigatorContainerBuilder: (context, navigationShell, children) {
         final bibleFac = di<IBibleFacade>();
@@ -301,7 +371,6 @@ final router = GoRouter(
           providers: [
             BlocProvider(create: (_) => VersesCubit(facade: bibleFac)),
             BlocProvider(create: (_) => ScripturePickerCubit(facade: bibleFac)),
-            BlocProvider(create: (_) => TransBloc(facade: bibleFac)),
           ],
           child: LiveLayout(
             key: broadcastLayoutKey,
@@ -447,40 +516,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: Routes.myProfile,
-              builder: (context, state) {
-                final userId = context.select<SessionCubit, Uid<User>?>(
-                  (b) => b.state.whenOrNull(authenticated: (u, _) => u.id),
-                );
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (_) => MyProfileCubit(
-                        facade: di<IProfileFacade>(),
-                        session: di<ISessionContext>(),
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (_) => ProfileFormCubit(
-                        facade: di<IProfileFacade>(),
-                        media: di<MediaService>(),
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (_) => UsersRecentBroadcastsBloc(
-                        facade: di<IBroadcastFacade>(),
-                        userId: userId!,
-                      )..add(const GetUsersRecentBroadcasts()),
-                    ),
-                    BlocProvider(
-                      create: (_) => UsersAllBroadcastsBloc(
-                        facade: di<IBroadcastFacade>(),
-                        userId: userId!,
-                      )..add(const GetUsersBroadcasts()),
-                    ),
-                  ],
-                  child: const MyProfilePage(),
-                );
-              },
+              builder: (context, state) => const MyProfilePage(),
             ),
           ],
         ),
@@ -489,14 +525,6 @@ final router = GoRouter(
             GoRoute(
               path: Routes.webCreateBroadcast,
               builder: (context, state) => const CreateBroadcastPage(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: Routes.settings,
-              builder: (context, state) => const SettingsPage(),
             ),
           ],
         ),

@@ -8,9 +8,7 @@ part 'chat_input_cubit.freezed.dart';
 class ChatInputCubit extends Cubit<ChatInputState> {
   ChatInputCubit() : super(const ChatInputState());
 
-  void contentChanged(String content) =>
-    emit(state.copyWith(content: content));
-  
+  void contentChanged(String content) => emit(state.copyWith(content: content));
 
   void startEditing(Chat chat) {
     emit(
@@ -22,7 +20,7 @@ class ChatInputCubit extends Cubit<ChatInputState> {
     );
   }
 
-  void stopEditing(Chat chat) {
+  void stopEditing() {
     emit(
       state.copyWith(
         isEditing: false,

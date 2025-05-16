@@ -33,7 +33,12 @@ class SessionContext implements ISessionContext {
   Future<void> logout() => _authFacade.logout();
 
   @override
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential) {
-    return _authFacade.switchAccount(credential);
+  Future<Either<AuthException, UserCredential>> switchAccount(
+    UserCredential credential,
+  ) {
+    return _authFacade.switchAccount(credential.user.id);
   }
+
+  @override
+  Future<void> refresh() => _authFacade.init();
 }

@@ -21,6 +21,10 @@ class ProfileDto with _$ProfileDto {
     @JsonKey(name: '_count') UserStatsDto? stats,
     bool? isSubscribedToUser,
     bool? verified,
+    int? numberOfBroadcasts,
+    int? numberOfSubscribers,
+    int? numberOfSubscriptions,
+    bool? subscribed,
   }) = _ProfileDto;
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) =>
@@ -44,6 +48,10 @@ extension ProfileDtoToDomain on ProfileDto {
         subscriptions: stats?.subscriptions,
       ),
       verified: verified,
+      numberOfBroadcasts: numberOfBroadcasts,
+      numberOfSubscribers: numberOfSubscribers,
+      numberOfSubscriptions: numberOfSubscriptions,
+      subscribed: subscribed,
     );
   }
 }
@@ -62,6 +70,10 @@ extension ProfileToDto on Profile {
         subscriptions: stats?.subscriptions,
       ),
       verified: verified,
+      numberOfBroadcasts: numberOfBroadcasts,
+      numberOfSubscribers: numberOfSubscribers,
+      numberOfSubscriptions: numberOfSubscriptions,
+      subscribed: subscribed,
     );
   }
 }

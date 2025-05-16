@@ -9,9 +9,8 @@ class ProfileRecentBroadcastsTab extends HookWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
       builder: (context, state) => state.maybeWhen(
-        orElse: () => EmptyStateWidget(
-          actionTitle: 'Broadcasts',
-          action: () {},
+        orElse: () => Center(
+          child: EmptyStateWidget(actionTitle: 'Broadcasts', action: () {}),
         ),
         loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
         loaded: (broadcasts) => _List(broadcasts: broadcasts),
@@ -61,7 +60,7 @@ class _List extends StatelessWidget {
 }
 
 class _LoadMoreWidget extends StatelessWidget {
-  const _LoadMoreWidget({super.key});
+  const _LoadMoreWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +76,7 @@ class _LoadMoreWidget extends StatelessWidget {
         loadedLast: (broadcasts) => MText(
           'You’ve reached the end 🎉',
           style: MTextTheme.of(context)?.captionRegular,
-          color: MColorScheme.of(context)?.onBackgroundVariant,
+          color: MColorScheme.of(context).onBackgroundVariant,
           textAlign: TextAlign.center,
         ),
       ),

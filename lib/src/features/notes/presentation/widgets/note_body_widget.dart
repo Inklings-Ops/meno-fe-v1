@@ -14,7 +14,7 @@ class NoteBodyWidget extends StatelessWidget {
     return RefreshIndicator.adaptive(
       onRefresh: () async => switch (selectedIndex.value) {
         0 => notesBloc.add(const GetNotesRequested()),
-        1 => foldersBloc.add(const GetAllFolders()),
+        1 => foldersBloc.add(const GetFoldersRequested()),
         _ => null,
       },
       child: SingleChildScrollView(

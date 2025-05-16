@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:rxdart/rxdart.dart';
@@ -30,7 +31,7 @@ class AuthFacade implements IAuthFacade {
   @override
   @PostConstruct(preResolve: true)
   Future<void> init() async {
-    final dto = await _local.getUserCredential();
+    final dto = await _local.getAuthCredential();
     final credential = dto?.toDomain;
     _credentialSubject.add(credential);
     _tokenSubject.add(credential?.token);
@@ -38,13 +39,12 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<Map<String, UserCredential>?> get allCredentials async {
-    final map = await _local.getAllUserCredentials;
+    final map = await _local.getAllUserCredentials();
     if (map != null) {
       final userCredentialsMap = map.map((key, value) {
         final userCredentials = value.toDomain;
         return MapEntry(key, userCredentials);
       });
-
       return userCredentialsMap;
     }
     return null;
@@ -55,8 +55,8 @@ class AuthFacade implements IAuthFacade {
 
   @override
   Future<User> get user async {
-    final userDto = await _local.getCurrentUser;
-    final userDomain = userDto?.toDomain;
+    final userDto = await _local.getAuthCredential();
+    final userDomain = userDto?.user.toDomain;
     return userDomain ?? User.empty();
   }
 
@@ -72,7 +72,10 @@ class AuthFacade implements IAuthFacade {
   Token? get userToken => _tokenSubject.valueOrNull;
 
   @override
-  bool isTokenExpired(String token) => _jwt.isExpired(token);
+  bool isTokenValid(String? token) {
+    if (token == null) return false;
+    return _jwt.isExpired(token);
+  }
 
   @override
   Future<Either<AuthException, UserCredential>> login({
@@ -88,9 +91,12 @@ class AuthFacade implements IAuthFacade {
     try {
       final response = await _remote.login(email: emailStr, password: pwdStr);
       final credential = response.data!.toDomain;
+
       _credentialSubject.add(credential);
       _tokenSubject.add(credential.token);
-      await _local.storeAuthCombined(response.data!);
+
+      await _local.storeCredentials(response.data!);
+
       return right(credential);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
@@ -110,7 +116,17 @@ class AuthFacade implements IAuthFacade {
   Future<void> logout() async {
     _credentialSubject.add(null);
     _tokenSubject.add(null);
-    await _local.deleteCurrentUserCredential();
+  }
+
+  @override
+  Future<void> removeAccount(Uid<User> userId) async {
+    await _local.deleteAuthCredential();
+    await _local.deleteAuthToken();
+
+    if (credential?.user.id == userId) {
+      _credentialSubject.add(null);
+      _tokenSubject.add(null);
+    }
   }
 
   @override
@@ -141,7 +157,7 @@ class AuthFacade implements IAuthFacade {
       final credential = response.data!.toDomain;
       _credentialSubject.add(credential);
       _tokenSubject.add(credential.token);
-      await _local.storeAuthCombined(response.data!);
+      await _local.storeCredentials(response.data!);
       return right(credential);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
@@ -212,14 +228,72 @@ class AuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<Either<AuthException, Unit>> switchAccount(UserCredential c) async {
-    if ((c.token?.isActive ?? false) == true) {
-      _credentialSubject.add(c);
-      _tokenSubject.add(c.token);
-      await _local.storeAuthCombined(c.toDto);
+  Future<Either<AuthException, Unit>> editProfile({
+    SingleLineString? fullName,
+    Bio? bio,
+    Avatar? avatar,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    final userId = await _local.getAuthUserId();
+    if (userId == null) return left(const AuthException.message('No user'));
+
+    final fullNameValue = fullName?.getOr();
+    final bioValue = bio?.getOr();
+    final avatarValue = avatar?.getOr();
+
+    try {
+      final response = await _remote.editProfile(
+        userId: userId,
+        fullName: fullNameValue,
+        bio: bioValue,
+        image: avatarValue,
+      );
+
+      final userDto = response.data;
+      if (userDto == null) return left(const AuthException.message('No user'));
+
+      final currentCredential = _credentialSubject.value;
+      final updated = currentCredential?.copyWith(user: userDto.toDomain);
+      if (updated == null) return left(const AuthException.message('No user'));
+
+      _credentialSubject.add(updated);
+      _tokenSubject.add(updated.token);
+
+      await _local.storeCredentials(updated.toDto);
+
       return right(unit);
-    } else {
-      return left(const AuthException.userTokenExpired());
+    } on DioException catch (e) {
+      return left(AuthException.message(e.message ?? 'Unknown error'));
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, UserCredential>> switchAccount(
+    Uid<User> userId,
+  ) async {
+    final allCreds = await _local.getAllUserCredentials();
+    if (allCreds == null) return left(const NoUserAccountFound());
+
+    final credentialDto = allCreds[userId.getOr()];
+    if (credentialDto == null) return left(const NoUserAccountFound());
+
+    final credential = credentialDto.toDomain;
+
+    final token = credential.token;
+    if (!(token?.isActive ?? false)) return left(const UserTokenExpired());
+
+    try {
+      await _local.storeCredentials(credentialDto);
+      _credentialSubject.add(credential);
+      _tokenSubject.add(credential.token);
+
+      return right(credential);
+    } catch (e) {
+      return left(AuthException.message(e.toString()));
     }
   }
 
@@ -276,5 +350,41 @@ class AuthFacade implements IAuthFacade {
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false}) {
     // (gettoknowdavid): implement googleSignIn
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AuthException, ProfilesList>> getProfiles({
+    String? userId,
+    String? include,
+    String? keywords,
+    String? sortBy,
+    String? orderBy,
+    int? page,
+    int? size,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthException.networkError());
+
+    try {
+      final response = await _remote.getProfiles(
+        keywords: keywords,
+        userId: userId,
+        include: 'subscribed',
+        sortBy: sortBy ?? 'fullName',
+        orderBy: orderBy ?? 'ASC',
+        page: page ?? 1,
+        size: size ?? 8,
+      );
+      return right(response.data!.toDomain);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthException.serverError());
+        default:
+          return left(const AuthException.unknownError());
+      }
+    } on TimeoutException {
+      return left(const AuthException.timeOutError());
+    }
   }
 }

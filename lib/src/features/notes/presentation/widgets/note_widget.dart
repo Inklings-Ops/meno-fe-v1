@@ -9,7 +9,7 @@ class NoteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
@@ -37,12 +37,14 @@ class NoteWidget extends StatelessWidget {
             ),
             BlocBuilder<NotesBloc, NotesState>(
               builder: (context, state) => Skeletonizer(
-                enabled: state is NotesLoadInProgress,
+                enabled: state.status == NotesStatus.loading,
                 child: MText(
-                  state.maybeWhen(
-                    orElse: () => '0',
-                    loadSuccess: (notes) => notes.length.toString(),
-                  ),
+                  switch (state.status) {
+                    NotesStatus.loadSuccess ||
+                    NotesStatus.loadingMore =>
+                      state.notes.length.toString(),
+                    _ => '0',
+                  },
                   style: textTheme.heading2Medium,
                   color: foreground,
                 ),

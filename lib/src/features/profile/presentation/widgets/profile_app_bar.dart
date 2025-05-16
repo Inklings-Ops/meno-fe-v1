@@ -6,7 +6,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return AppBar(
       leading: Align(
@@ -23,7 +23,7 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 23,
       titleSpacing: 0,
       title: GestureDetector(
-        onTap: () => context.showSwitchAccountSheet<void>(),
+        onTap: () => router.push(Routes.switchAccountModal),
         child: Row(
           children: [
             MText(name, color: colors.onBackground),

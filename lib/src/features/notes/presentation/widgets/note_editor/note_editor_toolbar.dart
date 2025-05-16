@@ -10,7 +10,7 @@ class NoteEditorToolbar extends StatelessWidget {
     return SizedBox(
       height: 56,
       child: Card(
-        color: MColorScheme.of(context)!.surfaceTint,
+        color: MColorScheme.of(context).surfaceTint,
         shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
         child: QuillToolbar.simple(
           controller: controller,

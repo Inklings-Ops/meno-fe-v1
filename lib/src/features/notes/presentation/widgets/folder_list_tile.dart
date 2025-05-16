@@ -15,7 +15,7 @@ class FolderListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final border = Border.all(
       width: 2,
@@ -97,7 +97,7 @@ class FolderListTileSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     return Skeletonizer(

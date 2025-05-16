@@ -9,6 +9,9 @@ class NotesList extends StatelessWidget {
     this.onOptionTap,
     this.selectedNote,
     super.key,
+    this.hasReachedMax = false,
+    this.scrollController,
+    this.bottomWidget,
   });
 
   final List<Note?> notes;
@@ -17,15 +20,28 @@ class NotesList extends StatelessWidget {
   final void Function(Note)? onOptionTap;
   final Note? selectedNote;
 
+  final bool hasReachedMax;
+  final ScrollController? scrollController;
+  final Widget? bottomWidget;
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: notes.length,
+      itemCount: notes.length + (bottomWidget != null ? 1 : 0),
       separatorBuilder: (context, index) => Spaces.verticalLarge,
       itemBuilder: (context, index) {
-        final note = notes[index]!;
+        if (index >= notes.length) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: Insets.md),
+            child: bottomWidget,
+          );
+        }
+
+        final note = notes[index];
+        if (note == null) return const SizedBox.shrink();
+
         return NoteCard(
           key: ValueKey(note.uid),
           note: note,

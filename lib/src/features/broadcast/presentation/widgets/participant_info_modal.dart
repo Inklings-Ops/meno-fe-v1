@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class ParticipantInfoModal extends StatelessWidget {
   const ParticipantInfoModal({required this.participant, super.key});
@@ -8,82 +7,101 @@ class ParticipantInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
-        orElse: User.empty,
-        authenticated: (user, token) => user,
+    return BlocBuilder<OthersProfileCubit, OthersProfileState>(
+      builder: (context, state) => MModal(
+        builder: (context) => state.when(
+          loading: () => const _Content(isLoading: true),
+          success: (profile) => _Content(profile: profile),
+          failure: (exception) => exception.maybeMap(
+            orElse: () => const Text('Unknown error'),
+            message: (value) => Text(value.message),
+            noUserAccountFound: (value) => const Text('No user found'),
+          ),
+        ),
       ),
     );
+  }
+}
 
-    return MModal(
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            MAvatar(radius: 36, url: participant.imageUrl),
-            Spaces.verticalLarge,
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MText(
-                    participant.fullName,
-                    style: textTheme.heading3Medium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // if (isCohost) ...[
-                  //   Spaces.horizontalSmall,
-                  //   const MBadge.cohost(),
-                  // ]
-                ],
-              ),
+class _Content extends StatelessWidget {
+  const _Content({this.profile, this.isLoading = false});
+
+  final Profile? profile;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context)!;
+    final colors = MColorScheme.of(context);
+    final bloc = context.watch<SubscriptionBloc>();
+
+    final isSubscribedToUser = profile?.isSubscribedToUser ?? false;
+
+    final subscribed = (profile?.subscribed ?? false) ||
+        (bloc.subscribeMap[profile?.id] ?? false);
+
+    final isSubscribed = isSubscribedToUser || subscribed;
+
+    final defaultStyle = OutlinedButton.styleFrom(
+      backgroundColor: isSubscribed ? colors.primary : Colors.transparent,
+      foregroundColor: isSubscribed ? colors.onPrimary : colors.primary,
+    );
+
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          MAvatar(radius: 36, url: profile?.imageUrl),
+          Spaces.verticalLarge,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MText(
+                  profile?.fullName.getOr() ?? BoneMock.fullName,
+                  style: textTheme.heading3Medium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
-            Spaces.verticalMicro,
-            if (participant.bio != null) ...[
-              MText(
-                participant.bio!,
-                style: textTheme.subheadingRegular,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Spaces.verticalLarge,
-            ] else
-              Spaces.verticalLarge,
-            if (participant.id == currentUser.id.getOr()) ...[
-              MPrimaryButton(
-                label: 'View Profile',
-                onPressed: () => router.push(
-                  Routes.othersProfile,
-                  extra: participant.id,
-                ),
-              ),
-            ] else ...[
-              MPrimaryButton.icon(
-                label: 'Subscribed',
-                icon: const Icon(MIcons.user_check),
-                onPressed: () {},
-              ),
-              Spaces.verticalSmall,
-              MTextButton(
-                label: 'View account',
-                onPressed: () => router.push(
-                  Routes.othersProfile,
-                  extra: participant.id,
-                ),
-              ),
-            ],
-            // MTextButton(
-            //   label: "Remove as Co-host",
-            //   onPressed: () {},
-            // ),
-          ],
-        ),
+          ),
+          Spaces.verticalMicro,
+          if (profile?.bio != null) ...[
+            MText(
+              profile?.bio?.getOr() ?? BoneMock.paragraph,
+              style: textTheme.subheadingRegular,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Spaces.verticalLarge,
+          ] else
+            Spaces.verticalLarge,
+          if (profile == null || isLoading)
+            MPrimaryButton.icon(
+              label: isSubscribed ? 'Subscribed' : 'Subscribe',
+              icon: const Icon(MIcons.user_check),
+              onPressed: null,
+            )
+          else
+            SubscribeButton(
+              profile: profile!,
+              style: defaultStyle,
+              showIcon: true,
+            ),
+          Spaces.verticalSmall,
+          MTextButton(
+            label: 'View account',
+            onPressed: isLoading
+                ? null
+                : () => router.push(Routes.othersProfile, extra: profile?.id),
+          ),
+        ],
       ),
     );
   }

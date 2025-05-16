@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class LiveLayout extends StatefulWidget {
   const LiveLayout({
@@ -18,6 +18,8 @@ class LiveLayout extends StatefulWidget {
 class _LiveLayoutState extends State<LiveLayout>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController controller;
+  bool _showChatDot = false;
+  final int _chatTabIndex = 1;
 
   @override
   bool get wantKeepAlive => true;
@@ -28,16 +30,30 @@ class _LiveLayoutState extends State<LiveLayout>
 
     return Stack(
       children: [
-        Scaffold(
-          appBar: BroadcastAppBar(
-            controller: controller,
-            onTabTap: widget.navigationShell.goBranch,
-          ),
-          body: LiveLayoutListeners(
-            child: MTabBarView(
+        BlocListener<ChatListBloc, ChatListState>(
+          listenWhen: (previous, current) {
+            return current.chats.length > previous.chats.length &&
+                current.chats.isNotEmpty;
+          },
+          listener: (context, state) {
+            if (controller.index != _chatTabIndex) {
+              if (!_showChatDot) {
+                if (mounted) setState(() => _showChatDot = true);
+              }
+            }
+          },
+          child: Scaffold(
+            appBar: BroadcastAppBar(
+              showChatDot: _showChatDot,
               controller: controller,
-              children: widget.children,
-              onPageChanged: (_) => FocusScope.of(context).unfocus(),
+              onTabTap: widget.navigationShell.goBranch,
+            ),
+            body: LiveLayoutListeners(
+              child: MTabBarView(
+                controller: controller,
+                children: widget.children,
+                onPageChanged: (_) => FocusScope.of(context).unfocus(),
+              ),
             ),
           ),
         ),
@@ -47,31 +63,69 @@ class _LiveLayoutState extends State<LiveLayout>
   }
 
   @override
-  void didUpdateWidget(covariant LiveLayout oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    controller.index = widget.navigationShell.currentIndex;
-  }
-
-  @override
-  void dispose() {
-    controller.removeListener(_onTabSwitched);
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     controller = TabController(
       length: widget.children.length,
       vsync: this,
       initialIndex: widget.navigationShell.currentIndex,
-    )..addListener(_onTabSwitched);
+    )..addListener(_handleTabControllerIndexChange);
   }
 
-  void _onTabSwitched() {
+  @override
+  void dispose() {
+    controller.removeListener(_handleTabControllerIndexChange);
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant LiveLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync TabController if navigationShell's index changed externally
+    if (controller.index != widget.navigationShell.currentIndex) {
+      controller.index = widget.navigationShell.currentIndex;
+      // After syncing ensure chat notification state is correct for the new tab
+      _processChatNotificationVisibility(controller.index);
+    }
+  }
+
+  // Handles index changes from TabController (e.g., swipes, programmatic
+  // changes on controller)
+  void _handleTabControllerIndexChange() {
+    // If the controller's index is different from the shell, update the shell
     if (controller.index != widget.navigationShell.currentIndex) {
       widget.navigationShell.goBranch(controller.index);
+    }
+
+    // Always process chat notification visibility based on the controller's
+    // current index
+    _processChatNotificationVisibility(controller.index);
+  }
+
+  // Handles direct tap events from the TabBar
+  void _onDirectTabTap(int tappedIndex) {
+    // If the tapped index is different from the current controller index,
+    // tell the controller to animate to the new index.
+    // This will subsequently trigger _handleTabControllerIndexChange.
+    if (controller.index != tappedIndex) {
+      controller.animateTo(tappedIndex);
+    } else {
+      // If tapping the already active tab the controller listener may not fire
+      // Explicitly update navigation shell (if needed) & process notification.
+      if (widget.navigationShell.currentIndex != tappedIndex) {
+        widget.navigationShell.goBranch(tappedIndex);
+      }
+      _processChatNotificationVisibility(tappedIndex);
+    }
+  }
+
+  // Centralized logic to show/hide the chat dot
+  void _processChatNotificationVisibility(int targetIndex) {
+    if (targetIndex == _chatTabIndex) {
+      if (_showChatDot) {
+        if (mounted) setState(() => _showChatDot = false);
+      }
     }
   }
 }

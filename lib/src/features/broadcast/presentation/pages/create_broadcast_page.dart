@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -22,7 +24,7 @@ class CreateBroadcastView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final formKey = useMemoized(GlobalKey<FormState>.new);
 
     final broadcastBloc = context.watch<BroadcastBloc>();
@@ -54,9 +56,10 @@ class CreateBroadcastView extends HookWidget {
                 context.showBroadcastError(error);
               },
               broadcastStarted: () async {
+                log('fromt the create broadcast page...');
                 final broadcast = broadcastBloc.state.broadcast;
                 await background.startBroadcastBackgroundProcess(broadcast);
-                liveKit.add(LiveKitBroadcast(state.broadcast.broadcastToken!));
+                liveKit.add(LiveKitBroadcast(token: broadcast.broadcastToken));
                 await router.replace<void>(Routes.broadcastTab);
               },
             );

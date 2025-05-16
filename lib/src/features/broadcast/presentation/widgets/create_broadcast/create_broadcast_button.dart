@@ -21,6 +21,7 @@ class CreateBroadcastButton extends StatelessWidget {
             loading: isLoading,
             disabled: isLoading || !bloc.state.isFormValid,
             onPressed: () {
+              context.read<TimerCubit>().reset();
               context.clearSnackBars();
               FocusScope.of(context).unfocus();
               if (Form.of(context).validate()) {

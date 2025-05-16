@@ -10,7 +10,7 @@ class FolderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final background = selected ? colors.primary : colors.inActiveContainer;
@@ -36,12 +36,15 @@ class FolderWidget extends StatelessWidget {
             MText('Folders', style: textTheme.captionMedium, color: foreground),
             BlocBuilder<FoldersBloc, FoldersState>(
               builder: (context, state) => Skeletonizer(
-                enabled: state is FoldersLoading,
+                enabled: state.status == FoldersStatus.loading,
                 child: MText(
-                  state.maybeWhen(
-                    orElse: () => '0',
-                    loaded: (folders) => folders.length.toString(),
-                  ),
+                  switch (state.status) {
+                    FoldersStatus.success ||
+                    FoldersStatus.loadingMore =>
+                      state.folders.length.toString(),
+                    _ => '0',
+                  },
+                  
                   style: textTheme.heading2Medium,
                   color: foreground,
                 ),

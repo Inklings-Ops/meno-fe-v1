@@ -11,7 +11,7 @@ class StreamLeaveButton extends StatelessWidget {
 
     final broadcast = context.select((StreamBloc bloc) => bloc.state.broadcast);
 
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return MPrimaryButton.icon(
       label: 'Leave Broadcast',
@@ -19,6 +19,7 @@ class StreamLeaveButton extends StatelessWidget {
         context.showLeaveBroadcastDialog().then((value) {
           if (value != true) return;
           if (context.mounted) {
+            di<BackgroundService>().stopBroadcastBackgroundProcess();
             socket.add(SocketLeaveBroadcast(broadcast.id));
             context.read<LiveKitBloc>().add(const LiveKitDisconnect());
             context.read<LiveBloc>().add(const LiveReset());

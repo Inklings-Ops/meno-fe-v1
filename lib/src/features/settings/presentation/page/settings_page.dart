@@ -1,15 +1,13 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_list_tile.dart';
-import 'package:meno_fe_v1/src/features/settings/presentation/widgets/settings_section.dart';
-
+import 'package:meno_fe_v1/src/features/settings/settings.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
-
+    final colors = MColorScheme.of(context);
+    final bloc = context.watch<SettingsBloc>();
     return MScaffold(
       appBar: MAppBar.primary(title: 'Settings'),
       body: SingleChildScrollView(
@@ -42,19 +40,29 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Notifications',
                   leadingIcon: MIcons.bell,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.notificationSettings),
                 ),
                 SettingsListTile(
                   title: 'Dark Mode',
                   leadingIcon: Icons.dark_mode_outlined,
-                  onTap: () {},
-                  trailing: Switch(value: false, onChanged: (value) {}),
+                  trailing: Switch(
+                    value: bloc.state.themeMode == ThemeMode.dark,
+                    onChanged: (value) {
+                      if (value) {
+                        bloc.add(const ChangeTheme(ThemeMode.dark));
+                      } else {
+                        bloc.add(const ChangeTheme(ThemeMode.light));
+                      }
+                    },
+                  ),
                 ),
                 SettingsListTile(
                   title: 'Location',
                   leadingIcon: Icons.pin_outlined,
-                  onTap: () {},
-                  trailing: Switch(value: true, onChanged: (value) {}),
+                  trailing: Switch(
+                    value: bloc.state.useLocation,
+                    onChanged: (v) => bloc.add(ToggleLocationServices(v)),
+                  ),
                   showDivider: false,
                 ),
               ],
@@ -72,7 +80,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Security',
                   leadingIcon: MIcons.shield,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.securitySettings),
                   showDivider: false,
                 ),
               ],
@@ -84,7 +92,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'About Meno',
                   leadingIcon: MIcons.users,
-                  onTap: () {},
+                  onTap: () => router.push(Routes.about),
                 ),
                 SettingsListTile(
                   title: 'FAQs',
@@ -99,7 +107,7 @@ class SettingsPage extends StatelessWidget {
                 SettingsListTile(
                   title: 'Logout',
                   leadingIcon: MIcons.log_out,
-                  onTap: context.read<SessionCubit>().logout,
+                  onTap: () => router.push(Routes.logoutConfirmationDialog),
                 ),
                 SettingsListTile(
                   title: 'Delete Account',

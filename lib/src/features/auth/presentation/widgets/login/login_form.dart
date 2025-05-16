@@ -17,7 +17,7 @@ class LoginForm extends HookWidget {
         children: [
           if (isPasswordOnly) ...[
             UserAccountDetails(
-              action: () => context.showSwitchAccountSheet<void>(),
+              action: () => router.push(Routes.switchAccountModal),
             ),
             Spaces.verticalXXLarge,
           ] else ...[

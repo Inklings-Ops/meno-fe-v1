@@ -14,6 +14,7 @@ class NetworkService {
       final networkStatus = switch (status) {
         InternetConnectionStatus.connected => NetworkStatus.connected,
         InternetConnectionStatus.disconnected => NetworkStatus.disconnected,
+        InternetConnectionStatus.slow => NetworkStatus.slow,
       };
       _controller.add(networkStatus);
     });

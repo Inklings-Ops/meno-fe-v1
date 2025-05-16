@@ -8,7 +8,6 @@ export 'package:flutter_hooks/flutter_hooks.dart';
 export 'package:fluttertoast/fluttertoast.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:go_router/go_router.dart';
-export 'package:hydrated_bloc/hydrated_bloc.dart';
 export 'package:meno_design_system/meno_design_system.dart';
 export 'package:meno_fe_v1/app/meno_bloc_provider.dart';
 export 'package:meno_fe_v1/firebase_options.dart';

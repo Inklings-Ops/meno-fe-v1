@@ -37,6 +37,30 @@ class SocketEvent with _$SocketEvent {
     required String createdAt,
   }) = SocketSendMessage;
 
+  const factory SocketEvent.sendChatReaction({
+    required String senderId,
+    required String broadcastId,
+    required String content,
+    required String createdAt,
+  }) = SocketSendChatReaction;
+
+  const factory SocketEvent.editMessage({
+    required String id,
+    required String senderId,
+    required String broadcastId,
+    required String content,
+    required String createdAt,
+    required String updatedAt,
+  }) = SocketEditMessage;
+
+  const factory SocketEvent.deleteChatMessage({
+    required String id,
+    required String senderId,
+    required String broadcastId,
+    required String content,
+    required String createdAt,
+  }) = SocketDeleteMessage;
+
   const factory SocketEvent.newParticipant(dynamic data) = _NewParticipant;
 
   const factory SocketEvent.participantLeft(dynamic data) = _ParticipantLeft;
@@ -52,4 +76,10 @@ class SocketEvent with _$SocketEvent {
   const factory SocketEvent.notification(dynamic data) = _Notification;
 
   const factory SocketEvent.newMessage(dynamic data) = _NewMessage;
+
+  const factory SocketEvent.editedMessage(dynamic data) = _EditedMessage;
+
+  const factory SocketEvent.deletedMessage(dynamic data) = _DeletedMessage;
+
+  const factory SocketEvent.newChatReaction(dynamic data) = _NewChatReaction;
 }

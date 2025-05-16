@@ -78,6 +78,8 @@ abstract class IBroadcastFacade {
   });
 
   Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
+    String? id,
+
     /// Status of the broadcast
     /// Example : active or inactive
     String? status,
@@ -132,5 +134,11 @@ abstract class IBroadcastFacade {
 
   Future<Option<Broadcast>> getSavedBroadcastDetails();
 
+  Future<Option<JoinBroadcastEntity>> getSavedStreamDetails();
+
   Future<void> clearSavedBroadcastDetails();
+
+  Future<void> saveBroadcastDetails(Broadcast broadcast);
+  
+  Future<void> saveStreamDetails(JoinBroadcastEntity entity);
 }

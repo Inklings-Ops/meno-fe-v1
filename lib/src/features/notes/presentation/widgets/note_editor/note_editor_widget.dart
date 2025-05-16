@@ -64,19 +64,20 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
     }
     final textTheme = MTextTheme.of(context)!;
     quillConfigurations = QuillEditorConfigurations(
+      padding: MediaQuery.viewInsetsOf(context),
       placeholder: 'Start writing...',
       expands: true,
       customStyles: DefaultStyles(
         paragraph: DefaultTextBlockStyle(
           textTheme.captionRegular!,
-          const HorizontalSpacing(8, 0),
+          HorizontalSpacing.zero,
           VerticalSpacing.zero,
           VerticalSpacing.zero,
           null,
         ),
         placeHolder: DefaultTextBlockStyle(
           textTheme.captionRegular!,
-          const HorizontalSpacing(8, 0),
+          HorizontalSpacing.zero,
           VerticalSpacing.zero,
           VerticalSpacing.zero,
           null,

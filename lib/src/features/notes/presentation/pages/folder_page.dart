@@ -60,7 +60,7 @@ class FolderPageOptionsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final folder = context.select((FolderBloc bloc) => bloc.state.folder);
 
     return IconButton(

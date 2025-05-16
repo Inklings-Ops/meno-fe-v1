@@ -33,17 +33,12 @@ class _ScriptureTranslation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransBloc, TransState>(
-      buildWhen: (p, c) => p.selectedTranslation != c.selectedTranslation,
+    return BlocBuilder<TranslationBloc, TranslationState>(
       builder: (context, state) {
-        final translation = state.selectedTranslation;
         return _Container(
-          content: translation.abbreviation.toUpperCase(),
+          content: state.translation.abbreviation.toUpperCase(),
           onTap: () => context.showModal<void>(
-            BlocProvider.value(
-              value: context.read<TransBloc>(),
-              child: const BibleTranslationsModal(),
-            ),
+            const BibleTranslationsModal(),
             isScrollControlled: true,
             useRootNavigator: true,
           ),
@@ -80,7 +75,7 @@ class _PreviousAndNextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final bloc = context.watch<ScripturePickerCubit>();
     return Row(
       children: [
@@ -122,7 +117,7 @@ class _Container extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return InkWell(
       onTap: onTap,

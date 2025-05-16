@@ -12,7 +12,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context)!;
+    final colorScheme = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Container(
       margin: const EdgeInsets.only(top: 40),

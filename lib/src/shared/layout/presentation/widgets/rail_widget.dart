@@ -18,7 +18,7 @@ class RailWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final navigationRailTheme = Theme.of(context).navigationRailTheme;
     final iconWidget = IconTheme(
       data: selected

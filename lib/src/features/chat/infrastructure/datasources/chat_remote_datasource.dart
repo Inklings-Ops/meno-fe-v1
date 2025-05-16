@@ -5,13 +5,14 @@ import 'package:retrofit/retrofit.dart';
 
 part 'chat_remote_datasource.g.dart';
 
+@injectable
 @RestApi()
 abstract class ChatRemoteDatasource {
   /// Creates a new `ChatRemoteDatasource` object.
   @factoryMethod
   factory ChatRemoteDatasource(
     Dio dio, {
-    String baseUrl,
+    @Named('baseUrl') String baseUrl,
   }) = _ChatRemoteDatasource;
 
   @GET('/api/v1/chat-messages')

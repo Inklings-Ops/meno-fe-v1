@@ -28,7 +28,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
             MText(
               'You’ve reached the end 🎉',
               style: MTextTheme.of(context)!.captionRegular,
-              color: MColorScheme.of(context)!.onBackgroundVariant,
+              color: MColorScheme.of(context).onBackgroundVariant,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 28),
@@ -40,7 +40,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.broadcasts, super.key, this.loading = false});
+  const _List({required this.broadcasts, this.loading = false});
   final List<Broadcast?> broadcasts;
   final bool loading;
 

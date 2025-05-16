@@ -2,30 +2,30 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
-class ReactionButton extends StatelessWidget {
-  const ReactionButton({super.key});
+class MReactionButton extends StatelessWidget {
+  const MReactionButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
 
-    return Positioned(
-      bottom: 60,
-      right: 16,
-      child: Container(
-        height: 56,
-        padding: const EdgeInsets.all(Insets.sm),
-        decoration: BoxDecoration(
-          color: colors.background,
-          borderRadius: Corners.circle,
-        ),
-        child: ListView.separated(
-          shrinkWrap: true,
-          separatorBuilder: (context, i) => Spaces.horizontalSmall,
-          scrollDirection: Axis.horizontal,
-          itemCount: reactions.length,
-          itemBuilder: (context, i) {
-            return AnimationConfiguration.staggeredList(
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.all(Insets.sm),
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: Corners.circle,
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        separatorBuilder: (context, i) => Spaces.horizontalSmall,
+        scrollDirection: Axis.horizontal,
+        itemCount: reactions.length,
+        itemBuilder: (context, i) {
+          return InkWell(
+            onTap: () {
+            },
+            child: AnimationConfiguration.staggeredList(
               position: i,
               duration: const Duration(milliseconds: 260),
               child: SlideAnimation(
@@ -40,9 +40,9 @@ class ReactionButton extends StatelessWidget {
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

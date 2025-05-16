@@ -29,6 +29,7 @@ class NetworkFacade implements INetworkFacade {
         return switch (event) {
           InternetConnectionStatus.connected => NetworkStatus.connected,
           InternetConnectionStatus.disconnected => NetworkStatus.disconnected,
+          InternetConnectionStatus.slow => NetworkStatus.slow,
         };
       },
     );

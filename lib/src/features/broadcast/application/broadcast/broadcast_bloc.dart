@@ -13,13 +13,28 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   BroadcastBloc({required IBroadcastFacade facade})
       : _facade = facade,
         super(BroadcastState.initial()) {
+    on<InitializeBroadcast>(_onInitializeBroadcast);
     on<BroadcastStartPressed>(_onBroadcastStartPressed);
     on<BroadcastReset>(_onBroadcastReset);
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
+    on<BroadcastSaveDetailsPressed>(_onBroadcastSaveDetailsPressed);
   }
 
   final IBroadcastFacade _facade;
   final _initialState = BroadcastState.initial();
+
+  Future<void> _onInitializeBroadcast(
+    InitializeBroadcast event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    emit(state.copyWith(status: const _LoadInProgress()));
+    emit(
+      state.copyWith(
+        broadcast: event.broadcast,
+        status: const _Initial(),
+      ),
+    );
+  }
 
   Future<void> _onBroadcastStartPressed(
     BroadcastStartPressed event,
@@ -46,7 +61,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    emit(state.copyWith(status: const _LoadInProgress()));
+    emit(state.copyWith(status: const _LoadInProgress(), isReconnect: true));
     final option = await _facade.getSavedBroadcastDetails();
     emit(
       option.fold(
@@ -61,5 +76,19 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         ),
       ),
     );
+  }
+
+  Future<void> _onBroadcastSaveDetailsPressed(
+    BroadcastSaveDetailsPressed event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    final token = state.broadcast.broadcastToken;
+    final id = state.broadcast.id.getOr();
+    final result = await _facade.getBroadcasts(id: id);
+    final broadcast = result.fold(
+      (l) => null,
+      (r) => r.broadcasts.first?.copyWith(broadcastToken: token),
+    );
+    if (broadcast != null) await _facade.saveBroadcastDetails(broadcast);
   }
 }

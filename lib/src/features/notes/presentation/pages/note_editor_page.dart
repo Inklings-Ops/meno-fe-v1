@@ -7,6 +7,7 @@ class NoteEditorPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSaving = useState<bool>(false);
     final isSaved = useState<bool>(false);
     final bloc = context.read<NoteEditorBloc>();
 
@@ -25,14 +26,16 @@ class NoteEditorPage extends HookWidget {
       builder: (context, state) => PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
+          isSaving.value = true;
+
           if (isSaved.value) return;
-          
+
           isSaved.value = true;
 
           // Allow popping if no change is made to the note
           if ((state as NoteLoaded).note == note) return router.pop();
 
-          // Allow popping is the note's title and content are empty, initially
+          // Allow popping if the note's title and content are empty, initially
           // or after editing.
           if (bloc.isNoteEmpty) return router.pop();
 

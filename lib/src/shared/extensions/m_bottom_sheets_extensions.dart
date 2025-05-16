@@ -1,5 +1,4 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/features.dart';
 
 extension MBottomSheetsX on BuildContext {
   Future<T?> showModal<T>(
@@ -14,7 +13,7 @@ extension MBottomSheetsX on BuildContext {
       context: this,
       builder: (context) => Material(child: child),
       constraints: constraints,
-      backgroundColor: MColorScheme.of(this)?.background,
+      backgroundColor: MColorScheme.of(this).background,
       isScrollControlled: isScrollControlled ?? false,
       useRootNavigator: useRootNavigator ?? false,
       isDismissible: isDismissible ?? true,
@@ -29,12 +28,4 @@ extension MBottomSheetsX on BuildContext {
         isScrollControlled: true,
         useRootNavigator: true,
       );
-
-  Future<dynamic> showJoinLiveBroadcastModal(Broadcast broadcast) async {
-    return showModal(
-      isScrollControlled: true,
-      useRootNavigator: true,
-      PreStreamModal(broadcast: broadcast),
-    );
-  }
 }

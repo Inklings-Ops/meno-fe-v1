@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -26,17 +28,41 @@ class LiveLayoutListeners extends HookWidget {
           listener: (context, state) {
             state.status.whenOrNull(
               failed: (error, isStream) {
+                if (error.contains('Invalid Token')) {
+                  final broadcast = broadcastBloc.state.broadcast;
+                  di<BackgroundService>().stopBroadcastBackgroundProcess();
+                  socket.add(SocketEndBroadcast(broadcast.id));
+                  timer.reset();
+                  chat.add(const ChatReset());
+                  live.add(const LiveReset());
+                  livekit.add(const LiveKitDisconnect());
+                  router.go(Routes.home);
+                }
+
                 live.add(const GoFailure());
+                timer.reset();
                 context.showErrorSnackBar(error);
-                if (isStream) return router.pop();
               },
               broadcastConnected: () {
                 final broadcast = broadcastBloc.state.broadcast;
                 socket.add(SocketStartBroadcast(broadcast.id));
               },
-              streamConnected: () {
+              broadcastReconnected: () {
+                final broadcast = broadcastBloc.state.broadcast;
+                log('Came here...${broadcast.startTime}');
+                timer.setAndStart(broadcast.startTime);
+                chat.add(InitializeChatList(broadcast));
+                socket.add(SocketGetMessages(broadcast.id));
+                participants.add(GetLiveParticipants(broadcast.id));
+                live.add(const GoLive());
+              },
+              streamReconnected: () {
                 final broadcast = streamBloc.state.broadcast;
-                socket.add(SocketJoinBroadcast(broadcast.id));
+                chat.add(InitializeChatList(broadcast));
+                socket.add(SocketGetMessages(broadcast.id));
+                participants.add(GetLiveParticipants(broadcast.id));
+                timer.setAndStart(broadcast.startTime);
+                live.add(const GoStreaming());
               },
             );
           },
@@ -52,6 +78,7 @@ class LiveLayoutListeners extends HookWidget {
               },
               broadcastStarted: () {
                 final broadcast = broadcastBloc.state.broadcast;
+                broadcastBloc.add(const BroadcastSaveDetailsPressed());
                 chat.add(InitializeChatList(broadcast));
                 socket.add(SocketGetMessages(broadcast.id));
                 participants.add(GetLiveParticipants(broadcast.id));
@@ -64,7 +91,7 @@ class LiveLayoutListeners extends HookWidget {
                 participants.add(GetAllParticipants(broadcast.id));
                 timer.stop();
                 live.add(const LiveReset());
-                if (router.state!.name == Routes.broadcastTab) {
+                if (router.state.name == Routes.broadcastTab) {
                   await router.replace<void>(Routes.endedBroadcast);
                 } else {
                   await router.push<void>(Routes.endedBroadcast);
@@ -99,9 +126,10 @@ class LiveLayoutListeners extends HookWidget {
                   router.go(Routes.home);
                 }
               },
-              messagesReceived: (chats) {
-                chat.add(LoadChatMessages(chats));
-              },
+              messagesReceived: (chats) => chat.add(LoadChatMessages(chats)),
+              newMessage: (c) => chat.add(NewChatReceived(c)),
+              editedMessage: (c) => chat.add(EditedChatReceived(c)),
+              deletedMessage: (c) => chat.add(DeletedChatRemoved(c)),
             );
           },
         ),

@@ -1,4 +1,4 @@
-import 'package:meno_fe_v1/meno.dart';
+import 'package:meno_fe_v1/meno.dart' hide Notification;
 import 'package:meno_fe_v1/src/features/features.dart';
 
 final fakeNotes = List.filled(
@@ -40,3 +40,28 @@ final fakeProfile = Profile(
   bio: Bio(BoneMock.paragraph),
   stats: UserStats(broadcasts: 0, subscribers: 0, subscriptions: 0),
 );
+
+final fakeNotification = Notification(
+  id: 'id',
+  createdAt: DateTime.now(),
+  content: NotificationContent(
+    broadcastCreator: BoneMock.fullName,
+    broadcastId: 'broadcastId',
+    broadcastTitle: BoneMock.title,
+    cohostFullName: BoneMock.fullName,
+    id: 'id',
+    subscriberId: 'subscriberId',
+    subscriberName: BoneMock.name,
+    subscriptionId: 'subsciberId',
+    title: BoneMock.title,
+  ),
+);
+
+final fakeNotificationsList = List.filled(3, fakeNotification);
+
+final fakeNotifications = {
+  NotificationCategory.none: <Notification?>[],
+  NotificationCategory.older: fakeNotificationsList,
+  NotificationCategory.thisWeek: fakeNotificationsList,
+  NotificationCategory.today: fakeNotificationsList,
+};

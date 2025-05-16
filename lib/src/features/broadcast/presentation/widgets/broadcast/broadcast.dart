@@ -1,4 +1,3 @@
-export 'broadcast_chat_tab.dart';
 export 'broadcast_controls.dart';
 export 'broadcast_microphone_button.dart';
 export 'broadcast_options_button.dart';

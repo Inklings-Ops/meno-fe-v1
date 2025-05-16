@@ -67,10 +67,10 @@ abstract class IBibleFacade {
   /// or if prompted by the user.
   Future<Either<BibleException, Translation>> downloadBible(String translation);
 
-  void cancelBibleDownload(String translation);
+  void cancelDownload();
 
   /// A Stream that exposes the download progress of the Bible
-  Stream<double?> get downloadBibleProgress;
+  Stream<int> get downloadBibleProgress;
 
   Future<void> initialize();
 }

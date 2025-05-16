@@ -12,7 +12,7 @@ class BroadcastInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return MModal(
       builder: (context) => Column(
@@ -36,7 +36,10 @@ class BroadcastInfoModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
-                  broadcast.creator!.fullName,
+                  broadcast.creator?.fullName ??
+                      broadcast.creatorFullName ??
+                      broadcast.fullName ??
+                      '',
                   style: textTheme.captionRegular,
                 ),
                 Spaces.horizontalSmall,

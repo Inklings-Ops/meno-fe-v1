@@ -4,8 +4,6 @@ export 'dtos/dtos.dart';
 export 'dtos/notification_content_dto.dart';
 export 'dtos/notification_data_dto.dart';
 export 'dtos/notification_dto.dart';
-export 'mapper/mapper.dart';
-export 'mapper/notifications_mapper.dart';
 export 'notification_facade.dart';
 export 'responses/notification_response.dart';
 export 'responses/responses.dart';

@@ -91,7 +91,7 @@ class _Grid extends HookWidget {
   final bool isNowLive;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     late Widget child;
 

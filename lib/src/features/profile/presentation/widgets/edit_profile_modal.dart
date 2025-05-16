@@ -1,5 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
+import 'package:meno_fe_v1/src/features/features.dart';
 
 class EditProfileModal extends StatelessWidget {
   const EditProfileModal({super.key});
@@ -8,17 +8,32 @@ class EditProfileModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ProfileFormCubit, ProfileFormState>(
       listener: (context, state) {
-        // TODO: implement listener
+        state.onEdited.fold(
+          () => null,
+          (failureOrSuccess) => failureOrSuccess.fold(
+            (exception) => context.showErrorSnackBar(
+              exception.maybeMap(
+                orElse: () => '',
+                message: (value) => value.message,
+                networkError: (_) => MErrorMessages.networkError,
+                serverError: (_) => MErrorMessages.serverError,
+                timeOutError: (_) => MErrorMessages.timeOutError,
+                unknownError: (_) => MErrorMessages.unknownError,
+              ),
+            ),
+            (success) => router.pop(),
+          ),
+        );
       },
       child: MModal(
         title: 'Edit profile details',
-        builder: (context) => const SingleChildScrollView(
-          child: Column(
+        builder: (context) => SingleChildScrollView(
+          padding: MediaQuery.viewInsetsOf(context),
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Align(
-                child: MAvatar(radius: 49),
-              ),
+              Spaces.verticalLarge,
+              Align(child: ProfileFormAvatar()),
               Spaces.verticalXLarge,
               ProfileFormNameField(),
               Spaces.verticalXLarge,
@@ -28,6 +43,60 @@ class EditProfileModal extends StatelessWidget {
               SizedBox(height: 56),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProfileFormAvatar extends StatelessWidget {
+  const ProfileFormAvatar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+
+    final bloc = context.watch<ProfileFormCubit>();
+
+    final url = context.select<MyProfileCubit, String?>(
+      (bloc) => bloc.state.whenOrNull(success: (profile) => profile.imageUrl),
+    );
+
+    return BlocBuilder<ProfileFormCubit, ProfileFormState>(
+      bloc: bloc,
+      buildWhen: (p, c) => p.avatar != c.avatar || bloc.state.loading,
+      builder: (context, state) => SizedBox.square(
+        dimension: 96,
+        child: Stack(
+          children: [
+            MAvatar(
+              radius: 49,
+              url: url,
+              file: state.avatar?.getOr(),
+              hasBorder: false,
+              onTap: () => context.showModal<void>(
+                MImageSourceModal(
+                  onGallerySourceTap: bloc.avatarChanged,
+                  onCameraSourceTap: () => bloc.avatarChanged(
+                    fromGallery: false,
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                height: Insets.xxl,
+                width: Insets.xxl,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colors.primary,
+                  border: Border.all(width: 2, color: colors.onPrimary!),
+                ),
+                child: Icon(MIcons.edit_02, size: 16, color: colors.onPrimary),
+              ),
+            ),
+          ],
         ),
       ),
     );

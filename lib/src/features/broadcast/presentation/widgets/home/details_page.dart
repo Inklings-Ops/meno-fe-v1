@@ -9,7 +9,7 @@ class DetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
+      (SessionBloc bloc) => bloc.state.maybeWhen(
         orElse: User.empty,
         authenticated: (user, token) => user,
       ),
@@ -75,10 +75,10 @@ class DetailsPageOptionsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     final currentUser = context.select(
-      (SessionCubit bloc) => bloc.state.maybeWhen(
+      (SessionBloc bloc) => bloc.state.maybeWhen(
         orElse: User.empty,
         authenticated: (user, token) => user,
       ),
@@ -144,7 +144,7 @@ class _Artwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     const borderRadius = Corners.lg;
 
     final colorFilter = ColorFilter.mode(
@@ -190,7 +190,7 @@ class _Creator extends StatelessWidget {
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return SizedBox(
       height: 16,
       child: MTextButton.icon(
@@ -242,7 +242,7 @@ class _Time extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

@@ -20,7 +20,7 @@ class SubscribeNotificationCard extends StatelessWidget {
         children: [
           MAvatar(
             radius: 24,
-            url: notification.content.subscriberImageUrl,
+            url: notification.content?.subscriberImageUrl,
           ),
           Spaces.horizontalSmall,
           Expanded(
@@ -29,7 +29,7 @@ class SubscribeNotificationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MText(
-                  '''${notification.content.subscriberName} just subscribed to you''',
+                  '''${notification.content?.subscriberName} just subscribed to you''',
                   style: styles.nTitleTextStyle,
                   maxLines: 2,
                 ),

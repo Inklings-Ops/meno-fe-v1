@@ -18,7 +18,7 @@ class ParticipantItem extends StatelessWidget {
     final hasUser = participant != null;
     final isCohost = [Role.cohost, Role.COHOST].contains(participant?.role);
     final isHost = [Role.host, Role.HOST].contains(participant?.role);
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: SizedBox.square(
         dimension: 88,
@@ -59,7 +59,7 @@ class _ParticipantAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return SizedBox.square(
       dimension: 48,
       child: Stack(
@@ -104,7 +104,7 @@ class _HostTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) {
@@ -125,7 +125,7 @@ class _CoHostTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionCubit, SessionState>(
+    return BlocBuilder<SessionBloc, SessionState>(
       builder: (context, state) => state.maybeWhen(
         orElse: () => const SizedBox(),
         authenticated: (user, _) {

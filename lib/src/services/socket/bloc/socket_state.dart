@@ -58,4 +58,16 @@ class SocketState with _$SocketState {
   const factory SocketState.newMessage(
     Chat chat,
   ) = SocketNewMessageReceived;
+
+  const factory SocketState.editedMessage(
+    Chat chat,
+  ) = SocketEditedMessageReceived;
+
+  const factory SocketState.deletedMessage(
+    Chat chat,
+  ) = SocketDeletedMessageRemoved;
+
+  const factory SocketState.newReaction(
+    Chat chat,
+  ) = SocketNewChatReactionReceived;
 }

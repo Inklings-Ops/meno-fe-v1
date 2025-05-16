@@ -31,7 +31,11 @@ class Routes {
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
   static const String settings = '/settings';
+  static const String notificationSettings = '/settings/notifications';
+  static const String securitySettings = '/settings/security';
+  static const String about = '/settings/about';
   static const String endedBroadcast = '/endedBroadcast';
+  static const String biblePage = '/bible-page';
 
   static const String broadcastTab = '/broadcast-tab';
   static const String chatTab = '/chat-tab';
@@ -43,6 +47,7 @@ class Routes {
   static const String noteSection = '/notes-section';
   static const String folderSection = '/folder-section';
 
+  static const String preStreamModal = '/pre-stream-modal';
   static const String noteCardOptionsModal = '/note-card-options-modal';
   static const String addNoteToFolderModal = '/add-note-to-folder-modal';
   static const String moveNoteToFolderModal = '/move-note-to-folder-modal';
@@ -51,10 +56,16 @@ class Routes {
   static const String othersProfileOptionsModal =
       '/others-profile-options-modal';
   static const String editProfileModal = '/edit-profile-modal';
+  static const String switchAccountModal = '/switch-account-modal';
+  static const String broadcastInfoModal = '/broadcast-info-modal';
+  static const String pickImageModal = '/pick-image-modal';
 
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
+  static const String leaveAndJoinDialog = '/leave-and-join-stream-dialog';
+  static const String logoutConfirmationDialog =
+      '/logout-confirmation-dialog';
 }
 
 class ModalPage<T> extends Page<void> {
@@ -80,7 +91,7 @@ class ModalPage<T> extends Page<void> {
     return ModalBottomSheetRoute<T>(
       builder: (context) => Material(child: child),
       constraints: constraints,
-      backgroundColor: MColorScheme.of(context)?.background,
+      backgroundColor: MColorScheme.of(context).background,
       isScrollControlled: isScrollControlled,
       isDismissible: isDismissible,
       enableDrag: enableDrag,

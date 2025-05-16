@@ -60,7 +60,7 @@ class _ResultList extends StatelessWidget {
             imageUrl: broadcast.imageUrl,
             host: broadcast.fullName,
             liveCount: broadcast.totalListeners,
-            onTap: () => context.showJoinLiveBroadcastModal(broadcast),
+            onTap: () => router.push(Routes.preStreamModal, extra: broadcast),
           );
         }
 
@@ -80,7 +80,7 @@ class _NoResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Center(
       child: Column(

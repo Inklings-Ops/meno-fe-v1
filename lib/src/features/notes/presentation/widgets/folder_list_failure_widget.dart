@@ -6,7 +6,7 @@ class FolderListFailureWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
@@ -35,7 +35,7 @@ class FolderListFailureWidget extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              context.read<FoldersBloc>().add(const GetAllFolders());
+              context.read<FoldersBloc>().add(const GetFoldersRequested());
             },
           ),
         ),

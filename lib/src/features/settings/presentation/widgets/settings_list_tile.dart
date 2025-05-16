@@ -3,9 +3,9 @@ import 'package:meno_fe_v1/meno.dart';
 class SettingsListTile extends StatelessWidget {
   const SettingsListTile({
     required this.title,
-    required this.leadingIcon,
-    required this.onTap,
     super.key,
+    this.leadingIcon,
+    this.onTap,
     this.isDisabled = false,
     this.trailing,
     this.showDivider = true,
@@ -14,17 +14,17 @@ class SettingsListTile extends StatelessWidget {
   });
 
   final String title;
-  final IconData leadingIcon;
+  final IconData? leadingIcon;
   final bool isDisabled;
   final Widget? trailing;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool showDivider;
-  final MColor? titleColor;
-  final MColor? iconColor;
+  final Color? titleColor;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
@@ -32,11 +32,14 @@ class SettingsListTile extends StatelessWidget {
           tileColor: resolveDisabledWithOpacity(colors.surfaceTint),
           onTap: isDisabled ? null : onTap,
           minTileHeight: 56,
-          leading: Icon(
-            leadingIcon,
-            size: 20,
-            color: iconColor ?? resolveDisabledWithOpacity(colors.primary),
-          ),
+          leading: leadingIcon == null
+              ? null
+              : Icon(
+                  leadingIcon,
+                  size: 20,
+                  color:
+                      iconColor ?? resolveDisabledWithOpacity(colors.primary),
+                ),
           horizontalTitleGap: Insets.sm,
           title: MText(
             title,
@@ -56,7 +59,7 @@ class SettingsListTile extends StatelessWidget {
     );
   }
 
-  MColor? resolveDisabled(MColor? main, MColor? disabled) {
+  Color? resolveDisabled(Color? main, Color? disabled) {
     return !isDisabled ? main : disabled;
   }
 

@@ -20,7 +20,7 @@ class SideNavRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Insets.md),
       decoration: BoxDecoration(

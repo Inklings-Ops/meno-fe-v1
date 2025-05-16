@@ -1,9 +1,7 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/features/chat/application/application.dart';
-import 'package:meno_fe_v1/src/services/live_kit/bloc/live_kit_bloc.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class BroadcastStartStopButton extends StatelessWidget {
   const BroadcastStartStopButton({super.key});
@@ -17,7 +15,7 @@ class BroadcastStartStopButton extends StatelessWidget {
         offAir: () => _Button('Stop', onTap: () => stop(context)),
         loading: () => const _Button('Start', loading: true),
         live: () => _Button('Stop', onTap: () => stop(context)),
-        failure: () => _Button('Start', onTap: () => start(context)),
+        failure: () => _Button('Stop', onTap: () => stop(context)),
       ),
     );
   }
@@ -42,7 +40,7 @@ class BroadcastStartStopButton extends StatelessWidget {
     context.read<LiveBloc>().add(const GoLoading());
     final broadcast = context.read<BroadcastBloc>().state.broadcast;
     final liveKit = context.read<LiveKitBloc>();
-    liveKit.add(LiveKitBroadcast(broadcast.broadcastToken!));
+    liveKit.add(LiveKitBroadcast(token: broadcast.broadcastToken));
   }
 }
 
@@ -59,7 +57,7 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     final isStart = label == 'Start';

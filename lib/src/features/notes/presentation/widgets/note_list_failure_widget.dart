@@ -6,7 +6,7 @@ class NoteListFailureWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return Column(
       children: [
@@ -32,8 +32,7 @@ class NoteListFailureWidget extends StatelessWidget {
                 width: 1.50,
               ),
             ),
-            onPressed: () =>
-                context.read<NotesBloc>().add(const GetNotesRequested()),
+            onPressed: () => context.read<NotesBloc>().add(const ReloadNotes()),
           ),
         ),
       ],

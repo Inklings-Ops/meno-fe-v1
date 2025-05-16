@@ -20,7 +20,7 @@ class DiscoverSearchBar extends StatelessWidget {
   final bool autofocus;
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
     return Padding(
@@ -35,18 +35,20 @@ class DiscoverSearchBar extends StatelessWidget {
                 autoFocus: autofocus,
                 onTap: onTap,
                 onChanged: onChanged,
-                hintText: 'Search broadcasts or broadcasters',
+                hintText: 'Search broadcasts',
                 hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
                 padding: const WidgetStatePropertyAll(
                   EdgeInsets.symmetric(horizontal: Insets.md),
                 ),
                 leading: const Icon(MIcons.search, size: Insets.lg),
-                shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Color(0xFFC2C7D0),
-                  ),
+                shape: const WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: Color(0xFFC2C7D0),
+                    ),
                     borderRadius: Corners.sm,
-                ),),
+                  ),
+                ),
               ),
             ),
           ),

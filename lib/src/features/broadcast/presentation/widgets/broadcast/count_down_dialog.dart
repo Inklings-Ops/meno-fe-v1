@@ -4,7 +4,7 @@ class CountDownDialog extends StatelessWidget {
   const CountDownDialog({super.key});
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context)!;
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
     return SizedBox(
       width: 152,

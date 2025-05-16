@@ -8,9 +8,14 @@ part 'live_kit_bloc.freezed.dart';
 part 'live_kit_event.dart';
 part 'live_kit_state.dart';
 
+const nullBroadcastTokenErrorMessage = 'No broadcast token provided.';
+
 class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
-  LiveKitBloc({required LiveKitService liveKit})
-      : _liveKit = liveKit,
+  LiveKitBloc({
+    required LiveKitService liveKit,
+    required NetworkService network,
+  })  : _liveKit = liveKit,
+        _network = network,
         super(const LiveKitState()) {
     on<LiveKitBroadcast>(_onBroadcast);
     on<LiveKitStream>(_onStream);
@@ -19,6 +24,7 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
   }
 
   final LiveKitService _liveKit;
+  final NetworkService _network;
 
   bool get isLoading => state.status is LiveKitConnecting;
 
@@ -26,17 +32,46 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     LiveKitBroadcast event,
     Emitter<LiveKitState> emit,
   ) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) {
+      return emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(
+            error: 'No internet connection',
+          ),
+        ),
+      );
+    }
+
+    final token = event.token;
+    if (token == null) {
+      return emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(
+            error: nullBroadcastTokenErrorMessage,
+          ),
+        ),
+      );
+    }
+
     emit(state.copyWith(status: const LiveKitConnecting()));
-    final result = await _liveKit.broadcast2(event.token);
+    final result = await _liveKit.broadcast(token);
     emit(
       result.fold(
         (failure) => state.copyWith(
           micEnabled: false,
-          status: LiveKitConnectionFailed(error: failure.message),
+          status: LiveKitConnectionFailed(
+            error: failure.maybeMap(
+              orElse: () => 'Unknown error',
+              message: (value) => value.message,
+            ),
+          ),
         ),
         (success) => state.copyWith(
           micEnabled: true,
-          status: const LiveKitBroadcastConnected(),
+          status: event.isReconnect
+              ? const LiveKitBroadcastReconnected()
+              : const LiveKitBroadcastConnected(),
         ),
       ),
     );
@@ -46,19 +81,48 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     LiveKitStream event,
     Emitter<LiveKitState> emit,
   ) async {
-    emit(state.copyWith(status: const LiveKitConnecting()));
-    final result = await _liveKit.stream2(event.token);
-    emit(
-      result.fold(
-        (failure) => state.copyWith(
-          status: LiveKitConnectionFailed(
-            error: failure.message,
-            isStream: true,
+    final isConnected = await _network.isConnected;
+    if (!isConnected) {
+      emit(
+        state.copyWith(
+          status: const LiveKitConnectionFailed(
+            error: 'No internet connection',
           ),
         ),
-        (success) => state.copyWith(status: const LiveKitStreamConnected()),
-      ),
-    );
+      );
+    } else {
+      final token = event.token;
+      if (token == null) {
+        emit(
+          state.copyWith(
+            status: const LiveKitConnectionFailed(
+              error: nullBroadcastTokenErrorMessage,
+            ),
+          ),
+        );
+      } else {
+        emit(state.copyWith(status: const LiveKitConnecting()));
+        final result = await _liveKit.stream(token);
+        emit(
+          result.fold(
+            (failure) => state.copyWith(
+              status: LiveKitConnectionFailed(
+                isStream: true,
+                error: failure.maybeMap(
+                  orElse: () => 'Unknown error',
+                  message: (value) => value.message,
+                ),
+              ),
+            ),
+            (success) => state.copyWith(
+              status: event.isReconnect
+                  ? const LiveKitStreamReconnected()
+                  : const LiveKitStreamConnected(),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _onMuteToggled(
