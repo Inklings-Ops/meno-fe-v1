@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -113,9 +114,9 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.localNotifications);
     gh.lazySingleton<_i558.FlutterSecureStorage>(
         () => registerModule.secureStorage);
-    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
-    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
     gh.lazySingleton<_i879.BackgroundService>(() => _i879.BackgroundService());
+    gh.lazySingleton<_i431.JWTService>(() => _i431.JWTService());
+    gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
     gh.factory<_i664.BibleLocalDatasource>(() =>
@@ -144,11 +145,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i463.NetworkService(gh<_i973.InternetConnectionChecker>()));
     gh.factory<_i882.AuthLocalDatasource>(() =>
         _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
-    gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
-        storage: gh<_i535.SecureStorageService>()));
     gh.factory<_i396.BroadcastLocalDatasource>(() =>
         _i396.BroadcastLocalDatasource(
             storage: gh<_i264.SecureStorageService>()));
+    gh.factory<_i517.ProfileLocalDatasource>(() => _i517.ProfileLocalDatasource(
+        storage: gh<_i535.SecureStorageService>()));
     gh.lazySingleton<_i266.AuthTokenInterceptor>(() =>
         _i266.AuthTokenInterceptor(storage: gh<_i535.SecureStorageService>()));
     gh.lazySingleton<_i305.INetworkFacade>(() => _i479.NetworkFacade(
@@ -166,11 +167,16 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i424.BibleRemoteDatasource>(
         () => _i424.BibleRemoteDatasource(dio: gh<_i361.Dio>()));
-    gh.factory<_i922.ChatRemoteDatasource>(() => _i922.ChatRemoteDatasource(
+    gh.factory<_i437.AuthRemoteDatasource>(() => _i437.AuthRemoteDatasource(
           gh<_i361.Dio>(),
           baseUrl: gh<String>(instanceName: 'baseUrl'),
         ));
-    gh.factory<_i437.AuthRemoteDatasource>(() => _i437.AuthRemoteDatasource(
+    gh.factory<_i943.BroadcastRemoteDatasource>(
+        () => _i943.BroadcastRemoteDatasource(
+              gh<_i361.Dio>(),
+              baseUrl: gh<String>(instanceName: 'baseUrl'),
+            ));
+    gh.factory<_i922.ChatRemoteDatasource>(() => _i922.ChatRemoteDatasource(
           gh<_i361.Dio>(),
           baseUrl: gh<String>(instanceName: 'baseUrl'),
         ));
@@ -178,18 +184,13 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i361.Dio>(),
           baseUrl: gh<String>(instanceName: 'baseUrl'),
         ));
-    gh.factory<_i212.ProfileRemoteDatasource>(
-        () => _i212.ProfileRemoteDatasource(
-              gh<_i361.Dio>(),
-              baseUrl: gh<String>(instanceName: 'baseUrl'),
-            ));
-    gh.factory<_i943.BroadcastRemoteDatasource>(
-        () => _i943.BroadcastRemoteDatasource(
-              gh<_i361.Dio>(),
-              baseUrl: gh<String>(instanceName: 'baseUrl'),
-            ));
     gh.factory<_i589.NotificationRemoteDatasource>(
         () => _i589.NotificationRemoteDatasource(
+              gh<_i361.Dio>(),
+              baseUrl: gh<String>(instanceName: 'baseUrl'),
+            ));
+    gh.factory<_i212.ProfileRemoteDatasource>(
+        () => _i212.ProfileRemoteDatasource(
               gh<_i361.Dio>(),
               baseUrl: gh<String>(instanceName: 'baseUrl'),
             ));
