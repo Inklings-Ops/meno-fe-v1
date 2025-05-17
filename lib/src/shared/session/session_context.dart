@@ -41,4 +41,13 @@ class SessionContext implements ISessionContext {
 
   @override
   Future<void> refresh() => _authFacade.init();
+
+  @override
+  Future<Token?> getCurrentAuthToken() async {
+    final credential = _authFacade.credential;
+    if (credential != null && (credential.token?.isValid ?? false)) {
+      return credential.token!;
+    }
+    return null;
+  }
 }

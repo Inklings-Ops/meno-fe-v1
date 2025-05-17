@@ -79,7 +79,9 @@ import '../services/objectbox_service.dart' as _i116;
 import '../services/permissions_service.dart' as _i179;
 import '../services/secure_storage_service.dart' as _i535;
 import '../services/services.dart' as _i264;
+import '../services/socket/socket_service.dart' as _i717;
 import '../shared/session/bloc/session_bloc.dart' as _i703;
+import '../shared/session/session.dart' as _i530;
 import '../shared/session/session_context.dart' as _i320;
 import '../shared/shared.dart' as _i44;
 import 'register_module.dart' as _i291;
@@ -242,6 +244,13 @@ extension GetItInjectableX on _i174.GetIt {
       () {
         final i = _i703.SessionBloc(session: gh<_i44.ISessionContext>());
         return i.init().then((_) => i);
+      },
+      preResolve: true,
+    );
+    await gh.factoryAsync<_i717.SocketService>(
+      () {
+        final i = _i717.SocketService(session: gh<_i530.ISessionContext>());
+        return i.initialize().then((_) => i);
       },
       preResolve: true,
     );

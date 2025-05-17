@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart' show Token;
 
 abstract class ISessionContext {
   Future<void> logout();
@@ -17,4 +18,6 @@ abstract class ISessionContext {
   Stream<UserCredential?> get userChanges;
 
   Future<void> refresh();
+
+  Future<Token?> getCurrentAuthToken();
 }
