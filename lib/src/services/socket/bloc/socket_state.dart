@@ -1,73 +1,106 @@
 part of 'socket_bloc.dart';
 
-@freezed
-class SocketState with _$SocketState {
-  const factory SocketState.connectInProgress() = SocketConnectInProgress;
+sealed class SocketState with EquatableMixin {
+  const SocketState();
 
-  const factory SocketState.connected() = SocketConnected;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory SocketState.disconnected() = SocketDisconnected;
+final class SocketConnectInProgress extends SocketState {
+  const SocketConnectInProgress();
+}
 
-  const factory SocketState.error({
-    required String error,
-    @Default(false) bool isStream,
-  }) = SocketError;
+final class SocketConnected extends SocketState {
+  const SocketConnected();
+}
 
-  const factory SocketState.loading() = SocketLoading;
+final class SocketDisconnected extends SocketState {
+  const SocketDisconnected();
+}
 
-  const factory SocketState.broadcastStarted() = SocketBroadcastStarted;
+final class SocketError extends SocketState {
+  const SocketError(this.message);
+  final String message;
 
-  const factory SocketState.broadcastEnded() = SocketBroadcastEnded;
+  @override
+  List<Object?> get props => [message];
+}
 
-  const factory SocketState.broadcastJoined() = SocketBroadcastJoined;
+// Event: newBroadcastListener
+final class SocketNewParticipantReceived extends SocketState {
+  const SocketNewParticipantReceived(this.participant);
+  final BroadcastParticipant participant;
 
-  const factory SocketState.broadcastLeft() = SocketBroadcastLeft;
+  @override
+  List<Object?> get props => [participant];
+}
 
-  const factory SocketState.messagesReceived(
-    List<Chat?> chats,
-  ) = SocketMessagesReceived;
+// Event: broadcastListenerLeft
+final class SocketParticipantLeftReceived extends SocketState {
+  const SocketParticipantLeftReceived(this.participant);
+  final BroadcastParticipant participant;
 
-  const factory SocketState.newBroadcastListener(
-    BroadcastParticipant participant,
-  ) = SocketNewBroadcastListenerReceived;
+  @override
+  List<Object?> get props => [participant];
+}
 
-  const factory SocketState.broadcastListenerLeft(
-    BroadcastParticipant participant,
-  ) = SocketBroadcastListenerLeftReceived;
+// Event: endedBroadcast
+final class SocketEndedBroadcastReceived extends SocketState {
+  const SocketEndedBroadcastReceived(this.data);
+  final EndedBroadcastData data;
 
-  const factory SocketState.endedBroadcast(
-    EndedBroadcastData data,
-  ) = SocketEndedBroadcastReceived;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketState.newBroadcast(
-    Broadcast broadcast,
-  ) = SocketNewBroadcastReceived;
+// Event: newBroadcast
+final class SocketNewBroadcastReceived extends SocketState {
+  const SocketNewBroadcastReceived(this.broadcast);
+  final Broadcast broadcast;
 
-  const factory SocketState.hostDisconnected(
-    bool value,
-  ) = SocketHostDisconnectedReceived;
+  @override
+  List<Object?> get props => [broadcast];
+}
 
-  const factory SocketState.hostReconnected(
-    bool value,
-  ) = SocketReconnectedReceived;
+// Event: hostDisconnected
+final class SocketHostDisconnectedReceived extends SocketState {
+  const SocketHostDisconnectedReceived(this.value);
+  final bool value;
 
-  const factory SocketState.notification(
-    Notification notification,
-  ) = SocketNotificationReceived;
+  @override
+  List<Object?> get props => [value];
+}
 
-  const factory SocketState.newMessage(
-    Chat chat,
-  ) = SocketNewMessageReceived;
+// Event: hostReconnected
+final class SocketHostReconnectedReceived extends SocketState {
+  const SocketHostReconnectedReceived(this.value);
+  final bool value;
 
-  const factory SocketState.editedMessage(
-    Chat chat,
-  ) = SocketEditedMessageReceived;
+  @override
+  List<Object?> get props => [value];
+}
 
-  const factory SocketState.deletedMessage(
-    Chat chat,
-  ) = SocketDeletedMessageRemoved;
+final class SocketNotificationReceived extends SocketState {
+  const SocketNotificationReceived(this.notification);
+  final Notification notification;
 
-  const factory SocketState.newReaction(
-    Chat chat,
-  ) = SocketNewChatReactionReceived;
+  @override
+  List<Object?> get props => [notification];
+}
+
+final class SocketDeletedChatReceived extends SocketState {
+  const SocketDeletedChatReceived(this.chat);
+  final Chat chat;
+
+  @override
+  List<Object?> get props => [chat];
+}
+
+final class SocketEditedChatReceived extends SocketState {
+  const SocketEditedChatReceived(this.chat);
+  final Chat chat;
+
+  @override
+  List<Object?> get props => [chat];
 }

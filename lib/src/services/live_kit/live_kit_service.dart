@@ -5,7 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/core/env/env.dart';
-import 'package:meno_fe_v1/src/features/features.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -66,12 +66,12 @@ class LiveKitService extends Object with Disposable {
       await disconnect();
       if (e.message.contains('invalid token')) {
         return left(
-          const BroadcastException.message(
+          const BroadcastExceptionWithMessage(
             'Invalid Token: Unable to connect due to invalid token.',
           ),
         );
       }
-      return left(BroadcastException.message(e.message));
+      return left(BroadcastExceptionWithMessage(e.message));
     }
   }
 

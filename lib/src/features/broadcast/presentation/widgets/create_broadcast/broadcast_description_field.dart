@@ -21,9 +21,7 @@ class BroadcastDescriptionField extends StatelessWidget {
         controller: controller,
         enabled: !isLoading,
         onChanged: context.read<BroadcastFormCubit>().descriptionChanged,
-        validator: (_) => state.description != null
-            ? context.validator(state.description!.value)
-            : null,
+        validator: (_) => context.validator(state.description.value),
       ),
     );
   }

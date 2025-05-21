@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/core/exceptions/broadcast_exception.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
 import 'package:meno_fe_v1/src/features/discover/discover.dart';
 

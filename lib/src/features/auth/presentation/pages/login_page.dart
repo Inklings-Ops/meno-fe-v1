@@ -58,10 +58,6 @@ class LoginView extends HookWidget {
             (failure) => context.showLoginError(failure),
             (success) {
               context.read<SessionBloc>().add(const SessionStarted());
-              context.read<RecentlyLiveCubit>().fetch();
-              context.read<LiveBroadcastsBloc>().add(const GetLiveBroadcasts());
-              context.read<AccountBloc>().add(const AccountInitialized());
-              context.read<MyProfileCubit>().fetch();
             },
           ),
         );

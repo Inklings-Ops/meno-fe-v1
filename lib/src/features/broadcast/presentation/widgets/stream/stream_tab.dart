@@ -69,7 +69,7 @@ class _StreamArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<StreamBloc, StreamState, String?>(
+    return BlocSelector<BroadcastBloc, BroadcastState, String?>(
       selector: (state) => state.broadcast.imageUrl,
       builder: (context, url) => BroadcastArtworkWidget(imageUrl: url),
     );
@@ -81,7 +81,7 @@ class _StreamTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<StreamBloc, StreamState, String>(
+    return BlocSelector<BroadcastBloc, BroadcastState, String>(
       selector: (state) => state.broadcast.title.getOr(),
       builder: (context, title) => BroadcastTitle(title: title),
     );
@@ -93,7 +93,7 @@ class _CreatorName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<StreamBloc, StreamState, String>(
+    return BlocSelector<BroadcastBloc, BroadcastState, String>(
       selector: (state) => state.broadcast.creator!.fullName,
       builder: (context, fullName) => MText(
         fullName,
@@ -108,7 +108,7 @@ class _BroadcastAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<StreamBloc, StreamState, String?>(
+    return BlocSelector<BroadcastBloc, BroadcastState, String?>(
       selector: (state) => state.broadcast.description?.getOr(),
       builder: (context, desc) => BroadcastAboutTab(description: desc),
     );

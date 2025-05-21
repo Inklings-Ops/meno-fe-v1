@@ -93,6 +93,7 @@ class DiscoverView extends HookWidget {
         child: SingleChildScrollView(
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: Insets.xxxl),
           child: switch (filter.value) {
             Filter.all => const AllBroadcastsWidget(),
             Filter.nowLive => const NowLiveBroadcastsWidget(),
@@ -114,27 +115,28 @@ class DiscoverView extends HookWidget {
   }
 
   Future<dynamic> _nowLive(BuildContext context) async {
-    final nowLiveBloc = context.read<LiveBroadcastsBloc>();
+    final nowLiveBloc = context.read<NowLiveBloc>();
     final nowLive = nowLiveBloc.stream.first;
-    nowLiveBloc.add(const GetLiveBroadcasts());
+    nowLiveBloc.add(const NowLiveStarted());
     return Future<dynamic>.value(nowLive);
   }
 
   Future<dynamic> _recentlyLive(BuildContext context) async {
-    final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
+    final recentlyLiveBloc = context.read<RecentlyLiveBloc>();
     final recentlyLive = recentlyLiveBloc.stream.first;
-    await recentlyLiveBloc.fetch();
+    recentlyLiveBloc.add(const RecentlyLiveStarted());
     return Future<dynamic>.value(recentlyLive);
   }
 
   Future<void> fetchMore(BuildContext context, Filter filter) async {
-    final nowLive = context.read<LiveBroadcastsBloc>();
-    final recentlyLive = context.read<RecentlyLiveCubit>();
+    final nowLive = context.read<NowLiveBloc>();
+    final recentlyLive = context.read<RecentlyLiveBloc>();
 
     return switch (filter) {
       Filter.all => null,
-      Filter.nowLive => nowLive.add(const GetMoreLiveBroadcasts()),
-      Filter.recentlyLive => recentlyLive.fetchMore(),
+      Filter.nowLive => nowLive.add(const NowLiveFetchMoreRequested()),
+      Filter.recentlyLive =>
+        recentlyLive.add(const RecentlyLiveFetchMoreRequested()),
       Filter.accounts => null,
     };
   }

@@ -6,35 +6,41 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const Padding(
-          padding: EdgeInsets.only(top: 120),
-          child: EmptyListWidget(),
-        ),
-        loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-        success: (broadcasts) => _List(broadcasts: broadcasts),
-        loadingMore: (broadcasts) => Column(
-          children: [
-            _List(broadcasts: broadcasts),
-            Spaces.verticalXLarge,
-            const MLoadingIndicator.box(),
-          ],
-        ),
-        successLast: (broadcasts) => Column(
-          children: [
-            _List(broadcasts: broadcasts),
-            Spaces.verticalXLarge,
-            MText(
-              'You’ve reached the end 🎉',
-              style: MTextTheme.of(context)!.captionRegular,
-              color: MColorScheme.of(context).onBackgroundVariant,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 28),
-          ],
-        ),
-      ),
+    return BlocBuilder<RecentlyLiveBloc, RecentlyLiveState>(
+      builder: (context, state) {
+        switch (state) {
+          case RecentlyLiveLoadInProgress():
+            return _List(broadcasts: fakeBroadcasts, loading: true);
+          case RecentlyLiveLoadMoreInProgress(:final broadcasts):
+            return Column(
+              children: [
+                _List(broadcasts: broadcasts),
+                Spaces.verticalXLarge,
+                const MLoadingIndicator.box(),
+              ],
+            );
+          case RecentlyLiveLoadSuccess(:final broadcasts, :final hasMore):
+            if (hasMore) return _List(broadcasts: broadcasts);
+            return Column(
+              children: [
+                _List(broadcasts: broadcasts),
+                Spaces.verticalXLarge,
+                MText(
+                  'You’ve reached the end 🎉',
+                  style: MTextTheme.of(context)!.captionRegular,
+                  color: MColorScheme.of(context).onBackgroundVariant,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 28),
+              ],
+            );
+          default:
+            return const Padding(
+              padding: EdgeInsets.only(top: 120),
+              child: EmptyListWidget(),
+            );
+        }
+      },
     );
   }
 }
@@ -46,6 +52,13 @@ class _List extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (broadcasts.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 120),
+        child: EmptyListWidget(),
+      );
+    }
+
     return Skeletonizer(
       enabled: loading,
       child: GridView.builder(
@@ -62,7 +75,10 @@ class _List extends StatelessWidget {
             title: broadcast.title.getOr(),
             imageUrl: broadcast.imageUrl,
             host: broadcast.fullName,
-            onTap: () => router.push(Routes.details, extra: broadcast),
+            onTap: () => router.pushNamed(
+              'Broadcast Details',
+              pathParameters: {'id': broadcast.id.getOr()},
+            ),
           );
         },
         itemCount: broadcasts.length,

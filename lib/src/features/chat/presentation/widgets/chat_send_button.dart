@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class ChatSendButton extends StatelessWidget {
   const ChatSendButton({required this.scrollController, super.key});
@@ -10,13 +9,8 @@ class ChatSendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
 
+    final broadcastBloc = context.watch<BroadcastBloc>();
     final chatInputBloc = context.watch<ChatInputCubit>();
-    final chatListBloc = context.watch<ChatListBloc>();
-
-    final currentUserId = context.read<SessionBloc>().state.maybeWhen(
-          orElse: () => '',
-          authenticated: (user, token) => user.id.getOr(),
-        );
 
     final isLive = [
       const Live(),
@@ -28,27 +22,22 @@ class ChatSendButton extends StatelessWidget {
     final isEditing = inputState.isEditing && inputState.initialChat != null;
 
     void submit() {
-      late SocketEvent event;
+      late ChatListEvent event;
       if (isEditing) {
         final chat = inputState.initialChat!;
-        event = SocketEditMessage(
-          id: chat.id,
-          senderId: chat.sender?.id ?? chat.senderId ?? currentUserId,
-          broadcastId: chat.broadcastId,
-          content: chatInputBloc.state.content!,
-          createdAt: chat.createdAt.toIso8601String(),
-          updatedAt: DateTime.timestamp().toIso8601String(),
-        );
+        final contentString = inputState.content;
+        if (contentString == null) return;
+        final updatedContent = IChatContent(contentString);
+        final updatedChat = chat.copyWith(content: updatedContent);
+        event = ChatEditMessageRequested(updatedChat);
       } else {
-        event = SocketSendMessage(
-          senderId: currentUserId,
-          broadcastId: chatListBloc.state.broadcast.id.getOr(),
-          content: chatInputBloc.state.content!,
-          createdAt: DateTime.timestamp().toIso8601String(),
+        event = ChatSendMessageRequested(
+          broadcastId: broadcastBloc.state.broadcast.id,
+          content: inputState.content!,
         );
       }
 
-      context.read<SocketBloc>().add(event);
+      context.read<ChatListBloc>().add(event);
 
       scrollController.animateTo(
         0,

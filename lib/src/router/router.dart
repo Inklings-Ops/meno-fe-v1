@@ -48,8 +48,11 @@ final router = GoRouter(
       builder: (context, state) => const CreateNewPasswordPage(),
     ),
     GoRoute(
-      path: Routes.details,
-      builder: (_, state) => DetailsPage(broadcast: state.extra! as Broadcast),
+      path: Routes.broadcastDetails,
+      name: 'Broadcast Details',
+      builder: (_, state) => BroadcastDetailsPage(
+        id: Uid.fromString(state.pathParameters['id']!),
+      ),
     ),
     GoRoute(
       path: Routes.emailVerification,
@@ -71,10 +74,11 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.endedBroadcast,
-      onExit: (context, state) {
-        context.read<TimerCubit>().dispose();
-        context.read<ParticipantsBloc>().add(const ParticipantsReset());
-        context.read<BroadcastBloc>().add(const BroadcastReset());
+      onExit: (ctx, state) {
+        ctx.read<TimerCubit>().dispose();
+        ctx.read<ChatListBloc>().add(const ChatResetRequested());
+        ctx.read<ParticipantsBloc>().add(const ParticipantsResetRequested());
+        ctx.read<BroadcastBloc>().add(const BroadcastResetRequested());
         return true;
       },
       builder: (context, state) => const EndedBroadcastPage(),
@@ -115,10 +119,6 @@ final router = GoRouter(
     GoRoute(
       path: Routes.onboarding,
       builder: (context, state) => const OnboardingPage(),
-    ),
-    GoRoute(
-      path: Routes.recentlyLive,
-      builder: (context, state) => const RecentlyLivePage(),
     ),
     GoRoute(
       path: Routes.register,
@@ -170,10 +170,6 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: Routes.nowLive,
-      builder: (context, state) => const NowLivePage(),
-    ),
-    GoRoute(
       path: Routes.settings,
       builder: (context, state) => const SettingsPage(),
     ),
@@ -193,6 +189,31 @@ final router = GoRouter(
     GoRoute(
       path: Routes.notificationSettings,
       builder: (context, state) => const NotificationsSettingsPage(),
+    ),
+
+    GoRoute(
+      path: Routes.broadcasts,
+      name: 'Broadcasts',
+      builder: (context, state) => BroadcastsPage(
+        type: stringToBroadcastPageType(state.uri.queryParameters['type']),
+        orderBy: stringToOrderBy(state.uri.queryParameters['order-by']),
+        sortBy: state.uri.queryParameters['sort-by']!,
+        page: _mapValue('page', state.uri.queryParameters, int.parse) ?? 1,
+        size: _mapValue('size', state.uri.queryParameters, int.parse) ?? 10,
+        startTimeExists: _mapValue(
+          'start-time-exists',
+          state.uri.queryParameters,
+          _boolValue,
+        ),
+        endTimeExists: _mapValue(
+          'end-time-exists',
+          state.uri.queryParameters,
+          _boolValue,
+        ),
+        include: state.uri.queryParameters['include'],
+        status: state.uri.queryParameters['status'],
+        creatorId: state.uri.queryParameters['creator-id'],
+      ),
     ),
 
     /// Modals
@@ -339,15 +360,6 @@ final router = GoRouter(
         barrierDismissible: false,
         builder: (context) => RemoveNoteFromFolderAlertDialog(
           note: state.extra! as Note,
-        ),
-      ),
-    ),
-    GoRoute(
-      path: Routes.leaveAndJoinDialog,
-      pageBuilder: (context, state) => DialogPage<void>(
-        key: state.pageKey,
-        builder: (context) => LeaveAndJoinDialog(
-          broadcast: state.extra! as Broadcast,
         ),
       ),
     ),
@@ -537,5 +549,25 @@ extension GoRouteX on GoRouter {
   void popAndPush(String location, {Object? extra}) {
     pop();
     push(location, extra: extra);
+  }
+}
+
+T? _mapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+bool _boolValue(String value) {
+  switch (value) {
+    case 'true':
+      return true;
+    case 'false':
+      return false;
+    default:
+      throw UnsupportedError('Cannot convert "$value" into a bool.');
   }
 }

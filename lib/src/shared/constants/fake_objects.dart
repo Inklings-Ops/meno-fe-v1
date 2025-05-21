@@ -31,6 +31,13 @@ final fakeBroadcasts = List.filled(
     title: SingleLineString(BoneMock.title),
     description: BroadcastDescription(BoneMock.longParagraph),
     creator: fakeBroadcastParticipant,
+    creatorId:BoneMock.name,
+    fullName: BoneMock.fullName,
+    startTime: DateTime.now(),
+    endTime: DateTime.now().add(const Duration(hours: 1)),
+    createdAt: DateTime.now(),
+    liveListeners: 100,
+    totalListeners: 200,
   ),
 );
 

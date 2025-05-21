@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
@@ -31,7 +32,7 @@ class BroadcastFacade implements IBroadcastFacade {
     List<String>? cohosts,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     final titleStr = title.value.getOrElse(() => MErrorMessages.invalidBTitle);
     final descStr =
@@ -51,7 +52,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -60,7 +61,7 @@ class BroadcastFacade implements IBroadcastFacade {
     Uid<Broadcast> id,
   ) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
@@ -70,7 +71,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -84,7 +85,7 @@ class BroadcastFacade implements IBroadcastFacade {
     DateTime? startTime,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
     final titleStr = title?.value.getOrElse(() => MErrorMessages.invalidBTitle);
@@ -106,7 +107,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -130,7 +131,7 @@ class BroadcastFacade implements IBroadcastFacade {
     bool? startTimeExist,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final response = await _remote.getBroadcasts(
@@ -156,26 +157,31 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
   @override
-  Future<Either<BroadcastException, JoinBroadcastEntity>> joinBroadcast(
+  Future<Either<BroadcastException, Broadcast>> joinBroadcast(
     Uid<Broadcast> id,
   ) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
       final response = await _remote.joinBroadcast(broadcastId: idStr);
-      return right(response.data!.toDomain);
+      final data = response.data!;
+      final broadcastWithoutToken = data.broadcast.toDomain;
+      final broadcastWithToken = broadcastWithoutToken.copyWith(
+        broadcastToken: data.broadcastToken,
+      );
+      return right(broadcastWithToken);
     } on DioException catch (e) {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -184,7 +190,7 @@ class BroadcastFacade implements IBroadcastFacade {
     Uid<Broadcast> id,
   ) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
@@ -194,7 +200,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -203,7 +209,7 @@ class BroadcastFacade implements IBroadcastFacade {
     Uid<Broadcast> id,
   ) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
@@ -215,7 +221,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -224,7 +230,7 @@ class BroadcastFacade implements IBroadcastFacade {
     Uid<Broadcast> id,
   ) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final idStr = id.value.getOrElse(() => MErrorMessages.invalidBUid);
@@ -235,7 +241,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -243,7 +249,7 @@ class BroadcastFacade implements IBroadcastFacade {
     final errorData = e.response?.data as Map<String, dynamic>;
     final unknownError = errorData['error'] as dynamic;
     if (unknownError.runtimeType == String) {
-      return BroadcastException.message(errorData['message'] as String);
+      return BroadcastExceptionWithMessage(errorData['message'] as String);
     }
 
     final message = errorData['error'] as Map<String, dynamic>;
@@ -255,10 +261,10 @@ class BroadcastFacade implements IBroadcastFacade {
     }
 
     if (result != null) {
-      return BroadcastException.message(result);
+      return BroadcastExceptionWithMessage(result);
     }
 
-    return const BroadcastException.serverError();
+    return const BroadcastServerException();
   }
 
   @override
@@ -269,7 +275,7 @@ class BroadcastFacade implements IBroadcastFacade {
     String? orderBy,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final response = await _remote.getBroadcasts(
@@ -287,7 +293,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -302,7 +308,7 @@ class BroadcastFacade implements IBroadcastFacade {
     String? endTimeLT,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     final now = DateTime.now();
     final oneDayAgo = now.subtract(const Duration(days: 100));
@@ -324,7 +330,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -337,7 +343,7 @@ class BroadcastFacade implements IBroadcastFacade {
     String? orderBy,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     try {
       final response = await _remote.getBroadcasts(
@@ -352,7 +358,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 
@@ -368,7 +374,7 @@ class BroadcastFacade implements IBroadcastFacade {
     String? endTimeLT,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const BroadcastException.networkError());
+    if (!isConnected) return left(const BroadcastNetworkException());
 
     final now = DateTime.now();
     final oneDayAgo = now.subtract(const Duration(days: 100));
@@ -391,7 +397,7 @@ class BroadcastFacade implements IBroadcastFacade {
       final error = _getError(e);
       return left(error);
     } on TimeoutException {
-      return left(const BroadcastException.timeOutError());
+      return left(const BroadcastTimeoutException());
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/response/response.dart' show BaseResponse;
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -16,7 +17,7 @@ abstract class ChatRemoteDatasource {
   }) = _ChatRemoteDatasource;
 
   @GET('/api/v1/chat-messages')
-  Future<ChatResponse<ChatListDto>> chatMessages({
+  Future<BaseResponse<PaginatedChatMessages<ChatDto?>>> chatMessages({
     @Query('broadcastId') required String broadcastId,
     @Query('orderBy') String? orderBy,
     @Query('page') int? page,

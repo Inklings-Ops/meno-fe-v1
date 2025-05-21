@@ -13,8 +13,17 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         super(AccountState.initial()) {
     on<AccountInitialized>(_onInitialize);
     on<AccountSwitchRequested>(_onSwitchAccount);
+
+    _subscription = _session.userChanges.listen((credential) {
+      if (credential != null && (credential.token?.isValid ?? false)) {
+        add(const AccountInitialized());
+      }
+    });
   }
+
   final ISessionContext _session;
+
+  StreamSubscription<UserCredential?>? _subscription;
 
   Future<void> _onInitialize(
     AccountInitialized event,
@@ -41,5 +50,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         (credential) => AccountLoaded(credential: credential),
       ),
     );
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    _subscription = null;
+    return super.close();
   }
 }

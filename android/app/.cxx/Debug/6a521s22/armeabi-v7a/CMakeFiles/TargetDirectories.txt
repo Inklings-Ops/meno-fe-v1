@@ -1,0 +1,2 @@
+D:/CODE/Work/Meno/meno-fe-v1/android/app/.cxx/Debug/6a521s22/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/CODE/Work/Meno/meno-fe-v1/android/app/.cxx/Debug/6a521s22/armeabi-v7a/CMakeFiles/rebuild_cache.dir

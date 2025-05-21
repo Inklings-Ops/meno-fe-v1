@@ -3,31 +3,48 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:rxdart/rxdart.dart';
 
-part 'participants_bloc.freezed.dart';
-
 part 'participants_event.dart';
-
 part 'participants_state.dart';
 
 class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
-  ParticipantsBloc({required IBroadcastFacade facade})
-      : _facade = facade,
-        super(ParticipantsState.initial()) {
-    on<GetLiveParticipants>(_onGetLiveParticipants);
-    on<ParticipantsReloadPressed>(_onParticipantsReloadPressed);
-    on<GetAllParticipants>(_onGetAllParticipants);
-    on<ParticipantsReset>(_onParticipantsReset);
-    on<ParticipantJoined>(_onParticipantJoined, transformer: _transformer());
-    on<ParticipantLeft>(_onParticipantLeft, transformer: _transformer());
+  ParticipantsBloc({
+    required IBroadcastFacade facade,
+    required SocketService socket,
+  })  : _facade = facade,
+        _socket = socket,
+        super(const ParticipantsState()) {
+    on<ParticipantsFetchRequested>(_onParticipantsFetchRequested);
+    on<ParticipantsReloadRequested>(_onParticipantsReloadRequested);
+    on<ParticipantsFetchAllRequested>(_onParticipantsFetchAllRequested);
+    on<ParticipantsResetRequested>(_onParticipantsResetRequested);
+    on<_ParticipantJoinedSubscribed>(
+      _onParticipantJoinedSubscribed,
+      transformer: _transformer(),
+    );
+    on<_ParticipantLeftSubscribed>(
+      _onParticipantLeftSubscribed,
+      transformer: _transformer(),
+    );
+
+    _socket.addListener(
+      'newBroadcastListener',
+      (data) => add(_ParticipantJoinedSubscribed(data)),
+    );
+
+    _socket.addListener(
+      'broadcastListenerLeft',
+      (data) => add(_ParticipantLeftSubscribed(data)),
+    );
   }
 
   final IBroadcastFacade _facade;
-
-  final _initialState = ParticipantsState.initial();
+  final SocketService _socket;
 
   /// Priority bucket for [Role.host]. This is not a list as there will be only
   /// one host broadcast
@@ -47,8 +64,8 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   /// This will
   /// - Store the live broadcast object gotten from the event parameter
   /// - Retrieve all the currently live participants and update the state
-  Future<void> _onGetLiveParticipants(
-    GetLiveParticipants event,
+  Future<void> _onParticipantsFetchRequested(
+    ParticipantsFetchRequested event,
     Emitter<ParticipantsState> emit,
   ) async {
     if (_listenersInitialized) return;
@@ -74,8 +91,8 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   }
 
   /// Reload event to retrieve all the currently live [BroadcastParticipant]s
-  Future<void> _onParticipantsReloadPressed(
-    ParticipantsReloadPressed event,
+  Future<void> _onParticipantsReloadRequested(
+    ParticipantsReloadRequested event,
     Emitter<ParticipantsState> emit,
   ) async {
     emit(state.copyWith(loading: true));
@@ -97,8 +114,8 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
 
   /// Fetches all the [BroadcastParticipant]s that have joined the broadcast
   /// from the time it started to its ending
-  Future<void> _onGetAllParticipants(
-    GetAllParticipants event,
+  Future<void> _onParticipantsFetchAllRequested(
+    ParticipantsFetchAllRequested event,
     Emitter<ParticipantsState> emit,
   ) async {
     emit(state.copyWith(loading: true));
@@ -117,12 +134,14 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
 
   /// Event function to update the state when a new [BroadcastParticipant]
   /// joins a [Broadcast]
-  void _onParticipantJoined(
-    ParticipantJoined event,
+  void _onParticipantJoinedSubscribed(
+    _ParticipantJoinedSubscribed event,
     Emitter<ParticipantsState> emit,
   ) {
     if (!_listenersInitialized) return;
-    _addToBucket(event.participant);
+    final eventData = event.data as Map<String, dynamic>;
+    final participant = BroadcastParticipantDto.fromJson(eventData).toDomain;
+    _addToBucket(participant);
     emit(
       state.copyWith(
         liveParticipants: _buildSortedList(),
@@ -133,12 +152,14 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
 
   /// Event function to update the state when a [BroadcastParticipant] leaves
   /// a [Broadcast]
-  void _onParticipantLeft(
-    ParticipantLeft event,
+  void _onParticipantLeftSubscribed(
+    _ParticipantLeftSubscribed event,
     Emitter<ParticipantsState> emit,
   ) {
     if (!_listenersInitialized) return;
-    _removeFromBucket(event.participant);
+    final eventData = event.data as Map<String, dynamic>;
+    final participant = BroadcastParticipantDto.fromJson(eventData).toDomain;
+    _removeFromBucket(participant);
     emit(
       state.copyWith(
         liveParticipants: _buildSortedList(),
@@ -148,15 +169,17 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   }
 
   /// Event function to reset the [ParticipantsBloc] and free up resources
-  void _onParticipantsReset(
-    ParticipantsReset event,
+  void _onParticipantsResetRequested(
+    ParticipantsResetRequested event,
     Emitter<ParticipantsState> emit,
   ) {
     _listenersInitialized = false;
     host = null;
     cohosts.clear();
     listeners.clear();
-    emit(_initialState);
+    _socket.removeListener('newBroadcastListener');
+    _socket.removeListener('broadcastListenerLeft');
+    emit(const ParticipantsState());
   }
 
   void _addToBucket(BroadcastParticipant participant) {

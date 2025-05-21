@@ -11,9 +11,10 @@ class ChatBubble extends StatelessWidget {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
-    final broadcast = getBroadcastFromContext(context);
-    final isHost =
-        (broadcast.creatorId ?? broadcast.creator?.id) == chat.senderId;
+    final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
+
+    final broadcastCreatorId = broadcast.creatorId ?? broadcast.creator?.id;
+    final isHost = broadcastCreatorId == chat.senderId;
 
     final timeStamp = GetTimeAgo.parse(chat.updatedAt ?? chat.createdAt);
 
@@ -129,17 +130,4 @@ class ChatBubble extends StatelessWidget {
       isScrollControlled: true,
     );
   }
-}
-
-Broadcast getBroadcastFromContext(BuildContext context) {
-  final broadcastBloc = context.read<BroadcastBloc>().state;
-  final streamBloc = context.read<StreamBloc>().state;
-
-  if (broadcastBloc.broadcast != Broadcast.empty()) {
-    return broadcastBloc.broadcast;
-  } else if (streamBloc.broadcast != Broadcast.empty()) {
-    return streamBloc.broadcast;
-  }
-
-  throw Exception('No valid broadcast found in either bloc');
 }

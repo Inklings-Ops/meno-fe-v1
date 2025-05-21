@@ -30,30 +30,39 @@ class _LiveLayoutState extends State<LiveLayout>
 
     return Stack(
       children: [
-        BlocListener<ChatListBloc, ChatListState>(
-          listenWhen: (previous, current) {
-            return current.chats.length > previous.chats.length &&
-                current.chats.isNotEmpty;
-          },
-          listener: (context, state) {
-            if (controller.index != _chatTabIndex) {
-              if (!_showChatDot) {
-                if (mounted) setState(() => _showChatDot = true);
-              }
-            }
-          },
+        MultiBlocListener(
+          listeners: [
+            BlocListener<ChatListBloc, ChatListState>(
+              listenWhen: (previous, current) {
+                return current.chats.length > previous.chats.length &&
+                    current.chats.isNotEmpty;
+              },
+              listener: (context, state) {
+                if (controller.index != _chatTabIndex) {
+                  if (!_showChatDot) {
+                    if (mounted) setState(() => _showChatDot = true);
+                  }
+                }
+              },
+            ),
+            BlocListener<BroadcastBloc, BroadcastState>(
+              listener: (context, state) {
+                if (state.status.isLeft) {
+                  router.go(Routes.home);
+                }
+              },
+            ),
+          ],
           child: Scaffold(
             appBar: BroadcastAppBar(
               showChatDot: _showChatDot,
               controller: controller,
               onTabTap: widget.navigationShell.goBranch,
             ),
-            body: LiveLayoutListeners(
-              child: MTabBarView(
-                controller: controller,
-                children: widget.children,
-                onPageChanged: (_) => FocusScope.of(context).unfocus(),
-              ),
+            body: MTabBarView(
+              controller: controller,
+              children: widget.children,
+              onPageChanged: (_) => FocusScope.of(context).unfocus(),
             ),
           ),
         ),

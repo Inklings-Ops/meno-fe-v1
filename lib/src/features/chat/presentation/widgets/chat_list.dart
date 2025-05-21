@@ -31,30 +31,34 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final broadcast = context.read<ChatListBloc>().state.broadcast;
-    return BlocBuilder<SessionBloc, SessionState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        authenticated: (user, _) {
-          final currentUserId = user.id.getOr();
-          final senderId = chat.senderId;
-          return GestureDetector(
-            onLongPress: () {
-              final isHost = user.id.getOr() == broadcast.creator!.id;
-              if (currentUserId == senderId) {
-                showMyChatOptions(context, chat: chat);
-              } else {
-                showOtherChatOptions(
-                  context,
-                  chat: chat,
-                  isHost: isHost,
-                );
-              }
-            },
-            child: ChatBubble(chat: chat),
-          );
-        },
-      ),
+    final senderId = chat.senderId ?? chat.sender?.id;
+
+    final broadcastCreatorId = context.select<BroadcastBloc, String?>(
+      (bloc) {
+        final broadcast = bloc.state.broadcast;
+        return broadcast.creator?.id ?? broadcast.creatorId;
+      },
+    );
+
+    final currentUserId = context.select<SessionBloc, String?>(
+      (b) => b.state.whenOrNull(authenticated: (user, _) => user.id.getOr()),
+    );
+
+    // If the currently authenticated user is also the host of the broadcast
+    final isHost = currentUserId == broadcastCreatorId;
+
+    // If the currently authenticated user is also the sender of this chat msg
+    final isCurrentUserTheSender = currentUserId == senderId;
+
+    return GestureDetector(
+      onLongPress: () {
+        if (isCurrentUserTheSender) {
+          showMyChatOptions(context, chat: chat);
+        } else {
+          showOtherChatOptions(context, chat: chat, isHost: isHost);
+        }
+      },
+      child: ChatBubble(chat: chat),
     );
   }
 
@@ -67,16 +71,7 @@ class _ChatBubble extends StatelessWidget {
   Future<void> handleDeleteMessage(BuildContext context, Chat chat) async {
     final result = await context.showDeleteCommentDialog();
     if ((result ?? false) && context.mounted) {
-      final socket = context.read<SocketBloc>();
-      return socket.add(
-        SocketDeleteMessage(
-          id: chat.id,
-          senderId: chat.sender?.id ?? chat.senderId ?? '',
-          broadcastId: chat.broadcastId,
-          content: chat.content.getOr(),
-          createdAt: chat.createdAt.toIso8601String(),
-        ),
-      );
+      return context.read<ChatListBloc>().add(ChatDeleteRequested(chat));
     }
   }
 
@@ -89,7 +84,7 @@ class _ChatBubble extends StatelessWidget {
       isScrollControlled: true,
       BlocListener<SocketBloc, SocketState>(
         listener: (context, state) {
-          state.whenOrNull(deletedMessage: (chat) => router.pop());
+          if (state is SocketDeletedChatReceived) router.pop();
         },
         child: MModal(
           title: 'My Comment',

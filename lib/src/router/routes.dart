@@ -26,7 +26,6 @@ class Routes {
   static const String othersProfile = '/others-profile';
   static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
-  static const String details = '/details';
   static const String notifications = '/notifications';
   static const String noteEditor = '/noteEditor';
   static const String folder = '/folder';
@@ -36,6 +35,8 @@ class Routes {
   static const String about = '/settings/about';
   static const String endedBroadcast = '/endedBroadcast';
   static const String biblePage = '/bible-page';
+  static const String broadcasts = '/broadcasts';
+  static const String broadcastDetails = '/broadcasts/:id';
 
   static const String broadcastTab = '/broadcast-tab';
   static const String chatTab = '/chat-tab';
@@ -63,7 +64,6 @@ class Routes {
   static const String deleteNoteDialog = '/delete-note-dialog';
   static const String deleteFolderDialog = '/delete-folder-dialog';
   static const String remoteNoteFromFolderDialog = '/remove-note-folder-dialog';
-  static const String leaveAndJoinDialog = '/leave-and-join-stream-dialog';
   static const String logoutConfirmationDialog =
       '/logout-confirmation-dialog';
 }

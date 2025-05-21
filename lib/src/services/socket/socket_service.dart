@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:injectable/injectable.dart';
-import 'package:meno_fe_v1/src/core/core.dart' show SocketException;
 import 'package:meno_fe_v1/src/core/env/env.dart';
+import 'package:meno_fe_v1/src/core/exceptions/socket_exception.dart';
 import 'package:meno_fe_v1/src/shared/session/session.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -80,7 +80,7 @@ class SocketService {
   /// from the server (e.g., {'error': 'Something went wrong'}), which
   /// needs to be checked by the caller.
   ///
-  Future<dynamic> emitWithAck(String event, dynamic data) async {
+  Future<dynamic> emit(String event, dynamic data) async {
     // Check connection state BEFORE creating the completer
     if (_socket == null || (_socket?.connected ?? false)) {
       // Throw an exception that can be caught by the caller
@@ -158,5 +158,13 @@ class SocketService {
     await _authSubscription?.cancel();
     _authSubscription = null;
     _socket?.dispose();
+  }
+
+  SocketException getErrorMessage(dynamic error) {
+    final result = switch (error) {
+      final Map<String, dynamic> errors => SocketValidationException(errors),
+      _ => SocketException(error),
+    };
+    return result;
   }
 }

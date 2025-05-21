@@ -11,6 +11,7 @@ class PreStreamActionButtons extends StatelessWidget {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
 
+    final broadcastBloc = context.watch<BroadcastBloc>();
     return SizedBox(
       height: 32,
       child: Row(
@@ -18,14 +19,14 @@ class PreStreamActionButtons extends StatelessWidget {
           Expanded(
             child: MPrimaryButton(
               label: 'Join',
-              loading: context.watch<LiveBloc>().state is LiveLoading,
+              loading: broadcastBloc.state.status.isLoading,
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 textStyle: textTheme.microMedium,
               ),
               onPressed: () {
-                context.read<LiveBloc>().add(const GoLoading());
-                context.read<StreamBloc>().add(StreamJoinPressed(broadcast.id));
+                final id = broadcast.id;
+                broadcastBloc.add(BroadcastJoinRequested(id));
               },
             ),
           ),

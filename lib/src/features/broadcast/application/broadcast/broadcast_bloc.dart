@@ -1,94 +1,162 @@
 import 'dart:async';
 
-import 'package:meno_fe_v1/meno.dart';
-import 'package:meno_fe_v1/src/features/features.dart';
-
-part 'broadcast_bloc.freezed.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
+import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart' show SingleLineString, Uid;
 
 part 'broadcast_event.dart';
-
 part 'broadcast_state.dart';
 
 class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
-  BroadcastBloc({required IBroadcastFacade facade})
-      : _facade = facade,
-        super(BroadcastState.initial()) {
-    on<InitializeBroadcast>(_onInitializeBroadcast);
-    on<BroadcastStartPressed>(_onBroadcastStartPressed);
-    on<BroadcastReset>(_onBroadcastReset);
+  BroadcastBloc({
+    required StartBroadcastUsecase startBroadcastUsecase,
+    required EndBroadcastUsecase endBroadcastUsecase,
+    required JoinBroadcastUsecase joinBroadcastUsecase,
+    required LeaveBroadcastUsecase leaveBroadcastUsecase,
+    required ReconnectBroadcastUsecase reconnectBroadcastUsecase,
+  })  : _startBroadcastUsecase = startBroadcastUsecase,
+        _endBroadcastUsecase = endBroadcastUsecase,
+        _joinBroadcastUsecase = joinBroadcastUsecase,
+        _leaveBroadcastUsecase = leaveBroadcastUsecase,
+        _reconnectBroadcastUsecase = reconnectBroadcastUsecase,
+        super(BroadcastState()) {
+    on<BroadcastStartRequested>(_onBroadcastStartRequested);
+    on<BroadcastResetRequested>(_onBroadcastResetRequested);
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
-    on<BroadcastSaveDetailsPressed>(_onBroadcastSaveDetailsPressed);
   }
 
-  final IBroadcastFacade _facade;
-  final _initialState = BroadcastState.initial();
+  final StartBroadcastUsecase _startBroadcastUsecase;
+  final EndBroadcastUsecase _endBroadcastUsecase;
+  final JoinBroadcastUsecase _joinBroadcastUsecase;
+  final LeaveBroadcastUsecase _leaveBroadcastUsecase;
+  final ReconnectBroadcastUsecase _reconnectBroadcastUsecase;
 
-  Future<void> _onInitializeBroadcast(
-    InitializeBroadcast event,
+  Future<void> _onBroadcastStartRequested(
+    BroadcastStartRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    emit(state.copyWith(status: const _LoadInProgress()));
-    emit(
-      state.copyWith(
-        broadcast: event.broadcast,
-        status: const _Initial(),
-      ),
+    emit(state.copyWith(status: LiveBroadcastStatus.loading));
+
+    final params = StartBroadcastParams(
+      title: event.title,
+      description: event.description,
+      artwork: event.artwork,
+      cohosts: event.cohosts,
+      timeZone: event.timeZone,
     );
-  }
 
-  Future<void> _onBroadcastStartPressed(
-    BroadcastStartPressed event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    emit(state.copyWith(status: const _LoadInProgress()));
-    final failureOrBroadcast = await _facade.startBroadcast(event.broadcast.id);
+    final failureOrBroadcast = await _startBroadcastUsecase(params);
+
     failureOrBroadcast.fold(
-      (failure) => emit(state.copyWith(status: _BroadcastFailure(failure))),
+      (exception) => emit(
+        state.copyWith(
+          status: LiveBroadcastStatus.failure,
+          exception: exception,
+        ),
+      ),
       (broadcast) => emit(
         state.copyWith(
+          status: LiveBroadcastStatus.started,
           broadcast: broadcast,
-          status: const _BroadcastStarted(),
         ),
       ),
     );
   }
 
-  void _onBroadcastReset(BroadcastReset event, Emitter<BroadcastState> emit) {
-    emit(_initialState);
+  Future<void> _onBroadcastEndRequested(
+    BroadcastEndRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    emit(state.copyWith(status: LiveBroadcastStatus.loading));
+
+    final failureOrEnd = await _endBroadcastUsecase(event.broadcastId);
+
+    failureOrEnd.fold(
+      (exception) => emit(
+        state.copyWith(
+          status: LiveBroadcastStatus.failure,
+          exception: exception,
+        ),
+      ),
+      (_) => emit(state.copyWith(status: LiveBroadcastStatus.failure)),
+    );
+  }
+
+  Future<void> _onBroadcastJoinRequested(
+    BroadcastJoinRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    emit(state.copyWith(status: LiveBroadcastStatus.loading));
+
+    final failureOrBroadcast = await _joinBroadcastUsecase(event.broadcastId);
+
+    failureOrBroadcast.fold(
+      (exception) => emit(
+        state.copyWith(
+          status: LiveBroadcastStatus.failure,
+          exception: exception,
+        ),
+      ),
+      (broadcast) => emit(
+        state.copyWith(
+          status: LiveBroadcastStatus.joined,
+          broadcast: broadcast,
+          isStream: true,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onBroadcastLeaveRequested(
+    BroadcastLeaveRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    emit(state.copyWith(status: LiveBroadcastStatus.loading));
+
+    final failureOrLeave = await _leaveBroadcastUsecase(event.broadcastId);
+
+    failureOrLeave.fold(
+      (exception) => emit(
+        state.copyWith(
+          status: LiveBroadcastStatus.failure,
+          exception: exception,
+        ),
+      ),
+      (_) => emit(BroadcastState()),
+    );
+  }
+
+  void _onBroadcastResetRequested(
+    BroadcastResetRequested event,
+    Emitter<BroadcastState> emit,
+  ) {
+    emit(BroadcastState());
   }
 
   Future<void> _onBroadcastReconnectRequested(
     BroadcastReconnectRequested event,
     Emitter<BroadcastState> emit,
   ) async {
-    emit(state.copyWith(status: const _LoadInProgress(), isReconnect: true));
-    final option = await _facade.getSavedBroadcastDetails();
+    final isStream = event.isStream;
+    emit(state.copyWith(status: LiveBroadcastStatus.loading));
+    final connectOrFailure = await _reconnectBroadcastUsecase(isStream);
     emit(
-      option.fold(
-        () => state.copyWith(
-          status: const LiveBroadcastStatus.failure(
-            BroadcastException.message('No saved broadcast'),
-          ),
+      connectOrFailure.fold(
+        (failure) => state.copyWith(
+          status: LiveBroadcastStatus.failure,
+          exception: failure,
         ),
         (broadcast) => state.copyWith(
           broadcast: broadcast,
-          status: const _BroadcastStarted(),
+          isReconnect: true,
+          isStream: isStream,
+          status: isStream
+              ? LiveBroadcastStatus.joined
+              : LiveBroadcastStatus.started,
         ),
       ),
     );
-  }
-
-  Future<void> _onBroadcastSaveDetailsPressed(
-    BroadcastSaveDetailsPressed event,
-    Emitter<BroadcastState> emit,
-  ) async {
-    final token = state.broadcast.broadcastToken;
-    final id = state.broadcast.id.getOr();
-    final result = await _facade.getBroadcasts(id: id);
-    final broadcast = result.fold(
-      (l) => null,
-      (r) => r.broadcasts.first?.copyWith(broadcastToken: token),
-    );
-    if (broadcast != null) await _facade.saveBroadcastDetails(broadcast);
   }
 }

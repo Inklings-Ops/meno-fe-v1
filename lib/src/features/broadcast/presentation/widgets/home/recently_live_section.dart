@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
@@ -14,19 +16,37 @@ class RecentlyLiveSection extends StatelessWidget {
         MHeader(
           title: 'Recently Live',
           action: InkWell(
-            onTap: () => router.push(Routes.recentlyLive),
+            onTap: () => context.pushNamed(
+              'Broadcasts',
+              queryParameters: {
+                'type': BroadcastsPageType.recently.name,
+                'sort-by': 'endTime',
+                'order-by': OrderBy.DESC.name,
+                'end-time-exists': 'true',
+                'include': 'totalListeners',
+              },
+            ),
             child: MText('See all', color: colors.onBackgroundVariant),
           ),
         ),
         Spaces.verticalXLarge,
         LimitedBox(
           maxHeight: 176,
-          child: BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
-            builder: (context, state) => state.maybeWhen(
-              orElse: () => const SizedBox(),
-              loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-              success: (broadcasts) => _List(broadcasts: broadcasts),
-            ),
+          child: BlocBuilder<RecentlyLiveBloc, RecentlyLiveState>(
+            buildWhen: (previous, current) => previous != current,
+            builder: (context, state) {
+              switch (state) {
+                case RecentlyLiveLoadInProgress():
+                  return _List(broadcasts: fakeBroadcasts, loading: true);
+                case RecentlyLiveLoadSuccess(:final broadcasts):
+                  return _List(broadcasts: broadcasts);
+                case RecentlyLiveLoadFailure(:final exception):
+                  log('Recently Live Exception: ${exception.message}');
+                  return const EmptyListWidget();
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
           ),
         ),
       ],
@@ -47,7 +67,10 @@ class _Card extends StatelessWidget {
           broadcast.creatorFullName ??
           '',
       imageUrl: broadcast.imageUrl,
-      onTap: () => router.push(Routes.details, extra: broadcast),
+      onTap: () => router.pushNamed(
+        'Broadcast Details',
+        pathParameters: {'id': broadcast.id.getOr()},
+      ),
     );
   }
 }

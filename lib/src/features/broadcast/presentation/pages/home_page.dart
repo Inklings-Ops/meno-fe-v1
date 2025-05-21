@@ -6,15 +6,15 @@ class HomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentlyLiveBloc = context.read<RecentlyLiveCubit>();
-    final liveBroadcastsCubit = context.read<LiveBroadcastsBloc>();
+    final recentlyLiveBloc = context.read<RecentlyLiveBloc>();
+    final nowLiveBloc = context.read<NowLiveBloc>();
 
     Future<void> onRefresh() async {
-      final liveBroadcasts = liveBroadcastsCubit.stream.first;
-      liveBroadcastsCubit.add(const GetLiveBroadcasts());
+      final liveBroadcasts = nowLiveBloc.stream.first;
+      nowLiveBloc.add(const NowLiveStarted());
 
       final recentlyLive = recentlyLiveBloc.stream.first;
-      await recentlyLiveBloc.fetch();
+      recentlyLiveBloc.add(const RecentlyLiveStarted());
 
       await Future.wait([liveBroadcasts, recentlyLive]);
     }
@@ -23,23 +23,17 @@ class HomePage extends HookWidget {
       appBar: const HomeAppBar(),
       body: RefreshIndicator(
         onRefresh: onRefresh,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
+        child: const SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
             children: [
-              BlocBuilder<LiveBloc, LiveState>(
-                builder: (context, state) => state.maybeWhen(
-                  orElse: () => Spaces.verticalXLarge,
-                  streaming: LiveStreamActivityCard.new,
-                  live: LiveBroadcastActivityCard.new,
-                ),
-              ),
-              const LiveForYou(),
-              const NowLiveSection(),
-              const RecentlyLiveSection(),
-              const SizedBox(height: 20),
+              LiveBroadcastActivityCard(),
+              LiveForYou(),
+              NowLiveSection(),
+              RecentlyLiveSection(),
+              SizedBox(height: 20),
             ],
           ),
         ),

@@ -1,26 +1,51 @@
 part of 'participants_bloc.dart';
 
-@freezed
-class ParticipantsEvent with _$ParticipantsEvent {
-  const factory ParticipantsEvent.getLiveParticipants(
-    Uid<Broadcast> broadcastId,
-  ) = GetLiveParticipants;
+sealed class ParticipantsEvent with EquatableMixin {
+  const ParticipantsEvent();
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory ParticipantsEvent.participantsReloadPressed(
-    Uid<Broadcast> broadcastId,
-  ) = ParticipantsReloadPressed;
+final class ParticipantsFetchRequested extends ParticipantsEvent {
+  const ParticipantsFetchRequested(this.broadcastId);
+  final Uid<Broadcast> broadcastId;
 
-  const factory ParticipantsEvent.getAllParticipants(
-    Uid<Broadcast> broadcastId,
-  ) = GetAllParticipants;
+  @override
+  List<Object?> get props => [broadcastId];
+}
 
-  const factory ParticipantsEvent.participantJoined(
-    BroadcastParticipant participant,
-  ) = ParticipantJoined;
+final class ParticipantsReloadRequested extends ParticipantsEvent {
+  const ParticipantsReloadRequested(this.broadcastId);
+  final Uid<Broadcast> broadcastId;
 
-  const factory ParticipantsEvent.participantLeft(
-    BroadcastParticipant participant,
-  ) = ParticipantLeft;
+  @override
+  List<Object?> get props => [broadcastId];
+}
 
-  const factory ParticipantsEvent.reset() = ParticipantsReset;
+final class ParticipantsFetchAllRequested extends ParticipantsEvent {
+  const ParticipantsFetchAllRequested(this.broadcastId);
+  final Uid<Broadcast> broadcastId;
+
+  @override
+  List<Object?> get props => [broadcastId];
+}
+
+final class _ParticipantJoinedSubscribed extends ParticipantsEvent {
+  const _ParticipantJoinedSubscribed(this.data);
+  final dynamic data;
+
+  @override
+  List<Object?> get props => [data];
+}
+
+final class _ParticipantLeftSubscribed extends ParticipantsEvent {
+  const _ParticipantLeftSubscribed(this.data);
+  final dynamic data;
+
+  @override
+  List<Object?> get props => [data];
+}
+
+final class ParticipantsResetRequested extends ParticipantsEvent {
+  const ParticipantsResetRequested();
 }

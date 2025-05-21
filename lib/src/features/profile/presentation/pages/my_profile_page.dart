@@ -35,14 +35,14 @@ class MyProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<MyProfileCubit>();
-    final recentlyLiveCubit = context.read<RecentlyLiveCubit>();
+    final recentlyLiveCubit = context.read<RecentlyLiveBloc>();
 
     Future<void> onRefresh() async {
       final myProfile = bloc.stream.first;
       await bloc.fetch();
 
       final recentlyLive = recentlyLiveCubit.stream.first;
-      await recentlyLiveCubit.fetch();
+      recentlyLiveCubit.add(const RecentlyLiveStarted());
 
       await Future.wait([myProfile, recentlyLive]);
     }

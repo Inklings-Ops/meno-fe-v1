@@ -1,85 +1,96 @@
 part of 'socket_bloc.dart';
 
-@freezed
-class SocketEvent with _$SocketEvent {
-  const factory SocketEvent.connect(Token token) = SocketConnect;
+sealed class SocketEvent with EquatableMixin {
+  const SocketEvent();
 
-  const factory SocketEvent.disconnect() = SocketDisconnect;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory SocketEvent.updateState(
-    SocketState newState,
-  ) = SocketUpdateState;
+final class SocketConnectRequested extends SocketEvent {
+  const SocketConnectRequested();
+}
 
-  const factory SocketEvent.startBroadcast(
-    Uid<Broadcast> broadcastId,
-  ) = SocketStartBroadcast;
+final class SocketDisconnectRequested extends SocketEvent {
+  const SocketDisconnectRequested();
+}
 
-  const factory SocketEvent.endBroadcast(
-    Uid<Broadcast> broadcastId,
-  ) = SocketEndBroadcast;
+final class SocketUpdateStateRequested extends SocketEvent {
+  const SocketUpdateStateRequested(this.newState);
+  final SocketState newState;
 
-  const factory SocketEvent.joinBroadcast(
-    Uid<Broadcast> broadcastId,
-  ) = SocketJoinBroadcast;
+  @override
+  List<Object?> get props => [newState];
+}
 
-  const factory SocketEvent.leaveBroadcast(
-    Uid<Broadcast> broadcastId,
-  ) = SocketLeaveBroadcast;
+final class SocketNewParticipantSubscribed extends SocketEvent {
+  const SocketNewParticipantSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.getMessages(
-    Uid<Broadcast> broadcastId,
-  ) = SocketGetMessages;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.sendMessage({
-    required String senderId,
-    required String broadcastId,
-    required String content,
-    required String createdAt,
-  }) = SocketSendMessage;
+final class SocketParticipantLeftSubscribed extends SocketEvent {
+  const SocketParticipantLeftSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.sendChatReaction({
-    required String senderId,
-    required String broadcastId,
-    required String content,
-    required String createdAt,
-  }) = SocketSendChatReaction;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.editMessage({
-    required String id,
-    required String senderId,
-    required String broadcastId,
-    required String content,
-    required String createdAt,
-    required String updatedAt,
-  }) = SocketEditMessage;
+final class SocketEndedBroadcastSubscribed extends SocketEvent {
+  const SocketEndedBroadcastSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.deleteChatMessage({
-    required String id,
-    required String senderId,
-    required String broadcastId,
-    required String content,
-    required String createdAt,
-  }) = SocketDeleteMessage;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.newParticipant(dynamic data) = _NewParticipant;
+final class SocketNewBroadcastSubscribed extends SocketEvent {
+  const SocketNewBroadcastSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.participantLeft(dynamic data) = _ParticipantLeft;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.endedBroadcast(dynamic data) = _EndedBroadcast;
+final class SocketHostDisconnectedSubscribed extends SocketEvent {
+  const SocketHostDisconnectedSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.newBroadcast(dynamic data) = _NewBroadcast;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.hostDisconnected(dynamic data) = _HostDisconnected;
+final class SocketHostReconnectedSubscribed extends SocketEvent {
+  const SocketHostReconnectedSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.hostReconnected(dynamic data) = _HostReconnected;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.notification(dynamic data) = _Notification;
+final class SocketNotificationSubscribed extends SocketEvent {
+  const SocketNotificationSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.newMessage(dynamic data) = _NewMessage;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.editedMessage(dynamic data) = _EditedMessage;
+final class SocketEditedChatSubscribed extends SocketEvent {
+  const SocketEditedChatSubscribed(this.data);
+  final dynamic data;
 
-  const factory SocketEvent.deletedMessage(dynamic data) = _DeletedMessage;
+  @override
+  List<Object?> get props => [data];
+}
 
-  const factory SocketEvent.newChatReaction(dynamic data) = _NewChatReaction;
+final class SocketDeletedChatSubscribed extends SocketEvent {
+  const SocketDeletedChatSubscribed(this.data);
+  final dynamic data;
+
+  @override
+  List<Object?> get props => [data];
 }

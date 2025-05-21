@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/features/chat/application/application.dart';
 
 class EndedBroadcastPage extends HookWidget {
   const EndedBroadcastPage({super.key});
@@ -8,14 +7,7 @@ class EndedBroadcastPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context)!;
-
-    useEffect(
-      () {
-        context.read<ChatListBloc>().add(const ChatReset());
-        return;
-      },
-      const [],
-    );
+    final broadcast = context.read<BroadcastBloc>().state.broadcast;
 
     return MScaffold(
       body: Center(
@@ -32,7 +24,7 @@ class EndedBroadcastPage extends HookWidget {
               ),
             ),
             Spaces.verticalXLarge,
-            const BroadcastArtworkWidget(),
+            BroadcastArtworkWidget(imageUrl: broadcast.imageUrl),
             Spaces.verticalLarge,
             BroadcastTimer(
               showTimeAgo: false,

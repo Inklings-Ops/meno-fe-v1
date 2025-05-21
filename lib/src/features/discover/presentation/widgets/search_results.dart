@@ -68,7 +68,10 @@ class _ResultList extends StatelessWidget {
           title: broadcast.title.getOr(),
           imageUrl: broadcast.imageUrl,
           host: broadcast.fullName,
-          onTap: () => router.push(Routes.details, extra: broadcast),
+          onTap: () => router.pushNamed(
+            'Broadcast Details',
+            pathParameters: {'id': broadcast.id.getOr()},
+          ),
         );
       },
     );

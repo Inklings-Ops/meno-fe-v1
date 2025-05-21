@@ -10,27 +10,36 @@ class AllBroadcastsWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Spaces.verticalXLarge,
-        BlocBuilder<LiveBroadcastsBloc, LiveBroadcastsState>(
-          builder: (context, state) => state.maybeWhen(
-            orElse: () => const EmptyListWidget(),
-            loading: () => _Grid(
-              broadcasts: fakeBroadcasts,
-              loading: true,
-              isNowLive: true,
-            ),
-            loaded: (broadcasts) => _Grid(
-              broadcasts: broadcasts,
-              isNowLive: true,
-            ),
-          ),
+        BlocBuilder<NowLiveBloc, NowLiveState>(
+          builder: (context, state) {
+            switch (state) {
+              case NowLiveLoadInProgress():
+              case NowLiveLoadMoreInProgress():
+                return _Grid(
+                  broadcasts: fakeBroadcasts,
+                  loading: true,
+                  isNowLive: true,
+                );
+              case NowLiveLoadSuccess(:final broadcasts):
+                return _Grid(broadcasts: broadcasts, isNowLive: true);
+              default:
+                return const EmptyListWidget();
+            }
+          },
         ),
         Spaces.verticalXXLarge,
-        BlocBuilder<RecentlyLiveCubit, RecentlyLiveState>(
-          builder: (context, state) => state.maybeWhen(
-            orElse: () => const EmptyListWidget(),
-            loading: () => _Grid(broadcasts: fakeBroadcasts, loading: true),
-            success: (broadcasts) => _Grid(broadcasts: broadcasts),
-          ),
+        BlocBuilder<RecentlyLiveBloc, RecentlyLiveState>(
+          builder: (context, state) {
+            switch (state) {
+              case RecentlyLiveLoadInProgress():
+              case RecentlyLiveLoadMoreInProgress():
+                return _Grid(broadcasts: fakeBroadcasts, loading: true);
+              case RecentlyLiveLoadSuccess(:final broadcasts):
+                return _Grid(broadcasts: broadcasts);
+              default:
+                return const EmptyListWidget();
+            }
+          },
         ),
         Spaces.verticalXXLarge,
       ],
@@ -53,8 +62,28 @@ class _Grid extends HookWidget {
   Widget build(BuildContext context) {
     final title = isNowLive ? 'Now Live' : 'Recently Live';
     void onSeeAll() => isNowLive
-        ? router.push(Routes.nowLive)
-        : router.push(Routes.recentlyLive);
+        ? router.pushNamed(
+            'Broadcasts',
+            queryParameters: {
+              'type': BroadcastsPageType.now.name,
+              'sort-by': 'startTime',
+              'order-by': OrderBy.ASC.name,
+              'end-time-exists': 'false',
+              'start-time-exists': 'true',
+              'include': 'totalListeners',
+              'status': 'active',
+            },
+          )
+        : router.pushNamed(
+            'Broadcasts',
+            queryParameters: {
+              'type': BroadcastsPageType.recently.name,
+              'sort-by': 'endTime',
+              'order-by': OrderBy.DESC.name,
+              'end-time-exists': 'true',
+              'include': 'totalListeners',
+            },
+          );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -77,20 +106,19 @@ class _Grid extends HookWidget {
               itemCount: broadcasts.length,
               itemBuilder: (context, index) {
                 final broadcast = broadcasts[index]!;
-
-                if (isNowLive) {
-                  return LiveBroadcastCard(broadcast: broadcast);
-                } else {
-                  return MCard.recentlyLive(
-                    title: broadcast.title.getOr(),
-                    imageUrl: broadcast.imageUrl,
-                    host: broadcast.creator?.fullName ??
-                        broadcast.fullName ??
-                        broadcast.creatorFullName ??
-                        '',
-                    onTap: () => router.push(Routes.details, extra: broadcast),
-                  );
-                }
+                if (isNowLive) return LiveBroadcastCard(broadcast: broadcast);
+                return MCard.recentlyLive(
+                  title: broadcast.title.getOr(),
+                  imageUrl: broadcast.imageUrl,
+                  host: broadcast.creator?.fullName ??
+                      broadcast.fullName ??
+                      broadcast.creatorFullName ??
+                      '',
+                  onTap: () => router.pushNamed(
+                    'Broadcast Details',
+                    pathParameters: {'id': broadcast.id.getOr()},
+                  ),
+                );
               },
             ),
           ),

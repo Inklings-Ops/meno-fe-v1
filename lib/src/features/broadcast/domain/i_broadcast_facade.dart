@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/core/core.dart' show BroadcastException;
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/entities.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/exceptions/broadcast_exception.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/value_objects/value_objects.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
@@ -25,7 +25,7 @@ abstract class IBroadcastFacade {
     DateTime? startTime,
   });
 
-  Future<Either<BroadcastException, JoinBroadcastEntity>> joinBroadcast(
+  Future<Either<BroadcastException, Broadcast>> joinBroadcast(
     Uid<Broadcast> id,
   );
 

@@ -37,6 +37,16 @@ import '../features/bible/infrastructure/datasources/local/bible_local_datasourc
     as _i664;
 import '../features/bible/infrastructure/datasources/remote/bible_remote_datasource.dart'
     as _i424;
+import '../features/broadcast/application/usecases/end_broadcast_usecase.dart'
+    as _i126;
+import '../features/broadcast/application/usecases/join_broadcast_usecase.dart'
+    as _i674;
+import '../features/broadcast/application/usecases/leave_broadcast_usecase.dart'
+    as _i748;
+import '../features/broadcast/application/usecases/reconnect_broadcast_usecase.dart'
+    as _i850;
+import '../features/broadcast/application/usecases/start_broadcast_usecase.dart'
+    as _i444;
 import '../features/broadcast/broadcast.dart' as _i625;
 import '../features/broadcast/infrastructure/broadcast_facade.dart' as _i1031;
 import '../features/broadcast/infrastructure/datasources/broadcast_local_datasource.dart'
@@ -80,6 +90,7 @@ import '../services/permissions_service.dart' as _i179;
 import '../services/secure_storage_service.dart' as _i535;
 import '../services/services.dart' as _i264;
 import '../services/socket/socket_service.dart' as _i717;
+import '../services/timezone_service.dart' as _i549;
 import '../shared/session/bloc/session_bloc.dart' as _i703;
 import '../shared/session/session.dart' as _i530;
 import '../shared/session/session_context.dart' as _i320;
@@ -121,6 +132,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i691.LiveKitService>(() => _i691.LiveKitService());
     gh.lazySingleton<_i535.SecureStorageService>(
         () => _i535.SecureStorageService());
+    gh.lazySingleton<_i549.TimezoneService>(() => _i549.TimezoneService());
     gh.factory<_i664.BibleLocalDatasource>(() =>
         _i664.BibleLocalDatasource(objectBox: gh<_i116.ObjectBoxService>()));
     gh.factory<_i933.NoteLocalDatasource>(() =>
@@ -196,6 +208,10 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i361.Dio>(),
               baseUrl: gh<String>(instanceName: 'baseUrl'),
             ));
+    gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
+          remote: gh<_i506.ChatRemoteDatasource>(),
+          network: gh<_i264.NetworkService>(),
+        ));
     gh.factory<_i1042.INoteFacade>(() => _i176.NoteFacade(
           network: gh<_i264.NetworkService>(),
           local: gh<_i1042.NoteLocalDatasource>(),
@@ -205,10 +221,6 @@ extension GetItInjectableX on _i174.GetIt {
           local: gh<_i652.BibleLocalDatasource>(),
           remote: gh<_i652.BibleRemoteDatasource>(),
           network: gh<_i463.NetworkService>(),
-        ));
-    gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
-          remote: gh<_i506.ChatRemoteDatasource>(),
-          network: gh<_i264.NetworkService>(),
         ));
     gh.factory<_i625.IBroadcastFacade>(() => _i1031.BroadcastFacade(
           remote: gh<_i625.BroadcastRemoteDatasource>(),
@@ -240,13 +252,12 @@ extension GetItInjectableX on _i174.GetIt {
           authFacade: gh<_i236.IAuthFacade>(),
           settingsFacade: gh<_i709.ISettingsFacade>(),
         ));
-    await gh.factoryAsync<_i703.SessionBloc>(
-      () {
-        final i = _i703.SessionBloc(session: gh<_i44.ISessionContext>());
-        return i.init().then((_) => i);
-      },
-      preResolve: true,
-    );
+    gh.factory<_i850.ReconnectBroadcastUsecase>(
+        () => _i850.ReconnectBroadcastUsecase(
+              facade: gh<_i625.IBroadcastFacade>(),
+              liveKit: gh<_i264.LiveKitService>(),
+              background: gh<_i264.BackgroundService>(),
+            ));
     await gh.factoryAsync<_i717.SocketService>(
       () {
         final i = _i717.SocketService(session: gh<_i530.ISessionContext>());
@@ -254,6 +265,38 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
+    await gh.factoryAsync<_i703.SessionBloc>(
+      () {
+        final i = _i703.SessionBloc(session: gh<_i44.ISessionContext>());
+        return i.init().then((_) => i);
+      },
+      preResolve: true,
+    );
+    gh.factory<_i126.EndBroadcastUsecase>(() => _i126.EndBroadcastUsecase(
+          facade: gh<_i625.IBroadcastFacade>(),
+          liveKit: gh<_i264.LiveKitService>(),
+          socket: gh<_i264.SocketService>(),
+          background: gh<_i264.BackgroundService>(),
+        ));
+    gh.factory<_i674.JoinBroadcastUsecase>(() => _i674.JoinBroadcastUsecase(
+          facade: gh<_i625.IBroadcastFacade>(),
+          liveKit: gh<_i264.LiveKitService>(),
+          socket: gh<_i264.SocketService>(),
+          background: gh<_i264.BackgroundService>(),
+        ));
+    gh.factory<_i748.LeaveBroadcastUsecase>(() => _i748.LeaveBroadcastUsecase(
+          facade: gh<_i625.IBroadcastFacade>(),
+          liveKit: gh<_i264.LiveKitService>(),
+          socket: gh<_i264.SocketService>(),
+          background: gh<_i264.BackgroundService>(),
+        ));
+    gh.factory<_i444.StartBroadcastUsecase>(() => _i444.StartBroadcastUsecase(
+          facade: gh<_i625.IBroadcastFacade>(),
+          liveKit: gh<_i264.LiveKitService>(),
+          socket: gh<_i264.SocketService>(),
+          background: gh<_i264.BackgroundService>(),
+          timezone: gh<_i264.TimezoneService>(),
+        ));
     return this;
   }
 }

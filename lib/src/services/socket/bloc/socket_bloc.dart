@@ -1,317 +1,172 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/core/env/env.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
 
-part 'socket_bloc.freezed.dart';
 part 'socket_event.dart';
 part 'socket_state.dart';
 
 class SocketBloc extends Bloc<SocketEvent, SocketState> {
-  SocketBloc({
-    required IBroadcastFacade broadcast,
-  })  : _broadcast = broadcast,
+  SocketBloc({required SocketService socket})
+      : _socket = socket,
         super(const SocketDisconnected()) {
-    on<SocketConnect>(_onConnect);
-    on<SocketDisconnect>(_onDisconnect);
-    on<SocketStartBroadcast>(_onStartBroadcast);
-    on<SocketEndBroadcast>(_onEndBroadcast);
-    on<SocketJoinBroadcast>(_onJoinBroadcast);
-    on<SocketLeaveBroadcast>(_onLeaveBroadcast);
-    on<SocketSendMessage>(_onSendMessage);
-    on<SocketEditMessage>(_onEditMessage);
-    on<SocketDeleteMessage>(_onDeleteMessage);
-    on<_NewParticipant>(_onNewParticipant);
-    on<_ParticipantLeft>(_onParticipantLeft);
-    on<_EndedBroadcast>(_onEndedBroadcast);
-    on<_NewBroadcast>(_onNewBroadcast);
-    on<_HostDisconnected>(_onHostDisconnect);
-    on<_HostReconnected>(_onHostReconnected);
-    on<_Notification>(_onNotification);
-    on<_NewMessage>(_onNewMessage);
-    on<_EditedMessage>(_onEditedMessage);
-    on<_DeletedMessage>(_onDeletedMessage);
-    on<SocketUpdateState>(_onUpdateState);
-    on<SocketGetMessages>(_onGetMessages);
-    on<SocketSendChatReaction>(_onSendChatReaction);
-    on<_NewChatReaction>(_onNewChatReaction);
+    on<SocketDisconnectRequested>(_onDisconnect);
+    on<SocketUpdateStateRequested>(_onUpdateState);
+    on<SocketNewParticipantSubscribed>(_onNewParticipantSubscribed);
+    on<SocketParticipantLeftSubscribed>(_onParticipantLeftSubscribed);
+    on<SocketEndedBroadcastSubscribed>(_onEndedBroadcastSubscribed);
+    on<SocketNewBroadcastSubscribed>(_onNewBroadcastSubscribed);
+    on<SocketHostDisconnectedSubscribed>(_onHostDisconnectSubscribed);
+    on<SocketHostReconnectedSubscribed>(_onHostReconnectedSubscribed);
+    on<SocketNotificationSubscribed>(_onNotificationSubscribed);
+    on<SocketEditedChatSubscribed>(_onEditedChatSubscribed);
+    on<SocketDeletedChatSubscribed>(_onDeletedChatSubscribed);
+
+    _setupListeners();
   }
 
-  final IBroadcastFacade _broadcast;
+  final SocketService _socket;
 
-  io.Socket? _socket;
-
-  Future<void> _onConnect(
-    SocketConnect event,
-    Emitter<SocketState> emit,
-  ) async {
-    _socket = io.io(
-      Env.menoApiUrl,
-      io.OptionBuilder()
-          .setTransports(['websocket'])
-          .setQuery({'token': event.token.getOr()})
-          .enableAutoConnect()
-          .enableReconnection()
-          .build(),
-    );
-    setupListeners({
-      'connect': (_) => add(const SocketUpdateState(SocketConnected())),
-      'disconnect': (_) => add(const SocketUpdateState(SocketDisconnected())),
-      'newBroadcastListener': (data) => add(_NewParticipant(data)),
-      'broadcastListenerLeft': (data) => add(_ParticipantLeft(data)),
-      'endedBroadcast': (data) => add(_EndedBroadcast(data)),
-      'newBroadcast': (data) => add(_NewBroadcast(data)),
-      'hostDisconnected': (data) => add(_HostDisconnected(data)),
-      'hostReconnected': (data) => add(_HostReconnected(data)),
-      'notification': (data) => add(_Notification(data)),
-      'newMessage': (data) => add(_NewMessage(data)),
-      'editedMessage': (data) => add(_EditedMessage(data)),
-      'deletedMessage': (data) => add(_DeletedMessage(data)),
-      'newReaction': (data) => add(_NewChatReaction(data)),
-    });
+  void _setupListeners() {
+    _socket
+      ..addListener(
+        'connect',
+        (_) => add(const SocketUpdateStateRequested(SocketConnected())),
+      )
+      ..addListener(
+        'disconnect',
+        (_) => add(const SocketUpdateStateRequested(SocketDisconnected())),
+      )
+      ..addListener(
+        'newBroadcastListener',
+        (data) => add(SocketNewParticipantSubscribed(data)),
+      )
+      ..addListener(
+        'broadcastListenerLeft',
+        (data) => add(SocketParticipantLeftSubscribed(data)),
+      )
+      ..addListener(
+        'endedBroadcast',
+        (data) => add(SocketEndedBroadcastSubscribed(data)),
+      )
+      ..addListener(
+        'newBroadcast',
+        (data) => add(SocketNewBroadcastSubscribed(data)),
+      )
+      ..addListener(
+        'hostDisconnected',
+        (data) => add(SocketHostDisconnectedSubscribed(data)),
+      )
+      ..addListener(
+        'hostReconnected',
+        (data) => add(SocketHostReconnectedSubscribed(data)),
+      )
+      ..addListener(
+        'notification',
+        (data) => add(SocketNotificationSubscribed(data)),
+      )
+      ..addListener(
+        'editedMessage',
+        (data) => add(SocketEditedChatSubscribed(data)),
+      )
+      ..addListener(
+        'deletedMessage',
+        (data) => add(SocketDeletedChatSubscribed(data)),
+      );
   }
 
-  void setupListeners(Map<String, void Function(dynamic)> listeners) {
-    listeners.forEach((event, handler) {
-      _socket?.on(event, handler);
-    });
-  }
-
-  void _onDisconnect(SocketDisconnect event, Emitter<SocketState> emit) {
-    _socket?.disconnect();
-  }
-
-  bool get isLoading => state is SocketLoading;
-
-  void _onStartBroadcast(
-    SocketStartBroadcast event,
+  void _onDisconnect(
+    SocketDisconnectRequested event,
     Emitter<SocketState> emit,
   ) {
-    emit(const SocketLoading());
-    _socket?.emitWithAck(
-      'startedBroadcast',
-      {'broadcastId': event.broadcastId.getOr()},
-      ack: (dynamic res) {
-        final response = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => json as dynamic,
-        );
-        if (response.error != null) {
-          _addUpdateState(SocketError(error: response.error!));
-        } else {
-          _addUpdateState(const SocketBroadcastStarted());
-        }
-      },
-    );
+    _socket.disconnect();
   }
 
-  void _onEndBroadcast(SocketEndBroadcast event, Emitter<SocketState> emit) {
-    emit(const SocketLoading());
-    _socket?.emitWithAck(
-      'endBroadcast',
-      {'broadcastId': event.broadcastId.getOr()},
-      ack: (dynamic res) {
-        final response = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => json as dynamic,
-        );
-        if (response.error != null) {
-          _addUpdateState(SocketError(error: response.error!));
-        } else {
-          _broadcast.clearSavedBroadcastDetails();
-          _addUpdateState(const SocketBroadcastEnded());
-        }
-      },
-    );
-  }
-
-  void _onJoinBroadcast(SocketJoinBroadcast event, Emitter<SocketState> emit) {
-    emit(const SocketLoading());
-    _socket?.emitWithAck(
-      'joinBroadcast',
-      {'broadcastId': event.broadcastId.getOr()},
-      ack: (dynamic res) {
-        final response = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => json as dynamic,
-        );
-        if (response.error != null) {
-          _addUpdateState(SocketError(error: response.error!, isStream: true));
-        } else {
-          _addUpdateState(const SocketBroadcastJoined());
-        }
-      },
-    );
-  }
-
-  void _onLeaveBroadcast(
-    SocketLeaveBroadcast event,
+  void _onNewParticipantSubscribed(
+    SocketNewParticipantSubscribed event,
     Emitter<SocketState> emit,
   ) {
-    emit(const SocketLoading());
-    _socket?.emitWithAck(
-      'leaveBroadcast',
-      {'broadcastId': event.broadcastId.getOr()},
-      ack: (dynamic res) {
-        final response = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => json as dynamic,
-        );
-        if (response.error != null) {
-          _addUpdateState(SocketError(error: response.error!));
-        } else {
-          _addUpdateState(const SocketBroadcastLeft());
-        }
-      },
-    );
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = BroadcastParticipantDto.fromJson(eventData);
+    emit(SocketNewParticipantReceived(dto.toDomain));
   }
 
-  void _onGetMessages(SocketGetMessages event, Emitter<SocketState> emit) {
-    _socket?.emitWithAck(
-      'getChatMessages',
-      {'broadcastId': event.broadcastId.getOr()},
-      ack: (dynamic res) {
-        final response = SocketResponse.fromJson(
-          res as Map<String, dynamic>,
-          (json) => ChatListDto.fromJson(json as Map<String, dynamic>),
-        );
-        if (response.error != null) {
-          add(SocketUpdateState(SocketError(error: response.error!)));
-        } else {
-          final dtos = response.data!.chatMessages;
-          final chatMessages = dtos.map((chat) => chat?.toDomain).toList();
-          add(SocketUpdateState(SocketMessagesReceived(chatMessages)));
-        }
-      },
-    );
-  }
-
-  void _onSendMessage(SocketSendMessage event, Emitter<SocketState> emit) {
-    _socket?.emitWithAck(
-      'sendChatMessage',
-      {
-        'senderId': event.senderId,
-        'broadcastId': event.broadcastId,
-        'content': event.content,
-        'createdAt': event.createdAt,
-      },
-    );
-  }
-
-  void _onEditMessage(SocketEditMessage event, Emitter<SocketState> emit) {
-    _socket?.emitWithAck(
-      'editChatMessage',
-      {
-        'id': event.id,
-        'senderId': event.senderId,
-        'broadcastId': event.broadcastId,
-        'content': event.content,
-        'createdAt': event.createdAt,
-        'updatedAt': event.updatedAt,
-      },
-    );
-  }
-
-  void _onDeleteMessage(SocketDeleteMessage event, Emitter<SocketState> emit) {
-    _socket?.emitWithAck(
-      'deleteChatMessage',
-      {
-        'id': event.id,
-        'senderId': event.senderId,
-        'broadcastId': event.broadcastId,
-        'content': event.content,
-        'createdAt': event.createdAt,
-      },
-    );
-  }
-
-  void _onSendChatReaction(
-    SocketSendChatReaction event,
+  void _onParticipantLeftSubscribed(
+    SocketParticipantLeftSubscribed event,
     Emitter<SocketState> emit,
   ) {
-    _socket?.emitWithAck(
-      'sendChatMessage',
-      {
-        'senderId': event.senderId,
-        'broadcastId': event.broadcastId,
-        'content': event.content,
-        'createdAt': event.createdAt,
-      },
-    );
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = BroadcastParticipantDto.fromJson(eventData);
+    emit(SocketParticipantLeftReceived(dto.toDomain));
   }
 
-  void _onNewParticipant(_NewParticipant event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = BroadcastParticipantDto.fromJson(decoded);
-    emit(SocketNewBroadcastListenerReceived(dto.toDomain));
-  }
-
-  void _onParticipantLeft(_ParticipantLeft event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = BroadcastParticipantDto.fromJson(decoded);
-    emit(SocketBroadcastListenerLeftReceived(dto.toDomain));
-  }
-
-  void _onEndedBroadcast(_EndedBroadcast event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = EndedBroadcastDataDto.fromJson(decoded);
+  void _onEndedBroadcastSubscribed(
+    SocketEndedBroadcastSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = EndedBroadcastDataDto.fromJson(eventData);
     emit(SocketEndedBroadcastReceived(dto.toDomain));
   }
 
-  void _onNewBroadcast(_NewBroadcast event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = BroadcastDto.fromJson(decoded);
+  void _onNewBroadcastSubscribed(
+    SocketNewBroadcastSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = BroadcastDto.fromJson(eventData);
     emit(SocketNewBroadcastReceived(dto.toDomain));
   }
 
-  void _onHostDisconnect(_HostDisconnected event, Emitter<SocketState> emit) {
+  void _onHostDisconnectSubscribed(
+    SocketHostDisconnectedSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
     final value = jsonDecode(jsonEncode(event.data)) as bool;
     emit(SocketHostDisconnectedReceived(value));
   }
 
-  void _onHostReconnected(_HostReconnected event, Emitter<SocketState> emit) {
+  void _onHostReconnectedSubscribed(
+    SocketHostReconnectedSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
     final value = jsonDecode(jsonEncode(event.data)) as bool;
-    emit(SocketReconnectedReceived(value));
+    emit(SocketHostReconnectedReceived(value));
   }
 
-  void _onNotification(_Notification event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = NotificationDto.fromJson(decoded);
+  void _onNotificationSubscribed(
+    SocketNotificationSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = NotificationDto.fromJson(eventData);
     emit(SocketNotificationReceived(dto.toDomain));
   }
 
-  void _onNewMessage(_NewMessage event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = ChatDto.fromJson(decoded);
-    emit(SocketNewMessageReceived(dto.toDomain));
+  void _onEditedChatSubscribed(
+    SocketEditedChatSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = ChatDto.fromJson(eventData);
+    emit(SocketEditedChatReceived(dto.toDomain));
   }
 
-  void _onEditedMessage(_EditedMessage event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = ChatDto.fromJson(decoded);
-    emit(SocketEditedMessageReceived(dto.toDomain));
+  void _onDeletedChatSubscribed(
+    SocketDeletedChatSubscribed event,
+    Emitter<SocketState> emit,
+  ) {
+    final eventData = event.data as Map<String, dynamic>;
+    final dto = ChatDto.fromJson(eventData);
+    emit(SocketDeletedChatReceived(dto.toDomain));
   }
 
-  void _onDeletedMessage(_DeletedMessage event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = ChatDto.fromJson(decoded);
-    emit(SocketDeletedMessageRemoved(dto.toDomain));
-  }
-
-  void _onNewChatReaction(_NewChatReaction event, Emitter<SocketState> emit) {
-    final decoded = jsonDecode(jsonEncode(event.data)) as Map<String, dynamic>;
-    final dto = ChatDto.fromJson(decoded);
-    emit(SocketNewChatReactionReceived(dto.toDomain));
-  }
-
-  void _onUpdateState(SocketUpdateState event, Emitter<SocketState> emit) {
+  void _onUpdateState(
+    SocketUpdateStateRequested event,
+    Emitter<SocketState> emit,
+  ) {
     emit(event.newState);
   }
-
-  void _addUpdateState(SocketState state) => add(SocketUpdateState(state));
 }

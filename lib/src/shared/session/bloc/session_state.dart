@@ -71,7 +71,6 @@ extension SessionStateX on SessionState {
         Routes.home,
         Routes.webCreateBroadcast,
         Routes.createBroadcast,
-        Routes.details,
         Routes.discover,
         Routes.folder,
         Routes.home,
@@ -103,7 +102,6 @@ extension SessionStateX on SessionState {
         Routes.othersProfileOptionsModal,
         Routes.editProfileModal,
         Routes.preStreamModal,
-        Routes.leaveAndJoinDialog,
         Routes.biblePage,
         Routes.switchAccountModal,
         Routes.broadcastInfoModal,
@@ -112,6 +110,8 @@ extension SessionStateX on SessionState {
         Routes.about,
         Routes.logoutConfirmationDialog,
         Routes.pickImageModal,
+        Routes.broadcasts,
+        Routes.broadcastDetails,
       ],
     );
   }

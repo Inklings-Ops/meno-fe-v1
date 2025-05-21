@@ -1,15 +1,13 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class StreamLeaveButton extends StatelessWidget {
   const StreamLeaveButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final socket = context.read<SocketBloc>();
-
-    final broadcast = context.select((StreamBloc bloc) => bloc.state.broadcast);
+    final broadcastBloc = context.watch<BroadcastBloc>();
+    final broadcastId = broadcastBloc.state.broadcast.id;
 
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context)!;
@@ -18,13 +16,7 @@ class StreamLeaveButton extends StatelessWidget {
       onPressed: () {
         context.showLeaveBroadcastDialog().then((value) {
           if (value != true) return;
-          if (context.mounted) {
-            di<BackgroundService>().stopBroadcastBackgroundProcess();
-            socket.add(SocketLeaveBroadcast(broadcast.id));
-            context.read<LiveKitBloc>().add(const LiveKitDisconnect());
-            context.read<LiveBloc>().add(const LiveReset());
-            router.go(Routes.home);
-          }
+          broadcastBloc.add(BroadcastLeaveRequested(broadcastId));
         });
       },
       icon: const Icon(MIcons.log_out),

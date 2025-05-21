@@ -1,24 +1,60 @@
 part of 'broadcast_bloc.dart';
 
-@freezed
-class BroadcastState with _$BroadcastState {
-  const factory BroadcastState({
-    required Broadcast broadcast,
-    @Default(false) bool hostDisconnected,
-    @Default(false) bool isReconnect,
-    @Default(_Initial()) LiveBroadcastStatus status,
-  }) = _BroadcastState;
-
-  factory BroadcastState.initial() {
-    return BroadcastState(broadcast: Broadcast.empty());
-  }
+enum LiveBroadcastStatus {
+  initial,
+  loading,
+  started,
+  joined,
+  ended,
+  left,
+  failure
 }
 
-@freezed
-class LiveBroadcastStatus with _$LiveBroadcastStatus {
-  const factory LiveBroadcastStatus.initial() = _Initial;
-  const factory LiveBroadcastStatus.loadInProgress() = _LoadInProgress;
-  const factory LiveBroadcastStatus.broadcastStarted() = _BroadcastStarted;
-  const factory LiveBroadcastStatus.failure(BroadcastException exception) =
-      _BroadcastFailure;
+extension LiveBroadcastStatusX on LiveBroadcastStatus {
+  bool get isInitial => this == LiveBroadcastStatus.initial;
+  bool get isLoading => this == LiveBroadcastStatus.loading;
+  bool get isStarted => this == LiveBroadcastStatus.started;
+  bool get isEnded => this == LiveBroadcastStatus.ended;
+  bool get isLeft => this == LiveBroadcastStatus.left;
+  bool get isJoined => this == LiveBroadcastStatus.joined;
+  bool get isFailure => this == LiveBroadcastStatus.failure;
+}
+
+final class BroadcastState with EquatableMixin {
+  BroadcastState({
+    this.status = LiveBroadcastStatus.initial,
+    this.hostDisconnected = false,
+    this.isReconnect = false,
+    this.exception,
+    this.isStream = false,
+    Broadcast? broadcast,
+  }) : broadcast = broadcast ?? Broadcast.empty();
+
+  final Broadcast broadcast;
+  final LiveBroadcastStatus status;
+  final bool hostDisconnected;
+  final bool isReconnect;
+  final BroadcastException? exception;
+  final bool isStream;
+
+  BroadcastState copyWith({
+    Broadcast? broadcast,
+    LiveBroadcastStatus? status,
+    bool? hostDisconnected,
+    bool? isReconnect,
+    BroadcastException? exception,
+    bool? isStream,
+  }) {
+    return BroadcastState(
+      broadcast: broadcast ?? this.broadcast,
+      status: status ?? this.status,
+      hostDisconnected: hostDisconnected ?? this.hostDisconnected,
+      isReconnect: isReconnect ?? this.isReconnect,
+      exception: exception ?? this.exception,
+      isStream: isStream ?? this.isStream,
+    );
+  }
+
+  @override
+  List<Object?> get props => [broadcast, status, hostDisconnected, isReconnect];
 }

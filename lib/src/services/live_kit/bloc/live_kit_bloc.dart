@@ -60,12 +60,7 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
       result.fold(
         (failure) => state.copyWith(
           micEnabled: false,
-          status: LiveKitConnectionFailed(
-            error: failure.maybeMap(
-              orElse: () => 'Unknown error',
-              message: (value) => value.message,
-            ),
-          ),
+          status: LiveKitConnectionFailed(error: failure.message),
         ),
         (success) => state.copyWith(
           micEnabled: true,
@@ -108,10 +103,7 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
             (failure) => state.copyWith(
               status: LiveKitConnectionFailed(
                 isStream: true,
-                error: failure.maybeMap(
-                  orElse: () => 'Unknown error',
-                  message: (value) => value.message,
-                ),
+                error: failure.message,
               ),
             ),
             (success) => state.copyWith(

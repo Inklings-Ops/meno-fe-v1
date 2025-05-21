@@ -43,9 +43,7 @@ class AccountsSearchBar extends StatelessWidget {
                 leading: const Icon(MIcons.search, size: Insets.lg),
                 shape: const WidgetStatePropertyAll(
                   RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Color(0xFFC2C7D0),
-                    ),
+                    side: BorderSide(color: Color(0xFFC2C7D0)),
                     borderRadius: Corners.sm,
                   ),
                 ),

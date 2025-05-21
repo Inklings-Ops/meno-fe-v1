@@ -47,7 +47,10 @@ class _List extends StatelessWidget {
                     '',
                 endTime: broadcast.endTime,
                 imageUrl: broadcast.imageUrl,
-                onTap: () => router.push(Routes.details, extra: broadcast),
+                onTap: () => router.pushNamed(
+                  'Broadcast Details',
+                  pathParameters: {'id': broadcast.id.getOr()},
+                ),
               );
             }
 

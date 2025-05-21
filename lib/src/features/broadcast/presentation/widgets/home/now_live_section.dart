@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/socket/bloc/socket_bloc.dart';
 
 class NowLiveSection extends StatelessWidget {
   const NowLiveSection({super.key});
@@ -8,8 +7,6 @@ class NowLiveSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final bloc = context.read<LiveBroadcastsBloc>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -17,35 +14,43 @@ class NowLiveSection extends StatelessWidget {
         MHeader(
           title: 'Now Live',
           action: InkWell(
-            onTap: () => context.push(Routes.nowLive),
+            onTap: () => context.pushNamed(
+              'Broadcasts',
+              queryParameters: {
+                'type': BroadcastsPageType.now.name,
+                'sort-by': 'startTime',
+                'order-by': OrderBy.ASC.name,
+                'end-time-exists': 'false',
+                'start-time-exists': 'true',
+                'include': 'totalListeners',
+                'status': 'active',
+              },
+            ),
             child: MText('See all', color: colors.onBackgroundVariant),
           ),
         ),
         const SizedBox(height: 24),
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            state.whenOrNull(
-              newBroadcast: (data) => bloc.add(NewBroadcastReceived(data)),
-              endedBroadcast: (data) => bloc.add(EndedBroadcastReceived(data)),
-            );
-          },
-          child: LimitedBox(
-            maxHeight: 184,
-            child: BlocBuilder<LiveBroadcastsBloc, LiveBroadcastsState>(
-              builder: (context, state) => state.maybeWhen(
-                orElse: EmptyListWidget.new,
-                loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-                loaded: (broadcasts) => _List(broadcasts: broadcasts),
-              ),
-            ),
+        LimitedBox(
+          maxHeight: 184,
+          child: BlocBuilder<NowLiveBloc, NowLiveState>(
+            builder: (context, state) {
+              switch (state) {
+                case NowLiveLoadInProgress():
+                  return _List(broadcasts: fakeBroadcasts, loading: true);
+                case NowLiveLoadSuccess(:final broadcasts):
+                  return _List(broadcasts: broadcasts);
+                case NowLiveLoadFailure():
+                  return const EmptyListWidget();
+                default:
+                  return const SizedBox.shrink();
+              }
+            },
           ),
         ),
       ],
     );
   }
 }
-
-
 
 class _List extends StatelessWidget {
   const _List({required this.broadcasts, this.loading = false});
@@ -54,6 +59,8 @@ class _List extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (broadcasts.isEmpty) return const EmptyListWidget();
+
     return Skeletonizer(
       enabled: loading,
       child: ListView.separated(

@@ -8,3 +8,4 @@ export 'objectbox_service.dart';
 export 'permissions_service.dart';
 export 'secure_storage_service.dart';
 export 'socket/socket.dart';
+export 'timezone_service.dart';

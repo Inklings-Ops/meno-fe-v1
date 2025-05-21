@@ -1,6 +1,5 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/services/services.dart';
 
 class LiveBroadcastActivityCard extends StatelessWidget {
   const LiveBroadcastActivityCard({super.key});
@@ -11,38 +10,51 @@ class LiveBroadcastActivityCard extends StatelessWidget {
       (bloc) => bloc.state.broadcast,
     );
 
-    return BlocBuilder<LiveBloc, LiveState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        live: () => ActivityCard(
-          badgeTitle: 'Now Live',
-          broadcast: broadcast,
-          actionButtonLabel: 'End',
-          action: () => onBroadcastEnd(context, broadcast.id),
-          onTap: () => router.push<void>(Routes.broadcastTab),
-        ),
-        reconnecting: () => ActivityCard(
-          badgeTitle: 'Reconnecting',
-          broadcast: broadcast,
-          actionButtonLabel: 'End',
-          onTap: () => router.push<void>(Routes.broadcastTab),
-        ),
-      ),
+    return BlocBuilder<BroadcastBloc, BroadcastState>(
+      builder: (context, state) {
+        switch (state.status) {
+          case LiveBroadcastStatus.started:
+            return ActivityCard(
+              badgeTitle: 'Now Live',
+              broadcast: broadcast,
+              actionButtonLabel: 'End',
+              action: () => onBroadcastEnd(context, broadcast.id),
+              onTap: () => router.push<void>(Routes.broadcastTab),
+            );
+          case LiveBroadcastStatus.joined:
+            return ActivityCard(
+              badgeTitle: 'Now Streaming',
+              broadcast: broadcast,
+              actionButtonLabel: 'Leave',
+              action: () => onBroadcastLeave(context, broadcast.id),
+              onTap: () => router.push<void>(Routes.broadcastTab, extra: true),
+            );
+          case LiveBroadcastStatus.failure:
+          case LiveBroadcastStatus.initial:
+          case LiveBroadcastStatus.left:
+          case LiveBroadcastStatus.loading:
+          case LiveBroadcastStatus.ended:
+            return const SizedBox(height: Insets.xxl);
+        }
+      },
     );
   }
 
   void onBroadcastEnd(BuildContext context, Uid<Broadcast> broadcastId) {
-    final socket = context.read<SocketBloc>();
-    final livekit = context.read<LiveKitBloc>();
-    context.showEndBroadcastDialog().then((value) {
-      if (value == null || value == false) {
-        return;
-      } else {
-        di<BackgroundService>().stopBroadcastBackgroundProcess();
-        socket.add(SocketEndBroadcast(broadcastId));
-        livekit.add(const LiveKitDisconnect());
-        return;
-      }
+    final broadcastBloc = context.read<BroadcastBloc>();
+    context.showEndBroadcastDialog().then((result) {
+      if (result != true) return;
+      broadcastBloc.add(BroadcastEndRequested(broadcastId));
+      return;
+    });
+  }
+
+  void onBroadcastLeave(BuildContext context, Uid<Broadcast> broadcastId) {
+    final broadcastBloc = context.read<BroadcastBloc>();
+    context.showLeaveBroadcastDialog().then((result) {
+      if (result != true) return;
+      broadcastBloc.add(BroadcastEndRequested(broadcastId));
+      return;
     });
   }
 }

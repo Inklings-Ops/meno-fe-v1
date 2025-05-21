@@ -6,8 +6,8 @@ class BroadcastTitleField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<LiveBloc, bool>(
-      (bloc) => bloc.state is LiveLoading,
+    final isLoading = context.select<BroadcastBloc, bool>(
+      (bloc) => bloc.state.status.isLoading,
     );
 
     return BlocBuilder<BroadcastFormCubit, BroadcastFormState>(
@@ -19,7 +19,12 @@ class BroadcastTitleField extends StatelessWidget {
         enabled: !isLoading,
         textInputAction: TextInputAction.next,
         onChanged: context.read<BroadcastFormCubit>().titleChanged,
-        validator: (_) => context.validator(state.title.value),
+        validator: (_) => state.title.value.fold(
+          (exception) => exception.mapOrNull(
+            empty: (value) => MErrorMessages.emptyError,
+          ),
+          (_) => null,
+        ),
       ),
     );
   }
