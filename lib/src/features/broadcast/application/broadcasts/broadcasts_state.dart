@@ -37,13 +37,13 @@ final class BroadcastsState with EquatableMixin {
 
   final String sortBy;
   final OrderBy orderBy;
-  final Uid<Broadcast>? id;
+  final ID? id;
   final String? keywords;
   final bool? startTimeExists;
   final bool? endTimeExists;
   final String? include;
   final String? broadcastStatus;
-  final Uid<User>? creatorId;
+  final ID? creatorId;
 
   final BroadcastException? exception;
 
@@ -73,13 +73,13 @@ final class BroadcastsState with EquatableMixin {
     BroadcastsStateStatus? status,
     String? sortBy,
     OrderBy? orderBy,
-    Uid<Broadcast>? id,
+    ID? id,
     String? keywords,
     bool? startTimeExists,
     bool? endTimeExists,
     String? include,
     String? broadcastStatus,
-    Uid<User>? creatorId,
+    ID? creatorId,
     BroadcastException? exception,
   }) {
     return BroadcastsState(

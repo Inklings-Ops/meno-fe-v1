@@ -1,103 +1,130 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meno_fe_v1/src/features/broadcast/domain/domain.dart';
+import 'package:meno_fe_v1/src/features/broadcast/infrastructure/dtos/dtos.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
-part 'broadcast_dto.freezed.dart';
 part 'broadcast_dto.g.dart';
 
-@freezed
-@JsonSerializable(
-  explicitToJson: true,
-  createFactory: false,
-  includeIfNull: false,
-)
-class BroadcastDto with _$BroadcastDto {
-  const factory BroadcastDto({
-    required String id,
-    required String title,
-    String? description,
-    String? broadcastToken,
-    BroadcastStatus? status,
-    BroadcastParticipantDto? creator,
-    String? creatorId,
-    String? fullName,
-    String? imageId,
-    String? imageUrl,
-    String? timeZone,
-    DateTime? startTime,
-    DateTime? endTime,
-    DateTime? createdAt,
-    dynamic deleted,
-    int? liveListeners,
-    int? totalListeners,
-    String? creatorBio,
-    String? creatorFullName,
-    String? creatorImageUrl,
-  }) = _BroadcastDto;
+@JsonSerializable()
+class BroadcastDto with EquatableMixin {
+  const BroadcastDto({
+    required this.id,
+    required this.title,
+    required this.description,
+    this.status = BroadcastStatus.inactive,
+    this.broadcastToken,
+    this.creatorId,
+    this.creator,
+    this.fullName,
+    this.imageUrl,
+    this.startTime,
+    this.endTime,
+    this.createdAt,
+    this.deleted,
+    this.liveListeners,
+    this.totalListeners,
+    this.creatorFullName,
+    this.creatorBio,
+    this.creatorImageUrl,
+  });
 
   factory BroadcastDto.fromJson(Map<String, dynamic> json) =>
       _$BroadcastDtoFromJson(json);
 
-  @override
   Map<String, dynamic> toJson() => _$BroadcastDtoToJson(this);
+
+  final String id;
+  final String title;
+  final String description;
+  final BroadcastStatus status;
+  final String? broadcastToken;
+  final String? creatorId;
+  final ParticipantDto? creator;
+  final String? fullName;
+  final String? imageUrl;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final DateTime? createdAt;
+  final dynamic deleted;
+  final int? liveListeners;
+  final int? totalListeners;
+  final String? creatorFullName;
+  final String? creatorBio;
+  final String? creatorImageUrl;
+
+  @override
+  List<Object?> get props => [
+        id,
+        title,
+        description,
+        broadcastToken,
+        status,
+        creatorId,
+        creator,
+        fullName,
+        imageUrl,
+        startTime,
+        endTime,
+        createdAt,
+        deleted,
+        liveListeners,
+        totalListeners,
+        creatorFullName,
+        creatorBio,
+        creatorImageUrl,
+      ];
+
+  @override
+  bool? get stringify => true;
 }
 
-extension BroadcastDtoToDomain on BroadcastDto {
+extension BroadcastToDomainX on BroadcastDto {
   Broadcast get toDomain {
     return Broadcast(
-      id: Uid<Broadcast>.fromString(id),
+      id: ID.fromString(id),
       title: SingleLineString(title),
-      description: BroadcastDescription(description),
-      creatorId: creatorId,
-      creator: creator != null
-          ? BroadcastParticipant(id: creator!.id, fullName: creator!.fullName)
-          : null,
-      fullName: fullName,
+      description: MultiLineString(description),
+      status: status,
       broadcastToken: broadcastToken,
-      createdAt: createdAt,
-      deleted: deleted,
-      endTime: endTime,
-      imageId: imageId,
+      creatorId: creatorId == null ? null : ID.fromString(creatorId!),
+      creator: creator?.toDomain,
+      fullName: fullName == null ? null : SingleLineString(fullName!),
       imageUrl: imageUrl,
       startTime: startTime,
-      status: status,
-      timeZone: timeZone,
+      endTime: endTime,
+      createdAt: createdAt,
+      deleted: deleted,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
-      creatorBio: creatorBio,
-      creatorFullName: creatorFullName,
+      creatorFullName:
+          creatorFullName == null ? null : SingleLineString(creatorFullName!),
+      creatorBio: creatorBio == null ? null : MultiLineString(creatorBio!),
       creatorImageUrl: creatorImageUrl,
     );
   }
 }
 
-extension BroadcastToDto on Broadcast {
+extension BroadcastToDtoX on Broadcast {
   BroadcastDto get toDto {
     return BroadcastDto(
-      id: id.getOr(),
-      title: title.getOr(),
-      description: description?.getOr(),
-      creatorId: creatorId,
-      creator: creator != null
-          ? BroadcastParticipantDto(
-              id: creator!.id,
-              fullName: creator!.fullName,
-            )
-          : null,
-      fullName: fullName,
+      id: id.getOrCrash(),
+      title: title.getOrCrash(),
+      description: description.getOrCrash(),
+      status: status,
       broadcastToken: broadcastToken,
-      createdAt: createdAt,
-      deleted: deleted,
-      endTime: endTime,
-      imageId: imageId,
+      creatorId: creatorId?.getOrNull(),
+      creator: creator?.toDto,
+      fullName: fullName?.getOrNull(),
       imageUrl: imageUrl,
       startTime: startTime,
-      status: status,
-      timeZone: timeZone,
+      endTime: endTime,
+      createdAt: createdAt,
+      deleted: deleted,
       liveListeners: liveListeners,
       totalListeners: totalListeners,
-      creatorBio: creatorBio,
-      creatorFullName: creatorFullName,
+      creatorFullName: creatorFullName?.getOrNull(),
+      creatorBio: creatorBio?.getOrNull(),
       creatorImageUrl: creatorImageUrl,
     );
   }

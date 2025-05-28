@@ -6,7 +6,7 @@ class GoogleDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Row(
       children: [
         const Expanded(child: MDivider()),

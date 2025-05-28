@@ -31,46 +31,59 @@ class DiscoverResultWidget extends HookWidget {
 
 class _AllBroadcastsView extends HookWidget {
   const _AllBroadcastsView();
-
-  Future<List<Broadcast?>> nowLive() async {
-    final fOrS = await di<IBroadcastFacade>().nowLiveBroadcasts();
-    return fOrS.fold((l) => [], (r) => r.broadcasts);
-  }
-
-  Future<List<Broadcast?>> recentlyLive() async {
-    final now = DateTime.now();
-    final oneDayAgo = now.subtract(const Duration(days: 100));
-
-    final fOrS = await di<IBroadcastFacade>().recentlyLiveBroadcasts(
-      endTimeGT: oneDayAgo.toIso8601String(),
-      endTimeLT: now.toIso8601String(),
-    );
-    return fOrS.fold((l) => [], (r) => r.broadcasts);
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    final nowLiveFuture = useMemoized(nowLive);
-    final nowLiveSnapshot = useFuture(nowLiveFuture);
-
-    final recentlyLiveFuture = useMemoized(recentlyLive);
-    final recentlyLiveSnapshot = useFuture(recentlyLiveFuture);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Spaces.verticalXLarge,
-        _Grid(
-          title: 'Now Live',
-          snapshot: nowLiveSnapshot,
-          isNowLive: true,
-          onSeeAll: () {},
+        BlocBuilder<NowLiveBloc, NowLiveState>(
+          builder: (context, state) {
+            switch (state) {
+              case NowLiveLoadFailure():
+                return const EmptyListWidget();
+              case NowLiveLoadMoreInProgress(:final broadcasts):
+              case NowLiveLoadSuccess(:final broadcasts):
+                return _Grid(
+                  title: 'Now Live',
+                  broadcasts: broadcasts,
+                  isNowLive: true,
+                  onSeeAll: () {},
+                );
+              case NowLiveInitial():
+              case NowLiveLoadInProgress():
+                return _Grid(
+                  title: 'Now Live',
+                  broadcasts: fakeBroadcasts,
+                  isNowLive: true,
+                  isLoading: true,
+                );
+            }
+          },
         ),
         Spaces.verticalXXLarge,
-        _Grid(
-          title: 'Recently Live',
-          snapshot: recentlyLiveSnapshot,
-          onSeeAll: () {},
+        BlocBuilder<RecentlyLiveBloc, RecentlyLiveState>(
+          builder: (context, state) {
+            switch (state) {
+              case RecentlyLiveLoadFailure():
+                return const EmptyListWidget();
+              case RecentlyLiveLoadMoreInProgress(:final broadcasts):
+              case RecentlyLiveLoadSuccess(:final broadcasts):
+                return _Grid(
+                  title: 'Recently Live',
+                  broadcasts: broadcasts,
+                  onSeeAll: () {},
+                );
+              case RecentlyLiveInitial():
+              case RecentlyLiveLoadInProgress():
+                return _Grid(
+                  title: 'Recently Live',
+                  broadcasts: fakeBroadcasts,
+                  isLoading: true,
+                );
+            }
+          },
         ),
         Spaces.verticalXXLarge,
       ],
@@ -81,82 +94,80 @@ class _AllBroadcastsView extends HookWidget {
 class _Grid extends HookWidget {
   const _Grid({
     required this.title,
-    required this.onSeeAll,
-    required this.snapshot,
+    required this.broadcasts,
+    this.onSeeAll,
     this.isNowLive = false,
+    this.isLoading = false,
   });
+
   final String title;
-  final VoidCallback onSeeAll;
-  final AsyncSnapshot<List<Broadcast?>> snapshot;
+  final VoidCallback? onSeeAll;
+  final List<Broadcast?> broadcasts;
   final bool isNowLive;
+  final bool isLoading;
+
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
-    late Widget child;
+    final textTheme = MTextTheme.of(context);
 
-    final isLoading = snapshot.connectionState == ConnectionState.waiting;
-    if (isLoading || snapshot.hasError) {
-      child = const MLoadingIndicator.box();
-    } else if (!isLoading && (snapshot.data?.isEmpty ?? false)) {
-      child = const EmptyListWidget();
-    } else {
-      final broadcasts = snapshot.data!;
-      child = GridView.builder(
-        scrollDirection: Axis.horizontal,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 24,
-          crossAxisSpacing: 24,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        shrinkWrap: true,
-        primary: false,
-        itemCount: broadcasts.length,
-        itemBuilder: (context, i) {
-          final broadcast = broadcasts[i]!;
-          if (isNowLive) {
-            return MCard.live(
-              title: broadcast.title.getOr(),
-              imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName,
-              liveCount: broadcast.totalListeners,
-            );
-          } else {
-            return MCard.recentlyLive(
-              title: broadcast.title.getOr(),
-              imageUrl: broadcast.imageUrl,
-              host: broadcast.fullName,
-            );
-          }
-        },
-      );
-    }
+    if (!isLoading && broadcasts.isEmpty) return const EmptyListWidget();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          height: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MText(title, style: textTheme.subheadingBold),
-              InkWell(
-                onTap: onSeeAll,
-                child: MText(
-                  'See all',
-                  style: textTheme.microMedium,
-                  color: colors.primary,
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                MText(title, style: textTheme.subheadingBold),
+                InkWell(
+                  onTap: isLoading ? null : onSeeAll,
+                  child: MText(
+                    'See all',
+                    style: textTheme.microMedium,
+                    color: colors.primary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Spaces.verticalXLarge,
-        LimitedBox(maxHeight: 376, child: child),
-      ],
+          Spaces.verticalXLarge,
+          LimitedBox(
+            maxHeight: 376,
+            child: GridView.builder(
+              scrollDirection: Axis.horizontal,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 24,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+              primary: false,
+              itemCount: broadcasts.length,
+              itemBuilder: (context, i) {
+                final broadcast = broadcasts[i]!;
+                if (isNowLive) {
+                  return LiveBroadcastCard(broadcast: broadcast);
+                } else {
+                  return MCard.recentlyLive(
+                    title: broadcast.title.getOrCrash(),
+                    imageUrl: broadcast.imageUrl,
+                    host: broadcast.fullName?.getOrNull() ??
+                        broadcast.creatorFullName?.getOrNull() ??
+                        broadcast.creator?.fullName.getOrNull(),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

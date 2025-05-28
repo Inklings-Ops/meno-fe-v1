@@ -7,7 +7,7 @@ class MNotesBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Container(
       width: 56,
       height: 18,

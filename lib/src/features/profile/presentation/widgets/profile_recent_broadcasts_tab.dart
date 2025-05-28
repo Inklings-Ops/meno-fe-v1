@@ -8,15 +8,22 @@ class ProfileRecentBroadcastsTab extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => Center(
-          child: EmptyStateWidget(actionTitle: 'Broadcasts', action: () {}),
-        ),
-        loading: () => _List(broadcasts: fakeBroadcasts, loading: true),
-        loaded: (broadcasts) => _List(broadcasts: broadcasts),
-        loadingMore: (broadcasts) => _List(broadcasts: broadcasts),
-        loadedLast: (broadcasts) => _List(broadcasts: broadcasts),
-      ),
+      builder: (context, state) {
+        switch (state) {
+          case UsersRecentBroadcastsEmpty():
+          case UsersRecentBroadcastsLoadFailure():
+            return EmptyStateWidget(actionTitle: 'Broadcasts', action: () {});
+          case UsersRecentBroadcastsInitial():
+          case UsersRecentBroadcastsLoadInProgress():
+            return _List(broadcasts: fakeBroadcasts, loading: true);
+          case UsersRecentBroadcastsLoadMoreInProgress(:final broadcasts):
+            return _List(broadcasts: broadcasts);
+          case UsersRecentBroadcastsLoadSuccess(:final broadcasts):
+            return _List(broadcasts: broadcasts);
+          case UsersRecentBroadcastsLoadLastSuccess(:final broadcasts):
+            return _List(broadcasts: broadcasts);
+        }
+      },
     );
   }
 }
@@ -40,16 +47,16 @@ class _List extends StatelessWidget {
             if (index < broadcasts.length) {
               final broadcast = broadcasts[index]!;
               return MRecentlyLiveListTile(
-                title: broadcast.title.getOr(),
-                creator: broadcast.creator?.fullName ??
-                    broadcast.fullName ??
-                    broadcast.creatorFullName ??
+                title: broadcast.title.getOrCrash(),
+                creator: broadcast.creator?.fullName.getOrNull() ??
+                    broadcast.fullName?.getOrNull() ??
+                    broadcast.creatorFullName?.getOrNull() ??
                     '',
                 endTime: broadcast.endTime,
                 imageUrl: broadcast.imageUrl,
                 onTap: () => router.pushNamed(
                   'Broadcast Details',
-                  pathParameters: {'id': broadcast.id.getOr()},
+                  pathParameters: {'id': broadcast.id.getOrCrash()},
                 ),
               );
             }
@@ -69,20 +76,31 @@ class _LoadMoreWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = context.read<UsersRecentBroadcastsBloc>();
     return BlocBuilder<UsersRecentBroadcastsBloc, UsersRecentBroadcastsState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        loaded: (_) => TextButton(
-          onPressed: () => bloc.add(const GetMoreUsersRecentBroadcasts()),
-          child: const MText('Load more'),
-        ),
-        loadingMore: (broadcasts) => const MLoadingIndicator.box(),
-        loadedLast: (broadcasts) => MText(
-          'You’ve reached the end 🎉',
-          style: MTextTheme.of(context)?.captionRegular,
-          color: MColorScheme.of(context).onBackgroundVariant,
-          textAlign: TextAlign.center,
-        ),
-      ),
+      builder: (context, state) {
+        switch (state) {
+          case UsersRecentBroadcastsEmpty():
+          case UsersRecentBroadcastsLoadFailure():
+          case UsersRecentBroadcastsInitial():
+          case UsersRecentBroadcastsLoadInProgress():
+            return const SizedBox.shrink();
+          case UsersRecentBroadcastsLoadMoreInProgress():
+            return const MLoadingIndicator.box();
+          case UsersRecentBroadcastsLoadSuccess():
+            return TextButton(
+              onPressed: () => bloc.add(
+                const UsersRecentBroadcastsFetchMoreRequested(),
+              ),
+              child: const MText('Load more'),
+            );
+          case UsersRecentBroadcastsLoadLastSuccess():
+            return MText(
+              'You’ve reached the end 🎉',
+              style: MTextTheme.of(context).captionRegular,
+              color: MColorScheme.of(context).onBackgroundVariant,
+              textAlign: TextAlign.center,
+            );
+        }
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ class AccountUpgradeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 24,
       child: Row(
@@ -17,7 +17,7 @@ class AccountUpgradeSection extends StatelessWidget {
             onPressed: () {},
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
-              textStyle: textTheme.captionMedium?.copyWith(
+              textStyle: textTheme.captionMedium.copyWith(
                 decoration: TextDecoration.underline,
               ),
             ),

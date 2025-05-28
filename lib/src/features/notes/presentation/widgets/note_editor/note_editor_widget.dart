@@ -17,7 +17,7 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
   late QuillController contentController;
   late FocusNode quillFocusNode;
   late ScrollController scrollController;
-  late QuillEditorConfigurations quillConfigurations;
+  late QuillEditorConfig quillConfigs;
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +41,11 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
               Spaces.verticalLarge,
             ],
             Expanded(
-              child: QuillEditor(
+              child: QuillEditor.basic(
                 controller: contentController,
                 focusNode: quillFocusNode,
                 scrollController: scrollController,
-                configurations: quillConfigurations,
+                config: quillConfigs,
               ),
             ),
           ],
@@ -59,24 +59,25 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
   @override
   void didChangeDependencies() {
     if (widget.note.content.isValid) {
-      final json = jsonDecode(widget.note.content.getOr()) as List<dynamic>;
+      final json =
+          jsonDecode(widget.note.content.getOrCrash()) as List<dynamic>;
       contentController.document = Document.fromJson(json);
     }
-    final textTheme = MTextTheme.of(context)!;
-    quillConfigurations = QuillEditorConfigurations(
+    final textTheme = MTextTheme.of(context);
+    quillConfigs = QuillEditorConfig(
       padding: MediaQuery.viewInsetsOf(context),
       placeholder: 'Start writing...',
       expands: true,
       customStyles: DefaultStyles(
         paragraph: DefaultTextBlockStyle(
-          textTheme.captionRegular!,
+          textTheme.captionRegular,
           HorizontalSpacing.zero,
           VerticalSpacing.zero,
           VerticalSpacing.zero,
           null,
         ),
         placeHolder: DefaultTextBlockStyle(
-          textTheme.captionRegular!,
+          textTheme.captionRegular,
           HorizontalSpacing.zero,
           VerticalSpacing.zero,
           VerticalSpacing.zero,
@@ -97,7 +98,9 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
 
     contentController.addListener(() {
       final con = jsonEncode(contentController.document.toDelta().toJson());
-      context.read<NoteEditorBloc>().add(NoteContentChanged(NoteContent(con)));
+      context
+          .read<NoteEditorBloc>()
+          .add(NoteContentChanged(MultiLineString(con)));
     });
   }
 

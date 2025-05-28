@@ -72,7 +72,6 @@ import '../features/profile/infrastructure/datasources/profile_local_datasource.
     as _i517;
 import '../features/profile/infrastructure/datasources/profile_remote_datasource.dart'
     as _i212;
-import '../features/profile/infrastructure/mapper/profile_mapper.dart' as _i865;
 import '../features/profile/infrastructure/profile_facade.dart' as _i920;
 import '../features/profile/profile.dart' as _i443;
 import '../features/settings/infrastructure/datasources/settings_local_datasource.dart'
@@ -117,7 +116,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.obj,
       preResolve: true,
     );
-    gh.singleton<_i865.ProfileMapper>(() => _i865.ProfileMapper());
     gh.singleton<_i179.PermissionsService>(() => _i179.PermissionsService());
     gh.lazySingleton<_i973.InternetConnectionChecker>(
         () => registerModule.internetChecker);
@@ -157,8 +155,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i463.NetworkService>(
         () => _i463.NetworkService(gh<_i973.InternetConnectionChecker>()));
-    gh.factory<_i882.AuthLocalDatasource>(() =>
-        _i882.AuthLocalDatasource(storage: gh<_i535.SecureStorageService>()));
+    await gh.factoryAsync<_i882.AuthLocalDatasource>(
+      () {
+        final i = _i882.AuthLocalDatasource(
+            storage: gh<_i535.SecureStorageService>());
+        return i.initialize().then((_) => i);
+      },
+      preResolve: true,
+    );
     gh.factory<_i396.BroadcastLocalDatasource>(() =>
         _i396.BroadcastLocalDatasource(
             storage: gh<_i264.SecureStorageService>()));
@@ -212,6 +216,11 @@ extension GetItInjectableX on _i174.GetIt {
           remote: gh<_i506.ChatRemoteDatasource>(),
           network: gh<_i264.NetworkService>(),
         ));
+    gh.factory<_i236.IAuthFacade>(() => _i790.AuthFacade(
+          remoteDatasource: gh<_i236.AuthRemoteDatasource>(),
+          localDatasource: gh<_i236.AuthLocalDatasource>(),
+          networkService: gh<_i264.NetworkService>(),
+        ));
     gh.factory<_i1042.INoteFacade>(() => _i176.NoteFacade(
           network: gh<_i264.NetworkService>(),
           local: gh<_i1042.NoteLocalDatasource>(),
@@ -227,19 +236,7 @@ extension GetItInjectableX on _i174.GetIt {
           local: gh<_i625.BroadcastLocalDatasource>(),
           network: gh<_i264.NetworkService>(),
         ));
-    await gh.factoryAsync<_i236.IAuthFacade>(
-      () {
-        final i = _i790.AuthFacade(
-          remoteDatasource: gh<_i236.AuthRemoteDatasource>(),
-          localDatasource: gh<_i236.AuthLocalDatasource>(),
-          networkService: gh<_i264.NetworkService>(),
-          jwtService: gh<_i264.JWTService>(),
-        );
-        return i.init().then((_) => i);
-      },
-      preResolve: true,
-    );
-    gh.lazySingleton<_i443.IProfileFacade>(() => _i920.ProfileFacade(
+    gh.factory<_i443.IProfileFacade>(() => _i920.ProfileFacade(
           remote: gh<_i443.ProfileRemoteDatasource>(),
           local: gh<_i443.ProfileLocalDatasource>(),
           network: gh<_i463.NetworkService>(),

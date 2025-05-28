@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/core/exceptions/auth_exception.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
@@ -22,10 +22,8 @@ import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 //
 // Registers as a singleton using the `@LazySingleton` annotation.
 abstract class IAuthFacade {
-  /// Initializes the facade by retrieving the store user credential from
-  /// the secure local storage and passing it on to the required stream
-  /// controllers for use
-  Future<void> init();
+  /// Returns all the [UserCredential]s of stored in the app secure storage.
+  Stream<Map<String, UserCredential>> get allAccounts;
 
   /// A stream of the authenticated [UserCredential]
   ///
@@ -33,26 +31,10 @@ abstract class IAuthFacade {
   /// account
   Stream<UserCredential?> get userChanges;
 
-  /// A stream of the authenticated UserToken
-  ///
-  /// Provides a way to easy listen on for any changes made on the user's token
-  /// from the [UserCredential]
-  Stream<Token?> get tokenChanges;
-
   /// Checks whether the user is currently verified.
   Future<bool> get isVerified;
 
-  /// Gets the currently authenticated user.
-  Future<User> get user;
-
-  /// Gets the authenticated user's token.
-  Token? get userToken;
-
-  /// Gets the authenticated user's credential.
   UserCredential? get credential;
-
-  /// Gets the user's token.
-  Future<Map<String, UserCredential>?> get allCredentials;
 
   /// Signs the user in with Google.
   ///
@@ -62,8 +44,6 @@ abstract class IAuthFacade {
   /// Returns an `Either` value, where the left value is a `AuthException`
   /// object and the right value is a `Unit` object.
   Future<Either<AuthException, Unit>> googleSignIn({bool isRegister = false});
-
-  bool isTokenValid(String token);
 
   /// Logs the user in with their email address and password.
   ///
@@ -85,8 +65,8 @@ abstract class IAuthFacade {
     required SingleLineString fullName,
     required Email email,
     required Password password,
-    Bio? bio,
-    Avatar? avatar,
+    MultiLineString? bio,
+    ImageFile? avatar,
   });
 
   Future<Either<AuthException, Unit>> changePassword({
@@ -107,28 +87,12 @@ abstract class IAuthFacade {
     required Password newPassword,
   });
 
-  Future<void> removeAccount(Uid<User> userId);
+  Future<void> removeAccount(ID id);
 
-  Future<Either<AuthException, UserCredential>> switchAccount(Uid<User> userId);
+  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential);
 
   Future<Either<AuthException, Unit>> verifyEmailAddress({
     required Email email,
     required String code,
-  });
-
-  Future<Either<AuthException, Unit>> editProfile({
-    SingleLineString? fullName,
-    Bio? bio,
-    Avatar? avatar,
-  });
-
-  Future<Either<AuthException, ProfilesList>> getProfiles({
-    String? userId,
-    String? include,
-    String? keywords,
-    String? sortBy,
-    String? orderBy,
-    int? page,
-    int? size,
   });
 }

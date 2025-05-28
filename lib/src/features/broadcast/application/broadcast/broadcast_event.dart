@@ -17,8 +17,8 @@ final class BroadcastStartRequested extends BroadcastEvent {
   });
 
   final SingleLineString title;
-  final BroadcastDescription description;
-  final BroadcastArtwork? artwork;
+  final MultiLineString description;
+  final ImageFile? artwork;
   final List<String>? cohosts;
   final String? timeZone;
 
@@ -28,7 +28,7 @@ final class BroadcastStartRequested extends BroadcastEvent {
 
 final class BroadcastEndRequested extends BroadcastEvent {
   const BroadcastEndRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -36,7 +36,7 @@ final class BroadcastEndRequested extends BroadcastEvent {
 
 final class BroadcastJoinRequested extends BroadcastEvent {
   const BroadcastJoinRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -44,7 +44,7 @@ final class BroadcastJoinRequested extends BroadcastEvent {
 
 final class BroadcastLeaveRequested extends BroadcastEvent {
   const BroadcastLeaveRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -60,4 +60,14 @@ final class BroadcastReconnectRequested extends BroadcastEvent {
 
 final class BroadcastResetRequested extends BroadcastEvent {
   const BroadcastResetRequested();
+}
+
+final class BroadcastMuteMicRequested extends BroadcastEvent {
+  const BroadcastMuteMicRequested();
+
+}
+
+final class BroadcastUnMuteMicRequested extends BroadcastEvent {
+  const BroadcastUnMuteMicRequested();
+
 }

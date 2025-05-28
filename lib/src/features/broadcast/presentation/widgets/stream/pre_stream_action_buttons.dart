@@ -9,7 +9,7 @@ class PreStreamActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final broadcastBloc = context.watch<BroadcastBloc>();
     return SizedBox(
@@ -36,7 +36,7 @@ class PreStreamActionButtons extends StatelessWidget {
               label: 'Share',
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: colors.outlineVariant3!),
+                side: BorderSide(color: colors.outlineVariant3),
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 textStyle: textTheme.microMedium,
                 foregroundColor: colors.onBackground,

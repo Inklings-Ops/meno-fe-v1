@@ -1,84 +1,55 @@
 import 'package:dartz/dartz.dart';
-import 'package:meno_fe_v1/src/core/core.dart' show BroadcastException;
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:dio/dio.dart';
+import 'package:meno_fe_v1/src/core/core.dart';
 import 'package:meno_fe_v1/src/features/broadcast/domain/entities/entities.dart';
-import 'package:meno_fe_v1/src/features/broadcast/domain/value_objects/value_objects.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
 abstract class IBroadcastFacade {
   Future<Either<BroadcastException, Broadcast>> createBroadcast({
     required SingleLineString title,
-    BroadcastDescription? description,
-    BroadcastArtwork? artwork,
+    required MultiLineString description,
+    ImageFile? artwork,
     String? timeZone,
     List<String>? cohosts,
   });
 
-  Future<Either<BroadcastException, Unit>> deleteBroadcast(Uid<Broadcast> id);
+  Future<Either<BroadcastException, Unit>> deleteBroadcast(ID id);
 
   Future<Either<BroadcastException, Broadcast>> editBroadcast({
-    required Uid<Broadcast> id,
+    required ID id,
     SingleLineString? title,
-    BroadcastDescription? description,
-    BroadcastArtwork? image,
+    MultiLineString? description,
+    ImageFile? image,
     String? timeZone,
     DateTime? startTime,
   });
 
   Future<Either<BroadcastException, Broadcast>> joinBroadcast(
-    Uid<Broadcast> id,
+    ID id,
   );
 
   Future<Either<BroadcastException, Broadcast>> startBroadcast(
-    Uid<Broadcast> id,
+    ID id,
   );
 
-  Future<Either<BroadcastException, List<BroadcastParticipant>>> listeners(
-    Uid<Broadcast> id,
+  Future<Either<BroadcastException, PaginatedList<Participant?>>> listeners(
+    ID id,
   );
 
-  Future<Either<BroadcastException, List<BroadcastParticipant>>> liveListeners(
-    Uid<Broadcast> id,
+  Future<Either<BroadcastException, List<Participant?>>> liveListeners(
+    ID id,
   );
 
-  Future<Either<BroadcastException, BroadcastListEntity>> nowLiveBroadcasts({
-    int? page,
-    int? size,
-    String? sortBy,
-    String? orderBy,
-  });
+  Future<Either<BroadcastException, PaginatedList<Broadcast?>>> getBroadcasts({
+    /// Sort by a specific broadcast field
+    required String sortBy,
 
-  Future<Either<BroadcastException, BroadcastListEntity>>
-      recentlyLiveBroadcasts({
-    int? page,
-    int? size,
-    String? sortBy,
-    String? orderBy,
-    String? endTimeGT,
-    String? endTimeLT,
-  });
+    /// Order by a specific broadcast field
+    /// Example : ASC or DESC
+    required OrderBy orderBy,
 
-  Future<Either<BroadcastException, BroadcastListEntity>>
-      userRecentlyLiveBroadcasts({
-    required Uid<User> userId,
-    int? page,
-    int? size,
-    String? sortBy,
-    String? orderBy,
-    String? endTimeGT,
-    String? endTimeLT,
-  });
-
-  Future<Either<BroadcastException, BroadcastListEntity>> search({
-    String? keywords,
-    int? page,
-    int? size,
-    String? sortBy,
-    String? orderBy,
-  });
-
-  Future<Either<BroadcastException, BroadcastListEntity>> getBroadcasts({
-    String? id,
+    /// [ID] of the broadcast
+    ID? id,
 
     /// Status of the broadcast
     /// Example : active or inactive
@@ -96,20 +67,13 @@ abstract class IBroadcastFacade {
     String? keywords,
 
     /// Return only broadcasts created by a specific user
-    String? creatorId,
-
-    /// Sort by a specific broadcast field
-    String? sortBy,
-
-    /// Order by a specific broadcast field
-    /// Example : ASC or DESC
-    String? orderBy,
+    ID? creatorId,
 
     /// Used for pagination
-    int? page,
+    int page = 1,
 
     /// Used for pagination
-    int? size,
+    int size = 8,
 
     /// Greater than end time
     String? endTimeGT,
@@ -128,17 +92,14 @@ abstract class IBroadcastFacade {
 
     /// Equal to start time
     bool? startTimeExist,
+
+    /// To cancel the request
+    CancelToken? cancelToken,
   });
 
-  Future<bool> get hasSavedBroadcast;
-
   Future<Option<Broadcast>> getSavedBroadcastDetails();
-
-  Future<Option<JoinBroadcastEntity>> getSavedStreamDetails();
 
   Future<void> clearSavedBroadcastDetails();
 
   Future<void> saveBroadcastDetails(Broadcast broadcast);
-  
-  Future<void> saveStreamDetails(JoinBroadcastEntity entity);
 }

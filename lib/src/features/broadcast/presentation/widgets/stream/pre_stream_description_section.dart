@@ -7,7 +7,7 @@ class PreStreamDescriptionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -20,8 +20,7 @@ class PreStreamDescriptionSection extends StatelessWidget {
           ],
         ),
         Spaces.verticalLarge,
-        if (broadcast.description?.getOr() != null)
-          MText(broadcast.description!.getOr()!),
+        MText(broadcast.description.getOrCrash()),
       ],
     );
   }

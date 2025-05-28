@@ -13,7 +13,7 @@ class NoteEditorAutosaveWidget extends StatelessWidget {
         saving: () => MText(
           'Saving...',
           color: MColorScheme.of(context).primary,
-          style: MTextTheme.of(context)!.captionMedium,
+          style: MTextTheme.of(context).captionMedium,
         ),
       ),
     );

@@ -5,10 +5,10 @@ import 'package:meno_fe_v1/src/core/response/response.dart' show BaseResponse;
 import 'package:meno_fe_v1/src/core/usecase/usecase.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart' show Uid;
+import 'package:meno_fe_v1/src/shared/shared.dart' show ID;
 
 @injectable
-class JoinBroadcastUsecase implements UseCase<Broadcast, Uid<Broadcast>> {
+class JoinBroadcastUsecase implements UseCase<Broadcast, ID> {
   const JoinBroadcastUsecase({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
@@ -26,7 +26,7 @@ class JoinBroadcastUsecase implements UseCase<Broadcast, Uid<Broadcast>> {
 
   @override
   Future<Either<BroadcastException, Broadcast>> call(
-    Uid<Broadcast> params,
+    ID params,
   ) async {
     final joinedResult = await _facade.joinBroadcast(params);
 
@@ -64,7 +64,7 @@ class JoinBroadcastUsecase implements UseCase<Broadcast, Uid<Broadcast>> {
 
     final socketResult = await _socket.emit(
       'joinBroadcast',
-      {'broadcastId': params.getOr()},
+      {'broadcastId': params.getOrCrash()},
     );
 
     final joinedResponse = BaseResponse.fromJson(

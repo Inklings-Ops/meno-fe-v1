@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
@@ -37,7 +39,7 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
     );
 
     _subscription = _session.userChanges.listen((credential) {
-      if (credential != null && (credential.token?.isValid ?? false)) {
+      if (credential != null && credential.token.isValid) {
         add(const NowLiveStarted());
       }
     });
@@ -57,7 +59,7 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
 
     final response = await _facade.getBroadcasts(
       sortBy: 'startTime',
-      orderBy: OrderBy.ASC.name,
+      orderBy: OrderBy.ASC,
       endTimeExist: false,
       startTimeExist: true,
       include: 'totalListeners',
@@ -70,7 +72,7 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
       response.fold(
         NowLiveLoadFailure.new,
         (success) => NowLiveLoadSuccess(
-          broadcasts: success.broadcasts,
+          broadcasts: success.items,
           currentPage: success.currentPage,
           hasMore: success.currentPage < success.totalPages,
         ),
@@ -89,7 +91,7 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
 
       final response = await _facade.getBroadcasts(
         sortBy: 'startTime',
-        orderBy: OrderBy.ASC.name,
+        orderBy: OrderBy.ASC,
         endTimeExist: false,
         startTimeExist: true,
         include: 'totalListeners',
@@ -102,7 +104,7 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
         response.fold(
           NowLiveLoadFailure.new,
           (success) => NowLiveLoadSuccess(
-            broadcasts: success.broadcasts,
+            broadcasts: success.items,
             currentPage: success.currentPage,
             hasMore: success.currentPage < success.totalPages,
           ),
@@ -138,8 +140,8 @@ class NowLiveBloc extends Bloc<NowLiveEvent, NowLiveState> {
   ) {
     if (state is NowLiveLoadSuccess) {
       final eventData = event.data as Map<String, dynamic>;
-      final endedDetails = EndedBroadcastDataDto.fromJson(eventData).toDomain;
-      final endedBroadcast = endedDetails.broadcastDetails;
+      final endedDetails = EndedBroadcastData.fromJson(eventData);
+      final endedBroadcast = endedDetails.broadcastDetails.toDomain;
 
       final currentState = state as NowLiveLoadSuccess;
       final currentBroadcasts = List<Broadcast?>.from(currentState.broadcasts);

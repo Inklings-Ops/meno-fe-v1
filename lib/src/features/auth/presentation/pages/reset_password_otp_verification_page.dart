@@ -7,7 +7,7 @@ class ResetPasswordOtpVerificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MScaffold(
       appBar: MAppBar.primary(title: 'Reset Password'),
       body: Form(

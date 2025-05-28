@@ -24,7 +24,7 @@ class NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final content = _getContent(note.content);
 
@@ -53,7 +53,7 @@ class NoteCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       MText(
-                        note.title.getOr(),
+                        note.title.getOrCrash(),
                         style: textTheme.bodyMedium,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -64,7 +64,7 @@ class NoteCard extends StatelessWidget {
                           child: Row(
                             children: [
                               MTag(
-                                title: note.folder!.title.getOr(),
+                                title: note.folder!.title.getOrCrash(),
                                 style: textTheme.microMedium,
                               ),
                             ],
@@ -131,10 +131,10 @@ class NoteCard extends StatelessWidget {
   }
 }
 
-String _getContent(NoteContent content) {
+String _getContent(MultiLineString content) {
   String value;
   try {
-    final json = content.getOr();
+    final json = content.getOrCrash();
     value = Document.fromJson(jsonDecode(json) as List<dynamic>).toPlainText();
   } catch (e) {
     value = BoneMock.longParagraph;

@@ -7,7 +7,9 @@ enum LiveBroadcastStatus {
   joined,
   ended,
   left,
-  failure
+  failure,
+  reconnecting,
+  offAir,
 }
 
 extension LiveBroadcastStatusX on LiveBroadcastStatus {
@@ -18,6 +20,8 @@ extension LiveBroadcastStatusX on LiveBroadcastStatus {
   bool get isLeft => this == LiveBroadcastStatus.left;
   bool get isJoined => this == LiveBroadcastStatus.joined;
   bool get isFailure => this == LiveBroadcastStatus.failure;
+  bool get isReconnecting => this == LiveBroadcastStatus.reconnecting;
+  bool get isOffAir => this == LiveBroadcastStatus.offAir;
 }
 
 final class BroadcastState with EquatableMixin {
@@ -27,8 +31,9 @@ final class BroadcastState with EquatableMixin {
     this.isReconnect = false,
     this.exception,
     this.isStream = false,
+    this.isMicrophoneEnabled = false,
     Broadcast? broadcast,
-  }) : broadcast = broadcast ?? Broadcast.empty();
+  }) : broadcast = broadcast ?? Broadcast.empty;
 
   final Broadcast broadcast;
   final LiveBroadcastStatus status;
@@ -36,6 +41,7 @@ final class BroadcastState with EquatableMixin {
   final bool isReconnect;
   final BroadcastException? exception;
   final bool isStream;
+  final bool isMicrophoneEnabled;
 
   BroadcastState copyWith({
     Broadcast? broadcast,
@@ -44,6 +50,7 @@ final class BroadcastState with EquatableMixin {
     bool? isReconnect,
     BroadcastException? exception,
     bool? isStream,
+    bool? isMicrophoneEnabled,
   }) {
     return BroadcastState(
       broadcast: broadcast ?? this.broadcast,
@@ -52,9 +59,16 @@ final class BroadcastState with EquatableMixin {
       isReconnect: isReconnect ?? this.isReconnect,
       exception: exception ?? this.exception,
       isStream: isStream ?? this.isStream,
+      isMicrophoneEnabled: isMicrophoneEnabled ?? this.isMicrophoneEnabled,
     );
   }
 
   @override
-  List<Object?> get props => [broadcast, status, hostDisconnected, isReconnect];
+  List<Object?> get props => [
+        broadcast,
+        status,
+        hostDisconnected,
+        isReconnect,
+        isMicrophoneEnabled,
+      ];
 }

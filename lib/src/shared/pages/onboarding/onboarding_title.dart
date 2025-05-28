@@ -14,7 +14,7 @@ class OnboardingTitle extends StatelessWidget {
               children: [
                 MText(
                   text,
-                  style: MTextTheme.of(context)?.heading1Bold,
+                  style: MTextTheme.of(context).heading1Bold,
                   textAlign: TextAlign.center,
                 ),
                 Positioned(

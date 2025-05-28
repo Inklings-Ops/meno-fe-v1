@@ -22,14 +22,17 @@ class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<RegisterCubit, RegisterState>(
+      listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
-        state.option.fold(
-          () => null,
-          (either) => either.fold(
-            (failure) => context.showRegistrationError(failure),
-            (success) => null,
-          ),
-        );
+        switch (state.status) {
+          case FormStatus.failure:
+            context.showErrorSnackBar(state.exception!.message);
+          case FormStatus.success:
+          case FormStatus.canceled:
+          case FormStatus.initial:
+          case FormStatus.loading:
+            break;
+        }
       },
       child: MScaffold(
         appBar: MAppBar.primary(

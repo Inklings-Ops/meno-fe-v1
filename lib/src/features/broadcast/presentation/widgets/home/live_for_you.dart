@@ -5,7 +5,7 @@ class LiveForYou extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       children: [
         const MHeader(title: 'Live For You ✨'),
@@ -50,7 +50,7 @@ class DiscoverButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 32,
       width: 112,

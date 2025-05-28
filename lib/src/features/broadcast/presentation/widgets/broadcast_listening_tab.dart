@@ -6,49 +6,14 @@ class BroadcastListeningTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    return Column(
-      key: const ValueKey('BroadcastListeningTab'),
+    return const Column(
+      key: ValueKey('BroadcastListeningTab'),
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
-          height: 34,
-          child: Row(
-            children: [
-              const _NumberOfParticipants(),
-              const Spacer(),
-              ExpandButton(
-                onTap: () => context.showModal<void>(
-                  const BroadcastParticipantsModal(),
-                  isScrollControlled: true,
-                  constraints: BoxConstraints(maxHeight: size.height * 0.9),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Spaces.verticalLarge,
-        const Expanded(child: BroadcastParticipantList()),
+        MenoSpacer.v(Insets.xl),
+        ParticipantListHeaderWidget(),
+        MenoSpacer.v(Insets.lg),
+        Expanded(child: ParticipantList()),
       ],
-    );
-  }
-}
-
-class _NumberOfParticipants extends StatelessWidget {
-  const _NumberOfParticipants();
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return BlocSelector<ParticipantsBloc, ParticipantsState, int>(
-      selector: (state) => state.numberOfLiveParticipants,
-      builder: (context, numberOfParticipants) => Row(
-        children: [
-          const Icon(MIcons.hearing, size: 16),
-          Spaces.horizontalSmall,
-          MText('$numberOfParticipants', style: textTheme.captionMedium),
-        ],
-      ),
     );
   }
 }

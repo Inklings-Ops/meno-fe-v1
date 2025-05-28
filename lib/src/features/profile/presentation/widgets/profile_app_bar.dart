@@ -7,14 +7,14 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return AppBar(
       leading: Align(
         alignment: Alignment.centerLeft,
         child: Padding(
           padding: const EdgeInsets.only(left: 16),
           child: ColoredBox(
-            color: colors.secondary!,
+            color: colors.secondary,
             child: const SizedBox(height: 30, width: 3),
           ),
         ),

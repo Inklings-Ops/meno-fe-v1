@@ -19,12 +19,12 @@ class SocketService {
   Future<void> initialize() async {
     _authSubscription = _session.userChanges.listen((credential) async {
       if (credential != null) {
-        final token = await _session.getCurrentAuthToken();
-        if (token != null || (token?.isValid ?? false)) {
+        final token = credential.token;
+        if (token.isValid) {
           // Connect only if not already connected or trying to connect
           if (_socket == null || _socket?.connected == false) {
             log('SocketService: User authenticated, connecting with token...');
-            await connect(token: token!.getOr()!);
+            await connect(token: token.getOrCrash());
           }
         } else {
           log('SocketService: No authentication token found. Cannot connect.');
@@ -36,16 +36,18 @@ class SocketService {
       }
     });
 
-    // Handle initial state: if already logged in when service initializes
+    // // Handle initial state: if already logged in when service initializes
     final initialCredential = _session.credential;
     if (initialCredential != null) {
-      final token = await _session.getCurrentAuthToken();
-      if (token != null) {
+      final token = initialCredential.token;
+      if (token.isValid) {
         log('SocketService: Authenticated, connecting with token...');
-        await connect(token: token.getOr()!);
+        await connect(token: token.getOrCrash());
       }
     }
   }
+
+  bool get isSocketConnected => _socket?.connected ?? false;
 
   Future<void> connect({required String token}) async {
     if (_socket?.connected ?? false) return;
@@ -57,13 +59,12 @@ class SocketService {
       io.OptionBuilder()
           .setTransports(['websocket'])
           .setQuery({'token': token})
-          .disableAutoConnect()
+          .enableAutoConnect()
           .enableReconnection()
           .build(),
     );
 
     _setupListeners();
-    _socket?.connect();
   }
 
   /// Emits an event and waits for an acknowledgment from the server.
@@ -81,44 +82,67 @@ class SocketService {
   /// needs to be checked by the caller.
   ///
   Future<dynamic> emit(String event, dynamic data) async {
-    // Check connection state BEFORE creating the completer
-    if (_socket == null || (_socket?.connected ?? false)) {
-      // Throw an exception that can be caught by the caller
-      log('Emit failed: Socket not connected.');
-      throw const SocketException('Socket not connected');
-    }
-
     // Use Completer<dynamic> to hold the ack response data
     final completer = Completer<dynamic>();
 
-    try {
-      log('Emitting event: $event');
+    // // Check connection state BEFORE creating the completer
+    if (!isSocketConnected) {
+      // Throw an exception that can be caught by the caller
+      log('Emit failed: Socket not connected.');
+      return completer.completeError(
+        const SocketException('Socket not connected'),
+      );
+    } else {
+      try {
+        log('Emitting event: $event');
 
-      // The ack function provided to the socket.io client
-      // will complete our completer with the server response.
-      void ackWrapper(dynamic response) {
-        log('Received ack for event $event: $response');
-        if (!completer.isCompleted) completer.complete(response);
+        // The ack function provided to the socket.io client
+        // will complete our completer with the server response.
+        void ackWrapper(dynamic response) {
+          log('Received ack for event $event: $response');
+          if (!completer.isCompleted) completer.complete(response);
+        }
+
+        _socket!.emitWithAck(event, data, ack: ackWrapper);
+
+        // Return the future that will complete with the ack response or error
+        return completer.future;
+      } on Exception catch (e) {
+        log('Error emitting event $event: $e');
+
+        // Ensure completer fails if it hasn't already
+        if (!completer.isCompleted) {
+          completer.completeError(e);
+        }
+
+        // Rethrow or throw a specific exception if needed
+        throw SocketException('Failed to emit event $event: $e');
       }
-
-      _socket!.emitWithAck(event, data, ack: ackWrapper);
-
-      // Return the future that will complete with the ack response or error
-      return completer.future;
-    } on Exception catch (e) {
-      log('Error emitting event $event: $e');
-
-      // Ensure completer fails if it hasn't already
-      if (!completer.isCompleted) {
-        completer.completeError(e);
-      }
-
-      // Rethrow or throw a specific exception if needed
-      throw SocketException('Failed to emit event $event: $e');
     }
   }
 
-  void _setupListeners() {}
+  dynamic onConnect(dynamic Function(dynamic) handler) {
+    return _socket?.onConnect(handler);
+  }
+
+  dynamic onDisconnect(dynamic Function(dynamic) handler) {
+    return _socket?.onDisconnect(handler);
+  }
+
+  dynamic onReconnect(dynamic Function(dynamic) handler) {
+    return _socket?.onReconnect(handler);
+  }
+
+  dynamic onReconnectAttempt(dynamic Function(dynamic) handler) {
+    return _socket?.onReconnectAttempt(handler);
+  }
+
+  void _setupListeners() {
+    _socket?.onConnect((data) => log('Socket connected, $data'));
+    _socket?.onDisconnect((data) => log('Socket disconnected, $data'));
+    _socket?.onReconnect((data) => log('Socket reconnecting, $data'));
+    _socket?.onReconnectAttempt((data) => log('Socket reconnecting, $data'));
+  }
 
   // Method for feature providers to add their listeners
   void addListener(String event, dynamic Function(dynamic) handler) {

@@ -44,11 +44,11 @@ class _NowLiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.live(
-      title: broadcast.title.getOr(),
+      title: broadcast.title.getOrCrash(),
       imageUrl: broadcast.imageUrl,
-      host: broadcast.creator?.fullName ??
-          broadcast.fullName ??
-          broadcast.creatorFullName ??
+      host: broadcast.creator?.fullName.getOrNull() ??
+          broadcast.fullName?.getOrNull() ??
+          broadcast.creatorFullName?.getOrNull() ??
           '',
       liveCount: broadcast.totalListeners,
     );
@@ -62,11 +62,11 @@ class _RecentlyLiveCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.recentlyLive(
-      title: broadcast.title.getOr(),
+      title: broadcast.title.getOrCrash(),
       imageUrl: broadcast.imageUrl,
-      host: broadcast.creator?.fullName ??
-          broadcast.fullName ??
-          broadcast.creatorFullName ??
+      host: broadcast.creator?.fullName.getOrNull() ??
+          broadcast.fullName?.getOrNull() ??
+          broadcast.creatorFullName?.getOrNull() ??
           '',
     );
   }

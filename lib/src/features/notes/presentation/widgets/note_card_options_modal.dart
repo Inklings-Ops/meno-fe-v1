@@ -8,7 +8,7 @@ class NoteCardOptionsModal extends StatelessWidget {
     super.key,
   });
   final Note note;
-  final Uid<Folder>? folderId;
+  final ID? folderId;
 
   @override
   Widget build(BuildContext context) {

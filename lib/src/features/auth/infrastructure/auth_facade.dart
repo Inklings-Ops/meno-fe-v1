@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/auth_exception.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/profile/profile.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-import 'package:rxdart/rxdart.dart';
 
 @Injectable(as: IAuthFacade)
 class AuthFacade implements IAuthFacade {
@@ -15,321 +14,33 @@ class AuthFacade implements IAuthFacade {
     required AuthRemoteDatasource remoteDatasource,
     required AuthLocalDatasource localDatasource,
     required NetworkService networkService,
-    required JWTService jwtService,
   })  : _remote = remoteDatasource,
         _local = localDatasource,
-        _network = networkService,
-        _jwt = jwtService;
+        _network = networkService;
+
   final AuthRemoteDatasource _remote;
   final AuthLocalDatasource _local;
   final NetworkService _network;
-  final JWTService _jwt;
-
-  final _credentialSubject = BehaviorSubject<UserCredential?>.seeded(null);
-  final _tokenSubject = BehaviorSubject<Token?>.seeded(null);
 
   @override
-  @PostConstruct(preResolve: true)
-  Future<void> init() async {
-    final dto = await _local.getAuthCredential();
-    final credential = dto?.toDomain;
-    _credentialSubject.add(credential);
-    _tokenSubject.add(credential?.token);
+  Stream<Map<String, UserCredential>> get allAccounts {
+    return _local.allAccountsStream.map((dtoMap) {
+      final domainMap = <String, UserCredential>{};
+      dtoMap.forEach((key, dto) => domainMap[key] = dto.toDomain);
+      return domainMap;
+    });
   }
 
   @override
-  Future<Map<String, UserCredential>?> get allCredentials async {
-    final map = await _local.getAllUserCredentials();
-    if (map != null) {
-      final userCredentialsMap = map.map((key, value) {
-        final userCredentials = value.toDomain;
-        return MapEntry(key, userCredentials);
-      });
-      return userCredentialsMap;
-    }
-    return null;
-  }
-
-  @override
-  UserCredential? get credential => _credentialSubject.value;
-
-  @override
-  Future<User> get user async {
-    final userDto = await _local.getAuthCredential();
-    final userDomain = userDto?.user.toDomain;
-    return userDomain ?? User.empty();
-  }
-
-  @override
-  Stream<UserCredential?> get userChanges {
-    return _credentialSubject.stream.asBroadcastStream();
-  }
-
-  @override
-  Stream<Token?> get tokenChanges => _tokenSubject.stream.asBroadcastStream();
-
-  @override
-  Token? get userToken => _tokenSubject.valueOrNull;
-
-  @override
-  bool isTokenValid(String? token) {
-    if (token == null) return false;
-    return _jwt.isExpired(token);
-  }
-
-  @override
-  Future<Either<AuthException, UserCredential>> login({
-    required Email email,
-    required Password password,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final emailStr = email.value.getOrElse(() => MErrorMessages.invalidEmail);
-    final pwdStr = password.value.getOrElse(() => MErrorMessages.invalidPwd);
-
-    try {
-      final response = await _remote.login(email: emailStr, password: pwdStr);
-      final credential = response.data!.toDomain;
-
-      _credentialSubject.add(credential);
-      _tokenSubject.add(credential.token);
-
-      await _local.storeCredentials(response.data!);
-
-      return right(credential);
-    } on DioException catch (e) {
-      switch (e.response?.statusCode) {
-        case 400:
-          return left(const AuthException.invalidEmailOrPassword());
-        case 500:
-          return left(const AuthException.serverError());
-        default:
-          return left(const AuthException.unknownError());
-      }
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
-
-  @override
-  Future<void> logout() async {
-    _credentialSubject.add(null);
-    _tokenSubject.add(null);
-  }
-
-  @override
-  Future<void> removeAccount(Uid<User> userId) async {
-    await _local.deleteAuthCredential();
-    await _local.deleteAuthToken();
-
-    if (credential?.user.id == userId) {
-      _credentialSubject.add(null);
-      _tokenSubject.add(null);
-    }
-  }
-
-  @override
-  Future<Either<AuthException, UserCredential>> register({
-    required SingleLineString fullName,
-    required Email email,
-    required Password password,
-    Bio? bio,
-    Avatar? avatar,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final nameStr = fullName.value.getOrElse(() => MErrorMessages.invalidFName);
-    final emailStr = email.value.getOrElse(() => MErrorMessages.invalidEmail);
-    final pwdStr = password.value.getOrElse(() => MErrorMessages.invalidPwd);
-    final bioStr = bio?.value.getOrElse(() => MErrorMessages.invalidBio);
-    final avatarFile = avatar?.value.getOrElse(() => null);
-
-    try {
-      final response = await _remote.register(
-        fullName: nameStr,
-        email: emailStr,
-        password: pwdStr,
-        bio: bioStr,
-        image: avatarFile,
-      );
-      final credential = response.data!.toDomain;
-      _credentialSubject.add(credential);
-      _tokenSubject.add(credential.token);
-      await _local.storeCredentials(response.data!);
-      return right(credential);
-    } on DioException catch (e) {
-      switch (e.response?.statusCode) {
-        case 400:
-          return left(const AuthException.emailAlreadyInUse());
-        case 500:
-          return left(const AuthException.serverError());
-        default:
-          return left(const AuthException.unknownError());
-      }
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
-
-  @override
-  Future<Either<AuthException, Unit>> requestOtp({
-    required Email email,
-    required String type,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-    final emailStr = email.value.getOrElse(() => MErrorMessages.invalidEmail);
-    try {
-      await _remote.requestOtp(email: emailStr, type: type);
-      return right(unit);
-    } on DioException catch (e) {
-      switch (e.response?.statusCode) {
-        case 500:
-          return left(const AuthException.serverError());
-        default:
-          return left(const AuthException.unknownError());
-      }
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
-
-  @override
-  Future<Either<AuthException, Unit>> resetPassword({
-    required Email email,
-    required String code,
-    required Password newPassword,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final emailStr = email.value.getOrElse(() => MErrorMessages.invalidEmail);
-    final pwdStr = newPassword.value.getOrElse(() => MErrorMessages.invalidPwd);
-
-    try {
-      await _remote.resetPassword(
-        email: emailStr,
-        code: code,
-        newPassword: pwdStr,
-      );
-      return right(unit);
-    } on DioException catch (e) {
-      switch (e.response?.statusCode) {
-        case 500:
-          return left(const AuthException.serverError());
-        default:
-          return left(const AuthException.unknownError());
-      }
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
-
-  @override
-  Future<Either<AuthException, Unit>> editProfile({
-    SingleLineString? fullName,
-    Bio? bio,
-    Avatar? avatar,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final userId = await _local.getAuthUserId();
-    if (userId == null) return left(const AuthException.message('No user'));
-
-    final fullNameValue = fullName?.getOr();
-    final bioValue = bio?.getOr();
-    final avatarValue = avatar?.getOr();
-
-    try {
-      final response = await _remote.editProfile(
-        userId: userId,
-        fullName: fullNameValue,
-        bio: bioValue,
-        image: avatarValue,
-      );
-
-      final userDto = response.data;
-      if (userDto == null) return left(const AuthException.message('No user'));
-
-      final currentCredential = _credentialSubject.value;
-      final updated = currentCredential?.copyWith(user: userDto.toDomain);
-      if (updated == null) return left(const AuthException.message('No user'));
-
-      _credentialSubject.add(updated);
-      _tokenSubject.add(updated.token);
-
-      await _local.storeCredentials(updated.toDto);
-
-      return right(unit);
-    } on DioException catch (e) {
-      return left(AuthException.message(e.message ?? 'Unknown error'));
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
-
-  @override
-  Future<Either<AuthException, UserCredential>> switchAccount(
-    Uid<User> userId,
-  ) async {
-    final allCreds = await _local.getAllUserCredentials();
-    if (allCreds == null) return left(const NoUserAccountFound());
-
-    final credentialDto = allCreds[userId.getOr()];
-    if (credentialDto == null) return left(const NoUserAccountFound());
-
-    final credential = credentialDto.toDomain;
-
-    final token = credential.token;
-    if (!(token?.isActive ?? false)) return left(const UserTokenExpired());
-
-    try {
-      await _local.storeCredentials(credentialDto);
-      _credentialSubject.add(credential);
-      _tokenSubject.add(credential.token);
-
-      return right(credential);
-    } catch (e) {
-      return left(AuthException.message(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<AuthException, Unit>> verifyEmailAddress({
-    required Email email,
-    required String code,
-  }) async {
-    final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
-
-    final emailStr = email.value.getOrElse(() => MErrorMessages.invalidEmail);
-    try {
-      final response = await _remote.verifyEmailAddress(
-        email: emailStr,
-        code: code,
-      );
-      if (response.statusCode == 201) {
-        return right(unit);
-      } else {
-        return left(const AuthException.unableToVerifyEmail());
-      }
-    } on DioException catch (e) {
-      switch (e.response?.statusCode) {
-        case 500:
-          return left(const AuthException.serverError());
-        default:
-          return left(const AuthException.unknownError());
-      }
-    } on TimeoutException {
-      return left(const AuthException.timeOutError());
-    }
-  }
+  UserCredential? get credential => _local.currentAccount?.toDomain;
 
   @override
   Future<bool> get isVerified => throw UnimplementedError();
+
+  @override
+  Stream<UserCredential?> get userChanges {
+    return _local.authStateChanges.map((e) => e?.toDomain);
+  }
 
   @override
   Future<Either<AuthException, Unit>> changePassword({
@@ -353,38 +64,176 @@ class AuthFacade implements IAuthFacade {
   }
 
   @override
-  Future<Either<AuthException, ProfilesList>> getProfiles({
-    String? userId,
-    String? include,
-    String? keywords,
-    String? sortBy,
-    String? orderBy,
-    int? page,
-    int? size,
+  Future<Either<AuthException, UserCredential>> login({
+    required Email email,
+    required Password password,
+  }) async {
+    try {
+      final response = await _remote.login(
+        email: email.getOrCrash(),
+        password: password.getOrCrash(),
+      );
+      final credential = response.data!.toDomain;
+      await _local.addAccount(response.data!);
+      return right(credential);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 400:
+          return left(const InvalidEmailOrPasswordException());
+        case 500:
+          return left(const AuthServerException());
+        default:
+          return left(const AuthUnknownException());
+      }
+    } on TimeoutException {
+      return left(const AuthTimeoutException());
+    }
+  }
+
+  @override
+  Future<void> logout() => _local.logout();
+
+  @override
+  Future<Either<AuthException, UserCredential>> register({
+    required SingleLineString fullName,
+    required Email email,
+    required Password password,
+    MultiLineString? bio,
+    ImageFile? avatar,
   }) async {
     final isConnected = await _network.isConnected;
-    if (!isConnected) return left(const AuthException.networkError());
+    if (!isConnected) return left(const AuthNetworkException());
+
+    final nameStr = fullName.getOrCrash();
+    final emailStr = email.getOrCrash();
+    final pwdStr = password.getOrCrash();
+    final bioStr = bio?.getOrNull();
+    final avatarFile = avatar?.getOrNull();
 
     try {
-      final response = await _remote.getProfiles(
-        keywords: keywords,
-        userId: userId,
-        include: 'subscribed',
-        sortBy: sortBy ?? 'fullName',
-        orderBy: orderBy ?? 'ASC',
-        page: page ?? 1,
-        size: size ?? 8,
+      final response = await _remote.register(
+        fullName: nameStr,
+        email: emailStr,
+        password: pwdStr,
+        bio: bioStr,
+        image: avatarFile,
       );
-      return right(response.data!.toDomain);
+      final credential = response.data!.toDomain;
+      await _local.addAccount(response.data!);
+      return right(credential);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 400:
+          return left(const EmailAlreadyInUseException());
+        case 500:
+          return left(const AuthServerException());
+        default:
+          return left(const AuthUnknownException());
+      }
+    } on TimeoutException {
+      return left(const AuthTimeoutException());
+    }
+  }
+
+  @override
+  Future<void> removeAccount(ID id) => _local.removeAccount(id.getOrCrash());
+
+  @override
+  Future<Either<AuthException, Unit>> requestOtp({
+    required Email email,
+    required String type,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthNetworkException());
+    final emailStr = email.getOrCrash();
+    try {
+      await _remote.requestOtp(email: emailStr, type: type);
+      return right(unit);
     } on DioException catch (e) {
       switch (e.response?.statusCode) {
         case 500:
-          return left(const AuthException.serverError());
+          return left(const AuthServerException());
         default:
-          return left(const AuthException.unknownError());
+          return left(const AuthUnknownException());
       }
     } on TimeoutException {
-      return left(const AuthException.timeOutError());
+      return left(const AuthTimeoutException());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> resetPassword({
+    required Email email,
+    required String code,
+    required Password newPassword,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthNetworkException());
+
+    final emailStr = email.getOrCrash();
+    final pwdStr = newPassword.value.getOrElse(() => MErrorMessages.invalidPwd);
+
+    try {
+      await _remote.resetPassword(
+        email: emailStr,
+        code: code,
+        newPassword: pwdStr,
+      );
+      return right(unit);
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthServerException());
+        default:
+          return left(const AuthUnknownException());
+      }
+    } on TimeoutException {
+      return left(const AuthTimeoutException());
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> switchAccount(
+    UserCredential credential,
+  ) async {
+    if (!credential.token.isValid) return left(const TokenExpiredException());
+
+    try {
+      await _local.switchAccount(credential.toDto);
+      return right(unit);
+    } on Exception catch (e) {
+      return left(AuthExceptionWithMessage(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> verifyEmailAddress({
+    required Email email,
+    required String code,
+  }) async {
+    final isConnected = await _network.isConnected;
+    if (!isConnected) return left(const AuthNetworkException());
+
+    final emailStr = email.getOrCrash();
+    try {
+      final response = await _remote.verifyEmailAddress(
+        email: emailStr,
+        code: code,
+      );
+      if (response.statusCode == 201) {
+        return right(unit);
+      } else {
+        return left(const UnableToVerifyEmailException());
+      }
+    } on DioException catch (e) {
+      switch (e.response?.statusCode) {
+        case 500:
+          return left(const AuthServerException());
+        default:
+          return left(const AuthUnknownException());
+      }
+    } on TimeoutException {
+      return left(const AuthTimeoutException());
     }
   }
 }

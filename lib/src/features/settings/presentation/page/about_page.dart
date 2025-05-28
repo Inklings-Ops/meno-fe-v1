@@ -7,7 +7,7 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final trailingColor = colors.onBackgroundVariant;
     return MScaffold(
       appBar: MAppBar.secondary(title: 'About Menō', centerTitle: true),

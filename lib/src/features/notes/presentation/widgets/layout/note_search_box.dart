@@ -23,7 +23,7 @@ class _NoteSearchBoxState extends State<NoteSearchBox> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final showSearch = context.select<NotesBloc, bool>(
       (bloc) =>

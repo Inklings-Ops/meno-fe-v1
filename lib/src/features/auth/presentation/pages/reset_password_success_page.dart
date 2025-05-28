@@ -7,7 +7,7 @@ class ResetPasswordSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MScaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

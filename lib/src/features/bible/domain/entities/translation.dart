@@ -1,19 +1,24 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part 'translation.freezed.dart';
-
-@freezed
-class Translation with _$Translation {
-  const factory Translation({
-    required String name,
-    required String abbreviation,
-    int? id,
-    @Default(false) bool downloaded,
-  }) = _Translation;
+final class Translation with EquatableMixin {
+  const Translation({
+    required this.name,
+    required this.abbreviation,
+    this.id,
+    this.downloaded = false,
+  });
 
   factory Translation.fromAbbreviation(String abbreviation) {
     return _handleTranslationsFromString(abbreviation);
   }
+
+  final String name;
+  final String abbreviation;
+  final int? id;
+  final bool downloaded;
+
+  @override
+  List<Object?> get props => [name, abbreviation, id, downloaded];
 }
 
 Translation _handleTranslationsFromString(String abb) => switch (abb) {

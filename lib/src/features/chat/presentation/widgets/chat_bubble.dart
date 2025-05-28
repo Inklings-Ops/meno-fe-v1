@@ -9,7 +9,7 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final broadcast = context.select((BroadcastBloc b) => b.state.broadcast);
 
@@ -44,7 +44,9 @@ class ChatBubble extends StatelessWidget {
                     InkWell(
                       onTap: () => showUserInfo(context),
                       child: MText(
-                        chat.fullName ?? chat.sender?.fullName ?? '',
+                        chat.fullName?.getOrNull() ??
+                            chat.sender?.fullName.getOrNull() ??
+                            '',
                         style: textTheme.microMedium,
                         color: colors.onBackgroundVariant,
                         maxLines: 1,
@@ -95,7 +97,7 @@ class ChatBubble extends StatelessWidget {
                     ),
                   ),
                   child: MText(
-                    chat.content.getOr(),
+                    chat.content.getOrCrash(),
                     style: textTheme.captionRegular,
                     color: isHost
                         ? colors.onSecondaryContainer
@@ -111,15 +113,20 @@ class ChatBubble extends StatelessWidget {
   }
 
   Future<dynamic> showUserInfo(BuildContext context) async {
-    final currentUserId = context.read<SessionBloc>().state.whenOrNull(
-          authenticated: (user, token) => user.id.getOr(),
-        );
+    final myUserId = context.select(
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.id,
+        _ => null,
+      },
+    );
 
-    if (currentUserId == chat.senderId) return;
+    if (myUserId == chat.senderId) return;
 
     return context.showModal(
       MUserInfoModal(
-        fullName: chat.fullName,
+        fullName: chat.fullName?.getOrNull() ??
+            chat.sender?.fullName.getOrNull() ??
+            '',
         imageUrl: chat.imageUrl,
         onSubscribe: () {},
         onViewAccount: () => router.push(

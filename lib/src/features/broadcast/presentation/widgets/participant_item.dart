@@ -8,16 +8,18 @@ class ParticipantItem extends StatelessWidget {
     this.onTap,
     this.isForAddCohost = false,
   });
-  final BroadcastParticipant? participant;
+  final Participant? participant;
   final VoidCallback? onTap;
   final bool isForAddCohost;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final hasUser = participant != null;
-    final isCohost = [Role.cohost, Role.COHOST].contains(participant?.role);
-    final isHost = [Role.host, Role.HOST].contains(participant?.role);
+    final isCohost = [ParticipantRole.cohost, ParticipantRole.COHOST]
+        .contains(participant?.role);
+    final isHost = [ParticipantRole.host, ParticipantRole.HOST]
+        .contains(participant?.role);
     return GestureDetector(
       onTap: onTap,
       child: SizedBox.square(
@@ -30,8 +32,8 @@ class ParticipantItem extends StatelessWidget {
             ),
             Spaces.verticalSmall,
             MText(
-              hasUser ? participant!.fullName : 'Add Co-host',
-              style: textTheme.microMedium?.copyWith(height: 1),
+              hasUser ? participant!.fullName.getOrCrash() : 'Add Co-host',
+              style: textTheme.microMedium.copyWith(height: 1),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               color: hasUser ? null : MColor.grey50,
@@ -39,11 +41,11 @@ class ParticipantItem extends StatelessWidget {
             ),
             if (isCohost) ...[
               Spaces.verticalMicro,
-              _CoHostTag(participantId: participant!.id),
+              _CoHostTag(participantId: participant!.id.getOrCrash()),
             ],
             if (isHost) ...[
               Spaces.verticalMicro,
-              _HostTag(participantId: participant!.id),
+              _HostTag(participantId: participant!.id.getOrCrash()),
             ],
           ],
         ),
@@ -54,7 +56,7 @@ class ParticipantItem extends StatelessWidget {
 
 class _ParticipantAvatar extends StatelessWidget {
   const _ParticipantAvatar({required this.isForAddCohost, this.participant});
-  final BroadcastParticipant? participant;
+  final Participant? participant;
   final bool isForAddCohost;
 
   @override
@@ -82,7 +84,7 @@ class _ParticipantAvatar extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(
                     width: 2,
-                    color: colors.background!,
+                    color: colors.background,
                   ),
                 ),
                 child: Icon(
@@ -105,16 +107,13 @@ class _HostTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SessionBloc, SessionState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        authenticated: (user, _) {
-          if (participantId == user.id.getOr()) {
-            return const _Tag(title: 'You');
-          } else {
-            return const _Tag(title: 'Host');
-          }
-        },
-      ),
+      builder: (context, state) => switch (state) {
+        SessionAuthenticated(:final user) =>
+          participantId == user.id.getOrCrash()
+              ? const _Tag(title: 'You')
+              : const _Tag(title: 'Host'),
+        _ => const SizedBox(),
+      },
     );
   }
 }
@@ -126,16 +125,13 @@ class _CoHostTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SessionBloc, SessionState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        authenticated: (user, _) {
-          if (participantId == user.id.getOr()) {
-            return const _Tag(title: 'You');
-          } else {
-            return const _Tag(title: 'Co-Host');
-          }
-        },
-      ),
+      builder: (context, state) => switch (state) {
+        SessionAuthenticated(:final user) =>
+          participantId == user.id.getOrCrash()
+              ? const _Tag(title: 'You')
+              : const _Tag(title: 'Co-Host'),
+        _ => const SizedBox(),
+      },
     );
   }
 }
@@ -146,7 +142,7 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    return MText(title, style: textTheme.nanoRegular?.copyWith(height: 1));
+    final textTheme = MTextTheme.of(context);
+    return MText(title, style: textTheme.nanoRegular.copyWith(height: 1));
   }
 }

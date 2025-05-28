@@ -124,7 +124,7 @@ class LiveKitBloc extends Bloc<LiveKitEvent, LiveKitState> {
     if (state.status is! LiveKitBroadcastConnected) return;
     final micEnabled = !state.micEnabled;
     emit(state.copyWith(micEnabled: micEnabled));
-    await _liveKit.mute(enabled: micEnabled);
+    await _liveKit.enableMicrophone(micEnabled);
   }
 
   Future<void> _onDisconnect(

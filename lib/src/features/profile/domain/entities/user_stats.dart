@@ -1,18 +1,31 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part 'user_stats.freezed.dart';
+final class UserStats with EquatableMixin {
+  const UserStats({
+    this.subscribers = 0,
+    this.subscriptions = 0,
+    this.broadcasts = 0,
+  });
 
-@freezed
-class UserStats with _$UserStats {
-  factory UserStats({
+  final int subscribers;
+  final int subscriptions;
+  final int broadcasts;
+
+  UserStats copyWith({
     int? subscribers,
     int? subscriptions,
     int? broadcasts,
-  }) = _UserStats;
+  }) {
+    return UserStats(
+      subscribers: subscribers ?? this.subscribers,
+      subscriptions: subscriptions ?? this.subscriptions,
+      broadcasts: broadcasts ?? this.broadcasts,
+    );
+  }
 
-  factory UserStats.empty() => UserStats(
-        subscribers: 0,
-        broadcasts: 0,
-        subscriptions: 0,
-      );
+  @override
+  bool get stringify => true;
+
+  @override
+  List<Object?> get props => [subscribers, subscriptions, broadcasts];
 }

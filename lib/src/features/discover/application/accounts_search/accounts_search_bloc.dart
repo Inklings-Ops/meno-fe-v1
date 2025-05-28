@@ -1,37 +1,39 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'accounts_search_event.dart';
 part 'accounts_search_state.dart';
-part 'accounts_search_bloc.freezed.dart';
 
 class AccountsSearchBloc
     extends Bloc<AccountsSearchEvent, AccountsSearchState> {
-  AccountsSearchBloc({required IAuthFacade facade})
+  AccountsSearchBloc({required IProfileFacade facade})
       : _facade = facade,
-        super(AccountsSearchState.initial()) {
-    on<AccountsSearchResultsFetched>(_onSearchResultsFetched);
-    on<AccountsSearchBarChanged>(
-      _onSearchBarChanged,
+        super(const AccountsSearchState()) {
+    on<AccountSearchResultsFetched>(_onAccountSearchResultsFetched);
+    on<AccountSearchKeywordChanged>(
+      _onAccountSearchKeywordChanged,
       transformer: (events, mapper) => events
           .debounceTime(const Duration(milliseconds: 300))
           .switchMap(mapper),
     );
   }
 
-  final IAuthFacade _facade;
+  final IProfileFacade _facade;
 
-  Future<void> _onSearchResultsFetched(
-    AccountsSearchResultsFetched event,
+  Future<void> _onAccountSearchResultsFetched(
+    AccountSearchResultsFetched event,
     Emitter<AccountsSearchState> emit,
   ) async {
     if (state.hasMore || !state.isSearchingMore) {
       emit(state.copyWith(isSearchingMore: true));
       final fOrS = await _facade.getProfiles(
         keywords: state.keyword,
-        page: event.page,
+        page: event.currentPage,
         size: 8,
       );
       emit(
@@ -39,17 +41,17 @@ class AccountsSearchBloc
           (f) => state.copyWith(isLoading: false, exception: f),
           (r) => state.copyWith(
             isLoading: false,
-            profiles: [...state.profiles, ...r.profiles],
-            page: event.page,
-            hasMore: event.page < r.totalPages,
+            profiles: [...state.profiles, ...r.items],
+            page: event.currentPage,
+            hasMore: event.currentPage < r.totalPages,
           ),
         ),
       );
     }
   }
 
-  Future<void> _onSearchBarChanged(
-    AccountsSearchBarChanged event,
+  Future<void> _onAccountSearchKeywordChanged(
+    AccountSearchKeywordChanged event,
     Emitter<AccountsSearchState> emit,
   ) async {
     emit(
@@ -66,7 +68,7 @@ class AccountsSearchBloc
         (f) => state.copyWith(isLoading: false, exception: f),
         (r) => state.copyWith(
           isLoading: false,
-          profiles: r.profiles,
+          profiles: r.items,
           hasMore: r.currentPage < r.totalPages,
         ),
       ),

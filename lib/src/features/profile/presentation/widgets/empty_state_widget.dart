@@ -13,7 +13,7 @@ class EmptyStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Container(
       margin: const EdgeInsets.only(top: 40),
       child: Column(
@@ -42,7 +42,7 @@ class EmptyStateWidget extends StatelessWidget {
                   horizontal: 16,
                   vertical: 8,
                 ),
-                side: BorderSide(color: colorScheme.outlineVariant3!),
+                side: BorderSide(color: colorScheme.outlineVariant3),
                 foregroundColor: colorScheme.onBackground,
                 shape: const RoundedRectangleBorder(
                   borderRadius: Corners.sm,

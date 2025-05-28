@@ -5,28 +5,28 @@ import 'package:meno_fe_v1/src/features/features.dart';
 
 final _profiles = <Profile>[
   Profile(
-    id: '178d88c6-1674-4135-a68b-88877b902ab2',
-    bio: Bio("The Lord's favoured."),
-    fullName: SingleLineString('Chrstie David Michael'),
+    id: ID.fromString('178d88c6-1674-4135-a68b-88877b902ab2'),
+    bio: MultiLineString("The Lord's favoured."),
+    fullName: SingleLineString('Christie David Michael'),
     imageUrl: '''
 https://res.cloudinary.com/gson007/image/upload/v1668024849/pjxxonawlab2bvn8la9o.jpg''',
   ),
   Profile(
-    id: '6fe8dbf2-e0ec-4d8c-bb13-fb9583cda788',
-    bio: Bio('''
+    id: ID.fromString('6fe8dbf2-e0ec-4d8c-bb13-fb9583cda788'),
+    bio: MultiLineString('''
 David Michael: Always wanting to know more of God. Super charged with the Spirit.\nHallelujah!'''),
     fullName: SingleLineString('David Michael'),
     imageUrl: '''
 https://res.cloudinary.com/gson007/image/upload/v1741767889/erixhls5hpuuibb6ou9h.jpg''',
   ),
   Profile(
-    id: '3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1',
+    id: ID.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
     fullName: SingleLineString('David Michael II'),
     imageUrl: '''
 https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg''',
   ),
   Profile(
-    id: '6a86d27a-f923-4e52-9b01-b8667591375a',
+    id: ID.fromString('6a86d27a-f923-4e52-9b01-b8667591375a'),
     fullName: SingleLineString('STU David Michael'),
     imageUrl: '''
 https://res.cloudinary.com/gson007/image/upload/v1668023831/l0kvyd27pddlspuwa2xp.jpg''',
@@ -62,7 +62,7 @@ class _List extends StatelessWidget {
         itemBuilder: (context, i) {
           final profile = profiles[i]!;
           final colors = MColorScheme.of(context);
-          final textTheme = MTextTheme.of(context)!;
+          final textTheme = MTextTheme.of(context);
           return Card(
             margin: EdgeInsets.zero,
             child: Padding(
@@ -80,8 +80,8 @@ class _List extends StatelessWidget {
                   SizedBox(
                     height: Insets.xl,
                     child: MText(
-                      profile.fullName.getOr(),
-                      style: MTextTheme.of(context)!.captionMedium,
+                      profile.fullName.getOrCrash(),
+                      style: MTextTheme.of(context).captionMedium,
                       maxLines: 1,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -96,7 +96,7 @@ class _List extends StatelessWidget {
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      color: colors.onBackground?.withValues(alpha: 0.6),
+                      color: colors.onBackground.withValues(alpha: 0.6),
                     ),
                   ),
                   const Spacer(),

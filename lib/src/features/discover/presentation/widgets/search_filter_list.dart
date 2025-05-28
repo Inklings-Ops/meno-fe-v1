@@ -10,7 +10,7 @@ class SearchFilterList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     const filters = Filter.values;
     return ListView.separated(
       itemBuilder: (context, i) {

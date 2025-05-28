@@ -12,9 +12,9 @@ class NoteEditorToolbar extends StatelessWidget {
       child: Card(
         color: MColorScheme.of(context).surfaceTint,
         shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
-        child: QuillToolbar.simple(
+        child: QuillSimpleToolbar(
           controller: controller,
-          configurations: const QuillSimpleToolbarConfigurations(
+          config: const QuillSimpleToolbarConfig(
             showRedo: false,
             showUndo: false,
             showFontFamily: false,
@@ -35,9 +35,6 @@ class NoteEditorToolbar extends StatelessWidget {
             showQuote: false,
             showLeftAlignment: false,
             showRightAlignment: false,
-            showClipboardCut: false,
-            showClipboardCopy: false,
-            showClipboardPaste: false,
             showCenterAlignment: false,
             showIndent: false,
           ),

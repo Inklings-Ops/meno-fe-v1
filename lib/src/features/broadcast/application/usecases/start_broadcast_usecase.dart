@@ -17,8 +17,8 @@ final class StartBroadcastParams with EquatableMixin {
   });
 
   final SingleLineString title;
-  final BroadcastDescription description;
-  final BroadcastArtwork? artwork;
+  final MultiLineString description;
+  final ImageFile? artwork;
   final List<String>? cohosts;
   final String? timeZone;
 
@@ -53,7 +53,7 @@ class StartBroadcastUsecase
   ) async {
     final localTimezone = await _timezone.getLocalTimezone();
 
-    // Create the broadcast
+    // // Create the broadcast
     final createdResult = await _facade.createBroadcast(
       title: params.title,
       description: params.description,
@@ -74,7 +74,7 @@ class StartBroadcastUsecase
       );
     }
 
-    // Call the start broadcast endpoint to get the `broadcastToken`
+    // // Call the start broadcast endpoint to get the `broadcastToken`
     final startedResult = await _facade.startBroadcast(createdBroadcast.id);
 
     final startedBroadcast = startedResult.fold(
@@ -92,14 +92,14 @@ class StartBroadcastUsecase
       );
     }
 
-    // Ensure there is a `broadcastToken` available
+    // // Ensure there is a `broadcastToken` available
     final broadcastToken = startedBroadcast.broadcastToken;
     if (broadcastToken == null) {
       const message = 'Broadcast token missing. Cannot start';
       return const Left(BroadcastExceptionWithMessage(message));
     }
 
-    // Attempt to connect to the LiveKit SDK Client
+    // // Attempt to connect to the LiveKit SDK Client
     final liveKitResult = await _liveKit.broadcast(broadcastToken);
 
     if (liveKitResult.isLeft()) {
@@ -114,7 +114,7 @@ class StartBroadcastUsecase
 
     final socketResult = await _socket.emit(
       'startedBroadcast',
-      {'broadcastId': startedBroadcast.id.getOr()},
+      {'broadcastId': startedBroadcast.id.getOrCrash()},
     );
 
     final startedResponse = BaseResponse.fromJson(
@@ -135,12 +135,14 @@ class StartBroadcastUsecase
     // Save broadcast details so it can easily be retrieved when a broadcast
     // needs to be reconnected to.
     final broadcast = startedBroadcast.copyWith(startTime: DateTime.now());
+
     await Future.microtask(() {
+      _liveKit.enableMicrophone();
       _facade.saveBroadcastDetails(broadcast);
       _background.startBroadcastBackgroundProcess(broadcast);
     });
 
     // Successfully started the broadcast
-    return Right(startedBroadcast);
+    return Right(broadcast);
   }
 }

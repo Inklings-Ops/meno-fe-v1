@@ -1,52 +1,55 @@
-import 'package:meno_fe_v1/meno.dart';
+import 'package:flutter/material.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
+/// Custom AppBar for the live session, including tabs and a chat
+/// notification dot.
 class BroadcastAppBar extends StatelessWidget implements PreferredSizeWidget {
+  /// Creates an BroadcastAppBar.
   const BroadcastAppBar({
     required this.controller,
-    this.onTabTap,
+    required this.showChatDot,
+    this.onTabChanged,
     super.key,
-    this.showChatDot = false,
   });
 
   final TabController controller;
-  final void Function(int)? onTabTap;
+  final void Function(int)? onTabChanged;
   final bool showChatDot;
 
   @override
   Widget build(BuildContext context) {
-    final dangerColor = MColorScheme.of(context).error;
+    Widget icon = const SizedBox.shrink();
+    if (showChatDot) {
+      icon = Center(
+        child: Container(
+          width: 8,
+          height: 8,
+          decoration: const BoxDecoration(
+            color: Colors.red,
+            shape: BoxShape.circle,
+          ),
+        ),
+      );
+    }
     return SafeArea(
-      child: Container(
-        color: Colors.transparent,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-        constraints: const BoxConstraints(minHeight: 32),
-        child: TabBar(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
+        child: MTabBar.normal(
           controller: controller,
-          onTap: onTabTap,
+          onTap: onTabChanged,
           tabs: [
-            const Tab(text: 'Broadcast'),
-            Tab(
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  if (showChatDot)
-                    Positioned(
-                      left: -8,
-                      child: MDot(color: dangerColor),
-                    ),
-                  const Text('Chat'),
-                ],
-              ),
-            ),
-            const Tab(text: 'Live Bible'),
-            const Tab(text: 'Live Notes'),
+            const MenoTab(text: 'Broadcast'),
+            MenoTab(text: 'Chat', icon: icon),
+            const MenoTab(text: 'Live Bible'),
+            const MenoTab(text: 'Live Notes'),
           ],
+          padding: EdgeInsets.zero,
+          isScrollable: false,
         ),
       ),
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

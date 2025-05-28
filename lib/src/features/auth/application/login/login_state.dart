@@ -1,33 +1,55 @@
 part of 'login_cubit.dart';
 
-@freezed
-class LoginState with _$LoginState {
-  /// Creates a new `LoginState` object.
-  factory LoginState({
-    /// The user's email address.
-    required Email email,
+final class LoginState with EquatableMixin {
+  LoginState() : this._(email: Email(''), password: Password(''));
 
-    /// The user's password.
-    required Password password,
+  const LoginState._({
+    required this.email,
+    required this.password,
+    this.status = FormStatus.initial,
+    this.exception,
+  });
 
-    /// Whether or not the login form is loading.
-    required bool loading,
+  LoginState withEmail(String email) {
+    return LoginState._(email: Email(email), password: password);
+  }
 
-    /// The result of the last login attempt.
-    required Option<Either<AuthException, UserCredential>> option,
-  }) = _LoginState;
+  LoginState withPassword(String password) {
+    return LoginState._(email: email, password: Password(password));
+  }
 
-  /// Creates a new `LoginFormState` object with the initial values.
-  factory LoginState.initial() {
-    return LoginState(
-      email: Email(''),
-      password: Password(''),
-      loading: false,
-      option: none(),
+  LoginState withSubmissionLoading() {
+    return LoginState._(
+      email: email,
+      password: password,
+      status: FormStatus.loading,
     );
   }
 
-  LoginState._();
+  LoginState withSubmissionSuccess() {
+    return LoginState._(
+      email: email,
+      password: password,
+      status: FormStatus.success,
+    );
+  }
 
-  bool get isFormValid => email.isValid && password.isValid;
+  LoginState withSubmissionFailure([AuthException? exception]) {
+    return LoginState._(
+      email: email,
+      password: password,
+      status: FormStatus.failure,
+      exception: exception,
+    );
+  }
+
+  final Email email;
+  final Password password;
+  final FormStatus status;
+  final AuthException? exception;
+
+  bool get isValid => email.isValid && password.isValid;
+
+  @override
+  List<Object?> get props => [email, password, status, exception];
 }

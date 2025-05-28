@@ -6,7 +6,7 @@ class NotesEvent with _$NotesEvent {
   // Event to fetch/refresh notes, potentially with search terms
   const factory NotesEvent.getNotesRequested({
     String? keywords,
-    Uid<Note>? noteId,
+    ID? noteId,
     @Default('createdAt') String sortBy,
     @Default('DESC') String orderBy,
     @Default(false) bool pinned,
@@ -17,7 +17,7 @@ class NotesEvent with _$NotesEvent {
   // Event specifically for triggering pagination
   const factory NotesEvent.fetchMoreNotes({
     String? keywords,
-    Uid<Note>? noteId,
+    ID? noteId,
     @Default('createdAt') String sortBy,
     @Default('DESC') String orderBy,
     @Default(false) bool pinned,

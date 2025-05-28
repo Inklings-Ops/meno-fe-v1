@@ -13,7 +13,7 @@ class ProfileStatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 46,
       child: Column(

@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/core/exceptions/auth_exception.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/settings.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-part 'login_cubit.freezed.dart';
 part 'login_state.dart';
 
 /// A [Cubit] responsible for managing the login state.
@@ -16,46 +16,38 @@ class LoginCubit extends Cubit<LoginState> {
     required ISettingsFacade settingsFacade,
   })  : _facade = facade,
         _settingsFacade = settingsFacade,
-        super(LoginState.initial());
+        super(LoginState());
   final IAuthFacade _facade;
   final ISettingsFacade _settingsFacade;
 
   bool get isOnboarded => _settingsFacade.isOnboarded;
 
-  /// Updates the user's email address.
-  ///
-  /// Args:
-  ///   email: The user's new email address.
-  void emailChanged(String email) {
-    emit(state.copyWith(email: Email(email), option: none()));
-  }
+  void emailChanged(String email) => emit(state.withEmail(email));
 
-  /// Updates the user's password.
-  ///
-  /// Args:
-  ///   password: The user's new password.
-  void passwordChanged(String password) {
-    emit(
-      state.copyWith(
-        password: Password(password, isLogin: true),
-        option: none(),
-      ),
-    );
-  }
+  void passwordChanged(String password) => emit(state.withPassword(password));
 
   /// Initiates the login process.
   ///
   /// Returns:
   ///   A `Future` that completes when the login process is finished.
   Future<void> login() async {
-    late Either<AuthException, UserCredential> fOrS;
-    final isEmailValid = state.email.isValid;
-    final isPasswordValid = state.password.isValid;
-    if (isEmailValid && isPasswordValid) {
-      emit(state.copyWith(loading: true, option: none()));
-      fOrS = await _facade.login(email: state.email, password: state.password);
-      unawaited(_settingsFacade.completeOnboarding);
-    }
-    emit(state.copyWith(option: optionOf(fOrS), loading: false));
+    if (!state.isValid) return;
+    
+    emit(state.withSubmissionLoading());
+    
+    final failureOrSuccess = await _facade.login(
+      email: state.email,
+      password: state.password,
+    );
+
+    emit(
+      failureOrSuccess.fold(
+        state.withSubmissionFailure,
+        (success) {
+          unawaited(_settingsFacade.completeOnboarding);
+          return state.withSubmissionSuccess();
+        },
+      ),
+    );
   }
 }

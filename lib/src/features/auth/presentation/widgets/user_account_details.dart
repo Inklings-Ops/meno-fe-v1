@@ -8,11 +8,17 @@ class UserAccountDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SessionBloc, SessionState>(
-      builder: (context, state) => state.maybeWhen(
-        orElse: () => const SizedBox(),
-        partiallyAuthenticated: (user) => _Widget(action: action, user: user),
-        authenticated: (user, token) => _Widget(action: action, user: user),
-      ),
+      builder: (context, state) => switch (state) {
+        SessionPartiallyAuthenticated(:final user) => _Widget(
+            action: action,
+            user: user,
+          ),
+        SessionAuthenticated(:final user) => _Widget(
+            action: action,
+            user: user,
+          ),
+        _ => const SizedBox(),
+      },
     );
   }
 }
@@ -25,7 +31,7 @@ class _Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 74,
       child: Row(
@@ -43,7 +49,7 @@ class _Widget extends StatelessWidget {
                   style: textTheme.subheadingMedium,
                 ),
                 MText(
-                  user.fullName.getOr(),
+                  user.fullName.getOrCrash(),
                   style: textTheme.heading2Medium,
                 ),
               ],

@@ -25,7 +25,7 @@ class SideNavRail extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: Insets.md),
       decoration: BoxDecoration(
         color: colors.background,
-        border: Border(right: BorderSide(color: colors.outlineVariant1!)),
+        border: Border(right: BorderSide(color: colors.outlineVariant1)),
       ),
       child: NavigationRail(
         selectedIndex: selectedIndex,

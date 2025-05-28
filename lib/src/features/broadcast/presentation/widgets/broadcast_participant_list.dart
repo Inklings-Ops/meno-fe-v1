@@ -1,8 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 
-class BroadcastParticipantList extends StatelessWidget {
-  const BroadcastParticipantList({super.key, this.padding});
+class ParticipantList extends StatelessWidget {
+  const ParticipantList({super.key, this.padding});
   final EdgeInsetsGeometry? padding;
 
   @override
@@ -10,14 +10,14 @@ class BroadcastParticipantList extends StatelessWidget {
     final bloc = context.watch<ParticipantsBloc>();
 
     final myUserId = context.select(
-      (SessionBloc bloc) => bloc.state.whenOrNull(
-        authenticated: (user, token) => user.id.getOr(),
-      ),
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.id,
+        _ => null,
+      },
     );
 
     return BlocBuilder<ParticipantsBloc, ParticipantsState>(
       bloc: bloc,
-      buildWhen: (p, c) => p.liveParticipants != c.liveParticipants,
       builder: (context, state) {
         final isLoading = state.loading;
         final participants = state.liveParticipants;
@@ -34,17 +34,18 @@ class BroadcastParticipantList extends StatelessWidget {
           ),
           itemCount: participants.length,
           itemBuilder: (context, index) {
-            final participant = participants[index];
+            final participant = participants[index]!;
+            final id = participant.id;
             return ParticipantItem(
-              key: ValueKey(participant.id),
+              key: ValueKey(participant.id.getOrCrash()),
               participant: participant,
               onTap: () {
-                if (participant.id == myUserId) return;
+                if (id == myUserId) return;
                 context.showModal<void>(
                   BlocProvider(
                     create: (_) => OthersProfileCubit(
                       facade: di<IProfileFacade>(),
-                      userId: participant.id,
+                      userId: id,
                     )..fetch(),
                     child: ParticipantInfoModal(participant: participant),
                   ),

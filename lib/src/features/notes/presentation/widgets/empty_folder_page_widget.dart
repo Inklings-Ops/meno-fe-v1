@@ -7,7 +7,7 @@ class EmptyFolderPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final folder = context.select((FolderBloc bloc) => bloc.state.folder);
 
@@ -35,7 +35,7 @@ class EmptyFolderPageWidget extends StatelessWidget {
                 iconColor: colors.onBackground,
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 side: BorderSide(
-                  color: colors.outlineVariant3!,
+                  color: colors.outlineVariant3,
                   width: 1.50,
                 ),
               ),

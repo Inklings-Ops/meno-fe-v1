@@ -39,11 +39,11 @@ class ActivityCard extends StatelessWidget {
                     children: [
                       _Badge(badgeTitle: badgeTitle),
                       const SizedBox(height: 2),
-                      _Title(title: broadcast.title.getOr()),
+                      _Title(title: broadcast.title.getOrCrash()),
                       _CreatorName(
-                        fullName: broadcast.creator?.fullName ??
-                            broadcast.creatorFullName ??
-                            broadcast.fullName ??
+                        fullName: broadcast.creator?.fullName.getOrNull() ??
+                            broadcast.creatorFullName?.getOrNull() ??
+                            broadcast.fullName?.getOrNull() ??
                             '',
                       ),
                     ],
@@ -70,7 +70,7 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Row(
       children: [
         CircleAvatar(
@@ -120,7 +120,7 @@ class _Title extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: MText(
         title,
-        style: MTextTheme.of(context)!.captionMedium,
+        style: MTextTheme.of(context).captionMedium,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -136,7 +136,7 @@ class _CreatorName extends StatelessWidget {
   Widget build(BuildContext context) {
     return MText(
       fullName,
-      style: MTextTheme.of(context)!.captionRegular,
+      style: MTextTheme.of(context).captionRegular,
       color: MColorScheme.of(context).onBackgroundVariant,
     );
   }

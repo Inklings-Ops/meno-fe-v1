@@ -1,12 +1,14 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
 import 'package:meno_fe_v1/src/features/bible/domain/entities/chapter.dart';
 
-part 'book.freezed.dart';
+final class Book with EquatableMixin {
+  const Book({required this.name, required this.chapters, this.id});
 
-@freezed
-class Book with _$Book {
-  factory Book({
-    required String name, required List<Chapter> chapters, int? id,
-  }) = _Book;
+  final String name;
+  final List<Chapter> chapters;
+  final int? id;
+
+  @override
+  List<Object?> get props => [name, chapters, id];
 }

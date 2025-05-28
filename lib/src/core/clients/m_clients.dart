@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:injectable/injectable.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/config/config.dart' show AuthStorageKeys;
 import 'package:meno_fe_v1/src/services/secure_storage_service.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/m_keys.dart';
 
 /// An interceptor for automatically adding an authorization token to requests
 /// based on a stored user credential.
@@ -21,6 +19,34 @@ class AuthTokenInterceptor extends Interceptor {
   AuthTokenInterceptor({required SecureStorageService storage})
       : _storage = storage;
   final SecureStorageService _storage;
+
+  /// Removes only the expired user from storage without affecting others
+  Future<void> _forceLogout() async {
+    final currentUserId = await _storage.read(AuthStorageKeys.currentUserId);
+    final accountsJson = await _storage.read(AuthStorageKeys.allAccounts);
+
+    if (accountsJson != null && currentUserId != null) {
+      final allAccounts = jsonDecode(accountsJson) as Map<String, dynamic>;
+      allAccounts.remove(currentUserId);
+      final updatedAccounts = jsonEncode(allAccounts);
+      await _storage.write(AuthStorageKeys.allAccounts, value: updatedAccounts);
+    }
+
+    // Remove current user if it's the same as the expired one
+    await _storage.delete(AuthStorageKeys.currentUserId);
+    await _storage.delete(AuthStorageKeys.currentUserToken);
+  }
+
+  /// Retrieves the latest token from the [SecureStorageService]
+  Future<String?> _getToken() async {
+    final token = await _storage.read(AuthStorageKeys.currentUserToken);
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      return token;
+    } else {
+      await _forceLogout();
+      return null;
+    }
+  }
 
   /// Handles errors that occur during the HTTP request/response lifecycle.
   ///
@@ -45,20 +71,8 @@ class AuthTokenInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final credentials = await _storage.read(MKeys.allCredentials);
-    final authUserId = await _storage.read(MKeys.authUserId);
-    if (credentials != null && authUserId != null) {
-      final decodedMap = jsonDecode(credentials) as Map<String, dynamic>;
-      final authCredential = decodedMap[authUserId] as Map<String, dynamic>?;
-
-      if (authCredential != null) {
-        final userCredential = UserCredentialDto.fromJson(authCredential);
-        final token = userCredential.token;
-        if (token != null && !JwtDecoder.isExpired(token)) {
-          options.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
-        }
-      }
-    }
+    final token = await _getToken();
+    if (token != null) options.headers['authorization'] = 'Bearer $token';
     return super.onRequest(options, handler);
   }
 }

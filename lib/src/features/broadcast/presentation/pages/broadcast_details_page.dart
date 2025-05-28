@@ -4,7 +4,7 @@ import 'package:meno_fe_v1/src/features/features.dart';
 
 class BroadcastDetailsPage extends StatelessWidget {
   const BroadcastDetailsPage({required this.id, super.key});
-  final Uid<Broadcast> id;
+  final ID id;
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +28,10 @@ class DetailsPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.select(
-      (SessionBloc bloc) => bloc.state.maybeWhen(
-        orElse: User.empty,
-        authenticated: (user, token) => user,
-      ),
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user,
+        _ => null,
+      },
     );
 
     return BlocBuilder<BroadcastsBloc, BroadcastsState>(
@@ -59,7 +59,7 @@ class DetailsPageView extends StatelessWidget {
           final broadcast = state.broadcasts.first!;
           return MScaffold(
             appBar: MAppBar.secondary(
-              title: broadcast.title.getOr(),
+              title: broadcast.title.getOrCrash(),
               actions: [
                 const MIconButton(icon: Icon(MIcons.star_border)),
                 Spaces.horizontalLarge,
@@ -84,16 +84,19 @@ class DetailsPageView extends StatelessWidget {
                     startTime: broadcast.startTime,
                   ),
                   Spaces.verticalMicro,
-                  _Title(title: broadcast.title.getOr()),
+                  _Title(title: broadcast.title.getOrCrash()),
                   Spaces.verticalMicro,
                   _Creator(
-                    name: broadcast.fullName!,
+                    name: broadcast.fullName?.getOrNull() ??
+                        broadcast.creatorFullName?.getOrNull() ??
+                        broadcast.creator?.fullName.getOrNull() ??
+                        '',
                     onTap: () {
                       final userId =
                           broadcast.creatorId ?? broadcast.creator?.id;
                       if (userId == null) {
                         return;
-                      } else if (userId == currentUser.id.getOr()) {
+                      } else if (userId == currentUser?.id) {
                         router.go(Routes.myProfile);
                       } else {
                         router.push(Routes.othersProfile, extra: userId);
@@ -107,7 +110,7 @@ class DetailsPageView extends StatelessWidget {
                     onPressed: () {},
                   ),
                   const SizedBox(height: 40),
-                  _Description(description: broadcast.description?.getOr()),
+                  _Description(description: broadcast.description.getOrCrash()),
                 ],
               ),
             ),
@@ -127,12 +130,12 @@ class DetailsPageOptionsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final currentUser = context.select(
-      (SessionBloc bloc) => bloc.state.maybeWhen(
-        orElse: User.empty,
-        authenticated: (user, token) => user,
-      ),
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user,
+        _ => null,
+      },
     );
     return MModal(
       builder: (context) => Column(
@@ -140,10 +143,13 @@ class DetailsPageOptionsModal extends StatelessWidget {
         children: [
           _Artwork(imageUrl: broadcast.imageUrl),
           Spaces.verticalSmall,
-          _Title(title: broadcast.title.getOr()),
+          _Title(title: broadcast.title.getOrCrash()),
           Spaces.verticalMicro,
           MText(
-            broadcast.fullName!,
+            broadcast.fullName?.getOrNull() ??
+                broadcast.creatorFullName?.getOrNull() ??
+                broadcast.creator?.fullName.getOrNull() ??
+                '',
             style: textTheme.captionRegular,
             color: colors.onBackgroundVariant,
           ),
@@ -155,7 +161,7 @@ class DetailsPageOptionsModal extends StatelessWidget {
               final id = broadcast.creatorId ?? broadcast.creator?.id;
               if (id == null) {
                 return;
-              } else if (id == currentUser.id.getOr()) {
+              } else if (id == currentUser?.id) {
                 await router.push(Routes.myProfile);
               } else {
                 await router.push(Routes.othersProfile, extra: id);
@@ -199,7 +205,7 @@ class _Artwork extends StatelessWidget {
     const borderRadius = Corners.lg;
 
     final colorFilter = ColorFilter.mode(
-      colors.onSurfaceShade!,
+      colors.onSurfaceShade,
       BlendMode.srcIn,
     );
 
@@ -265,7 +271,7 @@ class _Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       children: [
         Row(
@@ -294,7 +300,7 @@ class _Time extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -328,7 +334,7 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 24,
       child: MText(

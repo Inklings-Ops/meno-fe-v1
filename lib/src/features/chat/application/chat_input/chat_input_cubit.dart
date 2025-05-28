@@ -16,7 +16,7 @@ class ChatInputCubit extends Cubit<ChatInputState> {
       state.copyWith(
         isEditing: true,
         initialChat: chat,
-        content: chat.content.getOr(),
+        content: chat.content.getOrCrash(),
       ),
     );
   }
@@ -31,7 +31,7 @@ class ChatInputCubit extends Cubit<ChatInputState> {
     );
   }
 
-  void clearContent() => emit(state.copyWith(content: null));
+  void clearContent() => emit(const ChatInputState(hideWelcomeNote: true));
 
   void hideWelcomeNote() => emit(state.copyWith(hideWelcomeNote: true));
 }

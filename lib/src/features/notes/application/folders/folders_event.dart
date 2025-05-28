@@ -4,7 +4,7 @@ part of 'folders_bloc.dart';
 class FoldersEvent with _$FoldersEvent {
   const factory FoldersEvent.getFoldersRequested({
     String? title,
-    Uid<Folder>? folderId,
+    ID? folderId,
     @Default(false) bool pinned,
     @Default('createdAt') String sortBy,
     @Default('DESC') String orderBy,
@@ -30,6 +30,6 @@ class FoldersEvent with _$FoldersEvent {
   ) = UpdateFolderList;
 
   const factory FoldersEvent.getFolderAndUpdateList(
-    Uid<Folder> folderId,
+    ID folderId,
   ) = GetFolderAndUpdateList;
 }

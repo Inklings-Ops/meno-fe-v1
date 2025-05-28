@@ -27,7 +27,7 @@ class _PublishingInProgressModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -49,7 +49,7 @@ class _PublishingInProgressModal extends StatelessWidget {
           ),
         ),
         Spaces.verticalLarge,
-        BroadcastTimer(textStyle: textTheme.heading2Bold),
+        BroadcastTimerWidget(textStyle: textTheme.heading2Bold),
         Spaces.verticalXLarge,
         Spaces.verticalXXLarge, // Add avatars
         Spaces.verticalSmall,
@@ -70,7 +70,7 @@ class _SuccessModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -25,7 +25,7 @@ class SettingsListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       children: [
         ListTile(

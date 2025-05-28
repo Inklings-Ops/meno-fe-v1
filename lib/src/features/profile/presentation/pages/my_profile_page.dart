@@ -6,22 +6,26 @@ class MyProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userId = context.select<SessionBloc, Uid<User>?>(
-      (b) => b.state.whenOrNull(authenticated: (u, _) => u.id),
+    final myUserId = context.select(
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.id,
+        _ => null,
+      },
     );
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (_) => UsersRecentBroadcastsBloc(
             facade: di<IBroadcastFacade>(),
-            userId: userId!,
-          )..add(const GetUsersRecentBroadcasts()),
+            userId: myUserId,
+          )..add(const UsersRecentBroadcastsFetchRequested()),
         ),
         BlocProvider(
           create: (_) => UsersAllBroadcastsBloc(
             facade: di<IBroadcastFacade>(),
-            userId: userId!,
-          )..add(const GetUsersBroadcasts()),
+            userId: myUserId,
+          )..add(const UsersAllBroadcastsFetchRequested()),
         ),
       ],
       child: const MyProfileView(),
@@ -47,48 +51,20 @@ class MyProfileView extends StatelessWidget {
       await Future.wait([myProfile, recentlyLive]);
     }
 
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ProfileFormCubit, ProfileFormState>(
-          listener: (context, state) {
-            state.onEdited.fold(
-              () => null,
-              (either) => either.fold(
-                (failure) => context.showErrorSnackBar(
-                  failure.maybeWhen(
-                    message: (message) => message,
-                    networkError: () => MErrorMessages.networkError,
-                    serverError: () => MErrorMessages.serverError,
-                    timeOutError: () => MErrorMessages.timeOutError,
-                    orElse: () => MErrorMessages.unknownError,
-                  ),
-                ),
-                (success) => bloc.fetch(),
-              ),
-            );
-          },
-        ),
-      ],
-      child: BlocBuilder<MyProfileCubit, MyProfileState>(
-        bloc: bloc,
-        builder: (context, state) => Scaffold(
-          body: state.when(
-            loading: () => _Scaffold(profile: fakeProfile, loading: true),
-            success: (profile) => _Scaffold(profile: profile),
-            failure: (exception) => Center(
-              child: Text(
-                exception.maybeWhen(
-                  message: (message) => message,
-                  networkError: () => MErrorMessages.networkError,
-                  serverError: () => MErrorMessages.serverError,
-                  timeOutError: () => MErrorMessages.timeOutError,
-                  orElse: () => MErrorMessages.unknownError,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    return BlocBuilder<MyProfileCubit, MyProfileState>(
+      bloc: bloc,
+      builder: (context, state) {
+        switch (state) {
+          case MyProfileLoadInProgress():
+            return _Scaffold(profile: fakeProfile, loading: true);
+          case MyProfileLoadSuccess(:final profile):
+            return _Scaffold(profile: profile);
+          case MyProfileLoadFailure(:final exception):
+            return Center(child: Text(exception.message));
+          case MyProfileInitial():
+            return const SizedBox.shrink();
+        }
+      },
     );
   }
 }
@@ -101,7 +77,7 @@ class _Scaffold extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final tabController = useTabController(initialLength: 4);
 
     return Skeletonizer(
@@ -118,7 +94,7 @@ class _Scaffold extends HookWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: Insets.lg),
                   child: ColoredBox(
-                    color: colors.secondary!,
+                    color: colors.secondary,
                     child: const SizedBox(height: 30, width: 3),
                   ),
                 ),
@@ -131,7 +107,10 @@ class _Scaffold extends HookWidget {
                 onTap: () => router.push(Routes.switchAccountModal),
                 child: Row(
                   children: [
-                    MText(profile.fullName.getOr(), color: colors.onBackground),
+                    MText(
+                      profile.fullName.getOrCrash(),
+                      color: colors.onBackground,
+                    ),
                     Spaces.horizontalSmall,
                     const Icon(MIcons.chevron_down, size: 24),
                   ],
@@ -248,7 +227,7 @@ class _RecentBroadcastsTab extends StatelessWidget {
       await profileBloc.fetch();
 
       final recentlyLive = recentlyLiveBloc.stream.first;
-      recentlyLiveBloc.add(const GetUsersRecentBroadcasts());
+      recentlyLiveBloc.add(const UsersRecentBroadcastsFetchRequested());
 
       await Future.wait([myProfile, recentlyLive]);
     }
@@ -273,7 +252,7 @@ class _AllBroadcastsTab extends StatelessWidget {
       await profileBloc.fetch();
 
       final allBroadcasts = allBroadcastsBloc.stream.first;
-      allBroadcastsBloc.add(const GetUsersBroadcasts());
+      allBroadcastsBloc.add(const UsersAllBroadcastsFetchRequested());
 
       await Future.wait([myProfile, allBroadcasts]);
     }

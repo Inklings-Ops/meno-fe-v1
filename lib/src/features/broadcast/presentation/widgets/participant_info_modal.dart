@@ -3,21 +3,18 @@ import 'package:meno_fe_v1/src/features/features.dart';
 
 class ParticipantInfoModal extends StatelessWidget {
   const ParticipantInfoModal({required this.participant, super.key});
-  final BroadcastParticipant participant;
+  final Participant participant;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OthersProfileCubit, OthersProfileState>(
       builder: (context, state) => MModal(
-        builder: (context) => state.when(
-          loading: () => const _Content(isLoading: true),
-          success: (profile) => _Content(profile: profile),
-          failure: (exception) => exception.maybeMap(
-            orElse: () => const Text('Unknown error'),
-            message: (value) => Text(value.message),
-            noUserAccountFound: (value) => const Text('No user found'),
-          ),
-        ),
+        builder: (context) => switch (state) {
+          OthersProfileLoadFailure(:final exception) => Text(exception.message),
+          OthersProfileLoadSuccess(:final profile) =>
+            _Content(profile: profile),
+          _ => const _Content(isLoading: true),
+        },
       ),
     );
   }
@@ -31,7 +28,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final colors = MColorScheme.of(context);
     final bloc = context.watch<SubscriptionBloc>();
 
@@ -62,7 +59,7 @@ class _Content extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 MText(
-                  profile?.fullName.getOr() ?? BoneMock.fullName,
+                  profile?.fullName.getOrCrash() ?? BoneMock.fullName,
                   style: textTheme.heading3Medium,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -73,7 +70,7 @@ class _Content extends StatelessWidget {
           Spaces.verticalMicro,
           if (profile?.bio != null) ...[
             MText(
-              profile?.bio?.getOr() ?? BoneMock.paragraph,
+              profile?.bio?.getOrCrash() ?? BoneMock.paragraph,
               style: textTheme.subheadingRegular,
               textAlign: TextAlign.center,
               maxLines: 2,

@@ -7,11 +7,12 @@ class ProfileButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
-    final textStyle = MTextTheme.of(context)!.microMedium;
+    final textStyle = MTextTheme.of(context).microMedium;
     final profile = context.select<MyProfileCubit, Profile?>(
-      (bloc) => bloc.state.whenOrNull(
-        success: (profile) => profile,
-      ),
+      (bloc) => switch (bloc.state) {
+        MyProfileLoadSuccess(:final profile) => profile,
+        _ => null,
+      },
     );
     return SizedBox(
       height: 32,

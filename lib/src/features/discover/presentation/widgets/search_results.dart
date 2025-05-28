@@ -55,22 +55,18 @@ class _ResultList extends StatelessWidget {
       itemBuilder: (context, i) {
         final broadcast = result[i]!;
         if (broadcast.endTime == null) {
-          return MCard.live(
-            title: broadcast.title.getOr(),
-            imageUrl: broadcast.imageUrl,
-            host: broadcast.fullName,
-            liveCount: broadcast.totalListeners,
-            onTap: () => router.push(Routes.preStreamModal, extra: broadcast),
-          );
+          return LiveBroadcastCard(broadcast: broadcast);
         }
 
         return MCard.recentlyLive(
-          title: broadcast.title.getOr(),
+          title: broadcast.title.getOrCrash(),
           imageUrl: broadcast.imageUrl,
-          host: broadcast.fullName,
+          host: broadcast.fullName?.getOrNull() ??
+              broadcast.creatorFullName?.getOrNull() ??
+              broadcast.creator?.fullName.getOrNull(),
           onTap: () => router.pushNamed(
             'Broadcast Details',
-            pathParameters: {'id': broadcast.id.getOr()},
+            pathParameters: {'id': broadcast.id.getOrCrash()},
           ),
         );
       },
@@ -84,7 +80,7 @@ class _NoResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

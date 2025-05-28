@@ -8,7 +8,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final watcher = context.watch<NotesWatcherBloc>();
 
@@ -40,7 +40,7 @@ class DeleteNoteAlertDialog extends StatelessWidget {
               label: 'Cancel',
               onPressed: () => context.pop(false),
               style: TextButton.styleFrom(
-                foregroundColor: colorScheme.onDisabled?.withValues(alpha: 0.5),
+                foregroundColor: colorScheme.onDisabled.withValues(alpha: 0.5),
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               ),
             ),

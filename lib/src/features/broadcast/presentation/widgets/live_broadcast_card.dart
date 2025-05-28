@@ -9,9 +9,10 @@ class LiveBroadcastCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final liveState = context.watch<BroadcastBloc>().state;
     final myUserId = context.select(
-      (SessionBloc bloc) => bloc.state.whenOrNull(
-        authenticated: (user, token) => user.id.getOr(),
-      ),
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.id,
+        _ => null,
+      },
     );
 
     final isHost = myUserId == (broadcast.creatorId ?? broadcast.creator?.id);
@@ -20,7 +21,7 @@ class LiveBroadcastCard extends StatelessWidget {
     final isStreaming = liveState.isStream && isBroadcast;
 
     return MCard.live(
-      title: broadcast.title.getOr(),
+      title: broadcast.title.getOrCrash(),
       host: hostName,
       imageUrl: broadcast.imageUrl,
       liveCount: broadcast.totalListeners,
@@ -38,9 +39,9 @@ class LiveBroadcastCard extends StatelessWidget {
 
 
   String get hostName {
-    return broadcast.creator?.fullName ??
-        broadcast.fullName ??
-        broadcast.creatorFullName ??
+    return broadcast.creator?.fullName.getOrCrash() ??
+        broadcast.fullName?.getOrCrash() ??
+        broadcast.creatorFullName?.getOrCrash() ??
         '';
   }
 }

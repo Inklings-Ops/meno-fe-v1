@@ -12,12 +12,6 @@ class ChatSendButton extends StatelessWidget {
     final broadcastBloc = context.watch<BroadcastBloc>();
     final chatInputBloc = context.watch<ChatInputCubit>();
 
-    final isLive = [
-      const Live(),
-      const Streaming(),
-      const Reconnecting(),
-    ].contains(context.watch<LiveBloc>().state);
-
     final inputState = chatInputBloc.state;
     final isEditing = inputState.isEditing && inputState.initialChat != null;
 
@@ -27,33 +21,31 @@ class ChatSendButton extends StatelessWidget {
         final chat = inputState.initialChat!;
         final contentString = inputState.content;
         if (contentString == null) return;
-        final updatedContent = IChatContent(contentString);
+        final updatedContent = MultiLineString(contentString);
         final updatedChat = chat.copyWith(content: updatedContent);
         event = ChatEditMessageRequested(updatedChat);
+        chatInputBloc.stopEditing();
       } else {
         event = ChatSendMessageRequested(
           broadcastId: broadcastBloc.state.broadcast.id,
           content: inputState.content!,
         );
+        chatInputBloc.clearContent();
       }
-
+      FocusScope.of(context).unfocus();
       context.read<ChatListBloc>().add(event);
-
       scrollController.animateTo(
         0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-
-      chatInputBloc.clearContent();
-      chatInputBloc.stopEditing();
     }
 
     return BlocBuilder<ChatInputCubit, ChatInputState>(
       bloc: chatInputBloc,
       builder: (context, state) {
         final content = state.content;
-        if (content != null && isLive) {
+        if (content != null) {
           return Column(
             children: [
               Spaces.horizontalSmall,

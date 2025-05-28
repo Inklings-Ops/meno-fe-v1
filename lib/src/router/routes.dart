@@ -37,6 +37,7 @@ class Routes {
   static const String biblePage = '/bible-page';
   static const String broadcasts = '/broadcasts';
   static const String broadcastDetails = '/broadcasts/:id';
+  // static const String livePage = '/broadcasts/live/:id';
 
   static const String broadcastTab = '/broadcast-tab';
   static const String chatTab = '/chat-tab';

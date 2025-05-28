@@ -13,7 +13,7 @@ class BroadcastInfoModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MModal(
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -23,7 +23,7 @@ class BroadcastInfoModal extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: MText(
-              broadcast.title.getOr(),
+              broadcast.title.getOrCrash(),
               style: textTheme.subheadingBold,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -36,9 +36,9 @@ class BroadcastInfoModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
-                  broadcast.creator?.fullName ??
-                      broadcast.creatorFullName ??
-                      broadcast.fullName ??
+                  broadcast.creator?.fullName.getOrNull() ??
+                      broadcast.creatorFullName?.getOrNull() ??
+                      broadcast.fullName?.getOrNull() ??
                       '',
                   style: textTheme.captionRegular,
                 ),

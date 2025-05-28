@@ -15,6 +15,14 @@ final class SocketDisconnectRequested extends SocketEvent {
   const SocketDisconnectRequested();
 }
 
+final class _Update extends SocketEvent {
+  const _Update(this.state);
+  final SocketState state;
+
+  @override
+  List<Object?> get props => [state];
+}
+
 final class SocketUpdateStateRequested extends SocketEvent {
   const SocketUpdateStateRequested(this.newState);
   final SocketState newState;

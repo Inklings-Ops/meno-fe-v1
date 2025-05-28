@@ -14,7 +14,7 @@ class EmptyListWidget extends StatelessWidget {
           Spaces.verticalMedium,
           MText(
             title ?? 'Nothing to show here',
-            style: MTextTheme.of(context)?.captionMedium,
+            style: MTextTheme.of(context).captionMedium,
             textAlign: TextAlign.center,
           ),
         ],

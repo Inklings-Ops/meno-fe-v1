@@ -1,8 +1,18 @@
 part of 'session_bloc.dart';
 
-@freezed
-class SessionEvent with _$SessionEvent {
-  const factory SessionEvent.started() = SessionStarted;
-  const factory SessionEvent.refresh() = SessionRefresh;
-  const factory SessionEvent.logout() = SessionLogout;
+
+sealed class SessionEvent with EquatableMixin {
+  const SessionEvent();
+
+  @override
+  List<Object?> get props => [];
+
+}
+
+final class SessionStarted extends SessionEvent {
+  const SessionStarted();
+}
+
+final class SessionLogoutRequested extends SessionEvent {
+  const SessionLogoutRequested();
 }

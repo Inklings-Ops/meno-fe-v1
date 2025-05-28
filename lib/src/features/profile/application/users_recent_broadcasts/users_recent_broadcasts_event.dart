@@ -1,9 +1,18 @@
 part of 'users_recent_broadcasts_bloc.dart';
 
-@freezed
-class UsersRecentBroadcastsEvent with _$UsersRecentBroadcastsEvent {
-  const factory UsersRecentBroadcastsEvent.getBroadcasts() =
-      GetUsersRecentBroadcasts;
-  const factory UsersRecentBroadcastsEvent.getMoreBroadcasts() =
-      GetMoreUsersRecentBroadcasts;
+sealed class UsersRecentBroadcastsEvent with EquatableMixin {
+  const UsersRecentBroadcastsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class UsersRecentBroadcastsFetchRequested
+    extends UsersRecentBroadcastsEvent {
+  const UsersRecentBroadcastsFetchRequested();
+}
+
+final class UsersRecentBroadcastsFetchMoreRequested
+    extends UsersRecentBroadcastsEvent {
+  const UsersRecentBroadcastsFetchMoreRequested();
 }

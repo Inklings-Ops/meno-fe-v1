@@ -7,7 +7,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     const borderRadius = Corners.sm;
 
     final label = isBroadcasting ? 'Stop Broadcasting?' : 'Leave Broadcast?';
@@ -26,7 +26,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
             label: 'Cancel',
             onPressed: () => Navigator.pop(context, false),
             style: TextButton.styleFrom(
-              foregroundColor: colors.onDisabled?.withValues(alpha: 0.5),
+              foregroundColor: colors.onDisabled.withValues(alpha: 0.5),
               shape: const RoundedRectangleBorder(borderRadius: borderRadius),
             ),
           ),

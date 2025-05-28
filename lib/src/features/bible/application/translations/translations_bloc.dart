@@ -1,23 +1,22 @@
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 part 'translations_event.dart';
 part 'translations_state.dart';
-part 'translations_bloc.freezed.dart';
 
 class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
   TranslationsBloc({required IBibleFacade facade})
       : _facade = facade,
         super(const TranslationsState()) {
-    on<GetTranslations>(_onGetTranslations);
-    on<UpdateTranslations>(_onUpdateTranslations);
+    on<TranslationsFetchRequested>(_onTranslationsFetchRequested);
+    on<TranslationsUpdateRequested>(_onTranslationsUpdateRequested);
   }
 
   final IBibleFacade _facade;
 
-  void _onGetTranslations(
-    GetTranslations event,
+  void _onTranslationsFetchRequested(
+    TranslationsFetchRequested event,
     Emitter<TranslationsState> emit,
   ) {
     emit(
@@ -28,8 +27,8 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
     );
   }
 
-  void _onUpdateTranslations(
-    UpdateTranslations event,
+  void _onTranslationsUpdateRequested(
+    TranslationsUpdateRequested event,
     Emitter<TranslationsState> emit,
   ) {
     final localTranslations = List<Translation>.from(state.localTranslations);

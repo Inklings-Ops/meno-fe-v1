@@ -6,7 +6,7 @@ class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({super.key});
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MScaffold(
       appBar: MAppBar.primary(title: 'Verify Your Email'),
       body: SingleChildScrollView(

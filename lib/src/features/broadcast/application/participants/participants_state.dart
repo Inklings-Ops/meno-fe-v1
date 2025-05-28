@@ -11,14 +11,14 @@ final class ParticipantsState with EquatableMixin {
   });
 
   /// The list of participants currently live-streaming the broadcast
-  final List<BroadcastParticipant> liveParticipants;
+  final List<Participant?> liveParticipants;
 
   /// The number of participants currently live-streaming the broadcast
   final int numberOfLiveParticipants;
 
   /// List of all the participants that joined through out the lifecycle
   /// of the broadcast
-  final List<BroadcastParticipant> allParticipants;
+  final List<Participant?> allParticipants;
 
   /// The total number of participants that joined through out the lifecycle
   /// of the broadcast
@@ -40,9 +40,9 @@ final class ParticipantsState with EquatableMixin {
       ];
 
   ParticipantsState copyWith({
-    List<BroadcastParticipant>? liveParticipants,
+    List<Participant?>? liveParticipants,
     int? numberOfLiveParticipants,
-    List<BroadcastParticipant>? allParticipants,
+    List<Participant?>? allParticipants,
     int? numberOfAllParticipants,
     bool? loading,
     BroadcastException? exception,

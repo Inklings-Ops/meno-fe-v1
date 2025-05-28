@@ -7,8 +7,8 @@ sealed class SocketState with EquatableMixin {
   List<Object?> get props => [];
 }
 
-final class SocketConnectInProgress extends SocketState {
-  const SocketConnectInProgress();
+final class SocketConnecting extends SocketState {
+  const SocketConnecting();
 }
 
 final class SocketConnected extends SocketState {
@@ -17,6 +17,14 @@ final class SocketConnected extends SocketState {
 
 final class SocketDisconnected extends SocketState {
   const SocketDisconnected();
+}
+
+final class SocketReconnected extends SocketState {
+  const SocketReconnected();
+}
+
+final class SocketReconnecting extends SocketState {
+  const SocketReconnecting();
 }
 
 final class SocketError extends SocketState {
@@ -30,7 +38,7 @@ final class SocketError extends SocketState {
 // Event: newBroadcastListener
 final class SocketNewParticipantReceived extends SocketState {
   const SocketNewParticipantReceived(this.participant);
-  final BroadcastParticipant participant;
+  final Participant participant;
 
   @override
   List<Object?> get props => [participant];
@@ -39,7 +47,7 @@ final class SocketNewParticipantReceived extends SocketState {
 // Event: broadcastListenerLeft
 final class SocketParticipantLeftReceived extends SocketState {
   const SocketParticipantLeftReceived(this.participant);
-  final BroadcastParticipant participant;
+  final Participant participant;
 
   @override
   List<Object?> get props => [participant];

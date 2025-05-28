@@ -21,7 +21,7 @@ class ChapterWidget extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          color: colors.outlineVariant1?.withValues(alpha: 0.5),
+          color: colors.outlineVariant1.withValues(alpha: 0.5),
         ),
         child: MText('$chapter'),
       ),

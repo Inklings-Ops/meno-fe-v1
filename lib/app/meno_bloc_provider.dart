@@ -13,7 +13,7 @@ class MenoBlocProvider extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => SocketBloc(socket: di<SocketService>())),
         BlocProvider(create: (_) => SettingsBloc()),
-        BlocProvider(create: (_) => di<SessionBloc>()),
+        BlocProvider(create: (_) => di<SessionBloc>()..init()),
         BlocProvider(
           lazy: false,
           create: (_) => MyProfileCubit(
@@ -22,7 +22,9 @@ class MenoBlocProvider extends StatelessWidget {
           )..fetch(),
         ),
         BlocProvider(
-          create: (_) => AccountBloc(session: di<ISessionContext>()),
+          create: (_) => AccountBloc(
+            session: di<ISessionContext>(),
+          )..add(const AccountInitialized()),
         ),
         BlocProvider(create: (_) => TimerCubit()),
         BlocProvider(
@@ -46,7 +48,7 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(
           create: (_) => TranslationsBloc(
             facade: di<IBibleFacade>(),
-          )..add(const GetTranslations()),
+          )..add(const TranslationsFetchRequested()),
         ),
         BlocProvider(
           create: (_) => BibleDownloaderBloc(facade: di<IBibleFacade>()),
@@ -60,7 +62,6 @@ class MenoBlocProvider extends StatelessWidget {
         BlocProvider(create: (_) => ChatInputCubit()),
         BlocProvider(
           create: (_) => ChatListBloc(
-            facade: di<IChatFacade>(),
             session: di<ISessionContext>(),
             socket: di<SocketService>(),
           ),
@@ -72,6 +73,8 @@ class MenoBlocProvider extends StatelessWidget {
             reconnectBroadcastUsecase: di<ReconnectBroadcastUsecase>(),
             startBroadcastUsecase: di<StartBroadcastUsecase>(),
             joinBroadcastUsecase: di<JoinBroadcastUsecase>(),
+            // socket: di<SocketService>(),
+            liveKit: di<LiveKitService>(),
           ),
         ),
         BlocProvider(
@@ -84,22 +87,24 @@ class MenoBlocProvider extends StatelessWidget {
           create: (_) => OnboardingCubit(facade: di<ISettingsFacade>()),
         ),
         BlocProvider(
+          lazy: false,
           create: (_) => NowLiveBloc(
             facade: di<IBroadcastFacade>(),
             socket: di<SocketService>(),
             session: di<ISessionContext>(),
-          ),
+          )..add(const NowLiveStarted()),
         ),
         BlocProvider(
+          lazy: false,
           create: (_) => RecentlyLiveBloc(
             facade: di<IBroadcastFacade>(),
             socket: di<SocketService>(),
             session: di<ISessionContext>(),
-          ),
+          )..add(const RecentlyLiveStarted()),
         ),
         BlocProvider(
           create: (_) => ProfileFormCubit(
-            authFacade: di<IAuthFacade>(),
+            facade: di<IProfileFacade>(),
             media: di<MediaService>(),
           ),
         ),

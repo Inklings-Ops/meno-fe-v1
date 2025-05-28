@@ -12,7 +12,7 @@ class DiscoverPage extends StatelessWidget {
           create: (_) => SearchBloc(facade: di<IBroadcastFacade>()),
         ),
         BlocProvider(
-          create: (_) => AccountsSearchBloc(facade: di<IAuthFacade>()),
+          create: (_) => AccountsSearchBloc(facade: di<IProfileFacade>()),
         ),
         BlocProvider(
           create: (_) => FilterBloc(facade: di<IBroadcastFacade>())..init(),

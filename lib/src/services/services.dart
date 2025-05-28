@@ -1,6 +1,6 @@
 export 'background_service.dart';
 export 'jwt_service.dart';
-export 'live_kit/live_kit.dart';
+export 'live_kit/live_kit.dart' hide Participant;
 export 'media_service.dart';
 export 'network_service.dart';
 export 'notification_service.dart';

@@ -46,15 +46,15 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   final IBroadcastFacade _facade;
   final SocketService _socket;
 
-  /// Priority bucket for [Role.host]. This is not a list as there will be only
-  /// one host broadcast
-  BroadcastParticipant? host;
+  /// Priority bucket for [ParticipantRole.host]. This is not a list as
+  /// there will be only one host broadcast
+  Participant? host;
 
-  /// Priority bucket for [Role.cohost]
-  final LinkedHashSet<BroadcastParticipant> cohosts = LinkedHashSet();
+  /// Priority bucket for [ParticipantRole.cohost]
+  final LinkedHashSet<Participant> cohosts = LinkedHashSet();
 
-  /// Priority bucket for [Role.listener]
-  final LinkedHashSet<BroadcastParticipant> listeners = LinkedHashSet();
+  /// Priority bucket for [ParticipantRole.listener]
+  final LinkedHashSet<Participant> listeners = LinkedHashSet();
 
   /// Tracks the initialization state of the Streams
   bool _listenersInitialized = false;
@@ -90,7 +90,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     _listenersInitialized = true;
   }
 
-  /// Reload event to retrieve all the currently live [BroadcastParticipant]s
+  /// Reload event to retrieve all the currently live [Participant]s
   Future<void> _onParticipantsReloadRequested(
     ParticipantsReloadRequested event,
     Emitter<ParticipantsState> emit,
@@ -112,7 +112,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     );
   }
 
-  /// Fetches all the [BroadcastParticipant]s that have joined the broadcast
+  /// Fetches all the [Participant]s that have joined the broadcast
   /// from the time it started to its ending
   Future<void> _onParticipantsFetchAllRequested(
     ParticipantsFetchAllRequested event,
@@ -124,15 +124,15 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
       response.fold(
         (exception) => state.copyWith(loading: false, exception: exception),
         (participants) => state.copyWith(
-          allParticipants: participants,
-          numberOfAllParticipants: participants.length,
+          allParticipants: participants.items,
+          numberOfAllParticipants: participants.items.length,
           loading: false,
         ),
       ),
     );
   }
 
-  /// Event function to update the state when a new [BroadcastParticipant]
+  /// Event function to update the state when a new [Participant]
   /// joins a [Broadcast]
   void _onParticipantJoinedSubscribed(
     _ParticipantJoinedSubscribed event,
@@ -140,7 +140,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   ) {
     if (!_listenersInitialized) return;
     final eventData = event.data as Map<String, dynamic>;
-    final participant = BroadcastParticipantDto.fromJson(eventData).toDomain;
+    final participant = ParticipantDto.fromJson(eventData).toDomain;
     _addToBucket(participant);
     emit(
       state.copyWith(
@@ -150,7 +150,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     );
   }
 
-  /// Event function to update the state when a [BroadcastParticipant] leaves
+  /// Event function to update the state when a [Participant] leaves
   /// a [Broadcast]
   void _onParticipantLeftSubscribed(
     _ParticipantLeftSubscribed event,
@@ -158,7 +158,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
   ) {
     if (!_listenersInitialized) return;
     final eventData = event.data as Map<String, dynamic>;
-    final participant = BroadcastParticipantDto.fromJson(eventData).toDomain;
+    final participant = ParticipantDto.fromJson(eventData).toDomain;
     _removeFromBucket(participant);
     emit(
       state.copyWith(
@@ -182,15 +182,16 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     emit(const ParticipantsState());
   }
 
-  void _addToBucket(BroadcastParticipant participant) {
+  void _addToBucket(Participant? participant) {
+    if (participant == null) return;
     switch (participant.role) {
-      case Role.host || Role.HOST:
+      case ParticipantRole.host || ParticipantRole.HOST:
         host = participant;
         return;
-      case Role.cohost || Role.COHOST:
+      case ParticipantRole.cohost || ParticipantRole.COHOST:
         cohosts.add(participant);
         return;
-      case Role.listener || Role.LISTENER:
+      case ParticipantRole.listener || ParticipantRole.LISTENER:
         listeners.add(participant);
         return;
       case null:
@@ -198,15 +199,15 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     }
   }
 
-  void _removeFromBucket(BroadcastParticipant participant) {
+  void _removeFromBucket(Participant participant) {
     switch (participant.role) {
-      case Role.host || Role.HOST:
+      case ParticipantRole.host || ParticipantRole.HOST:
         if (host?.id == participant.id) host = null;
         return;
-      case Role.cohost || Role.COHOST:
+      case ParticipantRole.cohost || ParticipantRole.COHOST:
         cohosts.remove(participant);
         return;
-      case Role.listener || Role.LISTENER:
+      case ParticipantRole.listener || ParticipantRole.LISTENER:
         listeners.remove(participant);
         return;
       case null:
@@ -214,7 +215,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     }
   }
 
-  void _initializeBuckets(List<BroadcastParticipant> participants) {
+  void _initializeBuckets(List<Participant?> participants) {
     host = null;
     cohosts.clear();
     listeners.clear();
@@ -224,7 +225,7 @@ class ParticipantsBloc extends Bloc<ParticipantsEvent, ParticipantsState> {
     }
   }
 
-  List<BroadcastParticipant> _buildSortedList() {
+  List<Participant?> _buildSortedList() {
     return [
       if (host != null) host!,
       ...cohosts,

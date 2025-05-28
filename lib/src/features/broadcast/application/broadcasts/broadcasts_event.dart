@@ -25,13 +25,13 @@ final class BroadcastsFetchRequested extends BroadcastsEvent {
   final int page;
   final String sortBy;
   final OrderBy orderBy;
-  final Uid<Broadcast>? id;
+  final ID? id;
   final String? keywords;
   final bool? startTimeExists;
   final bool? endTimeExists;
   final String? include;
   final String? status;
-  final Uid<User>? creatorId;
+  final ID? creatorId;
   final CancelToken? cancelToken;
 
   @override

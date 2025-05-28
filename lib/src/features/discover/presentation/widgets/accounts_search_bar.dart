@@ -21,7 +21,7 @@ class AccountsSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return Padding(
       padding: padding ?? const EdgeInsets.symmetric(horizontal: Insets.lg),

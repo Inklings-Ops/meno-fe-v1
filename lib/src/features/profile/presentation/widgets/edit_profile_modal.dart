@@ -8,22 +8,17 @@ class EditProfileModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ProfileFormCubit, ProfileFormState>(
       listener: (context, state) {
-        state.onEdited.fold(
-          () => null,
-          (failureOrSuccess) => failureOrSuccess.fold(
-            (exception) => context.showErrorSnackBar(
-              exception.maybeMap(
-                orElse: () => '',
-                message: (value) => value.message,
-                networkError: (_) => MErrorMessages.networkError,
-                serverError: (_) => MErrorMessages.serverError,
-                timeOutError: (_) => MErrorMessages.timeOutError,
-                unknownError: (_) => MErrorMessages.unknownError,
-              ),
-            ),
-            (success) => router.pop(),
-          ),
-        );
+        switch (state.status) {
+          case FormStatus.failure:
+            context.showErrorSnackBar(state.exception!.message);
+          case FormStatus.success:
+            final bloc = context.read<MyProfileCubit>();
+            bloc.optimisticallyUpdate(state.profile!);
+          case FormStatus.canceled:
+          case FormStatus.initial:
+          case FormStatus.loading:
+            return;
+        }
       },
       child: MModal(
         title: 'Edit profile details',
@@ -55,16 +50,16 @@ class ProfileFormAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-
-    final bloc = context.watch<ProfileFormCubit>();
-
+    final bloc = context.read<ProfileFormCubit>();
     final url = context.select<MyProfileCubit, String?>(
-      (bloc) => bloc.state.whenOrNull(success: (profile) => profile.imageUrl),
+      (bloc) => switch (bloc.state) {
+        MyProfileLoadSuccess(:final profile) => profile.imageUrl,
+        _ => null,
+      },
     );
 
     return BlocBuilder<ProfileFormCubit, ProfileFormState>(
-      bloc: bloc,
-      buildWhen: (p, c) => p.avatar != c.avatar || bloc.state.loading,
+      buildWhen: (p, c) => p.avatar != c.avatar || p.status != c.status,
       builder: (context, state) => SizedBox.square(
         dimension: 96,
         child: Stack(
@@ -72,14 +67,14 @@ class ProfileFormAvatar extends StatelessWidget {
             MAvatar(
               radius: 49,
               url: url,
-              file: state.avatar?.getOr(),
+              file: state.avatar?.getOrCrash(),
               hasBorder: false,
               onTap: () => context.showModal<void>(
                 MImageSourceModal(
                   onGallerySourceTap: bloc.avatarChanged,
-                  onCameraSourceTap: () => bloc.avatarChanged(
-                    fromGallery: false,
-                  ),
+                  onCameraSourceTap: () {
+                    bloc.avatarChanged(fromGallery: false);
+                  },
                 ),
               ),
             ),
@@ -91,7 +86,7 @@ class ProfileFormAvatar extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: colors.primary,
-                  border: Border.all(width: 2, color: colors.onPrimary!),
+                  border: Border.all(width: 2, color: colors.onPrimary),
                 ),
                 child: Icon(MIcons.edit_02, size: 16, color: colors.onPrimary),
               ),
@@ -108,19 +103,16 @@ class ProfileFormNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<ProfileFormCubit, bool>(
-      (b) => b.state.loading,
-    );
     return BlocBuilder<ProfileFormCubit, ProfileFormState>(
-      buildWhen: (p, c) => p.fullName != c.fullName || isLoading,
+      buildWhen: (p, c) => p.fullName != c.fullName || p.status != c.status,
       builder: (context, state) => MTextFormField(
         label: 'Name',
         hint: 'John Doe',
         required: true,
-        enabled: !isLoading,
-        initialValue: state.fullName?.getOrE(''),
+        enabled: !state.status.isLoading,
+        initialValue: state.fullName?.getOrNull(),
         onChanged: context.read<ProfileFormCubit>().fullNameChanged,
-        validator: (_) => context.validator(state.fullName!.value),
+        validator: (_) => state.fullName?.failureOrNull?.message,
       ),
     );
   }
@@ -131,21 +123,17 @@ class ProfileFormDescriptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select<ProfileFormCubit, bool>(
-      (b) => b.state.loading,
-    );
-
     return BlocBuilder<ProfileFormCubit, ProfileFormState>(
-      buildWhen: (p, c) => p.bio != c.bio || isLoading,
+      buildWhen: (p, c) => p.bio != c.bio || p.status != c.status,
       builder: (context, state) => MTextArea(
         label: 'Description',
         hint: 'Enter a brief description',
         maxLines: 5,
         maxLength: 244,
-        enabled: !isLoading,
-        initialValue: state.bio?.getOrE(''),
+        enabled: !state.status.isLoading,
+        initialValue: state.bio?.getOrCrash(),
         onChanged: context.read<ProfileFormCubit>().bioChanged,
-        validator: (_) => context.validator(state.bio!.value),
+        validator: (_) => state.bio?.failureOrNull?.message,
       ),
     );
   }
@@ -157,12 +145,11 @@ class ProfileFormSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileFormCubit, ProfileFormState>(
-      buildWhen: (p, c) =>
-          p.loading != c.loading || p.hasChanges != c.hasChanges,
+      buildWhen: (p, c) => p.status != c.status || p.hasChanges != c.hasChanges,
       builder: (context, state) => MPrimaryButton(
         label: 'Save changes',
-        loading: state.loading,
-        disabled: state.loading || !state.hasChanges,
+        loading: state.status.isLoading,
+        disabled: state.status.isLoading || !state.hasChanges,
         onPressed: context.read<ProfileFormCubit>().editProfile,
       ),
     );

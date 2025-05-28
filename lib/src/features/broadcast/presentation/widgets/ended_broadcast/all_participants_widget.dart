@@ -6,7 +6,7 @@ class AllParticipantsWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return BlocBuilder<ParticipantsBloc, ParticipantsState>(
       builder: (context, state) => Column(
@@ -21,7 +21,7 @@ class AllParticipantsWidget extends HookWidget {
                     (e) => Positioned(
                       left: state.allParticipants.indexOf(e) * 30,
                       right: 0,
-                      child: MAvatar(radius: 16, url: e.imageUrl),
+                      child: MAvatar(radius: 16, url: e?.imageUrl),
                     ),
                   )
                   .toList(),

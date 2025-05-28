@@ -1,77 +1,59 @@
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/profile/domain/domain.dart';
 import 'package:meno_fe_v1/src/services/media_service.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-part 'profile_form_cubit.freezed.dart';
 part 'profile_form_state.dart';
 
 class ProfileFormCubit extends Cubit<ProfileFormState> {
   ProfileFormCubit({
-    required IAuthFacade authFacade,
+    required IProfileFacade facade,
     required MediaService media,
-  })  : _authFacade = authFacade,
+  })  : _facade = facade,
         _media = media,
-        super(ProfileFormState.initial());
-  final IAuthFacade _authFacade;
+        super(const ProfileFormState());
+  final IProfileFacade _facade;
   final MediaService _media;
 
-  bool? get isValid {
-    return (state.fullName?.isValid ?? false) || (state.bio?.isValid ?? false);
-  }
-
   void initializeWithProfile(Profile? profile) {
-    emit(
-      state.copyWith(
-        fullName: profile?.fullName,
-        bio: profile?.bio,
-      ),
-    );
-  }
-
-  Future<void> avatarChanged({bool fromGallery = true}) async {
-    final file = await _media.getImage(fromGallery: fromGallery);
-    if (file != null) {
-      emit(state.copyWith(avatar: Avatar(File(file.path)), hasChanges: true));
+    if (profile == null) {
+      emit(state.withSubmissionFailure(const NoProfileFoundException()));
+    } else {
+      emit(state.withProfile(profile));
     }
   }
 
-  void bioChanged(String bio) {
-    /// Updates the state with the new bio and clears the `option`.
-    emit(state.copyWith(bio: Bio(bio), hasChanges: true));
+  void fullNameChanged(String fullName) => emit(state.withFullName(fullName));
+
+  void bioChanged(String bio) => emit(state.withBio(bio));
+
+  Future<void> avatarChanged({bool fromGallery = true}) async {
+    final file = await _media.getImage(fromGallery: fromGallery);
+    if (file != null) emit(state.withAvatar(File(file.path)));
   }
 
   Future<void> editProfile() async {
-    if (!state.hasChanges) return;
+    if (!state.hasChanges && state.profile == null) return;
 
-    emit(state.copyWith(loading: true, onEdited: none()));
+    emit(state.withSubmissionLoading());
 
-    final result = await _authFacade.editProfile(
-      avatar: state.avatar,
-      bio: state.bio,
-      fullName: state.fullName,
+    final profile = state.profile!;
+
+    final result = await _facade.editProfile(
+      id: profile.id,
+      fullName: state.fullName == profile.fullName ? null : state.fullName,
+      bio: state.bio == profile.bio ? null : state.bio,
+      image: state.avatar,
     );
 
     emit(
-      state.copyWith(
-        loading: false,
-        onEdited: some(result),
-        hasChanges: false,
-      ),
-    );
-  }
-
-  void fullNameChanged(String fullName) {
-    /// Updates the state with the new fullName and clears the `option`.
-    emit(
-      state.copyWith(
-        fullName: SingleLineString(fullName),
-        hasChanges: true,
+      result.fold(
+        state.withSubmissionFailure,
+        state.withSubmissionSuccess,
       ),
     );
   }

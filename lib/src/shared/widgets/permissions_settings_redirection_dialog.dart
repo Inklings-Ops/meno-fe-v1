@@ -11,7 +11,7 @@ class PermissionsSettingsRedirectionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return AlertDialog(
       title: MText('Permission Required', style: textTheme.heading2Regular),
@@ -24,7 +24,7 @@ class PermissionsSettingsRedirectionDialog extends StatelessWidget {
             label: 'Cancel',
             onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
-              foregroundColor: colors.onDisabled?.withValues(alpha: 0.5),
+              foregroundColor: colors.onDisabled.withValues(alpha: 0.5),
               shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),

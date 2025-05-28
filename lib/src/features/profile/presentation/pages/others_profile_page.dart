@@ -7,23 +7,18 @@ class OthersProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OthersProfileCubit, OthersProfileState>(
-      builder: (context, state) => state.when(
-        loading: () => _Scaffold(profile: fakeProfile, loading: true),
-        failure: (exception) => MScaffold(
-          body: Center(
-            child: Text(
-              exception.maybeWhen(
-                message: (message) => message,
-                networkError: () => MErrorMessages.networkError,
-                serverError: () => MErrorMessages.serverError,
-                timeOutError: () => MErrorMessages.timeOutError,
-                orElse: () => MErrorMessages.unknownError,
-              ),
-            ),
-          ),
-        ),
-        success: (profile) => _Scaffold(profile: profile),
-      ),
+      builder: (context, state) {
+        switch (state) {
+          case OthersProfileLoadInProgress():
+            return _Scaffold(profile: fakeProfile, loading: true);
+          case OthersProfileLoadSuccess(:final profile):
+            return _Scaffold(profile: profile);
+          case OthersProfileLoadFailure(:final exception):
+            return Center(child: Text(exception.message));
+          case OthersProfileInitial():
+            return const SizedBox.shrink();
+        }
+      },
     );
   }
 }
@@ -35,7 +30,7 @@ class _Scaffold extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final colors = MColorScheme.of(context);
 
     final tabController = useTabController(initialLength: 2);
@@ -46,7 +41,7 @@ class _Scaffold extends HookWidget {
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
-              title: MText(profile.fullName.getOr()),
+              title: MText(profile.fullName.getOrCrash()),
               centerTitle: true,
               expandedHeight: loading ? 320 : 320,
               pinned: true,
@@ -159,7 +154,7 @@ class _RecentBroadcastsTab extends StatelessWidget {
       await profileBloc.fetch();
 
       final recentlyLive = recentlyLiveBloc.stream.first;
-      recentlyLiveBloc.add(const GetUsersRecentBroadcasts());
+      recentlyLiveBloc.add(const UsersRecentBroadcastsFetchRequested());
 
       await Future.wait([myProfile, recentlyLive]);
     }
@@ -184,7 +179,7 @@ class _AllBroadcastsTab extends StatelessWidget {
       await profileBloc.fetch();
 
       final allBroadcasts = allBroadcastsBloc.stream.first;
-      allBroadcastsBloc.add(const GetUsersBroadcasts());
+      allBroadcastsBloc.add(const UsersAllBroadcastsFetchRequested());
 
       await Future.wait([myProfile, allBroadcasts]);
     }

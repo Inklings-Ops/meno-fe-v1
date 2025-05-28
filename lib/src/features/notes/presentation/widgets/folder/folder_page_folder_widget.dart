@@ -8,7 +8,7 @@ class FolderPageFolderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return RawMaterialButton(
       onPressed: null,
       shape: const FolderWidgetBorder(),
@@ -27,7 +27,7 @@ class FolderPageFolderWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             BlocSelector<FolderBloc, FolderState, String>(
-              selector: (state) => state.folder.title.getOr(),
+              selector: (state) => state.folder.title.getOrCrash(),
               builder: (context, folderName) => MText(
                 folderName,
                 style: textTheme.subheadingMedium,

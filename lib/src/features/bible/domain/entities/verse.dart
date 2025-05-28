@@ -1,16 +1,32 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 
-part 'verse.freezed.dart';
+final class Verse with EquatableMixin {
+  const Verse({
+    required this.book,
+    required this.bookName,
+    required this.chapter,
+    required this.text,
+    required this.verse,
+    this.id,
+    this.translation,
+  });
 
-@freezed
-class Verse with _$Verse {
-  const factory Verse({
-    required String book,
-    required String bookName,
-    required int chapter,
-    required String text,
-    required int verse,
-    int? id,
-    String? translation,
-  }) = _Verse;
+  final String book;
+  final String bookName;
+  final int chapter;
+  final String text;
+  final int verse;
+  final int? id;
+  final String? translation;
+
+  @override
+  List<Object?> get props => [
+        book,
+        bookName,
+        chapter,
+        text,
+        verse,
+        id,
+        translation,
+      ];
 }

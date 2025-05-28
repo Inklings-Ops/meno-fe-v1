@@ -1,22 +1,62 @@
 part of 'users_recent_broadcasts_bloc.dart';
 
-@freezed
-class UsersRecentBroadcastsState with _$UsersRecentBroadcastsState {
-  const factory UsersRecentBroadcastsState.initial() =
-      UsersRecentBroadcastsInitial;
-  const factory UsersRecentBroadcastsState.empty() = UsersRecentBroadcastsEmpty;
-  const factory UsersRecentBroadcastsState.loading() =
-      UsersRecentBroadcastsLoading;
-  const factory UsersRecentBroadcastsState.loaded(
-    List<Broadcast?> broadcasts,
-  ) = UsersRecentBroadcastsLoaded;
-  const factory UsersRecentBroadcastsState.loadingMore(
-    List<Broadcast?> broadcasts,
-  ) = UsersRecentBroadcastsLoadingMore;
-  const factory UsersRecentBroadcastsState.loadedLast(
-    List<Broadcast?> broadcasts,
-  ) = UsersRecentBroadcastsLoadedLast;
-  const factory UsersRecentBroadcastsState.failure(
-    BroadcastException exception,
-  ) = UsersRecentBroadcastsFailure;
+sealed class UsersRecentBroadcastsState with EquatableMixin {
+  const UsersRecentBroadcastsState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class UsersRecentBroadcastsInitial extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsInitial();
+}
+
+final class UsersRecentBroadcastsEmpty extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsEmpty();
+}
+
+final class UsersRecentBroadcastsLoadInProgress
+    extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsLoadInProgress();
+}
+
+final class UsersRecentBroadcastsLoadMoreInProgress
+    extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsLoadMoreInProgress(this.broadcasts);
+  final List<Broadcast?> broadcasts;
+
+  @override
+  List<Object?> get props => [broadcasts];
+}
+
+final class UsersRecentBroadcastsLoadSuccess
+    extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsLoadSuccess({
+    required this.broadcasts,
+    this.currentPage = 1,
+  });
+
+  final List<Broadcast?> broadcasts;
+  final int currentPage;
+
+  @override
+  List<Object?> get props => [broadcasts, currentPage];
+}
+
+final class UsersRecentBroadcastsLoadLastSuccess
+    extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsLoadLastSuccess(this.broadcasts);
+  final List<Broadcast?> broadcasts;
+
+  @override
+  List<Object?> get props => [broadcasts];
+}
+
+final class UsersRecentBroadcastsLoadFailure
+    extends UsersRecentBroadcastsState {
+  const UsersRecentBroadcastsLoadFailure(this.exception);
+  final BroadcastException exception;
+
+  @override
+  List<Object?> get props => [exception];
 }

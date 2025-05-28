@@ -54,7 +54,10 @@ class ReconnectBroadcastUsecase implements UseCase<Broadcast, bool> {
     }
 
     await Future.microtask(
-      () => _background.startBroadcastBackgroundProcess(broadcast),
+      () {
+        _liveKit.enableMicrophone();
+        _background.startBroadcastBackgroundProcess(broadcast);
+      },
     );
 
     return Right(broadcast);

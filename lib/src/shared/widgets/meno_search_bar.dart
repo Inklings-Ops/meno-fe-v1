@@ -50,7 +50,7 @@ class MenoSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SearchBar(
       focusNode: focusNode,
       scrollPadding: EdgeInsets.zero,
@@ -65,13 +65,13 @@ class MenoSearchBar extends StatelessWidget {
         EdgeInsets.symmetric(horizontal: Insets.md),
       ),
       hintStyle: WidgetStatePropertyAll(
-        textTheme.captionRegular?.copyWith(color: colors.disabled),
+        textTheme.captionRegular.copyWith(color: colors.disabled),
       ),
       shape: const WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: Corners.sm),
       ),
       side: WidgetStateProperty.resolveWith((states) {
-        final side = BorderSide(color: colors.inActive!);
+        final side = BorderSide(color: colors.inActive);
         if (states.contains(WidgetState.error)) {
           return side.copyWith(color: colors.error, width: 2);
         } else if (states.contains(WidgetState.disabled)) {
@@ -84,16 +84,16 @@ class MenoSearchBar extends StatelessWidget {
         return side;
       }),
       textStyle: WidgetStateTextStyle.resolveWith((states) {
-        final baseTextStyle = textTheme.captionRegular!;
+        final baseTextStyle = textTheme.captionRegular;
         late Color color;
         if (states.contains(WidgetState.disabled)) {
-          color = colors.inActive!;
+          color = colors.inActive;
         } else if (states.contains(WidgetState.focused)) {
-          color = colors.onBackground!;
+          color = colors.onBackground;
         } else if (states.contains(WidgetState.error)) {
-          color = colors.onBackground!;
+          color = colors.onBackground;
         } else {
-          color = colors.inActive!;
+          color = colors.inActive;
         }
         return baseTextStyle.copyWith(color: color);
       }),

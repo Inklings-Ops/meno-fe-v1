@@ -23,7 +23,7 @@ class _FolderSearchBoxState extends State<FolderSearchBox> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final showSearch = context.select<FoldersBloc, bool>(
       (bloc) => !(bloc.state.status == FoldersStatus.success &&

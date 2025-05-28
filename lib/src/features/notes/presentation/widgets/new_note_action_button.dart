@@ -7,7 +7,7 @@ class NewNoteActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return BlocBuilder<NotesBloc, NotesState>(
       builder: (context, state) {
         switch (state.status) {

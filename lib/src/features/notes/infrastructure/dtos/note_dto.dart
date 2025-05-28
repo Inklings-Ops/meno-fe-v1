@@ -67,9 +67,9 @@ class _CreatorConverter implements JsonConverter<ToOne<NoteCreatorDto>, _Map?> {
 extension NoteDtoToDomain on NoteDto {
   Note get toDomain {
     return Note(
-      uid: Uid<Note>.fromString(uid),
-      title: NoteTitle(title),
-      content: NoteContent(content),
+      uid: ID.fromString(uid),
+      title: SingleLineString(title),
+      content: MultiLineString(content),
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -82,9 +82,9 @@ extension NoteDtoToDomain on NoteDto {
 extension NoteDomainToDto on Note {
   NoteDto get toDto {
     return NoteDto(
-      uid: uid.getOr(),
-      title: title.getOr(),
-      content: content.getOr(),
+      uid: uid.getOrCrash(),
+      title: title.getOrCrash(),
+      content: content.getOrCrash(),
       pinned: pinned,
       createdAt: createdAt,
       updatedAt: updatedAt,

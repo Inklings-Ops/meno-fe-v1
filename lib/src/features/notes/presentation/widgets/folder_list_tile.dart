@@ -16,10 +16,10 @@ class FolderListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final border = Border.all(
       width: 2,
-      color: colors.primary!,
+      color: colors.primary,
       strokeAlign: BorderSide.strokeAlignOutside,
     );
 
@@ -43,7 +43,7 @@ class FolderListTile extends StatelessWidget {
                 child: ClipPath(
                   clipper: FolderClipper(r: 8, notch: 4),
                   child: ColoredBox(
-                    color: colors.primary!,
+                    color: colors.primary,
                     child: Center(
                       child: Icon(
                         MIcons.file_02,
@@ -66,7 +66,7 @@ class FolderListTile extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: MText(
-                        folder.title.getOr(),
+                        folder.title.getOrCrash(),
                         style: textTheme.captionMedium,
                       ),
                     ),
@@ -98,7 +98,7 @@ class FolderListTileSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return Skeletonizer(
       child: Card(
@@ -120,7 +120,7 @@ class FolderListTileSkeleton extends StatelessWidget {
                   child: ClipPath(
                     clipper: FolderClipper(r: 8, notch: 4),
                     child: ColoredBox(
-                      color: colors.primary!,
+                      color: colors.primary,
                       child: Center(
                         child: Icon(
                           MIcons.file_02,

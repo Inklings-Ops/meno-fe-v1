@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/media_service.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
@@ -15,7 +14,7 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
         super(
           BroadcastFormState(
             title: SingleLineString(''),
-            description: BroadcastDescription(''),
+            description: MultiLineString(''),
           ),
         );
 
@@ -24,12 +23,12 @@ class BroadcastFormCubit extends Cubit<BroadcastFormState> {
   Future<void> artworkChanged({bool fromGallery = true}) async {
     final file = await _mediaService.getImage(fromGallery: fromGallery);
     if (file != null) {
-      emit(state.copyWith(artwork: BroadcastArtwork(File(file.path))));
+      emit(state.copyWith(artwork: ImageFile(File(file.path))));
     }
   }
 
   void descriptionChanged(String desc) {
-    emit(state.copyWith(description: BroadcastDescription(desc)));
+    emit(state.copyWith(description: MultiLineString(desc)));
   }
 
   void onRecordingChanged(bool value) {

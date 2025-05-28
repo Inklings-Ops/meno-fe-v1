@@ -5,7 +5,7 @@ class ResetPasswordPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final formKey = useMemoized(GlobalKey<FormState>.new);
     return MScaffold(
       appBar: MAppBar.primary(title: 'Reset Password'),

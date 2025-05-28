@@ -115,15 +115,15 @@ class _ListWidget extends StatelessWidget {
 
           final broadcast = broadcasts[index]!;
           return MRecentlyLiveListTile(
-            title: broadcast.title.getOr(),
+            title: broadcast.title.getOrCrash(),
             endTime: broadcast.endTime,
             imageUrl: broadcast.imageUrl,
-            creator: broadcast.fullName ??
-                broadcast.creatorFullName ??
-                broadcast.creator?.fullName,
+            creator: broadcast.fullName?.getOrCrash() ??
+                broadcast.creatorFullName?.getOrCrash() ??
+                broadcast.creator?.fullName.getOrCrash(),
             onTap: () => router.pushNamed(
               'Broadcast Details',
-              pathParameters: {'id': broadcast.id.getOr()},
+              pathParameters: {'id': broadcast.id.getOrCrash()},
             ),
           );
         },

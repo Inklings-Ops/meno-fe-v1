@@ -6,8 +6,7 @@ class EndedBroadcastPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
-    final broadcast = context.read<BroadcastBloc>().state.broadcast;
+    final textTheme = MTextTheme.of(context);
 
     return MScaffold(
       body: Center(
@@ -24,9 +23,9 @@ class EndedBroadcastPage extends HookWidget {
               ),
             ),
             Spaces.verticalXLarge,
-            BroadcastArtworkWidget(imageUrl: broadcast.imageUrl),
+            const BroadcastArtworkWidget(key: Key('LiveBroadcastArtwork')),
             Spaces.verticalLarge,
-            BroadcastTimer(
+            BroadcastTimerWidget(
               showTimeAgo: false,
               textStyle: textTheme.heading2Bold,
             ),

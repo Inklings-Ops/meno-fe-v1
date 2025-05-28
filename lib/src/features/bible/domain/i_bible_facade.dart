@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:meno_fe_v1/src/core/core.dart' show BibleException;
 import 'package:meno_fe_v1/src/features/bible/domain/entities/entities.dart';
-import 'package:meno_fe_v1/src/features/bible/domain/exceptions/exceptions.dart';
 
 /// The [IBibleFacade] abstract class is a contract that defines methods and
 /// properties

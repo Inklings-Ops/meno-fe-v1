@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/domain.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
 part 'folder_form_bloc.freezed.dart';
 part 'folder_form_event.dart';

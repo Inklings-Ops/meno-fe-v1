@@ -6,10 +6,15 @@ class LogoutConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final session = context.read<SessionBloc>();
-    final user = session.state.whenOrNull(authenticated: (user, _) => user);
-    final fullName = user?.fullName.getOrE('');
+    final fullName = context.select(
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.fullName.getOrCrash(),
+        _ => null,
+      },
+    );
+
     return AlertDialog(
       title: MText(
         'Log out from account?',
@@ -27,7 +32,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
             label: 'Cancel',
             onPressed: () => context.pop(false),
             style: TextButton.styleFrom(
-              foregroundColor: colors.onDisabled?.withValues(alpha: 0.5),
+              foregroundColor: colors.onDisabled.withValues(alpha: 0.5),
               shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),
           ),
@@ -36,8 +41,8 @@ class LogoutConfirmationDialog extends StatelessWidget {
           height: 40,
           child: MPrimaryButton(
             label: 'Log out',
-            loading: session.state is SessionLoading,
-            onPressed: () => session.add(const SessionLogout()),
+            loading: session.state is SessionLoadInProgress,
+            onPressed: () => session.add(const SessionLogoutRequested()),
             style: FilledButton.styleFrom(
               shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
             ),

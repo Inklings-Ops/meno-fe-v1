@@ -6,7 +6,7 @@ class CreateNewPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MScaffold(
       appBar: MAppBar.primary(title: 'Create New Password'),
       body: Form(

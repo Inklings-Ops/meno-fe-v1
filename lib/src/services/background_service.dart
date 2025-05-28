@@ -10,10 +10,10 @@ class BackgroundService {
     if (Platform.isAndroid) {
       try {
         final androidConfig = FlutterBackgroundAndroidConfig(
-          notificationTitle: broadcast.title.getOr(),
-          notificationText: broadcast.creator?.fullName ??
-              broadcast.fullName ??
-              broadcast.creatorFullName ??
+          notificationTitle: broadcast.title.getOrCrash(),
+          notificationText: broadcast.creator?.fullName.getOrNull() ??
+              broadcast.fullName?.getOrNull() ??
+              broadcast.creatorFullName?.getOrNull() ??
               '',
           notificationIcon: const AndroidResource(
             name: 'ic_stat_ic_notification',

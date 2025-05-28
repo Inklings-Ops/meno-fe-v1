@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/router/router.dart';
@@ -10,22 +10,20 @@ import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'session_event.dart';
 part 'session_state.dart';
-part 'session_bloc.freezed.dart';
 
 @Injectable()
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
   SessionBloc({required ISessionContext session})
       : _session = session,
-        super(const SessionLoading()) {
+        super(const SessionLoadInProgress()) {
     on<SessionStarted>(_onStarted);
-    on<SessionLogout>(_onLogout);
-    on<SessionRefresh>(_onRefresh);
+    on<SessionLogoutRequested>(_onLogout);
   }
 
   final ISessionContext _session;
 
   ValueNotifier<SessionState> get authState => _authState;
-  final _authState = ValueNotifier<SessionState>(const SessionLoading());
+  final _authState = ValueNotifier<SessionState>(const SessionLoadInProgress());
 
   @override
   void onChange(Change<SessionState> change) {
@@ -35,7 +33,6 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   @PostConstruct(preResolve: true)
   Future<void> init() async => add(const SessionStarted());
-
 
   Future<void> _onStarted(
     SessionStarted event,
@@ -47,29 +44,24 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       onError: (error, stackTrace) {
         // Handle errors appropriately, perhaps emit an error state.
         debugPrint('Error in SessionBloc stream: $error, $stackTrace');
-        return const SessionState.unauthenticated();
+        return const SessionUnauthenticated();
       },
     );
   }
 
-  void _onLogout(SessionLogout event, Emitter<SessionState> emit) {
-    unawaited(_session.logout());
-  }
-
-  Future<void> _onRefresh(
-    SessionRefresh event,
+  void _onLogout(
+    SessionLogoutRequested event,
     Emitter<SessionState> emit,
-  ) async {
-    await _session.refresh();
+  ) {
+    unawaited(_session.logout());
   }
 
   SessionState _determineState(bool isOnboarded, UserCredential? credential) {
     if (!isOnboarded) return const SessionOnboarding();
     return switch (credential) {
-      final UserCredential c when c.token == null || !c.token!.isValid =>
-        SessionPartiallyAuthenticated(user: c.user),
-      final UserCredential c =>
-        SessionAuthenticated(user: c.user, token: c.token!),
+      final UserCredential c when !c.token.isValid =>
+        SessionPartiallyAuthenticated(c.user),
+      final UserCredential c => SessionAuthenticated(c.user, c.token),
       null => const SessionUnauthenticated(),
     };
   }

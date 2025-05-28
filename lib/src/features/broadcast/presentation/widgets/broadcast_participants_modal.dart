@@ -1,8 +1,8 @@
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 
-class BroadcastParticipantsModal extends StatelessWidget {
-  const BroadcastParticipantsModal({super.key});
+class ParticipantsModal extends StatelessWidget {
+  const ParticipantsModal({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class BroadcastParticipantsModal extends StatelessWidget {
             hint: 'Search',
           ),
           Spaces.verticalLarge,
-          Expanded(child: BroadcastParticipantList(padding: EdgeInsets.zero)),
+          Expanded(child: ParticipantList(padding: EdgeInsets.zero)),
         ],
       ),
     );

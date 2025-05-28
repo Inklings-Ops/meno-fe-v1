@@ -2,12 +2,9 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meno_fe_v1/src/core/core.dart';
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart'
-    show Broadcast;
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/constants/constants.dart';
-import 'package:meno_fe_v1/src/shared/value_objects/uid.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 @Injectable(as: IChatFacade)
 class ChatFacade implements IChatFacade {
@@ -22,7 +19,7 @@ class ChatFacade implements IChatFacade {
 
   @override
   Future<Either<ChatException, PaginatedList<Chat?>>> getChatMessages({
-    required Uid<Broadcast> broadcastId,
+    required ID broadcastId,
     OrderBy? orderBy = OrderBy.DESC,
     int? page = 1,
     int? size = 50,
@@ -32,7 +29,7 @@ class ChatFacade implements IChatFacade {
 
     try {
       final response = await _remote.chatMessages(
-        broadcastId: broadcastId.getOr(),
+        broadcastId: broadcastId.getOrCrash(),
         orderBy: orderBy?.lowercaseName,
         page: page,
         size: size,

@@ -36,9 +36,10 @@ class LoginView extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final email = context.select(
-      (SessionBloc bloc) => bloc.state.whenOrNull(
-        partiallyAuthenticated: (user) => user.email.getOr(),
-      ),
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionPartiallyAuthenticated(:final user) => user.email.getOrCrash(),
+        _ => null,
+      },
     );
 
     useEffect(
@@ -50,17 +51,18 @@ class LoginView extends HookWidget {
     );
 
     return BlocListener<LoginCubit, LoginState>(
-      listenWhen: (p, c) => p.option != c.option,
+      listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
-        state.option.fold(
-          () => null,
-          (either) => either.fold(
-            (failure) => context.showLoginError(failure),
-            (success) {
-              context.read<SessionBloc>().add(const SessionStarted());
-            },
-          ),
-        );
+        switch (state.status) {
+          case FormStatus.failure:
+            context.showErrorSnackBar(state.exception!.message);
+          case FormStatus.success:
+            context.read<SessionBloc>().add(const SessionStarted());
+          case FormStatus.canceled:
+          case FormStatus.initial:
+          case FormStatus.loading:
+            break;
+        }
       },
       child: MScaffold(
         appBar: MAppBar.primary(title: 'Log in', implyLeading: implyLeading),

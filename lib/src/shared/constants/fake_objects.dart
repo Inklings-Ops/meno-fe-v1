@@ -4,35 +4,38 @@ import 'package:meno_fe_v1/src/features/features.dart';
 final fakeNotes = List.filled(
   3,
   Note(
-    uid: Uid.fromString('uniqueIdStr'),
-    title: NoteTitle(BoneMock.title),
-    content: NoteContent(BoneMock.longParagraph),
-    folder: Folder(id: Uid.fromString('id'), title: FolderTitle(BoneMock.name)),
+    uid: ID.fromString('uniqueIdStr'),
+    title: SingleLineString(BoneMock.title),
+    content: MultiLineString(BoneMock.longParagraph),
+    folder: Folder(
+      id: ID.fromString('id'),
+      title: SingleLineString(BoneMock.name),
+    ),
     createdAt: DateTime.now(),
   ),
 );
 
 final fakeFolders = List.filled(
   3,
-  Folder(id: Uid.fromString('id'), title: FolderTitle(BoneMock.title)),
+  Folder(id: ID.fromString('id'), title: SingleLineString(BoneMock.title)),
 );
 
-final fakeBroadcastParticipant = BroadcastParticipant(
-  id: '1',
-  fullName: BoneMock.name,
+final fakeParticipant = Participant(
+  id: ID.fromString('1'),
+  fullName: SingleLineString(BoneMock.name),
 );
 
-final fakeBroadcastParticipants = List.filled(3, fakeBroadcastParticipant);
+final fakeParticipants = List.filled(3, fakeParticipant);
 
 final fakeBroadcasts = List.filled(
   3,
   Broadcast(
-    id: Uid.fromString('uniqueIdStr'),
+    id: ID.fromString('uniqueIdStr'),
     title: SingleLineString(BoneMock.title),
-    description: BroadcastDescription(BoneMock.longParagraph),
-    creator: fakeBroadcastParticipant,
-    creatorId:BoneMock.name,
-    fullName: BoneMock.fullName,
+    description: MultiLineString(BoneMock.longParagraph),
+    creator: fakeParticipant,
+    creatorId: ID.fromString(BoneMock.name),
+    fullName: SingleLineString(BoneMock.fullName),
     startTime: DateTime.now(),
     endTime: DateTime.now().add(const Duration(hours: 1)),
     createdAt: DateTime.now(),
@@ -42,10 +45,10 @@ final fakeBroadcasts = List.filled(
 );
 
 final fakeProfile = Profile(
-  id: 'id',
+  id: ID.fromString('1'),
   fullName: SingleLineString(BoneMock.name),
-  bio: Bio(BoneMock.paragraph),
-  stats: UserStats(broadcasts: 0, subscribers: 0, subscriptions: 0),
+  bio: MultiLineString(BoneMock.paragraph),
+  stats: const UserStats(),
 );
 
 final fakeNotification = Notification(
@@ -59,7 +62,7 @@ final fakeNotification = Notification(
     id: 'id',
     subscriberId: 'subscriberId',
     subscriberName: BoneMock.name,
-    subscriptionId: 'subsciberId',
+    subscriptionId: 'subscriberId',
     title: BoneMock.title,
   ),
 );

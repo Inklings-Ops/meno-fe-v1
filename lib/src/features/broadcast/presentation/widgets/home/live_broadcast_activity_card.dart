@@ -13,6 +13,7 @@ class LiveBroadcastActivityCard extends StatelessWidget {
     return BlocBuilder<BroadcastBloc, BroadcastState>(
       builder: (context, state) {
         switch (state.status) {
+          case LiveBroadcastStatus.reconnecting:
           case LiveBroadcastStatus.started:
             return ActivityCard(
               badgeTitle: 'Now Live',
@@ -34,13 +35,14 @@ class LiveBroadcastActivityCard extends StatelessWidget {
           case LiveBroadcastStatus.left:
           case LiveBroadcastStatus.loading:
           case LiveBroadcastStatus.ended:
+          case LiveBroadcastStatus.offAir:
             return const SizedBox(height: Insets.xxl);
         }
       },
     );
   }
 
-  void onBroadcastEnd(BuildContext context, Uid<Broadcast> broadcastId) {
+  void onBroadcastEnd(BuildContext context, ID broadcastId) {
     final broadcastBloc = context.read<BroadcastBloc>();
     context.showEndBroadcastDialog().then((result) {
       if (result != true) return;
@@ -49,7 +51,7 @@ class LiveBroadcastActivityCard extends StatelessWidget {
     });
   }
 
-  void onBroadcastLeave(BuildContext context, Uid<Broadcast> broadcastId) {
+  void onBroadcastLeave(BuildContext context, ID broadcastId) {
     final broadcastBloc = context.read<BroadcastBloc>();
     context.showLeaveBroadcastDialog().then((result) {
       if (result != true) return;

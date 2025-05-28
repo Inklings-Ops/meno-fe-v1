@@ -99,7 +99,7 @@ class BibleFacade implements IBibleFacade {
     final isConnected = await _network.isConnected;
 
     if (!isConnected) {
-      return left(const BibleException.networkError());
+      return left(const BibleNetworkException());
     } else {
       try {
         final verseDtos = await _remote.download(
@@ -118,9 +118,9 @@ class BibleFacade implements IBibleFacade {
 
         return right(translationDomain);
       } on DioException catch (e) {
-        return left(BibleException.message(e.toString()));
+        return left(BibleExceptionWithMessage(e.toString()));
       } on Exception catch (e) {
-        return left(BibleException.message(e.toString()));
+        return left(BibleExceptionWithMessage(e.toString()));
       }
     }
   }

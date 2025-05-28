@@ -51,7 +51,7 @@ final router = GoRouter(
       path: Routes.broadcastDetails,
       name: 'Broadcast Details',
       builder: (_, state) => BroadcastDetailsPage(
-        id: Uid.fromString(state.pathParameters['id']!),
+        id: ID.fromString(state.pathParameters['id']!),
       ),
     ),
     GoRoute(
@@ -75,7 +75,7 @@ final router = GoRouter(
     GoRoute(
       path: Routes.endedBroadcast,
       onExit: (ctx, state) {
-        ctx.read<TimerCubit>().dispose();
+        ctx.read<TimerCubit>().reset();
         ctx.read<ChatListBloc>().add(const ChatResetRequested());
         ctx.read<ParticipantsBloc>().add(const ParticipantsResetRequested());
         ctx.read<BroadcastBloc>().add(const BroadcastResetRequested());
@@ -143,26 +143,26 @@ final router = GoRouter(
     GoRoute(
       path: Routes.othersProfile,
       builder: (_, state) {
-        final userId = Uid<User>.fromString(state.extra! as String);
+        final userId = ID.fromString(state.extra! as String);
         return MultiBlocProvider(
           providers: [
             BlocProvider(
               create: (_) => OthersProfileCubit(
                 facade: di<IProfileFacade>(),
-                userId: state.extra! as String,
+                userId: userId,
               )..fetch(),
             ),
             BlocProvider(
               create: (_) => UsersRecentBroadcastsBloc(
                 facade: di<IBroadcastFacade>(),
                 userId: userId,
-              )..add(const GetUsersRecentBroadcasts()),
+              )..add(const UsersRecentBroadcastsFetchRequested()),
             ),
             BlocProvider(
               create: (_) => UsersAllBroadcastsBloc(
                 facade: di<IBroadcastFacade>(),
                 userId: userId,
-              )..add(const GetUsersBroadcasts()),
+              )..add(const UsersAllBroadcastsFetchRequested()),
             ),
           ],
           child: const OthersProfilePage(),
@@ -252,7 +252,7 @@ final router = GoRouter(
           isScrollControlled: true,
           child: NoteCardOptionsModal(
             note: extra['note'] as Note,
-            folderId: extra['folderId'] as Uid<Folder>?,
+            folderId: extra['folderId'] as ID?,
           ),
         );
       },
@@ -274,7 +274,7 @@ final router = GoRouter(
           isScrollControlled: true,
           child: MoveNoteToFolderModal(
             note: extra['note'] as Note,
-            folderId: extra['folderId'] as Uid<Folder>,
+            folderId: extra['folderId'] as ID,
           ),
         );
       },
@@ -398,8 +398,8 @@ final router = GoRouter(
             GoRoute(
               path: Routes.broadcastTab,
               builder: (context, state) {
-                if (state.extra == null) return const BroadcastTab();
-                return const StreamTab();
+                if (state.extra == null) return const LiveBroadcastTab();
+                return const LiveStreamTab();
               },
             ),
           ],
@@ -409,7 +409,7 @@ final router = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: Routes.chatTab,
-              builder: (context, state) => const ChatTab(),
+              builder: (context, state) => const LiveChatTab(),
             ),
           ],
         ),
@@ -427,7 +427,7 @@ final router = GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: Routes.notesTab,
-              builder: (context, state) => const NotesTab(),
+              builder: (context, state) => const LiveNotesTab(),
               routes: [
                 GoRoute(
                   parentNavigatorKey: notesTabKey,

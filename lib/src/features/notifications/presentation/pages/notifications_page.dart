@@ -46,7 +46,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final today = notifications[NotificationCategory.today];
     final thisWeek = notifications[NotificationCategory.thisWeek];
     final older = notifications[NotificationCategory.older];

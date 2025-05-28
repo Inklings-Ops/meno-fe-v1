@@ -27,7 +27,7 @@ class RecentlyLiveBroadcastsWidget extends StatelessWidget {
                 Spaces.verticalXLarge,
                 MText(
                   'You’ve reached the end 🎉',
-                  style: MTextTheme.of(context)!.captionRegular,
+                  style: MTextTheme.of(context).captionRegular,
                   color: MColorScheme.of(context).onBackgroundVariant,
                   textAlign: TextAlign.center,
                 ),
@@ -72,12 +72,14 @@ class _List extends StatelessWidget {
         itemBuilder: (context, i) {
           final broadcast = broadcasts[i]!;
           return MCard.recentlyLive(
-            title: broadcast.title.getOr(),
+            title: broadcast.title.getOrCrash(),
             imageUrl: broadcast.imageUrl,
-            host: broadcast.fullName,
+            host: broadcast.fullName?.getOrNull() ??
+                broadcast.creatorFullName?.getOrNull() ??
+                broadcast.creator?.fullName.getOrNull(),
             onTap: () => router.pushNamed(
               'Broadcast Details',
-              pathParameters: {'id': broadcast.id.getOr()},
+              pathParameters: {'id': broadcast.id.getOrCrash()},
             ),
           );
         },

@@ -66,7 +66,7 @@ class _ChatTextField extends HookWidget {
 
     return TextFormField(
       focusNode: focusNode,
-      style: MTextTheme.of(context)!.captionRegular,
+      style: MTextTheme.of(context).captionRegular,
       controller: controller,
       onChanged: inputBloc.contentChanged,
       maxLines: 5,

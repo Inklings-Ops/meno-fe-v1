@@ -5,7 +5,7 @@ class ShareProfileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final colors = MColorScheme.of(context);
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
 
@@ -19,7 +19,7 @@ class ShareProfileButton extends StatelessWidget {
         onPressed: () {},
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: colors.outlineVariant3!,
+            color: colors.outlineVariant3,
           ),
           foregroundColor: colors.onBackground,
           textStyle: textTheme.microMedium,

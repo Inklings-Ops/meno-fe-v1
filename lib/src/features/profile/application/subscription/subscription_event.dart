@@ -1,9 +1,32 @@
 part of 'subscription_bloc.dart';
 
-@freezed
-class SubscriptionEvent with _$SubscriptionEvent {
-  const factory SubscriptionEvent.subscribe(Profile user) = Subscribe;
-  const factory SubscriptionEvent.unsubscribe(Profile user) = Unsubscribe;
-  const factory SubscriptionEvent.fetchSubscriptions() = FetchSubscriptions;
-  const factory SubscriptionEvent.fetchSubscribers() = FetchSubscribers;
+sealed class SubscriptionEvent with EquatableMixin {
+  const SubscriptionEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class SubscribeRequested extends SubscriptionEvent {
+  const SubscribeRequested(this.user);
+  final Profile user;
+
+  @override
+  List<Object?> get props => [user];
+}
+
+final class UnsubscribeRequested extends SubscriptionEvent {
+  const UnsubscribeRequested(this.user);
+  final Profile user;
+
+  @override
+  List<Object?> get props => [user];
+}
+
+final class SubscriptionsFetchRequested extends SubscriptionEvent {
+  const SubscriptionsFetchRequested();
+}
+
+final class SubscribersFetchRequested extends SubscriptionEvent {
+  const SubscribersFetchRequested();
 }

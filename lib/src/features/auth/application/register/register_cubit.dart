@@ -1,62 +1,43 @@
-import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
 
-part 'register_cubit.freezed.dart';
 part 'register_state.dart';
 
 /// A [Cubit] responsible for managing the registration state.
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit({required IAuthFacade facade})
       : _facade = facade,
-        super(RegisterState.initial());
+        super(RegisterState());
   final IAuthFacade _facade;
 
-  /// Updates the user's email address.
-  ///
-  /// Args:
-  ///   email: The user's new email address.
-  void emailChanged(String email) {
-    emit(state.copyWith(email: Email(email), option: none()));
-  }
+  void emailChanged(String email) => emit(state.withEmail(email));
+  void fullNameChanged(String fullName) => emit(state.withFullName(fullName));
 
-  /// Updates the user's full name
-  ///
-  /// Args:
-  ///   email: The user's new full name
-  void fullNameChanged(String value) {
-    emit(state.copyWith(fullName: SingleLineString(value), option: none()));
-  }
+  void passwordChanged(String password) => emit(state.withPassword(password));
 
-  /// Updates the user's password.
-  ///
-  /// Args:
-  ///   password: The user's new password.
-  void passwordChanged(String value) {
-    emit(state.copyWith(password: Password(value), option: none()));
-  }
+  void termsChanged(bool terms) => emit(state.withTerms(terms));
 
-  /// Initiates the registration process.
-  ///
-  /// Returns:
-  ///   A `Future` that completes when the registration process is finished.
-  Future<void> registerPressed() async {
-    late Either<AuthException, UserCredential> fOrS;
+  void onRememberMeChanged(bool? value) => emit(state.withRememberMe(value));
 
-    if (state.isFormValid) {
-      emit(state.copyWith(loading: true, option: none()));
-      fOrS = await _facade.register(
-        fullName: state.fullName,
-        email: state.email,
-        password: state.password,
-      );
-    }
-    emit(state.copyWith(loading: false, option: optionOf(fOrS)));
-  }
+  Future<void> register() async {
+    if (!state.isValid) return;
 
-  void onRememberMeChanged(bool? value) {
-    emit(state.copyWith(rememberMe: value ?? state.rememberMe));
+    emit(state.withSubmissionLoading());
+
+    final failureOrSuccess = await _facade.register(
+      fullName: state.fullName,
+      email: state.email,
+      password: state.password,
+    );
+
+    emit(
+      failureOrSuccess.fold(
+        state.withSubmissionFailure,
+        (success) => state.withSubmissionSuccess(),
+      ),
+    );
   }
 }

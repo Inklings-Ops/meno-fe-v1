@@ -5,11 +5,11 @@ class NoteEditorEvent with _$NoteEditorEvent {
   const factory NoteEditorEvent.initialize(Note note) = InitializeNoteEditor;
 
   const factory NoteEditorEvent.titleChanged(
-    NoteTitle title,
+    SingleLineString title,
   ) = NoteTitleChanged;
 
   const factory NoteEditorEvent.contentChanged(
-    NoteContent content,
+    MultiLineString content,
   ) = NoteContentChanged;
 
   const factory NoteEditorEvent.saveRequested() = NoteSaveRequested;

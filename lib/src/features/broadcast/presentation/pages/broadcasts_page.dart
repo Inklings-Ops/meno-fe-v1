@@ -35,7 +35,7 @@ class BroadcastsPage extends StatelessWidget {
       page: page,
       sortBy: sortBy,
       orderBy: orderBy,
-      creatorId: creatorId != null ? Uid.fromString(creatorId!) : null,
+      creatorId: creatorId != null ? ID.fromString(creatorId!) : null,
       endTimeExists: endTimeExists,
       include: include,
       startTimeExists: startTimeExists,

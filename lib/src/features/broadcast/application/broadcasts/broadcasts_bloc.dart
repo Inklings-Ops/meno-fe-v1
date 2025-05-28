@@ -2,10 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart' show User;
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/constants/constants.dart' show OrderBy;
-import 'package:meno_fe_v1/src/shared/shared.dart' show Uid;
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcasts_event.dart';
 part 'broadcasts_state.dart';
@@ -42,10 +40,10 @@ class BroadcastsBloc extends Bloc<BroadcastsEvent, BroadcastsState> {
     final response = await _facade.getBroadcasts(
       page: event.page,
       sortBy: event.sortBy,
-      orderBy: event.orderBy.name,
-      creatorId: event.creatorId?.getOr(),
+      orderBy: event.orderBy,
+      creatorId: event.creatorId,
       endTimeExist: event.endTimeExists,
-      id: event.id?.getOr(),
+      id: event.id,
       include: event.include,
       keywords: event.keywords,
       startTimeExist: event.startTimeExists,
@@ -60,7 +58,7 @@ class BroadcastsBloc extends Bloc<BroadcastsEvent, BroadcastsState> {
         ),
         (success) => state.copyWith(
           status: BroadcastsStateStatus.success,
-          broadcasts: success.broadcasts,
+          broadcasts: success.items,
           currentPage: success.currentPage,
           totalPages: success.totalPages,
           hasMore: success.currentPage < success.totalPages,
@@ -79,10 +77,10 @@ class BroadcastsBloc extends Bloc<BroadcastsEvent, BroadcastsState> {
       final response = await _facade.getBroadcasts(
         page: state.currentPage + 1,
         sortBy: state.sortBy,
-        orderBy: state.orderBy.name,
-        creatorId: state.creatorId?.getOr(),
+        orderBy: state.orderBy,
+        creatorId: state.creatorId,
         endTimeExist: state.endTimeExists,
-        id: state.id?.getOr(),
+        id: state.id,
         include: state.include,
         keywords: state.keywords,
         startTimeExist: state.startTimeExists,
@@ -97,7 +95,7 @@ class BroadcastsBloc extends Bloc<BroadcastsEvent, BroadcastsState> {
           ),
           (success) => state.copyWith(
             status: BroadcastsStateStatus.success,
-            broadcasts: success.broadcasts,
+            broadcasts: success.items,
             currentPage: success.currentPage,
             totalPages: success.totalPages,
             hasMore: success.currentPage < success.totalPages,

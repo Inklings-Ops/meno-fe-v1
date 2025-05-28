@@ -21,7 +21,14 @@ abstract class RegisterModule {
   @lazySingleton
   Dio dio(@Named('baseUrl') String baseUrl, AuthTokenInterceptor interceptor) {
     final dio = Dio()..options = BaseOptions(baseUrl: baseUrl);
-    dio.interceptors.add(interceptor);
+    dio.interceptors.addAll([
+      // LogInterceptor(
+      //   requestBody: true,
+      //   responseBody: true,
+      //   responseHeader: false,
+      // ),
+      interceptor,
+    ]);
     return dio;
   }
 

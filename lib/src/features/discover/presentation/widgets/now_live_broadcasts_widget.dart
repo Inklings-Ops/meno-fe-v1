@@ -27,7 +27,7 @@ class NowLiveBroadcastsWidget extends StatelessWidget {
                 Spaces.verticalXLarge,
                 MText(
                   'You’ve reached the end 🎉',
-                  style: MTextTheme.of(context)!.captionRegular,
+                  style: MTextTheme.of(context).captionRegular,
                   color: MColorScheme.of(context).onBackgroundVariant,
                   textAlign: TextAlign.center,
                 ),

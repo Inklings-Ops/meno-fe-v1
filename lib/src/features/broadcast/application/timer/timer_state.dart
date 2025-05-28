@@ -1,21 +1,20 @@
 part of 'timer_cubit.dart';
 
-@freezed
-class TimerState with _$TimerState {
-  factory TimerState({
-    required String hours,
-    required String minutes,
-    required String seconds,
-    required Duration elapsedTime,
-    required bool isRunning,
-    String? timeAgo,
-  }) = _TimerState;
+class TimerState with EquatableMixin {
+  const TimerState({this.elapsed = Duration.zero, this.isRunning = false});
+  final Duration elapsed;
+  final bool isRunning;
 
-  factory TimerState.initial() => TimerState(
-        hours: '00',
-        minutes: '00',
-        seconds: '00',
-        elapsedTime: Duration.zero,
-        isRunning: false,
-      );
+  @override
+  List<Object?> get props => [elapsed, isRunning];
+
+  TimerState copyWith({
+    Duration? elapsed,
+    bool? isRunning,
+  }) {
+    return TimerState(
+      elapsed: elapsed ?? this.elapsed,
+      isRunning: isRunning ?? this.isRunning,
+    );
+  }
 }

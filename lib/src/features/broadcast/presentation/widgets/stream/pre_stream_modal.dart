@@ -20,7 +20,7 @@ class PreStreamModal extends HookWidget {
               final broadcastId = state.broadcast.id;
               chatsBloc.add(ChatGetMessagesRequested(broadcastId));
               participantsBloc.add(ParticipantsFetchRequested(broadcastId));
-              timerBloc.start();
+              timerBloc.setAndStart(state.broadcast.startTime);
               router.popAndPush(Routes.broadcastTab, extra: true);
             }
           },
@@ -72,7 +72,7 @@ class _TopSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       height: 142,
       child: Row(
@@ -85,7 +85,7 @@ class _TopSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MText(
-                  broadcast.title.getOr(),
+                  broadcast.title.getOrCrash(),
                   style: textTheme.subheadingMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -94,9 +94,9 @@ class _TopSection extends StatelessWidget {
                 const MBadge.live(),
                 const SizedBox(height: 6),
                 MText(
-                  broadcast.fullName ??
-                      broadcast.creator?.fullName ??
-                      broadcast.creatorFullName ??
+                  broadcast.fullName?.getOrNull() ??
+                      broadcast.creator?.fullName.getOrNull() ??
+                      broadcast.creatorFullName?.getOrNull() ??
                       '',
                   style: textTheme.captionRegular,
                   maxLines: 1,

@@ -1,40 +1,47 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/chat/chat.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meno_fe_v1/src/features/chat/domain/domain.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-part 'chat_sender_dto.freezed.dart';
 part 'chat_sender_dto.g.dart';
 
-@freezed
-@JsonSerializable(
-  explicitToJson: true,
-  createFactory: false,
-  includeIfNull: false,
-)
-class ChatSenderDto with _$ChatSenderDto {
-  factory ChatSenderDto({
-    required String id,
-    required String fullName,
-    String? imageUrl,
-  }) = _ChatSenderDto;
+@JsonSerializable()
+final class ChatSenderDto with EquatableMixin {
+  const ChatSenderDto({
+    required this.id,
+    required this.fullName,
+    this.imageUrl,
+  });
 
   factory ChatSenderDto.fromJson(Map<String, dynamic> json) =>
       _$ChatSenderDtoFromJson(json);
-  @override
-  Map<String, dynamic> toJson() => _$ChatSenderDtoToJson(this);
-}
 
-extension ChatSenderDtoToDomain on ChatSenderDto {
-  ChatSender get toDomain => ChatSender(
-        id: id,
-        fullName: fullName,
-        imageUrl: imageUrl,
-      );
+  Map<String, dynamic> toJson() => _$ChatSenderDtoToJson(this);
+
+  final String id;
+  final String fullName;
+  final String? imageUrl;
+
+  @override
+  List<Object?> get props => [id, fullName, imageUrl];
 }
 
 extension ChatSenderToDto on ChatSender {
-  ChatSenderDto get toDto => ChatSenderDto(
-        id: id,
-        fullName: fullName,
-        imageUrl: imageUrl,
-      );
+  ChatSenderDto get toDto {
+    return ChatSenderDto(
+      id: id.getOrCrash(),
+      fullName: fullName.getOrCrash(),
+      imageUrl: imageUrl,
+    );
+  }
+}
+
+extension ChatSenderToDomain on ChatSenderDto {
+  ChatSender get toDomain {
+    return ChatSender(
+      id: ID.fromString(id),
+      fullName: SingleLineString(fullName),
+      imageUrl: imageUrl,
+    );
+  }
 }

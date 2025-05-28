@@ -1,12 +1,32 @@
 part of 'others_profile_cubit.dart';
 
-@freezed
-class OthersProfileState with _$OthersProfileState {
-  const factory OthersProfileState.loading() = OthersProfileLoadInProgress;
-  const factory OthersProfileState.success(
-    Profile profile,
-  ) = OthersProfileLoaded;
-  const factory OthersProfileState.failure(
-    AuthException exception,
-  ) = OthersProfileFailed;
+sealed class OthersProfileState with EquatableMixin {
+  const OthersProfileState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class OthersProfileInitial extends OthersProfileState {
+  const OthersProfileInitial();
+}
+
+final class OthersProfileLoadInProgress extends OthersProfileState {
+  const OthersProfileLoadInProgress();
+}
+
+final class OthersProfileLoadSuccess extends OthersProfileState {
+  const OthersProfileLoadSuccess(this.profile);
+  final Profile profile;
+
+  @override
+  List<Object?> get props => [profile];
+}
+
+final class OthersProfileLoadFailure extends OthersProfileState {
+  const OthersProfileLoadFailure(this.exception);
+  final ProfileException exception;
+
+  @override
+  List<Object?> get props => [exception];
 }

@@ -33,10 +33,10 @@ class _ScriptureTranslation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TranslationBloc, TranslationState>(
+    return BlocBuilder<TranslationBloc, Translation>(
       builder: (context, state) {
         return _Container(
-          content: state.translation.abbreviation.toUpperCase(),
+          content: state.abbreviation.toUpperCase(),
           onTap: () => context.showModal<void>(
             const BibleTranslationsModal(),
             isScrollControlled: true,
@@ -118,7 +118,7 @@ class _Container extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return InkWell(
       onTap: onTap,
       child: Container(

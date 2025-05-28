@@ -6,7 +6,7 @@ class EmptyFolderListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Center(
       child: SizedBox(
         width: 266,
@@ -33,7 +33,7 @@ class _CreateNewFolderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return SizedBox(
       width: 160,
       height: 32,
@@ -46,7 +46,7 @@ class _CreateNewFolderButton extends StatelessWidget {
           iconColor: colors.onBackground,
           shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
           side: BorderSide(
-            color: colors.outlineVariant3!,
+            color: colors.outlineVariant3,
             width: 1.50,
           ),
         ),

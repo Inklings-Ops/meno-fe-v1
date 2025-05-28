@@ -1,47 +1,49 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
-import 'package:meno_fe_v1/src/features/auth/infrastructure/dtos/user_dto.dart';
-import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
 
-part 'user_credential_dto.freezed.dart';
 part 'user_credential_dto.g.dart';
 
-/// A data transfer object (DTO) representing a user's credentials.
-@freezed
-@JsonSerializable(explicitToJson: true, createFactory: false)
-class UserCredentialDto with _$UserCredentialDto {
-  /// Creates a new `UserCredentialDto` object.
-  factory UserCredentialDto({
-    /// The user's DTO.
-    required UserDto user,
+@JsonSerializable()
+class UserCredentialDto with EquatableMixin {
+  const UserCredentialDto({required this.token, required this.user});
 
-    /// The user's token.
-    String? token,
-  }) = _UserCredentialDto;
-
-  /// Creates a new `UserCredentialDto` object from a JSON map.
   factory UserCredentialDto.fromJson(Map<String, dynamic> json) =>
       _$UserCredentialDtoFromJson(json);
 
-  /// Converts the `UserCredentialDto` object to a JSON map.
-  @override
   Map<String, dynamic> toJson() => _$UserCredentialDtoToJson(this);
+
+  final String token;
+  final UserDto user;
+
+  @override
+  List<Object?> get props => [token, user];
+
+  @override
+  bool get stringify => true;
 }
 
-extension UserCredentialDtoToDomain on UserCredentialDto {
+extension UserCredentialDtoX on UserCredentialDto {
+  UserCredentialDto get stripped {
+    return UserCredentialDto(
+      user: user.stripped,
+      token: token,
+    );
+  }
+
   UserCredential get toDomain {
     return UserCredential(
       user: user.toDomain,
-      token: token == null ? null : Token(token!),
+      token: Token(token),
     );
   }
 }
 
-extension UserCredentialToDto on UserCredential {
+extension UserCredentialToDtoX on UserCredential {
   UserCredentialDto get toDto {
     return UserCredentialDto(
       user: user.toDto,
-      token: token?.getOr(),
+      token: token.getOrElse(() => ''),
     );
   }
 }

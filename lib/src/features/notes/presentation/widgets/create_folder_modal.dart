@@ -51,7 +51,7 @@ class FolderFormTitleField extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).inputDecorationTheme;
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final textController = useTextEditingController();
 
@@ -75,7 +75,7 @@ class FolderFormTitleField extends HookWidget {
         bloc.state.whenOrNull(
           loaded: (folder) {
             if (folder.title.isValid) {
-              textController.text = folder.title.getOr();
+              textController.text = folder.title.getOrCrash();
             } else {
               textController.text = '';
             }
@@ -89,9 +89,10 @@ class FolderFormTitleField extends HookWidget {
         controller: textController,
         textAlign: TextAlign.center,
         enabled: state is! FolderFormSubmitInProgress,
-        onChanged: (value) => bloc.add(FolderTitleChanged(FolderTitle(value))),
+        onChanged: (value) =>
+            bloc.add(FolderTitleChanged(SingleLineString(value))),
         validator: (_) => state.whenOrNull(
-          loaded: (folder) => context.validator(folder.title.value),
+          loaded: (folder) => folder.title.failureOrNull?.message,
         ),
         decoration: InputDecoration(
           hintText: 'Title',
@@ -101,7 +102,7 @@ class FolderFormTitleField extends HookWidget {
           errorBorder: errorBorder,
           focusedErrorBorder: errorBorder,
           disabledBorder: disabledBorder,
-          hintStyle: textTheme.heading1Regular?.copyWith(
+          hintStyle: textTheme.heading1Regular.copyWith(
             color: colors.onBackgroundVariant,
           ),
         ),

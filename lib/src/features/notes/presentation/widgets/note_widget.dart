@@ -10,7 +10,7 @@ class NoteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final background = selected ? colors.primary : colors.inActiveContainer;
     final foreground = selected ? colors.onPrimary : colors.onInActiveContainer;
 

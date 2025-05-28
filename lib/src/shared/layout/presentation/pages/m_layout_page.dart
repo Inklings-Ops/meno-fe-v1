@@ -1,4 +1,4 @@
-import 'package:logger/logger.dart';
+import 'package:meno_fe_v1/app/meno_bloc_listeners.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart' hide StreamState;
@@ -20,7 +20,6 @@ class MLayoutPage extends HookWidget {
 
     void onInitialMessage(RemoteMessage? value) {
       initMessage.value = value?.data.toString();
-      Logger().w(initMessage.value);
     }
 
     final permissions = di<PermissionsService>();
@@ -54,21 +53,22 @@ class MLayoutPage extends HookWidget {
       );
     }
 
-    return BlocBuilder<AccountBloc, AccountState>(
-      buildWhen: (p, c) => p is AccountLoading != c is AccountLoading,
-      builder: (context, state) => state.maybeWhen(
-        loading: () => const Scaffold(
-          body: ColoredBox(
-            color: Colors.black,
-            child: SizedBox.expand(
-              child: Center(child: MLoadingIndicator(130, 130)),
-            ),
-          ),
-        ),
-        orElse: () => Scaffold(
-          body: Row(children: [sideNavRail, Expanded(child: shell)]),
-          bottomNavigationBar: bottomNavBar,
-        ),
+    return MenoBlocListeners(
+      child: BlocBuilder<AccountBloc, AccountState>(
+        builder: (context, state) {
+          switch (state) {
+            case AccountInitial():
+            case AccountLoadInProgress():
+              return const LoadingPage();
+            case AccountLoadFailure():
+            case AccountLoadSingleAccountSuccess():
+            case AccountLoadSuccess():
+              return Scaffold(
+                body: Row(children: [sideNavRail, Expanded(child: shell)]),
+                bottomNavigationBar: bottomNavBar,
+              );
+          }
+        },
       ),
     );
   }

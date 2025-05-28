@@ -6,7 +6,7 @@ class SecuritySettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return MScaffold(
       appBar: MAppBar.secondary(title: 'Security', centerTitle: true),
       body: SingleChildScrollView(

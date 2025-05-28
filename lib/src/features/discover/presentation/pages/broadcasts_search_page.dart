@@ -8,15 +8,15 @@ class BroadcastsSearchPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
+    final bloc = context.read<SearchBloc>();
     useEffect(
       () {
-        final bloc = context.read<SearchBloc>();
         scrollController.addListener(() {
           final pixels = scrollController.position.pixels;
           final maxScrollExtent = scrollController.position.maxScrollExtent;
           if (pixels >= maxScrollExtent && bloc.state.hasMore) {
             final page = bloc.state.page + 1;
-            bloc.add(SearchResultsFetched(page));
+            bloc.add(SearchFetchResultsRequested(page));
           }
         });
         return null;
@@ -35,7 +35,7 @@ class BroadcastsSearchPage extends HookWidget {
             showCancelButton: true,
             onCancel: onCancel,
             onChanged: (value) {
-              context.read<SearchBloc>().add(SearchBarChanged(value));
+              bloc.add(SearchKeywordChanged(value));
             },
           ),
         ),

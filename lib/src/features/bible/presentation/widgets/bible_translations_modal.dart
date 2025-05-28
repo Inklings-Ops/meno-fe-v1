@@ -6,7 +6,7 @@ class BibleTranslationsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     final translationBloc = context.read<TranslationBloc>();
     final translationsBloc = context.read<TranslationsBloc>();
     return BlocListener<BibleDownloaderBloc, BibleDownloaderState>(
@@ -14,12 +14,12 @@ class BibleTranslationsModal extends StatelessWidget {
         state.option.fold(
           () => null,
           (either) => either.fold(
-            context.showBibleError,
+            (exception) => context.showErrorSnackBar(exception.message),
             (translation) {
               final localTrans = translationsBloc.state.localTranslations;
               if (localTrans.contains(translation)) return;
-              translationBloc.add(ChangeTranslation(translation));
-              translationsBloc.add(UpdateTranslations(translation));
+              translationBloc.onTranslationChanged(translation);
+              translationsBloc.add(TranslationsUpdateRequested(translation));
               return router.pop<void>();
             },
           ),
@@ -65,7 +65,7 @@ class OfflineBibleTranslationsList extends StatelessWidget {
             key: ObjectKey(translation.name),
             translation: translation,
             onChange: () {
-              translationBloc.add(ChangeTranslation(translation));
+              translationBloc.onTranslationChanged(translation);
               Navigator.pop(context);
             },
           );

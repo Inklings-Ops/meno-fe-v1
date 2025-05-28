@@ -8,7 +8,7 @@ sealed class ParticipantsEvent with EquatableMixin {
 
 final class ParticipantsFetchRequested extends ParticipantsEvent {
   const ParticipantsFetchRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -16,7 +16,7 @@ final class ParticipantsFetchRequested extends ParticipantsEvent {
 
 final class ParticipantsReloadRequested extends ParticipantsEvent {
   const ParticipantsReloadRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -24,7 +24,7 @@ final class ParticipantsReloadRequested extends ParticipantsEvent {
 
 final class ParticipantsFetchAllRequested extends ParticipantsEvent {
   const ParticipantsFetchAllRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];

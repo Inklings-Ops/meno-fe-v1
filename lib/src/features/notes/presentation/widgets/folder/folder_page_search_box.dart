@@ -5,7 +5,7 @@ class FolderPageSearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return SizedBox(
       height: 40,

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/auth/auth.dart';
 import 'package:meno_fe_v1/src/features/settings/settings.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
@@ -18,36 +19,20 @@ class SessionContext implements ISessionContext {
   bool get isOnboarded => _settingsFacade.isOnboarded;
 
   @override
-  UserCredential? get credential => _authFacade.credential;
-
-  @override
-  Future<List<UserCredential>> get allCredentials async {
-    final credentialsMap = await _authFacade.allCredentials;
-    return credentialsMap?.values.toList() ?? [];
-  }
-
-  @override
   Stream<UserCredential?> get userChanges => _authFacade.userChanges;
 
   @override
   Future<void> logout() => _authFacade.logout();
 
   @override
-  Future<Either<AuthException, UserCredential>> switchAccount(
-    UserCredential credential,
-  ) {
-    return _authFacade.switchAccount(credential.user.id);
+  Future<Either<AuthException, Unit>> switchAccount(UserCredential credential) {
+    return _authFacade.switchAccount(credential);
   }
 
   @override
-  Future<void> refresh() => _authFacade.init();
+  UserCredential? get credential => _authFacade.credential;
 
   @override
-  Future<Token?> getCurrentAuthToken() async {
-    final credential = _authFacade.credential;
-    if (credential != null && (credential.token?.isValid ?? false)) {
-      return credential.token!;
-    }
-    return null;
-  }
+  Stream<Map<String, UserCredential>> get allAccounts =>
+      _authFacade.allAccounts;
 }

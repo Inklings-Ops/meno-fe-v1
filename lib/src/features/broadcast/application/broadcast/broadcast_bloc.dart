@@ -4,7 +4,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart' show SingleLineString, Uid;
+import 'package:meno_fe_v1/src/services/services.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'broadcast_event.dart';
 part 'broadcast_state.dart';
@@ -16,15 +17,29 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
     required JoinBroadcastUsecase joinBroadcastUsecase,
     required LeaveBroadcastUsecase leaveBroadcastUsecase,
     required ReconnectBroadcastUsecase reconnectBroadcastUsecase,
+    // required SocketService socket,
+    required LiveKitService liveKit,
   })  : _startBroadcastUsecase = startBroadcastUsecase,
         _endBroadcastUsecase = endBroadcastUsecase,
         _joinBroadcastUsecase = joinBroadcastUsecase,
         _leaveBroadcastUsecase = leaveBroadcastUsecase,
         _reconnectBroadcastUsecase = reconnectBroadcastUsecase,
+        // _socket = socket,
+        _liveKit = liveKit,
         super(BroadcastState()) {
     on<BroadcastStartRequested>(_onBroadcastStartRequested);
+    on<BroadcastJoinRequested>(_onBroadcastJoinRequested);
+    on<BroadcastEndRequested>(_onBroadcastEndRequested);
+    on<BroadcastLeaveRequested>(_onBroadcastLeaveRequested);
     on<BroadcastResetRequested>(_onBroadcastResetRequested);
     on<BroadcastReconnectRequested>(_onBroadcastReconnectRequested);
+    on<BroadcastMuteMicRequested>(_onBroadcastMuteMicRequested);
+    on<BroadcastUnMuteMicRequested>(_onBroadcastUnMuteMicRequested);
+
+    // _socket.addListener('hostReconnected', (data) {
+    //   Logger().w('FROM BROADCAST_BLOC HOST DISCONNECTED => $data');
+    //   add(const BroadcastReconnectRequested());
+    // });
   }
 
   final StartBroadcastUsecase _startBroadcastUsecase;
@@ -32,6 +47,10 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
   final JoinBroadcastUsecase _joinBroadcastUsecase;
   final LeaveBroadcastUsecase _leaveBroadcastUsecase;
   final ReconnectBroadcastUsecase _reconnectBroadcastUsecase;
+  // final SocketService _socket;
+  final LiveKitService _liveKit;
+
+  StreamSubscription<RoomEvent>? _subscription;
 
   Future<void> _onBroadcastStartRequested(
     BroadcastStartRequested event,
@@ -56,12 +75,34 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
           exception: exception,
         ),
       ),
-      (broadcast) => emit(
-        state.copyWith(
-          status: LiveBroadcastStatus.started,
-          broadcast: broadcast,
-        ),
-      ),
+      (broadcast) {
+        var status = LiveBroadcastStatus.started;
+
+        _subscription = _liveKit.eventsStream.listen((liveEvent) {
+          switch (liveEvent) {
+            case RoomConnectedEvent():
+            case RoomReconnectedEvent():
+              status = LiveBroadcastStatus.started;
+              return;
+            case RoomDisconnectedEvent():
+              status = LiveBroadcastStatus.offAir;
+              return;
+            case RoomReconnectingEvent():
+            case RoomAttemptReconnectEvent():
+              status = LiveBroadcastStatus.reconnecting;
+              return;
+            default:
+          }
+        });
+
+        emit(
+          state.copyWith(
+            status: status,
+            broadcast: broadcast,
+            isMicrophoneEnabled: true,
+          ),
+        );
+      },
     );
   }
 
@@ -80,7 +121,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
           exception: exception,
         ),
       ),
-      (_) => emit(state.copyWith(status: LiveBroadcastStatus.failure)),
+      (_) => emit(state.copyWith(status: LiveBroadcastStatus.ended)),
     );
   }
 
@@ -99,13 +140,34 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
           exception: exception,
         ),
       ),
-      (broadcast) => emit(
-        state.copyWith(
-          status: LiveBroadcastStatus.joined,
-          broadcast: broadcast,
-          isStream: true,
-        ),
-      ),
+      (broadcast) {
+        var status = LiveBroadcastStatus.joined;
+
+        _subscription = _liveKit.eventsStream.listen((liveEvent) {
+          switch (liveEvent) {
+            case RoomConnectedEvent():
+            case RoomReconnectedEvent():
+              status = LiveBroadcastStatus.joined;
+              return;
+            case RoomDisconnectedEvent():
+              status = LiveBroadcastStatus.offAir;
+              return;
+            case RoomReconnectingEvent():
+            case RoomAttemptReconnectEvent():
+              status = LiveBroadcastStatus.reconnecting;
+              return;
+            default:
+          }
+        });
+
+        emit(
+          state.copyWith(
+            status: status,
+            broadcast: broadcast,
+            isStream: true,
+          ),
+        );
+      },
     );
   }
 
@@ -124,14 +186,16 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
           exception: exception,
         ),
       ),
-      (_) => emit(BroadcastState()),
+      (_) => emit(state.copyWith(status: LiveBroadcastStatus.left)),
     );
   }
 
-  void _onBroadcastResetRequested(
+  Future<void> _onBroadcastResetRequested(
     BroadcastResetRequested event,
     Emitter<BroadcastState> emit,
-  ) {
+  ) async {
+    await _subscription?.cancel();
+    _subscription = null;
     emit(BroadcastState());
   }
 
@@ -150,6 +214,7 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         ),
         (broadcast) => state.copyWith(
           broadcast: broadcast,
+          isMicrophoneEnabled: !isStream,
           isReconnect: true,
           isStream: isStream,
           status: isStream
@@ -158,5 +223,21 @@ class BroadcastBloc extends Bloc<BroadcastEvent, BroadcastState> {
         ),
       ),
     );
+  }
+
+  Future<void> _onBroadcastMuteMicRequested(
+    BroadcastMuteMicRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    unawaited(_liveKit.enableMicrophone(false));
+    emit(state.copyWith(isMicrophoneEnabled: false));
+  }
+
+  Future<void> _onBroadcastUnMuteMicRequested(
+    BroadcastUnMuteMicRequested event,
+    Emitter<BroadcastState> emit,
+  ) async {
+    unawaited(_liveKit.enableMicrophone());
+    emit(state.copyWith(isMicrophoneEnabled: true));
   }
 }

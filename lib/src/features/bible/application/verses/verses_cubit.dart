@@ -1,14 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/domain.dart';
 
-part 'verses_cubit.freezed.dart';
-part 'verses_state.dart';
-
-class VersesCubit extends Cubit<VersesState> {
+class VersesCubit extends Cubit<List<Verse>> {
   VersesCubit({required IBibleFacade facade})
       : _facade = facade,
-        super(VersesState.initial());
+        super(const []);
 
   final IBibleFacade _facade;
 
@@ -23,6 +19,6 @@ class VersesCubit extends Cubit<VersesState> {
       translation: translation,
     );
 
-    emit(state.copyWith(verses: verses));
+    emit(verses);
   }
 }

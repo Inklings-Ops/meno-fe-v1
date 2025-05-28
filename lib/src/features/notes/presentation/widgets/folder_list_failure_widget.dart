@@ -7,7 +7,7 @@ class FolderListFailureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     return Column(
       children: [
         const SizedBox(height: 72),
@@ -30,7 +30,7 @@ class FolderListFailureWidget extends StatelessWidget {
                 borderRadius: Corners.sm,
               ),
               side: BorderSide(
-                color: colors.outlineVariant3!,
+                color: colors.outlineVariant3,
                 width: 1.50,
               ),
             ),

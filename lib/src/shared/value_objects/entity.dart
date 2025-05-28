@@ -1,5 +1,5 @@
-import 'package:meno_fe_v1/src/shared/value_objects/uid.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/id.dart';
 
 abstract class IEntity {
-  Uid<dynamic> get uid;
+ ID get uid;
 }

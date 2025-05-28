@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:logger/logger.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/services/live_kit/live_kit.dart';
 
@@ -42,7 +41,6 @@ class LiveBloc extends Bloc<LiveEvent, LiveState> {
     } else if (e is RoomReconnectingEvent || e is RoomAttemptReconnectEvent) {
       add(const GoReconnecting());
     } else {
-      Logger().e(e);
       return;
     }
   }

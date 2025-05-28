@@ -5,7 +5,7 @@ class FolderFormEvent with _$FolderFormEvent {
   const factory FolderFormEvent.init(Folder folder) = InitializeFolderForm;
 
   const factory FolderFormEvent.titleChanged(
-    FolderTitle title,
+    SingleLineString title,
   ) = FolderTitleChanged;
 
   const factory FolderFormEvent.submit() = SubmitFolderForm;

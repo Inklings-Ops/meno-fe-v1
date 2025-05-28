@@ -8,7 +8,7 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final watcher = context.watch<NotesWatcherBloc>();
 
@@ -40,7 +40,7 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
               label: 'Cancel',
               onPressed: router.pop,
               style: TextButton.styleFrom(
-                foregroundColor: colors.onDisabled?.withValues(alpha: 0.5),
+                foregroundColor: colors.onDisabled.withValues(alpha: 0.5),
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               ),
             ),

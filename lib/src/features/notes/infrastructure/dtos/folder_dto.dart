@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
-import 'package:meno_fe_v1/src/shared/value_objects/uid.dart';
+import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 import 'package:objectbox/objectbox.dart';
 
 part 'folder_dto.freezed.dart';
@@ -51,8 +51,8 @@ extension FolderDtoToDomain on FolderDto {
   Folder get toDomain {
     return Folder(
       dbId: dbId,
-      id: Uid.fromString(id),
-      title: FolderTitle(title),
+      id: ID.fromString(id),
+      title: SingleLineString(title),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
@@ -65,8 +65,8 @@ extension FolderToDto on Folder {
   FolderDto get toDto {
     return FolderDto(
       dbId: dbId,
-      id: id.getOr(),
-      title: title.getOr(),
+      id: id.getOrCrash(),
+      title: title.getOrCrash(),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,

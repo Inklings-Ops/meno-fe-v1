@@ -11,8 +11,8 @@ class BroadcastFormState with EquatableMixin {
   });
 
   final SingleLineString title;
-  final BroadcastDescription description;
-  final BroadcastArtwork? artwork;
+  final MultiLineString description;
+  final ImageFile? artwork;
   final List<String>? cohosts;
   final bool shouldRecord;
   final bool loading;
@@ -21,8 +21,8 @@ class BroadcastFormState with EquatableMixin {
 
   BroadcastFormState copyWith({
     SingleLineString? title,
-    BroadcastDescription? description,
-    BroadcastArtwork? artwork,
+    MultiLineString? description,
+    ImageFile? artwork,
     List<String>? cohosts,
     bool? shouldRecord,
     bool? loading,

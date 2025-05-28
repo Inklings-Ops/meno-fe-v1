@@ -33,22 +33,25 @@ class _ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final senderId = chat.senderId ?? chat.sender?.id;
 
-    final broadcastCreatorId = context.select<BroadcastBloc, String?>(
+    final broadcastCreatorId = context.select<BroadcastBloc, ID?>(
       (bloc) {
         final broadcast = bloc.state.broadcast;
         return broadcast.creator?.id ?? broadcast.creatorId;
       },
     );
 
-    final currentUserId = context.select<SessionBloc, String?>(
-      (b) => b.state.whenOrNull(authenticated: (user, _) => user.id.getOr()),
+    final myUserId = context.select(
+      (SessionBloc bloc) => switch (bloc.state) {
+        SessionAuthenticated(:final user) => user.id,
+        _ => null,
+      },
     );
 
     // If the currently authenticated user is also the host of the broadcast
-    final isHost = currentUserId == broadcastCreatorId;
+    final isHost = myUserId == broadcastCreatorId;
 
     // If the currently authenticated user is also the sender of this chat msg
-    final isCurrentUserTheSender = currentUserId == senderId;
+    final isCurrentUserTheSender = myUserId == senderId;
 
     return GestureDetector(
       onLongPress: () {

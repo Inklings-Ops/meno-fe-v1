@@ -10,8 +10,8 @@ class FolderTag extends StatelessWidget {
     return Row(
       children: [
         MTag(
-          title: folder.title.getOr(),
-          style: MTextTheme.of(context)!.microMedium,
+          title: folder.title.getOrCrash(),
+          style: MTextTheme.of(context).microMedium,
         ),
       ],
     );

@@ -5,22 +5,20 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
-import 'package:meno_fe_v1/src/core/response/response.dart' show BaseResponse;
-import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
+import 'package:meno_fe_v1/src/core/response/response.dart'
+    show BaseResponse, PaginatedList;
 import 'package:meno_fe_v1/src/features/chat/chat.dart';
 import 'package:meno_fe_v1/src/services/socket/socket_service.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart' show ISessionContext, Uid;
+import 'package:meno_fe_v1/src/shared/shared.dart' show ID, ISessionContext;
 
 part 'chat_list_event.dart';
 part 'chat_list_state.dart';
 
 class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   ChatListBloc({
-    required IChatFacade facade,
     required SocketService socket,
     required ISessionContext session,
-  })  : _facade = facade,
-        _socket = socket,
+  })  : _socket = socket,
         _session = session,
         super(const ChatListState()) {
     on<ChatGetMessagesRequested>(_onGetMessagesRequested);
@@ -37,7 +35,6 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     socket.addListener('deletedMessage', (c) => add(_DeletedChatReceived(c)));
   }
 
-  final IChatFacade _facade;
   final SocketService _socket;
   final ISessionContext _session;
 
@@ -47,25 +44,64 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   ) async {
     emit(state.copyWith(status: ChatListStatus.loading, exception: null));
 
-    final messagesOrFailure = await _facade.getChatMessages(
-      broadcastId: event.broadcastId,
+    final socketResult = await _socket.emit(
+      'getChatMessages',
+      {'broadcastId': event.broadcastId.getOrCrash()},
     );
 
-    emit(
-      messagesOrFailure.fold(
-        (exception) => state.copyWith(
-          exception: exception,
+    final response = BaseResponse<PaginatedChatMessages<ChatDto?>>.fromJson(
+      socketResult as Map<String, dynamic>,
+      (json) => PaginatedChatMessages<ChatDto?>.fromJson(
+        json! as Map<String, dynamic>,
+        (json) => json == null
+            ? null
+            : ChatDto.fromJson(json as Map<String, dynamic>),
+      ),
+    );
+
+    final socketError = response.error;
+    if (socketError != null) {
+      final error = _socket.getErrorMessage(socketError);
+      emit(
+        state.copyWith(
+          exception: ChatExceptionWithMessage(error.message.toString()),
           status: ChatListStatus.failure,
         ),
-        (paginatedList) => state.copyWith(
+      );
+    } else {
+      final data = response.data!;
+      final paginatedList = PaginatedList(
+        items: data.chatMessages.map((dto) => dto?.toDomain).toList(),
+        currentPage: data.currentPage,
+        totalItems: data.totalItems,
+        totalPages: data.totalPages,
+      );
+      emit(
+        state.copyWith(
           chats: paginatedList.items,
           currentPage: paginatedList.currentPage,
           totalPages: paginatedList.totalPages,
           moreInProgress: false,
           hasMore: paginatedList.currentPage < paginatedList.totalPages,
         ),
-      ),
-    );
+      );
+    }
+
+    // emit(
+    //   messagesOrFailure.fold(
+    //     (exception) => state.copyWith(
+    //       exception: exception,
+    //       status: ChatListStatus.failure,
+    //     ),
+    //     (paginatedList) => state.copyWith(
+    //       chats: paginatedList.items,
+    //       currentPage: paginatedList.currentPage,
+    //       totalPages: paginatedList.totalPages,
+    //       moreInProgress: false,
+    //       hasMore: paginatedList.currentPage < paginatedList.totalPages,
+    //     ),
+    //   ),
+    // );
   }
 
   void _onNewChatReceived(_NewChatReceived event, Emitter<ChatListState> emit) {
@@ -161,8 +197,8 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
 
     try {
       final payload = {
-        'senderId': user.id.getOr(),
-        'broadcastId': broadcastId,
+        'senderId': user.id.getOrCrash(),
+        'broadcastId': broadcastId.getOrCrash(),
         'content': content,
         'createdAt': now,
       };
@@ -186,7 +222,6 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     }
   }
 
-
   Future<void> _onChatEditMessageRequested(
     ChatEditMessageRequested event,
     Emitter<ChatListState> emit,
@@ -196,21 +231,21 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     final user = _session.credential?.user;
 
     if (user == null || !chat.content.isValid) {
-      log('sendMessage aborted: User not logged in or content empty.');
+      log('editChatMessage aborted: User not logged in or content empty.');
       return;
     }
 
     try {
       final payload = {
-        'id': chat.id,
-        'senderId': user.id.getOr(),
-        'broadcastId': chat.broadcastId,
-        'content': chat.content,
+        'id': chat.id.getOrCrash(),
+        'senderId': user.id.getOrCrash(),
+        'broadcastId': chat.broadcastId.getOrCrash(),
+        'content': chat.content.getOrCrash(),
         'createdAt': chat.createdAt.toIso8601String(),
         'updatedAt': updatedAt,
       };
 
-      final ack = await _socket.emit('sendChatMessage', payload);
+      final ack = await _socket.emit('editChatMessage', payload);
 
       final response = BaseResponse.fromJson(
         ack as Map<String, dynamic>,
@@ -222,7 +257,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
       } else {
         // Success via Ack - message sent to server.
         // Now we wait for _onNewMessage or timeout.
-        log('Sending successful.');
+        log('Sending edited message successful.');
       }
     } catch (e) {
       log('Exception message or processing Ack: $e');

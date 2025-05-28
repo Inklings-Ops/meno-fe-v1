@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 part 'bible_downloader_event.dart';

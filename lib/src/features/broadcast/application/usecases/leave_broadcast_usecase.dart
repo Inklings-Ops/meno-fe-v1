@@ -5,10 +5,10 @@ import 'package:meno_fe_v1/src/core/response/response.dart' show BaseResponse;
 import 'package:meno_fe_v1/src/core/usecase/usecase.dart';
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/shared.dart' show Uid;
+import 'package:meno_fe_v1/src/shared/shared.dart' show ID;
 
 @injectable
-class LeaveBroadcastUsecase implements UseCase<void, Uid<Broadcast>> {
+class LeaveBroadcastUsecase implements UseCase<void, ID> {
   const LeaveBroadcastUsecase({
     required IBroadcastFacade facade,
     required LiveKitService liveKit,
@@ -25,10 +25,10 @@ class LeaveBroadcastUsecase implements UseCase<void, Uid<Broadcast>> {
   final BackgroundService _background;
 
   @override
-  Future<Either<BroadcastException, void>> call(Uid<Broadcast> params) async {
+  Future<Either<BroadcastException, void>> call(ID params) async {
     final socketResult = await _socket.emit(
       'leaveBroadcast',
-      {'broadcastId': params.getOr()},
+      {'broadcastId': params.getOrCrash()},
     );
 
     final ack = BaseResponse.fromJson(

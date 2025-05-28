@@ -16,7 +16,7 @@ class SubscribeButton extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final bloc = context.watch<SubscriptionBloc>();
 
@@ -30,7 +30,7 @@ class SubscribeButton extends HookWidget {
     final defaultStyle = OutlinedButton.styleFrom(
       textStyle: textTheme.microMedium,
       fixedSize: const Size(double.infinity, Insets.xxl),
-      side: BorderSide(color: MColorScheme.of(context).primary!),
+      side: BorderSide(color: MColorScheme.of(context).primary),
       shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
       backgroundColor: isSubscribed ? colors.primary : Colors.transparent,
       foregroundColor: isSubscribed ? colors.onPrimary : colors.primary,
@@ -45,9 +45,9 @@ class SubscribeButton extends HookWidget {
 
     void handleSubscription() {
       if (isSubscribed) {
-        bloc.add(Unsubscribe(profile));
+        bloc.add(UnsubscribeRequested(profile));
       } else {
-        bloc.add(Subscribe(profile));
+        bloc.add(SubscribeRequested(profile));
       }
     }
 

@@ -8,15 +8,15 @@ class AccountsSearchPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
+    final bloc = context.read<AccountsSearchBloc>();
     useEffect(
       () {
-        final bloc = context.read<AccountsSearchBloc>();
         scrollController.addListener(() {
           final pixels = scrollController.position.pixels;
           final maxScrollExtent = scrollController.position.maxScrollExtent;
           if (pixels >= maxScrollExtent && bloc.state.hasMore) {
             final page = bloc.state.page + 1;
-            bloc.add(AccountsSearchResultsFetched(page));
+            bloc.add(AccountSearchResultsFetched(page));
           }
         });
         return null;
@@ -35,9 +35,7 @@ class AccountsSearchPage extends HookWidget {
             showCancelButton: true,
             onCancel: onCancel,
             onChanged: (value) {
-              context
-                  .read<AccountsSearchBloc>()
-                  .add(AccountsSearchBarChanged(value));
+              bloc.add(AccountSearchKeywordChanged(value));
             },
           ),
         ),

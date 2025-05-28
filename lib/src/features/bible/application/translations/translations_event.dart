@@ -1,8 +1,20 @@
 part of 'translations_bloc.dart';
 
-@freezed
-class TranslationsEvent with _$TranslationsEvent {
-  const factory TranslationsEvent.get() = GetTranslations;
-  const factory TranslationsEvent.update(Translation translation) =
-      UpdateTranslations;
+sealed class TranslationsEvent with EquatableMixin {
+  const TranslationsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class TranslationsFetchRequested extends TranslationsEvent {
+  const TranslationsFetchRequested();
+}
+
+final class TranslationsUpdateRequested extends TranslationsEvent {
+  const TranslationsUpdateRequested(this.translation);
+  final Translation translation;
+
+  @override
+  List<Object?> get props => [translation];
 }

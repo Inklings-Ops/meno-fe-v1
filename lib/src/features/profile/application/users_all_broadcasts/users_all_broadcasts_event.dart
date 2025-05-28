@@ -1,8 +1,17 @@
 part of 'users_all_broadcasts_bloc.dart';
 
-@freezed
-class UsersAllBroadcastsEvent with _$UsersAllBroadcastsEvent {
-  const factory UsersAllBroadcastsEvent.getBroadcasts() = GetUsersBroadcasts;
-  const factory UsersAllBroadcastsEvent.getMoreBroadcasts() =
-      GetMoreUsersBroadcasts;
+sealed class UsersAllBroadcastsEvent with EquatableMixin {
+  const UsersAllBroadcastsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class UsersAllBroadcastsFetchRequested extends UsersAllBroadcastsEvent {
+  const UsersAllBroadcastsFetchRequested();
+}
+
+final class UsersAllBroadcastsFetchMoreRequested
+    extends UsersAllBroadcastsEvent {
+  const UsersAllBroadcastsFetchMoreRequested();
 }

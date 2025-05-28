@@ -9,7 +9,7 @@ class BibleVerses extends HookWidget {
     final bloc = context.watch<VersesCubit>();
     final scriptureCubit = context.watch<ScripturePickerCubit>();
     final translationBloc = context.watch<TranslationBloc>();
-    final transAbb = translationBloc.state.translation.abbreviation;
+    final transAbb = translationBloc.state.abbreviation;
 
     useEffect(
       () {
@@ -33,7 +33,7 @@ class BibleVerses extends HookWidget {
             );
           },
         ),
-        BlocListener<TranslationBloc, TranslationState>(
+        BlocListener<TranslationBloc, Translation>(
           listener: (context, state) {
             bloc.getVerses(
               book: scriptureCubit.state.book,
@@ -43,14 +43,14 @@ class BibleVerses extends HookWidget {
           },
         ),
       ],
-      child: BlocBuilder<VersesCubit, VersesState>(
+      child: BlocBuilder<VersesCubit, List<Verse>>(
         bloc: bloc,
-        buildWhen: (p, c) => p.verses != c.verses,
+        buildWhen: (previous, current) => previous != current,
         builder: (context, state) => ListView.separated(
           shrinkWrap: true,
-          itemCount: state.verses.length,
+          itemCount: state.length,
           separatorBuilder: (context, i) => Spaces.verticalMedium,
-          itemBuilder: (context, i) => VerseWidget(verse: state.verses[i]),
+          itemBuilder: (context, i) => VerseWidget(verse: state[i]),
         ),
       ),
     );

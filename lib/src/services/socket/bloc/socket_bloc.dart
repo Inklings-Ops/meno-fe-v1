@@ -12,6 +12,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   SocketBloc({required SocketService socket})
       : _socket = socket,
         super(const SocketDisconnected()) {
+    on<SocketConnectRequested>(_onConnect);
     on<SocketDisconnectRequested>(_onDisconnect);
     on<SocketUpdateStateRequested>(_onUpdateState);
     on<SocketNewParticipantSubscribed>(_onNewParticipantSubscribed);
@@ -24,57 +25,61 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     on<SocketEditedChatSubscribed>(_onEditedChatSubscribed);
     on<SocketDeletedChatSubscribed>(_onDeletedChatSubscribed);
 
-    _setupListeners();
+    socket.onConnect((_) => add(const SocketConnectRequested()));
+    socket.onDisconnect((_) => add(const SocketDisconnectRequested()));
+    socket.onReconnect((_) => add(const _Update(SocketReconnected())));
+    socket.onReconnectAttempt((_) => add(const _Update(SocketReconnecting())));
   }
 
   final SocketService _socket;
 
   void _setupListeners() {
-    _socket
-      ..addListener(
-        'connect',
-        (_) => add(const SocketUpdateStateRequested(SocketConnected())),
-      )
-      ..addListener(
-        'disconnect',
-        (_) => add(const SocketUpdateStateRequested(SocketDisconnected())),
-      )
-      ..addListener(
+    if (_socket.isSocketConnected) {
+      _socket.addListener(
         'newBroadcastListener',
         (data) => add(SocketNewParticipantSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'broadcastListenerLeft',
         (data) => add(SocketParticipantLeftSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'endedBroadcast',
         (data) => add(SocketEndedBroadcastSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'newBroadcast',
         (data) => add(SocketNewBroadcastSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'hostDisconnected',
         (data) => add(SocketHostDisconnectedSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'hostReconnected',
         (data) => add(SocketHostReconnectedSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'notification',
         (data) => add(SocketNotificationSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'editedMessage',
         (data) => add(SocketEditedChatSubscribed(data)),
-      )
-      ..addListener(
+      );
+      _socket.addListener(
         'deletedMessage',
         (data) => add(SocketDeletedChatSubscribed(data)),
       );
+    }
+  }
+
+  Future<void> _onConnect(
+    SocketConnectRequested event,
+    Emitter<SocketState> emit,
+  ) async {
+    _setupListeners();
+    return emit(const SocketConnected());
   }
 
   void _onDisconnect(
@@ -89,7 +94,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     Emitter<SocketState> emit,
   ) {
     final eventData = event.data as Map<String, dynamic>;
-    final dto = BroadcastParticipantDto.fromJson(eventData);
+    final dto = ParticipantDto.fromJson(eventData);
     emit(SocketNewParticipantReceived(dto.toDomain));
   }
 
@@ -98,7 +103,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     Emitter<SocketState> emit,
   ) {
     final eventData = event.data as Map<String, dynamic>;
-    final dto = BroadcastParticipantDto.fromJson(eventData);
+    final dto = ParticipantDto.fromJson(eventData);
     emit(SocketParticipantLeftReceived(dto.toDomain));
   }
 
@@ -107,8 +112,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     Emitter<SocketState> emit,
   ) {
     final eventData = event.data as Map<String, dynamic>;
-    final dto = EndedBroadcastDataDto.fromJson(eventData);
-    emit(SocketEndedBroadcastReceived(dto.toDomain));
+    final dto = EndedBroadcastData.fromJson(eventData);
+    emit(SocketEndedBroadcastReceived(dto));
   }
 
   void _onNewBroadcastSubscribed(

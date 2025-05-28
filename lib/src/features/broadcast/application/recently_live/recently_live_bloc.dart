@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
@@ -5,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/features.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
-import 'package:meno_fe_v1/src/shared/session/session.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
 part 'recently_live_event.dart';
 part 'recently_live_state.dart';
@@ -24,7 +26,7 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
     on<_EndedBroadcastSubscribed>(_onEndedBroadcastSubscribed);
 
     _subscription = _session.userChanges.listen((credential) {
-      if (credential != null && (credential.token?.isValid ?? false)) {
+      if (credential != null && credential.token.isValid) {
         add(const RecentlyLiveStarted());
       }
     });
@@ -44,7 +46,7 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
 
     final response = await _facade.getBroadcasts(
       size: 10,
-      orderBy: 'DESC',
+      orderBy: OrderBy.DESC,
       sortBy: 'endTime',
       endTimeExist: true,
       include: 'totalListeners',
@@ -55,7 +57,7 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
       response.fold(
         RecentlyLiveLoadFailure.new,
         (success) => RecentlyLiveLoadSuccess(
-          broadcasts: success.broadcasts,
+          broadcasts: success.items,
           currentPage: success.currentPage,
           hasMore: success.currentPage < success.totalPages,
         ),
@@ -74,7 +76,7 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
 
       final response = await _facade.getBroadcasts(
         size: 10,
-        orderBy: 'DESC',
+        orderBy: OrderBy.DESC,
         sortBy: 'endTime',
         endTimeExist: true,
         include: 'totalListeners',
@@ -85,7 +87,7 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
         response.fold(
           RecentlyLiveLoadFailure.new,
           (success) => RecentlyLiveLoadSuccess(
-            broadcasts: success.broadcasts,
+            broadcasts: success.items,
             currentPage: success.currentPage,
             hasMore: success.currentPage < success.totalPages,
           ),
@@ -100,8 +102,8 @@ class RecentlyLiveBloc extends Bloc<RecentlyLiveEvent, RecentlyLiveState> {
   ) {
     if (state is RecentlyLiveLoadSuccess) {
       final eventData = event.data as Map<String, dynamic>;
-      final endedDetails = EndedBroadcastDataDto.fromJson(eventData).toDomain;
-      final endedBroadcast = endedDetails.broadcastDetails;
+      final endedDetails = EndedBroadcastData.fromJson(eventData);
+      final endedBroadcast = endedDetails.broadcastDetails.toDomain;
 
       final currentState = state as RecentlyLiveLoadSuccess;
       final currentBroadcasts = List<Broadcast?>.from(currentState.broadcasts);

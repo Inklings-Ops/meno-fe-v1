@@ -11,8 +11,8 @@ class MKeys {
   static const String streamDetailsKey = '_stream_details_key_';
   static const int notificationId = 888;
 
-  static const String allCredentials = '_all_credentials_';
-  static const String authCredential = '_authenticated_user_credential_';
-  static const String authUserId = '_authenticated_user_id_';
-  static const String authToken = '_user_authentication_token_';
+  // static const String allCredentials = '_all_credentials_';
+  // static const String authCredential = '_authenticated_user_credential_';
+  // static const String authUserId = '_authenticated_user_id_';
+  // static const String authToken = '_user_authentication_token_';
 }

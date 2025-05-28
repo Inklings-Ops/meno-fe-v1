@@ -12,14 +12,15 @@ class MSwitchAccountModal extends StatelessWidget {
         builder: (context) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            state.maybeWhen(
-              orElse: () => const _LogInToExistingAccountContent(),
-              loading: () => const MLoadingIndicator.box(),
-              loaded: (cred, allCreds) => _AllSavedCredentialsContent(
-                selectedCredential: cred,
-                credentials: allCreds,
-              ),
-            ),
+            switch (state) {
+              AccountLoadInProgress() => const MLoadingIndicator.box(),
+              AccountLoadSuccess(:final credential, :final allCredentials) =>
+                _AllSavedCredentialsContent(
+                  selectedCredential: credential,
+                  credentials: allCredentials,
+                ),
+              _ => const _LogInToExistingAccountContent(),
+            },
           ],
         ),
       ),
@@ -39,7 +40,7 @@ class _LogInToExistingAccountContent extends StatelessWidget {
         MPrimaryButton(
           label: 'Log in to Existing Account',
           onPressed: () => context
-            ..read<SessionBloc>().add(const SessionLogout())
+            ..read<SessionBloc>().add(const SessionLogoutRequested())
             ..pop(),
         ),
         Spaces.verticalMicro,
@@ -59,20 +60,21 @@ class _AllSavedCredentialsContent extends StatelessWidget {
     required this.selectedCredential,
   });
 
-  final List<UserCredential> credentials;
+  final List<UserCredential?> credentials;
   final UserCredential selectedCredential;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ...credentials.map((credential) {
+          if (credential == null) return const SizedBox.shrink();
           final user = credential.user;
-          return RadioListTile<UserCredential>(
+          return RadioListTile<UserCredential?>(
             key: ObjectKey(credential),
             value: credential,
             groupValue: selectedCredential,
@@ -82,12 +84,13 @@ class _AllSavedCredentialsContent extends StatelessWidget {
               children: [
                 MAvatar(radius: 20, url: user.imageUrl),
                 Spaces.horizontalLarge,
-                MText(user.fullName.getOr(), style: textTheme.bodyRegular),
+                MText(user.fullName.getOrCrash(), style: textTheme.bodyRegular),
               ],
             ),
-            onChanged: (value) => context
-              ..read<AccountBloc>().add(AccountSwitchRequested(value!))
-              ..pop(),
+            onChanged: (value) {
+              router.pop(context);
+              context.read<AccountBloc>().add(AccountSwitchRequested(value!));
+            },
           );
         }),
         MModalListTile(
@@ -110,7 +113,7 @@ class _AllSavedCredentialsContent extends StatelessWidget {
 
   void logout(BuildContext context) {
     context
-      ..read<SessionBloc>().add(const SessionLogout())
+      ..read<SessionBloc>().add(const SessionLogoutRequested())
       ..pop();
   }
 }

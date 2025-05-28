@@ -7,7 +7,7 @@ class SubscribeNotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = MCardStyles.of(context)!;
+    final styles = MCardStyles.of(context);
 
     return Container(
       padding: styles.nCardContentPadding,

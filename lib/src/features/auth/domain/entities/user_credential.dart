@@ -1,32 +1,44 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/auth/auth.dart';
-import 'package:meno_fe_v1/src/features/auth/domain/entities/user.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/features/auth/domain/domain.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
-part 'user_credential.freezed.dart';
+final class UserCredential with EquatableMixin {
+  const UserCredential({required this.token, required this.user});
 
-/// Represents a user's credentials.
-@freezed
-class UserCredential with _$UserCredential {
-  /// Creates a new `UserCredentials` object.
-  const factory UserCredential({
-    /// The user.
-    required User user,
-
-    /// The user's token.
-    Token? token,
-  }) = _UserCredential;
-
-  /// Creates a new `UserCredentials` object with all of the properties set to
-  /// their default values.
   factory UserCredential.empty() {
     return UserCredential(
-      user: User.empty(),
       token: Token(''),
+      user: User(
+        id: ID.empty,
+        fullName: SingleLineString('New Birth Group'),
+        email: Email('newbirthgroup@gmail.com'),
+        bio: MultiLineString('This is a group that is committed to the growth'),
+      ),
     );
   }
 
-  factory UserCredential.fromUI(User user, [Token? token]) {
-    return UserCredential(user: user, token: token);
+  final Token token;
+  final User user;
+
+  @override
+  List<Object?> get props => [token, user];
+
+  UserCredential copyWith({Token? token, User? user}) {
+    return UserCredential(
+      token: token ?? this.token,
+      user: user ?? this.user,
+    );
+  }
+
+  @override
+  bool get stringify => true;
+}
+
+extension UserCredentialX on UserCredential {
+  UserCredential get stripped {
+    return UserCredential(
+      user: user.stripped,
+      token: token,
+    );
   }
 }

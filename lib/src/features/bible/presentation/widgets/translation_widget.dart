@@ -18,11 +18,11 @@ class TranslationWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
 
     final abbreviation = translation.abbreviation;
     final isSelected = context.select<TranslationBloc, bool>(
-      (bloc) => bloc.state.translation.abbreviation == abbreviation,
+      (bloc) => bloc.state.abbreviation == abbreviation,
     );
 
     final borderRadius = BorderRadius.circular(24);
@@ -35,7 +35,7 @@ class TranslationWidget extends HookWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: borderRadius,
-          border: isSelected ? Border.all(color: colors.primary!) : null,
+          border: isSelected ? Border.all(color: colors.primary) : null,
           color: isSelected ? colors.primaryContainer : colors.outlineVariant2,
         ),
         child: Row(

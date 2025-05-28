@@ -29,7 +29,7 @@ class BottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: navigationBarTheme.backgroundColor,
         border: Border(
-          top: BorderSide(width: 0.8, color: colors.outlineVariant1!),
+          top: BorderSide(width: 0.8, color: colors.outlineVariant1),
         ),
       ),
       child: NavigationBar(

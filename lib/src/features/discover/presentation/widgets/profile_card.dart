@@ -8,7 +8,7 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context)!;
+    final textTheme = MTextTheme.of(context);
     // final isSubscribed = profile.subscribed ?? false;
 
     return InkWell(
@@ -32,8 +32,8 @@ class ProfileCard extends StatelessWidget {
               SizedBox(
                 height: Insets.xl,
                 child: MText(
-                  profile.fullName.getOr(),
-                  style: MTextTheme.of(context)!.captionMedium,
+                  profile.fullName.getOrCrash(),
+                  style: MTextTheme.of(context).captionMedium,
                   maxLines: 1,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
@@ -48,19 +48,14 @@ class ProfileCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  color: colors.onBackground?.withValues(alpha: 0.6),
+                  color: colors.onBackground.withValues(alpha: 0.6),
                 ),
               ),
               const Spacer(),
               BlocListener<SubscriptionBloc, SubscriptionState>(
                 listener: (context, state) {
                   if (state.exception != null) {
-                    context.showErrorSnackBar(
-                      state.exception!.maybeWhen(
-                        orElse: () => 'Unknown error',
-                        message: (message) => message,
-                      ),
-                    );
+                    context.showErrorSnackBar(state.exception!.message);
                   }
                 },
                 child: SubscribeButton(profile: profile),

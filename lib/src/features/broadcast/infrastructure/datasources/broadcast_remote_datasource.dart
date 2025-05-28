@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/core.dart' show BaseResponse;
 import 'package:meno_fe_v1/src/features/broadcast/broadcast.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -19,7 +20,7 @@ abstract class BroadcastRemoteDatasource {
 
   @POST('/api/v1/broadcasts')
   @MultiPart()
-  Future<BroadcastResponse<BroadcastDto?>> createBroadcast({
+  Future<BaseResponse<BroadcastDto?>> createBroadcast({
     @Part() required String title,
     @Part() String? description,
     @Part() String? timezone,
@@ -28,13 +29,13 @@ abstract class BroadcastRemoteDatasource {
   });
 
   @DELETE('/api/v1/broadcasts/{broadcastId}')
-  Future<BroadcastResponse<dynamic>> deleteBroadcast({
+  Future<BaseResponse<dynamic>> deleteBroadcast({
     @Path('broadcastId') required String broadcastId,
   });
 
   @PUT('/api/v1/broadcasts/{broadcastId}')
   @MultiPart()
-  Future<BroadcastResponse<BroadcastDto?>> editBroadcast({
+  Future<BaseResponse<BroadcastDto?>> editBroadcast({
     @Path('broadcastId') required String broadcastId,
     @Part() String? title,
     @Part() String? description,
@@ -44,27 +45,27 @@ abstract class BroadcastRemoteDatasource {
   });
 
   @POST('/api/v1/broadcasts/{broadcastId}/join')
-  Future<BroadcastResponse<JoinBroadcastDto?>> joinBroadcast({
+  Future<BaseResponse<JoinBroadcastDto?>> joinBroadcast({
     @Path('broadcastId') required String broadcastId,
   });
 
   @PUT('/api/v1/broadcasts/{broadcastId}/start')
-  Future<BroadcastResponse<BroadcastDto?>> startBroadcast({
+  Future<BaseResponse<BroadcastDto?>> startBroadcast({
     @Path('broadcastId') required String broadcastId,
   });
 
   @GET('/api/v1/broadcasts/{broadcastId}/listeners')
-  Future<BroadcastResponse<BroadcastParticipantsListDto>> getListeners({
+  Future<BaseResponse<PaginatedParticipants<ParticipantDto>>> getListeners({
     @Path('broadcastId') required String broadcastId,
   });
 
   @GET('/api/v1/broadcasts/{broadcastId}/live-listeners')
-  Future<BroadcastResponse<List<BroadcastParticipantDto>>> getLiveListeners({
+  Future<BaseResponse<List<ParticipantDto>>> getLiveListeners({
     @Path('broadcastId') required String broadcastId,
   });
 
   @GET('/api/v1/broadcasts/')
-  Future<BroadcastResponse<BroadcastListDto?>> getBroadcasts({
+  Future<BaseResponse<PaginatedBroadcasts<BroadcastDto?>>> getBroadcasts({
     @Query('id') String? id,
 
     /// Status of the broadcast

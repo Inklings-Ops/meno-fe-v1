@@ -45,21 +45,16 @@ class LiveKitService extends Object with Disposable {
 
       log('Connection prepared.');
       final fastConnectOptions = FastConnectOptions(
-        microphone: isHost
-            ? const TrackOption(enabled: true)
-            : const TrackOption(enabled: false),
+        microphone: TrackOption(enabled: isHost),
       );
 
       log('Connecting...');
       await room.connect(
         url,
         token,
-        fastConnectOptions: fastConnectOptions,
+        fastConnectOptions: isHost ? fastConnectOptions : null,
       );
 
-      if (isHost) {
-        await room.localParticipant?.setMicrophoneEnabled(true);
-      }
       return right(unit);
     } on LiveKitException catch (e) {
       log('LiveKit: Connection failed.', error: e.message);
@@ -75,6 +70,11 @@ class LiveKitService extends Object with Disposable {
     }
   }
 
+  /// Mute or unmute the local participant's microphone.
+  Future<void> enableMicrophone([bool enabled = true]) async {
+    await room.localParticipant?.setMicrophoneEnabled(enabled);
+  }
+
   /// Start a broadcast session.
   Future<Either<BroadcastException, Unit>> broadcast(String token) =>
       _connect(token: token, isHost: true);
@@ -85,11 +85,6 @@ class LiveKitService extends Object with Disposable {
 
   /// Sets up the event listener for the room.
   void _setupListener() => listener.listen(_events.add);
-
-  /// Mute or unmute the local participant's microphone.
-  Future<void> mute({required bool enabled}) async {
-    await room.localParticipant?.setMicrophoneEnabled(enabled);
-  }
 
   /// Disconnects from the room, ensuring resources are freed.
   Future<void> disconnect() async {

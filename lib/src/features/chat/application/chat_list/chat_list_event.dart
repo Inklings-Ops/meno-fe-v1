@@ -8,7 +8,7 @@ sealed class ChatListEvent with EquatableMixin {
 
 final class ChatGetMessagesRequested extends ChatListEvent {
   const ChatGetMessagesRequested(this.broadcastId);
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
 
   @override
   List<Object?> get props => [broadcastId];
@@ -20,7 +20,7 @@ final class ChatSendMessageRequested extends ChatListEvent {
     required this.content,
   });
 
-  final Uid<Broadcast> broadcastId;
+  final ID broadcastId;
   final String content;
 
   @override

@@ -1,5 +1,18 @@
 import 'package:intl/intl.dart';
 
+/// Formats a Duration component (hours, minutes, seconds) with padding.
+String formatTimerUnit(int value) {
+  return value.toString().padLeft(2, '0');
+}
+
+extension DurationFormatting on Duration {
+  String get hoursFormatted => formatTimerUnit(inHours);
+  String get minutesFormatted => formatTimerUnit(inMinutes.remainder(60));
+  String get secondsFormatted => formatTimerUnit(inSeconds.remainder(60));
+
+  String get timeAgo => DateHelpers.getTimeAgo(this);
+}
+
 class DateHelpers {
   DateHelpers._();
 

@@ -61,15 +61,15 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MCard.recentlyLive(
-      title: broadcast.title.getOr(),
-      host: broadcast.creator?.fullName ??
-          broadcast.fullName ??
-          broadcast.creatorFullName ??
+      title: broadcast.title.getOrCrash(),
+      host: broadcast.creator?.fullName.getOrNull() ??
+          broadcast.fullName?.getOrNull() ??
+          broadcast.creatorFullName?.getOrNull() ??
           '',
       imageUrl: broadcast.imageUrl,
       onTap: () => router.pushNamed(
         'Broadcast Details',
-        pathParameters: {'id': broadcast.id.getOr()},
+        pathParameters: {'id': broadcast.id.getOrCrash()},
       ),
     );
   }
