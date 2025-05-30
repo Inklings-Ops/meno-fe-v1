@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
 part 'notifications_event.dart';
 part 'notifications_state.dart';
-part 'notifications_bloc.freezed.dart';
 
 enum NotificationCategory { today, thisWeek, older, none }
 
@@ -21,54 +21,55 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   NotificationsBloc({
     required INotificationFacade facade,
   })  : _facade = facade,
-        super(const NotificationsEmpty()) {
-    on<GetNotifications>(_onGetNotifications);
-    on<DeleteNotification>(_onDelete);
-    on<UpdateNotification>(_onUpdate);
+        super(const NotificationsLoadEmpty()) {
+    on<NotificationsFetchRequested>(_onGetNotifications);
+    on<NotificationsDeleteRequested>(_onDelete);
+    on<NotificationsUpdateRequested>(_onUpdate);
   }
 
   final INotificationFacade _facade;
 
   Future<void> _onGetNotifications(
-    GetNotifications event,
+    NotificationsFetchRequested event,
     Emitter<NotificationsState> emit,
   ) async {
-    emit(const NotificationsLoading());
+    emit(const NotificationsLoadInProgress());
     final res = await _facade.getNotifications(page: 1, size: 50);
     emit(
       res.fold(
-        NotificationsFailure.new,
-        (notifications) {
-          if (notifications.isEmpty) return const NotificationsEmpty();
+        NotificationsLoadFailed.new,
+        (paginatedList) {
+          final notifications = paginatedList.items;
+          if (notifications.isEmpty) return const NotificationsLoadEmpty();
           final sortedNotifications = _sortNotifications(notifications);
-          return NotificationsLoaded(sortedNotifications);
+          return NotificationsLoadSuccess(sortedNotifications);
         },
       ),
     );
   }
 
   Future<void> _onDelete(
-    DeleteNotification event,
+    NotificationsDeleteRequested event,
     Emitter<NotificationsState> emit,
   ) async {
-    emit(const NotificationsLoading());
+    emit(const NotificationsLoadInProgress());
     final fOrS = await _facade.deleteNotification(event.id);
     fOrS.fold(
-      (exception) => emit(NotificationsFailure(exception)),
-      (notifications) {
-        if (state is NotificationsLoaded) {
-          final list = (state as NotificationsLoaded).notifications;
+      (exception) => emit(NotificationsLoadFailed(exception)),
+      (_) {
+        if (state is NotificationsLoadSuccess) {
+          final list = (state as NotificationsLoadSuccess).notifications;
           final updatedList =
               Map<NotificationCategory, List<Notification?>>.from(list);
           updatedList.removeWhere((key, v) => v.any((e) => e?.id == event.id));
-          emit(NotificationsLoaded(updatedList));
+          emit(NotificationsLoadSuccess(updatedList));
         }
       },
     );
   }
 
   Future<void> _onUpdate(
-    UpdateNotification event,
+    NotificationsUpdateRequested event,
     Emitter<NotificationsState> emit,
   ) async {}
 

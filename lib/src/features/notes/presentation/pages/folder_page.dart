@@ -10,21 +10,22 @@ class FolderPage extends HookWidget {
     final bloc = context.watch<FolderBloc>();
     final watcher = context.watch<NotesWatcherBloc>();
     return RefreshIndicator(
-      onRefresh: () async => bloc.add(const GetFolderNotes()),
+      onRefresh: () async => bloc.add(const FolderGetFolderNotesRequested()),
       child: BlocListener<NotesWatcherBloc, NotesWatcherState>(
         bloc: watcher,
         listenWhen: (p, c) =>
-            p is NoteAddedToFolder != c is NoteAddedToFolder ||
-            p is NoteRemovedFromFolder != c is NoteRemovedFromFolder,
+            p is NotesWatcherNoteAddedToFolder !=
+                c is NotesWatcherNoteAddedToFolder ||
+            p is NotesWatcherNoteRemovedFromFolder !=
+                c is NotesWatcherNoteRemovedFromFolder,
         listener: (context, state) {
-          watcher.state.whenOrNull(
-            noteAddedToFolder: (note, _) {
-              bloc.add(UpdateFolderNotes(note));
-            },
-            noteRemovedFromFolder: (note, _) {
-              bloc.add(UpdateFolderNotes(note));
-            },
-          );
+          switch (state) {
+            case NotesWatcherNoteAddedToFolder(:final note):
+              bloc.add(FolderUpdateFolderNotesRequested(note));
+            case NotesWatcherNoteRemovedFromFolder(:final note):
+              bloc.add(FolderUpdateFolderNotesRequested(note));
+            default:
+          }
         },
         child: Scaffold(
           appBar: AppBar(
@@ -104,7 +105,7 @@ class FolderPageOptionsButton extends StatelessWidget {
     if (r == false) return;
     return router.pop();
   }
-  
+
   Future<void> _deleteFolder(BuildContext context, Folder f) async {
     final r = await router.push<bool>(Routes.deleteFolderDialog, extra: f);
     if (r == false) return;
@@ -117,7 +118,7 @@ class FolderPageOptionsButton extends StatelessWidget {
     final bloc = context.read<FolderBloc>();
     final r = await router.push<Folder?>(Routes.folderFormModal, extra: folder);
     if (r == null) return;
-    bloc.add(RenameFolder(r));
+    bloc.add(FolderRenameFolderRequested(r));
     return router.pop();
   }
 }

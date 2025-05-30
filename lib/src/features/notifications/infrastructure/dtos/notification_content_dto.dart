@@ -1,38 +1,65 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_content.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
-part 'notification_content_dto.freezed.dart';
 part 'notification_content_dto.g.dart';
 
-@freezed
-@JsonSerializable(
-  explicitToJson: true,
-  createFactory: false,
-  includeIfNull: false,
-)
-class NotificationContentDto with _$NotificationContentDto {
-  const factory NotificationContentDto({
-    String? subscriberId,
-    String? subscriberName,
-    String? subscriptionId,
-    String? subscriberImageUrl,
-    String? cohostId,
-    String? broadcastId,
-    String? broadcastTitle,
-    String? cohostFullName,
-    String? cohostImageUrl,
-    String? broadcastCreator,
-    String? broadcastImageUrl,
-    String? id,
-    String? title,
-    String? imageUrl,
-  }) = _NotificationContentDto;
+@JsonSerializable()
+class NotificationContentDto with EquatableMixin {
+  const NotificationContentDto({
+    this.subscriberId,
+    this.subscriberName,
+    this.subscriptionId,
+    this.subscriberImageUrl,
+    this.cohostId,
+    this.broadcastId,
+    this.broadcastTitle,
+    this.cohostFullName,
+    this.cohostImageUrl,
+    this.broadcastCreator,
+    this.broadcastImageUrl,
+    this.id,
+    this.title,
+    this.imageUrl,
+  });
 
   factory NotificationContentDto.fromJson(Map<String, dynamic> json) =>
       _$NotificationContentDtoFromJson(json);
 
-  @override
+  final String? subscriberId;
+  final String? subscriberName;
+  final String? subscriptionId;
+  final String? subscriberImageUrl;
+  final String? cohostId;
+  final String? broadcastId;
+  final String? broadcastTitle;
+  final String? cohostFullName;
+  final String? cohostImageUrl;
+  final String? broadcastCreator;
+  final String? broadcastImageUrl;
+  final String? id;
+  final String? title;
+  final String? imageUrl;
+
   Map<String, dynamic> toJson() => _$NotificationContentDtoToJson(this);
+
+  @override
+  List<Object?> get props => [
+        subscriberId,
+        subscriberName,
+        subscriptionId,
+        subscriberImageUrl,
+        cohostId,
+        broadcastId,
+        broadcastTitle,
+        cohostFullName,
+        cohostImageUrl,
+        broadcastCreator,
+        broadcastImageUrl,
+        id,
+        title,
+        imageUrl,
+      ];
 }
 
 extension NotificationContentDtoToDomain on NotificationContentDto {

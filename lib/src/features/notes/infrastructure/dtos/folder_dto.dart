@@ -1,62 +1,53 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
-import 'package:objectbox/objectbox.dart';
 
-part 'folder_dto.freezed.dart';
 part 'folder_dto.g.dart';
 
-@Freezed(addImplicitFinal: false)
-@JsonSerializable(explicitToJson: true, createFactory: false)
-class FolderDto with _$FolderDto {
-  @Entity(realClass: FolderDto)
-  factory FolderDto({
-    @Unique() required String id,
-    required String title,
-    @_NotesConverter() required ToMany<NoteDto> notes,
-    @Id() int? dbId,
-    int? numberOfNotes,
-    bool? pinned,
-    @Property(type: PropertyType.date) DateTime? createdAt,
-  }) = _FolderDto;
-
-  FolderDto._();
+@JsonSerializable()
+class FolderDto with EquatableMixin {
+  const FolderDto({
+    required this.id,
+    required this.title,
+    this.notes = const <NoteDto?>[],
+    this.numberOfNotes,
+    this.pinned,
+    this.createdAt,
+  });
 
   factory FolderDto.fromJson(Map<String, dynamic> json) =>
       _$FolderDtoFromJson(json);
 
-  @override
+  final String id;
+  final String title;
+  final List<NoteDto?> notes;
+  final int? numberOfNotes;
+  final bool? pinned;
+  final DateTime? createdAt;
+
   Map<String, dynamic> toJson() => _$FolderDtoToJson(this);
-}
-
-typedef _Map = List<Map<String, dynamic>>;
-
-class _NotesConverter implements JsonConverter<ToMany<NoteDto>, _Map?> {
-  const _NotesConverter();
 
   @override
-  ToMany<NoteDto> fromJson(List<Map<String, dynamic>>? json) {
-    return ToMany<NoteDto>(
-      items: json == null ? [] : json.map(NoteDto.fromJson).toList(),
-    );
-  }
-
-  @override
-  List<Map<String, dynamic>>? toJson(ToMany<NoteDto> rel) {
-    return rel.map((NoteDto obj) => obj.toJson()).toList();
-  }
+  List<Object?> get props => [
+        id,
+        title,
+        notes,
+        numberOfNotes,
+        pinned,
+        createdAt,
+      ];
 }
 
 extension FolderDtoToDomain on FolderDto {
   Folder get toDomain {
     return Folder(
-      dbId: dbId,
       id: ID.fromString(id),
       title: SingleLineString(title),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: notes.map((note) => note.toDomain).toList(),
+      notes: notes.map((note) => note?.toDomain).toList(),
     );
   }
 }
@@ -64,14 +55,12 @@ extension FolderDtoToDomain on FolderDto {
 extension FolderToDto on Folder {
   FolderDto get toDto {
     return FolderDto(
-      dbId: dbId,
       id: id.getOrCrash(),
       title: title.getOrCrash(),
       numberOfNotes: numberOfNotes,
       pinned: pinned,
       createdAt: createdAt,
-      notes: ToMany()
-        ..addAll(notes.isNotEmpty ? notes.map((e) => e!.toDto).toList() : []),
+      notes: notes.isNotEmpty ? notes.map((e) => e?.toDto).toList() : [],
     );
   }
 }

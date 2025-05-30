@@ -1,12 +1,28 @@
 part of 'bible_downloader_bloc.dart';
 
-@freezed
-class BibleDownloaderEvent with _$BibleDownloaderEvent {
-  const factory BibleDownloaderEvent.download(String translation) =
-      DownloadBible;
+sealed class BibleDownloaderEvent with EquatableMixin {
+  const BibleDownloaderEvent();
 
-  const factory BibleDownloaderEvent.cancel() = CancelBibleDownload;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory BibleDownloaderEvent.updateProgress(int progress) =
-      _UpdateProgress;
+final class BibleDownloadRequested extends BibleDownloaderEvent {
+  const BibleDownloadRequested(this.translation);
+  final String translation;
+
+  @override
+  List<Object?> get props => [translation];
+}
+
+final class _UpdateDownloadProgress extends BibleDownloaderEvent {
+  const _UpdateDownloadProgress(this.progress);
+  final int progress;
+
+  @override
+  List<Object?> get props => [progress];
+}
+
+final class BibleCancelDownloadRequested extends BibleDownloaderEvent {
+  const BibleCancelDownloadRequested();
 }

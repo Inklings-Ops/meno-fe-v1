@@ -27,19 +27,12 @@ class MenoBlocProvider extends StatelessWidget {
           )..add(const AccountInitialized()),
         ),
         BlocProvider(create: (_) => TimerCubit()),
-        BlocProvider(
-          create: (_) => LiveKitBloc(
-            liveKit: di<LiveKitService>(),
-            network: di<NetworkService>(),
-          ),
-        ),
-        BlocProvider(create: (_) => LiveBloc(liveKit: di<LiveKitService>())),
         BlocProvider(create: (_) => NetworkCubit(facade: di<INetworkFacade>())),
         BlocProvider(
           lazy: false,
           create: (_) => NotesBloc(
             facade: di<INoteFacade>(),
-          )..add(const GetNotesRequested()),
+          )..add(const NotesFetchNotesRequested()),
         ),
         BlocProvider(
           create: (_) => NotesWatcherBloc(facade: di<INoteFacade>()),
@@ -57,7 +50,7 @@ class MenoBlocProvider extends StatelessWidget {
           lazy: false,
           create: (_) => FoldersBloc(
             facade: di<INoteFacade>(),
-          )..add(const GetFoldersRequested()),
+          )..add(const FoldersGetFoldersRequested()),
         ),
         BlocProvider(create: (_) => ChatInputCubit()),
         BlocProvider(

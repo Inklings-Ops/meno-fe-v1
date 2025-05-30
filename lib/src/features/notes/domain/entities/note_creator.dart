@@ -1,21 +1,28 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/features/auth/auth.dart';
+import 'package:meno_fe_v1/src/shared/shared.dart';
 
-part 'note_creator.freezed.dart';
+class NoteCreator with EquatableMixin implements IEntity {
+  const NoteCreator({
+    required this.id,
+    required this.fullName,
+    required this.email,
+    this.imageUrl,
+  });
 
-@freezed
-class NoteCreator with _$NoteCreator {
-  factory NoteCreator({
-    required String id,
-    required String fullName,
-    required String email,
-    int? dbId,
-    String? imageUrl,
-  }) = _NoteCreator;
+  @override
+  final ID id;
 
-  factory NoteCreator.empty() => NoteCreator(
-        id: '',
-        fullName: '',
-        imageUrl: '',
-        email: '',
-      );
+  final SingleLineString fullName;
+  final Email email;
+  final String? imageUrl;
+
+  static NoteCreator empty = NoteCreator(
+    id: ID.fromString(''),
+    fullName: SingleLineString(''),
+    email: Email(''),
+  );
+
+  @override
+  List<Object?> get props => [id, fullName, email, imageUrl];
 }

@@ -22,7 +22,9 @@ class NotificationsSettingsPage extends StatelessWidget {
                   trailing: Switch(
                     value: bloc.state.receiveLiveBroadcastsNotifications,
                     onChanged: (value) {
-                      bloc.add(ToggleLiveBroadcastsNotifications(value));
+                      bloc.add(
+                        SettingsToggleLiveBroadcastsNotifications(value),
+                      );
                     },
                   ),
                 ),
@@ -31,7 +33,9 @@ class NotificationsSettingsPage extends StatelessWidget {
                   trailing: Switch(
                     value: bloc.state.receiveNewSubscribersNotifications,
                     onChanged: (value) {
-                      bloc.add(ToggleNewSubscribersNotifications(value));
+                      bloc.add(
+                        SettingsToggleNewSubscribersNotifications(value),
+                      );
                     },
                   ),
                 ),
@@ -41,7 +45,7 @@ class NotificationsSettingsPage extends StatelessWidget {
                   trailing: Switch(
                     value: bloc.state.receiveAddedCohostNotifications,
                     onChanged: (value) {
-                      bloc.add(ToggleAddedCohostNotifications(value));
+                      bloc.add(SettingsToggleAddedCohostNotifications(value));
                     },
                   ),
                 ),

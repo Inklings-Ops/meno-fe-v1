@@ -14,17 +14,16 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listener: (context, state) {
-        state.whenOrNull(
-          noteRemovedFromFolder: (note, folder) {
-            context.read<NotesBloc>().add(NoteReceived(note));
-            context.read<FoldersBloc>().add(const GetFoldersRequested());
+        switch (state) {
+          case NotesWatcherNoteRemovedFromFolder(:final note):
+            context.read<NotesBloc>().add(NotesNoteReceived(note));
+            context.read<FoldersBloc>().add(const FoldersGetFoldersRequested());
             router.pop(true);
-          },
-          failure: (exception) {
-            context.showNoteError(exception);
+          case NotesWatcherLoadFailed(:final exception):
+            context.showErrorSnackBar(exception.message);
             router.pop(false);
-          },
-        );
+          default:
+        }
       },
       child: AlertDialog(
         title: MText('Remove Note?', style: textTheme.heading2Regular),
@@ -50,9 +49,9 @@ class RemoveNoteFromFolderAlertDialog extends StatelessWidget {
             child: MPrimaryButton(
               label: 'Remove',
               onPressed: () => watcher.add(
-                RemoveNoteFromFolder(note, note.folder!),
+                NotesWatcherRemoveNoteToFolderRequested(note, note.folder!),
               ),
-              loading: watcher.state is NoteWatcherLoading,
+              loading: watcher.state is NotesWatcherLoadInProgress,
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               ),

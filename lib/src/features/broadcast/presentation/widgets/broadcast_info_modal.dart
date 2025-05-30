@@ -12,7 +12,6 @@ class BroadcastInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
     return MModal(
       builder: (context) => Column(
@@ -67,20 +66,20 @@ class BroadcastInfoModal extends StatelessWidget {
             leading: Icon(MIcons.link_02),
             title: 'Copy Link',
           ),
-          if (!isStreaming)
-            BlocBuilder<LiveBloc, LiveState>(
-              builder: (context, state) => state.maybeWhen(
-                live: () => const SizedBox(),
-                reconnecting: () => const SizedBox(),
-                streaming: () => const SizedBox(),
-                orElse: () => MModalListTile(
-                  leading: Icon(MIcons.trash, color: colors.error),
-                  title: 'Delete Broadcast',
-                  titleColor: colors.error,
-                  onTap: () {},
-                ),
-              ),
-            ),
+          // if (!isStreaming)
+          //   BlocBuilder<LiveBloc, LiveState>(
+          //     builder: (context, state) => state.maybeWhen(
+          //       live: () => const SizedBox(),
+          //       reconnecting: () => const SizedBox(),
+          //       streaming: () => const SizedBox(),
+          //       orElse: () => MModalListTile(
+          //         leading: Icon(MIcons.trash, color: colors.error),
+          //         title: 'Delete Broadcast',
+          //         titleColor: colors.error,
+          //         onTap: () {},
+          //       ),
+          //     ),
+          //   ),
           Spaces.verticalXLarge,
         ],
       ),

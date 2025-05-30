@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart' hide Notification;
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
-import 'package:meno_fe_v1/src/shared/constants/constants.dart';
 
 typedef MMessenger = ScaffoldFeatureController<SnackBar, SnackBarClosedReason>;
 
@@ -72,16 +70,16 @@ extension MSnackBarExtensions on BuildContext {
   //   );
   // }
 
-  MMessenger showNoteError(NoteException exception) {
-    return showErrorSnackBar(
-      exception.maybeMap(
-        orElse: () => '',
-        message: (value) => value.message,
-        networkError: (_) => MErrorMessages.networkError,
-        serverError: (_) => MErrorMessages.serverError,
-        timeOutError: (_) => MErrorMessages.timeOutError,
-        unknownError: (_) => MErrorMessages.unknownError,
-      ),
-    );
-  }
+  // MMessenger showNoteError(NoteException exception) {
+  //   return showErrorSnackBar(
+  //     exception.maybeMap(
+  //       orElse: () => '',
+  //       message: (value) => value.message,
+  //       networkError: (_) => MErrorMessages.networkError,
+  //       serverError: (_) => MErrorMessages.serverError,
+  //       timeOutError: (_) => MErrorMessages.timeOutError,
+  //       unknownError: (_) => MErrorMessages.unknownError,
+  //     ),
+  //   );
+  // }
 }

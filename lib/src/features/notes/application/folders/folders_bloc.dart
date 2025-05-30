@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 import 'package:rxdart/rxdart.dart';
 
-part 'folders_bloc.freezed.dart';
 part 'folders_event.dart';
 part 'folders_state.dart';
 
@@ -13,20 +13,21 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     required INoteFacade facade,
   })  : _facade = facade,
         super(const FoldersState()) {
-    on<GetFoldersRequested>(
+    on<FoldersGetFoldersRequested>(
       _onGetFoldersRequested,
       transformer: _debounceAndSwitch(),
     );
-    on<FetchMoreFolders>(
+    on<FoldersGetMoreFoldersRequested>(
       _onFetchMoreFolders,
       transformer: _throttleDroppable(),
     );
-    on<FolderSearchChanged>(_onFolderSearchChanged);
-    on<UpdateFolderList>(_onUpdateFolderList);
-    on<GetFolderAndUpdateList>(_onGetFolderAndUpdateList);
-    on<FolderRemoved>(_onFolderRemoved);
+    on<FoldersSearchKeywordsChanged>(_onFolderSearchChanged);
+    on<FoldersUpdateFoldersRequested>(_onUpdateFolderList);
+    on<FoldersGetFolderAndUpdateList>(_onGetFolderAndUpdateList);
+    on<FoldersRemoveFolderRequested>(_onFolderRemoved);
+    on<FoldersReloadRequested>(_onReloadFolders);
 
-    add(const GetFoldersRequested());
+    add(const FoldersGetFoldersRequested());
   }
 
   final INoteFacade _facade;
@@ -52,7 +53,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
   }
 
   Future<void> _onGetFoldersRequested(
-    GetFoldersRequested event,
+    FoldersGetFoldersRequested event,
     Emitter<FoldersState> emit,
   ) async {
     const pageToFetch = 1;
@@ -83,21 +84,20 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
           failure: failure,
         ),
       ),
-      (folders) => emit(
+      (paginatedList) => emit(
         state.copyWith(
           status: FoldersStatus.success,
-          folders: folders,
+          folders: paginatedList.items,
           currentPage: pageToFetch,
           pageSize: pageSize,
-          hasReachedMax: folders.length < pageSize,
-          failure: null,
+          hasReachedMax: paginatedList.items.length < pageSize,
         ),
       ),
     );
   }
 
   Future<void> _onFetchMoreFolders(
-    FetchMoreFolders event,
+    FoldersGetMoreFoldersRequested event,
     Emitter<FoldersState> emit,
   ) async {
     // Prevent fetching if already maxed out or already loading more
@@ -122,36 +122,38 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
           failure: failure,
         ),
       ),
-      (newFolders) => emit(
+      (paginatedList) => emit(
         state.copyWith(
           status: FoldersStatus.success,
-          folders: List.of(state.folders)..addAll(newFolders),
+          folders: List.of(state.folders)..addAll(paginatedList.items),
           currentPage: nextPage,
-          hasReachedMax: newFolders.length < state.pageSize,
-          failure: null,
+          hasReachedMax: paginatedList.items.length < state.pageSize,
         ),
       ),
     );
   }
 
   void _onFolderSearchChanged(
-    FolderSearchChanged event,
+    FoldersSearchKeywordsChanged event,
     Emitter<FoldersState> emit,
   ) {
     add(
-      GetFoldersRequested(
+      FoldersGetFoldersRequested(
         title: event.keywords.isEmpty ? null : event.keywords,
         size: state.pageSize,
       ),
     );
   }
 
-  void _onReloadFolders(ReloadFolders event, Emitter<FoldersState> emit) {
-    add(GetFoldersRequested(size: state.pageSize));
+  void _onReloadFolders(
+    FoldersReloadRequested event,
+    Emitter<FoldersState> emit,
+  ) {
+    add(FoldersGetFoldersRequested(size: state.pageSize));
   }
 
   Future<void> _onGetFolderAndUpdateList(
-    GetFolderAndUpdateList event,
+    FoldersGetFolderAndUpdateList event,
     Emitter<FoldersState> emit,
   ) async {
     if (state.status == FoldersStatus.success ||
@@ -183,7 +185,7 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
   }
 
   Future<void> _onUpdateFolderList(
-    UpdateFolderList event,
+    FoldersUpdateFoldersRequested event,
     Emitter<FoldersState> emit,
   ) async {
     if (state.status == FoldersStatus.success ||
@@ -201,7 +203,10 @@ class FoldersBloc extends Bloc<FoldersEvent, FoldersState> {
     }
   }
 
-  void _onFolderRemoved(FolderRemoved event, Emitter<FoldersState> emit) {
+  void _onFolderRemoved(
+    FoldersRemoveFolderRequested event,
+    Emitter<FoldersState> emit,
+  ) {
     if (state.status == FoldersStatus.success ||
         state.status == FoldersStatus.loadingMore) {
       final folderId = event.folder.id;

@@ -1,29 +1,35 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
-part 'notification_data_dto.freezed.dart';
 part 'notification_data_dto.g.dart';
 
-@freezed
-@JsonSerializable(
-  explicitToJson: true,
-  createFactory: false,
-  includeIfNull: false,
-)
-class NotificationDataDto with _$NotificationDataDto {
-  const factory NotificationDataDto({
-    required List<NotificationDto?> notifications,
-    required int totalPages,
-    required int currentPage,
-    required int totalItems,
-  }) = _NotificationDataDto;
+@JsonSerializable()
+class NotificationDataDto with EquatableMixin {
+  const NotificationDataDto({
+    required this.notifications,
+    required this.totalPages,
+    required this.currentPage,
+    required this.totalItems,
+  });
 
   factory NotificationDataDto.fromJson(Map<String, dynamic> json) =>
       _$NotificationDataDtoFromJson(json);
 
-  @override
+  final List<NotificationDto?> notifications;
+  final int totalPages;
+  final int currentPage;
+  final int totalItems;
+
   Map<String, dynamic> toJson() => _$NotificationDataDtoToJson(this);
+
+  @override
+  List<Object?> get props => [
+        notifications,
+        totalPages,
+        currentPage,
+        totalItems,
+      ];
 }
 
 extension NotificationDataToDomainX on NotificationDataDto {

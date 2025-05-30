@@ -1,17 +1,37 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_content.dart';
 import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_type.dart';
 
-part 'notification.freezed.dart';
+final class Notification with EquatableMixin {
+  const Notification({
+    this.read = false,
+    this.id,
+    this.type,
+    this.content,
+    this.createdAt,
+  });
 
-@freezed
-class Notification with _$Notification {
-  const factory Notification({
+  final String? id;
+  final NotificationType? type;
+  final bool read;
+  final NotificationContent? content;
+  final DateTime? createdAt;
+  Notification copyWith({
     String? id,
     NotificationType? type,
-    @Default(false) bool read,
+    bool? read,
     NotificationContent? content,
     DateTime? createdAt,
-  }) = _Notification;
+  }) {
+    return Notification(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      read: read ?? this.read,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, type, read, content, createdAt];
 }

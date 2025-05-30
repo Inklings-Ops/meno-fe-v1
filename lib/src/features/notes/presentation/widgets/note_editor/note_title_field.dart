@@ -11,15 +11,15 @@ class NoteTitleField extends HookWidget {
     return BlocConsumer<NoteEditorBloc, NoteEditorState>(
       listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
-        bloc.state.whenOrNull(
-          loaded: (note) {
+        switch (state) {
+          case NoteEditorLoadSuccess(:final note):
             if (note.title.isValid) {
               textController.text = note.title.getOrCrash();
             } else {
               textController.text = '';
             }
-          },
-        );
+          default:
+        }
       },
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => TextFormField(
@@ -27,12 +27,15 @@ class NoteTitleField extends HookWidget {
         style: MTextTheme.of(context).heading3Bold,
         controller: textController,
         textInputAction: TextInputAction.next,
-        enabled: state is! NoteSaveInProgress,
-        onChanged: (value) =>
-            bloc.add(NoteTitleChanged(SingleLineString(value))),
-        validator: (_) => state.whenOrNull(
-          loaded: (note) => note.title.failureOrNull?.message,
+        enabled: state is! NoteEditorSaveInProgress,
+        onChanged: (value) => bloc.add(
+          NoteEditorTitleChanged(SingleLineString(value)),
         ),
+        validator: (_) => switch (state) {
+          NoteEditorLoadSuccess(:final note) =>
+            note.title.failureOrNull?.message,
+          _ => null,
+        },
         decoration: InputDecoration(
           border: InputBorder.none,
           errorBorder: InputBorder.none,

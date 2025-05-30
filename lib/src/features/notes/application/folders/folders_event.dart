@@ -1,35 +1,79 @@
 part of 'folders_bloc.dart';
 
-@freezed
-class FoldersEvent with _$FoldersEvent {
-  const factory FoldersEvent.getFoldersRequested({
-    String? title,
-    ID? folderId,
-    @Default(false) bool pinned,
-    @Default('createdAt') String sortBy,
-    @Default('DESC') String orderBy,
-    @Default(1) int page,
-    @Default(6) int size,
-  }) = GetFoldersRequested;
+sealed class FoldersEvent with EquatableMixin {
+  const FoldersEvent();
 
-// Fetch next page for pagination
-  const factory FoldersEvent.fetchMoreFolders() = FetchMoreFolders;
+  @override
+  List<Object?> get props => [];
+}
 
-  // Search input changed
-  const factory FoldersEvent.searchChanged(String keywords) =
-      FolderSearchChanged;
+final class FoldersGetFoldersRequested extends FoldersEvent {
+  const FoldersGetFoldersRequested({
+    this.pinned = false,
+    this.sortBy = 'createdAt',
+    this.orderBy = 'DESC',
+    this.page = 1,
+    this.size = 6,
+    this.title,
+    this.folderId,
+  });
 
-  // Reload first page, clear search
-  const factory FoldersEvent.reloadFolders() = ReloadFolders;
+  final String? title;
+  final ID? folderId;
+  final bool pinned;
+  final String sortBy;
+  final String orderBy;
+  final int page;
+  final int size;
 
-  // Remove a folder from the current list (client-side)
-  const factory FoldersEvent.folderRemoved(Folder folder) = FolderRemoved;
+  @override
+  List<Object?> get props => [
+        title,
+        folderId,
+        pinned,
+        sortBy,
+        orderBy,
+        page,
+        size,
+      ];
+}
 
-  const factory FoldersEvent.updateFolders(
-    Folder newFolder,
-  ) = UpdateFolderList;
+final class FoldersGetMoreFoldersRequested extends FoldersEvent {
+  const FoldersGetMoreFoldersRequested();
+}
 
-  const factory FoldersEvent.getFolderAndUpdateList(
-    ID folderId,
-  ) = GetFolderAndUpdateList;
+final class FoldersSearchKeywordsChanged extends FoldersEvent {
+  const FoldersSearchKeywordsChanged(this.keywords);
+  final String keywords;
+
+  @override
+  List<Object?> get props => [keywords];
+}
+
+final class FoldersReloadRequested extends FoldersEvent {
+  const FoldersReloadRequested();
+}
+
+final class FoldersRemoveFolderRequested extends FoldersEvent {
+  const FoldersRemoveFolderRequested(this.folder);
+  final Folder folder;
+
+  @override
+  List<Object?> get props => [folder];
+}
+
+final class FoldersUpdateFoldersRequested extends FoldersEvent {
+  const FoldersUpdateFoldersRequested(this.newFolder);
+  final Folder newFolder;
+
+  @override
+  List<Object?> get props => [newFolder];
+}
+
+final class FoldersGetFolderAndUpdateList extends FoldersEvent {
+  const FoldersGetFolderAndUpdateList(this.folderId);
+  final ID folderId;
+
+  @override
+  List<Object?> get props => [folderId];
 }

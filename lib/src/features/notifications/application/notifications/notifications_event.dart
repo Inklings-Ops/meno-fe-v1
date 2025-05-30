@@ -1,8 +1,28 @@
 part of 'notifications_bloc.dart';
 
-@freezed
-class NotificationsEvent with _$NotificationsEvent {
-  const factory NotificationsEvent.getNotifications() = GetNotifications;
-  const factory NotificationsEvent.delete(String id) = DeleteNotification;
-  const factory NotificationsEvent.update(String id) = UpdateNotification;
+sealed class NotificationsEvent with EquatableMixin {
+  const NotificationsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class NotificationsFetchRequested extends NotificationsEvent {
+  const NotificationsFetchRequested();
+}
+
+final class NotificationsDeleteRequested extends NotificationsEvent {
+  const NotificationsDeleteRequested(this.id);
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
+final class NotificationsUpdateRequested extends NotificationsEvent {
+  const NotificationsUpdateRequested(this.id);
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
 }

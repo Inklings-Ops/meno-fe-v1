@@ -14,18 +14,17 @@ class DeleteFolderAlertDialog extends StatelessWidget {
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listenWhen: (c, p) => p != c,
-      listener: (context, state) {
-        state.whenOrNull(
-          folderDeleted: (folder) {
-            context.read<FoldersBloc>().add(FolderRemoved(folder));
-            context.read<NotesBloc>().add(const GetNotesRequested());
+      listener: (ctx, state) {
+        switch (state) {
+          case NotesWatcherFolderDeleted(:final folder):
+            ctx.read<FoldersBloc>().add(FoldersRemoveFolderRequested(folder));
+            ctx.read<NotesBloc>().add(const NotesFetchNotesRequested());
             router.pop(true);
-          },
-          failure: (exception) {
-            context.showNoteError(exception);
+          case NotesWatcherLoadFailed(:final exception):
+            ctx.showErrorSnackBar(exception.message);
             router.pop(false);
-          },
-        );
+          default:
+        }
       },
       child: AlertDialog(
         title: MText('Delete Folder?', style: textTheme.heading2Regular),
@@ -48,8 +47,10 @@ class DeleteFolderAlertDialog extends StatelessWidget {
           ),
           MDangerButton(
             label: 'Delete',
-            loading: watcher.state is NoteWatcherLoading,
-            onPressed: () => watcher.add(DeleteFolder(folder)),
+            loading: watcher.state is NotesWatcherLoadInProgress,
+            onPressed: () => watcher.add(
+              NotesWatcherDeleteFolderRequested(folder),
+            ),
             style: FilledButton.styleFrom(
               backgroundColor: colors.error,
               foregroundColor: colors.onError,

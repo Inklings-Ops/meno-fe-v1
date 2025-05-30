@@ -9,23 +9,22 @@ class AddNoteToFolderModal extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final watcher = context.watch<NotesWatcherBloc>();
-    final loading = watcher.state is NoteWatcherLoading;
+    final loading = watcher.state is NotesWatcherLoadInProgress;
 
     final pickedFolder = useState<Folder?>(null);
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
       listener: (context, state) {
-        state.whenOrNull(
-          noteAddedToFolder: (note, folder) {
-            context.read<NotesBloc>().add(NoteReceived(note));
-            context.read<FoldersBloc>().add(const GetFoldersRequested());
+        switch (state) {
+          case NotesWatcherNoteAddedToFolder(:final note):
+            context.read<NotesBloc>().add(NotesNoteReceived(note));
+            context.read<FoldersBloc>().add(const FoldersGetFoldersRequested());
             router.pop(true);
-          },
-          failure: (exception) {
-            context.showNoteError(exception);
+          case NotesWatcherLoadFailed(:final exception):
+            context.showErrorSnackBar(exception.message);
             router.pop(false);
-          },
-        );
+          default:
+        }
       },
       child: MModal(
         title: 'Add to Folder',
@@ -75,7 +74,10 @@ class AddNoteToFolderModal extends HookWidget {
                 loading: loading,
                 disabled: pickedFolder.value == null,
                 onPressed: () => watcher.add(
-                  AddNoteToFolder(note, pickedFolder.value!),
+                  NotesWatcherAddNoteToFolderRequested(
+                    note,
+                    pickedFolder.value!,
+                  ),
                 ),
               ),
             ],

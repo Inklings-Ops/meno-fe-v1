@@ -1,52 +1,40 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
+import 'package:meno_fe_v1/src/core/response/response.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:meno_fe_v1/src/services/services.dart';
 import 'package:meno_fe_v1/src/shared/shared.dart';
-import 'package:objectbox/objectbox.dart';
 
 @Injectable(as: INoteFacade)
 class NoteFacade implements INoteFacade {
   NoteFacade({
     required NetworkService network,
-    required NoteLocalDatasource local,
     required NoteRemoteDatasource remote,
   })  : _network = network,
-        _local = local,
         _remote = remote;
-  final NetworkService _network;
-  final NoteLocalDatasource _local;
-  final NoteRemoteDatasource _remote;
 
-  @override
-  Stream<List<Note?>> allNotesStream() {
-    final notes = _local
-        .allNotesStream()
-        .map((dtos) => dtos.map((dto) => dto?.toDomain).toList());
-    return notes;
-  }
+  final NetworkService _network;
+  final NoteRemoteDatasource _remote;
 
   @override
   Future<Either<NoteException, Note>> createNote(Note note) async {
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
-      final titleStr = note.title.value.getOrElse(() => 'Unknown Title');
-      final contentStr = note.content.value.getOrElse(() => 'Unknown content');
-
       try {
         final response = await _remote.createNote(
-          title: titleStr,
-          content: contentStr,
+          title: note.title.getOrCrash(),
+          content: note.content.getOrCrash(),
         );
 
-        return right(response.data!.toDomain);
+        return Right(response.data!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -58,24 +46,24 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      return right(Note.empty());
+      return Right(Note.empty);
     } else {
       try {
         final response = await _remote.updateNote(
-          noteId: note.uid.value.getOrElse(() => 'Invalid id'),
-          title: note.title.value.getOrElse(() => 'Invalid title'),
-          content: note.content.value.getOrElse(() => 'Invalid content'),
+          noteId: note.id.getOrCrash(),
+          title: note.title.getOrCrash(),
+          content: note.content.getOrCrash(),
           pinned: pinned,
         );
+
         final dto = response.data;
         final noteEntity = dto!.toDomain;
-
-        return right(noteEntity);
+        return Right(noteEntity);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -84,17 +72,16 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, Unit>> deleteNote(ID noteId) async {
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
-        final uidStr = noteId.value.getOrElse(() => 'Invalid id');
-        await _remote.deleteNote(uidStr);
-        return right(unit);
+        await _remote.deleteNote(noteId.getOrCrash());
+        return const Right(unit);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -103,16 +90,16 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, Unit>> deleteFolder(ID folderId) async {
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         await _remote.deleteFolder(folderId.getOrCrash());
-        return right(unit);
+        return const Right(unit);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -124,7 +111,7 @@ class NoteFacade implements INoteFacade {
     required ID folderId,
   }) async {
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.addNoteToFolder(
@@ -132,12 +119,12 @@ class NoteFacade implements INoteFacade {
           folderId: folderId.getOrCrash(),
         );
 
-        return right(response.data!.toDomain);
+        return Right(response.data!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -146,24 +133,25 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, Folder>> createFolder(Folder folder) async {
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
-      final titleValue = folder.title.value.getOrElse(() => 'Unknown folder');
       try {
-        final response = await _remote.createFolder(title: titleValue);
-        return right(response.data!.toDomain);
+        final response = await _remote.createFolder(
+          title: folder.title.getOrCrash(),
+        );
+        return Right(response.data!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
   }
 
   @override
-  Future<Either<NoteException, List<Folder?>>> getAllFolders({
+  Future<Either<NoteException, PaginatedList<Folder?>>> getAllFolders({
     String? title,
     ID? folderId,
     bool? pinned,
@@ -173,10 +161,7 @@ class NoteFacade implements INoteFacade {
     int? size = 50,
   }) async {
     if (!(await _network.isConnected)) {
-      // final folderDtos = await _local.getAllFolders();
-      // final folders = folderDtos.map((e) => e?.toDomain).toList();
-      // return right(folders);
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.getAllFolders(
@@ -188,21 +173,26 @@ class NoteFacade implements INoteFacade {
           page: page,
           size: size,
         );
-        final dtos = response.data!.folders;
-        final folders = dtos.map((e) => e?.toDomain).toList();
-        return right(folders);
+        final data = response.data!;
+        final paginatedList = PaginatedList(
+          items: data.folders.map((dto) => dto?.toDomain).toList(),
+          currentPage: data.currentPage,
+          totalItems: data.totalItems,
+          totalPages: data.totalPages,
+        );
+        return Right(paginatedList);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
   }
 
   @override
-  Future<Either<NoteException, List<Note?>>> getAllNotes({
+  Future<Either<NoteException, PaginatedList<Note?>>> getAllNotes({
     String? keywords,
     ID? noteId,
     bool? pinned,
@@ -212,10 +202,7 @@ class NoteFacade implements INoteFacade {
     int? size = 6,
   }) async {
     if (!(await _network.isConnected)) {
-      // final noteDtos = await _local.getAllNotes();
-      // final notes = noteDtos.map((e) => e?.toDomain).toList();
-      // return right(notes);
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.getAllNotes(
@@ -227,15 +214,19 @@ class NoteFacade implements INoteFacade {
           page: page,
           size: size,
         );
-        final dtos = response.data!.notes;
-
-        final notes = dtos.map((e) => e?.toDomain).toList();
-        return right(notes);
+        final data = response.data!;
+        final paginatedList = PaginatedList(
+          items: data.notes.map((dto) => dto?.toDomain).toList(),
+          currentPage: data.currentPage,
+          totalItems: data.totalItems,
+          totalPages: data.totalPages,
+        );
+        return Right(paginatedList);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -253,11 +244,8 @@ class NoteFacade implements INoteFacade {
     CancelToken? cancelToken,
   }) async {
     final folderIdString = folderId.getOrCrash();
-    // final localFolder = _local.getFolder(folderIdString);
-    // if (localFolder != null) return right(localFolder.toDomain);
-
     if (!(await _network.isConnected)) {
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.getFolderWithNotes(
@@ -270,18 +258,17 @@ class NoteFacade implements INoteFacade {
           size: size,
           cancelToken: cancelToken,
         );
-        final resNotes = response.data!.notes;
-        final notes = ToMany<NoteDto>()..addAll(resNotes.whereType<NoteDto>());
-        final folderWithNotes = response.data!.folder.copyWith(notes: notes);
-        // _local.storeFolder(folderWithNotes);
-        return right(folderWithNotes.toDomain);
+        final folder = response.data!.folder.toDomain;
+        final notes = response.data!.notes.map((n) => n?.toDomain).toList();
+        final folderWithNotes = folder.copyWith(notes: notes);
+        return Right(folderWithNotes);
       } on DioException catch (e) {
         if (CancelToken.isCancel(e)) {
-          return left(const NoteException.message('Request cancelled'));
+          return const Left(NoteExceptionWithMessage('Request cancelled'));
         } else if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -294,10 +281,7 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      // final folderDto = await _local.getFolder(folderId);
-      // final folder = folderDto?.toDomain;
-      // return right(folder);
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.getFolder(
@@ -305,13 +289,12 @@ class NoteFacade implements INoteFacade {
           keywords: keywords,
           pinned: pinned,
         );
-        final folderResponse = response.data;
-        return right(folderResponse!.folder.toDomain);
+        return Right(response.data?.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -320,21 +303,18 @@ class NoteFacade implements INoteFacade {
   @override
   Future<Either<NoteException, Note?>> readNote(String noteId) async {
     if (!(await _network.isConnected)) {
-      // final noteDto = await _local.getNote(noteId);
-      // final note = noteDto?.toDomain;
-      // return right(note);
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.getNote(noteId);
         final dto = response.data;
         final note = dto?.toDomain;
-        return right(note);
+        return Right(note);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -347,19 +327,19 @@ class NoteFacade implements INoteFacade {
   }) async {
     if (!(await _network.isConnected)) {
       // how to remove item from folder on ObjectBox
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         await _remote.removeNoteFromFolder(
           noteId: noteId.getOrCrash(),
           folderId: folderId.getOrCrash(),
         );
-        return right(unit);
+        return const Right(unit);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }
@@ -371,26 +351,21 @@ class NoteFacade implements INoteFacade {
     bool? pinned,
   }) async {
     if (!(await _network.isConnected)) {
-      // final dto = await _local.getFolder(id);
-      // final titleValue = title?.getOrCrash() ?? dto!.title;
-      // final updatedDto = dto?.copyWith(title: titleValue, pinned: pinned);
-      // final folder = updatedDto!.toDomain;
-      // return right(folder);
-      return left(const NoteException.networkError());
+      return const Left(NoteNetworkException());
     } else {
       try {
         final response = await _remote.updateFolder(
           folderId: folder.id.getOrCrash(),
-          title: folder.title.value.getOrElse(() => 'Unknown folder'),
+          title: folder.title.getOrCrash(),
           pinned: pinned,
         );
         final dto = response.data;
-        return right(dto!.toDomain);
+        return Right(dto!.toDomain);
       } on DioException catch (e) {
         if (e.message != null) {
-          return left(NoteException.message(e.message!));
+          return Left(NoteExceptionWithMessage(e.message!));
         } else {
-          return left(const NoteException.unknownError());
+          return const Left(NoteUnknownException());
         }
       }
     }

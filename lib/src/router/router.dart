@@ -64,7 +64,7 @@ final router = GoRouter(
         create: (context) => FolderBloc(
           facade: di<INoteFacade>(),
           folder: state.extra! as Folder,
-        )..add(const GetFolderNotes()),
+        )..add(const FolderGetFolderNotesRequested()),
         child: const FolderPage(),
       ),
     ),
@@ -98,11 +98,11 @@ final router = GoRouter(
     GoRoute(
       path: Routes.noteEditor,
       builder: (context, state) {
-        final note = state.extra as Note? ?? Note.empty();
+        final note = state.extra as Note? ?? Note.empty;
         return BlocProvider(
           create: (_) => NoteEditorBloc(
             facade: di<INoteFacade>(),
-          )..add(InitializeNoteEditor(note)),
+          )..add(NoteEditorInitializeRequested(note)),
           child: NoteEditorPage(note: note),
         );
       },
@@ -112,7 +112,7 @@ final router = GoRouter(
       builder: (context, state) => BlocProvider(
         create: (_) => NotificationsBloc(
           facade: di<INotificationFacade>(),
-        )..add(const GetNotifications()),
+        )..add(const NotificationsFetchRequested()),
         child: const NotificationsPage(),
       ),
     ),
@@ -231,13 +231,13 @@ final router = GoRouter(
       path: Routes.folderFormModal,
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) {
-        final folder = state.extra as Folder? ?? Folder.empty();
+        final folder = state.extra as Folder? ?? Folder.empty;
         return ModalPage<dynamic>(
           isScrollControlled: true,
           child: BlocProvider(
             create: (_) => FolderFormBloc(
               facade: di<INoteFacade>(),
-            )..add(InitializeFolderForm(folder)),
+            )..add(FolderFormInitializeRequested(folder)),
             child: CreateFolderModal(initialFolder: folder),
           ),
         );
@@ -433,11 +433,11 @@ final router = GoRouter(
                   parentNavigatorKey: notesTabKey,
                   path: Routes.notesTabEditor,
                   builder: (context, state) {
-                    final note = state.extra as Note? ?? Note.empty();
+                    final note = state.extra as Note? ?? Note.empty;
                     return BlocProvider(
                       create: (_) => NoteEditorBloc(
                         facade: di<INoteFacade>(),
-                      )..add(InitializeNoteEditor(note)),
+                      )..add(NoteEditorInitializeRequested(note)),
                       child: NoteEditorPage(note: note),
                     );
                   },
@@ -483,13 +483,13 @@ final router = GoRouter(
             StatefulShellRoute(
               builder: (context, state, navigationShell) => navigationShell,
               navigatorContainerBuilder: (context, navigationShell, children) {
-                final f = di<INoteFacade>();
+                final facade = di<INoteFacade>();
                 return MultiBlocProvider(
                   providers: [
                     BlocProvider(
                       create: (_) => FolderBloc(
-                        facade: f,
-                        folder: Folder.empty(),
+                        facade: facade,
+                        folder: Folder.empty,
                       ),
                     ),
                   ],

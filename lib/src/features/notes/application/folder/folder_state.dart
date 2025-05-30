@@ -1,11 +1,32 @@
 part of 'folder_bloc.dart';
 
-@freezed
-class FolderState with _$FolderState {
-  const factory FolderState({
-    required Folder folder,
-    @Default([]) List<Note?> notes,
-    @Default(false) bool isLoadingNotes,
+final class FolderState with EquatableMixin {
+  const FolderState({
+    required this.folder,
+    this.notes = const <Note?>[],
+    this.isLoadingNotes = false,
+    this.exception,
+  });
+
+  final Folder folder;
+  final List<Note?> notes;
+  final bool isLoadingNotes;
+  final NoteException? exception;
+
+  @override
+  List<Object?> get props => [folder, notes, isLoadingNotes, exception];
+  
+  FolderState copyWith({
+    Folder? folder,
+    List<Note?>? notes,
+    bool? isLoadingNotes,
     NoteException? exception,
-  }) = _FolderState;
+  }) {
+    return FolderState(
+      folder: folder ?? this.folder,
+      notes: notes ?? this.notes,
+      isLoadingNotes: isLoadingNotes ?? this.isLoadingNotes,
+      exception: exception ?? this.exception,
+    );
+  }
 }

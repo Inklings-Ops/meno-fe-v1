@@ -1,78 +1,97 @@
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-part 'note_editor_bloc.freezed.dart';
 part 'note_editor_event.dart';
 part 'note_editor_state.dart';
 
 class NoteEditorBloc extends Bloc<NoteEditorEvent, NoteEditorState> {
   NoteEditorBloc({required INoteFacade facade})
       : _facade = facade,
-        super(NoteLoaded(Note.empty())) {
-    on<InitializeNoteEditor>(_onInit);
-    on<NoteTitleChanged>(_onTitleChanged);
-    on<NoteContentChanged>(_onContentChanged);
-    on<NoteSaveRequested>(_onNoteSaveRequested);
-    on<NoteEditorExited>(_onExited);
+        super(NoteEditorLoadSuccess(Note.empty)) {
+    on<NoteEditorInitializeRequested>(_onInit);
+    on<NoteEditorTitleChanged>(_onTitleChanged);
+    on<NoteEditorContentChanged>(_onContentChanged);
+    on<NoteEditorSaveRequested>(_onNoteSaveRequested);
+    on<NoteEditorExitRequested>(_onExited);
   }
 
   final INoteFacade _facade;
 
   bool get isNoteEmpty {
-    return state.maybeWhen(
-      orElse: () => true,
-      loaded: (note) => !(note.title.isValid && note.content.isValid),
-    );
+    return switch (state) {
+      NoteEditorLoadSuccess(:final note) =>
+        !(note.title.isValid && note.content.isValid),
+      _ => false
+    };
   }
 
   bool get isDoneEditingAndValid {
-    return state.maybeWhen(
-      orElse: () => false,
-      loaded: (note) => note.uid.isValid && note.title.isValid,
-    );
+    return switch (state) {
+      NoteEditorLoadSuccess(:final note) =>
+        note.id.isValid && note.title.isValid,
+      _ => false
+    };
   }
 
-  void _onInit(InitializeNoteEditor event, Emitter<NoteEditorState> emit) {
-    return emit(NoteLoaded(event.note));
+  void _onInit(
+    NoteEditorInitializeRequested event,
+    Emitter<NoteEditorState> emit,
+  ) {
+    return emit(NoteEditorLoadSuccess(event.note));
   }
 
-  void _onTitleChanged(NoteTitleChanged event, Emitter<NoteEditorState> emit) {
-    if (state is! NoteLoaded) return;
-    final note = (state as NoteLoaded).note.copyWith(title: event.title);
-    return emit(NoteLoaded(note));
+  void _onTitleChanged(
+    NoteEditorTitleChanged event,
+    Emitter<NoteEditorState> emit,
+  ) {
+    if (state is! NoteEditorLoadSuccess) return;
+    final note =
+        (state as NoteEditorLoadSuccess).note.copyWith(title: event.title);
+    return emit(NoteEditorLoadSuccess(note));
   }
 
   void _onContentChanged(
-    NoteContentChanged event,
+    NoteEditorContentChanged event,
     Emitter<NoteEditorState> emit,
   ) {
-    if (state is! NoteLoaded) return;
-    final note = (state as NoteLoaded).note.copyWith(content: event.content);
-    return emit(NoteLoaded(note));
+    if (state is! NoteEditorLoadSuccess) return;
+    final note = (state as NoteEditorLoadSuccess).note.copyWith(
+          content: event.content,
+        );
+    return emit(NoteEditorLoadSuccess(note));
   }
 
   Future<void> _onNoteSaveRequested(
-    NoteSaveRequested event,
+    NoteEditorSaveRequested event,
     Emitter<NoteEditorState> emit,
   ) async {
-    if (state is NoteSaveInProgress) return;
+    if (state is NoteEditorSaveInProgress) return;
 
-    if (state is NoteLoaded) {
-      final note = (state as NoteLoaded).note;
+    if (state is NoteEditorLoadSuccess) {
+      final note = (state as NoteEditorLoadSuccess).note;
 
-      emit(const NoteSaveInProgress());
+      emit(const NoteEditorSaveInProgress());
 
       if (note.title.isValid) {
-        final failureOrNote = note.uid.isValid
+        final failureOrNote = note.id.isValid
             ? await _facade.updateNote(note: note)
             : await _facade.createNote(note);
 
-        emit(failureOrNote.fold(NoteEditorFailure.new, NoteSaved.new));
+        emit(
+          failureOrNote.fold(
+            NoteEditorFailure.new,
+            NoteEditorSaveSuccess.new,
+          ),
+        );
       }
     }
   }
 
-  void _onExited(NoteEditorExited event, Emitter<NoteEditorState> emit) {}
+  void _onExited(
+    NoteEditorExitRequested event,
+    Emitter<NoteEditorState> emit,
+  ) {}
 }

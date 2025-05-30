@@ -1,19 +1,25 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'note_meta_data.freezed.dart';
 part 'note_meta_data.g.dart';
 
-@freezed
-@JsonSerializable(explicitToJson: true, createFactory: false)
-class NoteMetaData with _$NoteMetaData {
-  factory NoteMetaData({
-    required int totalPages,
-    required int currentPage,
-    required int totalItems,
-  }) = _NoteMetaData;
+@JsonSerializable()
+class NoteMetaData with EquatableMixin {
+  const NoteMetaData({
+    required this.totalPages,
+    required this.currentPage,
+    required this.totalItems,
+  });
 
   factory NoteMetaData.fromJson(Map<String, dynamic> json) =>
       _$NoteMetaDataFromJson(json);
-  @override
+
+  final int totalPages;
+  final int currentPage;
+  final int totalItems;
+
   Map<String, dynamic> toJson() => _$NoteMetaDataToJson(this);
+
+  @override
+  List<Object?> get props => [totalPages, currentPage, totalItems];
 }

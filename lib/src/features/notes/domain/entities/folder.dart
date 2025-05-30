@@ -1,23 +1,56 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
 import 'package:meno_fe_v1/src/shared/value_objects/value_objects.dart';
 
-part 'folder.freezed.dart';
+class Folder with EquatableMixin implements IEntity {
+  const Folder({
+    required this.id,
+    required this.title,
+    this.numberOfNotes,
+    this.pinned,
+    this.createdAt,
+    this.notes = const <Note?>[],
+  });
 
-@freezed
-class Folder with _$Folder {
-  factory Folder({
-    required ID id,
-    required SingleLineString title,
-    int? dbId,
+  @override
+  final ID id;
+
+  final SingleLineString title;
+  final int? numberOfNotes;
+  final bool? pinned;
+  final DateTime? createdAt;
+  final List<Note?> notes;
+
+  static Folder empty = Folder(
+    id: ID.fromString(''),
+    title: SingleLineString(''),
+  );
+
+  @override
+  List<Object?> get props => [
+        id,
+        title,
+        numberOfNotes,
+        pinned,
+        createdAt,
+        notes,
+      ];
+
+  Folder copyWith({
+    ID? id,
+    SingleLineString? title,
     int? numberOfNotes,
     bool? pinned,
     DateTime? createdAt,
-    @Default([]) List<Note?> notes,
-  }) = _Folder;
-
-  factory Folder.empty() => Folder(
-        id: ID.fromString(''),
-        title: SingleLineString(''),
-      );
+    List<Note?>? notes,
+  }) {
+    return Folder(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      numberOfNotes: numberOfNotes ?? this.numberOfNotes,
+      pinned: pinned ?? this.pinned,
+      createdAt: createdAt ?? this.createdAt,
+      notes: notes ?? this.notes,
+    );
+  }
 }

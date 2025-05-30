@@ -23,7 +23,9 @@ class NewFolderActionButton extends StatelessWidget {
               onTap: () async {
                 final bloc = context.read<FoldersBloc>();
                 final fld = await router.push<Folder?>(Routes.folderFormModal);
-                if (fld != null) return bloc.add(UpdateFolderList(fld));
+                if (fld != null) {
+                  return bloc.add(FoldersUpdateFoldersRequested(fld));
+                }
               },
               child: Row(
                 children: [

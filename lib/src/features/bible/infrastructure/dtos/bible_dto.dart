@@ -1,18 +1,24 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+// ignore_for_file: must_be_immutable
+
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/entities/bible.dart';
 import 'package:meno_fe_v1/src/features/bible/infrastructure/dtos/verse_dto.dart';
 import 'package:objectbox/objectbox.dart';
 
-part 'bible_dto.freezed.dart';
+@Entity()
+final class BibleDto with EquatableMixin {
+  BibleDto({required this.translation, required this.verses});
 
-@Freezed(addImplicitFinal: false)
-class BibleDto with _$BibleDto {
-  @Entity(realClass: BibleDto)
-  factory BibleDto({
-    @Unique() required String translation,
-    required ToMany<VerseDto> verses,
-    @Id() int? id,
-  }) = _BibleDto;
+  @Id()
+  int? id;
+
+  @Unique()
+  final String translation;
+
+  final ToMany<VerseDto> verses;
+
+  @override
+  List<Object?> get props => [translation, verses, id];
 }
 
 extension BibleDtoX on BibleDto {

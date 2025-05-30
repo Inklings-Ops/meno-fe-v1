@@ -18,7 +18,7 @@ class _FolderSearchBoxState extends State<FolderSearchBox> {
   }
 
   void _onSearchChanged(String query) {
-    context.read<FoldersBloc>().add(FolderSearchChanged(query));
+    context.read<FoldersBloc>().add(FoldersSearchKeywordsChanged(query));
   }
 
   @override

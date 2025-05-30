@@ -18,7 +18,7 @@ class _NoteSearchBoxState extends State<NoteSearchBox> {
   }
 
   void _onSearchChanged(String query) {
-    context.read<NotesBloc>().add(SearchChanged(query));
+    context.read<NotesBloc>().add(NotesSearchKeywordChanged(query));
   }
 
   @override

@@ -3,21 +3,53 @@ part of 'notes_bloc.dart';
 // Add status enum for finer control
 enum NotesStatus { initial, loading, loadingMore, loadSuccess, failure }
 
-@freezed
-class NotesState with _$NotesState {
-  const factory NotesState({
-    @Default(NotesStatus.initial) NotesStatus status,
-    @Default([]) List<Note?> notes,
-    @Default(0) int currentPage,
-    @Default(20) int pageSize,
-    @Default(false) bool hasReachedMax,
+final class NotesState with EquatableMixin {
+  const NotesState({
+    this.notes = const <Note?>[],
+    this.status = NotesStatus.initial,
+    this.currentPage = 0,
+    this.pageSize = 20,
+    this.hasReachedMax = false,
+    this.currentKeywords,
+    this.failure,
+  });
+
+  final List<Note?> notes;
+  final NotesStatus status;
+  final int currentPage;
+  final int pageSize;
+  final bool hasReachedMax;
+  final String? currentKeywords;
+  final NoteException? failure;
+
+  NotesState copyWith({
+    List<Note?>? notes,
+    NotesStatus? status,
+    int? currentPage,
+    int? pageSize,
+    bool? hasReachedMax,
     String? currentKeywords,
     NoteException? failure,
-  }) = _NotesState;
+  }) {
+    return NotesState(
+      notes: notes ?? this.notes,
+      status: status ?? this.status,
+      currentPage: currentPage ?? this.currentPage,
+      pageSize: pageSize ?? this.pageSize,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      currentKeywords: currentKeywords ?? this.currentKeywords,
+      failure: failure ?? this.failure,
+    );
+  }
 
-  // Keep old factories for potential compatibility or remove if unused
-  // const factory NotesState.initial() = NotesInitial;
-  // const factory NotesState.loadInProgress() = NotesLoadInProgress;
-  // const factory NotesState.loadSuccess(List<Note?> notes) = NotesLoadSuccess;
-  // const factory NotesState.failure(NoteException failure) = NotesFailure;
+  @override
+  List<Object?> get props => [
+        notes,
+        status,
+        currentPage,
+        pageSize,
+        hasReachedMax,
+        currentKeywords,
+        failure,
+      ];
 }

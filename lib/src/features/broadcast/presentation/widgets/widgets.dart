@@ -17,7 +17,6 @@ export 'live_bible_tab.dart';
 export 'live_broadcast_card.dart';
 export 'live_chat_tab.dart';
 export 'live_notes_tab.dart';
-export 'live_scaffold.dart';
 export 'now_live_list_widget.dart';
 export 'participant_info_modal.dart';
 export 'participant_item.dart';

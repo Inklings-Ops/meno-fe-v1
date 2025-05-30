@@ -100,7 +100,7 @@ class _NoteEditorWidgetState extends State<NoteEditorWidget> {
       final con = jsonEncode(contentController.document.toDelta().toJson());
       context
           .read<NoteEditorBloc>()
-          .add(NoteContentChanged(MultiLineString(con)));
+          .add(NoteEditorContentChanged(MultiLineString(con)));
     });
   }
 

@@ -1,18 +1,40 @@
 part of 'note_editor_bloc.dart';
 
-@freezed
-class NoteEditorEvent with _$NoteEditorEvent {
-  const factory NoteEditorEvent.initialize(Note note) = InitializeNoteEditor;
+sealed class NoteEditorEvent with EquatableMixin {
+  const NoteEditorEvent();
 
-  const factory NoteEditorEvent.titleChanged(
-    SingleLineString title,
-  ) = NoteTitleChanged;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory NoteEditorEvent.contentChanged(
-    MultiLineString content,
-  ) = NoteContentChanged;
+final class NoteEditorInitializeRequested extends NoteEditorEvent {
+  const NoteEditorInitializeRequested(this.note);
+  final Note note;
 
-  const factory NoteEditorEvent.saveRequested() = NoteSaveRequested;
+  @override
+  List<Object?> get props => [note];
+}
 
-  const factory NoteEditorEvent.exited() = NoteEditorExited;
+final class NoteEditorTitleChanged extends NoteEditorEvent {
+  const NoteEditorTitleChanged(this.title);
+  final SingleLineString title;
+
+  @override
+  List<Object?> get props => [title];
+}
+
+final class NoteEditorContentChanged extends NoteEditorEvent {
+  const NoteEditorContentChanged(this.content);
+  final MultiLineString content;
+
+  @override
+  List<Object?> get props => [content];
+}
+
+final class NoteEditorSaveRequested extends NoteEditorEvent {
+  const NoteEditorSaveRequested();
+}
+
+final class NoteEditorExitRequested extends NoteEditorEvent {
+  const NoteEditorExitRequested();
 }

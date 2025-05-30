@@ -1,58 +1,70 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'package:bloc/bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 
-part 'notes_watcher_bloc.freezed.dart';
 part 'notes_watcher_event.dart';
 part 'notes_watcher_state.dart';
 
 class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
   NotesWatcherBloc({required INoteFacade facade})
       : _facade = facade,
-        super(const NoteWatcherInitial()) {
-    on<DeleteNote>(_onDeleteNote);
-    on<DeleteFolder>(_onDeleteFolder);
-    on<AddNoteToFolder>(_onAddNoteToFolder);
-    on<RemoveNoteFromFolder>(_onRemoveNoteFromFolder);
+        super(const NotesWatcherInitial()) {
+    on<NotesWatcherDeleteNoteRequested>(_onDeleteNote);
+    on<NotesWatcherDeleteFolderRequested>(_onDeleteFolder);
+    on<NotesWatcherAddNoteToFolderRequested>(_onAddNoteToFolder);
+    on<NotesWatcherRemoveNoteToFolderRequested>(_onRemoveNoteFromFolder);
   }
 
   final INoteFacade _facade;
 
   Future<void> _onDeleteNote(
-    DeleteNote event,
+    NotesWatcherDeleteNoteRequested event,
     Emitter<NotesWatcherState> emit,
   ) async {
-    emit(const NoteWatcherLoading());
-    final fOrU = await _facade.deleteNote(event.note.uid);
-    emit(fOrU.fold(NoteWatcherFailed.new, (_) => NoteDeleted(event.note)));
+    emit(const NotesWatcherLoadInProgress());
+    final fOrU = await _facade.deleteNote(event.note.id);
+    emit(
+      fOrU.fold(
+        NotesWatcherLoadFailed.new,
+        (_) => NotesWatcherNoteDeleted(event.note),
+      ),
+    );
   }
 
   Future<void> _onDeleteFolder(
-    DeleteFolder event,
+    NotesWatcherDeleteFolderRequested event,
     Emitter<NotesWatcherState> emit,
   ) async {
-    emit(const NoteWatcherLoading());
+    emit(const NotesWatcherLoadInProgress());
     final fOrU = await _facade.deleteFolder(event.folder.id);
-    emit(fOrU.fold(NoteWatcherFailed.new, (_) => FolderDeleted(event.folder)));
+    emit(
+      fOrU.fold(
+        NotesWatcherLoadFailed.new,
+        (_) => NotesWatcherFolderDeleted(event.folder),
+      ),
+    );
   }
 
   Future<void> _onAddNoteToFolder(
-    AddNoteToFolder event,
+    NotesWatcherAddNoteToFolderRequested event,
     Emitter<NotesWatcherState> emit,
   ) async {
-    emit(const NoteWatcherLoading());
+    emit(const NotesWatcherLoadInProgress());
 
     final result = await _facade.addNoteToFolder(
-      noteId: event.note.uid,
+      noteId: event.note.id,
       folderId: event.folder.id,
     );
 
     emit(
       result.fold(
-        NoteWatcherFailed.new,
+        NotesWatcherLoadFailed.new,
         (note) {
           final folderNotes = List<Note?>.from(event.folder.notes);
-          final index = folderNotes.indexWhere((n) => n?.uid == note.uid);
+          final index = folderNotes.indexWhere((n) => n?.id == note.id);
           if (index == -1) {
             folderNotes.add(note);
           } else {
@@ -62,33 +74,33 @@ class NotesWatcherBloc extends Bloc<NotesWatcherEvent, NotesWatcherState> {
             notes: folderNotes,
             numberOfNotes: folderNotes.length,
           );
-          return NoteAddedToFolder(note: note, folder: folder);
+          return NotesWatcherNoteAddedToFolder(note, folder);
         },
       ),
     );
   }
 
   Future<void> _onRemoveNoteFromFolder(
-    RemoveNoteFromFolder event,
+    NotesWatcherRemoveNoteToFolderRequested event,
     Emitter<NotesWatcherState> emit,
   ) async {
-    emit(const NoteWatcherLoading());
+    emit(const NotesWatcherLoadInProgress());
 
     final result = await _facade.removeNoteFromFolder(
-      noteId: event.note.uid,
+      noteId: event.note.id,
       folderId: event.folder.id,
     );
 
     emit(
       result.fold(
-        NoteWatcherFailed.new,
+        NotesWatcherLoadFailed.new,
         (_) {
           final folderNotes = List<Note?>.from(event.folder.notes);
           folderNotes.remove(event.note);
 
           final note = event.note.copyWith(folder: null);
           final folder = event.folder.copyWith(notes: folderNotes);
-          return NoteRemovedFromFolder(note: note, folder: folder);
+          return NotesWatcherNoteRemovedFromFolder(note, folder);
         },
       ),
     );

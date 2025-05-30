@@ -29,7 +29,7 @@ class FolderNotesList extends StatelessWidget {
   Future<void> _onNoteTap(BuildContext context, Note note) async {
     final bloc = context.read<NotesBloc>();
     final newNote = await router.push<Note?>(Routes.noteEditor, extra: note);
-    if (newNote != null) return bloc.add(NoteReceived(newNote));
+    if (newNote != null) return bloc.add(NotesNoteReceived(newNote));
   }
 
   Future<void> _onOptionsTap(Note note, Folder folder) async {
@@ -75,7 +75,9 @@ class _FailureWidget extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                context.read<FolderBloc>().add(const GetFolderNotes());
+                context
+                    .read<FolderBloc>()
+                    .add(const FolderGetFolderNotesRequested());
               },
             ),
           ),

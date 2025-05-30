@@ -5,5 +5,3 @@ export 'dtos/notification_content_dto.dart';
 export 'dtos/notification_data_dto.dart';
 export 'dtos/notification_dto.dart';
 export 'notification_facade.dart';
-export 'responses/notification_response.dart';
-export 'responses/responses.dart';

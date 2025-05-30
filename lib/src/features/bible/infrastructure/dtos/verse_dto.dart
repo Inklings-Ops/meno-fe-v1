@@ -1,25 +1,24 @@
-// ignore_for_file: invalid_annotation_target
+// ignore_for_file: must_be_immutable
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meno_fe_v1/src/features/bible/domain/entities/verse.dart';
 import 'package:objectbox/objectbox.dart';
 
-part 'verse_dto.freezed.dart';
 part 'verse_dto.g.dart';
 
-@Freezed(addImplicitFinal: false)
-@JsonSerializable(createFactory: false)
-class VerseDto with _$VerseDto {
-  @Entity(realClass: VerseDto)
-  factory VerseDto({
-    @JsonKey(name: 'book_id') required String book,
-    @JsonKey(name: 'book_name') required String bookName,
-    required int chapter,
-    required String text,
-    required int verse,
-    @Id(assignable: true) int? id,
-    String? translation,
-  }) = _VerseDto;
+@Entity()
+@JsonSerializable()
+final class VerseDto with EquatableMixin {
+  VerseDto({
+    required this.book,
+    required this.bookName,
+    required this.chapter,
+    required this.text,
+    required this.verse,
+    this.id,
+    this.translation,
+  });
 
   factory VerseDto.fromJson(Map<String, dynamic> json) =>
       _$VerseDtoFromJson(json);
@@ -29,8 +28,52 @@ class VerseDto with _$VerseDto {
     return decodedVerseDto.copyWith(translation: trans);
   }
 
-  @override
+  @Id(assignable: true)
+  int? id;
+
+  @JsonKey(name: 'book_id')
+  final String book;
+
+  @JsonKey(name: 'book_name')
+  final String bookName;
+
+  final int chapter;
+  final String text;
+  final int verse;
+  final String? translation;
+
+  VerseDto copyWith({
+    int? id,
+    String? book,
+    String? bookName,
+    int? chapter,
+    String? text,
+    int? verse,
+    String? translation,
+  }) {
+    return VerseDto(
+      id: id ?? this.id,
+      book: book ?? this.book,
+      bookName: bookName ?? this.bookName,
+      chapter: chapter ?? this.chapter,
+      text: text ?? this.text,
+      verse: verse ?? this.verse,
+      translation: translation ?? this.translation,
+    );
+  }
+
   Map<String, dynamic> toJson() => _$VerseDtoToJson(this);
+
+  @override
+  List<Object?> get props => [
+        id,
+        book,
+        bookName,
+        chapter,
+        text,
+        verse,
+        translation,
+      ];
 }
 
 extension VerseDtoX on VerseDto {

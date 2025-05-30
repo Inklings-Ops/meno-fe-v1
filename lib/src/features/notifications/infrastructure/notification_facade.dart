@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:meno_fe_v1/src/core/exceptions/notification_exception.dart';
+import 'package:meno_fe_v1/src/core/response/response.dart' show PaginatedList;
 import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 import 'package:meno_fe_v1/src/services/network_service.dart';
 
@@ -15,26 +17,35 @@ class NotificationFacade implements INotificationFacade {
   final NetworkService _network;
 
   @override
-  Future<Either<NotificationException, List<Notification?>>> getNotifications({
+  Future<Either<NotificationException, PaginatedList<Notification?>>>
+      getNotifications({
     int? page,
     int? size,
   }) async {
     if (!(await _network.isConnected)) {
-      return left(const NotificationException.networkError());
+      return const Left(NotificationNetworkException());
     }
 
     try {
-      var sortedList = <Notification?>[];
+      var sortedList = <NotificationDto?>[];
       final response = await _remote.getNotifications(page: page, size: size);
-      final notifications = response.data?.toDomain.notifications;
-
-      if (notifications?.isNotEmpty ?? false) {
-        sortedList = notifications!.toList()
+      final data = response.data!;
+      final notifications = data.notifications;
+      if (notifications.isNotEmpty) {
+        sortedList = notifications.toList()
           ..sort((a, b) => b!.createdAt!.compareTo(a!.createdAt!));
       }
-      return right(sortedList);
+
+      final paginatedList = PaginatedList(
+        items: sortedList.map((dto) => dto?.toDomain).toList(),
+        currentPage: data.currentPage,
+        totalItems: data.totalItems,
+        totalPages: data.totalPages,
+      );
+
+      return Right(paginatedList);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? 'Error'));
+      return Left(NotificationExceptionWithMessage(e.message ?? 'Error'));
     }
   }
 
@@ -43,14 +54,14 @@ class NotificationFacade implements INotificationFacade {
     String id,
   ) async {
     if (!(await _network.isConnected)) {
-      return left(const NotificationException.networkError());
+      return const Left(NotificationNetworkException());
     }
 
     try {
       await _remote.deleteNotification(id);
-      return right(unit);
+      return const Right(unit);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? 'Error'));
+      return Left(NotificationExceptionWithMessage(e.message ?? 'Error'));
     }
   }
 
@@ -59,14 +70,14 @@ class NotificationFacade implements INotificationFacade {
     String id,
   ) async {
     if (!(await _network.isConnected)) {
-      return left(const NotificationException.networkError());
+      return const Left(NotificationNetworkException());
     }
 
     try {
       await _remote.updateNotification(id);
-      return right(unit);
+      return const Right(unit);
     } on DioException catch (e) {
-      return left(NotificationException.message(e.message ?? 'Error'));
+      return Left(NotificationExceptionWithMessage(e.message ?? 'Error'));
     }
   }
 }

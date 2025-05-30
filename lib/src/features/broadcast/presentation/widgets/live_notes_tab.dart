@@ -42,7 +42,7 @@ class LiveNotesTab extends HookWidget {
               onPressed: () async {
                 final bloc = context.read<NotesBloc>();
                 final n = await router.push<Note?>(Routes.notesTabEditorFull);
-                if (n != null) return bloc.add(NoteReceived(n));
+                if (n != null) return bloc.add(NotesNoteReceived(n));
               },
             ),
           ),

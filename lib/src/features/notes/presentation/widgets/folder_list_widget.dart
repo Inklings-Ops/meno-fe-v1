@@ -10,7 +10,7 @@ class FolderListWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
       child: RefreshIndicator(
-        onRefresh: () async => bloc.add(const GetFoldersRequested()),
+        onRefresh: () async => bloc.add(const FoldersGetFoldersRequested()),
         child: BlocBuilder<FoldersBloc, FoldersState>(
           builder: (context, state) {
             switch (state.status) {

@@ -31,8 +31,8 @@ class MenoBlocListeners extends StatelessWidget {
               case SessionAuthenticated():
                 ctx.read<NowLiveBloc>().add(const NowLiveStarted());
                 ctx.read<RecentlyLiveBloc>().add(const RecentlyLiveStarted());
-                ctx.read<NotesBloc>().add(const GetNotesRequested());
-                ctx.read<FoldersBloc>().add(const GetFoldersRequested());
+                ctx.read<NotesBloc>().add(const NotesFetchNotesRequested());
+                ctx.read<FoldersBloc>().add(const FoldersGetFoldersRequested());
               default:
             }
           },

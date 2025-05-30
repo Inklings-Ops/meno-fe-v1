@@ -1,19 +1,29 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part 'bible_response.freezed.dart';
 part 'bible_response.g.dart';
 
-@Freezed(genericArgumentFactories: true)
-sealed class BibleResponse<T> with _$BibleResponse<T> {
-  const factory BibleResponse({
-    required T data,
-    String? message,
-    bool? success,
-  }) = _BibleResponse;
+@JsonSerializable(genericArgumentFactories: true)
+final class BibleResponse<T> with EquatableMixin {
+  const BibleResponse({
+    required this.data,
+    this.message,
+    this.success,
+  });
 
   factory BibleResponse.fromJson(
     Map<String, dynamic> json,
     T Function(dynamic) fromJsonT,
   ) =>
       _$BibleResponseFromJson(json, fromJsonT);
+
+  final T data;
+  final String? message;
+  final bool? success;
+
+  Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
+      _$BibleResponseToJson(this, toJsonT);
+
+  @override
+  List<Object?> get props => [data, message, success];
 }

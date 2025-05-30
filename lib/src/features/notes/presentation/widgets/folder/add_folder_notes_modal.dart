@@ -14,15 +14,16 @@ class AddNotesToFolderModal extends HookWidget {
     final selectedNote = useState<Note?>(null);
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          failure: context.showNoteError,
-          noteAddedToFolder: (note, folder) {
-            context.read<NotesBloc>().add(const GetNotesRequested());
-            context.read<FoldersBloc>().add(UpdateFolderList(folder));
+      listener: (ctx, state) {
+        switch (state) {
+          case NotesWatcherLoadFailed(:final exception):
+            ctx.showErrorSnackBar(exception.message);
+          case NotesWatcherNoteAddedToFolder(:final note, :final folder):
+            ctx.read<NotesBloc>().add(const NotesFetchNotesRequested());
+            ctx.read<FoldersBloc>().add(FoldersUpdateFoldersRequested(folder));
             router.pop(note);
-          },
-        );
+          default:
+        }
       },
       child: MModal(
         title: 'Add to Folder',
@@ -35,10 +36,15 @@ class AddNotesToFolderModal extends HookWidget {
             Spaces.verticalLarge,
             MPrimaryButton(
               label: 'Done',
-              loading: watcher.state is NoteWatcherLoading,
+              loading: watcher.state is NotesWatcherLoadInProgress,
               disabled: selectedNote.value == null,
               onPressed: () {
-                watcher.add(AddNoteToFolder(selectedNote.value!, folder));
+                watcher.add(
+                  NotesWatcherAddNoteToFolderRequested(
+                    selectedNote.value!,
+                    folder,
+                  ),
+                );
               },
             ),
           ],
@@ -74,7 +80,9 @@ class _NotesListState extends State<_NotesList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<NotesBloc>().add(const FetchMoreNotes());
+    if (_isBottom) {
+      context.read<NotesBloc>().add(const NotesFetchMoreNotesRequested());
+    }
   }
 
   // Helper to check if scroll position is near the bottom

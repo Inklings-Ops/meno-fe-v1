@@ -4,7 +4,7 @@ import 'package:meno_fe_v1/src/features/features.dart';
 final fakeNotes = List.filled(
   3,
   Note(
-    uid: ID.fromString('uniqueIdStr'),
+    id: ID.fromString('uniqueIdStr'),
     title: SingleLineString(BoneMock.title),
     content: MultiLineString(BoneMock.longParagraph),
     folder: Folder(

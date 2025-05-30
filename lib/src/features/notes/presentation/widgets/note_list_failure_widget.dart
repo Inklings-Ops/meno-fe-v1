@@ -32,7 +32,9 @@ class NoteListFailureWidget extends StatelessWidget {
                 width: 1.50,
               ),
             ),
-            onPressed: () => context.read<NotesBloc>().add(const ReloadNotes()),
+            onPressed: () => context
+                .read<NotesBloc>()
+                .add(const NotesReloadNotesRequested()),
           ),
         ),
       ],

@@ -1,28 +1,66 @@
 part of 'notes_watcher_bloc.dart';
 
-@freezed
-class NotesWatcherState with _$NotesWatcherState {
-  const factory NotesWatcherState.initial() = NoteWatcherInitial;
+sealed class NotesWatcherState with EquatableMixin {
+  const NotesWatcherState();
 
-  const factory NotesWatcherState.loading() = NoteWatcherLoading;
+  @override
+  List<Object?> get props => [];
+}
 
-  const factory NotesWatcherState.noteCreated(Note note) = NoteCreated;
+final class NotesWatcherInitial extends NotesWatcherState {
+  const NotesWatcherInitial();
+}
 
-  const factory NotesWatcherState.noteDeleted(Note note) = NoteDeleted;
+final class NotesWatcherLoadInProgress extends NotesWatcherState {
+  const NotesWatcherLoadInProgress();
+}
 
-  const factory NotesWatcherState.folderDeleted(Folder folder) = FolderDeleted;
+final class NotesWatcherNoteCreated extends NotesWatcherState {
+  const NotesWatcherNoteCreated(this.note);
+  final Note note;
 
-  const factory NotesWatcherState.noteAddedToFolder({
-    required Note note,
-    required Folder folder,
-  }) = NoteAddedToFolder;
+  @override
+  List<Object?> get props => [note];
+}
 
-  const factory NotesWatcherState.noteRemovedFromFolder({
-    required Note note,
-    required Folder folder,
-  }) = NoteRemovedFromFolder;
+final class NotesWatcherNoteDeleted extends NotesWatcherState {
+  const NotesWatcherNoteDeleted(this.note);
+  final Note note;
 
-  const factory NotesWatcherState.failure(
-    NoteException exception,
-  ) = NoteWatcherFailed;
+  @override
+  List<Object?> get props => [note];
+}
+
+final class NotesWatcherNoteAddedToFolder extends NotesWatcherState {
+  const NotesWatcherNoteAddedToFolder(this.note, this.folder);
+  final Note note;
+  final Folder folder;
+
+  @override
+  List<Object?> get props => [note, folder];
+}
+
+final class NotesWatcherNoteRemovedFromFolder extends NotesWatcherState {
+  const NotesWatcherNoteRemovedFromFolder(this.note, this.folder);
+  final Note note;
+  final Folder folder;
+
+  @override
+  List<Object?> get props => [note, folder];
+}
+
+final class NotesWatcherFolderDeleted extends NotesWatcherState {
+  const NotesWatcherFolderDeleted(this.folder);
+  final Folder folder;
+
+  @override
+  List<Object?> get props => [folder];
+}
+
+final class NotesWatcherLoadFailed extends NotesWatcherState {
+  const NotesWatcherLoadFailed(this.exception);
+  final NoteException exception;
+
+  @override
+  List<Object?> get props => [exception];
 }

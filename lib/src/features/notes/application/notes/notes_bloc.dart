@@ -1,10 +1,12 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/notes.dart';
 import 'package:rxdart/rxdart.dart';
 
-part 'notes_bloc.freezed.dart';
 part 'notes_event.dart';
 part 'notes_state.dart';
 
@@ -15,25 +17,33 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     required INoteFacade facade,
   })  : _facade = facade,
         super(const NotesState()) {
-    on<GetNotesRequested>(_onGetNotes, transformer: _debounceAndSwitch());
-    on<FetchMoreNotes>(_onFetchMoreNotes, transformer: _throttleDroppable());
-    on<SearchChanged>(_onSearchChanged);
-    on<ReloadNotes>(_onReload);
-    on<NoteReceived>(_onNoteReceived);
-    on<NoteRemoved>(_onNoteRemoved);
+    on<NotesFetchNotesRequested>(
+      _onGetNotes,
+      transformer: _debounceAndSwitch(),
+    );
+    on<NotesFetchMoreNotesRequested>(
+      _onFetchMoreNotes,
+      transformer: _throttleDroppable(),
+    );
+    on<NotesSearchKeywordChanged>(_onSearchChanged);
+    on<NotesReloadNotesRequested>(_onReload);
+    on<NotesNoteReceived>(_onNoteReceived);
+    on<NotesNoteRemoved>(_onNoteRemoved);
 
-    add(const GetNotesRequested());
+    add(const NotesFetchNotesRequested());
   }
 
   final INoteFacade _facade;
 
-  EventTransformer<GetNotesRequested> _debounceAndSwitch<GetNotesRequested>() {
+  EventTransformer<NotesFetchNotesRequested>
+      _debounceAndSwitch<NotesFetchNotesRequested>() {
     return (events, mapper) => events
         .debounceTime(const Duration(milliseconds: 500))
         .switchMap(mapper);
   }
 
-  EventTransformer<FetchMoreNotes> _throttleDroppable<FetchMoreNotes>() {
+  EventTransformer<NotesFetchMoreNotesRequested>
+      _throttleDroppable<NotesFetchMoreNotesRequested>() {
     return (events, mapper) => events
         .throttleTime(
           const Duration(milliseconds: 300),
@@ -44,7 +54,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   }
 
   Future<void> _onGetNotes(
-    GetNotesRequested event,
+    NotesFetchNotesRequested event,
     Emitter<NotesState> emit,
   ) async {
     final pageToFetch = event.page;
@@ -73,19 +83,18 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           status: NotesStatus.failure,
           failure: failure,
         ),
-        (notes) => state.copyWith(
+        (paginatedList) => state.copyWith(
           status: NotesStatus.loadSuccess,
-          notes: notes,
+          notes: paginatedList.items,
           currentPage: pageToFetch,
-          hasReachedMax: notes.length < state.pageSize,
-          failure: null,
+          hasReachedMax: paginatedList.items.length < state.pageSize,
         ),
       ),
     );
   }
 
   Future<void> _onFetchMoreNotes(
-    FetchMoreNotes event,
+    NotesFetchMoreNotesRequested event,
     Emitter<NotesState> emit,
   ) async {
     if (state.hasReachedMax || state.status == NotesStatus.loadingMore) return;
@@ -110,27 +119,32 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           status: NotesStatus.failure,
           failure: failure,
         ),
-        (newNotes) => state.copyWith(
+        (paginatedList) => state.copyWith(
           status: NotesStatus.loadSuccess,
-          notes: List.of(state.notes)..addAll(newNotes),
+          notes: List.of(state.notes)..addAll(paginatedList.items),
           currentPage: nextPage,
-          hasReachedMax: newNotes.length < state.pageSize,
-          failure: null,
+          hasReachedMax: paginatedList.items.length < state.pageSize,
         ),
       ),
     );
   }
 
-  void _onSearchChanged(SearchChanged event, Emitter<NotesState> emit) {
+  void _onSearchChanged(
+    NotesSearchKeywordChanged event,
+    Emitter<NotesState> emit,
+  ) {
     add(
-      GetNotesRequested(
+      NotesFetchNotesRequested(
         keywords: event.keywords.isEmpty ? null : event.keywords,
         size: state.pageSize,
       ),
     );
   }
 
-  Future<void> _onReload(ReloadNotes event, Emitter<NotesState> emit) async {
+  Future<void> _onReload(
+    NotesReloadNotesRequested event,
+    Emitter<NotesState> emit,
+  ) async {
     emit(
       state.copyWith(
         status: NotesStatus.loading,
@@ -138,37 +152,34 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       ),
     );
 
-    final failureOrNotes = await _facade.getAllNotes(
-      page: 1,
-      size: state.pageSize,
-    );
+    final fOrNotes = await _facade.getAllNotes(page: 1, size: state.pageSize);
 
     emit(
-      failureOrNotes.fold(
+      fOrNotes.fold(
         (failure) => state.copyWith(
           status: NotesStatus.failure,
           failure: failure,
         ),
-        (notes) => state.copyWith(
+        (paginatedList) => state.copyWith(
           status: NotesStatus.loadSuccess,
-          notes: notes,
+          notes: paginatedList.items,
           currentPage: 1,
-          hasReachedMax: notes.length < state.pageSize,
+          hasReachedMax: paginatedList.items.length < state.pageSize,
           failure: null,
         ),
       ),
     );
   }
 
-  void _onNoteRemoved(NoteRemoved event, Emitter<NotesState> emit) {
-    final noteId = event.note.uid;
-    final updatedNotes = state.notes.where((e) => e?.uid != noteId).toList();
+  void _onNoteRemoved(NotesNoteRemoved event, Emitter<NotesState> emit) {
+    final noteId = event.note.id;
+    final updatedNotes = state.notes.where((e) => e?.id != noteId).toList();
     emit(state.copyWith(notes: updatedNotes));
   }
 
-  void _onNoteReceived(NoteReceived event, Emitter<NotesState> emit) {
+  void _onNoteReceived(NotesNoteReceived event, Emitter<NotesState> emit) {
     final updatedNotes = List<Note?>.from(state.notes);
-    final index = updatedNotes.indexWhere((n) => n?.uid == event.note.uid);
+    final index = updatedNotes.indexWhere((n) => n?.id == event.note.id);
 
     if (index == -1) {
       updatedNotes.insert(0, event.note);

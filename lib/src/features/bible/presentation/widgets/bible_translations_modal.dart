@@ -95,7 +95,9 @@ class OnlineBibleTranslationsList extends StatelessWidget {
             key: ObjectKey(translation),
             translation: translation,
             isOffline: false,
-            onDownload: () => bibleDownloader.add(DownloadBible(abbreviation)),
+            onDownload: () => bibleDownloader.add(
+              BibleDownloadRequested(abbreviation),
+            ),
           );
         },
       ),

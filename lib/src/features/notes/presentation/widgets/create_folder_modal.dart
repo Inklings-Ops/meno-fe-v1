@@ -11,14 +11,15 @@ class CreateFolderModal extends StatelessWidget {
 
     return BlocListener<FolderFormBloc, FolderFormState>(
       listenWhen: (previous, current) => previous != current,
-      listener: (context, state) {
-        state.whenOrNull(
-          failure: context.showNoteError,
-          submitted: (folder) {
-            context.read<FoldersBloc>().add(UpdateFolderList(folder));
+      listener: (ctx, state) {
+        switch (state) {
+          case FolderFormSubmitFailed(:final exception):
+            ctx.showErrorSnackBar(exception.message);
+          case FolderFormSubmitSuccess(:final folder):
+            ctx.read<FoldersBloc>().add(FoldersUpdateFoldersRequested(folder));
             router.pop(folder);
-          },
-        );
+          default:
+        }
       },
       child: Padding(
         padding: MediaQuery.viewInsetsOf(context),
@@ -71,16 +72,16 @@ class FolderFormTitleField extends HookWidget {
 
     return BlocConsumer<FolderFormBloc, FolderFormState>(
       listenWhen: (previous, current) => previous != current,
-      listener: (context, state) {
-        bloc.state.whenOrNull(
-          loaded: (folder) {
+      listener: (ctx, state) {
+        switch (state) {
+          case FolderFormLoadSuccess(:final folder):
             if (folder.title.isValid) {
               textController.text = folder.title.getOrCrash();
             } else {
               textController.text = '';
             }
-          },
-        );
+          default:
+        }
       },
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) => TextFormField(
@@ -89,11 +90,14 @@ class FolderFormTitleField extends HookWidget {
         controller: textController,
         textAlign: TextAlign.center,
         enabled: state is! FolderFormSubmitInProgress,
-        onChanged: (value) =>
-            bloc.add(FolderTitleChanged(SingleLineString(value))),
-        validator: (_) => state.whenOrNull(
-          loaded: (folder) => folder.title.failureOrNull?.message,
+        onChanged: (value) => bloc.add(
+          FolderFormTitleChanged(SingleLineString(value)),
         ),
+        validator: (_) => switch (state) {
+          FolderFormLoadSuccess(:final folder) =>
+            folder.title.failureOrNull?.message,
+          _ => null,
+        },
         decoration: InputDecoration(
           hintText: 'Title',
           border: border,
@@ -119,18 +123,19 @@ class _SubmitButton extends StatelessWidget {
     final bloc = context.read<FolderFormBloc>();
     return BlocBuilder<FolderFormBloc, FolderFormState>(
       builder: (context, state) => MPrimaryButton(
-        label: state.maybeWhen(
-          orElse: () => '',
-          failure: (_) => 'Try again',
-          loaded: (f) => f.id.isValid ? 'Rename Folder' : 'Create Folder',
-          submitted: (f) => 'Done',
-        ),
+        label: switch (state) {
+          FolderFormSubmitFailed() => 'Try again',
+          FolderFormLoadSuccess(:final folder) =>
+            folder.id.isValid ? 'Rename Folder' : 'Create Folder',
+          FolderFormSubmitSuccess() => 'Done',
+          _ => '',
+        },
         loading: state is FolderFormSubmitInProgress,
-        disabled: state.maybeWhen(
-          orElse: () => true,
-          loaded: (folder) => !folder.title.isValid,
-        ),
-        onPressed: () => bloc.add(const SubmitFolderForm()),
+        disabled: switch (state) {
+          FolderFormLoadSuccess(:final folder) => !folder.title.isValid,
+          _ => true,
+        },
+        onPressed: () => bloc.add(const FolderFormSubmitRequested()),
       ),
     );
   }

@@ -22,7 +22,9 @@ class NewNoteActionButton extends StatelessWidget {
               onTap: () async {
                 final bloc = context.read<NotesBloc>();
                 final newNote = await router.push<Note?>(Routes.noteEditor);
-                if (newNote != null) return bloc.add(NoteReceived(newNote));
+                if (newNote != null) {
+                  return bloc.add(NotesNoteReceived(newNote));
+                }
               },
               child: Row(
                 children: [

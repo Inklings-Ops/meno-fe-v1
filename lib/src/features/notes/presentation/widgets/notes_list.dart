@@ -43,10 +43,10 @@ class NotesList extends StatelessWidget {
         if (note == null) return const SizedBox.shrink();
 
         return NoteCard(
-          key: ValueKey(note.uid),
+          key: ValueKey(note.id),
           note: note,
           showAddButton: showAddButton,
-          selected: selectedNote?.uid == note.uid,
+          selected: selectedNote?.id == note.id,
           onTap: () async => onNoteTap?.call(note),
           onOptionsTap: () => onOptionTap?.call(note),
         );

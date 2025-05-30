@@ -49,9 +49,13 @@ class SettingsPage extends StatelessWidget {
                     value: bloc.state.themeMode == ThemeMode.dark,
                     onChanged: (value) {
                       if (value) {
-                        bloc.add(const ChangeTheme(ThemeMode.dark));
+                        bloc.add(
+                          const SettingsChangeThemeRequested(ThemeMode.dark),
+                        );
                       } else {
-                        bloc.add(const ChangeTheme(ThemeMode.light));
+                        bloc.add(
+                          const SettingsChangeThemeRequested(ThemeMode.light),
+                        );
                       }
                     },
                   ),
@@ -61,7 +65,9 @@ class SettingsPage extends StatelessWidget {
                   leadingIcon: Icons.pin_outlined,
                   trailing: Switch(
                     value: bloc.state.useLocation,
-                    onChanged: (v) => bloc.add(ToggleLocationServices(v)),
+                    onChanged: (value) => bloc.add(
+                      SettingsToggleLocationServices(value),
+                    ),
                   ),
                   showDivider: false,
                 ),

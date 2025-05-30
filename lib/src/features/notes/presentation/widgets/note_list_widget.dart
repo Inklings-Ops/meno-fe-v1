@@ -37,7 +37,9 @@ class _NoteListWidgetState extends State<NoteListWidget> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<NotesBloc>().add(const FetchMoreNotes());
+    if (_isBottom) {
+      context.read<NotesBloc>().add(const NotesFetchMoreNotesRequested());
+    }
   }
 
   // Helper to check if scroll position is near the bottom
@@ -54,7 +56,7 @@ class _NoteListWidgetState extends State<NoteListWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
       child: RefreshIndicator(
-        onRefresh: () async => bloc.add(const GetNotesRequested()),
+        onRefresh: () async => bloc.add(const NotesFetchNotesRequested()),
         child: BlocBuilder<NotesBloc, NotesState>(
           builder: (context, state) {
             switch (state.status) {
@@ -94,7 +96,7 @@ class _NoteListWidgetState extends State<NoteListWidget> {
       newN = await router.push<Note?>(Routes.noteEditor, extra: note);
     }
 
-    if (newN != null) return bloc.add(NoteReceived(newN));
+    if (newN != null) return bloc.add(NotesNoteReceived(newN));
   }
 
   Future<void> _onOptionsTap(Note note) {

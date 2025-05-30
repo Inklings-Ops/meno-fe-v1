@@ -1,14 +1,15 @@
+// ignore_for_file: avoid_redundant_argument_values
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meno_fe_v1/src/core/exceptions/exceptions.dart';
 import 'package:meno_fe_v1/src/features/bible/bible.dart';
 
 part 'bible_downloader_event.dart';
 part 'bible_downloader_state.dart';
-part 'bible_downloader_bloc.freezed.dart';
 
 class BibleDownloaderBloc
     extends Bloc<BibleDownloaderEvent, BibleDownloaderState> {
@@ -16,9 +17,9 @@ class BibleDownloaderBloc
     required IBibleFacade facade,
   })  : _facade = facade,
         super(const BibleDownloaderState()) {
-    on<DownloadBible>(_onDownloadBible);
-    on<CancelBibleDownload>(_onCancelBibleDownload);
-    on<_UpdateProgress>(_onUpdateProgress);
+    on<BibleDownloadRequested>(_onDownloadBible);
+    on<BibleCancelDownloadRequested>(_onCancelBibleDownload);
+    on<_UpdateDownloadProgress>(_onUpdateProgress);
   }
 
   final IBibleFacade _facade;
@@ -26,13 +27,13 @@ class BibleDownloaderBloc
   StreamSubscription<int>? _progressSubscription;
 
   Future<void> _onDownloadBible(
-    DownloadBible event,
+    BibleDownloadRequested event,
     Emitter<BibleDownloaderState> emit,
   ) async {
     if (state.downloading) return;
     late Either<BibleException, Translation> res;
     _progressSubscription = _facade.downloadBibleProgress.listen(
-      (progress) => add(_UpdateProgress(progress)),
+      (progress) => add(_UpdateDownloadProgress(progress)),
     );
     final translation = event.translation;
     emit(
@@ -55,7 +56,7 @@ class BibleDownloaderBloc
   }
 
   void _onCancelBibleDownload(
-    CancelBibleDownload event,
+    BibleCancelDownloadRequested event,
     Emitter<BibleDownloaderState> emit,
   ) {
     if (!state.downloading) return;
@@ -64,7 +65,7 @@ class BibleDownloaderBloc
   }
 
   void _onUpdateProgress(
-    _UpdateProgress event,
+    _UpdateDownloadProgress event,
     Emitter<BibleDownloaderState> emit,
   ) {
     if (!state.downloading) return;

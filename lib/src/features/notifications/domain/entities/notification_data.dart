@@ -1,15 +1,37 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
+final class NotificationData with EquatableMixin {
+  const NotificationData({
+    required this.notifications,
+    required this.totalPages,
+    required this.currentPage,
+    required this.totalItems,
+  });
 
-part 'notification_data.freezed.dart';
+  final List<Notification?> notifications;
+  final int totalPages;
+  final int currentPage;
+  final int totalItems;
+  NotificationData copyWith({
+    List<Notification?>? notifications,
+    int? totalPages,
+    int? currentPage,
+    int? totalItems,
+  }) {
+    return NotificationData(
+      notifications: notifications ?? this.notifications,
+      totalPages: totalPages ?? this.totalPages,
+      currentPage: currentPage ?? this.currentPage,
+      totalItems: totalItems ?? this.totalItems,
+    );
+  }
 
-@freezed
-class NotificationData with _$NotificationData {
-  const factory NotificationData({
-    required List<Notification?> notifications,
-    required int totalPages,
-    required int currentPage,
-    required int totalItems,
-  }) = _NotificationData;
+  @override
+  List<Object?> get props => [
+        notifications,
+        totalPages,
+        currentPage,
+        totalItems,
+      ];
 }

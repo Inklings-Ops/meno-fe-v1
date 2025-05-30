@@ -53,7 +53,9 @@ class _CreateNewFolderButton extends StatelessWidget {
         onPressed: () async {
           final bloc = context.read<FoldersBloc>();
           final newFolder = await router.push<Folder?>(Routes.folderFormModal);
-          if (newFolder != null) return bloc.add(UpdateFolderList(newFolder));
+          if (newFolder != null) {
+            return bloc.add(FoldersUpdateFoldersRequested(newFolder));
+          }
         },
       ),
     );

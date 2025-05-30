@@ -1,32 +1,32 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meno_fe_v1/src/features/notifications/notifications.dart';
 
-import 'package:meno_fe_v1/src/features/notifications/domain/entities/notification_type.dart';
-import 'package:meno_fe_v1/src/features/notifications/infrastructure/dtos/notification_content_dto.dart';
-
-part 'notification_dto.freezed.dart';
 part 'notification_dto.g.dart';
 
-@freezed
-@JsonSerializable(
-  explicitToJson: true,
-  createFactory: false,
-  includeIfNull: false,
-)
-class NotificationDto with _$NotificationDto {
-  const factory NotificationDto({
-    String? id,
-    NotificationType? type,
-    @Default(false) bool read,
-    NotificationContentDto? content,
-    DateTime? createdAt,
-  }) = _NotificationDto;
+@JsonSerializable()
+class NotificationDto with EquatableMixin {
+  const NotificationDto({
+    this.read = false,
+    this.id,
+    this.type,
+    this.content,
+    this.createdAt,
+  });
 
   factory NotificationDto.fromJson(Map<String, dynamic> json) =>
       _$NotificationDtoFromJson(json);
 
-  @override
+  final String? id;
+  final NotificationType? type;
+  final bool read;
+  final NotificationContentDto? content;
+  final DateTime? createdAt;
+
   Map<String, dynamic> toJson() => _$NotificationDtoToJson(this);
+
+  @override
+  List<Object?> get props => [id, type, read, content, createdAt];
 }
 
 extension NotificationDtoToDomain on NotificationDto {
@@ -40,6 +40,7 @@ extension NotificationDtoToDomain on NotificationDto {
     );
   }
 }
+
 extension NotificationToDto on Notification {
   NotificationDto get toDto {
     return NotificationDto(

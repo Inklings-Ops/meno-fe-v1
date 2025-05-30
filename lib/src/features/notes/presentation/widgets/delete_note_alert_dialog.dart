@@ -13,18 +13,17 @@ class DeleteNoteAlertDialog extends StatelessWidget {
     final watcher = context.watch<NotesWatcherBloc>();
 
     return BlocListener<NotesWatcherBloc, NotesWatcherState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          noteDeleted: (note) {
-            context.read<NotesBloc>().add(NoteRemoved(note));
-            context.read<FoldersBloc>().add(const GetFoldersRequested());
+      listener: (ctx, state) {
+        switch (state) {
+          case NotesWatcherNoteDeleted(:final note):
+            ctx.read<NotesBloc>().add(NotesNoteRemoved(note));
+            ctx.read<FoldersBloc>().add(const FoldersGetFoldersRequested());
             router.pop(true);
-          },
-          failure: (exception) {
-            context.showNoteError(exception);
+          case NotesWatcherLoadFailed(:final exception):
+            ctx.showErrorSnackBar(exception.message);
             router.pop(false);
-          },
-        );
+          default:
+        }
       },
       child: AlertDialog(
         title: MText('Delete Note?', style: textTheme.heading2Regular),
@@ -49,8 +48,10 @@ class DeleteNoteAlertDialog extends StatelessWidget {
             height: 40,
             child: MDangerButton(
               label: 'Delete',
-              loading: watcher.state is NoteWatcherLoading,
-              onPressed: () => watcher.add(DeleteNote(note)),
+              loading: watcher.state is NotesWatcherLoadInProgress,
+              onPressed: () => watcher.add(
+                NotesWatcherDeleteNoteRequested(note),
+              ),
               style: FilledButton.styleFrom(
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               ),

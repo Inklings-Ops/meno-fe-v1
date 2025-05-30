@@ -3,12 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:meno_fe_v1/meno.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/folder.dart';
 import 'package:meno_fe_v1/src/features/notes/domain/entities/note.dart';
-import 'package:meno_fe_v1/src/features/notes/domain/exceptions/note_exception.dart';
 
 abstract class INoteFacade {
-  Stream<List<Note?>> allNotesStream();
-
-  Future<Either<NoteException, List<Note?>>> getAllNotes({
+  Future<Either<NoteException, PaginatedList<Note?>>> getAllNotes({
     String? keywords,
     ID? noteId,
     bool? pinned,
@@ -39,7 +36,7 @@ abstract class INoteFacade {
     required ID folderId,
   });
 
-  Future<Either<NoteException, List<Folder?>>> getAllFolders({
+  Future<Either<NoteException, PaginatedList<Folder?>>> getAllFolders({
     String? title,
     ID? folderId,
     bool? pinned,

@@ -11,36 +11,28 @@ class ObjectBoxService {
     _bibleBox = store.box<BibleDto>();
     _verseBox = store.box<VerseDto>();
     _translationBox = store.box<TranslationDto>();
-    _noteBox = store.box<NoteDto>();
-    _folderBox = store.box<FolderDto>();
-    _noteCreatorBox = store.box<NoteCreatorDto>();
+    // _noteBox = store.box<NoteDto>();
+    // _folderBox = store.box<FolderDto>();
+    // _noteCreatorBox = store.box<NoteCreatorDto>();
   }
 
   late final Store store;
 
   late Box<BibleDto> _bibleBox;
-
   Box<BibleDto> get bibleBox => _bibleBox;
 
   late Box<VerseDto> _verseBox;
-
   Box<VerseDto> get verseBox => _verseBox;
 
   late Box<TranslationDto> _translationBox;
-
   Box<TranslationDto> get translationBox => _translationBox;
 
-  late Box<NoteDto> _noteBox;
-
-  Box<NoteDto> get noteBox => _noteBox;
-
-  late Box<FolderDto> _folderBox;
-
-  Box<FolderDto> get folderBox => _folderBox;
-
-  late Box<NoteCreatorDto> _noteCreatorBox;
-
-  Box<NoteCreatorDto> get noteCreatorBox => _noteCreatorBox;
+  // late Box<NoteDto> _noteBox;
+  // Box<NoteDto> get noteBox => _noteBox;
+  // late Box<FolderDto> _folderBox;
+  // Box<FolderDto> get folderBox => _folderBox;
+  // late Box<NoteCreatorDto> _noteCreatorBox;
+  // Box<NoteCreatorDto> get noteCreatorBox => _noteCreatorBox;
 
   /// Create an instance of ObjectBox to use throughout the app.
   static Future<ObjectBoxService> create() async {

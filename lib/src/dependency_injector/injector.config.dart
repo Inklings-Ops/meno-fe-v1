@@ -57,8 +57,6 @@ import '../features/chat/chat.dart' as _i506;
 import '../features/chat/infrastructure/chat_facade.dart' as _i536;
 import '../features/chat/infrastructure/datasources/chat_remote_datasource.dart'
     as _i922;
-import '../features/notes/infrastructure/datasources/note_local_datasource.dart'
-    as _i933;
 import '../features/notes/infrastructure/datasources/note_remote_datasource.dart'
     as _i309;
 import '../features/notes/infrastructure/note_facade.dart' as _i176;
@@ -133,8 +131,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i549.TimezoneService>(() => _i549.TimezoneService());
     gh.factory<_i664.BibleLocalDatasource>(() =>
         _i664.BibleLocalDatasource(objectBox: gh<_i116.ObjectBoxService>()));
-    gh.factory<_i933.NoteLocalDatasource>(() =>
-        _i933.NoteLocalDatasource(objectBox: gh<_i264.ObjectBoxService>()));
     gh.factory<String>(
       () => registerModule.bibleUrl,
       instanceName: 'bibleUrl',
@@ -212,6 +208,10 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i361.Dio>(),
               baseUrl: gh<String>(instanceName: 'baseUrl'),
             ));
+    gh.factory<_i1042.INoteFacade>(() => _i176.NoteFacade(
+          network: gh<_i264.NetworkService>(),
+          remote: gh<_i1042.NoteRemoteDatasource>(),
+        ));
     gh.factory<_i506.IChatFacade>(() => _i536.ChatFacade(
           remote: gh<_i506.ChatRemoteDatasource>(),
           network: gh<_i264.NetworkService>(),
@@ -220,11 +220,6 @@ extension GetItInjectableX on _i174.GetIt {
           remoteDatasource: gh<_i236.AuthRemoteDatasource>(),
           localDatasource: gh<_i236.AuthLocalDatasource>(),
           networkService: gh<_i264.NetworkService>(),
-        ));
-    gh.factory<_i1042.INoteFacade>(() => _i176.NoteFacade(
-          network: gh<_i264.NetworkService>(),
-          local: gh<_i1042.NoteLocalDatasource>(),
-          remote: gh<_i1042.NoteRemoteDatasource>(),
         ));
     gh.factory<_i652.IBibleFacade>(() => _i442.BibleFacade(
           local: gh<_i652.BibleLocalDatasource>(),

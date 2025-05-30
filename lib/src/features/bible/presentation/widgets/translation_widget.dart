@@ -84,7 +84,9 @@ class _DownloadButton extends StatelessWidget {
                   iconSize: 24,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.download_outlined),
-                  onPressed: () => bloc.add(DownloadBible(abbreviation)),
+                  onPressed: () => bloc.add(
+                    BibleDownloadRequested(abbreviation),
+                  ),
                 ),
         );
       },
@@ -109,7 +111,7 @@ class _ProgressIndicator extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () => bloc.add(const CancelBibleDownload()),
+          onPressed: () => bloc.add(const BibleCancelDownloadRequested()),
           padding: EdgeInsets.zero,
           iconSize: 20,
           style: IconButton.styleFrom(foregroundColor: colors.error),

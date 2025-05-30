@@ -10,7 +10,7 @@ class NotificationsPage extends StatelessWidget {
 
     Future<void> onRefresh() async {
       final notifications = bloc.stream.first;
-      bloc.add(const GetNotifications());
+      bloc.add(const NotificationsFetchRequested());
       await notifications;
     }
 
@@ -19,20 +19,22 @@ class NotificationsPage extends StatelessWidget {
       child: MScaffold(
         appBar: const _AppBar(),
         body: BlocBuilder<NotificationsBloc, NotificationsState>(
-          builder: (context, state) => state.when(
-            empty: () => const Center(child: Text('Nothing to see here')),
-            loading: () => _Content(
-              notifications: fakeNotifications,
-              loading: true,
-            ),
-            loaded: (notifications) => _Content(notifications: notifications),
-            failure: (exception) => Text(
-              exception.maybeWhen(
-                message: (message) => message,
-                orElse: () => "Something's not right",
-              ),
-            ),
-          ),
+          builder: (context, state) {
+            switch (state) {
+              case NotificationsLoadEmpty():
+                return const EmptyListWidget();
+              case NotificationsLoadInProgress():
+                return _Content(
+                  notifications: fakeNotifications,
+                  loading: true,
+                );
+              case NotificationsLoadSuccess(:final notifications):
+                return _Content(notifications: notifications);
+              case NotificationsLoadFailed(:final exception):
+                return Center(child: Text(exception.message));
+            }
+          },
+
         ),
       ),
     );

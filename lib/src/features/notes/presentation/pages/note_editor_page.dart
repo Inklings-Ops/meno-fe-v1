@@ -12,16 +12,16 @@ class NoteEditorPage extends HookWidget {
     final bloc = context.read<NoteEditorBloc>();
 
     return BlocConsumer<NoteEditorBloc, NoteEditorState>(
-      listenWhen: (p, c) => p is NoteSaveInProgress != c is NoteSaveInProgress,
+      listenWhen: (p, c) =>
+          p is NoteEditorSaveInProgress != c is NoteEditorSaveInProgress,
       listener: (context, state) {
-        state.whenOrNull(
-          failure: context.showNoteError,
-          saved: (newNote) {
-            if (note.uid.isValid == false) {
-              return router.pop(newNote);
-            }
-          },
-        );
+        switch (state) {
+          case NoteEditorFailure(:final exception):
+            context.showErrorSnackBar(exception.message);
+          case NoteEditorSaveSuccess(:final note):
+            if (note.id.isValid == false) return router.pop(note);
+          default:
+        }
       },
       builder: (context, state) => PopScope(
         canPop: false,
@@ -33,14 +33,16 @@ class NoteEditorPage extends HookWidget {
           isSaved.value = true;
 
           // Allow popping if no change is made to the note
-          if ((state as NoteLoaded).note == note) return router.pop();
+          if ((state as NoteEditorLoadSuccess).note == note) {
+            return router.pop();
+          }
 
           // Allow popping if the note's title and content are empty, initially
           // or after editing.
           if (bloc.isNoteEmpty) return router.pop();
 
           // Save the note
-          bloc.add(const NoteSaveRequested());
+          bloc.add(const NoteEditorSaveRequested());
 
           // If the note exists, pop the route with the note as result after
           // editing
