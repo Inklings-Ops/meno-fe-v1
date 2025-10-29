@@ -1,0 +1,5 @@
+name: meno
+packages:
+  - apps/meno_app
+  - packages/meno_auth
+  - packages/meno_design_system

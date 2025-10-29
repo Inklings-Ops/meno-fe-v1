@@ -1,0 +1,27 @@
+name: meno_domain
+resolution: workspace
+description: "Contains all Meno shared domain models, entities and value objects."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.9.2
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fpdart: ^1.1.1
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  build_runner: ^2.10.1
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  freezed: ^3.2.3
+  json_serializable: ^6.11.1
+  very_good_analysis: ^10.0.0
+
+flutter:
