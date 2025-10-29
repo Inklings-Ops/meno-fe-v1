@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_domain/meno_domain.dart';
+import 'package:meno_domain/src/converters/converters.dart';
 
 part 'broadcast.freezed.dart';
 
