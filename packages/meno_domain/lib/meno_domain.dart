@@ -1,5 +1,5 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+/// Meno Domain Library for all the domain classes.
+library;
+
+export 'src/exceptions/value_exception.dart';
+export 'src/value_objects/value_object.dart';
