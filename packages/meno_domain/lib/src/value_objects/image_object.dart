@@ -6,7 +6,7 @@ import 'package:meno_domain/meno_domain.dart';
 /// Image Value Object
 final class ImageObject extends ValueObject<String?> {
   /// Factory constructor: Validates eagerly and creates the instance.
-  factory ImageObject(String value, ImageObjectType type) {
+  factory ImageObject(String? value, ImageObjectType type) {
     final validateResult = _validateImage(value, type: type);
     return ImageObject._(validateResult, type);
   }
