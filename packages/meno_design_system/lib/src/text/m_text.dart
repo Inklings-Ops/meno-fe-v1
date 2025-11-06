@@ -367,7 +367,7 @@ class MText extends StatelessWidget {
         color: color,
         decoration: decoration,
         decorationColor: decorationColor,
-        fontSize: effectiveTextStyle.fontSize?.sp ?? fontSize?.sp,
+        fontSize: fontSize?.sp ?? effectiveTextStyle.fontSize?.sp,
         fontWeight: switch (weight) {
           MFontWeight.regular => FontWeight.w400,
           MFontWeight.medium => FontWeight.w500,

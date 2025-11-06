@@ -1,13 +1,19 @@
 import 'package:disco/disco.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meno_domain/meno_domain.dart';
 import 'package:meno_services/meno_services.dart';
 
-final class OnboardingBloc {
-  const OnboardingBloc({required LocalStorage storage}) : _storage = storage;
+@immutable
+final class OnboardingController {
+  const OnboardingController({
+    required LocalStorage storage,
+  }) : _storage = storage;
   final LocalStorage _storage;
 
-  static final provider = Provider<OnboardingBloc>(
-    (context) => OnboardingBloc(storage: LocalStorageImpl.provider.of(context)),
+  static final provider = Provider<OnboardingController>(
+    (context) => OnboardingController(
+      storage: LocalStorageImpl.provider.of(context),
+    ),
   );
 
   Future<void> completeOnboarding() async {

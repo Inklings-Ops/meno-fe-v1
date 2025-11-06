@@ -4,30 +4,20 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bccf639a-4003-4e7d-a424-f8dd4e7422ff" name="Changes" comment="feat: introduce meno_services package and implement local storage&#10;&#10;This commit introduces the new `meno_services` package to handle interactions with external services like APIs and databases.&#10;&#10;Key changes include:&#10;- Creation of the `meno_services` package with initial setup and dependencies (`flutter_secure_storage`, `shared_preferences`, `disco`).&#10;- Implementation of a `LocalStorage` interface (`LocalStorageImpl`) that abstracts synchronous (SharedPreferences) and secure asynchronous (FlutterSecureStorage) storage.&#10;- Addition of a theme-aware `MLogo` widget to the `meno_design_system` package.&#10;- Refactoring of the `meno_domain` package to include a new `MRoutes` class for centralized route management and the `LocalStorage` abstraction.&#10;- Integration of `meno_services` into the main app and `meno_onboarding` package, including dependency injection setup for storage services.">
-      <change afterPath="$PROJECT_DIR$/apps/meno_app/lib/routing/meno_router.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/meno_auth/lib/src/ui/login/login_page.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/meno_auth/lib/src/ui/ui.dart" afterDir="false" />
+    <list default="true" id="bccf639a-4003-4e7d-a424-f8dd4e7422ff" name="Changes" comment="Refactor: remove `final` from freezed models and add login page&#10;&#10;This commit refactors the domain models by removing the `final` keyword from all freezed classes to resolve build issues.&#10;&#10;Key changes include:&#10;- Removing `final` from model classes in `meno_domain`.&#10;- Adding a new `LoginPage` to the `meno_auth` package.&#10;- Implementing a GoRouter configuration (`menoRouterConfig`) in the main app.&#10;- Updating dependencies and cleaning up test files.">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/pub/bin/build_runner/build_runner.dart-3.9.2.snapshot" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/pub/bin/build_runner/build_runner.dart-3.9.2.snapshot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/meno_app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/apps/meno_app/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/meno_app/lib/routing/meno_router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/apps/meno_app/lib/routing/meno_router.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/meno_app/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/apps/meno_app/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_auth/analysis_options.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_auth/analysis_options.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_auth/lib/meno_auth.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_auth/lib/meno_auth.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_auth/test/meno_auth_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_auth/test/meno_auth_test.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user_credential.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user_credential.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/bible.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/bible.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/book.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/book.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/chapter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/chapter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/translation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/translation.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/verse.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/bible/verse.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/broadcast.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/broadcast.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/ended_broadcast_data.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/ended_broadcast_data.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/participant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/broadcast/participant.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/settings/notification_settings.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/settings/notification_settings.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/settings/settings.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/settings/settings.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_design_system/lib/src/text/m_text.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_design_system/lib/src/text/m_text.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/meno_onboarding.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/meno_onboarding.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/blocs/blocs.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/controllers/controllers.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/blocs/onboarding_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/controllers/onboarding_controller.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_title.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_title.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,6 +80,7 @@
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "meno-modular",
+    "io.flutter.reload.alreadyRun": "true",
     "last_opened_file_path": "/home/gettoknowdavid/dev/projects/personal/meno",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
     "show.migrate.to.gradle.popup": "false"
@@ -190,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762429575135</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Refactor: remove `final` from freezed models and add login page&#10;&#10;This commit refactors the domain models by removing the `final` keyword from all freezed classes to resolve build issues.&#10;&#10;Key changes include:&#10;- Removing `final` from model classes in `meno_domain`.&#10;- Adding a new `LoginPage` to the `meno_auth` package.&#10;- Implementing a GoRouter configuration (`menoRouterConfig`) in the main app.&#10;- Updating dependencies and cleaning up test files.">
+      <option name="closed" value="true" />
+      <created>1762443789880</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1762443789880</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -216,6 +215,7 @@
     <MESSAGE value="Refactor: move converters import to model files&#10;&#10;This moves the `converters.dart` import from the main library file directly into the specific model files (`user.dart`, `broadcast.dart`, `participant.dart`) that utilize it. This change improves encapsulation and makes dependencies more explicit within the domain models." />
     <MESSAGE value="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files." />
     <MESSAGE value="feat: introduce meno_services package and implement local storage&#10;&#10;This commit introduces the new `meno_services` package to handle interactions with external services like APIs and databases.&#10;&#10;Key changes include:&#10;- Creation of the `meno_services` package with initial setup and dependencies (`flutter_secure_storage`, `shared_preferences`, `disco`).&#10;- Implementation of a `LocalStorage` interface (`LocalStorageImpl`) that abstracts synchronous (SharedPreferences) and secure asynchronous (FlutterSecureStorage) storage.&#10;- Addition of a theme-aware `MLogo` widget to the `meno_design_system` package.&#10;- Refactoring of the `meno_domain` package to include a new `MRoutes` class for centralized route management and the `LocalStorage` abstraction.&#10;- Integration of `meno_services` into the main app and `meno_onboarding` package, including dependency injection setup for storage services." />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: introduce meno_services package and implement local storage&#10;&#10;This commit introduces the new `meno_services` package to handle interactions with external services like APIs and databases.&#10;&#10;Key changes include:&#10;- Creation of the `meno_services` package with initial setup and dependencies (`flutter_secure_storage`, `shared_preferences`, `disco`).&#10;- Implementation of a `LocalStorage` interface (`LocalStorageImpl`) that abstracts synchronous (SharedPreferences) and secure asynchronous (FlutterSecureStorage) storage.&#10;- Addition of a theme-aware `MLogo` widget to the `meno_design_system` package.&#10;- Refactoring of the `meno_domain` package to include a new `MRoutes` class for centralized route management and the `LocalStorage` abstraction.&#10;- Integration of `meno_services` into the main app and `meno_onboarding` package, including dependency injection setup for storage services." />
+    <MESSAGE value="Refactor: remove `final` from freezed models and add login page&#10;&#10;This commit refactors the domain models by removing the `final` keyword from all freezed classes to resolve build issues.&#10;&#10;Key changes include:&#10;- Removing `final` from model classes in `meno_domain`.&#10;- Adding a new `LoginPage` to the `meno_auth` package.&#10;- Implementing a GoRouter configuration (`menoRouterConfig`) in the main app.&#10;- Updating dependencies and cleaning up test files." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor: remove `final` from freezed models and add login page&#10;&#10;This commit refactors the domain models by removing the `final` keyword from all freezed classes to resolve build issues.&#10;&#10;Key changes include:&#10;- Removing `final` from model classes in `meno_domain`.&#10;- Adding a new `LoginPage` to the `meno_auth` package.&#10;- Implementing a GoRouter configuration (`menoRouterConfig`) in the main app.&#10;- Updating dependencies and cleaning up test files." />
   </component>
 </project>

@@ -23,6 +23,7 @@
       "dependencies": [
         "disco",
         "flutter",
+        "flutter_screenutil",
         "flutter_secure_storage",
         "flutter_solidart",
         "go_router",
@@ -31,6 +32,7 @@
         "meno_domain",
         "meno_onboarding",
         "meno_services",
+        "responsive_framework",
         "shared_preferences"
       ],
       "devDependencies": [
@@ -518,6 +520,14 @@
         "flutter",
         "meta",
         "solidart"
+      ]
+    },
+    {
+      "name": "responsive_framework",
+      "version": "1.5.1",
+      "dependencies": [
+        "collection",
+        "flutter"
       ]
     },
     {

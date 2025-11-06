@@ -21,7 +21,7 @@ class OnboardingTitle extends StatelessWidget {
                 weight: MFontWeight.bold,
               ),
               Positioned(
-                bottom: 0,
+                bottom: 0.h,
                 height: 8.h,
                 width: constraints.maxWidth,
                 child: const ColoredBox(color: MColor.decorativeYellow75),
