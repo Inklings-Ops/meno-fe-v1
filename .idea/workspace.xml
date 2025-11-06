@@ -4,20 +4,39 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bccf639a-4003-4e7d-a424-f8dd4e7422ff" name="Changes" comment="Refactor: move converters import to model files&#10;&#10;This moves the `converters.dart` import from the main library file directly into the specific model files (`user.dart`, `broadcast.dart`, `participant.dart`) that utilize it. This change improves encapsulation and makes dependencies more explicit within the domain models.">
-      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_title.dart" afterDir="false" />
+    <list default="true" id="bccf639a-4003-4e7d-a424-f8dd4e7422ff" name="Changes" comment="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files.">
+      <change afterPath="$PROJECT_DIR$/packages/meno_design_system/lib/src/logo/logo.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_design_system/lib/src/logo/m_logo.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/core/core.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/core/local_storage.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/routing/m_routes.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/routing/routing.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/blocs/blocs.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/blocs/onboarding_bloc.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/domain/domain.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/domain/onboarding_item.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_body.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_indicator.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_subtitle.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/ui.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/meno_services/lib/src/local_storage_impl.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/meno_app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/apps/meno_app/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/meno_app/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/apps/meno_app/pubspec.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/melos_meno.iml" beforeDir="false" afterPath="$PROJECT_DIR$/melos_meno.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_auth/analysis_options.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_auth/analysis_options.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_auth/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_auth/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_design_system/pubspec.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/src/models/auth/user.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/meno_domain/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_design_system/lib/meno_design_system.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_design_system/lib/meno_design_system.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_domain/lib/meno_domain.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_domain/lib/meno_domain.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/analysis_options.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/analysis_options.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/meno_onboarding.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/meno_onboarding.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_title.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/lib/src/ui/onboarding_title.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/meno_onboarding/test/meno_onboarding_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/meno_onboarding/test/meno_onboarding_test.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
@@ -79,6 +98,7 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "meno-modular",
     "last_opened_file_path": "/home/gettoknowdavid/dev/projects/personal/meno",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
@@ -90,6 +110,7 @@
       <recent name="$PROJECT_DIR$/packages/meno_domain/lib/src/converters" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/meno_onboarding/lib/src/domain" />
       <recent name="$PROJECT_DIR$/packages/meno_domain/lib/src/value_objects" />
     </key>
   </component>
@@ -155,7 +176,23 @@
       <option name="project" value="LOCAL" />
       <updated>1761780574975</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files.">
+      <option name="closed" value="true" />
+      <created>1762396485766</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1762396485766</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files.">
+      <option name="closed" value="true" />
+      <created>1762396682342</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1762396682342</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -179,6 +216,7 @@
     <MESSAGE value="feat: add broadcast and participant models&#10;&#10;Introduces new data models for the broadcast feature within the `meno_domain` package.&#10;&#10;This includes:&#10;- `Broadcast` model to represent a live or scheduled audio session.&#10;- `Participant` model to define users within a broadcast.&#10;- `BroadcastStatus` and `ParticipantRole` enums.&#10;- A `ParticipantRoleConverter` for case-insensitive JSON serialization." />
     <MESSAGE value="feat: add ended broadcast data model" />
     <MESSAGE value="Refactor: move converters import to model files&#10;&#10;This moves the `converters.dart` import from the main library file directly into the specific model files (`user.dart`, `broadcast.dart`, `participant.dart`) that utilize it. This change improves encapsulation and makes dependencies more explicit within the domain models." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor: move converters import to model files&#10;&#10;This moves the `converters.dart` import from the main library file directly into the specific model files (`user.dart`, `broadcast.dart`, `participant.dart`) that utilize it. This change improves encapsulation and makes dependencies more explicit within the domain models." />
+    <MESSAGE value="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files." />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add new meno_onboarding package and update dependencies&#10;&#10;This commit introduces the new `meno_onboarding` feature package, complete with its initial file structure, dependencies, and basic implementation.&#10;&#10;Additionally, it updates dependencies and configurations across the monorepo:&#10;- Adds `solidart`, `disco`, and related linting rules to the `meno_auth` package.&#10;- Removes the git submodule mapping for `meno_design_system`.&#10;- Adds the new `meno_onboarding` package to the Melos workspace configuration.&#10;- Updates various IDE and project configuration files." />
   </component>
 </project>

@@ -8,5 +8,6 @@ workspace:
   - packages/meno_design_system
   - packages/meno_domain
   - packages/meno_onboarding
+  - packages/meno_services
 dev_dependencies:
   melos: ^7.3.0

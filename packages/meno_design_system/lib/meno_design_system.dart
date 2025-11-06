@@ -26,6 +26,7 @@ export 'src/list_tiles/list_tiles.dart';
 export 'src/list_tiles/m_modal_list_tile.dart';
 export 'src/list_tiles/m_recently_live_list_tile.dart';
 export 'src/loading_indicator/m_loading_indicator.dart';
+export 'src/logo/m_logo.dart';
 export 'src/modals/m_image_source_modal.dart';
 export 'src/modals/m_modal.dart';
 export 'src/modals/m_modal_title_bar.dart';

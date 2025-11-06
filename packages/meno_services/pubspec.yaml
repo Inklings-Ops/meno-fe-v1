@@ -1,8 +1,8 @@
-name: meno_onboarding
+name: meno_services
 resolution: workspace
-publish_to: none
-description: "Meno Onboarding Package"
+description: "Meno Services for API clients or database interactions"
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: ^3.9.2
@@ -12,14 +12,10 @@ dependencies:
   disco: ^1.0.3+1
   flutter:
     sdk: flutter
-  flutter_screenutil: ^5.9.3
-  go_router: ^16.3.0
-  meno_design_system:
-    path: ../meno_design_system
+  flutter_secure_storage: ^9.2.4
   meno_domain:
     path: ../meno_domain
-  meno_services:
-    path: ../meno_services
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_lints: ^6.0.0
@@ -32,6 +28,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
