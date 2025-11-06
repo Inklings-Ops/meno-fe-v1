@@ -6,7 +6,7 @@ part 'notification_settings.g.dart';
 
 /// Class for [NotificationSettings].
 @freezed
-abstract final class NotificationSettings with _$NotificationSettings {
+abstract class NotificationSettings with _$NotificationSettings {
   /// Constructor for [NotificationSettings].
   const factory NotificationSettings({
     required String text,

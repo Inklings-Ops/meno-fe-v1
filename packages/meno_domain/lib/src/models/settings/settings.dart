@@ -9,7 +9,7 @@ part 'settings.g.dart';
 
 /// General Settings for the app.
 @freezed
-abstract final class Settings with _$Settings {
+abstract class Settings with _$Settings {
   /// Constructor for the Settings class.
   const factory Settings({
     @IdConverter() required Id id,

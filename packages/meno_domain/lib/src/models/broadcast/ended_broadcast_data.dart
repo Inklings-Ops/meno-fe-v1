@@ -7,7 +7,7 @@ part 'ended_broadcast_data.g.dart';
 
 /// Represents the data associated with an ended broadcast.
 @freezed
-abstract final class EndedBroadcastData with _$EndedBroadcastData {
+abstract class EndedBroadcastData with _$EndedBroadcastData {
   /// Creates an [EndedBroadcastData] object.
   const factory EndedBroadcastData({
     /// The details of the broadcast that has ended.
@@ -24,7 +24,7 @@ abstract final class EndedBroadcastData with _$EndedBroadcastData {
 
 /// Represents the reason why a broadcast ended.
 @freezed
-abstract final class EndedBroadcastReason with _$EndedBroadcastReason {
+abstract class EndedBroadcastReason with _$EndedBroadcastReason {
   /// Creates an [EndedBroadcastReason] object.
   const factory EndedBroadcastReason({
     /// The type of reason for the broadcast ending.

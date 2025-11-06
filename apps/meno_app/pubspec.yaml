@@ -9,15 +9,19 @@ environment:
 
 dependencies:
   disco: ^1.0.3+1
-  flutter_secure_storage: ^9.2.4
   flutter:
     sdk: flutter
+  flutter_secure_storage: ^9.2.4
+  flutter_solidart: ^2.7.1
+  go_router: ^16.3.0
   meno_auth:
     path: ../../packages/meno_auth
   meno_design_system:
     path: ../../packages/meno_design_system
   meno_domain:
     path: ../../packages/meno_domain
+  meno_onboarding:
+    path: ../../packages/meno_onboarding
   meno_services:
     path: ../../packages/meno_services
   shared_preferences: ^2.5.3

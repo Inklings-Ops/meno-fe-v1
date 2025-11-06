@@ -4,6 +4,7 @@ analyzer:
     - custom_lint
 linter:
   rules:
+    public_member_api_docs: false
     use_late_for_private_fields_and_variables: false
     implicit_call_tearoffs: false
     specify_nonobvious_property_types: false

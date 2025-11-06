@@ -24,9 +24,12 @@
         "disco",
         "flutter",
         "flutter_secure_storage",
+        "flutter_solidart",
+        "go_router",
         "meno_auth",
         "meno_design_system",
         "meno_domain",
+        "meno_onboarding",
         "meno_services",
         "shared_preferences"
       ],

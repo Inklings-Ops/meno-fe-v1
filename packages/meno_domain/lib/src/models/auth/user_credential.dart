@@ -14,7 +14,7 @@ part 'user_credential.g.dart';
 /// It uses the `freezed` package to generate boilerplate code for
 /// immutability and equality.
 @freezed
-abstract final class UserCredential with _$UserCredential {
+abstract class UserCredential with _$UserCredential {
   /// Creates an instance of [UserCredential].
   ///
   /// This constructor is private and is used by the `freezed` package.

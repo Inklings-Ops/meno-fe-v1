@@ -13,7 +13,7 @@ part 'user.g.dart';
 /// settings. It uses the `freezed` package to generate boilerplate code for
 /// immutability and equality.
 @freezed
-abstract final class User with _$User {
+abstract class User with _$User {
   /// Creates an instance of the [User] entity.
   const factory User({
     @IdConverter() required Id id,

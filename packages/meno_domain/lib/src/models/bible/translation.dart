@@ -11,7 +11,7 @@ part 'translation.freezed.dart';
 /// It uses the `freezed` package to generate boilerplate code for immutability,
 /// equality, and other common object methods.
 @freezed
-abstract final class Translation with _$Translation {
+abstract class Translation with _$Translation {
   /// Creates an instance of a Bible [Translation].
   ///
   /// The constructor is marked as `const` to allow for compile-time

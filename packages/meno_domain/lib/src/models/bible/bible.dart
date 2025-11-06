@@ -7,7 +7,7 @@ part 'bible.g.dart';
 
 /// Represents a collection of Bible verses from a specific translation.
 @freezed
-abstract final class Bible with _$Bible {
+abstract class Bible with _$Bible {
   /// Creates a [Bible] object.
   const factory Bible({
     /// The translation of the Bible.

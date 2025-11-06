@@ -13,7 +13,7 @@ part 'verse.g.dart';
 /// It uses the `freezed` package to generate boilerplate code for
 /// immutability, equality, and other common object methods.
 @freezed
-abstract final class Verse with _$Verse {
+abstract class Verse with _$Verse {
   /// Creates an instance of a [Verse].
   ///
   /// The constructor is marked as `const` to allow for compile-time

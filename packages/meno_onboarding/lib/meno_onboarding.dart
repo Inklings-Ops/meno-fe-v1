@@ -1,4 +1,4 @@
 /// Meno Onboarding
 library;
 
-export 'src/ui/ui.dart';
+export 'src/ui/onboarding_page.dart';

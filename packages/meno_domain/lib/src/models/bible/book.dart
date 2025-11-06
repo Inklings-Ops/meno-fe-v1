@@ -13,7 +13,7 @@ part 'book.g.dart';
 /// It uses the `freezed` package to generate boilerplate code for immutability,
 /// equality, and other common object methods.
 @freezed
-abstract final class Book with _$Book {
+abstract class Book with _$Book {
   /// Creates an instance of a [Book].
   ///
   /// The constructor is marked as `const` to allow for compile-time

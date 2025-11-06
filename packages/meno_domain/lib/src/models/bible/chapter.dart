@@ -13,7 +13,7 @@ part 'chapter.g.dart';
 /// It uses the `freezed` package to generate boilerplate code for immutability,
 /// equality, and other common object methods.
 @freezed
-abstract final class Chapter with _$Chapter {
+abstract class Chapter with _$Chapter {
   /// Creates an instance of a [Chapter].
   ///
   /// The constructor is marked as `const` to allow for compile-time

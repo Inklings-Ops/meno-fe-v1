@@ -8,7 +8,7 @@ part 'participant.g.dart';
 
 /// Represents a participant in a broadcast.
 @freezed
-abstract final class Participant with _$Participant {
+abstract class Participant with _$Participant {
   const factory Participant({
     /// The unique identifier of the participant.
     @IdConverter() required Id id,

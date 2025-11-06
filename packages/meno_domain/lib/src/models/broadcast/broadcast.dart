@@ -11,7 +11,7 @@ part 'broadcast.g.dart';
 /// This class serves as the primary entity for a broadcast,
 /// containing all its details, status, and related creator info.
 @freezed
-abstract final class Broadcast with _$Broadcast {
+abstract class Broadcast with _$Broadcast {
   /// Creates a Broadcast instance.
   /// This factory is the main constructor for the class.
   const factory Broadcast({
