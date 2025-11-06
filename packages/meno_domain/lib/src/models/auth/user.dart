@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meno_domain/meno_domain.dart';
 import 'package:meno_domain/src/converters/converters.dart';
-import 'package:meno_domain/src/models/models.dart' show Settings, UserRole;
 
 part 'user.freezed.dart';
 

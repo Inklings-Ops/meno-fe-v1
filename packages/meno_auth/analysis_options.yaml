@@ -1,4 +1,9 @@
-include: package:flutter_lints/flutter.yaml
-
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+include: package:very_good_analysis/analysis_options.yaml
+analyzer:
+  plugins:
+    - custom_lint
+linter:
+  rules:
+    use_late_for_private_fields_and_variables: false
+    implicit_call_tearoffs: false
+    specify_nonobvious_property_types: false

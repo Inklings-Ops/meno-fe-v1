@@ -3,15 +3,27 @@
   "packages": [
     {
       "name": "_fe_analyzer_shared",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-91.0.0",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-88.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "alien_signals",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/alien_signals-0.5.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "analyzer",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/analyzer-8.4.1",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/analyzer-8.1.1",
       "packageUri": "lib/",
-      "languageVersion": "3.9"
+      "languageVersion": "3.7"
+    },
+    {
+      "name": "analyzer_plugin",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/analyzer_plugin-0.13.7",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
     },
     {
       "name": "ansi_styles",
@@ -116,6 +128,12 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "ci",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/ci-0.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cli_launcher",
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/cli_launcher-0.3.2+1",
       "packageUri": "lib/",
@@ -165,9 +183,33 @@
     },
     {
       "name": "crypto",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/crypto-3.0.6",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/crypto-3.0.7",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "custom_lint",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/custom_lint-0.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "custom_lint_builder",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/custom_lint_builder-0.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "custom_lint_core",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/custom_lint_core-0.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "custom_lint_visitor",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/custom_lint_visitor-1.0.0+8.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "dart_style",
@@ -180,6 +222,12 @@
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/dartx-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "disco",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/disco-1.0.3+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "equatable",
@@ -198,12 +246,6 @@
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/ffi-2.1.4",
       "packageUri": "lib/",
       "languageVersion": "3.7"
-    },
-    {
-      "name": "figma_squircle",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/git/figma_squircle-5f1ad5aaccdf31fc398fc141979ea845a0f45383/",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
     },
     {
       "name": "file",
@@ -255,13 +297,25 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "flutter_screenutil",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_screenutil-5.9.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_solidart",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_solidart-2.7.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "flutter_svg",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_svg-2.2.1",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/flutter_svg-2.2.2",
       "packageUri": "lib/",
       "languageVersion": "3.7"
     },
@@ -273,7 +327,7 @@
     },
     {
       "name": "fpdart",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/fpdart-1.1.1",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/fpdart-1.2.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -312,6 +366,12 @@
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/hashcodes-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "hotreloader",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/hotreloader-4.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "http",
@@ -387,9 +447,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/lints-5.1.1",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.8"
     },
     {
       "name": "logging",
@@ -596,6 +656,24 @@
       "languageVersion": "3.8"
     },
     {
+      "name": "solidart",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/solidart-2.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "solidart_hooks",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/solidart_hooks-3.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "solidart_lint",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/solidart_lint-2.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
       "name": "source_gen",
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/source_gen-4.0.2",
       "packageUri": "lib/",
@@ -612,12 +690,6 @@
       "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/source_span-1.10.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
-    },
-    {
-      "name": "sprintf",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/sprintf-7.0.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
     },
     {
       "name": "sqflite",
@@ -711,7 +783,7 @@
     },
     {
       "name": "uuid",
-      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/uuid-4.5.1",
+      "rootUri": "file:///home/gettoknowdavid/.pub-cache/hosted/pub.dev/uuid-4.5.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -826,6 +898,12 @@
     {
       "name": "meno_domain",
       "rootUri": "../packages/meno_domain",
+      "packageUri": "lib/",
+      "languageVersion": "3.9"
+    },
+    {
+      "name": "meno_onboarding",
+      "rootUri": "../packages/meno_onboarding",
       "packageUri": "lib/",
       "languageVersion": "3.9"
     }

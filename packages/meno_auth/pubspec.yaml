@@ -1,33 +1,36 @@
 name: meno_auth
-
 resolution: workspace
 publish_to: none
-description: "A new Flutter project."
+description: "Meno Authentication Feature"
 version: 0.0.1
-homepage:
 
 environment:
   sdk: ^3.9.2
   flutter: ">=1.17.0"
 
 dependencies:
+  disco: ^1.0.3+1
   flutter:
     sdk: flutter
 
+  flutter_solidart: ^2.7.1
   meno_domain:
     path: ../meno_domain
+  solidart_hooks: ^3.1.1
 
 dev_dependencies:
+  custom_lint: ^0.8.1
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  solidart_lint: ^2.0.3
+  very_good_analysis: ^10.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
