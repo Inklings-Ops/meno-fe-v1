@@ -19,6 +19,10 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  meno_design_system:
+    git:
+      url: git@github.com:Inklings-Ops/meno_design_system.git
+      ref: master
   very_good_analysis: ^10.1.0
 
 flutter:
