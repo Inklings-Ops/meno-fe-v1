@@ -1,1 +1,19 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.6.0.0.yaml
+linter:
+  rules:
+    public_member_api_docs: false
+analyzer:
+  exclude:
+    - lib/objectbox.g.dart
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    avoid_js_rounded_ints: ignore
+    avoid_positional_boolean_parameters: ignore
+    cascade_invocations: ignore
+    inference_failure_on_instance_creation: ignore
+    invalid_annotation_target: ignore
+    one_member_abstracts: ignore
+    strict_raw_type: ignore
+    unused_element: ignore
+    library_private_types_in_public_api: ignore
