@@ -20,7 +20,9 @@ final notesLayoutKey = GlobalKey<NavigatorState>();
 final noteSectionKey = GlobalKey<NavigatorState>();
 final folderSectionKey = GlobalKey<NavigatorState>();
 
-final GoRouter routerConfig = GoRouter(
-  navigatorKey: rootNavigatorKey,
-  routes: [],
-);
+final class MRouter {
+  late final GoRouter routerConfig = GoRouter(
+    navigatorKey: rootNavigatorKey,
+    routes: [],
+  );
+}
