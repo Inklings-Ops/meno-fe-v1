@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:meno/core/domain/value_objects/value_objects.dart';
+import 'package:meno/core/domain/value_objects/value_exception.dart';
 
 abstract class IValueObject {
   bool get isValid;

@@ -1,9 +1,8 @@
 import 'dart:io' show File;
 
 import 'package:fpdart/fpdart.dart' show Either, Left, Right;
-import 'package:meno/core/domain/value_objects/image_origin.dart';
-import 'package:meno/core/domain/value_objects/value_exception.dart';
-import 'package:meno/core/domain/value_objects/value_object.dart';
+import 'package:meno/core/core.dart';
+import 'package:meno/shared/domain/value_objects/image_origin.dart';
 
 class ImageInput extends ValueObject<ImageOrigin?> {
   factory ImageInput.fromFile(File? file) {

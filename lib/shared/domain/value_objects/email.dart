@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:meno/core/domain/value_objects/value_exception.dart';
-import 'package:meno/core/domain/value_objects/value_object.dart';
+import 'package:meno/core/core.dart';
 
 class Email extends ValueObject<String> {
   factory Email(String input) => Email._(_validate(input));

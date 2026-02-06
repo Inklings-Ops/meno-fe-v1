@@ -1,33 +1,39 @@
 lib/
  ├── src/
- │   ├── app/                       <-- The "Glue" (Entry point, config, routing)
- │   │   ├── router/                <-- GoRouter configuration
- │   │   ├── theme/                 <-- AppTheme, Typography, Colors
- │   │   └── app.dart               <-- AppRoot Widget (MaterialApp)
+ │   ├── app/                        <-- The "Glue" (Entry point, config, routing)
+ │   │   ├── router/                 <-- GoRouter configuration
+ │   │   ├── theme/                  <-- AppTheme, Typography, Colors
+ │   │   └── app.dart                <-- AppRoot Widget (MaterialApp)
  │   │
- │   ├── core/                      <-- "Capabilities" (Not Business Logic)
- │   │   ├── network/               <-- DioClient, SocketClient, Interceptors
- │   │   ├── storage/               <-- SecureStorage, Hive, SharedPrefs
- │   │   ├── domain/                <-- Generic ValueObjects (ID, Email), Failures
- │   │   ├── observers/             <-- BlocObserver, RouteObserver
- │   │   └── utils/                 <-- DateFormatters, Loggers, Extensions
+ │   ├── core/                       <-- "Capabilities" (Not Business Logic)
+ │   │   ├── network/                <-- DioClient, SocketClient, Interceptors
+ │   │   ├── storage/                <-- SecureStorage, Hive, SharedPrefs
+ │   │   ├── domain/                 <-- Generic ValueObjects (ID, Email), Failures
+ │   │   ├── observers/              <-- BlocObserver, RouteObserver
+ │   │   └── utils/                  <-- DateFormatters, Loggers, Extensions
  │   │
- │   ├── common_ui/                 <-- "Dumb" Shared Components (No Logic)
+ │   ├── common_ui/                  <-- "Dumb" Shared Components (No Logic)
  │   │   ├── buttons/
  │   │   ├── dialogs/
  │   │   ├── inputs/
  │   │   └── layouts/
  │   │
- │   └── features/                  <-- "Vertical Slices" (Business Logic)
- │       ├── auth/                  <-- The Gold Standard Feature Structure
- │       │   ├── domain/            <-- PURE DART (Entities, Repositories, Failures)
- │       │   ├── infrastructure/    <-- DIRTY DART (DTOs, DataSources, Repo Impl)
- │       │   ├── application/       <-- STATE HOLDERS (Managers, Services, Blocs)
- │       │   └── presentation/      <-- UI (Screens, Widgets)
- │       │
- │       ├── broadcast/
- │       ├── chat/
- │       └── settings/
+ │   ├── features/                   <-- "Vertical Slices" (Business Logic)
+ │   │   ├── auth/                   <-- The Gold Standard Feature Structure
+ │   │   │   ├── domain/             <-- PURE DART (Entities, Repositories, Failures)
+ │   │   │   ├── infrastructure/     <-- DIRTY DART (DTOs, DataSources, Repo Impl)
+ │   │   │   ├── application/        <-- STATE HOLDERS (Managers, Services, Blocs)
+ │   │   │   └── presentation/       <-- UI (Screens, Widgets)
+ │   │   │
+ │   │   ├── broadcast/
+ │   │   ├── chat/
+ │   │   └── settings/
+ │   │
+ │   └── shared/                     <-- Domain Glue (Specific to Meno)
+ │       ├── domain/
+ │       ├── infrastructure/
+ │       ├── application/
+ │       └── presentation/
  │
- ├── di.dart                        <-- Injection (GetIt/Injectable setup)
- └── main.dart                      <-- Entry point
+ ├── di.dart                         <-- Injection (GetIt/Injectable setup)
+ └── main.dart                       <-- Entry point

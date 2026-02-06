@@ -1,6 +1,5 @@
 import 'package:fpdart/fpdart.dart' show Either, Left, Right;
-import 'package:meno/core/domain/value_objects/value_exception.dart';
-import 'package:meno/core/domain/value_objects/value_object.dart';
+import 'package:meno/core/core.dart';
 
 class TermsAcceptance extends ValueObject<bool> {
   factory TermsAcceptance(bool input) => TermsAcceptance._(_validate(input));

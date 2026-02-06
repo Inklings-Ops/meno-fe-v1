@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart' show Either, Left, Right;
-import 'package:meno/core/domain/value_objects/value_objects.dart';
+import 'package:meno/core/core.dart';
 
 class Token extends ValueObject<String> {
   factory Token(String input) => Token._(_validate(input));

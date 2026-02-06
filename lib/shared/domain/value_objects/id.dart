@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:meno/core/domain/value_objects/value_objects.dart';
+import 'package:meno/core/core.dart';
 import 'package:uuid/uuid.dart';
 
 class Id extends ValueObject<String> {

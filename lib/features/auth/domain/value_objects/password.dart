@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart' show Either, Left, Right;
-import 'package:meno/core/domain/value_objects/value_objects.dart';
+import 'package:meno/core/core.dart';
 
 class Password extends ValueObject<String> {
   factory Password.signIn(String input) {
