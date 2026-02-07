@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// The base class for all logical errors in the app
-sealed class MenoException with EquatableMixin implements Exception {
+abstract class MenoException with EquatableMixin implements Exception {
   const MenoException(this.message, [this.code]);
 
   final String message;
