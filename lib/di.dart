@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
+import 'package:meno/features/auth/infrastructure/infrastructure.dart';
 
 void injectDependencies() {
   // ========================================================================
@@ -38,6 +39,12 @@ void injectDependencies() {
       interceptors: [di<SessionInterceptor>(), di<LogInterceptor>()],
     ),
   );
+
+  // ========================================================================
+  // INFRASTRUCTURE LAYER
+  // ========================================================================
+  di.registerLazySingleton(() => AuthLocalDataSource(di<SecureStorage>()));
+  di.registerLazySingleton(() => AuthRemoteDataSource(di<ApiClient>()));
 
   // ========================================================================
   // PRESENTATION LAYER

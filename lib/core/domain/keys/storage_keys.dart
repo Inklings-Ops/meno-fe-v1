@@ -1,9 +1,15 @@
 abstract class StorageKeys {
   const StorageKeys._();
 
-  static const currentUserId = 'current_user_id';
-  static const currentUserToken = 'current_user_token';
-  static const currentRefreshToken = 'current_refresh_token';
-  static const accounts = 'accounts';
+  // Complete credential (for repository/UI)
+  static const credential = 'current_user_credential';
+
+  // Individual fields (for fast interceptor access)
+  static const userId = 'current_user_id';
+  static const accessToken = 'current_user_token';
+  static const refreshToken = 'current_refresh_token';
   static const sessionExpiry = 'session_expiry';
+
+  // Multi-account support
+  static const accounts = 'all_accounts';
 }

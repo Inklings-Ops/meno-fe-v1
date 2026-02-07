@@ -217,7 +217,7 @@ class SessionInterceptor extends QueuedInterceptor {
 
       // Parse new credentials
       final credentialDto = UserCredentialDto.fromJson(mResponse.data);
-      final newCredential = credentialDto.toDomain();
+      final newCredential = credentialDto.toDomain;
 
       // Save new session
       await _saveSession(newCredential);
@@ -246,10 +246,8 @@ class SessionInterceptor extends QueuedInterceptor {
   /// Retrieves the current session from storage
   Future<Option<Session>> _getCurrentSession() async {
     try {
-      final tokenJson = await _storage.read(StorageKeys.currentUserToken);
-      final refreshTokenJson = await _storage.read(
-        StorageKeys.currentRefreshToken,
-      );
+      final tokenJson = await _storage.read(StorageKeys.accessToken);
+      final refreshTokenJson = await _storage.read(StorageKeys.refreshToken);
 
       if (tokenJson == null) return none();
 
@@ -272,16 +270,16 @@ class SessionInterceptor extends QueuedInterceptor {
 
     await Future.wait([
       _storage.write(
-        StorageKeys.currentUserToken,
+        StorageKeys.accessToken,
         value: session.accessToken.getOrElse((_) => ''),
       ),
 
       _storage.write(
-        StorageKeys.currentRefreshToken,
+        StorageKeys.refreshToken,
         value: session.refreshToken.getOrNull() ?? '',
       ),
 
-      _storage.write(StorageKeys.currentUserId, value: userId.getOrCrash()),
+      _storage.write(StorageKeys.userId, value: userId.getOrCrash()),
 
       if (session.expiry != null)
         _storage.write(
@@ -303,7 +301,7 @@ class SessionInterceptor extends QueuedInterceptor {
           : <String, dynamic>{};
 
       final userId = credential.user.id.getOrCrash();
-      accounts[userId] = credential.toDto().toJson();
+      accounts[userId] = credential.toDto.toJson();
 
       await _storage.write(StorageKeys.accounts, value: jsonEncode(accounts));
     } on Exception catch (e) {
@@ -314,7 +312,7 @@ class SessionInterceptor extends QueuedInterceptor {
 
   /// Handles session expiration - clears storage and triggers callback
   Future<void> _handleSessionExpired() async {
-    final currentUserId = await _storage.read(StorageKeys.currentUserId);
+    final currentUserId = await _storage.read(StorageKeys.userId);
 
     if (currentUserId != null) {
       // Remove expired account from stored accounts
@@ -328,9 +326,9 @@ class SessionInterceptor extends QueuedInterceptor {
 
     // Clear current session
     await Future.wait([
-      _storage.delete(StorageKeys.currentUserId),
-      _storage.delete(StorageKeys.currentUserToken),
-      _storage.delete(StorageKeys.currentRefreshToken),
+      _storage.delete(StorageKeys.userId),
+      _storage.delete(StorageKeys.accessToken),
+      _storage.delete(StorageKeys.refreshToken),
       _storage.delete(StorageKeys.sessionExpiry),
     ]);
 

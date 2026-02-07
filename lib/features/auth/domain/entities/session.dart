@@ -10,21 +10,26 @@ final class Session with EquatableMixin {
     required this.expiry,
   });
 
-  factory Session.fromDto(String accessToken, {String? refreshToken}) {
-    DateTime? expiry;
+  factory Session.fromDto(
+    String accessToken, {
+    String? refreshToken,
+    DateTime? explicitExpiry,
+  }) {
+    var expiry = explicitExpiry;
 
-    try {
-      if (accessToken.isNotEmpty) {
+    // Only decode if we didn't provide an expiry
+    if (expiry == null && accessToken.isNotEmpty) {
+      try {
         final decoded = JwtDecoder.decode(accessToken);
         if (decoded.containsKey('exp')) {
           final value = decoded['exp'];
-          if (value is! int) throw Exception('Invalid token');
-          expiry = DateTime.fromMillisecondsSinceEpoch(value * 1000);
+          if (value is int) {
+            expiry = DateTime.fromMillisecondsSinceEpoch(value * 1000);
+          }
         }
+      } on Exception catch (e) {
+        debugPrint('Token invalid/opaque: $e');
       }
-    } on Exception catch (e) {
-      // Token is invalid or opaque, ignore expiry
-      debugPrint('Token is invalid or opaque, ignoring expiry: $e');
     }
 
     return Session(
