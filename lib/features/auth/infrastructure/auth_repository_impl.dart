@@ -14,13 +14,10 @@ final class AuthRepositoryImpl implements IAuthRepository {
   final AuthLocalDataSource _local;
   final AuthRemoteDataSource _remote;
 
-  // We use ValueNotifier to hold the state
   final _authState = ValueNotifier<Option<UserCredential>>(none());
 
   @override
-  // TODO: implement authState
-  ValueListenable<Option<UserCredential>> get authState =>
-      throw UnimplementedError();
+  ValueListenable<Option<UserCredential>> get authState => _authState;
 
   @override
   Future<Either<AuthException, Unit>> changePassword({
@@ -32,8 +29,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  // TODO: implement currentCredential
-  Option<UserCredential> get currentCredential => throw UnimplementedError();
+  Option<UserCredential> get currentCredential => _authState.value;
 
   @override
   Future<Either<AuthException, UserCredential>> googleSignIn() {
@@ -42,14 +38,24 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<void> initialize() {
-    // TODO: implement initialize
-    throw UnimplementedError();
+  Future<void> initialize() async {
+    final credentialDto = await _local.getCredential();
+    credentialDto.match(() => _authState.value = none(), (dto) async {
+      final credential = dto.toDomain;
+      if (credential.session.isExpired) {
+        await _local.clearCredential();
+        _authState.value = none();
+      } else {
+        _authState.value = some(credential);
+      }
+    });
   }
 
   @override
-  // TODO: implement isEmailVerified
-  bool get isEmailVerified => throw UnimplementedError();
+  bool get isEmailVerified {
+    final credential = _authState.value;
+    return credential.match(() => false, (cred) => cred.user.verified);
+  }
 
   @override
   Future<Either<AuthException, UserCredential>> login({
