@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
-import 'package:meno/shared/domain/entities/general_settings.dart';
 import 'package:meno/shared/infrastructure/dtos/notification_setting_dto.dart';
 
 final class GeneralSettingsDto with EquatableMixin {

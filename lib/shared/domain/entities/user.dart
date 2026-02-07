@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
-import 'package:meno/shared/domain/entities/general_settings.dart';
 
 final class User with EquatableMixin {
   const User({

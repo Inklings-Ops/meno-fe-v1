@@ -46,3 +46,54 @@ final class Session with EquatableMixin {
     return DateTime.now().isAfter(expiry!);
   }
 }
+
+extension SessionX on Session {
+  /// Whether this session should be refreshed.
+  ///
+  /// Returns true if:
+  /// - Token is expired OR
+  /// - Token expires within [threshold] (default 5 minutes)
+  ///
+  /// Returns false if:
+  /// - No refresh token available
+  /// - No expiry information (opaque tokens)
+  bool shouldRefresh({Duration threshold = const Duration(minutes: 5)}) {
+    // Can't refresh without a refresh token
+    if (refreshToken.getOrNull() == null) return false;
+
+    // No expiry info - assume valid (opaque token)
+    if (expiry == null) return false;
+
+    // Already expired
+    if (isExpired) return true;
+
+    // Expiring soon
+    final now = DateTime.now();
+    final refreshThreshold = expiry!.subtract(threshold);
+    return now.isAfter(refreshThreshold);
+  }
+
+  /// Whether this session can be refreshed.
+  ///
+  /// A session is refreshable if it has both:
+  /// - A valid refresh token
+  /// - Expiry information
+  bool get isRefreshable => refreshToken.getOrNull() != null && expiry != null;
+
+  /// Time remaining until token expires.
+  /// Returns null if no expiry information.
+  Duration? get timeUntilExpiry {
+    if (expiry == null) return null;
+    final now = DateTime.now();
+    return expiry!.difference(now);
+  }
+
+  /// Whether the session is about to expire (within threshold).
+  bool isExpiringSoon({Duration threshold = const Duration(minutes: 5)}) {
+    if (expiry == null) return false;
+    if (isExpired) return true;
+
+    final remaining = timeUntilExpiry;
+    return remaining != null && remaining < threshold;
+  }
+}
