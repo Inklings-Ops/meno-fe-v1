@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
+import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/infrastructure/infrastructure.dart';
 
 void injectDependencies() {
@@ -30,6 +31,8 @@ void injectDependencies() {
     () => SessionInterceptor(
       storage: di<SecureStorage>(),
       dio: di<Dio>(instanceName: 'refreshDio'),
+      onSessionExpired: di<IAuthRepository>().logout,
+      onTokenRefreshed: di<IAuthRepository>().initialize,
     ),
   );
 
@@ -45,6 +48,13 @@ void injectDependencies() {
   // ========================================================================
   di.registerLazySingleton(() => AuthLocalDataSource(di<SecureStorage>()));
   di.registerLazySingleton(() => AuthRemoteDataSource(di<ApiClient>()));
+  di.registerLazySingleton<IAuthRepository>(
+    () => AuthRepositoryImpl(
+      local: di<AuthLocalDataSource>(),
+      remote: di<AuthRemoteDataSource>(),
+    )..initialize(),
+    dispose: (param) => param.dispose(),
+  );
 
   // ========================================================================
   // PRESENTATION LAYER

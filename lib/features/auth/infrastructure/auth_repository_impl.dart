@@ -38,17 +38,15 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<void> initialize() async {
-    final credentialDto = await _local.getCredential();
-    credentialDto.match(() => _authState.value = none(), (dto) async {
-      final credential = dto.toDomain;
-      if (credential.session.isExpired) {
-        await _local.clearCredential();
-        _authState.value = none();
-      } else {
-        _authState.value = some(credential);
-      }
-    });
+  Future<void> initialize([UserCredential? credential]) async {
+    if (credential != null) {
+      await _checkExpiryAndUpdateState(credential);
+    } else {
+      final credentialDto = await _local.getCredential();
+      credentialDto.match(() => _authState.value = none(), (dto) async {
+        await _checkExpiryAndUpdateState(dto.toDomain);
+      });
+    }
   }
 
   @override
@@ -136,5 +134,22 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }) {
     // TODO: implement verifyEmail
     throw UnimplementedError();
+  }
+
+  @override
+  void dispose() {
+    _authState.dispose();
+  }
+
+  // ========================================================================
+  // SUPPORTING METHODS
+  // ========================================================================
+  Future<void> _checkExpiryAndUpdateState(UserCredential credential) async {
+    if (credential.session.isExpired) {
+      await _local.clearCredential();
+      _authState.value = none();
+    } else {
+      _authState.value = some(credential);
+    }
   }
 }

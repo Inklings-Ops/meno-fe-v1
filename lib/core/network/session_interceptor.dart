@@ -25,11 +25,13 @@ class SessionInterceptor extends QueuedInterceptor {
     required SecureStorage storage,
     required Dio dio,
     String refreshEndpoint = '/users/refresh',
-    void Function()? onSessionExpired,
+    Future<void> Function()? onSessionExpired,
+    void Function(UserCredential credential)? onTokenRefreshed,
   }) : _storage = storage,
        _dio = dio,
        _refreshEndpoint = refreshEndpoint,
-       _onSessionExpired = onSessionExpired;
+       _onSessionExpired = onSessionExpired,
+       _onTokenRefreshed = onTokenRefreshed;
 
   /// Secure storage for session data
   final SecureStorage _storage;
@@ -41,7 +43,10 @@ class SessionInterceptor extends QueuedInterceptor {
   final String _refreshEndpoint;
 
   /// Callback for session expiration
-  final void Function()? _onSessionExpired;
+  final Future<void> Function()? _onSessionExpired;
+
+  /// Callback for refreshing the token
+  final void Function(UserCredential credential)? _onTokenRefreshed;
 
   /// Track if we're currently refreshing to prevent duplicate refresh calls
   bool _isRefreshing = false;
@@ -221,7 +226,7 @@ class SessionInterceptor extends QueuedInterceptor {
 
       // Save new session
       await _saveSession(newCredential);
-
+      _onTokenRefreshed?.call(newCredential);
       _refreshCompleter?.complete();
       return right(newCredential.session);
     } on DioException catch (e) {
@@ -333,7 +338,7 @@ class SessionInterceptor extends QueuedInterceptor {
     ]);
 
     // Notify listeners (e.g., navigate to login)
-    _onSessionExpired?.call();
+    await _onSessionExpired?.call();
   }
 
   // ======================================================================

@@ -51,7 +51,7 @@ abstract interface class IAuthRepository {
   /// - Updates [authState] accordingly
   ///
   /// Call this once in your app initialization (e.g., AppManager.init()).
-  Future<void> initialize();
+  Future<void> initialize([UserCredential? credential]);
 
   // ========================================================================
   // AUTHENTICATION ACTIONS
@@ -151,6 +151,9 @@ abstract interface class IAuthRepository {
   ///
   /// If the removed account is currently active, logs out.
   Future<void> removeAccount(Id userId);
+
+  /// Handles Disposal
+  void dispose();
 }
 
 // ========================================================================
