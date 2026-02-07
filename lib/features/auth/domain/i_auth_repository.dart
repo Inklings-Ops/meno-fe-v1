@@ -10,48 +10,30 @@ import 'package:meno/shared/domain/domain.dart';
 /// - Infrastructure defines "how" (implementation details)
 /// - Uses reactive primitives for zero-latency UI updates
 abstract interface class IAuthRepository {
-  // ========================================================================
-  // REACTIVE STATE
-  // ========================================================================
-
-  /// The current authenticated user session.
+  /// The active Identity. The Router watches THIS.
   ///
-  /// - `Some(credential)`: User is authenticated
-  /// - `None()`: User is not authenticated
-  ///
-  /// Use with `watch_it` for automatic UI rebuilds:
-  /// ```dart
-  /// final auth = watchIt<IAuthRepository>().authState.value;
-  /// ```
-  ValueListenable<Option<UserCredential>> get authState;
+  /// - Immutable (String ID).
+  /// - Only changes on Login, Logout, or Switch.
+  /// - Does NOT change when User data (bio, name) changes.
+  ValueListenable<Option<Id>> get activeUserId;
 
-  /// All stored user accounts (for multi-account support).
+  /// The Data Vault. The UI watches THIS.
   ///
-  /// Key: User ID
-  /// Value: Stored credential
-  ValueListenable<Map<Id, UserCredential>> get storedAccounts;
+  /// Contains all logged-in sessions.
+  /// UI widgets find their specific user here using the [activeUserId].
+  ValueListenable<Map<Id, UserCredential>> get accounts;
 
-  /// Synchronous access to current credential.
-  Option<UserCredential> get currentCredential => authState.value;
+  /// Helper: Synchronously looks up the Active User in the Vault.
+  Option<UserCredential> get currentCredential;
+
+  /// Hydrates the Vault and sets the Active Anchor.
+  Future<void> initialize([UserCredential? refreshed]);
 
   /// Whether the current user's email is verified.
   /// Returns `false` if no user is authenticated.
   bool get isEmailVerified {
     return currentCredential.match(() => false, (cred) => cred.user.verified);
   }
-
-  // ========================================================================
-  // INITIALIZATION
-  // ========================================================================
-
-  /// Checks for existing authentication on app startup.
-  ///
-  /// - Validates stored tokens
-  /// - Refreshes if needed
-  /// - Updates [authState] accordingly
-  ///
-  /// Call this once in your app initialization (e.g., AppManager.init()).
-  Future<void> initialize([UserCredential? credential]);
 
   // ========================================================================
   // AUTHENTICATION ACTIONS
@@ -61,7 +43,7 @@ abstract interface class IAuthRepository {
   ///
   /// On success:
   /// - Returns authenticated [UserCredential]
-  /// - Updates [authState]
+  /// - Updates [activeUserId]
   /// - Stores credential in secure storage
   Future<Either<AuthException, UserCredential>> login({
     required Email email,
@@ -86,14 +68,13 @@ abstract interface class IAuthRepository {
   /// Authenticates or registers via Google OAuth.
   ///
   /// Auto-registers if user doesn't exist.
-  /// On success, updates [authState] and stores credential.
+  /// On success, updates [activeUserId] and stores credential.
   Future<Either<AuthException, UserCredential>> googleSignIn();
 
   /// Clears current session.
   ///
   /// - Removes tokens from storage
-  /// - Updates [authState] to `None()`
-  /// - Does NOT remove account from [storedAccounts] (use [removeAccount])
+  /// - Updates [activeUserId] to `None()`
   Future<void> logout();
 
   // ========================================================================
@@ -140,11 +121,7 @@ abstract interface class IAuthRepository {
   // MULTI-ACCOUNT MANAGEMENT
   // ========================================================================
 
-  /// Switches to a previously stored account.
-  ///
-  /// - Validates stored token
-  /// - Refreshes if expired
-  /// - Updates [authState]
+  /// Switches the [activeUserId] to a different account in the Vault.
   Future<Either<AuthException, Unit>> switchAccount(Id userId);
 
   /// Permanently removes an account from local storage.

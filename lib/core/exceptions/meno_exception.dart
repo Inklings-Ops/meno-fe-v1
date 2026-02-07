@@ -19,6 +19,10 @@ final class ServerException extends MenoException {
   const ServerException([super.message = 'Server error occurred.']);
 }
 
+final class StorageException extends MenoException {
+  const StorageException([super.message = 'Storage error occurred.']);
+}
+
 final class TimeoutException extends MenoException {
   const TimeoutException() : super('Request timed out.');
 }

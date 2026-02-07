@@ -21,6 +21,14 @@ typedef OnError = void Function(DioException error, StackTrace stackTrace);
 // API CLIENT
 // ========================================================================
 
+/// Infrastructure-level HTTP client that wraps Dio.
+///
+/// Design Philosophy:
+/// - Throws MenoException on failure (infrastructure layer pattern)
+/// - Repository layer catches and converts to Either
+/// - Automatic retry for transient failures
+/// - Integrated with MenoResponse wrapper
+///
 class ApiClient {
   ApiClient({
     required String baseUrl,
@@ -61,7 +69,10 @@ class ApiClient {
   // HTTP METHODS
   // ======================================================================
 
-  Future<Either<MenoException, T>> get<T>(
+  /// Executes GET request and returns parsed data.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> get<T>(
     String path, {
     required FromJson<T> fromJson,
     Map<String, dynamic>? queryParameters,
@@ -81,7 +92,10 @@ class ApiClient {
     );
   }
 
-  Future<Either<MenoException, List<T>>> getList<T>(
+  /// Executes GET request and returns list of parsed objects.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<List<T>> getList<T>(
     String path, {
     required FromJson<T> fromJson,
     Map<String, dynamic>? queryParameters,
@@ -97,7 +111,9 @@ class ApiClient {
         cancelToken: cancelToken,
       ),
       fromJson: (json) {
-        if (json is! List) throw const UnknownException('Expected List');
+        if (json is! List) {
+          throw const UnknownException('Expected List but got different type');
+        }
         return json.map((item) => fromJson(item)).toList();
       },
       isList: true,
@@ -105,7 +121,10 @@ class ApiClient {
     );
   }
 
-  Future<Either<MenoException, T>> post<T>(
+  /// Executes POST request and returns parsed data.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> post<T>(
     String path, {
     required FromJson<T> fromJson,
     dynamic data,
@@ -127,7 +146,10 @@ class ApiClient {
     );
   }
 
-  Future<Either<MenoException, T>> put<T>(
+  /// Executes PUT request and returns parsed data.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> put<T>(
     String path, {
     required FromJson<T> fromJson,
     dynamic data,
@@ -149,7 +171,10 @@ class ApiClient {
     );
   }
 
-  Future<Either<MenoException, T>> patch<T>(
+  /// Executes PATCH request and returns parsed data.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> patch<T>(
     String path, {
     required FromJson<T> fromJson,
     dynamic data,
@@ -171,7 +196,10 @@ class ApiClient {
     );
   }
 
-  Future<Either<MenoException, T>> delete<T>(
+  /// Executes DELETE request and returns parsed data.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> delete<T>(
     String path, {
     required FromJson<T> fromJson,
     dynamic data,
@@ -197,7 +225,10 @@ class ApiClient {
   // UNIT RETURNS (No response body expected)
   // ======================================================================
 
-  Future<Either<MenoException, Unit>> postUnit(
+  /// Executes POST request with no response body expected.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<void> postUnit(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
@@ -205,7 +236,7 @@ class ApiClient {
     CancelToken? cancelToken,
     bool retry = false,
   }) async {
-    return _executeRequest(
+    await _executeRequest(
       () => _dio.post(
         path,
         data: data,
@@ -213,12 +244,15 @@ class ApiClient {
         options: Options(headers: headers),
         cancelToken: cancelToken,
       ),
-      fromJson: (_) => unit,
+      fromJson: (_) => null,
       retry: retry,
     );
   }
 
-  Future<Either<MenoException, Unit>> deleteUnit(
+  /// Executes DELETE request with no response body expected.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<void> deleteUnit(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
@@ -226,7 +260,7 @@ class ApiClient {
     CancelToken? cancelToken,
     bool retry = false,
   }) async {
-    return _executeRequest(
+    await _executeRequest(
       () => _dio.delete(
         path,
         data: data,
@@ -234,12 +268,15 @@ class ApiClient {
         options: Options(headers: headers),
         cancelToken: cancelToken,
       ),
-      fromJson: (_) => unit,
+      fromJson: (_) => null,
       retry: retry,
     );
   }
 
-  Future<Either<MenoException, Unit>> putUnit(
+  /// Executes PUT request with no response body expected.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<void> putUnit(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
@@ -247,7 +284,7 @@ class ApiClient {
     CancelToken? cancelToken,
     bool retry = false,
   }) async {
-    return _executeRequest(
+    await _executeRequest(
       () => _dio.put(
         path,
         data: data,
@@ -255,7 +292,7 @@ class ApiClient {
         options: Options(headers: headers),
         cancelToken: cancelToken,
       ),
-      fromJson: (_) => unit,
+      fromJson: (_) => null,
       retry: retry,
     );
   }
@@ -264,7 +301,10 @@ class ApiClient {
   // FILE UPLOAD & DOWNLOAD
   // ======================================================================
 
-  Future<Either<MenoException, T>> upload<T>(
+  /// Uploads file(s) with FormData.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<T> upload<T>(
     String path, {
     required FromJson<T> fromJson,
     required FormData formData,
@@ -283,11 +323,14 @@ class ApiClient {
         cancelToken: cancelToken,
       ),
       fromJson: fromJson,
-      retry: false,
+      retry: false, // Don't retry file uploads
     );
   }
 
-  Future<Either<MenoException, Unit>> download(
+  /// Downloads file to specified path.
+  ///
+  /// Throws [MenoException] on failure.
+  Future<void> download(
     String urlPath,
     String savePath, {
     ProgressCallback? onReceiveProgress,
@@ -304,16 +347,15 @@ class ApiClient {
         cancelToken: cancelToken,
         deleteOnError: deleteOnError,
       );
-      return right(unit);
     } on DioException catch (e, st) {
       _onError?.call(e, st);
-      return left(_handleDioError(e));
+      throw _handleDioError(e);
     } catch (e, st) {
       _onError?.call(
         DioException(requestOptions: RequestOptions(), error: e),
         st,
       );
-      return left(UnknownException(e.toString()));
+      throw UnknownException(e.toString());
     }
   }
 
@@ -321,7 +363,11 @@ class ApiClient {
   // CORE EXECUTION LOGIC
   // ======================================================================
 
-  Future<Either<MenoException, T>> _executeRequest<T>(
+  /// Core request execution with retry logic and error handling.
+  ///
+  /// - Returns [T] on success
+  /// - Throws [MenoException] on failure.
+  Future<T> _executeRequest<T>(
     Future<Response> Function() request, {
     required FromJson<T> fromJson,
     bool isList = false,
@@ -330,45 +376,37 @@ class ApiClient {
   }) async {
     var attempts = 0;
 
+    // While the [retry] value is still true
     while (true) {
       try {
         final response = await request();
-
-        // Invoke success callback
         _onSuccess?.call(response.requestOptions, response);
-
-        // Parse MenoResponse wrapper
         final mResponse = _parseMenoResponse(response);
-
-        // Check for errors in MenoResponse
-        if (mResponse.hasError) return left(_handleMenoError(mResponse));
-
-        // Check status field
-        if (!mResponse.status) {
-          return left(ServerException(mResponse.message ?? 'Request failed'));
-        }
-
-        // Extract and parse the actual data
+        if (mResponse.hasError) throw _handleMenoError(mResponse);
+        final errorMessage = mResponse.message ?? 'Request failed.';
+        if (!mResponse.status) throw ServerException(errorMessage);
         final result = _parseData(mResponse.data, fromJson, isList);
-
-        return right(result);
+        return result;
+      } on MenoException {
+        rethrow;
       } on DioException catch (e, st) {
         _onError?.call(e, st);
 
         // Check if should retry
         if (retry && attempts < maxRetries && _shouldRetry(e)) {
           attempts++;
+          // Exponential backoff: 1s, 2s, 4s
           await Future.delayed(Duration(seconds: 1 << (attempts - 1)));
           continue;
         }
 
-        return left(_handleDioError(e));
+        throw _handleDioError(e);
       } catch (e, st) {
         _onError?.call(
           DioException(requestOptions: RequestOptions(), error: e),
           st,
         );
-        return left(UnknownException(e.toString()));
+        throw UnknownException(e.toString());
       }
     }
   }
