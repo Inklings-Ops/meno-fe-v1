@@ -381,11 +381,16 @@ class ApiClient {
       try {
         final response = await request();
         _onSuccess?.call(response.requestOptions, response);
-        final mResponse = _parseMenoResponse(response);
-        if (mResponse.hasError) throw _handleMenoError(mResponse);
-        final errorMessage = mResponse.message ?? 'Request failed.';
-        if (!mResponse.status) throw ServerException(errorMessage);
-        final result = _parseData(mResponse.data, fromJson, isList);
+
+        final menoRes = MenoResponse.fromJson(response, (json) => json);
+        if (menoRes.hasError) throw MenoException.fromResponse(menoRes);
+
+        if (!menoRes.status) {
+          final errorMessage = menoRes.message ?? 'Request failed.';
+          throw ServerException(errorMessage);
+        }
+
+        final result = _parseData(menoRes.data, fromJson, isList);
         return result;
       } on MenoException {
         rethrow;
@@ -406,7 +411,7 @@ class ApiClient {
           DioException(requestOptions: RequestOptions(), error: e),
           st,
         );
-        throw UnknownException(e.toString());
+        throw MenoException(e.toString());
       }
     }
   }
@@ -415,30 +420,17 @@ class ApiClient {
   // PARSING LOGIC
   // ======================================================================
 
-  /// Parse the outer MenoResponse wrapper
-  MenoResponse<dynamic> _parseMenoResponse(Response response) {
-    final data = response.data;
-
-    if (data is! Map<String, dynamic>) {
-      throw UnknownException(
-        'Expected Map<String, dynamic> but got ${data.runtimeType}',
-      );
-    }
-
-    return MenoResponse.fromJson(data, (json) => json);
-  }
-
   /// Parse the inner data field
   T _parseData<T>(dynamic data, FromJson<T> fromJson, bool isList) {
     if (data == null) {
       // For Unit returns or empty responses
       if (T == Unit) return unit as T;
-      throw const UnknownException('Response data is null');
+      throw const MenoException('Response data is null');
     }
 
     if (isList) {
       if (data is! List) {
-        throw UnknownException('Expected List but got ${data.runtimeType}');
+        throw MenoException('Expected List but got ${data.runtimeType}');
       }
       return data.map((item) => fromJson(item)).toList() as T;
     }
@@ -449,33 +441,6 @@ class ApiClient {
   // ======================================================================
   // ERROR HANDLING
   // ======================================================================
-
-  /// Handle errors from MenoResponse (backend validation errors)
-  MenoException _handleMenoError(MenoResponse response) {
-    // Field validation errors (e.g., {"email": "invalid", "name": "required"})
-    if (response.fieldErrors != null && response.fieldErrors!.isNotEmpty) {
-      return ValidationException(response.fieldErrors!);
-    }
-
-    // // Global error string
-    // if (response.globalError != null) {
-    //   // Check for common error types
-    //   final error = response.globalError!.toLowerCase();
-    //   if (error.contains('unauthorized') || error.contains('unauthenticated')) {
-    //     return ServerException(response.globalError!);
-    //   }
-    //   if (error.contains('forbidden')) {
-    //     return ServerException(response.globalError!);
-    //   }
-    //   if (error.contains('not found')) {
-    //     return ServerException(response.globalError!);
-    //   }
-    //   return ServerException(response.globalError!);
-    // }
-
-    // Fallback to message
-    return ServerException(response.message ?? 'Request failed');
-  }
 
   /// Handle Dio network/connection errors
   MenoException _handleDioError(DioException e) {
@@ -489,38 +454,34 @@ class ApiClient {
         // Try to parse MenoResponse from error response
         if (e.response?.data is Map<String, dynamic>) {
           try {
-            final menoResponse = MenoResponse.fromJson(
-              e.response!.data as Map<String, dynamic>,
-              (json) => json,
-            );
-            return _handleMenoError(menoResponse);
-          } catch (_) {
+            final errorResponse = MenoResponse.handleError(e.response!.data);
+            throw MenoException.fromResponse(errorResponse);
+          } catch (parserError) {
             // If parsing fails, fall through to default handling
+            if (parserError is MenoException) rethrow;
+            throw Exception(parserError.toString());
           }
         }
+
         return ServerException(
           e.response?.statusMessage ?? 'Server error occurred',
+          e.response?.statusCode,
         );
 
       case DioExceptionType.cancel:
-        return const UnknownException('Request was cancelled');
+        return const MenoException('Request was cancelled');
 
       case DioExceptionType.connectionError:
-        if (e.error is SocketException) {
-          return const NetworkException();
-        }
+        if (e.error is SocketException) return const NetworkException();
         return const NetworkException();
 
       case DioExceptionType.badCertificate:
-        return const ServerException('SSL certificate error');
+        return const ServerException('Secure connection failed.');
 
       case DioExceptionType.unknown:
-        if (e.error is SocketException) {
-          return const NetworkException();
-        }
-        return UnknownException(
-          e.error?.toString() ?? e.message ?? 'Unknown error occurred',
-        );
+        if (e.error is SocketException) return const NetworkException();
+        final message = e.error?.toString() ?? e.message;
+        return UnknownException(message ?? 'Unknown error');
     }
   }
 

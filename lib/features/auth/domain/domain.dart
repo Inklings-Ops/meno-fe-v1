@@ -1,4 +1,3 @@
-export 'auth_exception.dart';
 export 'entities/session.dart';
 export 'entities/user_credential.dart';
 export 'i_auth_repository.dart';

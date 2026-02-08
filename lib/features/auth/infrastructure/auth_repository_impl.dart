@@ -98,7 +98,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
 
         _activeUserId.value = const None();
       }
-    } catch (e) {
+    } catch (error) {
       // Initialization failure - start with no auth
       _activeUserId.value = const None();
       _lastKnownUser.value = const None();
@@ -106,7 +106,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, UserCredential>> login(
+  Future<Either<MenoException, UserCredential>> login(
     Email email,
     Password password,
   ) async {
@@ -117,12 +117,10 @@ final class AuthRepositoryImpl implements IAuthRepository {
       );
 
       return _handleSuccessfulAuth(dto);
-    } on MenoException catch (e) {
-      // Translate infrastructure exception to domain exception
-      return Left(AuthSystemFailure.fromMeno(e));
-    } catch (e) {
-      // Unexpected error
-      return Left(AuthSystemFailure(e.toString()));
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
     }
   }
 
@@ -136,14 +134,14 @@ final class AuthRepositoryImpl implements IAuthRepository {
 
       // Note: We intentionally DON'T clear _lastKnownUser here
       // so the user sees "Welcome back" when they return
-    } catch (e) {
+    } catch (error) {
       // Logout should always succeed
       _activeUserId.value = const None();
     }
   }
 
   @override
-  Future<Either<AuthException, UserCredential>> register({
+  Future<Either<MenoException, UserCredential>> register({
     required SingleLineString fullName,
     required Email email,
     required Password password,
@@ -157,15 +155,15 @@ final class AuthRepositoryImpl implements IAuthRepository {
       );
 
       return _handleSuccessfulAuth(dto);
-    } on MenoException catch (e) {
-      return Left(AuthSystemFailure.fromMeno(e));
-    } catch (e) {
-      return Left(AuthSystemFailure(e.toString()));
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
     }
   }
 
   @override
-  Future<Either<AuthException, Unit>> changePassword({
+  Future<Either<MenoException, Unit>> changePassword({
     required Password currentPassword,
     required Password newPassword,
   }) {
@@ -174,7 +172,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, UserCredential>> googleSignIn() {
+  Future<Either<MenoException, UserCredential>> googleSignIn() {
     // TODO: implement googleSignIn
     throw UnimplementedError();
   }
@@ -186,7 +184,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, Unit>> requestOtp({
+  Future<Either<MenoException, Unit>> requestOtp({
     required Email email,
     required OtpType type,
   }) {
@@ -195,7 +193,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, Unit>> resetPassword({
+  Future<Either<MenoException, Unit>> resetPassword({
     required Email email,
     required String code,
     required Password newPassword,
@@ -205,13 +203,13 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, Unit>> switchAccount(Id userId) {
+  Future<Either<MenoException, Unit>> switchAccount(Id userId) {
     // TODO: implement switchAccount
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<AuthException, Unit>> verifyEmail({
+  Future<Either<MenoException, Unit>> verifyEmail({
     required Email email,
     required String code,
   }) {
@@ -223,7 +221,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   // INTERNAL HELPERS
   // ========================================================================
   /// Shared logic for Login/Register success
-  Future<Either<AuthException, UserCredential>> _handleSuccessfulAuth(
+  Future<Either<MenoException, UserCredential>> _handleSuccessfulAuth(
     UserCredentialDto dto,
   ) async {
     // Persist to Local Storage (Hot Keys + Vault)

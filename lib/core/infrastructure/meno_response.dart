@@ -6,54 +6,33 @@ final class MenoResponse<T> with EquatableMixin {
     this.message,
     this.status = false,
     this.data,
-    this.globalError,
+    this.error,
     this.fieldErrors,
   });
 
-  // We pass a decoder function 'fromJsonT' to handle the generic data.
+  /// Factory for parsing SUCCESS (Expects data of type T)
   factory MenoResponse.fromJson(
-    Map<String, dynamic> json,
+    dynamic json,
     T Function(Object? json) fromJsonT,
-  ) {
-    // A. Parse the 'error' field dynamically
-    String? globalErr;
-    Map<String, String>? fieldErrs;
+  ) => _parse(json, fromJsonT);
 
-    final errorRaw = json['error'];
-
-    if (errorRaw is String) {
-      // Case 1: error is a simple string
-      globalErr = errorRaw;
-    } else if (errorRaw is Map) {
-      // Case 2: error is a Map of field validations
-      // We safely convert generic Map to Map<String, String>
-      fieldErrs = errorRaw.map((k, v) => MapEntry(k.toString(), v.toString()));
-    }
-
-    return MenoResponse(
-      statusCode: json['statusCode'] as int?,
-      message: json['message'] as String?,
-      status: json['status'] as bool? ?? false,
-      globalError: globalErr,
-      fieldErrors: fieldErrs,
-      data: json['data'] != null ? fromJsonT(json['data']) : null,
-    );
+  /// Factory for parsing ERRORS (Ignores data, T is void)
+  /// efficiently skips the generic decoder logic.
+  factory MenoResponse.handleError(dynamic json) {
+    return _parse(json, (_) => null);
   }
 
   final int? statusCode;
   final String? message;
   final bool status;
   final T? data;
+  final String? error;
 
-  // If backend sends "error": "Unauthorized", this is populated
-  final String? globalError;
-
-  // If backend sends "error": {"email": "bad", "name": "bad"}
+  /// If backend sends "error": {"email": "bad", "name": "bad"}
   final Map<String, String>? fieldErrors;
 
   /// Helper: Do we have ANY error?
-  bool get hasError =>
-      globalError != null || (fieldErrors?.isNotEmpty ?? false);
+  bool get hasError => error != null || (fieldErrors?.isNotEmpty ?? false);
 
   @override
   List<Object?> get props => [
@@ -61,7 +40,42 @@ final class MenoResponse<T> with EquatableMixin {
     message,
     status,
     data,
-    globalError,
+    error,
     fieldErrors,
   ];
+
+  static MenoResponse<T> _parse<T>(
+    dynamic json,
+    T? Function(dynamic data) dataParser,
+  ) {
+    if (json is! Map<String, dynamic>) {
+      throw FormatException(
+        'Expected Map<String, dynamic> but got ${json.runtimeType}',
+      );
+    }
+
+    String? globalErr;
+    Map<String, String>? fieldErrs;
+
+    final errorRaw = json['error'];
+
+    // Dynamic Error Parsing Logic
+    if (errorRaw is String) {
+      globalErr = errorRaw;
+    } else if (errorRaw is Map) {
+      fieldErrs = {};
+      for (final entry in errorRaw.entries) {
+        fieldErrs[entry.key.toString()] = entry.value.toString();
+      }
+    }
+
+    return MenoResponse<T>(
+      statusCode: json['statusCode'] as int?,
+      message: json['message'] as String?,
+      status: json['status'] as bool? ?? false,
+      error: globalErr,
+      fieldErrors: fieldErrs,
+      data: json['data'] != null ? dataParser(json['data']) : null,
+    );
+  }
 }

@@ -189,9 +189,7 @@ class SessionInterceptor extends QueuedInterceptor {
       final menoResponse = MenoResponse.fromJson(data, (json) => json);
 
       if (menoResponse.hasError || !menoResponse.status) {
-        throw ServerException(
-          menoResponse.globalError ?? 'Token refresh failed',
-        );
+        throw ServerException(menoResponse.error ?? 'Token refresh failed');
       }
 
       final credentialDto = UserCredentialDto.fromJson(menoResponse.data);
