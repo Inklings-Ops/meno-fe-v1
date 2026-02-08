@@ -8,6 +8,7 @@ import 'package:meno/features/auth/domain/domain.dart' show Password;
 import 'package:meno/features/auth/presentation/presentation.dart';
 import 'package:meno/shared/domain/domain.dart' show Email;
 import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class LoginFormWidget extends WatchingStatefulWidget {
@@ -63,7 +64,10 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               key: const Key('loginForm_emailField'),
               controller: _emailController,
             ),
-            (user) => UserAccountDetailsWidget(user: user, action: () {}),
+            (user) => UserAccountDetailsWidget(
+              user: user,
+              action: () => SwitchAccountModal.show(context),
+            ),
           ),
           Spaces.verticalXXLarge,
           _PasswordField(

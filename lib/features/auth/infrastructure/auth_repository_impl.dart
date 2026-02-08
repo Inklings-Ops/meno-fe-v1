@@ -35,6 +35,9 @@ final class AuthRepositoryImpl implements IAuthRepository {
   ValueListenable<Option<User>> get lastKnownUser => _lastKnownUser;
 
   @override
+  void clearLastKnownUser() => _lastKnownUser.value = const None();
+
+  @override
   bool get isEmailVerified {
     final credential = currentCredential;
     return credential.match(() => false, (cred) => cred.user.verified);

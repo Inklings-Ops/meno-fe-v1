@@ -31,6 +31,9 @@ abstract interface class IAuthRepository implements Disposable {
   /// This is used for "Welcome back" UI when session expires
   ValueListenable<Option<User>> get lastKnownUser;
 
+  /// Clears the last known user (even if session expired)
+  void clearLastKnownUser();
+
   /// Hydrates the Vault and sets the Active Anchor.
   Future<void> initialize([UserCredential? refreshed]);
 

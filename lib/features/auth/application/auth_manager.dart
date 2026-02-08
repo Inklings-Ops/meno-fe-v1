@@ -20,22 +20,20 @@ final class AuthManager extends ChangeNotifier implements Disposable {
 
   ValueListenable<Option<Id>> get userId => _repository.activeUserId;
 
+  ValueListenable<Map<Id, UserCredential>> get accounts => _repository.accounts;
+
+  /// Last known user for "Welcome back" display
+  /// This is populated even when session is expired
+  ValueListenable<Option<User>> get lastKnownUser => _repository.lastKnownUser;
+
+  void clearLastKnownUser() => _repository.clearLastKnownUser();
+
   // ======================================================================
   // COMPUTED STATE
   // ======================================================================
 
   /// Whether any user is authenticated
   bool get isAuthenticated => userId.value.isSome();
-
-  /// Current active credential (if authenticated)
-  Option<UserCredential> get credential => _repository.currentCredential;
-
-  /// All available accounts for switching
-  Map<Id, UserCredential> get availableAccounts => _repository.accounts.value;
-
-  /// Last known user for "Welcome back" display
-  /// This is populated even when session is expired
-  ValueListenable<Option<User>> get lastKnownUser => _repository.lastKnownUser;
 
   late final Command<LoginParams, UserCredential> login;
 
