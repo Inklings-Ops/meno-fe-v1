@@ -7,8 +7,8 @@ plugins {
 
 android {
     namespace = "com.inklings.meno.meno"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = (rootProject.property("compileSdk") as String).toInt()
+    ndkVersion = rootProject.property("ndkVersion") as String
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -25,7 +25,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = (rootProject.property("compileSdk") as String).toInt()
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

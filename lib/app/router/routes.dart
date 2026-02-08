@@ -1,6 +1,14 @@
 class R {
   const R._();
 
+  static const List<String> publicRoutes = [
+    R.loading,
+    R.login,
+    R.onboarding,
+    R.register,
+    R.resetPassword,
+  ];
+
   static const String root = '/';
   static const String loading = '/loading';
   static const String onboarding = '/onboarding';
@@ -17,7 +25,7 @@ class R {
   static const String createNewPassword = '/createNewPassword';
   static const String webCreateBroadcast = '/web-createBroadcast';
   static const String createBroadcast = '/createBroadcast';
-  static const String home = '/home';
+  static const String dashboard = '/dashboard';
   static const String discover = '/discover';
   static const String notes = '/notes';
   static const String myProfile = '/my-profile';

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
@@ -9,7 +10,7 @@ import 'package:meno/shared/domain/domain.dart';
 /// - Repository defines "what" and "where" of data (contracts)
 /// - Infrastructure defines "how" (implementation details)
 /// - Uses reactive primitives for zero-latency UI updates
-abstract interface class IAuthRepository {
+abstract interface class IAuthRepository implements Disposable {
   /// The active Identity. The Router watches THIS.
   ///
   /// - Immutable (String ID).
@@ -25,6 +26,10 @@ abstract interface class IAuthRepository {
 
   /// Helper: Synchronously looks up the Active User in the Vault.
   Option<UserCredential> get currentCredential;
+
+  /// Last known user (even if session expired)
+  /// This is used for "Welcome back" UI when session expires
+  ValueListenable<Option<User>> get lastKnownUser;
 
   /// Hydrates the Vault and sets the Active Anchor.
   Future<void> initialize([UserCredential? refreshed]);
@@ -45,10 +50,10 @@ abstract interface class IAuthRepository {
   /// - Returns authenticated [UserCredential]
   /// - Updates [activeUserId]
   /// - Stores credential in secure storage
-  Future<Either<AuthException, UserCredential>> login({
-    required Email email,
-    required Password password,
-  });
+  Future<Either<AuthException, UserCredential>> login(
+    Email email,
+    Password password,
+  );
 
   /// Registers a new user account.
   ///
@@ -61,8 +66,6 @@ abstract interface class IAuthRepository {
     required Email email,
     required Password password,
     required TermsAcceptance terms,
-    MultiLineString? bio,
-    ImageInput? avatar,
   });
 
   /// Authenticates or registers via Google OAuth.
@@ -128,9 +131,6 @@ abstract interface class IAuthRepository {
   ///
   /// If the removed account is currently active, logs out.
   Future<void> removeAccount(Id userId);
-
-  /// Handles Disposal
-  void dispose();
 }
 
 // ========================================================================

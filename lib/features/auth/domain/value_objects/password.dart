@@ -2,13 +2,13 @@ import 'package:fpdart/fpdart.dart' show Either, Left, Right;
 import 'package:meno/core/core.dart';
 
 class Password extends ValueObject<String> {
-  factory Password.signIn(String input) {
-    const mode = PasswordMode.signIn;
+  factory Password.login(String input) {
+    const mode = PasswordMode.login;
     return Password._(_validate(input, mode), input, mode);
   }
 
-  factory Password.signUp(String input) {
-    const mode = PasswordMode.signUp;
+  factory Password.register(String input) {
+    const mode = PasswordMode.register;
     return Password._(_validate(input, mode), input, mode);
   }
 
@@ -26,16 +26,16 @@ class Password extends ValueObject<String> {
     return brokenRules.any((r) => r.runtimeType == rule.runtimeType);
   }
 
-  static const Password emptySignIn = Password._(
+  static const Password emptyLogin = Password._(
     Left(RequiredValueException()),
     '',
-    PasswordMode.signIn,
+    PasswordMode.login,
   );
 
-  static const Password emptySignUp = Password._(
+  static const Password emptyRegister = Password._(
     Left(RequiredValueException()),
     '',
-    PasswordMode.signUp,
+    PasswordMode.register,
   );
 
   static Either<ValueException<String>, String> _validate(
@@ -46,7 +46,7 @@ class Password extends ValueObject<String> {
 
     // For SignIn, we are lenient (server handles checks).
     // For SignUp, we enforce strict rules.
-    if (mode == PasswordMode.signUp) {
+    if (mode == PasswordMode.register) {
       final rules = _collectBrokenRules(input);
       if (rules.isNotEmpty) {
         // Return the first rule as the "Primary" failure for the Either
@@ -88,4 +88,4 @@ class Password extends ValueObject<String> {
 }
 
 /// Enum to distinguish between sign-in and sign-up modes
-enum PasswordMode { signIn, signUp }
+enum PasswordMode { login, register }

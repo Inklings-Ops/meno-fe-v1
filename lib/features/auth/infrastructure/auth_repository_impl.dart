@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
@@ -16,8 +18,8 @@ final class AuthRepositoryImpl implements IAuthRepository {
   final AuthRemoteDataSource _remote;
 
   final _activeUserId = ValueNotifier<Option<Id>>(const None());
-
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
+  final _lastKnownUser = ValueNotifier<Option<User>>(const None());
 
   @override
   ValueListenable<Option<Id>> get activeUserId => _activeUserId;
@@ -26,64 +28,7 @@ final class AuthRepositoryImpl implements IAuthRepository {
   ValueListenable<Map<Id, UserCredential>> get accounts => _accounts;
 
   @override
-  Option<UserCredential> get currentCredential => _activeUserId.value.flatMap(
-    (id) => Option.fromNullable(_accounts.value[id]),
-  );
-
-  @override
-  Future<Either<AuthException, Unit>> changePassword({
-    required Password currentPassword,
-    required Password newPassword,
-  }) {
-    // TODO: implement changePassword
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<AuthException, UserCredential>> googleSignIn() {
-    // TODO: implement googleSignIn
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> initialize([UserCredential? refreshed]) async {
-    if (refreshed != null) return _updateAccountInternal(refreshed);
-
-    try {
-      final dtos = await _local.getAllAccounts();
-      final list = dtos.map((i, d) => MapEntry(Id.fromString(i), d.toDomain));
-      _accounts.value = list;
-
-      final credentialDto = await _local.getCredential();
-      if (credentialDto != null) {
-        final activeId = credentialDto.user.id;
-        final domainCredential = credentialDto.toDomain;
-
-        // Integrity Check: Ensure Active User exists in Vault
-        if (list.containsKey(Id.fromString(activeId))) {
-          // Sync Memory
-          if (domainCredential.session.isExpired) {
-            // Logic choice: Auto-logout or allow refresh?
-            // For safety, if strictly expired, we might clear active state
-            // But usually, we let the Interceptor handle the 401 later.
-            // Here we just set the ID.
-            _activeUserId.value = Some(Id.fromString(activeId));
-          } else {
-            _activeUserId.value = Some(Id.fromString(activeId));
-          }
-        } else {
-          // Corruption: Active ID exists but data missing. Clear it.
-          await _local.clearCredential();
-          _activeUserId.value = const None();
-        }
-      } else {
-        _activeUserId.value = const None();
-      }
-    } catch (e) {
-      // Initialization failure - start with no auth
-      _activeUserId.value = const None();
-    }
-  }
+  ValueListenable<Option<User>> get lastKnownUser => _lastKnownUser;
 
   @override
   bool get isEmailVerified {
@@ -92,10 +37,72 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<AuthException, UserCredential>> login({
-    required Email email,
-    required Password password,
-  }) async {
+  Option<UserCredential> get currentCredential => _activeUserId.value.flatMap(
+    (id) => Option.fromNullable(_accounts.value[id]),
+  );
+
+  @override
+  Future<void> initialize([UserCredential? refreshed]) async {
+    if (refreshed != null) return _updateAccountInternal(refreshed);
+
+    try {
+      final dtos = await _local.getAllAccounts();
+      final map = dtos.map((i, d) => MapEntry(Id.fromString(i), d.toDomain));
+      _accounts.value = map;
+
+      final credentialDto = await _local.getCredential();
+      if (credentialDto != null) {
+        final activeId = Id.fromString(credentialDto.user.id);
+        final domainCredential = credentialDto.toDomain;
+        final user = domainCredential.user;
+
+        _lastKnownUser.value = some(user);
+
+        // Integrity Check: Ensure Active User exists in Vault
+        if (map.containsKey(activeId)) {
+          if (domainCredential.session.isExpired) {
+            // Session expired - clear active ID but keep lastKnownUser
+            // This creates the "partially authenticated" state
+            _activeUserId.value = const None();
+
+            // Optionally: Clear the expired credential from hot storage
+            // but keep it in vault for "Welcome back" display
+            await _local.clearCredential();
+          } else {
+            // Valid session - set active user
+            _activeUserId.value = some(activeId);
+          }
+        } else {
+          // Corruption: Active ID exists but data missing
+          await _local.clearCredential();
+          _activeUserId.value = const None();
+          _lastKnownUser.value = const None();
+        }
+      } else {
+        // No active credential - check if we have any accounts in vault
+        if (map.isNotEmpty) {
+          // User logged out but we have stored accounts
+          // Get the most recent user for "Welcome back"
+          final mostRecentUser = map.values.first.user;
+          _lastKnownUser.value = some(mostRecentUser);
+        } else {
+          _lastKnownUser.value = const None();
+        }
+
+        _activeUserId.value = const None();
+      }
+    } catch (e) {
+      // Initialization failure - start with no auth
+      _activeUserId.value = const None();
+      _lastKnownUser.value = const None();
+    }
+  }
+
+  @override
+  Future<Either<AuthException, UserCredential>> login(
+    Email email,
+    Password password,
+  ) async {
     try {
       final dto = await _remote.login(
         email.getOrCrash(),
@@ -115,12 +122,16 @@ final class AuthRepositoryImpl implements IAuthRepository {
   @override
   Future<void> logout() async {
     try {
+      // Keep lastKnownUser for "Welcome back" on next visit
+      // Only clear active session
       await _local.clearCredential();
       _activeUserId.value = const None();
-      // await _loadStoredAccounts();
+
+      // Note: We intentionally DON'T clear _lastKnownUser here
+      // so the user sees "Welcome back" when they return
     } catch (e) {
-      // Logout should always succeed, even if storage fails
-      _activeUserId.value = none();
+      // Logout should always succeed
+      _activeUserId.value = const None();
     }
   }
 
@@ -130,10 +141,34 @@ final class AuthRepositoryImpl implements IAuthRepository {
     required Email email,
     required Password password,
     required TermsAcceptance terms,
-    MultiLineString? bio,
-    ImageInput? avatar,
+  }) async {
+    try {
+      final dto = await _remote.register(
+        fullName: fullName.getOrCrash(),
+        email: email.getOrCrash(),
+        password: password.getOrCrash(),
+      );
+
+      return _handleSuccessfulAuth(dto);
+    } on MenoException catch (e) {
+      return Left(AuthSystemFailure.fromMeno(e));
+    } catch (e) {
+      return Left(AuthSystemFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AuthException, Unit>> changePassword({
+    required Password currentPassword,
+    required Password newPassword,
   }) {
-    // TODO: implement register
+    // TODO: implement changePassword
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<AuthException, UserCredential>> googleSignIn() {
+    // TODO: implement googleSignIn
     throw UnimplementedError();
   }
 
@@ -187,12 +222,16 @@ final class AuthRepositoryImpl implements IAuthRepository {
     // Persist to Local Storage (Hot Keys + Vault)
     await _local.saveCredential(dto);
 
-    // Update In-Memory Vault
+    // Update In-Memory State
     final credential = dto.toDomain;
     _updateAccountInternal(credential);
 
-    // Update Anchor (should trigger router)
-    _activeUserId.value = Some(credential.user.id);
+    // Update last known user
+    _lastKnownUser.value = some(credential.user);
+
+    // Update active user ID (triggers router)
+    _activeUserId.value = some(credential.user.id);
+
     return Right(credential);
   }
 
@@ -201,11 +240,15 @@ final class AuthRepositoryImpl implements IAuthRepository {
     final newMap = Map<Id, UserCredential>.from(_accounts.value);
     newMap[credential.user.id] = credential;
     _accounts.value = newMap;
+
+    // Also update lastKnownUser
+    _lastKnownUser.value = some(credential.user);
   }
 
   @override
-  void dispose() {
+  FutureOr<dynamic> onDispose() {
     _activeUserId.dispose();
     _accounts.dispose();
+    _lastKnownUser.dispose();
   }
 }

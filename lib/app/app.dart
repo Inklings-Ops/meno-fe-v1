@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 class MenoApp extends StatefulWidget {
   const MenoApp({super.key});
@@ -27,8 +28,17 @@ class _MenoAppState extends State<MenoApp> {
     return MaterialApp.router(
       darkTheme: MTheme.dark,
       debugShowCheckedModeBanner: false,
-      routerConfig: di<MRouter>().routerConfig,
+      routerConfig: di<MenoRouter>().routerConfig,
       theme: MTheme.light,
+      builder: (context, child) => ResponsiveBreakpoints.builder(
+        breakpoints: const [
+          Breakpoint(start: 0, end: 450, name: PHONE),
+          Breakpoint(start: 451, end: 600, name: MOBILE),
+          Breakpoint(start: 601, end: 800, name: TABLET),
+          Breakpoint(start: 801, end: 1920, name: DESKTOP),
+        ],
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

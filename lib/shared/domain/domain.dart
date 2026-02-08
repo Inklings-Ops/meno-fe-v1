@@ -1,3 +1,4 @@
+export 'entities/destination.dart';
 export 'entities/general_settings.dart';
 export 'entities/notification_settings.dart';
 export 'entities/user.dart';

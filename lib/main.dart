@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:meno/app/app.dart';
-import 'package:meno/di.dart';
+import 'package:meno/core/di/injector.dart';
 
 /// Entry point for the app.
 Future<void> main() async {
