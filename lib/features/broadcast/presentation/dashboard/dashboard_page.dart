@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
+import 'package:meno/features/auth/application/application.dart';
 import 'package:meno/shared/application/user_manager.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -23,17 +24,23 @@ class DashboardPage extends StatelessWidget {
     //   await Future.wait([liveBroadcasts, recentlyLive]);
     // }
 
-    return const Scaffold(
-      appBar: _AppBar(key: Key('dashboardAppBar')),
+    return Scaffold(
+      appBar: const _AppBar(key: Key('dashboardAppBar')),
       body: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
         child: Column(
           children: [
+            MPrimaryButton(
+              label: 'Logout',
+              onPressed: di<AuthManager>().logout.run,
+            ),
             // LiveBroadcastActivityCard(),
             // LiveForYou(),
             // NowLiveSection(),
             // RecentlyLiveSection(),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

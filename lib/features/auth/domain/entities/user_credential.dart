@@ -8,6 +8,11 @@ final class UserCredential with EquatableMixin {
   final Session session;
   final User user;
 
+  static UserCredential empty = UserCredential(
+    session: Session.empty,
+    user: User.empty,
+  );
+
   @override
   List<Object?> get props => [session, user];
 }

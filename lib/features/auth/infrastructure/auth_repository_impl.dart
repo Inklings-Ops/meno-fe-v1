@@ -12,7 +12,9 @@ final class AuthRepositoryImpl implements IAuthRepository {
     required AuthLocalDataSource local,
     required AuthRemoteDataSource remote,
   }) : _local = local,
-       _remote = remote;
+       _remote = remote {
+    _tokenSubscription = _local.onCredentialChanged.listen(_onAuthChanged);
+  }
 
   final AuthLocalDataSource _local;
   final AuthRemoteDataSource _remote;
@@ -20,6 +22,8 @@ final class AuthRepositoryImpl implements IAuthRepository {
   final _activeUserId = ValueNotifier<Option<Id>>(const None());
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
   final _lastKnownUser = ValueNotifier<Option<User>>(const None());
+
+  StreamSubscription<UserCredentialDto?>? _tokenSubscription;
 
   @override
   ValueListenable<Option<Id>> get activeUserId => _activeUserId;
@@ -245,10 +249,29 @@ final class AuthRepositoryImpl implements IAuthRepository {
     _lastKnownUser.value = some(credential.user);
   }
 
+  void _onAuthChanged(UserCredentialDto? dto) {
+    if (dto == null) {
+      // Case: Session Expired (Token deleted)
+      _activeUserId.value = const None();
+      // We do NOT clear accounts (Soft Logout)
+    } else {
+      // Case: Token Refreshed / Login
+      final credential = dto.toDomain;
+
+      // 1. Update Vault
+      _updateAccountInternal(credential);
+
+      // 2. Update State
+      _activeUserId.value = some(credential.user.id);
+      _lastKnownUser.value = some(credential.user);
+    }
+  }
+
   @override
   FutureOr<dynamic> onDispose() {
     _activeUserId.dispose();
     _accounts.dispose();
     _lastKnownUser.dispose();
+    _tokenSubscription?.cancel();
   }
 }

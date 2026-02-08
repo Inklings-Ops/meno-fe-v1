@@ -39,6 +39,12 @@ final class Session with EquatableMixin {
     );
   }
 
+  static Session empty = Session(
+    accessToken: Token.orEmpty(''),
+    refreshToken: Token.orEmpty(''),
+    expiry: null,
+  );
+
   final Token accessToken;
   final Token refreshToken;
   final DateTime? expiry;

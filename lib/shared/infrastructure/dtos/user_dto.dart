@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:meno/shared/infrastructure/dtos/general_settings_dto.dart';
+import 'package:meno/utils/enum_utils.dart';
 
 final class UserDto with EquatableMixin {
   const UserDto({
@@ -26,8 +27,10 @@ final class UserDto with EquatableMixin {
       fullName: json[_kFullName] as String,
       email: json[_kEmail] as String,
       bio: json[_kBio] as String?,
-      generalSettings: json[_kGeneralSettings] as GeneralSettingsDto?,
-      role: json[_kRole] as UserRole?,
+      generalSettings: json[_kGeneralSettings] != null
+          ? GeneralSettingsDto.fromJson(json[_kGeneralSettings])
+          : null,
+      role: $enumDecodeNullable(_$UserRoleEnumMap, json['role']),
       imageId: json[_kImageId] as String?,
       imageUrl: json[_kImageUrl] as String?,
       verified: json[_kVerified] as bool,
@@ -53,7 +56,7 @@ final class UserDto with EquatableMixin {
       _kEmail: email,
       _kBio: bio,
       _kGeneralSettings: generalSettings?.toJson(),
-      _kRole: role,
+      _kRole: _$UserRoleEnumMap[role],
       _kImageId: imageId,
       _kImageUrl: imageUrl,
       _kVerified: verified,
@@ -129,3 +132,5 @@ extension UserToDomainX on User {
     );
   }
 }
+
+const _$UserRoleEnumMap = {UserRole.admin: 'admin', UserRole.guest: 'guest'};

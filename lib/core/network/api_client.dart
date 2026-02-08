@@ -457,21 +457,21 @@ class ApiClient {
       return ValidationException(response.fieldErrors!);
     }
 
-    // Global error string
-    if (response.globalError != null) {
-      // Check for common error types
-      final error = response.globalError!.toLowerCase();
-      if (error.contains('unauthorized') || error.contains('unauthenticated')) {
-        return ServerException(response.globalError!);
-      }
-      if (error.contains('forbidden')) {
-        return ServerException(response.globalError!);
-      }
-      if (error.contains('not found')) {
-        return ServerException(response.globalError!);
-      }
-      return ServerException(response.globalError!);
-    }
+    // // Global error string
+    // if (response.globalError != null) {
+    //   // Check for common error types
+    //   final error = response.globalError!.toLowerCase();
+    //   if (error.contains('unauthorized') || error.contains('unauthenticated')) {
+    //     return ServerException(response.globalError!);
+    //   }
+    //   if (error.contains('forbidden')) {
+    //     return ServerException(response.globalError!);
+    //   }
+    //   if (error.contains('not found')) {
+    //     return ServerException(response.globalError!);
+    //   }
+    //   return ServerException(response.globalError!);
+    // }
 
     // Fallback to message
     return ServerException(response.message ?? 'Request failed');

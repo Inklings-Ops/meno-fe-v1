@@ -9,6 +9,21 @@ final class AuthLocalDataSource {
 
   final SecureStorage _storage;
 
+  /// Emits the updated credential whenever the token changes on disk.
+  ///
+  /// - Emits `null` if the token is deleted (Session Expired).
+  /// - Emits `UserCredentialDto` if the token is refreshed/saved.
+  Stream<UserCredentialDto?> get onCredentialChanged {
+    // We watch the low-level key here, where it belongs.
+    return _storage.watchKey(StorageKeys.accessToken).asyncMap((token) async {
+      if (token == null) return null; // Logged out
+
+      // If token exists, fetch the full fresh object
+      // This handles the "Refresh" scenario automatically
+      return getCredential();
+    });
+  }
+
   // ======================================================================
   // PRIMARY OPERATIONS (Complete Credential)
   // ======================================================================

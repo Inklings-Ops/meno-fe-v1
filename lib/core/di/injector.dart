@@ -9,11 +9,14 @@ import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/infrastructure/infrastructure.dart';
 import 'package:meno/shared/application/user_manager.dart';
 
-void injectDependencies() {
+Future<void> injectDependencies() async {
+  // Push the base scope
+  di.pushNewScope(scopeName: 'root');
+
   // ========================================================================
   // STORAGE LAYER
   // ========================================================================
-  di.registerLazySingleton(FlutterSecureStorage.new);
+  di.registerSingletonAsync(() async => const FlutterSecureStorage());
   di.registerSingletonWithDependencies(
     () => SecureStorage(di<FlutterSecureStorage>()),
     dependsOn: [FlutterSecureStorage],
@@ -24,23 +27,21 @@ void injectDependencies() {
   // ========================================================================
 
   // Separate Dio instance for refresh requests (avoids interceptor loops)
-  di.registerLazySingleton<Dio>(
+  di.registerFactory<Dio>(
     () => Dio(BaseOptions(baseUrl: Env.menoApiUrl)),
     instanceName: 'refreshDio',
   );
 
   // Logging interceptor
-  di.registerLazySingleton(LogInterceptor.new);
+  di.registerSingletonAsync(() async => LogInterceptor());
 
   // Session interceptor with session expiry callback
-  di.registerSingletonWithDependencies(
-    () => SessionInterceptor(
+  di.registerSingletonAsync(
+    () async => SessionInterceptor(
       storage: di<SecureStorage>(),
       dio: di<Dio>(instanceName: 'refreshDio'),
-      onSessionExpired: di<IAuthRepository>().logout,
-      onTokenRefreshed: di<IAuthRepository>().initialize,
     ),
-    dependsOn: [SecureStorage, Dio],
+    dependsOn: [SecureStorage],
   );
 
   di.registerSingletonWithDependencies(
@@ -48,7 +49,7 @@ void injectDependencies() {
       baseUrl: Env.menoApiUrl,
       interceptors: [di<SessionInterceptor>(), di<LogInterceptor>()],
     ),
-    dependsOn: [LogInterceptor, SessionInterceptor],
+    dependsOn: [SessionInterceptor, LogInterceptor],
   );
 
   // ========================================================================
@@ -97,8 +98,5 @@ void injectDependencies() {
   // ========================================================================
   // PRESENTATION LAYER
   // ========================================================================
-  di.registerSingletonWithDependencies(
-    () => MenoRouter(di<IAuthRepository>()),
-    dependsOn: [IAuthRepository],
-  );
+  di.registerLazySingleton(() => MenoRouter(di<IAuthRepository>()));
 }

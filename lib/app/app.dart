@@ -56,6 +56,7 @@ class MenoAppErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       darkTheme: MTheme.dark,
       theme: MTheme.light,
       home: Scaffold(

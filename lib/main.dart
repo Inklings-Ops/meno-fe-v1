@@ -12,8 +12,8 @@ Future<void> main() async {
 
   try {
     // Inject the dependencies and wait for them to be ready
-    injectDependencies();
-    await di.allReady(timeout: const Duration(seconds: 5));
+    await injectDependencies();
+    await di.allReady();
 
     // Start the app if DI is ready
     runApp(const MenoApp());
