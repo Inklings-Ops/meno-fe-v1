@@ -12,4 +12,14 @@ abstract class StorageKeys {
 
   // Multi-account support
   static const accounts = 'all_accounts';
+
+  // #######################################################################
+  // #  BROADCAST KEYS
+  // #######################################################################
+
+  static String activeBroadcast(String userId) => 'broadcast_session_$userId';
+
+  static String broadcastDraft(String userId) => 'broadcast_draft_$userId';
+
+  static String recentBroadcasts(String userId) => 'recent_broadcasts_$userId';
 }

@@ -3,11 +3,11 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
-import 'package:meno/core/di/scope_handler.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/infrastructure/infrastructure.dart';
 import 'package:meno/shared/application/user_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> injectDependencies() async {
   // Push the base scope
@@ -16,7 +16,15 @@ Future<void> injectDependencies() async {
   // ========================================================================
   // STORAGE LAYER
   // ========================================================================
+  di.registerSingletonAsync(SharedPreferences.getInstance);
+
+  di.registerSingletonWithDependencies(
+    () => LocalStorage(di<SharedPreferences>()),
+    dependsOn: [SharedPreferences],
+  );
+
   di.registerSingletonAsync(() async => const FlutterSecureStorage());
+
   di.registerSingletonWithDependencies(
     () => SecureStorage(di<FlutterSecureStorage>()),
     dependsOn: [FlutterSecureStorage],

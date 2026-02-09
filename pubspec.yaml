@@ -25,6 +25,7 @@ dependencies:
       url: git@github.com:Inklings-Ops/meno_design_system.git
       ref: master
   responsive_framework: ^1.5.1
+  shared_preferences: ^2.5.4
   skeletonizer: ^2.1.2
   uuid: ^4.5.2
 
