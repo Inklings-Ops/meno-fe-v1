@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
@@ -6,6 +7,16 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 abstract class IBroadcastRepository implements Disposable {
+  ValueListenable<List<BroadcastDraft?>> get drafts;
+
+  Either<MenoException, List<BroadcastDraft?>> getDrafts(Id userId);
+
+  Future<void> saveDraft({required Id userId, required BroadcastDraft draft});
+
+  Future<void> deleteDraft({required Id userId, required Id draftId});
+
+  Future<void> clearDrafts(Id userId);
+
   Future<Either<MenoException, Broadcast>> createBroadcast({
     required SingleLineString title,
     required MultiLineString description,
@@ -44,9 +55,9 @@ abstract class IBroadcastRepository implements Disposable {
     CancelToken? cancelToken,
   });
 
-  Future<Option<Broadcast>> getSavedBroadcastDetails();
+  Option<BroadcastSession> getActiveBroadcastSession(Id userId);
 
-  Future<void> clearSavedBroadcastDetails();
+  Future<void> saveActiveBroadcastSession(BroadcastSession broadcast);
 
-  Future<void> saveBroadcastDetails(Broadcast broadcast);
+  Future<void> clearActiveBroadcast(Id userId);
 }

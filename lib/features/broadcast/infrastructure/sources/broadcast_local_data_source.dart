@@ -16,18 +16,21 @@ class BroadcastLocalDataSource {
   // ======================================================================
 
   /// Saves the active broadcast ID specifically for THIS user.
+  /// Saves a [Map] of the [broadcastId] to the [broadcastToken].
   Future<void> saveActiveBroadcastSession({
     required String userId,
     required String broadcastId,
+    required String broadcastToken,
   }) async {
     final key = StorageKeys.activeBroadcast(userId);
-    await _storage.setString(key, broadcastId);
+    await _storage.setList(key, [broadcastId, broadcastToken]);
   }
 
   /// Retrieves the ID if the app was killed mid-broadcast.
-  Future<String?> getActiveBroadcastSession(String userId) async {
+  /// Returns a [List] of the broadcast ID and the broadcast token.
+  List<String>? getActiveBroadcastSession(String userId) {
     final key = StorageKeys.activeBroadcast(userId);
-    return _storage.getString(key);
+    return _storage.getList(key);
   }
 
   /// Clears the ID when the user taps "End Broadcast" gracefully.
@@ -57,7 +60,8 @@ class BroadcastLocalDataSource {
   }
 
   /// Saves the form data (Title, Desc, Tags) so the user can come back later.
-  Future<void> saveDraft({
+  /// Returns the updated list of drafts
+  Future<List<BroadcastDraftDto?>> saveDraft({
     required String userId,
     required BroadcastDraftDto draft,
   }) async {
@@ -75,10 +79,13 @@ class BroadcastLocalDataSource {
     final jsonList = currentList.map((draft) => draft?.toJson()).toList();
     final jsonListString = jsonEncode(jsonList);
     await _storage.setString(key, jsonListString);
+
+    return currentList;
   }
 
   /// Deletes a specific draft using the draft [draftId]
-  Future<void> deleteDraft({
+  /// Returns the updated list of drafts
+  Future<List<BroadcastDraftDto?>> deleteDraft({
     required String userId,
     required String draftId,
   }) async {
@@ -94,6 +101,8 @@ class BroadcastLocalDataSource {
       final jsonListString = jsonEncode(jsonList);
       await _storage.setString(key, jsonListString);
     }
+
+    return currentList;
   }
 
   /// Clears all drafts for the user.

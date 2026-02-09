@@ -19,7 +19,7 @@ abstract class StorageKeys {
 
   static String activeBroadcast(String userId) => 'broadcast_session_$userId';
 
-  static String broadcastDraft(String userId) => 'broadcast_draft_$userId';
+  static String broadcastDrafts(String userId) => 'broadcast_draft_$userId';
 
-  static String recentBroadcasts(String userId) => 'recent_broadcasts_$userId';
+  static String broadcastCache(String userId) => 'broadcast_cache_$userId';
 }

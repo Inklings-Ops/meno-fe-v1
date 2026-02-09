@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
@@ -13,7 +14,7 @@ import 'package:meno/shared/domain/value_objects/paged_list.dart';
 import 'package:meno/shared/domain/value_objects/single_line_string.dart';
 
 final class BroadcastRepositoryImpl implements IBroadcastRepository {
-  const BroadcastRepositoryImpl({
+  BroadcastRepositoryImpl({
     required BroadcastRemoteDataSource remote,
     required BroadcastLocalDataSource local,
   }) : _remote = remote,
@@ -22,11 +23,7 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
   final BroadcastRemoteDataSource _remote;
   final BroadcastLocalDataSource _local;
 
-  @override
-  Future<void> clearSavedBroadcastDetails() {
-    // TODO: implement clearSavedBroadcastDetails
-    throw UnimplementedError();
-  }
+  final _drafts = ValueNotifier<List<BroadcastDraft?>>([]);
 
   @override
   Future<Either<MenoException, Broadcast>> createBroadcast({
@@ -98,12 +95,6 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
   }
 
   @override
-  Future<Option<Broadcast>> getSavedBroadcastDetails() {
-    // TODO: implement getSavedBroadcastDetails
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Either<MenoException, Broadcast>> joinBroadcast(Id id) {
     // TODO: implement joinBroadcast
     throw UnimplementedError();
@@ -118,18 +109,6 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
   @override
   Future<Either<MenoException, List<Participant?>>> liveListeners(Id id) {
     // TODO: implement liveListeners
-    throw UnimplementedError();
-  }
-
-  @override
-  FutureOr<dynamic> onDispose() {
-    // TODO: implement onDispose
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> saveBroadcastDetails(Broadcast broadcast) {
-    // TODO: implement saveBroadcastDetails
     throw UnimplementedError();
   }
 
@@ -179,5 +158,92 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
     }
 
     return params;
+  }
+
+  @override
+  Future<void> clearDrafts(Id userId) async {
+    await _local.clearDraft(userId.getOrCrash());
+    _drafts.value = [];
+  }
+
+  @override
+  Future<void> deleteDraft({required Id userId, required Id draftId}) async {
+    final updatedList = await _local.deleteDraft(
+      userId: userId.getOrCrash(),
+      draftId: draftId.getOrCrash(),
+    );
+    _drafts.value = updatedList.map((e) => e?.toDomain).toList();
+  }
+
+  @override
+  ValueListenable<List<BroadcastDraft?>> get drafts => _drafts;
+
+  @override
+  Either<MenoException, List<BroadcastDraft?>> getDrafts(Id userId) {
+    try {
+      final dtos = _local.getAllDrafts(userId.getOrCrash());
+      final transformedList = dtos.map((e) => e?.toDomain).toList();
+      _drafts.value = transformedList;
+      return Right(transformedList);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<void> saveDraft({
+    required Id userId,
+    required BroadcastDraft draft,
+  }) async {
+    try {
+      final updatedList = await _local.saveDraft(
+        userId: userId.getOrCrash(),
+        draft: draft.toDto,
+      );
+      _drafts.value = updatedList.map((e) => e?.toDomain).toList();
+    } catch (error) {
+      throw MenoException(error.toString());
+    }
+  }
+
+  @override
+  FutureOr<dynamic> onDispose() {
+    _drafts.dispose();
+  }
+
+  @override
+  Option<BroadcastSession> getActiveBroadcastSession(Id userId) {
+    final result = _local.getActiveBroadcastSession(userId.getOrCrash());
+    if (result == null) return const None();
+
+    final session = BroadcastSession(
+      broadcastId: Id.fromString(result[0]),
+      broadcastToken: result[1],
+      creatorId: userId,
+    );
+    return Some(session);
+  }
+
+  @override
+  Future<void> saveActiveBroadcastSession(BroadcastSession session) async {
+    try {
+      await _local.saveActiveBroadcastSession(
+        userId: session.creatorId.getOrCrash(),
+        broadcastId: session.broadcastId.getOrCrash(),
+        broadcastToken: session.broadcastToken,
+      );
+    } catch (error) {
+      throw MenoException(error.toString());
+    }
+  }
+
+  @override
+  Future<void> clearActiveBroadcast(Id userId) async {
+    try {
+      await _local.clearActiveBroadcastId(userId.getOrCrash());
+    } catch (error) {
+      throw MenoException(error.toString());
+    }
   }
 }

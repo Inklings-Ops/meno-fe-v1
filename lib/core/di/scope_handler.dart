@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/domain/domain.dart';
+import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
@@ -39,8 +40,14 @@ final class ScopeHandler implements Disposable {
         isFinal: true,
         scopeName: 'user_${userId.value}',
         init: (getIt) async {
+          // ==================================================================
+          // DOMAIN LAYER
+          // ==================================================================
           getIt.registerSingleton<Session>(credentials.session);
 
+          // ==================================================================
+          // INFRASTRUCTURE LAYER
+          // ==================================================================
           getIt.registerSingletonWithDependencies(
             () => BroadcastLocalDataSource(getIt<LocalStorage>()),
             dependsOn: [LocalStorage],
@@ -57,6 +64,14 @@ final class ScopeHandler implements Disposable {
               remote: getIt<BroadcastRemoteDataSource>(),
             );
           }, dependsOn: [BroadcastLocalDataSource, BroadcastRemoteDataSource]);
+
+          // ==================================================================
+          // APPLICATION LAYER
+          // ==================================================================
+          di.registerSingletonWithDependencies(
+            () => BroadcastFormManager(di<IBroadcastRepository>()),
+            dependsOn: [IBroadcastRepository],
+          );
         },
         dispose: () async {},
       );
