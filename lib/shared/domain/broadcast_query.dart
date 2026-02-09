@@ -96,6 +96,19 @@ final class BroadcastQuery with EquatableMixin {
     pagination: pagination,
   );
 
+  factory BroadcastQuery.recent({
+    PaginationParams pagination = const PaginationParams(),
+    SortParams sortParams = const SortParams(
+      sortBy: SortBy.endTime,
+      orderBy: OrderBy.desc,
+    ),
+  }) => BroadcastQuery(
+    sortParams: sortParams,
+    pagination: pagination,
+    endTimeRange: const TimeRange(exists: true),
+    includeTotalListeners: true,
+  );
+
   final Id? id;
   final SortParams? sortParams;
   final BroadcastStatus? status;

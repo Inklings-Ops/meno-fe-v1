@@ -41,6 +41,23 @@ final class PagedList<T> with EquatableMixin, Paged<T> {
 
   static PagedList<T> empty<T>() => PagedList<T>(items: []);
 
+  /// Merges a new page into the current list.
+  ///
+  /// [other] is the new page coming from the API.
+  /// If [replace] is true (pull-to-refresh), we discard current items.
+  PagedList<T> merge(PagedList<T> other, {bool replace = false}) {
+    if (replace) return other;
+    return PagedList<T>(
+      items: [...items, ...other.items],
+      currentPage: other.currentPage,
+      totalItems: other.totalItems,
+      totalPages: other.totalPages,
+    );
+  }
+
+  /// Helper to check if we have reached the end
+  bool get hasMore => currentPage < totalPages;
+
   PagedList<T> copyWith({
     List<T?>? items,
     int? currentPage,
