@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/domain/domain.dart';
+import 'package:meno/features/broadcast/domain/domain.dart';
+import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 final class ScopeHandler implements Disposable {
@@ -37,6 +40,23 @@ final class ScopeHandler implements Disposable {
         scopeName: 'user_${userId.value}',
         init: (getIt) async {
           getIt.registerSingleton<Session>(credentials.session);
+
+          getIt.registerSingletonWithDependencies(
+            () => BroadcastLocalDataSource(getIt<LocalStorage>()),
+            dependsOn: [LocalStorage],
+          );
+
+          getIt.registerSingletonWithDependencies(
+            () => BroadcastRemoteDataSource(getIt<ApiClient>()),
+            dependsOn: [ApiClient],
+          );
+
+          getIt.registerSingletonAsync<IBroadcastRepository>(() async {
+            return BroadcastRepositoryImpl(
+              local: getIt<BroadcastLocalDataSource>(),
+              remote: getIt<BroadcastRemoteDataSource>(),
+            );
+          }, dependsOn: [BroadcastLocalDataSource, BroadcastRemoteDataSource]);
         },
         dispose: () async {},
       );

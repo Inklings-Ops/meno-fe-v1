@@ -1,3 +1,4 @@
+export 'broadcast_repository_impl.dart';
 export 'dtos/broadcast_draft_dto.dart';
 export 'dtos/broadcast_dto.dart';
 export 'dtos/participant_dto.dart';
