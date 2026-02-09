@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 
-final class BroadcastLocalDataSource {
+class BroadcastLocalDataSource {
   const BroadcastLocalDataSource(this._storage);
 
   final LocalStorage _storage;

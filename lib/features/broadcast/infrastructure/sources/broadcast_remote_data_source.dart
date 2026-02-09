@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
-import 'package:meno/shared/domain/domain.dart';
 
-final class BroadcastRemoteDataSource {
+class BroadcastRemoteDataSource {
   const BroadcastRemoteDataSource(this._client);
 
   final ApiClient _client;
@@ -55,14 +54,14 @@ final class BroadcastRemoteDataSource {
     );
   }
 
-  Future<PagedList<BroadcastDto?>> getBroadcasts(
-    Map<String, dynamic> params, {
+  Future<dynamic> getBroadcasts(
+    Map<String, dynamic> queryParameters, {
     CancelToken? cancelToken,
   }) async {
     return _client.get(
       '/broadcasts',
-      queryParameters: params,
-      fromJson: (json) => PagedList.fromJson(json, BroadcastDto.fromJson),
+      queryParameters: queryParameters,
+      fromJson: (json) => json,
       cancelToken: cancelToken,
     );
   }

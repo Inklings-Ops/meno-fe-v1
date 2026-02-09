@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno/features/broadcast/infrastructure/dtos/participant_dto.dart';
 import 'package:meno/shared/domain/domain.dart';
 
@@ -143,4 +144,56 @@ final class BroadcastDto with EquatableMixin {
     creatorBio,
     creatorImageUrl,
   ];
+}
+
+extension BroadcastToDomainX on BroadcastDto {
+  Broadcast get toDomain {
+    return Broadcast(
+      id: Id.fromString(id),
+      title: SingleLineString(title),
+      description: MultiLineString(description),
+      status: status,
+      broadcastToken: broadcastToken,
+      creatorId: creatorId == null ? null : Id.fromString(creatorId!),
+      creator: creator?.toDomain,
+      fullName: fullName == null ? null : SingleLineString(fullName!),
+      imageUrl: imageUrl,
+      startTime: startTime,
+      endTime: endTime,
+      createdAt: createdAt,
+      deleted: deleted,
+      liveListeners: liveListeners,
+      totalListeners: totalListeners,
+      creatorFullName: creatorFullName == null
+          ? null
+          : SingleLineString(creatorFullName!),
+      creatorBio: creatorBio == null ? null : MultiLineString(creatorBio!),
+      creatorImageUrl: creatorImageUrl,
+    );
+  }
+}
+
+extension BroadcastToDtoX on Broadcast {
+  BroadcastDto get toDto {
+    return BroadcastDto(
+      id: id.getOrCrash(),
+      title: title.getOrCrash(),
+      description: description.getOrCrash(),
+      status: status,
+      broadcastToken: broadcastToken,
+      creatorId: creatorId?.getOrNull(),
+      creator: creator?.toDto,
+      fullName: fullName?.getOrNull(),
+      imageUrl: imageUrl,
+      startTime: startTime,
+      endTime: endTime,
+      createdAt: createdAt,
+      deleted: deleted,
+      liveListeners: liveListeners,
+      totalListeners: totalListeners,
+      creatorFullName: creatorFullName?.getOrNull(),
+      creatorBio: creatorBio?.getOrNull(),
+      creatorImageUrl: creatorImageUrl,
+    );
+  }
 }

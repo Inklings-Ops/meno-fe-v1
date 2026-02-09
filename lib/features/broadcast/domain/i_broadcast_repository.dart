@@ -9,7 +9,7 @@ abstract class IBroadcastRepository implements Disposable {
   Future<Either<MenoException, Broadcast>> createBroadcast({
     required SingleLineString title,
     required MultiLineString description,
-    ImageInput? artwork,
+    ImageInput? image,
     String? timeZone,
     List<String>? cohosts,
   });

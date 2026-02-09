@@ -13,15 +13,6 @@ enum SortBy {
   final String value;
 }
 
-/// Represents additional fields to include in the broadcast response
-enum BroadcastIncludeField {
-  totalListeners('totalListeners');
-
-  const BroadcastIncludeField(this.value);
-
-  final String value;
-}
-
 /// Value object representing time range filter
 final class TimeRange with EquatableMixin {
   const TimeRange({this.greaterThan, this.lessThan, this.exists});
@@ -73,7 +64,7 @@ final class BroadcastQuery with EquatableMixin {
     this.id,
     this.sortParams,
     this.status,
-    this.includeFields = const [],
+    this.includeTotalListeners = false,
     this.onlySubscriptions = false,
     this.keywords,
     this.creatorId,
@@ -108,7 +99,7 @@ final class BroadcastQuery with EquatableMixin {
   final Id? id;
   final SortParams? sortParams;
   final BroadcastStatus? status;
-  final List<BroadcastIncludeField>? includeFields;
+  final bool includeTotalListeners;
   final bool onlySubscriptions;
   final String? keywords;
   final Id? creatorId;
@@ -121,7 +112,7 @@ final class BroadcastQuery with EquatableMixin {
     SortParams? sortParams,
     Id? id,
     BroadcastStatus? status,
-    List<BroadcastIncludeField>? includeFields,
+    bool? includeTotalListeners,
     bool? onlySubscriptions,
     String? keywords,
     Id? creatorId,
@@ -132,7 +123,7 @@ final class BroadcastQuery with EquatableMixin {
     sortParams: sortParams ?? this.sortParams,
     id: id ?? this.id,
     status: status ?? this.status,
-    includeFields: includeFields ?? this.includeFields,
+    includeTotalListeners: includeTotalListeners ?? this.includeTotalListeners,
     onlySubscriptions: onlySubscriptions ?? this.onlySubscriptions,
     keywords: keywords ?? this.keywords,
     creatorId: creatorId ?? this.creatorId,
@@ -152,7 +143,7 @@ final class BroadcastQuery with EquatableMixin {
     id,
     sortParams,
     status,
-    includeFields,
+    includeTotalListeners,
     onlySubscriptions,
     keywords,
     creatorId,

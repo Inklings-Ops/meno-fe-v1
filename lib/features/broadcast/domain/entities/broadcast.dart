@@ -44,7 +44,7 @@ final class Broadcast with EquatableMixin {
   final DateTime? startTime;
   final DateTime? endTime;
   final DateTime? createdAt;
-  final dynamic deleted;
+  final DateTime? deleted;
   final int? liveListeners;
   final int? totalListeners;
   final SingleLineString? creatorFullName;
@@ -66,7 +66,7 @@ final class Broadcast with EquatableMixin {
     DateTime? startTime,
     DateTime? endTime,
     DateTime? createdAt,
-    dynamic deleted,
+    DateTime? deleted,
     int? liveListeners,
     int? totalListeners,
     SingleLineString? creatorFullName,
