@@ -79,6 +79,11 @@ final class ScopeHandler implements Disposable {
             () => RecentlyLiveBroadcastsManager(getIt<IBroadcastRepository>()),
             dependsOn: [IBroadcastRepository],
           );
+
+          di.registerSingletonWithDependencies(
+            () => NowLiveBroadcastsManager(getIt<IBroadcastRepository>()),
+            dependsOn: [IBroadcastRepository],
+          );
         },
         dispose: () async {
           di<IBroadcastRepository>().onDispose();

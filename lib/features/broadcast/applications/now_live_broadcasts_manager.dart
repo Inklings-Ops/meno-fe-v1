@@ -5,8 +5,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-class RecentlyLiveBroadcastsManager implements Disposable {
-  RecentlyLiveBroadcastsManager(this._repository) {
+class NowLiveBroadcastsManager implements Disposable {
+  NowLiveBroadcastsManager(this._repository) {
     getBroadcasts.run(true);
   }
 
@@ -17,7 +17,7 @@ class RecentlyLiveBroadcastsManager implements Disposable {
   late final getBroadcasts = Command.createAsyncNoResult((bool refresh) async {
     final page = refresh ? 1 : broadcasts.value.currentPage + 1;
     final pageParams = PaginationParams(page: page);
-    final queryParameters = BroadcastQuery.recent(pagination: pageParams);
+    final queryParameters = BroadcastQuery.nowLive(pagination: pageParams);
     final result = await _repository.getBroadcasts(queryParameters);
     result.fold((error) => throw error, (newPage) {
       broadcasts.value = broadcasts.value.merge(newPage, replace: refresh);
