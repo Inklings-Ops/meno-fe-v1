@@ -31,7 +31,7 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
     required MultiLineString description,
     ImageInput? image,
     String? timeZone,
-    List<String>? cohosts,
+    List<Id>? cohosts,
   }) {
     // TODO: implement createBroadcast
     throw UnimplementedError();

@@ -22,7 +22,7 @@ abstract class IBroadcastRepository implements Disposable {
     required MultiLineString description,
     ImageInput? image,
     String? timeZone,
-    List<String>? cohosts,
+    List<Id>? cohosts,
   });
 
   Future<Either<MenoException, Unit>> deleteBroadcast(Id id);

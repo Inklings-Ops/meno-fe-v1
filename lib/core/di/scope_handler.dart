@@ -68,10 +68,12 @@ final class ScopeHandler implements Disposable {
           // ==================================================================
           // APPLICATION LAYER
           // ==================================================================
-          di.registerSingletonWithDependencies(
-            () => BroadcastFormManager(di<IBroadcastRepository>()),
-            dependsOn: [IBroadcastRepository],
-          );
+          di.registerSingletonWithDependencies(() {
+            return BroadcastFormManager(
+              currentUserId: userId,
+              repository: getIt<IBroadcastRepository>(),
+            );
+          }, dependsOn: [IBroadcastRepository]);
         },
         dispose: () async {},
       );

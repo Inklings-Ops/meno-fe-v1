@@ -12,7 +12,7 @@ final class BroadcastDraftDto with EquatableMixin {
     required this.lastModified,
     this.record = false,
     this.cohosts = const [],
-    this.artwork,
+    this.image,
   });
 
   factory BroadcastDraftDto.fromJson(dynamic json) {
@@ -28,7 +28,7 @@ final class BroadcastDraftDto with EquatableMixin {
       cohosts: json[_kCohosts] != null
           ? (json[_kCohosts] as List).map((i) => i as String).toList()
           : const [],
-      artwork: json[_kArtwork] as String?,
+      image: json[_kImage] as String?,
       lastModified: DateTime.parse(json[_kLastModified] as String),
     );
   }
@@ -38,15 +38,15 @@ final class BroadcastDraftDto with EquatableMixin {
   static const String _kDescription = 'description';
   static const String _kRecord = 'record';
   static const String _kCohosts = 'cohosts';
-  static const String _kArtwork = 'artwork';
+  static const String _kImage = 'image';
   static const String _kLastModified = 'lastModified';
 
   final String id;
   final String title;
   final String description;
   final bool record;
-  final List<String?> cohosts;
-  final String? artwork;
+  final List<String> cohosts;
+  final String? image;
   final DateTime lastModified;
 
   Map<String, dynamic> toJson() => {
@@ -55,7 +55,7 @@ final class BroadcastDraftDto with EquatableMixin {
     _kDescription: description,
     _kRecord: record,
     _kCohosts: cohosts,
-    _kArtwork: artwork,
+    _kImage: image,
     _kLastModified: lastModified.toIso8601String(),
   };
 
@@ -64,8 +64,8 @@ final class BroadcastDraftDto with EquatableMixin {
     String? title,
     String? description,
     bool? record,
-    List<String?>? cohosts,
-    String? artwork,
+    List<String>? cohosts,
+    String? image,
     DateTime? lastModified,
   }) {
     return BroadcastDraftDto(
@@ -74,7 +74,7 @@ final class BroadcastDraftDto with EquatableMixin {
       description: description ?? this.description,
       record: record ?? this.record,
       cohosts: cohosts ?? this.cohosts,
-      artwork: artwork ?? this.artwork,
+      image: image ?? this.image,
       lastModified: lastModified ?? this.lastModified,
     );
   }
@@ -86,7 +86,7 @@ final class BroadcastDraftDto with EquatableMixin {
     description,
     record,
     cohosts,
-    artwork,
+    image,
     lastModified,
   ];
 }
@@ -98,9 +98,9 @@ extension BroadcastDraftDtoX on BroadcastDraftDto {
     description: MultiLineString(description),
     record: record,
     cohosts: cohosts.isNotEmpty
-        ? cohosts.map((id) => Id.fromString(id!)).toList()
+        ? cohosts.map(Id.fromString).toList()
         : const [],
-    artwork: artwork != null ? ImageInput.fromFile(File(artwork!)) : null,
+    image: image != null ? ImageInput.fromFile(File(image!)) : null,
     lastModified: lastModified,
   );
 }
@@ -112,9 +112,9 @@ extension BroadcastDraftX on BroadcastDraft {
     description: description.getOrCrash(),
     record: record,
     cohosts: cohosts.isNotEmpty
-        ? cohosts.map((id) => id!.getOrCrash()).toList()
+        ? cohosts.map((id) => id.getOrCrash()).toList()
         : const [],
-    artwork: switch (artwork?.getOrCrash()) {
+    image: switch (image?.getOrCrash()) {
       LocalImage(:final file) => file.path,
       _ => null,
     },
