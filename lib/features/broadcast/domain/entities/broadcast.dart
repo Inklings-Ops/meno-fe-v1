@@ -122,6 +122,14 @@ final class Broadcast with EquatableMixin {
     imageId,
     timeZone,
   ];
+
+  Id get effectiveCreatorId => creator?.id ?? creatorId ?? Id.empty;
+
+  SingleLineString get effectiveCreatorName =>
+      fullName ??
+      creator?.fullName ??
+      creatorFullName ??
+      SingleLineString.empty;
 }
 
 extension BroadcastX on Broadcast {
@@ -129,3 +137,20 @@ extension BroadcastX on Broadcast {
 
   bool get isNotEmpty => this != Broadcast.empty;
 }
+
+final fakeBroadcasts = List.filled(
+  3,
+  Broadcast(
+    id: Id.fromString('uniqueIdStr'),
+    title: SingleLineString('title'),
+    description: MultiLineString('longParagraph'),
+    creator: fakeParticipants[0],
+    creatorId: Id.fromString('name'),
+    fullName: SingleLineString('fullName'),
+    startTime: DateTime.now(),
+    endTime: DateTime.now().add(const Duration(hours: 1)),
+    createdAt: DateTime.now(),
+    liveListeners: 100,
+    totalListeners: 200,
+  ),
+);

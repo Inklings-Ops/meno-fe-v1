@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
-import 'package:meno/core/core.dart' show MenoException;
 import 'package:meno/features/auth/application/application.dart';
 import 'package:meno/features/auth/domain/domain.dart' show Password;
 import 'package:meno/features/auth/presentation/presentation.dart';
@@ -37,16 +36,6 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    registerHandler(
-      select: (AuthManager m) => m.login.errors,
-      handler: (context, e, cancel) {
-        if (e == null) return;
-        final data = e.error;
-        final message = data is MenoException ? data.message : 'Unknown error';
-        context.showErrorSnackBar(message);
-      },
-    );
-
     final lastKnownUserOption = watchValue((AuthManager m) => m.lastKnownUser);
 
     final textTheme = MTextTheme.of(context);

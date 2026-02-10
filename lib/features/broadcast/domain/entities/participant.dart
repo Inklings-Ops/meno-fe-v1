@@ -45,3 +45,17 @@ final class Participant with EquatableMixin {
     disconnectedAt,
   ];
 }
+
+final fakeParticipants = List.filled(
+  3,
+  Participant(
+    id: Id.fromString('1'),
+    fullName: SingleLineString('name'),
+    bio: MultiLineString('bio'),
+    imageUrl: 'imageUrl',
+    broadcastId: Id.fromString('broadcastId'),
+    role: ParticipantRole.host,
+    numberOfListeners: 100,
+    isHostDisconnected: true,
+  ),
+);

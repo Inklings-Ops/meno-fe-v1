@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -44,13 +46,13 @@ class _AvatarField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
-    // final bloc = context.watch<BroadcastFormCubit>();
-    // final status = context.select((BroadcastBloc bloc) => bloc.state.status);
+    // final bloc = context.watch<BroadcastFormManager>();
+    // final status = context.select((BroadcastBloc bloc) => bloc.status);
     return Column(
       children: [
         const MAvatar(
           radius: 48,
-          // file: state.artwork?.getOrCrash(),
+          // file: artwork?.getOrCrash(),
         ),
         MTextButton(
           label: 'Change Artwork',
@@ -82,25 +84,28 @@ class _AvatarField extends StatelessWidget {
   }
 }
 
-class _TitleField extends StatelessWidget {
+class _TitleField extends WatchingWidget {
   const _TitleField({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final status = context.select((BroadcastBloc bloc) => bloc.state.status);
-    return const MTextFormField(
+    final title = watchValue((BroadcastFormManager m) => m.title);
+    final isLoading = watchValue(
+      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    );
+    return MTextFormField(
       label: 'Broadcast title',
       hint: "Jim Halpert's live audio",
       required: true,
       textInputAction: TextInputAction.next,
-      // enabled: !status.isLoading,
-      // onChanged: context.read<BroadcastFormCubit>().titleChanged,
-      // validator: (_) => state.title.failureOrNull?.message,
+      enabled: !isLoading,
+      onChanged: di<BroadcastFormManager>().onTitleChanged,
+      validator: (_) => title.failureOrNull?.msg,
     );
   }
 }
 
-class _DescriptionField extends StatefulWidget {
+class _DescriptionField extends WatchingStatefulWidget {
   const _DescriptionField({super.key});
 
   @override
@@ -112,29 +117,32 @@ class _DescriptionFieldState extends State<_DescriptionField> {
 
   @override
   Widget build(BuildContext context) {
-    // final status = context.select((BroadcastBloc bloc) => bloc.state.status);
+    final description = watchValue((BroadcastFormManager m) => m.desc);
+    final isLoading = watchValue(
+      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    );
     return MTextArea(
       label: 'About broadcast',
       hint: 'Enter a brief description',
       maxLines: 5,
       maxLength: 244,
       controller: _controller,
-      // enabled: !status.isLoading,
-      // onChanged: context.read<BroadcastFormCubit>().descriptionChanged,
-      // validator: (_) => state.description.failureOrNull?.message,
+      enabled: !isLoading,
+      onChanged: di<BroadcastFormManager>().onDescChanged,
+      validator: (_) => description.failureOrNull?.msg,
     );
   }
 }
 
-class StartBroadcastButton extends StatelessWidget {
+class StartBroadcastButton extends WatchingWidget {
   const StartBroadcastButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final formBloc = context.watch<BroadcastFormCubit>();
-
-    // final broadcastBloc = context.watch<BroadcastBloc>();
-    // final isLoading = broadcastBloc.state.status.isLoading;
+    final isValid = watchValue((BroadcastFormManager m) => m.isValid);
+    final isLoading = watchValue(
+      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    );
 
     return Container(
       height: 77,
@@ -145,19 +153,12 @@ class StartBroadcastButton extends StatelessWidget {
         children: [
           MPrimaryButton(
             label: 'Start Broadcast',
-            // loading: isLoading,
-            // disabled: isLoading || !formBloc.state.isFormValid,
+            loading: isLoading,
+            disabled: isLoading || !isValid,
             onPressed: () {
-              // if (_formKey.currentState?.validate() ?? false) {
-              //   broadcastBloc.add(
-              //     BroadcastStartRequested(
-              //       title: formBloc.state.title,
-              //       description: formBloc.state.description,
-              //       artwork: formBloc.state.artwork,
-              //       cohosts: formBloc.state.cohosts,
-              //     ),
-              //   );
-              // }
+              if (_formKey.currentState?.validate() ?? false) {
+                di<BroadcastFormManager>().createBroadcast.run();
+              }
             },
           ),
         ],
@@ -192,21 +193,24 @@ class CoHostSection extends StatelessWidget {
   }
 }
 
-class RecordToggleSwitchField extends StatelessWidget {
+class RecordToggleSwitchField extends WatchingWidget {
   const RecordToggleSwitchField({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final manager = di<BroadcastFormManager>();
+    final record = watchValue((BroadcastFormManager m) => m.record);
+    final isLoading = watchValue(
+      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    );
     return CreateBroadcastListTile(
       leadingText: 'Enable recording',
       subtitleText: 'Record your broadcast to listen back to later',
       trailing: SizedBox(
         width: 48,
         child: Switch(
-          value: false,
-          onChanged: (value) {},
-          // value: state.shouldRecord,
-          // onChanged: context.read<BroadcastFormCubit>().onRecordingChanged,
+          value: record,
+          onChanged: isLoading ? null : manager.onToggleRecord,
         ),
       ),
     );

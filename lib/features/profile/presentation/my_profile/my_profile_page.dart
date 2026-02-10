@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/auth/application/application.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 
 class MyProfilePage extends WatchingWidget {
   const MyProfilePage({super.key});
@@ -29,7 +31,20 @@ class MyProfileView extends StatelessWidget {
       // await Future.wait([myProfile, recentlyLive]);
     }
 
-    return const SizedBox.shrink();
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        mainAxisAlignment: .center,
+        children: [
+          Center(
+            child: MPrimaryButton(
+              label: 'Log out',
+              onPressed: di<AuthManager>().logout.run,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

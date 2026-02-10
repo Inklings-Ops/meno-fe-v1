@@ -9,7 +9,7 @@ import 'package:meno/features/auth/infrastructure/infrastructure.dart';
 import 'package:meno/shared/application/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> injectDependencies() async {
+void setupDependencies() {
   // Push the base scope
   di.pushNewScope(scopeName: 'root');
 

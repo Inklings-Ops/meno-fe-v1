@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:meno/app/app.dart';
 import 'package:meno/core/di/injector.dart';
+import 'package:meno/core/exceptions/setup_global_exception_handler.dart';
 
 /// Entry point for the app.
 Future<void> main() async {
@@ -11,8 +12,9 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   try {
-    // Inject the dependencies and wait for them to be ready
-    await injectDependencies();
+    setupDependencies();
+    setupGlobalExceptionHandler();
+
     await di.allReady();
 
     // Start the app if DI is ready

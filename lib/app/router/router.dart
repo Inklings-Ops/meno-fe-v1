@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart' show GlobalKey, NavigatorState;
+import 'package:flutter/material.dart'
+    show GlobalKey, NavigatorState, ScaffoldMessengerState;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
@@ -10,6 +11,8 @@ import 'package:meno/features/discover/presentation/presentation.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
 import 'package:meno/shared/presentation/layout/meno_layout.dart';
+
+final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final mainLayoutKey = GlobalKey<NavigatorState>();
@@ -37,7 +40,7 @@ final class MenoRouter {
 
   late final GoRouter routerConfig = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: R.dashboard,
+    initialLocation: R.home,
     navigatorKey: rootNavigatorKey,
     redirect: (context, state) {
       final nextRoute = state.matchedLocation;
@@ -55,12 +58,17 @@ final class MenoRouter {
       //   return null;
       // }
 
-      if (isPublicRoute) return R.dashboard;
+      if (isPublicRoute) return R.home;
       return null;
     },
     refreshListenable: di<AuthManager>().userId,
     routes: [
       GoRoute(path: R.login, builder: (_, _) => const LoginPage()),
+
+      GoRoute(
+        path: R.createBroadcast,
+        builder: (context, state) => const CreateBroadcastPage(),
+      ),
 
       /// Main Shell Route
       /// Houses the main [MenoLayout] with the apps bottom navigation bar
@@ -75,8 +83,8 @@ final class MenoRouter {
             navigatorKey: dashboardKey,
             routes: [
               GoRoute(
-                path: R.dashboard,
-                builder: (context, state) => const DashboardPage(),
+                path: R.home,
+                builder: (context, state) => const HomePage(),
               ),
             ],
           ),

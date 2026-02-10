@@ -3,15 +3,20 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 final class AuthManager extends ChangeNotifier implements Disposable {
   AuthManager(this._repository) {
-    login = Command.createAsync((params) async {
-      final result = await _repository.login(params.email, params.password);
-      return result.fold((error) => throw error, (credential) => credential);
-    }, initialValue: UserCredential.empty);
+    login = Command.createAsync(
+      (params) async {
+        final result = await _repository.login(params.email, params.password);
+        return result.fold((error) => throw error, (credential) => credential);
+      },
+      initialValue: UserCredential.empty,
+      errorFilterFn: menoExceptionFilter,
+    );
 
     logout = Command.createAsyncNoParamNoResult(_repository.logout);
   }

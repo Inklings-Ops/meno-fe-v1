@@ -30,6 +30,7 @@ class _MenoAppState extends State<MenoApp> {
       debugShowCheckedModeBanner: false,
       routerConfig: di<MenoRouter>().routerConfig,
       theme: MTheme.light,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       builder: (context, child) => ResponsiveBreakpoints.builder(
         breakpoints: const [
           Breakpoint(start: 0, end: 450, name: PHONE),
@@ -59,6 +60,7 @@ class MenoAppErrorWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       darkTheme: MTheme.dark,
       theme: MTheme.light,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       home: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(24),

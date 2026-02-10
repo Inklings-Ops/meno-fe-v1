@@ -1,32 +1,27 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 class NowLiveBroadcastsManager implements Disposable {
   NowLiveBroadcastsManager(this._repository) {
-    getBroadcasts.run(true);
+    broadcasts = ListNotifier<Broadcast?>();
   }
 
   final IBroadcastRepository _repository;
 
-  final broadcasts = ValueNotifier<PagedList<Broadcast?>>(PagedList.empty());
+  late final ListNotifier<Broadcast?> broadcasts;
 
-  late final getBroadcasts = Command.createAsyncNoResult((bool refresh) async {
-    final page = refresh ? 1 : broadcasts.value.currentPage + 1;
-    final pageParams = PaginationParams(page: page);
-    final queryParameters = BroadcastQuery.nowLive(pagination: pageParams);
+  late final getBroadcasts = Command.createAsyncNoParamNoResult(() async {
+    final queryParameters = BroadcastQuery.nowLive();
     final result = await _repository.getBroadcasts(queryParameters);
-    result.fold((error) => throw error, (newPage) {
-      broadcasts.value = broadcasts.value.merge(newPage, replace: refresh);
+    result.fold((error) => throw error, (page) {
+      broadcasts.startTransAction();
+      broadcasts.addAll(page.items);
+      broadcasts.endTransAction();
     });
-  }, restriction: broadcasts.map((state) => !state.hasMore));
-
-  // Helper for UI to know if we can load more (for showing spinner at bottom)
-  bool get canLoadMore =>
-      broadcasts.value.hasMore && !getBroadcasts.isRunning.value;
+  });
 
   @override
   FutureOr<dynamic> onDispose() {

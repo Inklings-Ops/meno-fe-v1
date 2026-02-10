@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
@@ -13,6 +14,7 @@ final class ScopeHandler implements Disposable {
   ScopeHandler(this._repository) {
     // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);
+    _repository.activeUserId.value.fold(() {}, _enterScope);
   }
 
   final IAuthRepository _repository;
@@ -24,6 +26,11 @@ final class ScopeHandler implements Disposable {
   }
 
   Future<void> _enterScope(Id userId) async {
+    log('''
+  ###########################################################################
+  # AUTHENTICATED SCOPE : ${userId.value.getOrElse((_) => '')}              #
+  ###########################################################################
+  ''');
     // Safety Check: Don't push if we are already in this user's scope
     if (di.currentScopeName == 'user_${userId.value}') return;
 
@@ -39,29 +46,29 @@ final class ScopeHandler implements Disposable {
       di.pushNewScope(
         isFinal: true,
         scopeName: 'user_${userId.value}',
-        init: (getIt) async {
+        init: (_) async {
           // ==================================================================
           // DOMAIN LAYER
           // ==================================================================
-          getIt.registerSingleton<Session>(credentials.session);
+          di.registerSingleton<Session>(credentials.session);
 
           // ==================================================================
           // INFRASTRUCTURE LAYER
           // ==================================================================
-          getIt.registerSingletonWithDependencies(
-            () => BroadcastLocalDataSource(getIt<LocalStorage>()),
+          di.registerSingletonWithDependencies(
+            () => BroadcastLocalDataSource(di<LocalStorage>()),
             dependsOn: [LocalStorage],
           );
 
-          getIt.registerSingletonWithDependencies(
-            () => BroadcastRemoteDataSource(getIt<ApiClient>()),
+          di.registerSingletonWithDependencies(
+            () => BroadcastRemoteDataSource(di<ApiClient>()),
             dependsOn: [ApiClient],
           );
 
-          getIt.registerSingletonAsync<IBroadcastRepository>(() async {
+          di.registerSingletonAsync<IBroadcastRepository>(() async {
             return BroadcastRepositoryImpl(
-              local: getIt<BroadcastLocalDataSource>(),
-              remote: getIt<BroadcastRemoteDataSource>(),
+              local: di<BroadcastLocalDataSource>(),
+              remote: di<BroadcastRemoteDataSource>(),
             );
           }, dependsOn: [BroadcastLocalDataSource, BroadcastRemoteDataSource]);
 
@@ -71,24 +78,25 @@ final class ScopeHandler implements Disposable {
           di.registerSingletonWithDependencies(() {
             return BroadcastFormManager(
               currentUserId: userId,
-              repository: getIt<IBroadcastRepository>(),
+              repository: di<IBroadcastRepository>(),
             );
           }, dependsOn: [IBroadcastRepository]);
 
-          di.registerSingletonWithDependencies(
-            () => RecentlyLiveBroadcastsManager(getIt<IBroadcastRepository>()),
-            dependsOn: [IBroadcastRepository],
-          );
+          di.registerSingletonWithDependencies(() {
+            final manager = RecentlyLiveBroadcastsManager(
+              di<IBroadcastRepository>(),
+            );
+            manager.getBroadcasts.run();
+            return manager;
+          }, dependsOn: [IBroadcastRepository]);
 
-          di.registerSingletonWithDependencies(
-            () => NowLiveBroadcastsManager(getIt<IBroadcastRepository>()),
-            dependsOn: [IBroadcastRepository],
-          );
-        },
-        dispose: () async {
-          di<IBroadcastRepository>().onDispose();
-          di<BroadcastFormManager>().onDispose();
-          di<RecentlyLiveBroadcastsManager>().onDispose();
+          di.registerSingletonWithDependencies(() {
+            final manager = NowLiveBroadcastsManager(
+              di<IBroadcastRepository>(),
+            );
+            manager.getBroadcasts.run();
+            return manager;
+          }, dependsOn: [IBroadcastRepository]);
         },
       );
     }

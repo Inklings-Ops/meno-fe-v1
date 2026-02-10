@@ -180,3 +180,58 @@ final class BroadcastQuery with EquatableMixin {
     startTimeRange,
   ];
 }
+
+extension BroadcastQueryMapper on BroadcastQuery {
+  /// Flattens the query object into a Map<String, dynamic>
+  /// compatible with the backend's expected format (e.g. Retrofit style).
+  Map<String, dynamic> get toQueryParameters {
+    final params = <String, dynamic>{
+      // 1. Basic Fields
+      if (id != null) 'id': id!.value,
+      if (status != null) 'status': status!.name, // active/inactive
+      if (creatorId != null) 'creatorId': creatorId!.value,
+      if (keywords != null) 'keywords': keywords,
+      'include': includeTotalListeners ? 'totalListeners' : null,
+      'onlySubscriptions': onlySubscriptions,
+
+      // 2. Sorting & Pagination
+      if (sortParams != null) ...{
+        'sortBy': sortParams!.sortBy.value,
+        'orderBy': sortParams!.orderBy,
+      },
+      'page': pagination.page,
+      'size': pagination.size,
+    };
+
+    // 3. Flatten Start Time Range
+    // Maps startTimeRange.greaterThan -> startTime[gt]
+    if (startTimeRange != null) {
+      if (startTimeRange!.greaterThan != null) {
+        params['startTime[gt]'] = startTimeRange!.greaterThan;
+      }
+      if (startTimeRange!.lessThan != null) {
+        params['startTime[lt]'] = startTimeRange!.lessThan;
+      }
+      if (startTimeRange!.exists != null) {
+        params['startTime[exist]'] = startTimeRange!.exists;
+      }
+    }
+
+    // 4. Flatten End Time Range
+    // Maps endTimeRange.greaterThan -> endTime[gt]
+    if (endTimeRange != null) {
+      if (endTimeRange!.greaterThan != null) {
+        params['endTime[gt]'] = endTimeRange!.greaterThan;
+      }
+      if (endTimeRange!.lessThan != null) {
+        params['endTime[lt]'] = endTimeRange!.lessThan;
+      }
+      if (endTimeRange!.exists != null) {
+        params['endTime[exist]'] = endTimeRange!.exists;
+      }
+    }
+
+    // Remove any null values to keep the URL clean
+    return params..removeWhere((key, value) => value == null);
+  }
+}

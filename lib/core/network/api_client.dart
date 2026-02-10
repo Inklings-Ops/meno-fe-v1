@@ -382,7 +382,7 @@ class ApiClient {
         final response = await request();
         _onSuccess?.call(response.requestOptions, response);
 
-        final menoRes = MenoResponse.fromJson(response, (json) => json);
+        final menoRes = MenoResponse.fromJson(response.data, (json) => json);
         if (menoRes.hasError) throw MenoException.fromResponse(menoRes);
 
         if (!menoRes.status) {

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
@@ -50,13 +48,13 @@ class BottomNavBar extends StatelessWidget {
         widgets.add(
           Microphone(
             onTap: () async {
-              final micPermissionGranted = await _handleMicPermission(context);
-              if (!micPermissionGranted) return;
-
-              if (Platform.isAndroid && context.mounted) {
-                final bgGranted = await _handleBackgroundPermission(context);
-                if (!bgGranted) return;
-              }
+              // final micPermissionGranted = await _handleMicPermission(context);
+              // if (!micPermissionGranted) return;
+              //
+              // if (Platform.isAndroid && context.mounted) {
+              //   final bgGranted = await _handleBackgroundPermission(context);
+              //   if (!bgGranted) return;
+              // }
 
               if (context.mounted) await context.push(R.createBroadcast);
             },

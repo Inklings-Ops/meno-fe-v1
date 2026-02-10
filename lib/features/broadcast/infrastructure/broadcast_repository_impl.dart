@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_raw_strings
+
 import 'dart:async';
 
 import 'package:dio/dio.dart';
@@ -62,20 +64,17 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
     CancelToken? cancelToken,
   }) async {
     try {
-      // Convert query object to API parameters
-      final params = _buildQueryParams(query);
-
       final response = await _remote.getBroadcasts(
-        params,
+        query.toQueryParameters,
         cancelToken: cancelToken,
       );
 
       final json = response as Map<String, dynamic>;
 
-      final items = json['broadcasts'] as List<dynamic>;
-      final currentPage = json['currentPage'] as int;
-      final totalItems = json['totalItems'] as int;
-      final totalPages = json['totalPages'] as int;
+      final items = json[r'broadcasts'] as List<dynamic>;
+      final currentPage = json[r'currentPage'] as int;
+      final totalItems = json[r'totalItems'] as int;
+      final totalPages = json[r'totalPages'] as int;
 
       final sanitizedResponse = PagedList<Broadcast?>(
         items: items.isNotEmpty
@@ -116,48 +115,6 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
   Future<Either<MenoException, Broadcast>> startBroadcast(Id id) {
     // TODO: implement startBroadcast
     throw UnimplementedError();
-  }
-
-  /// Converts the query object to API-compatible parameters
-  Map<String, dynamic> _buildQueryParams(BroadcastQuery query) {
-    final params = <String, dynamic>{};
-
-    // Pagination
-    params['page'] = query.pagination.page;
-    params['size'] = query.pagination.size;
-
-    // Sorting
-    if (query.sortParams != null) {
-      params['sortBy'] = query.sortParams!.sortBy;
-      params['orderBy'] = query.sortParams!.orderBy.value;
-    }
-
-    // Filters
-    if (query.id != null) params['id'] = query.id!.value;
-    if (query.status != null) params['status'] = query.status!.value;
-    if (query.creatorId != null) params['creatorId'] = query.creatorId!.value;
-    if (query.keywords != null) params['keywords'] = query.keywords;
-    if (query.onlySubscriptions) params['onlySubscriptions'] = true;
-
-    // Include total listeners
-    if (query.includeTotalListeners) params['include'] = 'totalListeners';
-
-    // Time ranges
-    if (query.startTimeRange != null) {
-      final rng = query.startTimeRange!;
-      if (rng.greaterThan != null) params['startTime[gt]'] = rng.greaterThan;
-      if (rng.lessThan != null) params['startTime[lt]'] = rng.lessThan;
-      if (rng.exists != null) params['startTimeExist'] = rng.exists;
-    }
-
-    if (query.endTimeRange != null) {
-      final range = query.endTimeRange!;
-      if (range.greaterThan != null) params['endTime[gt]'] = range.greaterThan;
-      if (range.lessThan != null) params['endTime[lt]'] = range.lessThan;
-      if (range.exists != null) params['endTimeExist'] = range.exists;
-    }
-
-    return params;
   }
 
   @override
