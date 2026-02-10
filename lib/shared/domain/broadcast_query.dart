@@ -197,7 +197,7 @@ extension BroadcastQueryMapper on BroadcastQuery {
       // 2. Sorting & Pagination
       if (sortParams != null) ...{
         'sortBy': sortParams!.sortBy.value,
-        'orderBy': sortParams!.orderBy,
+        'orderBy': sortParams!.orderBy.value,
       },
       'page': pagination.page,
       'size': pagination.size,

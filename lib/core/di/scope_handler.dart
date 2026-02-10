@@ -14,25 +14,32 @@ final class ScopeHandler implements Disposable {
   ScopeHandler(this._repository) {
     // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);
-    _repository.activeUserId.value.fold(() {}, _enterScope);
+
+    // Initial check (fire and forget, but processed in order)
+    _syncScopeWithState(_repository.activeUserId.value, _subscription);
   }
 
   final IAuthRepository _repository;
-
   late final ListenableSubscription _subscription;
 
+  Future<void> _queue = Future<void>.value();
+
   void _syncScopeWithState(Option<Id> id, ListenableSubscription _) {
-    id.fold(_exitScope, _enterScope);
+    // This forces _enterScope to wait until _exitScope (if running)
+    // is 100% done.
+    _queue = _queue.then((_) async => id.fold(_exitScope, _enterScope));
   }
 
   Future<void> _enterScope(Id userId) async {
-    log('''
-  ###########################################################################
-  # AUTHENTICATED SCOPE : ${userId.value.getOrElse((_) => '')}              #
-  ###########################################################################
-  ''');
+    final targetScopeName = 'user_${userId.value.getOrElse((_) => '')}';
+    log('ScopeHandler: Requesting enter $targetScopeName');
+
     // Safety Check: Don't push if we are already in this user's scope
-    if (di.currentScopeName == 'user_${userId.value}') return;
+    // Now that we wait for exitScope, this check is safe and accurate.
+    if (di.currentScopeName == targetScopeName) {
+      log('ScopeHandler: Already in $targetScopeName. Skipping.');
+      return;
+    }
 
     // Clean up old scope if switching users
     await _exitScope();
@@ -45,7 +52,7 @@ final class ScopeHandler implements Disposable {
     if (credentials != null) {
       di.pushNewScope(
         isFinal: true,
-        scopeName: 'user_${userId.value}',
+        scopeName: targetScopeName,
         init: (_) async {
           // ==================================================================
           // DOMAIN LAYER
@@ -83,19 +90,17 @@ final class ScopeHandler implements Disposable {
           }, dependsOn: [IBroadcastRepository]);
 
           di.registerSingletonWithDependencies(() {
-            final manager = RecentlyLiveBroadcastsManager(
+            final mgr = RecentlyLiveBroadcastsManager(
               di<IBroadcastRepository>(),
             );
-            manager.getBroadcasts.run();
-            return manager;
+            mgr.getBroadcasts.run();
+            return mgr;
           }, dependsOn: [IBroadcastRepository]);
 
           di.registerSingletonWithDependencies(() {
-            final manager = NowLiveBroadcastsManager(
-              di<IBroadcastRepository>(),
-            );
-            manager.getBroadcasts.run();
-            return manager;
+            final mgr = NowLiveBroadcastsManager(di<IBroadcastRepository>());
+            mgr.getBroadcasts.run();
+            return mgr;
           }, dependsOn: [IBroadcastRepository]);
         },
       );
@@ -105,6 +110,7 @@ final class ScopeHandler implements Disposable {
   Future<void> _exitScope() async {
     // Only pop if we are NOT at the root
     if (di.currentScopeName != 'root') {
+      log('ScopeHandler: Popping scope ${di.currentScopeName}');
       await di.popScope();
     }
   }

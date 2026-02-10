@@ -18,7 +18,10 @@ final class AuthManager extends ChangeNotifier implements Disposable {
       errorFilterFn: menoExceptionFilter,
     );
 
-    logout = Command.createAsyncNoParamNoResult(_repository.logout);
+    logout = Command.createAsyncNoParamNoResult(
+      _repository.logout,
+      errorFilterFn: menoExceptionFilter,
+    );
   }
 
   final IAuthRepository _repository;

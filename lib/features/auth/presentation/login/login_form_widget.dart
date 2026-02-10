@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
+import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/auth/application/application.dart';
 import 'package:meno/features/auth/domain/domain.dart' show Password;
 import 'package:meno/features/auth/presentation/presentation.dart';
@@ -36,6 +37,25 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+      select: (AuthManager m) => m.login.errors,
+      handler: (context, error, cancel) {
+        if (error == null) return;
+
+        final exception = error.error;
+
+        // Handle validation errors locally (show field errors)
+        if (exception is ValidationException) {
+          // You could show field-specific errors here if needed
+          // For now, the global handler will show the snackbar
+          return;
+        }
+
+        // Other errors are handled by the global handler
+        // No need to show snackbar here - global handler does it
+      },
+    );
+
     final lastKnownUserOption = watchValue((AuthManager m) => m.lastKnownUser);
 
     final textTheme = MTextTheme.of(context);
