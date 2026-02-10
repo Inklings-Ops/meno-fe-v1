@@ -10,6 +10,7 @@ import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/features/discover/presentation/presentation.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
+import 'package:meno/shared/domain/broadcast_query.dart';
 import 'package:meno/shared/presentation/layout/meno_layout.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -68,6 +69,16 @@ final class MenoRouter {
       GoRoute(
         path: R.createBroadcast,
         builder: (context, state) => const CreateBroadcastPage(),
+      ),
+
+      GoRoute(
+        path: R.broadcasts,
+        name: R.broadcasts,
+        builder: (context, state) {
+          final params = state.uri.queryParameters;
+          final query = BroadcastQuery.fromRouter(params);
+          return BroadcastsPage(query: query);
+        },
       ),
 
       /// Main Shell Route

@@ -29,4 +29,6 @@ export 'presentation/layout/rail_widget.dart';
 export 'presentation/layout/side_nav_rail.dart';
 export 'presentation/presentation.dart';
 export 'presentation/widgets/empty_list_widget.dart';
+export 'presentation/widgets/error_widget.dart';
+export 'presentation/widgets/meno_search_bar.dart';
 export 'presentation/widgets/switch_account_modal.dart';

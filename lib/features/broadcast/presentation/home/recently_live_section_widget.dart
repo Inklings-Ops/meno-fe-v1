@@ -34,16 +34,10 @@ class RecentlyLiveSectionWidget extends WatchingWidget {
         MHeader(
           title: 'Recently Live',
           action: InkWell(
-            // onTap: () => context.pushNamed(
-            //   'Broadcasts',
-            //   queryParameters: {
-            //     'type': BroadcastsPageType.recently.name,
-            //     'sort-by': 'endTime',
-            //     'order-by': OrderBy.DESC.name,
-            //     'end-time-exists': 'true',
-            //     'include': 'totalListeners',
-            //   },
-            // ),
+            onTap: () => context.pushNamed(
+              R.broadcasts,
+              queryParameters: BroadcastQuery.recent().toRouterParams,
+            ),
             child: MText('See all', color: colors.onBackgroundVariant),
           ),
         ),

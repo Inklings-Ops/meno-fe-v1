@@ -1,6 +1,16 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
 
+enum BroadcastsType {
+  nowLive('nowLive'),
+  recentlyLive('recentlyLive'),
+  forYou('forYou');
+
+  const BroadcastsType(this.value);
+
+  final String value;
+}
+
 /// Represents the sort items for query results
 enum SortBy {
   title('title'),
@@ -71,6 +81,7 @@ final class BroadcastQuery with EquatableMixin {
     this.pagination = const PaginationParams(),
     this.endTimeRange,
     this.startTimeRange,
+    this.type,
   });
 
   /// Factory constructor for fetching user's subscriptions
@@ -103,6 +114,7 @@ final class BroadcastQuery with EquatableMixin {
       orderBy: OrderBy.asc,
     ),
   }) => BroadcastQuery(
+    type: BroadcastsType.nowLive,
     sortParams: sortParams,
     pagination: pagination,
     endTimeRange: const TimeRange(exists: false),
@@ -118,11 +130,62 @@ final class BroadcastQuery with EquatableMixin {
       orderBy: OrderBy.desc,
     ),
   }) => BroadcastQuery(
+    type: BroadcastsType.recentlyLive,
     sortParams: sortParams,
     pagination: pagination,
     endTimeRange: const TimeRange(exists: true),
+    startTimeRange: const TimeRange(exists: true),
     includeTotalListeners: true,
   );
+
+  factory BroadcastQuery.fromRouter(Map<String, String> map) {
+    return BroadcastQuery(
+      type: map['type'] is String
+          ? BroadcastsType.values.firstWhere((e) => e.value == map['type'])
+          : null,
+      id: map['id'] != null ? Id.fromString(map['id']!) : null,
+      sortParams: SortParams(
+        sortBy: map['sortBy'] is String
+            ? SortBy.values.firstWhere((e) => e.value == map['sortBy'])
+            : SortBy.title,
+        orderBy: map['orderBy'] is String
+            ? OrderBy.values.firstWhere((e) => e.value == map['orderBy'])
+            : OrderBy.asc,
+      ),
+      status: map['status'] is String
+          ? BroadcastStatus.values.firstWhere((e) => e.name == map['status'])
+          : null,
+      creatorId: map['creatorId'] != null
+          ? Id.fromString(map['creatorId']!)
+          : null,
+      keywords: map['keywords'],
+      includeTotalListeners: map['totalListeners'] != null,
+      onlySubscriptions: switch (map['onlySubscriptions']) {
+        'true' => true,
+        _ => false,
+      },
+      pagination: PaginationParams(
+        page: int.tryParse(map['page']!) ?? 1,
+        size: int.tryParse(map['size']!) ?? 20,
+      ),
+      endTimeRange: TimeRange(
+        exists: switch (map['endTime[exist]']) {
+          'true' => true,
+          _ => false,
+        },
+        greaterThan: map['endTime[gt]'],
+        lessThan: map['endTime[lt]'],
+      ),
+      startTimeRange: TimeRange(
+        exists: switch (map['startTime[exist]']) {
+          'true' => true,
+          _ => false,
+        },
+        greaterThan: map['startTime[gt]'],
+        lessThan: map['startTime[lt]'],
+      ),
+    );
+  }
 
   final Id? id;
   final SortParams? sortParams;
@@ -134,6 +197,7 @@ final class BroadcastQuery with EquatableMixin {
   final PaginationParams pagination;
   final TimeRange? endTimeRange;
   final TimeRange? startTimeRange;
+  final BroadcastsType? type;
 
   /// Creates a copy with modified parameters
   BroadcastQuery copyWith({
@@ -187,9 +251,9 @@ extension BroadcastQueryMapper on BroadcastQuery {
   Map<String, dynamic> get toQueryParameters {
     final params = <String, dynamic>{
       // 1. Basic Fields
-      if (id != null) 'id': id!.value,
+      if (id != null) 'id': id!.value.getOrElse((_) => ''),
       if (status != null) 'status': status!.name, // active/inactive
-      if (creatorId != null) 'creatorId': creatorId!.value,
+      if (creatorId != null) 'creatorId': creatorId!.value.getOrElse((_) => ''),
       if (keywords != null) 'keywords': keywords,
       'include': includeTotalListeners ? 'totalListeners' : null,
       'onlySubscriptions': onlySubscriptions,
@@ -233,5 +297,57 @@ extension BroadcastQueryMapper on BroadcastQuery {
 
     // Remove any null values to keep the URL clean
     return params..removeWhere((key, value) => value == null);
+  }
+
+  Map<String, String> get toRouterParams {
+    final params = <String, String>{
+      // 1. Basic Fields
+      if (type != null) 'type': type!.value,
+      if (id != null) 'id': id!.value.getOrElse((_) => ''),
+      if (status != null) 'status': status!.name,
+      if (creatorId != null) 'creatorId': creatorId!.value.getOrElse((_) => ''),
+      if (keywords != null) 'keywords': keywords ?? '',
+      'include': includeTotalListeners ? 'totalListeners' : '',
+      'onlySubscriptions': onlySubscriptions.toString(),
+
+      // 2. Sorting & Pagination
+      if (sortParams != null) ...{
+        'sortBy': sortParams!.sortBy.value,
+        'orderBy': sortParams!.orderBy.value,
+      },
+      'page': pagination.page.toString(),
+      'size': pagination.size.toString(),
+    };
+
+    // 3. Flatten Start Time Range
+    // Maps startTimeRange.greaterThan -> startTime[gt]
+    if (startTimeRange != null) {
+      if (startTimeRange!.greaterThan != null) {
+        params['startTime[gt]'] = startTimeRange!.greaterThan ?? '';
+      }
+      if (startTimeRange!.lessThan != null) {
+        params['startTime[lt]'] = startTimeRange!.lessThan ?? '';
+      }
+      if (startTimeRange!.exists != null) {
+        params['startTime[exist]'] = startTimeRange!.exists.toString();
+      }
+    }
+
+    // 4. Flatten End Time Range
+    // Maps endTimeRange.greaterThan -> endTime[gt]
+    if (endTimeRange != null) {
+      if (endTimeRange!.greaterThan != null) {
+        params['endTime[gt]'] = endTimeRange!.greaterThan ?? '';
+      }
+      if (endTimeRange!.lessThan != null) {
+        params['endTime[lt]'] = endTimeRange!.lessThan ?? '';
+      }
+      if (endTimeRange!.exists != null) {
+        params['endTime[exist]'] = endTimeRange!.exists.toString();
+      }
+    }
+
+    // Remove any null values to keep the URL clean
+    return params..removeWhere((key, value) => value.isEmpty);
   }
 }

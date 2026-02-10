@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
+import 'package:meno/shared/domain/domain.dart';
 import 'package:meno/shared/presentation/presentation.dart'
     show EmptyListWidget;
 import 'package:meno_design_system/meno_design_system.dart';
@@ -28,18 +31,10 @@ class NowLiveSectionWidget extends WatchingWidget {
         MHeader(
           title: 'Now Live',
           action: InkWell(
-            // onTap: () => context.pushNamed(
-            //   'Broadcasts',
-            //   queryParameters: {
-            //     'type': BroadcastsPageType.now.name,
-            //     'sort-by': 'startTime',
-            //     'order-by': OrderBy.ASC.name,
-            //     'end-time-exists': 'false',
-            //     'start-time-exists': 'true',
-            //     'include': 'totalListeners',
-            //     'status': 'active',
-            //   },
-            // ),
+            onTap: () => context.pushNamed(
+              R.broadcasts,
+              queryParameters: BroadcastQuery.nowLive().toRouterParams,
+            ),
             child: MText('See all', color: colors.onBackgroundVariant),
           ),
         ),
