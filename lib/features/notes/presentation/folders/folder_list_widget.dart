@@ -40,7 +40,6 @@ class FolderListWidget extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return ListView.separated(
-//       shrinkWrap: true,
 //       physics: const AlwaysScrollableScrollPhysics(),
 //       itemCount: folders.length,
 //       separatorBuilder: (context, index) => Spaces.verticalLarge,

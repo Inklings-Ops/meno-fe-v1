@@ -97,7 +97,6 @@ class _List extends StatelessWidget {
         separatorBuilder: (context, i) => const SizedBox(width: 24),
         itemCount: broadcasts.length,
         itemBuilder: (_, i) => _Card(broadcast: broadcasts[i]!),
-        primary: false,
       ),
     );
   }

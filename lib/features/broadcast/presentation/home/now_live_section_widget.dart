@@ -71,7 +71,6 @@ class _List extends StatelessWidget {
         itemCount: broadcasts.length,
         itemBuilder: (_, i) => LiveBroadcastCard(broadcast: broadcasts[i]!),
         primary: false,
-        shrinkWrap: true,
       ),
     );
   }
