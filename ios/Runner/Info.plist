@@ -51,7 +51,9 @@
 		<key>NSCameraUsageDescription</key>
         <string>Menō is using your camera</string>
         <key>NSMicrophoneUsageDescription</key>
-        <string>Menō is using your microphone</string>
+        <string>
+            Menō requires microphone access to enable you broadcast your voice to listeners.
+        </string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>Menō wants to access your photos</string>
         <key>PermissionGroupNotification</key>

@@ -6,15 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
-import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
-import 'package:meno/shared/domain/broadcast_query.dart';
-import 'package:meno/shared/domain/value_objects/id.dart';
-import 'package:meno/shared/domain/value_objects/image_input.dart';
-import 'package:meno/shared/domain/value_objects/multi_line_string.dart';
-import 'package:meno/shared/domain/value_objects/paged_list.dart';
-import 'package:meno/shared/domain/value_objects/single_line_string.dart';
+import 'package:meno/shared/domain/domain.dart';
 
 final class BroadcastRepositoryImpl
     with MenoLogger
@@ -35,11 +29,23 @@ final class BroadcastRepositoryImpl
     required SingleLineString title,
     required MultiLineString description,
     ImageInput? image,
-    String? timeZone,
+    String? timezone,
     List<Id>? cohosts,
-  }) {
-    // TODO: implement createBroadcast
-    throw UnimplementedError();
+  }) async {
+    try {
+      final result = await _remote.createBroadcast(
+        title: title.getOrCrash(),
+        description: description.getOrCrash(),
+        image: (image?.getOrNull() as LocalImage?)?.file,
+        cohosts: cohosts?.map((e) => e.getOrCrash()).toList(),
+        timezone: timezone,
+      );
+      if (result != null) return Right(result.toDomain);
+      return const Left(MenoException('Failed to create broadcast'));
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
@@ -115,9 +121,16 @@ final class BroadcastRepositoryImpl
   }
 
   @override
-  Future<Either<MenoException, Broadcast>> startBroadcast(Id id) {
-    // TODO: implement startBroadcast
-    throw UnimplementedError();
+  Future<Either<MenoException, Broadcast>> startBroadcast(Id id) async {
+    try {
+      final broadcastId = id.getOrCrash();
+      final result = await _remote.startBroadcast(broadcastId);
+      if (result != null) return Right(result.toDomain);
+      return const Left(MenoException('Failed to start broadcast'));
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override

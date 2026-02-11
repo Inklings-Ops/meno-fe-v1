@@ -21,7 +21,7 @@ abstract class IBroadcastRepository implements Disposable {
     required SingleLineString title,
     required MultiLineString description,
     ImageInput? image,
-    String? timeZone,
+    String? timezone,
     List<Id>? cohosts,
   });
 

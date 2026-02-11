@@ -71,6 +71,12 @@ final class TimeoutException extends MenoException {
   const TimeoutException() : super('Request timed out.');
 }
 
+final class PermissionsException extends MenoException {
+  const PermissionsException([
+    super.message = 'Error occurred while requesting this permission',
+  ]);
+}
+
 final class StorageException extends MenoException {
   const StorageException([super.message = 'Storage error occurred.']);
 }

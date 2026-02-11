@@ -16,7 +16,14 @@ void setupDependencies() {
   di.pushNewScope(scopeName: 'root');
 
   di.registerSingleton(Logger.new);
+
   di.registerSingleton(MediaService(ImagePicker()));
+
+  di.registerSingletonAsync(() async {
+    final service = PermissionsService();
+    service.checkPermissions.run();
+    return service;
+  });
 
   // ========================================================================
   // STORAGE LAYER

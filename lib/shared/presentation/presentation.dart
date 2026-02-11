@@ -7,4 +7,5 @@ export 'widgets/empty_list_widget.dart';
 export 'widgets/error_widget.dart';
 export 'widgets/meno_search_bar.dart';
 export 'widgets/paginated_broadcast_list_widget.dart';
+export 'widgets/permissions_dialog.dart';
 export 'widgets/switch_account_modal.dart';
