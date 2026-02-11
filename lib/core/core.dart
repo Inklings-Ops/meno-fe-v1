@@ -9,6 +9,7 @@ export 'exceptions/meno_exception.dart';
 export 'exceptions/meno_exception_filter.dart';
 export 'exceptions/setup_global_exception_handler.dart';
 export 'infrastructure/meno_response.dart';
+export 'media_service.dart';
 export 'meno_logger.dart';
 export 'network/api_client.dart';
 export 'network/session_interceptor.dart';

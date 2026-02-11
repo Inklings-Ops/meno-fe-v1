@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:io' show File;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/core/media_service.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
@@ -10,8 +10,10 @@ class BroadcastFormManager implements Disposable {
   BroadcastFormManager({
     required Id currentUserId,
     required IBroadcastRepository repository,
+    required MediaService mediaService,
   }) : _currentUserId = currentUserId,
-       _repository = repository {
+       _repository = repository,
+       _mediaService = mediaService {
     _repository.getDrafts(currentUserId);
 
     _form
@@ -21,6 +23,7 @@ class BroadcastFormManager implements Disposable {
 
   final Id _currentUserId;
   final IBroadcastRepository _repository;
+  final MediaService _mediaService;
 
   // Track the ID of the draft we are editing (to update instead of create new)
   Id? _currentDraftId;
@@ -37,7 +40,10 @@ class BroadcastFormManager implements Disposable {
 
   void onDescChanged(String input) => desc.value = MultiLineString(input);
 
-  void onImagePicked(File input) => image.value = ImageInput.fromFile(input);
+  Future<void> onImagePicked([bool fromGallery = true]) async {
+    final file = await _mediaService.getImage(fromGallery: fromGallery);
+    if (file != null) image.value = ImageInput.fromFile(file);
+  }
 
   void onToggleRecord(bool input) => record.value = input;
 

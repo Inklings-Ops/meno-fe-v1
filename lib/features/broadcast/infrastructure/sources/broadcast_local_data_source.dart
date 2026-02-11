@@ -22,15 +22,25 @@ class BroadcastLocalDataSource {
     required String broadcastId,
     required String broadcastToken,
   }) async {
+    final dto = BroadcastSessionDto(
+      broadcastId: broadcastId,
+      broadcastToken: broadcastToken,
+      timestamp: DateTime.now(),
+      creatorId: userId,
+    );
+
     final key = StorageKeys.activeBroadcast(userId);
-    await _storage.setList(key, [broadcastId, broadcastToken]);
+    await _storage.setString(key, jsonEncode(dto.toJson()));
   }
 
   /// Retrieves the ID if the app was killed mid-broadcast.
   /// Returns a [List] of the broadcast ID and the broadcast token.
-  List<String>? getActiveBroadcastSession(String userId) {
+  BroadcastSessionDto? getActiveBroadcastSession(String userId) {
     final key = StorageKeys.activeBroadcast(userId);
-    return _storage.getList(key);
+    final jsonString = _storage.getString(key);
+    if (jsonString == null) return null;
+    final json = jsonDecode(jsonString) as Map<String, dynamic>;
+    return BroadcastSessionDto.fromJson(json);
   }
 
   /// Clears the ID when the user taps "End Broadcast" gracefully.
@@ -144,5 +154,27 @@ class BroadcastLocalDataSource {
     } catch (_) {
       return [];
     }
+  }
+
+  // #######################################################################
+  // STREAMS
+  // #######################################################################
+  /// Watches the active session.
+  ///
+  /// Because LocalStorage.watchKey emits the current value immediately
+  /// (if using startWith) or we can manually yield it, this stream is always
+  /// up to date.
+  Stream<BroadcastSessionDto?> watchActiveSession(String userId) {
+    final key = StorageKeys.activeBroadcast(userId);
+
+    return _storage.watchKey(key).map((jsonString) {
+      if (jsonString == null) return null;
+      try {
+        final json = jsonDecode(jsonString) as Map<String, dynamic>;
+        return BroadcastSessionDto.fromJson(json);
+      } catch (_) {
+        return null;
+      }
+    });
   }
 }

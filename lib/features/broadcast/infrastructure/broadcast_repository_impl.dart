@@ -177,11 +177,7 @@ final class BroadcastRepositoryImpl
     final result = _local.getActiveBroadcastSession(userId.getOrCrash());
     if (result == null) return const None();
 
-    final session = BroadcastSession(
-      broadcastId: Id.fromString(result[0]),
-      broadcastToken: result[1],
-      creatorId: userId,
-    );
+    final session = result.toDomain;
     return Some(session);
   }
 
@@ -283,5 +279,11 @@ final class BroadcastRepositoryImpl
   @override
   Stream<EndedBroadcast> get onBroadcastEnded {
     return _remote.onEndedBroadcast.map((e) => e.toDomain);
+  }
+
+  @override
+  Stream<BroadcastSession?> watchActiveSession(Id userId) async* {
+    final dto = _local.watchActiveSession(userId.getOrCrash());
+    yield* dto.map((e) => e?.toDomain);
   }
 }

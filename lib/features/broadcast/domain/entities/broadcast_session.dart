@@ -6,6 +6,7 @@ class BroadcastSession with EquatableMixin {
   const BroadcastSession({
     required this.broadcastId,
     required this.broadcastToken,
+    required this.timestamp,
     required this.creatorId,
   });
 
@@ -13,17 +14,24 @@ class BroadcastSession with EquatableMixin {
     return BroadcastSession(
       broadcastId: broadcast.id,
       broadcastToken: broadcast.broadcastToken ?? '',
+      timestamp: DateTime.now(),
       creatorId: broadcast.creator?.id ?? broadcast.creatorId ?? Id.empty,
     );
   }
 
   final Id broadcastId;
   final String broadcastToken;
+  final DateTime timestamp;
   final Id creatorId;
 
   bool get isValid =>
       broadcastId.isValid && broadcastToken.isNotEmpty && creatorId.isValid;
 
   @override
-  List<Object?> get props => [broadcastId, broadcastToken, creatorId];
+  List<Object?> get props => [
+    broadcastId,
+    broadcastToken,
+    timestamp,
+    creatorId,
+  ];
 }

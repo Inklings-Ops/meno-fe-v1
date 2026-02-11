@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -46,26 +47,27 @@ class _AvatarField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
-    // final bloc = context.watch<BroadcastFormManager>();
-    // final status = context.select((BroadcastBloc bloc) => bloc.status);
+
+    final manager = di<BroadcastFormManager>();
+    final image = watchValue((BroadcastFormManager m) => m.image);
+    final imageValue = image.getOrNull() as LocalImage?;
+    final isLoading = watchValue(
+      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    );
+
     return Column(
       children: [
-        const MAvatar(
-          radius: 48,
-          // file: artwork?.getOrCrash(),
-        ),
+        MAvatar(radius: 48, file: imageValue?.file),
         MTextButton(
           label: 'Change Artwork',
           onPressed: () {
-            // if (!status.isLoading) {
-            //   context.showModal<void>(
-            //     MImageSourceModal(
-            //       onGallerySourceTap: bloc.artworkChanged,
-            //       onCameraSourceTap: () =>
-            //           bloc.artworkChanged(fromGallery: false),
-            //     ),
-            //   );
-            // }
+            if (isLoading) return;
+            context.showModal<void>(
+              MImageSourceModal(
+                onGallerySourceTap: manager.onImagePicked,
+                onCameraSourceTap: () => manager.onImagePicked(false),
+              ),
+            );
           },
         ),
         Center(

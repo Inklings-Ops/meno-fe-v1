@@ -67,4 +67,6 @@ abstract class IBroadcastRepository implements Disposable {
   Stream<List<Broadcast>> get watchNowLiveBroadcasts;
 
   Stream<EndedBroadcast> get onBroadcastEnded;
+
+  Stream<BroadcastSession?> watchActiveSession(Id userId);
 }

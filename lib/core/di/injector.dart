@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
@@ -15,6 +16,7 @@ void setupDependencies() {
   di.pushNewScope(scopeName: 'root');
 
   di.registerSingleton(Logger.new);
+  di.registerSingleton(MediaService(ImagePicker()));
 
   // ========================================================================
   // STORAGE LAYER

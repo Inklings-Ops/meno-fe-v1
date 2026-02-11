@@ -97,8 +97,9 @@ final class ScopeHandler with MenoLogger implements Disposable {
             return BroadcastFormManager(
               currentUserId: userId,
               repository: di<IBroadcastRepository>(),
+              mediaService: di<MediaService>(),
             );
-          }, dependsOn: [IBroadcastRepository]);
+          }, dependsOn: [IBroadcastRepository, MediaService]);
 
           di.registerSingletonWithDependencies(() {
             final manager = RecentlyLiveBroadcastsManager(
