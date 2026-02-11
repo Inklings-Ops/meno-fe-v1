@@ -3,9 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
-import 'package:meno/shared/domain/broadcast_query.dart';
-import 'package:meno/shared/presentation/presentation.dart';
-import 'package:meno/shared/shared.dart' show MenoSearchBar;
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastsPage extends WatchingWidget {
@@ -23,13 +21,14 @@ class BroadcastsPage extends WatchingWidget {
     pushScope(
       init: (getIt) {
         getIt.registerSingleton<BroadcastQuery>(query);
+
         getIt.registerLazySingleton<BroadcastsManager>(() {
-          final mgr = BroadcastsManager(
+          final manager = BroadcastsManager(
             repository: di<IBroadcastRepository>(),
             query: query,
           );
-          mgr.loadBroadcasts.run();
-          return mgr;
+          manager.fetch.run();
+          return manager;
         });
       },
     );
@@ -42,17 +41,17 @@ class BroadcastsPage extends WatchingWidget {
           Spaces.horizontalXLarge,
           const _SearchBar(key: Key('BroadcastsPageSearchBar')),
           const SizedBox(height: 2),
-          Expanded(
-            child: switch (type) {
-              BroadcastsType.recentlyLive => const RecentlyLiveListWidget(),
-              BroadcastsType.nowLive => const NowLiveListWidget(),
-              _ => const SizedBox.shrink(),
-            },
-          ),
+          Expanded(child: _buildListForType(type)),
         ],
       ),
     );
   }
+
+  Widget _buildListForType(BroadcastsType type) => switch (type) {
+    BroadcastsType.nowLive => const NowLiveListWidget(),
+    BroadcastsType.recentlyLive => const RecentlyLiveListWidget(),
+    _ => const SizedBox.shrink(),
+  };
 }
 
 extension BroadcastsTypeX on BroadcastsType {

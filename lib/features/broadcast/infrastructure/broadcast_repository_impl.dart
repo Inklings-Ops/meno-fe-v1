@@ -65,7 +65,7 @@ final class BroadcastRepositoryImpl implements IBroadcastRepository {
   }) async {
     try {
       final response = await _remote.getBroadcasts(
-        query.toQueryParameters,
+        query.toApiParams,
         cancelToken: cancelToken,
       );
 

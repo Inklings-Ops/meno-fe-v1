@@ -21,7 +21,7 @@ class NowLiveSectionWidget extends WatchingWidget {
     final broadcasts = watchValue((NowLiveBroadcastsManager m) => m.broadcasts);
 
     final isLoading = watchValue(
-      (NowLiveBroadcastsManager m) => m.getBroadcasts.isRunning,
+      (NowLiveBroadcastsManager m) => m.fetch.isRunning,
     );
 
     return Column(

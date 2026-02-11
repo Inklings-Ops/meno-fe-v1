@@ -20,11 +20,11 @@ class RecentlyLiveSectionWidget extends WatchingWidget {
     );
 
     final isLoading = watchValue(
-      (RecentlyLiveBroadcastsManager m) => m.getBroadcasts.isRunning,
+      (RecentlyLiveBroadcastsManager m) => m.fetch.isRunning,
     );
 
     final error = watchValue(
-      (RecentlyLiveBroadcastsManager m) => m.getBroadcasts.errors,
+      (RecentlyLiveBroadcastsManager m) => m.fetch.errors,
     );
 
     return Column(
@@ -36,7 +36,7 @@ class RecentlyLiveSectionWidget extends WatchingWidget {
           action: InkWell(
             onTap: () => context.pushNamed(
               R.broadcasts,
-              queryParameters: BroadcastQuery.recent().toRouterParams,
+              queryParameters: BroadcastQuery.recentlyLive().toRouterParams,
             ),
             child: MText('See all', color: colors.onBackgroundVariant),
           ),
@@ -98,7 +98,6 @@ class _List extends StatelessWidget {
         itemCount: broadcasts.length,
         itemBuilder: (_, i) => _Card(broadcast: broadcasts[i]!),
         primary: false,
-        shrinkWrap: true,
       ),
     );
   }

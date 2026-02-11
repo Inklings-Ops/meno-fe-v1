@@ -93,13 +93,13 @@ final class ScopeHandler implements Disposable {
             final mgr = RecentlyLiveBroadcastsManager(
               di<IBroadcastRepository>(),
             );
-            mgr.getBroadcasts.run();
+            mgr.fetch.run();
             return mgr;
           }, dependsOn: [IBroadcastRepository]);
 
           di.registerSingletonWithDependencies(() {
             final mgr = NowLiveBroadcastsManager(di<IBroadcastRepository>());
-            mgr.getBroadcasts.run();
+            mgr.fetch.run();
             return mgr;
           }, dependsOn: [IBroadcastRepository]);
         },

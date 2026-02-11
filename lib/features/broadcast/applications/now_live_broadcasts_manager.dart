@@ -5,15 +5,13 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 class NowLiveBroadcastsManager implements Disposable {
-  NowLiveBroadcastsManager(this._repository) {
-    broadcasts = ListNotifier<Broadcast?>();
-  }
+  NowLiveBroadcastsManager(this._repository);
 
   final IBroadcastRepository _repository;
 
-  late final ListNotifier<Broadcast?> broadcasts;
+  late final broadcasts = ListNotifier<Broadcast?>();
 
-  late final getBroadcasts = Command.createAsyncNoParamNoResult(() async {
+  late final fetch = Command.createAsyncNoParamNoResult(() async {
     final queryParameters = BroadcastQuery.nowLive();
     final result = await _repository.getBroadcasts(queryParameters);
     result.fold((error) => throw error, (page) {
@@ -26,6 +24,6 @@ class NowLiveBroadcastsManager implements Disposable {
   @override
   FutureOr<dynamic> onDispose() {
     broadcasts.dispose();
-    getBroadcasts.dispose();
+    fetch.dispose();
   }
 }
