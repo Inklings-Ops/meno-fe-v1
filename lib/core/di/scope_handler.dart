@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
@@ -10,7 +9,7 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-final class ScopeHandler implements Disposable {
+final class ScopeHandler with MenoLogger implements Disposable {
   ScopeHandler(this._repository) {
     // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);
@@ -32,12 +31,12 @@ final class ScopeHandler implements Disposable {
 
   Future<void> _enterScope(Id userId) async {
     final targetScopeName = 'user_${userId.value.getOrElse((_) => '')}';
-    log('ScopeHandler: Requesting enter $targetScopeName');
+    log.i('ScopeHandler: Requesting enter $targetScopeName');
 
     // Safety Check: Don't push if we are already in this user's scope
     // Now that we wait for exitScope, this check is safe and accurate.
     if (di.currentScopeName == targetScopeName) {
-      log('ScopeHandler: Already in $targetScopeName. Skipping.');
+      log.i('ScopeHandler: Already in $targetScopeName. Skipping.');
       return;
     }
 
@@ -110,7 +109,7 @@ final class ScopeHandler implements Disposable {
   Future<void> _exitScope() async {
     // Only pop if we are NOT at the root
     if (di.currentScopeName != 'root') {
-      log('ScopeHandler: Popping scope ${di.currentScopeName}');
+      log.d('ScopeHandler: Popping scope ${di.currentScopeName}');
       await di.popScope();
     }
   }

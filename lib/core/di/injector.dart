@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
@@ -12,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 void setupDependencies() {
   // Push the base scope
   di.pushNewScope(scopeName: 'root');
+
+  di.registerSingleton(Logger.new);
 
   // ========================================================================
   // STORAGE LAYER

@@ -74,3 +74,17 @@ final class TimeoutException extends MenoException {
 final class StorageException extends MenoException {
   const StorageException([super.message = 'Storage error occurred.']);
 }
+
+sealed class SocketException extends MenoException {
+  const SocketException([super.message = 'Socket error occurred.']);
+}
+
+/// Thrown when attempting to use socket while not connected
+final class SocketNotConnectedException extends SocketException {
+  const SocketNotConnectedException(super.message);
+}
+
+/// Thrown when socket operation times out
+final class SocketTimeoutException extends SocketException {
+  const SocketTimeoutException(super.message);
+}
