@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
 
     Future<void> onRefresh() async {
       try {
-        await nowLiveManager.fetch.runAsync();
+        await nowLiveManager.initialize.runAsync();
         await recentlyLiveManager.fetch.runAsync();
       } catch (e) {
         if (context.mounted) context.showErrorSnackBar(e.toString());

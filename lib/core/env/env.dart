@@ -7,6 +7,9 @@ abstract class Env {
   @EnviedField(varName: 'MENO_API_URL')
   static final String menoApiUrl = _Env.menoApiUrl;
 
+  @EnviedField(varName: 'WEB_SOCKET_URL')
+  static final String webSocketUrl = _Env.webSocketUrl;
+
   @EnviedField(varName: 'BIBLE_API_URL')
   static final String bibleApiUrl = _Env.bibleApiUrl;
 

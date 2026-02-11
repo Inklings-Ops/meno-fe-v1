@@ -60,4 +60,11 @@ abstract class IBroadcastRepository implements Disposable {
   Future<void> saveActiveBroadcastSession(BroadcastSession broadcast);
 
   Future<void> clearActiveBroadcast(Id userId);
+
+  // #########################################################################
+  // STREAMS
+  // #########################################################################
+  Stream<List<Broadcast>> get watchNowLiveBroadcasts;
+
+  Stream<EndedBroadcast> get onBroadcastEnded;
 }

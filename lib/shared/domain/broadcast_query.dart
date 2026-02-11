@@ -160,7 +160,7 @@ final class BroadcastQuery with EquatableMixin {
 
   // Now live broadcasts
   factory BroadcastQuery.nowLive({
-    PaginationParams pagination = const PaginationParams(),
+    PaginationParams pagination = const PaginationParams(size: 8),
   }) => const BroadcastQuery(
     type: BroadcastsType.nowLive,
     sortParams: SortParams.startTimeAsc,
@@ -172,7 +172,7 @@ final class BroadcastQuery with EquatableMixin {
 
   /// Recently ended broadcasts
   factory BroadcastQuery.recentlyLive({
-    PaginationParams pagination = const PaginationParams(),
+    PaginationParams pagination = const PaginationParams(size: 8),
   }) => const BroadcastQuery(
     type: BroadcastsType.recentlyLive,
     sortParams: SortParams.endTimeDesc,

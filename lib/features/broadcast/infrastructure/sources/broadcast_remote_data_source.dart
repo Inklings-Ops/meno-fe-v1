@@ -1,13 +1,19 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 
-class BroadcastRemoteDataSource {
-  const BroadcastRemoteDataSource(this._client);
+class BroadcastRemoteDataSource with MenoLogger {
+  const BroadcastRemoteDataSource({
+    required ApiClient api,
+    required WebSocketClient socket,
+  }) : _api = api,
+       _socket = socket;
 
-  final ApiClient _client;
+  final ApiClient _api;
+  final WebSocketClient _socket;
 
   Future<BroadcastDto?> createBroadcast({
     required String title,
@@ -35,7 +41,7 @@ class BroadcastRemoteDataSource {
       data.files.add(MapEntry('image', imageData));
     }
 
-    return _client.upload(
+    return _api.upload(
       '/broadcasts',
       formData: data,
       fromJson: BroadcastDto.fromJson,
@@ -47,7 +53,7 @@ class BroadcastRemoteDataSource {
     String broadcastId, {
     CancelToken? cancelToken,
   }) async {
-    return _client.post(
+    return _api.post(
       '/broadcasts/$broadcastId/start',
       fromJson: BroadcastDto.fromJson,
       cancelToken: cancelToken,
@@ -58,11 +64,65 @@ class BroadcastRemoteDataSource {
     Map<String, dynamic> queryParameters, {
     CancelToken? cancelToken,
   }) async {
-    return _client.get(
+    return _api.get(
       '/broadcasts',
       queryParameters: queryParameters,
       fromJson: (json) => json,
       cancelToken: cancelToken,
     );
+  }
+
+  // ======================================================================
+  // STREAMS
+  // ======================================================================
+  /// Stream of new broadcasts
+  Stream<BroadcastDto> get onNewBroadcast {
+    late final StreamController<BroadcastDto> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<BroadcastDto>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.newBroadcast, (dynamic data) {
+          try {
+            final dto = BroadcastDto.fromJson(data);
+            controller.add(dto);
+          } catch (e) {
+            log.e('Error parsing newBroadcast: $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
+  /// Stream of ended broadcasts
+  Stream<EndedBroadcastDto> get onEndedBroadcast {
+    late final StreamController<EndedBroadcastDto> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<EndedBroadcastDto>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.endedBroadcast, (dynamic data) {
+          try {
+            final dto = EndedBroadcastDto.fromJson(data);
+            controller.add(dto);
+          } catch (e) {
+            log.e('Error parsing endedBroadcast: $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
+  Stream<void> get onReconnected {
+    // Filter the connection state stream to only emit on 'connected'
+    return _socket.connectionState
+        .where((state) => state == SocketConnectionState.connected)
+        .map((_) {});
   }
 }

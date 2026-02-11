@@ -61,14 +61,26 @@ final class ScopeHandler with MenoLogger implements Disposable {
           // ==================================================================
           // INFRASTRUCTURE LAYER
           // ==================================================================
+          di.registerSingletonAsync<WebSocketClient>(() async {
+            final client = WebSocketClient(
+              url: Env.webSocketUrl,
+              token: credentials.session.accessToken.getOrCrash(),
+            );
+            await client.connect();
+            return client;
+          });
+
           di.registerSingletonWithDependencies(
             () => BroadcastLocalDataSource(di<LocalStorage>()),
             dependsOn: [LocalStorage],
           );
 
           di.registerSingletonWithDependencies(
-            () => BroadcastRemoteDataSource(di<ApiClient>()),
-            dependsOn: [ApiClient],
+            () => BroadcastRemoteDataSource(
+              api: di<ApiClient>(),
+              socket: di<WebSocketClient>(),
+            ),
+            dependsOn: [ApiClient, WebSocketClient],
           );
 
           di.registerSingletonAsync<IBroadcastRepository>(() async {
@@ -89,17 +101,19 @@ final class ScopeHandler with MenoLogger implements Disposable {
           }, dependsOn: [IBroadcastRepository]);
 
           di.registerSingletonWithDependencies(() {
-            final mgr = RecentlyLiveBroadcastsManager(
+            final manager = RecentlyLiveBroadcastsManager(
               di<IBroadcastRepository>(),
             );
-            mgr.fetch.run();
-            return mgr;
+            manager.initialize.run();
+            return manager;
           }, dependsOn: [IBroadcastRepository]);
 
           di.registerSingletonWithDependencies(() {
-            final mgr = NowLiveBroadcastsManager(di<IBroadcastRepository>());
-            mgr.fetch.run();
-            return mgr;
+            final manager = NowLiveBroadcastsManager(
+              di<IBroadcastRepository>(),
+            );
+            manager.initialize.run();
+            return manager;
           }, dependsOn: [IBroadcastRepository]);
         },
       );

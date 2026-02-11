@@ -5,9 +5,7 @@ import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
-import 'package:meno/shared/domain/domain.dart';
-import 'package:meno/shared/presentation/presentation.dart'
-    show EmptyListWidget;
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -21,7 +19,7 @@ class NowLiveSectionWidget extends WatchingWidget {
     final broadcasts = watchValue((NowLiveBroadcastsManager m) => m.broadcasts);
 
     final isLoading = watchValue(
-      (NowLiveBroadcastsManager m) => m.fetch.isRunning,
+      (NowLiveBroadcastsManager m) => m.initialize.isRunning,
     );
 
     return Column(
@@ -41,10 +39,10 @@ class NowLiveSectionWidget extends WatchingWidget {
         const SizedBox(height: 24),
         LimitedBox(
           maxHeight: 184,
-          child: switch (isLoading) {
-            true => _List(broadcasts: fakeBroadcasts, loading: true),
-            false => _List(broadcasts: broadcasts),
-          },
+          child: _List(
+            broadcasts: isLoading ? fakeBroadcasts : broadcasts,
+            isLoading: isLoading,
+          ),
         ),
       ],
     );
@@ -52,17 +50,17 @@ class NowLiveSectionWidget extends WatchingWidget {
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.broadcasts, this.loading = false});
+  const _List({required this.broadcasts, this.isLoading = false});
 
   final List<Broadcast?> broadcasts;
-  final bool loading;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     if (broadcasts.isEmpty) return const EmptyListWidget();
 
     return Skeletonizer(
-      enabled: loading,
+      enabled: isLoading,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,

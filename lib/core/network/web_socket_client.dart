@@ -100,27 +100,30 @@ class WebSocketClient with MenoLogger implements Disposable {
   /// Subscribe to a socket event
   ///
   /// Returns a [SocketSubscription] that can be cancelled
-  SocketSubscription on(String event, void Function(dynamic data) handler) {
+  SocketSubscription on(
+    SocketEvent event,
+    void Function(dynamic data) handler,
+  ) {
     if (_socket == null) {
       log.w('WebSocketClient: Socket not initialized, queuing for $event');
     }
 
     // Store handler for reconnection scenarios
-    _eventHandlers.putIfAbsent(event, () => []).add(handler);
+    _eventHandlers.putIfAbsent(event.value, () => []).add(handler);
 
     // Attach to socket if available
-    _socket?.on(event, handler);
+    _socket?.on(event.value, handler);
 
     return SocketSubscription._(event: event, handler: handler, client: this);
   }
 
   /// Unsubscribe from a socket event
-  void _off(String event, void Function(dynamic) handler) {
-    _eventHandlers[event]?.remove(handler);
-    if (_eventHandlers[event]?.isEmpty ?? false) {
-      _eventHandlers.remove(event);
+  void _off(SocketEvent event, void Function(dynamic) handler) {
+    _eventHandlers[event.value]?.remove(handler);
+    if (_eventHandlers[event.value]?.isEmpty ?? false) {
+      _eventHandlers.remove(event.value);
     }
-    _socket?.off(event, handler);
+    _socket?.off(event.value, handler);
   }
 
   /// Emit an event to the server
@@ -221,7 +224,7 @@ final class SocketSubscription {
     required this.client,
   });
 
-  final String event;
+  final SocketEvent event;
   final void Function(dynamic) handler;
   final WebSocketClient client;
 
@@ -236,4 +239,13 @@ enum SocketConnectionState {
   connected,
   reconnecting,
   error,
+}
+
+enum SocketEvent {
+  newBroadcast('newBroadcast'),
+  endedBroadcast('endedBroadcast');
+
+  const SocketEvent(this.value);
+
+  final String value;
 }

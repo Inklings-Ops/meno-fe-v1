@@ -1,29 +1,39 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
-import 'package:meno/shared/domain/domain.dart';
 
-class NowLiveBroadcastsManager implements Disposable {
+class NowLiveBroadcastsManager with MenoLogger implements Disposable {
   NowLiveBroadcastsManager(this._repository);
 
   final IBroadcastRepository _repository;
 
-  late final broadcasts = ListNotifier<Broadcast?>();
+  final broadcasts = ValueNotifier<List<Broadcast>>([]);
+  late final error = ValueNotifier<dynamic>(null);
 
-  late final fetch = Command.createAsyncNoParamNoResult(() async {
-    final queryParameters = BroadcastQuery.nowLive();
-    final result = await _repository.getBroadcasts(queryParameters);
-    result.fold((error) => throw error, (page) {
-      broadcasts.startTransAction();
-      broadcasts.addAll(page.items);
-      broadcasts.endTransAction();
-    });
-  });
+  StreamSubscription<List<Broadcast>>? _subscription;
+
+  late final initialize = Command.createAsyncNoParamNoResult(() async {
+    // Cancel any existing subscription to avoid duplicate listeners
+    await _subscription?.cancel();
+    _subscription = null;
+
+    _subscription = _repository.watchNowLiveBroadcasts.listen(
+      (event) => broadcasts.value = event,
+      onError: (dynamic e) {
+        error.value = e.toString();
+        log.e(e.toString());
+      },
+    );
+  }, errorFilterFn: menoExceptionFilter);
 
   @override
   FutureOr<dynamic> onDispose() {
+    _subscription?.cancel();
     broadcasts.dispose();
-    fetch.dispose();
+    error.dispose();
+    initialize.dispose();
   }
 }
