@@ -130,6 +130,12 @@ final class Broadcast with EquatableMixin {
       creator?.fullName ??
       creatorFullName ??
       SingleLineString.empty;
+
+  bool get isActive =>
+      status == .active && startTime != null && endTime == null;
+
+  bool get isInActive =>
+      status == .inactive && startTime != null && endTime != null;
 }
 
 extension BroadcastX on Broadcast {

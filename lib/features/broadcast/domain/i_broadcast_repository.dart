@@ -55,6 +55,15 @@ abstract class IBroadcastRepository implements Disposable {
     CancelToken? cancelToken,
   });
 
+  /// Retrieves a single broadcast by its ID.
+  ///
+  /// Returns [Broadcast] wrapped in Either for error handling.
+  /// If the broadcast is not found, returns null.
+  Future<Either<MenoException, Broadcast>> getBroadcast(
+    Id id, {
+    CancelToken? cancelToken,
+  });
+
   Option<BroadcastSession> getActiveBroadcastSession(Id userId);
 
   Future<void> saveActiveBroadcastSession(BroadcastSession broadcast);
@@ -69,4 +78,13 @@ abstract class IBroadcastRepository implements Disposable {
   Stream<EndedBroadcast> get onBroadcastEnded;
 
   Stream<BroadcastSession?> watchActiveSession(Id userId);
+
+  /// Stream of host disconnection events (for listeners)
+  Stream<dynamic> get onHostDisconnected;
+
+  /// Stream of host reconnection events (for listeners)
+  Stream<dynamic> get onHostReconnected;
+
+  /// Stream for socket reconnection
+  Stream<Unit> get onReconnected;
 }

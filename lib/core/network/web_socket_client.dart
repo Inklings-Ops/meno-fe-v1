@@ -243,7 +243,9 @@ enum SocketConnectionState {
 
 enum SocketEvent {
   newBroadcast('newBroadcast'),
-  endedBroadcast('endedBroadcast');
+  endedBroadcast('endedBroadcast'),
+  hostDisconnected('hostDisconnected'),
+  hostReconnected('hostReconnected');
 
   const SocketEvent(this.value);
 

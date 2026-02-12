@@ -40,12 +40,6 @@ final class BroadcastSessionDto with EquatableMixin {
     _kCreatorId: creatorId,
   };
 
-  /// Helper to check if the session is "stale" (e.g., > 12 hours old)
-  bool get isExpired {
-    final difference = DateTime.now().difference(timestamp);
-    return difference.inHours > 12;
-  }
-
   @override
   List<Object?> get props => [
     broadcastId,

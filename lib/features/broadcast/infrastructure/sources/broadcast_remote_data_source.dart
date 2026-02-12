@@ -119,6 +119,50 @@ class BroadcastRemoteDataSource with MenoLogger {
     return controller.stream;
   }
 
+  /// Stream of host disconnection events
+  Stream<dynamic> get onHostDisconnected {
+    late final StreamController<dynamic> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<dynamic>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.hostDisconnected, (dynamic data) {
+          try {
+            log.i('BroadcastRemoteDataSource: Host disconnected: $data');
+            controller.add(data);
+          } catch (e) {
+            log.e('BroadcastRemoteDataSource: Error hostDisconnected - $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
+  /// Stream of host reconnection events
+  Stream<dynamic> get onHostReconnected {
+    late final StreamController<dynamic> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<dynamic>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.hostReconnected, (dynamic data) {
+          try {
+            log.i('BroadcastRemoteDataSource: Host reconnected: $data');
+            controller.add(data);
+          } catch (e) {
+            log.e('BroadcastRemoteDataSource: Error hostReconnected - $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
   Stream<void> get onReconnected {
     // Filter the connection state stream to only emit on 'connected'
     return _socket.connectionState

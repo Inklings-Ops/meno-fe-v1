@@ -103,6 +103,30 @@ final class BroadcastRepositoryImpl
   }
 
   @override
+  Future<Either<MenoException, Broadcast>> getBroadcast(
+    Id id, {
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final query = BroadcastQuery(id: id);
+      final response = await _remote.getBroadcasts(
+        query.toApiParams,
+        cancelToken: cancelToken,
+      );
+
+      final json = response as Map<String, dynamic>;
+      final items = json[r'broadcasts'] as List<dynamic>;
+
+      if (items.isEmpty) return const Left(MenoException('No broadcast found'));
+      final dto = BroadcastDto.fromJson(items.first);
+      return Right(dto.toDomain);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
   Future<Either<MenoException, Broadcast>> joinBroadcast(Id id) {
     // TODO: implement joinBroadcast
     throw UnimplementedError();
@@ -295,8 +319,17 @@ final class BroadcastRepositoryImpl
   }
 
   @override
-  Stream<BroadcastSession?> watchActiveSession(Id userId) async* {
-    final dto = _local.watchActiveSession(userId.getOrCrash());
-    yield* dto.map((e) => e?.toDomain);
+  Stream<BroadcastSession?> watchActiveSession(Id userId) {
+    final id = userId.getOrCrash();
+    return _local.watchActiveSession(id).map((e) => e?.toDomain);
   }
+
+  @override
+  Stream<dynamic> get onHostDisconnected => _remote.onHostDisconnected;
+
+  @override
+  Stream<dynamic> get onHostReconnected => _remote.onHostReconnected;
+
+  @override
+  Stream<Unit> get onReconnected => _remote.onReconnected.map((_) => unit);
 }

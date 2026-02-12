@@ -1,6 +1,6 @@
 export 'di/di.dart';
 export 'di/injector.dart';
-export 'di/scope_handler.dart';
+export 'di/user_scope_handler.dart';
 export 'domain/keys/storage_keys.dart';
 export 'domain/value_objects/value_exception.dart';
 export 'domain/value_objects/value_object.dart';

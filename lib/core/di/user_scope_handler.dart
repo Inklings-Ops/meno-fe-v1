@@ -9,8 +9,8 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-final class ScopeHandler with MenoLogger implements Disposable {
-  ScopeHandler(this._repository) {
+final class UserScopeHandler with MenoLogger implements Disposable {
+  UserScopeHandler(this._repository) {
     // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);
 
@@ -115,6 +115,15 @@ final class ScopeHandler with MenoLogger implements Disposable {
             );
             manager.initialize.run();
             return manager;
+          }, dependsOn: [IBroadcastRepository]);
+
+          di.registerSingletonWithDependencies(() async {
+            final handler = LiveScopeHandler(
+              repository: di<IBroadcastRepository>(),
+              userId: userId,
+            );
+            await handler.initialize();
+            return handler;
           }, dependsOn: [IBroadcastRepository]);
         },
       );

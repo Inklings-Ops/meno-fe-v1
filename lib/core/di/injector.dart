@@ -111,7 +111,7 @@ void setupDependencies() {
   // OBSERVER
   // ========================================================================
   di.registerSingletonWithDependencies(
-    () => ScopeHandler(di<IAuthRepository>()),
+    () => UserScopeHandler(di<IAuthRepository>()),
     dependsOn: [IAuthRepository],
   );
 
