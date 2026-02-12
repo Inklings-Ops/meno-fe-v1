@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/core/media_service.dart';
+import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-class BroadcastFormManager implements Disposable {
+class BroadcastFormManager with MenoLogger implements Disposable {
   BroadcastFormManager({
     required Id currentUserId,
     required IBroadcastRepository repository,
@@ -45,6 +45,8 @@ class BroadcastFormManager implements Disposable {
     if (file != null) image.value = ImageInput.fromFile(file);
   }
 
+  void onImageRemoved() => image.value = ImageInput.empty;
+
   void onToggleRecord(bool input) => record.value = input;
 
   void onAddCohost() {}
@@ -77,18 +79,75 @@ class BroadcastFormManager implements Disposable {
         state.cohosts.length <= 2;
   });
 
+  late final saveBroadcastSession = Command.createAsync<Broadcast, Broadcast>(
+    (broadcast) async {
+      log.i('BroadcastFormManager: Step 3 - Saving active broadcast session');
+      final session = BroadcastSession.fromBroadcast(broadcast);
+      await _repository.saveActiveBroadcastSession(session);
+      return broadcast;
+    },
+    initialValue: Broadcast.empty,
+    errorFilterFn: menoExceptionFilter,
+  );
+
+  late final startBroadcast = Command.createAsync<Id, Broadcast>(
+    (broadcastId) async {
+      log.i('BroadcastFormManager: Step 2 - Starting broadcast');
+      final result = await _repository.startBroadcast(broadcastId);
+      return result.fold(
+        (failure) {
+          log.e('BroadcastFormManager: Failed to start broadcast - $failure');
+          throw failure;
+        },
+        (broadcast) {
+          log.i('BroadcastFormManager: Broadcast started successfully');
+          return broadcast;
+        },
+      );
+    },
+    initialValue: Broadcast.empty,
+    errorFilterFn: menoExceptionFilter,
+  )..pipeToCommand(saveBroadcastSession, transform: (value) => value);
+
   late final createBroadcast = Command.createAsyncNoParam(
     () async {
+      log.i('BroadcastFormManager: Step 1 - Creating broadcast');
       final result = await _repository.createBroadcast(
         title: title.value,
         description: desc.value,
         cohosts: cohosts.value,
         image: image.value,
       );
-      return result.fold((error) => throw error, (broadcast) => broadcast);
+      return result.fold(
+        (failure) {
+          log.e('BroadcastFormManager: Failed to create broadcast - $failure');
+          throw failure;
+        },
+        (broadcast) {
+          log.i('BroadcastFormManager: Broadcast created -$broadcast');
+          return broadcast;
+        },
+      );
     },
     initialValue: Broadcast.empty,
     restriction: isValid.map((value) => !value),
+    errorFilterFn: menoExceptionFilter,
+  )..pipeToCommand(startBroadcast, transform: (value) => value.id);
+
+  late final resetForm = Command.createSyncNoParamNoResult(() {
+    log.i('BroadcastFormManager: Resetting form');
+    title.value = SingleLineString.empty;
+    desc.value = MultiLineString.empty;
+    image.value = ImageInput.empty;
+    cohosts.value = [];
+    record.value = false;
+    _currentDraftId = null;
+  });
+
+  late final isRunning = createBroadcast.isRunning.combineLatest3(
+    startBroadcast.isRunning,
+    saveBroadcastSession.isRunning,
+    (isCreating, isStarting, isSaving) => isCreating || isStarting || isSaving,
   );
 
   void loadDraft(BroadcastDraft draft) {
@@ -115,6 +174,10 @@ class BroadcastFormManager implements Disposable {
     image.dispose();
     cohosts.dispose();
     record.dispose();
+
     createBroadcast.dispose();
+    startBroadcast.dispose();
+    saveBroadcastSession.dispose();
+    resetForm.dispose();
   }
 }

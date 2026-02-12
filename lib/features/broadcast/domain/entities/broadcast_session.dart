@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno/shared/domain/domain.dart';
 
@@ -11,11 +12,17 @@ class BroadcastSession with EquatableMixin {
   });
 
   factory BroadcastSession.fromBroadcast(Broadcast broadcast) {
+    final token = broadcast.broadcastToken;
+    if (token == null) throw const MenoException('Invalid broadcast token');
+
+    final creatorId = broadcast.effectiveCreatorId;
+    if (creatorId.isEmpty) throw const MenoException('Invalid creator ID');
+
     return BroadcastSession(
       broadcastId: broadcast.id,
-      broadcastToken: broadcast.broadcastToken ?? '',
+      broadcastToken: token,
       timestamp: DateTime.now(),
-      creatorId: broadcast.creator?.id ?? broadcast.creatorId ?? Id.empty,
+      creatorId: creatorId,
     );
   }
 

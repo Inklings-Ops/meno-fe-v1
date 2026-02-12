@@ -31,3 +31,7 @@ class Id extends ValueObject<String> {
     return Right(clean);
   }
 }
+
+extension IdX on Id {
+  bool get isEmpty => this == Id.empty;
+}

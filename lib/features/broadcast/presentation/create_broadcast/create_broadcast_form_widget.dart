@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
@@ -51,9 +53,7 @@ class _AvatarField extends StatelessWidget {
     final manager = di<BroadcastFormManager>();
     final image = watchValue((BroadcastFormManager m) => m.image);
     final imageValue = image.getOrNull() as LocalImage?;
-    final isLoading = watchValue(
-      (BroadcastFormManager m) => m.createBroadcast.isRunning,
-    );
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
 
     return Column(
       children: [
@@ -92,9 +92,8 @@ class _TitleField extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final title = watchValue((BroadcastFormManager m) => m.title);
-    final isLoading = watchValue(
-      (BroadcastFormManager m) => m.createBroadcast.isRunning,
-    );
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+
     return MTextFormField(
       label: 'Broadcast title',
       hint: "Jim Halpert's live audio",
@@ -120,9 +119,8 @@ class _DescriptionFieldState extends State<_DescriptionField> {
   @override
   Widget build(BuildContext context) {
     final description = watchValue((BroadcastFormManager m) => m.desc);
-    final isLoading = watchValue(
-      (BroadcastFormManager m) => m.createBroadcast.isRunning,
-    );
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+
     return MTextArea(
       label: 'About broadcast',
       hint: 'Enter a brief description',
@@ -141,10 +139,16 @@ class StartBroadcastButton extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isValid = watchValue((BroadcastFormManager m) => m.isValid);
-    final isLoading = watchValue(
-      (BroadcastFormManager m) => m.createBroadcast.isRunning,
+    registerHandler(
+      select: (BroadcastFormManager m) => m.saveBroadcastSession,
+      handler: (context, newValue, cancel) {
+        di<BroadcastFormManager>().resetForm.run();
+        context.replace(R.broadcastTab);
+      },
     );
+
+    final isValid = watchValue((BroadcastFormManager m) => m.isValid);
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
 
     return Container(
       height: 77,
@@ -202,9 +206,8 @@ class RecordToggleSwitchField extends WatchingWidget {
   Widget build(BuildContext context) {
     final manager = di<BroadcastFormManager>();
     final record = watchValue((BroadcastFormManager m) => m.record);
-    final isLoading = watchValue(
-      (BroadcastFormManager m) => m.createBroadcast.isRunning,
-    );
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+
     return CreateBroadcastListTile(
       leadingText: 'Enable recording',
       subtitleText: 'Record your broadcast to listen back to later',
