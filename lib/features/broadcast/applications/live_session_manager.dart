@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
+import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
@@ -32,6 +33,9 @@ final class LiveSessionManager with MenoLogger implements Disposable {
   final IBroadcastRepository _repository;
   final LiveKitClient _liveKit;
 
+  // Timer manager
+  late final LiveTimerManager timer;
+
   // #####################################################################
   // STATES
   // #####################################################################
@@ -39,6 +43,12 @@ final class LiveSessionManager with MenoLogger implements Disposable {
   late final sessionState = ValueNotifier(const LiveSession.initializing());
   late final liveStatus = ValueNotifier(LiveStatus.initializing);
   late final isMicrophoneEnabled = ValueNotifier<bool>(false);
+
+  // #####################################################################
+  // EXPOSED STATES
+  // #####################################################################
+
+  Broadcast get broadcast => _session.broadcast;
 
   // #####################################################################
   // SUBSCRIPTIONS AND LISTENERS
@@ -104,7 +114,31 @@ final class LiveSessionManager with MenoLogger implements Disposable {
   // COMMANDS
   // #####################################################################
 
-  late final startSession = Command.createSyncNoParamNoResult(() async {
+  late final initializeTimer = Command.createAsyncNoParamNoResult(() async {
+    // Get broadcast start time from session
+    final startTime = _session.broadcast.startTime;
+
+    if (startTime == null) {
+      log.e('LiveTimerManager: No start time available');
+      // Fallback to session timestamp
+      timer = LiveTimerManager(broadcastStartTime: _session.timestamp);
+      return;
+    }
+
+    // For zombie recovery, we might have cached elapsed time
+    // Calculate it from start time
+    final now = DateTime.now();
+    final calculatedElapsed = now.difference(startTime);
+
+    timer = LiveTimerManager(
+      broadcastStartTime: startTime,
+      initialElapsed: calculatedElapsed,
+    );
+
+    log.i('LiveTimerManager: Initialized with start time $startTime');
+  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(startSession);
+
+  late final startSession = Command.createAsyncNoParamNoResult(() async {
     final broadcast = _session.broadcast;
     log.i('LiveSessionManager: Initializing broadcast: ${broadcast.id}');
 
@@ -115,20 +149,83 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     _isHost = broadcast.effectiveCreatorId == _userId;
 
     log.i('LiveSessionManager: User is a ${_isHost ? 'host' : 'listener'}');
+  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(connectToLiveKit);
 
-    // Connect to LiveKit SDK Client
-    await _connectToLiveKit();
+  late final connectToLiveKit = Command.createAsyncNoParamNoResult(() async {
+    log.i('LiveSessionManager: Connecting to LiveKit');
+    liveStatus.value = LiveStatus.connecting;
 
-    // Emit socket event for started broadcast if broadcaster
-    if (_isHost && broadcast.isActive) await _notifyBroadcastStarted();
+    final broadcastToken = _session.broadcast.broadcastToken;
+    if (broadcastToken == null) {
+      log.e('LiveSessionManager: Broadcast token is null');
+      throw const MenoException('No valid broadcast token found.');
+    }
+
+    final result = await switch (_isHost) {
+      true => _liveKit.broadcast(broadcastToken),
+      false => _liveKit.stream(broadcastToken),
+    };
+
+    return result.fold(
+      (e) {
+        log.e('LiveSessionManager: LiveKit connection failed - $e');
+        sessionState.value = LiveSession.error(e.message);
+        liveStatus.value = LiveStatus.offAir;
+
+        // Retry connection for certain failures
+        if (e is LiveKitConnectionTimeout || e is LiveKtiConnectionFailed) {
+          _scheduleReconnection();
+        }
+
+        throw MenoException(e.message);
+      },
+      (_) {
+        log.i('LiveSessionManager: LiveKit connected successfully');
+
+        sessionState.value = switch (_isHost) {
+          true => const LiveSession.broadcasting(),
+          false => const LiveSession.listening(),
+        };
+
+        liveStatus.value = LiveStatus.live;
+
+        // Reset reconnection attempts on success
+        _reconnectionAttempts = 0;
+
+        // Update microphone state
+        isMicrophoneEnabled.value = _liveKit.isMicrophoneEnabled;
+
+        // Start timer once connected successfully
+        timer.start.run();
+      },
+    );
+  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(emitStartedEvent);
+
+  late final emitStartedEvent = Command.createAsyncNoParamNoResult(() async {
+    log.i('LiveSessionManager: Notifying server that broadcast started');
+
+    final broadcastId = _session.broadcast.id;
+
+    // Emit socket event
+    if (_isHost) {
+      await _repository.emitStartedBroadcast(broadcastId);
+      await _repository.deleteDraft(userId: _userId, draftId: broadcastId);
+    } else {
+      await _repository.emitJoinedBroadcast(broadcastId);
+    }
   }, errorFilterFn: menoExceptionFilter);
 
-  late final endSession = Command.createSyncNoParamNoResult(() async {
+  late final endSession = Command.createAsyncNoParamNoResult(() async {
     log.i('LiveSessionManager: Ending session');
 
     liveStatus.value = LiveStatus.disconnecting;
 
     final broadcastId = _session.broadcast.id;
+
+    // Stop timer
+    timer.stop.run();
+    log.i('LiveSessionManager: Timer stopped - ${timer.currentElapsed}');
+    log.i('LiveSessionManager: BQS: ${timer.qualityScore.toStringAsFixed(1)}%');
 
     final result = await switch (_isHost) {
       true => _repository.emitEndBroadcast(broadcastId),
@@ -156,15 +253,13 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     );
   }, errorFilterFn: menoExceptionFilter)..errors.listen(_killOnError);
 
-  late final toggleMicrophone = Command.createSyncNoParamNoResult(() async {
+  late final toggleMicrophone = Command.createAsyncNoResult((bool value) async {
     final previousState = isMicrophoneEnabled.value;
+    isMicrophoneEnabled.value = value;
 
-    final newState = !isMicrophoneEnabled.value;
-    isMicrophoneEnabled.value = newState;
+    log.i('LiveSessionManager: Toggling microphone to $value');
 
-    log.i('LiveSessionManager: Toggling microphone to $newState');
-
-    final result = await _liveKit.setMicrophoneEnabled(newState);
+    final result = await _liveKit.setMicrophoneEnabled(value);
 
     result.fold((failure) {
       log.e('LiveSessionManager: Failed to toggle microphone - $failure');
@@ -173,67 +268,26 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     }, (_) => log.i('LiveSessionManager: Microphone toggled successfully'));
   }, errorFilterFn: menoExceptionFilter);
 
-  late final reconnectToSocket = Command.createSyncNoParamNoResult(() async {
+  late final reconnectToSocket = Command.createAsyncNoParamNoResult(() async {
     log.i('LiveSessionManager: Socket reconnected, syncing state');
     // If we're a broadcaster and LiveKit is connected, notify server again
-    if (_isHost && _liveKit.connected) await _notifyBroadcastStarted();
+    if (_isHost && _liveKit.connected) {
+      log.i('LiveSessionManager: Notifying server that broadcast started');
+
+      // Emit socket event
+      if (_isHost) {
+        await _repository.emitStartedBroadcast(_session.broadcast.id);
+      } else {
+        await _repository.emitJoinedBroadcast(_session.broadcast.id);
+      }
+
+      log.i('LiveSessionManager: Broadcast started notification sent');
+    }
   }, errorFilterFn: menoExceptionFilter);
 
   // ######################################################################
   // PRIVATE METHODS
   // ######################################################################
-
-  Future<void> _connectToLiveKit() async {
-    try {
-      log.i('LiveSessionManager: Connecting to LiveKit');
-      liveStatus.value = LiveStatus.connecting;
-
-      final broadcastToken = _session.broadcast.broadcastToken;
-      if (broadcastToken == null) {
-        log.e('LiveSessionManager: Broadcast token is null');
-        throw Exception('No valid broadcast token found.');
-      }
-
-      final result = await switch (_isHost) {
-        true => _liveKit.broadcast(broadcastToken),
-        false => _liveKit.stream(broadcastToken),
-      };
-
-      result.fold(
-        (e) {
-          log.e('LiveSessionManager: LiveKit connection failed - $e');
-          sessionState.value = LiveSession.error(e.message);
-          liveStatus.value = LiveStatus.offAir;
-
-          // Retry connection for certain failures
-          if (e is LiveKitConnectionTimeout || e is LiveKtiConnectionFailed) {
-            _scheduleReconnection();
-          }
-        },
-        (_) {
-          log.i('LiveSessionManager: LiveKit connected successfully');
-
-          sessionState.value = switch (_isHost) {
-            true => const LiveSession.broadcasting(),
-            false => const LiveSession.listening(),
-          };
-
-          liveStatus.value = LiveStatus.live;
-
-          // Reset reconnection attempts on success
-          _reconnectionAttempts = 0;
-
-          // Update microphone state
-          isMicrophoneEnabled.value = _liveKit.isMicrophoneEnabled;
-
-          // Update participant count
-          // participantCount.value = _liveKit.participantCount;
-        },
-      );
-    } catch (e) {
-      log.e('LiveSessionManager: Failed to connect to LiveKit - $e');
-    }
-  }
 
   void _handleLiveKitStateChange(LiveKitState state) {
     log.d('LiveSessionManager: LiveKit state changed to $state');
@@ -244,14 +298,33 @@ final class LiveSessionManager with MenoLogger implements Disposable {
         _reconnectionAttempts = 0;
         _reconnectionTimer?.cancel();
 
+        // Resume timer if it was paused
+        if (!timer.isRunning.value) {
+          timer.resume.run();
+          log.i('LiveSessionManager: Timer resumed after reconnection');
+        }
+
       case LiveKitState.connecting:
         liveStatus.value = LiveStatus.connecting;
 
       case LiveKitState.reconnecting:
         liveStatus.value = LiveStatus.reconnecting;
 
+        // Pause timer during reconnection
+        if (timer.isRunning.value) {
+          timer.pause.run();
+          log.i('LiveSessionManager: Timer paused during reconnection');
+        }
+
       case LiveKitState.disconnected:
         liveStatus.value = LiveStatus.disconnected;
+
+        // Pause timer on disconnection
+        if (timer.isRunning.value) {
+          timer.pause.run();
+          log.i('LiveSessionManager: Timer paused due to disconnection');
+        }
+
         // Auto-reconnect if session is still active
         if (sessionState.value is! LiveSessionError) {
           _scheduleReconnection();
@@ -266,6 +339,12 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     log.w('LiveSessionManager: Host disconnected from broadcast');
     liveStatus.value = .hostDisconnected;
     sessionState.value = const .hostDisconnected();
+
+    // Pause timer for listeners when host disconnects
+    if (timer.isRunning.value) {
+      timer.pause.run();
+      log.i('LiveSessionManager: Timer paused - host disconnected');
+    }
   }
 
   void _handleHostReconnected(dynamic data) {
@@ -277,33 +356,26 @@ final class LiveSessionManager with MenoLogger implements Disposable {
 
     // Restore previous state
     sessionState.value = const .listening();
+
+    // Resume timer for listeners when host reconnects
+    if (!timer.isRunning.value) {
+      timer.resume.run();
+      log.i('LiveSessionManager: Timer resumed - host reconnected');
+    }
   }
 
   Future<void> _handleBroadcastEnded(EndedBroadcast data) async {
     log.i('LiveSessionManager: Broadcast ended by host');
+
+    // Stop timer
+    timer.stop.run();
+    log.i('LiveSessionManager: Timer stopped - broadcast ended');
+
     sessionState.value = const .ended();
     liveStatus.value = .offAir;
 
     // Clean up session
     await _repository.clearActiveBroadcast(_userId);
-  }
-
-  Future<void> _notifyBroadcastStarted() async {
-    try {
-      log.i('LiveSessionManager: Notifying server that broadcast started');
-
-      // Emit socket event
-      if (_isHost) {
-        await _repository.emitStartedBroadcast(_session.broadcast.id);
-      } else {
-        await _repository.emitJoinedBroadcast(_session.broadcast.id);
-      }
-
-      log.i('LiveSessionManager: Broadcast started notification sent');
-    } catch (e) {
-      log.e('LiveSessionManager: Failed to notify broadcast started - $e');
-      // Non-critical error, continue anyway
-    }
   }
 
   void _scheduleReconnection() {
@@ -313,6 +385,9 @@ final class LiveSessionManager with MenoLogger implements Disposable {
         'Connection lost. Please restart the broadcast.',
       );
       liveStatus.value = LiveStatus.offAir;
+
+      // Stop timer after max reconnection attempts
+      timer.stop.run();
       return;
     }
 
@@ -324,9 +399,9 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     );
 
     _reconnectionTimer?.cancel();
-    _reconnectionTimer = Timer(delay, () async {
+    _reconnectionTimer = Timer(delay, () {
       log.i('LiveSessionManager: Attempting reconnection');
-      await _connectToLiveKit();
+      connectToLiveKit.run();
     });
   }
 
@@ -350,13 +425,19 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     await _hostDisconnectedSubscription?.cancel();
     await _hostReconnectedSubscription?.cancel();
 
+    // Dispose timer manager
+    await timer.onDispose();
+
     // Dispose notifiers
     sessionState.dispose();
     liveStatus.dispose();
     isMicrophoneEnabled.dispose();
 
     // Dispose commands
+    initializeTimer.dispose();
     startSession.dispose();
+    connectToLiveKit.dispose();
+    emitStartedEvent.dispose();
     endSession.dispose();
     toggleMicrophone.dispose();
     reconnectToSocket.dispose();

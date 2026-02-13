@@ -48,6 +48,7 @@ final class LiveKitClient with MenoLogger implements Disposable {
   // #########################################################################
 
   void initialize() {
+    log.i('LiveKit: Initializing client');
     _room = sdk.Room(
       roomOptions: const sdk.RoomOptions(
         defaultAudioPublishOptions: sdk.AudioPublishOptions(name: 'microphone'),
@@ -58,6 +59,7 @@ final class LiveKitClient with MenoLogger implements Disposable {
 
     _listener = _room?.createListener();
     _setupRoomListeners();
+    log.i('LiveKit: Client initialized successfully');
   }
 
   /// Connect to LiveKit room as a broadcaster (host)
@@ -188,6 +190,8 @@ final class LiveKitClient with MenoLogger implements Disposable {
   void _setupRoomListeners() {
     if (_listener == null) return;
 
+    log.i('LiveKit: Setting up room listeners');
+
     // Forward all events to the room events stream
     _listener!.listen((event) {
       _roomEventsCtr.add(event);
@@ -202,8 +206,16 @@ final class LiveKitClient with MenoLogger implements Disposable {
     }
   }
 
+  /// Removes the listener from the room events.
+  Future<void> removeListener() async {
+    await _listener?.cancelAll();
+    _room?.removeListener(_setupRoomListeners);
+  }
+
   /// Handle specific room events
   void _handleRoomEvent(sdk.RoomEvent event) {
+    log.e('LiveKit: Room Event (${event.runtimeType}): $event');
+
     switch (event) {
       case sdk.RoomConnectedEvent():
         _updateConnectionState(.connected);
@@ -254,6 +266,7 @@ final class LiveKitClient with MenoLogger implements Disposable {
       _listener = null;
 
       // Disconnect from room
+      _room?.removeListener(_setupRoomListeners);
       await _room?.disconnect();
       await _room?.dispose();
       _room = null;

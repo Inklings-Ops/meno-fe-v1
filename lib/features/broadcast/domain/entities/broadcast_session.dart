@@ -11,6 +11,11 @@ class BroadcastSession with EquatableMixin {
   final Broadcast broadcast;
   final DateTime timestamp;
 
+  static BroadcastSession empty = BroadcastSession(
+    broadcast: Broadcast.empty,
+    timestamp: DateTime(0001),
+  );
+
   bool get isValid => broadcast.isValid;
 
   /// Helper to check if the session is "stale" (e.g., > 12 hours old)

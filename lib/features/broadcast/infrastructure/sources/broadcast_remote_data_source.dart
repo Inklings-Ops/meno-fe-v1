@@ -53,7 +53,7 @@ class BroadcastRemoteDataSource with MenoLogger {
     String broadcastId, {
     CancelToken? cancelToken,
   }) async {
-    return _api.post(
+    return _api.put(
       '/broadcasts/$broadcastId/start',
       fromJson: BroadcastDto.fromJson,
       cancelToken: cancelToken,

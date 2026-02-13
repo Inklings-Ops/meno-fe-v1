@@ -1,6 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
 
+/// Tracks which step of broadcast creation has completed
+enum BroadcastCreationStep {
+  none,
+  created, // Broadcast entity created in DB
+  started, // Broadcast started (LiveKit session initiated)
+  saved, // Session saved to local storage
+}
+
 final class BroadcastDraft with EquatableMixin {
   const BroadcastDraft({
     required this.id,
@@ -10,6 +18,8 @@ final class BroadcastDraft with EquatableMixin {
     this.record = false,
     this.cohosts = const [],
     this.image,
+    this.createdBroadcastId,
+    this.creationStep = BroadcastCreationStep.none,
   });
 
   static BroadcastDraft empty = BroadcastDraft(
@@ -34,6 +44,10 @@ final class BroadcastDraft with EquatableMixin {
   final ImageInput? image;
   final DateTime lastModified;
 
+  // Crash recovery fields
+  final Id? createdBroadcastId;
+  final BroadcastCreationStep creationStep;
+
   BroadcastDraft copyWith({
     SingleLineString? title,
     MultiLineString? description,
@@ -41,6 +55,8 @@ final class BroadcastDraft with EquatableMixin {
     List<Id>? cohosts,
     ImageInput? image,
     DateTime? lastModified,
+    Id? createdBroadcastId,
+    BroadcastCreationStep? creationStep,
   }) {
     return BroadcastDraft(
       id: id,
@@ -50,8 +66,14 @@ final class BroadcastDraft with EquatableMixin {
       cohosts: cohosts ?? this.cohosts,
       image: image ?? this.image,
       lastModified: lastModified ?? this.lastModified,
+      createdBroadcastId: createdBroadcastId ?? this.createdBroadcastId,
+      creationStep: creationStep ?? this.creationStep,
     );
   }
+
+  /// Whether this draft has a partial broadcast creation in progress
+  bool get hasPartialCreation =>
+      creationStep != BroadcastCreationStep.none && createdBroadcastId != null;
 
   @override
   List<Object?> get props => [
@@ -62,5 +84,7 @@ final class BroadcastDraft with EquatableMixin {
     cohosts,
     image,
     lastModified,
+    createdBroadcastId,
+    creationStep,
   ];
 }

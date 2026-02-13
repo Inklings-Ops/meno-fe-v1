@@ -5,7 +5,7 @@ import 'package:meno/app/router/routes.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/shared/domain/domain.dart' show Destination;
 import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
-import 'package:meno/shared/presentation/presentation.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 const List<Destination> _destinations = [
@@ -62,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
     return widgets;
   }
 
-  void _onMicTap(BuildContext ctx) {
+  Future<void> _onMicTap(BuildContext ctx) async {
     final service = di<PermissionsService>();
 
     // Create permission context with UI callbacks
@@ -72,12 +72,14 @@ class BottomNavBar extends StatelessWidget {
     );
 
     // Request all broadcast permissions
-    service.requestBroadcastPermissions.run(permissionContext);
+    await service.requestBroadcastPermissions.runAsync(permissionContext);
+
+    if (!ctx.mounted) return;
 
     // Check if we can proceed
     if (service.canBroadcast && ctx.mounted) {
       // Navigate to create broadcast screen
-      ctx.push(R.createBroadcast);
+      await ctx.push(R.createBroadcast);
     } else if (ctx.mounted) {
       ctx.showErrorSnackBar('Microphone permission is required to broadcast');
     }

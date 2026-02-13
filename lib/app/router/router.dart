@@ -6,12 +6,13 @@ import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/presentation/presentation.dart';
+import 'package:meno/features/bible/presentation/pages/live_bible_tab.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
+import 'package:meno/features/chat/presentation/presentation.dart';
 import 'package:meno/features/discover/presentation/presentation.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
-import 'package:meno/shared/domain/broadcast_query.dart';
-import 'package:meno/shared/presentation/layout/meno_layout.dart';
+import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -81,8 +82,81 @@ final class MenoRouter {
         },
       ),
 
-      /// Main Shell Route
-      /// Houses the main [MenoLayout] with the apps bottom navigation bar
+      GoRoute(
+        path: R.endedBroadcast,
+        builder: (context, state) => const EndedBroadcastPage(),
+      ),
+
+      // ######################################################################
+      // LIVE BROADCAST SHELL
+      // ######################################################################
+      StatefulShellRoute(
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state, navigationShell) => navigationShell,
+        navigatorContainerBuilder: (context, navigationShell, children) {
+          return LiveLayoutWidget(
+            key: broadcastLayoutKey,
+            navigationShell: navigationShell,
+            children: children,
+          );
+        },
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: broadcastTabKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: R.broadcastTab,
+                builder: (context, state) {
+                  // if (state.extra == null) return const LiveBroadcastTab();
+                  // return const LiveStreamTab();
+                  return const LiveBroadcastTab();
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: chatTabKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: R.chatTab,
+                builder: (context, state) => const LiveChatTab(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: bibleTabKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: R.bibleTab,
+                builder: (context, state) => const LiveBibleTab(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: notesTabKey,
+            routes: <RouteBase>[
+              GoRoute(
+                path: R.notesTab,
+                builder: (context, state) => const LiveNotesTab(),
+                // routes: [
+                //   GoRoute(
+                //     parentNavigatorKey: notesTabKey,
+                //     path: R.notesTabEditor,
+                //     builder: (context, state) {
+                //       final note = state.extra as Note? ?? Note.empty;
+                //       return NoteEditorPage(note: note);
+                //     },
+                //   ),
+                // ],
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // ######################################################################
+      // MAIN APP NAVIGATION SHELL
+      // ######################################################################
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => MenoLayout(
           key: mainLayoutKey,

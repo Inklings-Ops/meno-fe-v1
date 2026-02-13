@@ -94,7 +94,7 @@ class BroadcastLocalDataSource {
     final key = StorageKeys.broadcastDrafts(userId);
     final currentList = getAllDrafts(userId);
 
-    currentList.removeWhere((element) => element?.id != draftId);
+    currentList.removeWhere((element) => element?.id == draftId);
 
     if (currentList.isNotEmpty) {
       await _storage.remove(key);

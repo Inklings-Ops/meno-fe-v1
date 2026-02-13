@@ -19,6 +19,9 @@ extension ParticipantRoleSerialization on ParticipantRole {
       ParticipantRoleFormat.upper => toUpper(),
     };
   }
+
+  bool get isHost => this == ParticipantRole.host;
+  bool get isCohost => this == ParticipantRole.cohost;
 }
 
 extension ParticipantRoleParsing on String {

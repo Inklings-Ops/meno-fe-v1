@@ -7,6 +7,11 @@ final class EndedBroadcast with EquatableMixin {
   final Broadcast details;
   final EndedBroadcastReason reason;
 
+  static EndedBroadcast empty = EndedBroadcast(
+    details: Broadcast.empty,
+    reason: const EndedBroadcastReason(type: '', message: ''),
+  );
+
   @override
   List<Object?> get props => [details, reason];
 

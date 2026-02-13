@@ -119,43 +119,59 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
     try {
       await di.pushNewScopeAsync(
         scopeName: targetScopeName,
-        init: (getIt) async {
+        init: (_) async {
           // ================================================================
           // INFRASTRUCTURE LAYER
           // ================================================================
 
-          // LiveKit Client
-          di.registerSingleton(() {
+          // LiveKit Client - Register as async singleton
+          di.registerSingletonAsync<LiveKitClient>(() async {
+            log.d('LiveScopeHandler: Initializing LiveKit client');
             final client = LiveKitClient(url: Env.menoLiveKitUrl);
             client.initialize();
+            log.d('LiveScopeHandler: LiveKit client initialized');
             return client;
           });
+
+          // Wait for LiveKit to be ready
+          await di.isReady<LiveKitClient>();
+          log.d('LiveScopeHandler: LiveKit client is ready');
 
           // ================================================================
           // APPLICATION LAYER
           // ================================================================
 
-          // Live Session Manager - The main coordinator
-          di.registerSingletonWithDependencies(() {
+          // Live Session Manager - Register synchronously to avoid deadlock
+
+          // Register as regular singleton (not async)
+          di.registerSingletonAsync<LiveSessionManager>(() async {
+            log.d('LiveScopeHandler: Initializing Live Session Manager');
             final manager = LiveSessionManager(
               userId: _userId,
               session: session,
               repository: di<IBroadcastRepository>(),
               liveKit: di<LiveKitClient>(),
             );
-            manager.startSession.run();
+            log.d('LiveScopeHandler: Starting session...');
+            await manager.initializeTimer.runAsync();
+            log.d('LiveScopeHandler: Session started successfully');
             return manager;
-          }, dependsOn: [IBroadcastRepository, LiveKitClient]);
-        },
-        dispose: () async {},
-      );
+          }, dependsOn: [LiveKitClient, IBroadcastRepository]);
 
+          // Wait for timer initialization (piped command)
+          // Give it a moment to complete
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+        },
+      );
       _currentScopeName = targetScopeName;
       log.i('LiveScopeHandler: Entered $targetScopeName successfully');
-    } catch (e) {
+      log.i('LiveScopeHandler: Live scope is now ready for UI');
+    } catch (e, stackTrace) {
       log.e('LiveScopeHandler: Failed to enter scope - $e');
+      log.e('Stack trace: $stackTrace');
       // Clean up session on failure
       await _repository.clearActiveBroadcast(_userId);
+      rethrow; // Re-throw so error is visible
     }
   }
 

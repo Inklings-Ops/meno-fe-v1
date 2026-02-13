@@ -13,6 +13,8 @@ final class BroadcastDraftDto with EquatableMixin {
     this.record = false,
     this.cohosts = const [],
     this.image,
+    this.createdBroadcastId,
+    this.creationStep,
   });
 
   factory BroadcastDraftDto.fromJson(dynamic json) {
@@ -30,6 +32,10 @@ final class BroadcastDraftDto with EquatableMixin {
           : const [],
       image: json[_kImage] as String?,
       lastModified: DateTime.parse(json[_kLastModified] as String),
+      createdBroadcastId: json[_kCreatedBroadcastId] as String?,
+      creationStep: json[_kCreationStep] != null
+          ? int.tryParse(json[_kCreationStep].toString())
+          : null,
     );
   }
 
@@ -40,6 +46,8 @@ final class BroadcastDraftDto with EquatableMixin {
   static const String _kCohosts = 'cohosts';
   static const String _kImage = 'image';
   static const String _kLastModified = 'lastModified';
+  static const String _kCreatedBroadcastId = 'createdBroadcastId';
+  static const String _kCreationStep = 'creationStep';
 
   final String id;
   final String title;
@@ -48,6 +56,8 @@ final class BroadcastDraftDto with EquatableMixin {
   final List<String> cohosts;
   final String? image;
   final DateTime lastModified;
+  final String? createdBroadcastId;
+  final int? creationStep;
 
   Map<String, dynamic> toJson() => {
     _kId: id,
@@ -57,6 +67,8 @@ final class BroadcastDraftDto with EquatableMixin {
     _kCohosts: cohosts,
     _kImage: image,
     _kLastModified: lastModified.toIso8601String(),
+    _kCreatedBroadcastId: createdBroadcastId,
+    _kCreationStep: creationStep,
   };
 
   BroadcastDraftDto copyWith({
@@ -67,6 +79,8 @@ final class BroadcastDraftDto with EquatableMixin {
     List<String>? cohosts,
     String? image,
     DateTime? lastModified,
+    String? createdBroadcastId,
+    int? creationStep,
   }) {
     return BroadcastDraftDto(
       id: id ?? this.id,
@@ -76,6 +90,8 @@ final class BroadcastDraftDto with EquatableMixin {
       cohosts: cohosts ?? this.cohosts,
       image: image ?? this.image,
       lastModified: lastModified ?? this.lastModified,
+      createdBroadcastId: createdBroadcastId ?? this.createdBroadcastId,
+      creationStep: creationStep ?? this.creationStep,
     );
   }
 
@@ -88,6 +104,8 @@ final class BroadcastDraftDto with EquatableMixin {
     cohosts,
     image,
     lastModified,
+    createdBroadcastId,
+    creationStep,
   ];
 }
 
@@ -102,6 +120,14 @@ extension BroadcastDraftDtoX on BroadcastDraftDto {
         : const [],
     image: image != null ? ImageInput.fromFile(File(image!)) : null,
     lastModified: lastModified,
+    createdBroadcastId: createdBroadcastId != null
+        ? Id.fromString(createdBroadcastId!)
+        : null,
+    creationStep:
+        creationStep != null &&
+            creationStep! < BroadcastCreationStep.values.length
+        ? BroadcastCreationStep.values[creationStep!]
+        : BroadcastCreationStep.none,
   );
 }
 
@@ -119,5 +145,7 @@ extension BroadcastDraftX on BroadcastDraft {
       _ => null,
     },
     lastModified: lastModified,
+    createdBroadcastId: createdBroadcastId?.getOrCrash(),
+    creationStep: creationStep.index,
   );
 }

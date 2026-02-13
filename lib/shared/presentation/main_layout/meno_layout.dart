@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/features/auth/application/application.dart';
-import 'package:meno/shared/presentation/presentation.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class MenoLayout extends WatchingWidget {

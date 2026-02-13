@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
+import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
@@ -9,12 +10,26 @@ import 'package:meno_design_system/meno_design_system.dart';
 
 final _formKey = GlobalKey<FormState>();
 
-class CreateBroadcastForm extends StatelessWidget {
+class CreateBroadcastForm extends WatchingWidget {
   const CreateBroadcastForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
+
+    registerHandler(
+      handler: (context, errors, cancel) {
+        if (errors != null) {
+          final message = switch (errors.error) {
+            MenoException(:final message) => message,
+            _ => errors.error.toString(),
+          };
+          context.showErrorSnackBar(message);
+        }
+      },
+      select: (BroadcastFormManager m) => m.errors,
+    );
+
     return Form(
       key: _formKey,
       child: Column(
@@ -43,7 +58,7 @@ class CreateBroadcastForm extends StatelessWidget {
   }
 }
 
-class _AvatarField extends StatelessWidget {
+class _AvatarField extends WatchingWidget {
   const _AvatarField({super.key});
 
   @override
@@ -86,22 +101,53 @@ class _AvatarField extends StatelessWidget {
   }
 }
 
-class _TitleField extends WatchingWidget {
+class _TitleField extends StatefulWidget {
   const _TitleField({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final title = watchValue((BroadcastFormManager m) => m.title);
-    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+  State<_TitleField> createState() => _TitleFieldState();
+}
 
+class _TitleFieldState extends State<_TitleField> {
+  TextEditingController? _controller;
+  final manager = di<BroadcastFormManager>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    final initialValue = manager.title.value.getOrElse((_) => '');
+    _controller = TextEditingController(text: initialValue);
+
+    manager.title.listen((SingleLineString newValue, _) {
+      _syncControllerWithManager(newValue);
+    });
+  }
+
+  void _syncControllerWithManager(SingleLineString newValue) {
+    final text = newValue.getOrElse((_) => '');
+    if (_controller?.text != text) {
+      _controller?.text = text;
+      _controller?.selection = TextSelection.collapsed(offset: text.length);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _controller = null;
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MTextFormField(
+      key: widget.key,
       label: 'Broadcast title',
       hint: "Jim Halpert's live audio",
-      required: true,
+      controller: _controller,
+      onChanged: manager.onTitleChanged,
       textInputAction: TextInputAction.next,
-      enabled: !isLoading,
-      onChanged: di<BroadcastFormManager>().onTitleChanged,
-      validator: (_) => title.failureOrNull?.msg,
     );
   }
 }
@@ -114,7 +160,33 @@ class _DescriptionField extends WatchingStatefulWidget {
 }
 
 class _DescriptionFieldState extends State<_DescriptionField> {
-  final _controller = TextEditingController();
+  TextEditingController? _controller;
+  final manager = di<BroadcastFormManager>();
+
+  @override
+  void initState() {
+    super.initState();
+    final initialValue = manager.desc.value.getOrElse((_) => '');
+    _controller = TextEditingController(text: initialValue);
+
+    manager.desc.listen((MultiLineString newValue, _) {
+      _syncControllerWithManager(newValue);
+    });
+  }
+
+  void _syncControllerWithManager(MultiLineString newValue) {
+    final text = newValue.getOrElse((_) => '');
+    if (_controller?.text != text) {
+      _controller?.text = text;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _controller = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +194,14 @@ class _DescriptionFieldState extends State<_DescriptionField> {
     final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
 
     return MTextArea(
+      key: widget.key,
       label: 'About broadcast',
       hint: 'Enter a brief description',
       maxLines: 5,
       maxLength: 244,
       controller: _controller,
+      onChanged: manager.onDescChanged,
       enabled: !isLoading,
-      onChanged: di<BroadcastFormManager>().onDescChanged,
       validator: (_) => description.failureOrNull?.msg,
     );
   }
@@ -149,6 +222,14 @@ class StartBroadcastButton extends WatchingWidget {
 
     final isValid = watchValue((BroadcastFormManager m) => m.isValid);
     final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+    final step = watchValue((BroadcastFormManager m) => m.step);
+
+    final buttonLabel = switch (step) {
+      .none => 'Start Broadcast',
+      .created => 'Continue & Start',
+      .started => 'Finalize Broadcast',
+      .saved => 'Start Broadcast',
+    };
 
     return Container(
       height: 77,
@@ -158,7 +239,7 @@ class StartBroadcastButton extends WatchingWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           MPrimaryButton(
-            label: 'Start Broadcast',
+            label: buttonLabel,
             loading: isLoading,
             disabled: isLoading || !isValid,
             onPressed: () {
@@ -181,19 +262,7 @@ class CoHostSection extends StatelessWidget {
     return const LimitedBox(
       maxHeight: 72,
       child: Row(
-        children: [
-          // ParticipantItem(
-          //   onTap: () => context.showModal<void>(
-          //     const AddCohostModal(),
-          //     isScrollControlled: true,
-          //     constraints: BoxConstraints(
-          //       maxHeight: MediaQuery.sizeOf(context).height * 0.9,
-          //     ),
-          //   ),
-          // ),
-          Spaces.horizontalSmall,
-          Wrap(spacing: 8),
-        ],
+        children: [ParticipantItem(), Spaces.horizontalSmall, Wrap(spacing: 8)],
       ),
     );
   }
