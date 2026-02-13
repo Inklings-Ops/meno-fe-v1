@@ -20,15 +20,11 @@ final class LiveKitClient with MenoLogger implements Disposable {
 
   final _connectionStateCtr = StreamController<LiveKitState>.broadcast();
 
-  Stream get connectionState => _connectionStateCtr.stream;
+  Stream<LiveKitState> get connectionState => _connectionStateCtr.stream;
 
   final _roomEventsCtr = StreamController<sdk.RoomEvent>.broadcast();
 
-  Stream get roomEvents => _roomEventsCtr.stream;
-
-  final _participantEventsCtr = StreamController<ParticipantEvent>.broadcast();
-
-  Stream get participantEvents => _participantEventsCtr.stream;
+  Stream<sdk.RoomEvent> get roomEvents => _roomEventsCtr.stream;
 
   /// Current connection state
   LiveKitState _currentState = LiveKitState.disconnected;
@@ -48,10 +44,10 @@ final class LiveKitClient with MenoLogger implements Disposable {
   }
 
   // #########################################################################
-  // COMMANDS
+  // ACTIONS
   // #########################################################################
 
-  late final initialize = Command.createAsyncNoParamNoResult(() async {
+  void initialize() {
     _room = sdk.Room(
       roomOptions: const sdk.RoomOptions(
         defaultAudioPublishOptions: sdk.AudioPublishOptions(name: 'microphone'),
@@ -62,67 +58,86 @@ final class LiveKitClient with MenoLogger implements Disposable {
 
     _listener = _room?.createListener();
     _setupRoomListeners();
-  }, errorFilterFn: menoExceptionFilter);
+  }
 
   /// Connect to LiveKit room as a broadcaster (host)
   ///
   /// This enables microphone by default and prepares for broadcasting
-  late final broadcast = Command.createAsyncNoResult<String>((token) async {
-    final result = await _connect(token: token);
-    return result.fold((failure) => throw failure, (value) => value);
-  }, errorFilterFn: menoExceptionFilter);
+  Future<Either<LiveKitFailure, Unit>> broadcast(String token) async {
+    return _connect(token: token, enableMicrophone: true, isHost: true);
+  }
 
   /// Connect to LiveKit room as a listener (viewer)
   ///
   /// Microphone is disabled by default for listeners
-  late final stream = Command.createAsyncNoResult<String>((token) async {
-    final result = await _connect(
-      token: token,
-      isBroadcaster: false,
-      enableMicrophone: false,
-    );
-    return result.fold((failure) => throw failure, (value) => value);
-  }, errorFilterFn: menoExceptionFilter);
+  Future<Either<LiveKitFailure, Unit>> stream(String token) async {
+    return _connect(token: token, enableMicrophone: false, isHost: false);
+  }
 
   /// Disconnects from the LiveKit room
   ///
-  late final disconnect = Command.createAsyncNoParamNoResult(
-    _disconnect,
-    errorFilterFn: menoExceptionFilter,
-  );
+  /// Disconnect from room
+  Future<void> disconnect() async {
+    try {
+      log.i('LiveKit: Disconnecting from room');
+      _updateConnectionState(.disconnected);
 
-  /// Enabled the microphone of the participant
-  ///
-  late final toggleMicrophone = Command.createAsync<bool, bool>(
-    (enabled) async {
-      final result = await _enableMicrophone(enabled);
-      return result.fold((failure) => throw failure, (value) => value);
-    },
-    initialValue: false,
-    errorFilterFn: menoExceptionFilter,
-  );
+      await _room?.disconnect();
+      log.i('LiveKit: Disconnected successfully');
+    } catch (e) {
+      log.e('LiveKit: Error during disconnect - $e');
+      throw LiveKitUnexpectedError(e.toString());
+    }
+  }
+
+  /// Enable or disable local microphone
+  Future<Either<LiveKitFailure, bool>> setMicrophoneEnabled(
+    bool enabled,
+  ) async {
+    try {
+      if (_room?.localParticipant == null) {
+        return const Left(LiveKitNotConnected());
+      }
+
+      await _room!.localParticipant!.setMicrophoneEnabled(enabled);
+      log.i('LiveKit: Microphone ${enabled ? 'enabled' : 'disabled'}');
+      return Right(enabled);
+    } catch (e) {
+      log.e('LiveKit: Failed to set microphone state - $e');
+      return Left(LiveKitMicError(e.toString()));
+    }
+  }
 
   /// Reconnect with the same configuration
-  ///
-  late final reconnect = Command.createAsyncNoResult<String>((token) async {
-    final result = await _reconnect(token);
-    return result.fold((failure) => throw failure, (value) => value);
-  }, errorFilterFn: menoExceptionFilter);
+  Future<Either<LiveKitFailure, Unit>> reconnect(String token) async {
+    try {
+      log.i('LiveKit: Attempting to reconnect');
+      _updateConnectionState(.reconnecting);
+
+      await _room!.connect(_url, token);
+
+      log.i('LiveKit: Reconnected successfully');
+      return const Right(unit);
+    } catch (e) {
+      log.e('LiveKit: Reconnection failed - $e');
+      return Left(LiveKitReconnectFailed(e.toString()));
+    }
+  }
 
   // #########################################################################
   // HELPER METHODS
   // #########################################################################
 
-  Future<Either<MenoException, Unit>> _connect({
+  Future<Either<LiveKitFailure, Unit>> _connect({
     required String token,
-    bool enableMicrophone = true,
-    bool isBroadcaster = true,
+    required bool enableMicrophone,
+    required bool isHost,
   }) async {
     try {
       // Disconnect if already connected
       if (_room?.connectionState == sdk.ConnectionState.connected) {
         log.w('LiveKit: Already connected, disconnecting first');
-        await _disconnect();
+        await disconnect();
         // Wait a bit for cleanup
         await Future.delayed(const Duration(milliseconds: 500));
       }
@@ -136,15 +151,13 @@ final class LiveKitClient with MenoLogger implements Disposable {
 
       // Configure fast connect options for broadcaster
       sdk.FastConnectOptions? fastConnectOptions;
-      if (isBroadcaster) {
+      if (isHost) {
         fastConnectOptions = sdk.FastConnectOptions(
           microphone: sdk.TrackOption(enabled: enableMicrophone),
         );
       }
 
-      log.i(
-        'LiveKit: Connecting as ${isBroadcaster ? 'broadcaster' : 'listener'}',
-      );
+      log.i('LiveKit: Connecting as ${isHost ? 'broadcaster' : 'listener'}');
 
       // Connect to room
       await _room!.connect(_url, token, fastConnectOptions: fastConnectOptions);
@@ -153,58 +166,21 @@ final class LiveKitClient with MenoLogger implements Disposable {
       return const Right(unit);
     } on sdk.LiveKitException catch (e) {
       log.e('LiveKit: Connection failed - ${e.message}');
-      await _disconnect();
-      return Left(MenoException(e.message));
-    } catch (e) {
-      log.e('LiveKit: Unexpected error - $e');
-      await _disconnect();
-      return Left(MenoException(e.toString()));
-    }
-  }
+      await disconnect();
 
-  /// Disconnect from room
-  Future<void> _disconnect() async {
-    try {
-      log.i('LiveKit: Disconnecting from room');
-      _updateConnectionState(.disconnected);
-
-      await _room?.disconnect();
-      log.i('LiveKit: Disconnected successfully');
-    } catch (e) {
-      log.e('LiveKit: Error during disconnect - $e');
-      throw MenoException(e.toString());
-    }
-  }
-
-  /// Reconnect with the same configuration
-  Future<Either<MenoException, Unit>> _reconnect(String token) async {
-    try {
-      log.i('LiveKit: Attempting to reconnect');
-      _updateConnectionState(.reconnecting);
-
-      await _room!.connect(_url, token);
-
-      log.i('LiveKit: Reconnected successfully');
-      return const Right(unit);
-    } catch (e) {
-      log.e('LiveKit: Reconnection failed - $e');
-      return Left(MenoException(e.toString()));
-    }
-  }
-
-  /// Enable or disable local microphone
-  Future<Either<MenoException, bool>> _enableMicrophone(bool enabled) async {
-    try {
-      if (_room?.localParticipant == null) {
-        return const Left(MenoException('Failed: Not connected to room'));
+      if (e.message.contains('invalid token')) {
+        return const Left(LiveKitInvalidToken());
       }
 
-      await _room!.localParticipant!.setMicrophoneEnabled(enabled);
-      log.i('LiveKit: Microphone ${enabled ? 'enabled' : 'disabled'}');
-      return Right(enabled);
+      if (e.message.contains('timeout')) {
+        return const Left(LiveKitConnectionTimeout());
+      }
+
+      return Left(LiveKtiConnectionFailed(e.message));
     } catch (e) {
-      log.e('LiveKit: Failed to set microphone state - $e');
-      return Left(MenoException(e.toString()));
+      log.e('LiveKit: Unexpected error - $e');
+      await disconnect();
+      return Left(LiveKitUnexpectedError(e.toString()));
     }
   }
 
@@ -246,11 +222,9 @@ final class LiveKitClient with MenoLogger implements Disposable {
         log.i('LiveKit: Reconnected successfully');
 
       case sdk.ParticipantConnectedEvent(:final participant):
-        _participantEventsCtr.add(.connected(participant));
         log.i('LiveKit: Participant connected - ${participant.identity}');
 
       case sdk.ParticipantDisconnectedEvent(:final participant):
-        _participantEventsCtr.add(.disconnected(participant));
         log.i('LiveKit: Participant disconnected - ${participant.identity}');
 
       case sdk.TrackPublishedEvent(:final participant):
@@ -284,18 +258,9 @@ final class LiveKitClient with MenoLogger implements Disposable {
       await _room?.dispose();
       _room = null;
 
-      // Close commands
-      initialize.dispose();
-      broadcast.dispose();
-      stream.dispose();
-      disconnect.dispose();
-      toggleMicrophone.dispose();
-      reconnect.dispose();
-
       // Close streams
       await _connectionStateCtr.close();
       await _roomEventsCtr.close();
-      await _participantEventsCtr.close();
 
       log.d('LiveKit: Client disposed successfully');
     } catch (e) {
@@ -320,29 +285,43 @@ extension LivekitConnectionStateX on sdk.ConnectionState {
 }
 
 // #########################################################################
-// PARTICIPANT EVENTS
+// LIVEKIT FAILURES
 // #########################################################################
 
-sealed class ParticipantEvent {
-  const ParticipantEvent();
+sealed class LiveKitFailure implements Exception {
+  const LiveKitFailure(this.message);
 
-  factory ParticipantEvent.connected(sdk.Participant participant) {
-    return ParticipantConnected(participant);
-  }
-
-  factory ParticipantEvent.disconnected(sdk.Participant participant) {
-    return ParticipantDisconnected(participant);
-  }
+  final String message;
 }
 
-final class ParticipantConnected extends ParticipantEvent {
-  const ParticipantConnected(this.participant);
-
-  final sdk.Participant participant;
+final class LiveKitInvalidToken extends LiveKitFailure {
+  const LiveKitInvalidToken([
+    super.message = 'Unable to connect: Invalid or expired token',
+  ]);
 }
 
-final class ParticipantDisconnected extends ParticipantEvent {
-  const ParticipantDisconnected(this.participant);
+final class LiveKitConnectionTimeout extends LiveKitFailure {
+  const LiveKitConnectionTimeout([
+    super.message = 'Connection timeout: Please check your internet connection',
+  ]);
+}
 
-  final sdk.Participant participant;
+final class LiveKtiConnectionFailed extends LiveKitFailure {
+  const LiveKtiConnectionFailed(super.message);
+}
+
+final class LiveKitReconnectFailed extends LiveKitFailure {
+  const LiveKitReconnectFailed(super.message);
+}
+
+final class LiveKitNotConnected extends LiveKitFailure {
+  const LiveKitNotConnected([super.message = 'Failed: Not connected to room']);
+}
+
+final class LiveKitMicError extends LiveKitFailure {
+  const LiveKitMicError(super.message);
+}
+
+final class LiveKitUnexpectedError extends LiveKitFailure {
+  const LiveKitUnexpectedError(super.message);
 }

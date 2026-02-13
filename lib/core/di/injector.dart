@@ -17,7 +17,12 @@ void setupDependencies() {
 
   di.registerSingleton(Logger.new);
 
-  di.registerSingleton(MediaService(ImagePicker()));
+  di.registerSingletonAsync(() async => ImagePicker());
+
+  di.registerSingletonWithDependencies(
+    () => MediaService(di<ImagePicker>()),
+    dependsOn: [ImagePicker],
+  );
 
   di.registerSingletonAsync(() async {
     final service = PermissionsService();

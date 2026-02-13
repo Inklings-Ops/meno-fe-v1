@@ -66,13 +66,26 @@ abstract class IBroadcastRepository implements Disposable {
 
   Option<BroadcastSession> getActiveBroadcastSession(Id userId);
 
-  Future<void> saveActiveBroadcastSession(BroadcastSession broadcast);
+  Future<void> saveActiveBroadcastSession(Id userId, Broadcast broadcast);
 
   Future<void> clearActiveBroadcast(Id userId);
 
   // #########################################################################
+  // SOCKET EVENT ACTIONS
+  // #########################################################################
+
+  Future<Either<MenoException, Unit>> emitStartedBroadcast(Id id);
+
+  Future<Either<MenoException, Unit>> emitJoinedBroadcast(Id id);
+
+  Future<Either<MenoException, Unit>> emitEndBroadcast(Id broadcastId);
+
+  Future<Either<MenoException, Unit>> emitLeaveBroadcast(Id broadcastId);
+
+  // #########################################################################
   // STREAMS
   // #########################################################################
+
   Stream<List<Broadcast>> get watchNowLiveBroadcasts;
 
   Stream<EndedBroadcast> get onBroadcastEnded;

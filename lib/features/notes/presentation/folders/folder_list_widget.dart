@@ -23,7 +23,7 @@ class FolderListWidget extends StatelessWidget {
       //           return const FolderListFailureWidget();
       //         case FoldersStatus.loadingMore:
       //         case FoldersStatus.success:
-      //           if (state.folders.isEmpty) return const EmptyFolderListWidget();
+      //        if (state.folders.isEmpty) return const EmptyFolderListWidget();
       //           return FolderList(folders: state.folders);
       //       }
       //     },

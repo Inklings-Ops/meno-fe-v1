@@ -16,21 +16,13 @@ class BroadcastLocalDataSource {
   // ======================================================================
 
   /// Saves the active broadcast ID specifically for THIS user.
-  /// Saves a [Map] of the [broadcastId] to the [broadcastToken].
+  /// Saves a [BroadcastSessionDto] class/object.
   Future<void> saveActiveBroadcastSession({
     required String userId,
-    required String broadcastId,
-    required String broadcastToken,
+    required BroadcastSessionDto session,
   }) async {
-    final dto = BroadcastSessionDto(
-      broadcastId: broadcastId,
-      broadcastToken: broadcastToken,
-      timestamp: DateTime.now(),
-      creatorId: userId,
-    );
-
     final key = StorageKeys.activeBroadcast(userId);
-    await _storage.setString(key, jsonEncode(dto.toJson()));
+    await _storage.setString(key, jsonEncode(session.toJson()));
   }
 
   /// Retrieves the ID if the app was killed mid-broadcast.

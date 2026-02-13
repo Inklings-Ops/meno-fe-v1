@@ -1,14 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
-import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/features/broadcast/infrastructure/dtos/broadcast_dto.dart';
 
 final class BroadcastSessionDto with EquatableMixin {
-  const BroadcastSessionDto({
-    required this.broadcastId,
-    required this.broadcastToken,
-    required this.timestamp,
-    required this.creatorId,
-  });
+  const BroadcastSessionDto({required this.broadcast, required this.timestamp});
 
   factory BroadcastSessionDto.fromJson(dynamic json) {
     if (json is! Map<String, dynamic>) {
@@ -16,53 +11,32 @@ final class BroadcastSessionDto with EquatableMixin {
     }
 
     return BroadcastSessionDto(
-      broadcastId: json[_kBroadcastId] as String,
-      broadcastToken: json[_kBroadcastToken] as String,
+      broadcast: BroadcastDto.fromJson(json[_kBroadcast]),
       timestamp: DateTime.parse(json[_kTimestamp] as String),
-      creatorId: json[_kCreatorId] as String,
     );
   }
 
-  final String broadcastId;
-  final String broadcastToken;
+  final BroadcastDto broadcast;
   final DateTime timestamp;
-  final String creatorId;
 
-  static const String _kBroadcastId = 'broadcastId';
-  static const String _kBroadcastToken = 'broadcastToken';
+  static const String _kBroadcast = 'broadcast';
   static const String _kTimestamp = 'timestamp';
-  static const String _kCreatorId = 'creatorId';
 
   Map<String, dynamic> toJson() => {
-    _kBroadcastId: broadcastId,
-    _kBroadcastToken: broadcastToken,
+    _kBroadcast: broadcast.toJson(),
     _kTimestamp: timestamp.toIso8601String(),
-    _kCreatorId: creatorId,
   };
 
   @override
-  List<Object?> get props => [
-    broadcastId,
-    broadcastToken,
-    timestamp,
-    creatorId,
-  ];
+  List<Object?> get props => [broadcast, timestamp];
 }
 
 extension BroadcastSessionDtoX on BroadcastSessionDto {
-  BroadcastSession get toDomain => BroadcastSession(
-    broadcastId: Id.fromString(broadcastId),
-    broadcastToken: broadcastToken,
-    timestamp: timestamp,
-    creatorId: Id.fromString(creatorId),
-  );
+  BroadcastSession get toDomain =>
+      BroadcastSession(broadcast: broadcast.toDomain, timestamp: timestamp);
 }
 
 extension BroadcastSessionX on BroadcastSession {
-  BroadcastSessionDto get toDomain => BroadcastSessionDto(
-    broadcastId: broadcastId.getOrCrash(),
-    broadcastToken: broadcastToken,
-    timestamp: timestamp,
-    creatorId: creatorId.getOrCrash(),
-  );
+  BroadcastSessionDto get toDto =>
+      BroadcastSessionDto(broadcast: broadcast.toDto, timestamp: timestamp);
 }

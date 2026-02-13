@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
+import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
@@ -39,7 +40,7 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
 
     // Watch for active session changes
     _sessionSub = _repository.watchActiveSession(_userId).listen((session) {
-      log.d('LiveScopeHandler: Session changed - ${session?.broadcastId}');
+      log.d('LiveScopeHandler: Session changed - ${session?.broadcast.id}');
 
       // Queue the scope operation to prevent race conditions
       _queue = _queue.then((_) async {
@@ -60,9 +61,10 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
 
       // Notify LiveSessionManager about socket reconnection
       try {
+        log.i('LiveScopeHandler: Socket reconnected');
         // TODO(gettoknowdavid): Handle the reconnection logic
-        // final manager = di<LiveSessionManager>();
-        // await manager.handleSocketReconnection();
+        final manager = di<LiveSessionManager>();
+        manager.reconnectToSocket.run();
       } catch (e) {
         log.e('LiveScopeHandler: Failed to handle socket reconnection - $e');
       }
@@ -73,7 +75,7 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
   Future<void> _checkForZombieBroadcast() async {
     final session = _repository.getActiveBroadcastSession(_userId);
     return session.fold(() => null, (data) async {
-      log.w('LiveScopeHandler: Found zombie broadcast - ${data.broadcastId}');
+      log.w('LiveScopeHandler: Found zombie broadcast - ${data.broadcast.id}');
 
       if (data.isExpired) {
         log.w('LiveScopeHandler: Session is expired. Clearing...');
@@ -81,7 +83,7 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
         return;
       }
 
-      final broadcastOr = await _repository.getBroadcast(data.broadcastId);
+      final broadcastOr = await _repository.getBroadcast(data.broadcast.id);
 
       return broadcastOr.fold(
         (failure) async {
@@ -101,7 +103,7 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
   }
 
   Future<void> _enterLiveScope(BroadcastSession session) async {
-    final targetScopeName = 'live_${session.broadcastId}';
+    final targetScopeName = 'live_${session.broadcast.id.getOrCrash()}';
 
     // Check if already in this scope
     if (_currentScopeName == targetScopeName) {
@@ -125,9 +127,25 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
           // LiveKit Client
           di.registerSingleton(() {
             final client = LiveKitClient(url: Env.menoLiveKitUrl);
-            client.initialize.run();
+            client.initialize();
             return client;
           });
+
+          // ================================================================
+          // APPLICATION LAYER
+          // ================================================================
+
+          // Live Session Manager - The main coordinator
+          di.registerSingletonWithDependencies(() {
+            final manager = LiveSessionManager(
+              userId: _userId,
+              session: session,
+              repository: di<IBroadcastRepository>(),
+              liveKit: di<LiveKitClient>(),
+            );
+            manager.startSession.run();
+            return manager;
+          }, dependsOn: [IBroadcastRepository, LiveKitClient]);
         },
         dispose: () async {},
       );

@@ -73,6 +73,34 @@ class BroadcastRemoteDataSource with MenoLogger {
   }
 
   // ======================================================================
+  // SOCKET EVENT ACTIONS
+  // ======================================================================
+
+  Future<dynamic> emitEndBroadcast(String broadcastId) async {
+    return _socket.emitWithAck(SocketEvent.endBroadcast, {
+      'broadcastId': broadcastId,
+    });
+  }
+
+  Future<dynamic> emitStartedBroadcast(String broadcastId) async {
+    return _socket.emitWithAck(SocketEvent.startedBroadcast, {
+      'broadcastId': broadcastId,
+    });
+  }
+
+  Future<dynamic> emitJoinedBroadcast(String broadcastId) async {
+    return _socket.emitWithAck(SocketEvent.joinedBroadcast, {
+      'broadcastId': broadcastId,
+    });
+  }
+
+  Future<dynamic> emitLeaveBroadcast(String broadcastId) async {
+    return _socket.emitWithAck(SocketEvent.leaveBroadcast, {
+      'broadcastId': broadcastId,
+    });
+  }
+
+  // ======================================================================
   // STREAMS
   // ======================================================================
   /// Stream of new broadcasts

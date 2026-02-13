@@ -146,7 +146,7 @@ class WebSocketClient with MenoLogger implements Disposable {
   /// Throws [SocketNotConnectedException] if socket is not connected
   /// Throws [SocketTimeoutException] if acknowledgment times out
   Future<dynamic> emitWithAck(
-    String event,
+    SocketEvent event,
     dynamic data, {
     Duration timeout = const Duration(seconds: 20),
   }) async {
@@ -182,7 +182,7 @@ class WebSocketClient with MenoLogger implements Disposable {
     });
 
     try {
-      _socket?.emitWithAck(event, data, ack: ackHandler);
+      _socket?.emitWithAck(event.value, data, ack: ackHandler);
       return await completer.future;
     } catch (e) {
       timeoutTimer.cancel();
@@ -244,6 +244,10 @@ enum SocketConnectionState {
 enum SocketEvent {
   newBroadcast('newBroadcast'),
   endedBroadcast('endedBroadcast'),
+  leaveBroadcast('leaveBroadcast'),
+  startedBroadcast('startedBroadcast'),
+  joinedBroadcast('joinedBroadcast'),
+  endBroadcast('endBroadcast'),
   hostDisconnected('hostDisconnected'),
   hostReconnected('hostReconnected');
 

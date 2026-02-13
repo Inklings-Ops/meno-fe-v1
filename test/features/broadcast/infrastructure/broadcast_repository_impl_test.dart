@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/exceptions/meno_exception.dart';
-import 'package:meno/features/broadcast/infrastructure/broadcast_repository_impl.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:mockito/mockito.dart';

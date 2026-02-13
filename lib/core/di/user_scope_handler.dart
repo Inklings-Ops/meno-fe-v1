@@ -95,7 +95,7 @@ final class UserScopeHandler with MenoLogger implements Disposable {
           // ==================================================================
           di.registerSingletonWithDependencies(() {
             return BroadcastFormManager(
-              currentUserId: userId,
+              userId: userId,
               repository: di<IBroadcastRepository>(),
               mediaService: di<MediaService>(),
             );

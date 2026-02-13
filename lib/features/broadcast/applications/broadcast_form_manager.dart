@@ -8,20 +8,20 @@ import 'package:meno/shared/domain/domain.dart';
 
 class BroadcastFormManager with MenoLogger implements Disposable {
   BroadcastFormManager({
-    required Id currentUserId,
+    required Id userId,
     required IBroadcastRepository repository,
     required MediaService mediaService,
-  }) : _currentUserId = currentUserId,
+  }) : _userId = userId,
        _repository = repository,
        _mediaService = mediaService {
-    _repository.getDrafts(currentUserId);
+    _repository.getDrafts(userId);
 
     _form
         .debounce(const Duration(milliseconds: 500))
         .listen((state, _) => _performAutoSave(state));
   }
 
-  final Id _currentUserId;
+  final Id _userId;
   final IBroadcastRepository _repository;
   final MediaService _mediaService;
 
@@ -82,8 +82,7 @@ class BroadcastFormManager with MenoLogger implements Disposable {
   late final saveBroadcastSession = Command.createAsync<Broadcast, Broadcast>(
     (broadcast) async {
       log.i('BroadcastFormManager: Step 3 - Saving active broadcast session');
-      final session = BroadcastSession.fromBroadcast(broadcast);
-      await _repository.saveActiveBroadcastSession(session);
+      await _repository.saveActiveBroadcastSession(_userId, broadcast);
       return broadcast;
     },
     initialValue: Broadcast.empty,
@@ -164,7 +163,7 @@ class BroadcastFormManager with MenoLogger implements Disposable {
   Future<void> _performAutoSave(BroadcastDraft draft) async {
     // Don't save empty/useless drafts
     if (!draft.title.isValid && !draft.description.isValid) return;
-    await _repository.saveDraft(userId: _currentUserId, draft: draft);
+    await _repository.saveDraft(userId: _userId, draft: draft);
   }
 
   @override

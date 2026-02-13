@@ -142,6 +142,11 @@ extension BroadcastX on Broadcast {
   bool get isEmpty => this == Broadcast.empty;
 
   bool get isNotEmpty => this != Broadcast.empty;
+
+  bool get isValid =>
+      id.isValid &&
+      broadcastToken != null &&
+      (broadcastToken?.isNotEmpty ?? false);
 }
 
 final fakeBroadcasts = List.filled(

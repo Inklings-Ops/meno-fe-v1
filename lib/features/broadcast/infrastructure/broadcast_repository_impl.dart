@@ -219,12 +219,15 @@ final class BroadcastRepositoryImpl
   }
 
   @override
-  Future<void> saveActiveBroadcastSession(BroadcastSession session) async {
+  Future<void> saveActiveBroadcastSession(
+    Id userId,
+    Broadcast broadcast,
+  ) async {
     try {
+      final session = BroadcastSession.create(broadcast);
       await _local.saveActiveBroadcastSession(
-        userId: session.creatorId.getOrCrash(),
-        broadcastId: session.broadcastId.getOrCrash(),
-        broadcastToken: session.broadcastToken,
+        userId: userId.getOrCrash(),
+        session: session.toDto,
       );
     } catch (error) {
       throw MenoException(error.toString());
@@ -237,6 +240,51 @@ final class BroadcastRepositoryImpl
       await _local.clearActiveBroadcastId(userId.getOrCrash());
     } catch (error) {
       throw MenoException(error.toString());
+    }
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> emitEndBroadcast(Id broadcastId) async {
+    try {
+      await _remote.emitEndBroadcast(broadcastId.getOrCrash());
+      // TODO(gettoknowdavid): Confirm if the local session is cleared elsewhere
+      return right(unit);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> emitStartedBroadcast(Id id) async {
+    try {
+      await _remote.emitStartedBroadcast(id.getOrCrash());
+      return right(unit);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> emitJoinedBroadcast(Id id) async {
+    try {
+      await _remote.emitJoinedBroadcast(id.getOrCrash());
+      return right(unit);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> emitLeaveBroadcast(Id broadcastId) async {
+    try {
+      await _remote.emitLeaveBroadcast(broadcastId.getOrCrash());
+      return right(unit);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
     }
   }
 
