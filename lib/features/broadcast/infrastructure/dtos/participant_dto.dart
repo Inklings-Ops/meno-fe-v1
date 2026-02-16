@@ -9,7 +9,7 @@ class ParticipantDto with EquatableMixin {
     this.bio,
     this.imageUrl,
     this.broadcastId,
-    this.role,
+    this.role = ParticipantRole.unknown,
     this.numberOfListeners,
     this.isHostDisconnected,
     this.joinedAt,
@@ -27,7 +27,9 @@ class ParticipantDto with EquatableMixin {
       bio: json[_kBio] as String?,
       imageUrl: json[_kImageUrl] as String?,
       broadcastId: json[_kBroadcastId] as String?,
-      role: json[_kRole] != null ? (json[_kRole] as String).toRole() : null,
+      role: json[_kRole] != null
+          ? (json[_kRole] as String).toRole()
+          : ParticipantRole.listener,
       numberOfListeners: (json[_kNumberOfListeners] as num?)?.toInt(),
       isHostDisconnected: json[_kIsHostDisconnected] as bool?,
       joinedAt: json[_kJoinedAt] != null
@@ -57,7 +59,7 @@ class ParticipantDto with EquatableMixin {
       _kBio: bio,
       _kImageUrl: imageUrl,
       _kBroadcastId: broadcastId,
-      _kRole: role?.serialize(format: format ?? ParticipantRoleFormat.normal),
+      _kRole: role.serialize(format: format ?? ParticipantRoleFormat.normal),
       _kNumberOfListeners: numberOfListeners,
       _kIsHostDisconnected: isHostDisconnected,
       _kJoinedAt: joinedAt?.toIso8601String(),
@@ -70,7 +72,7 @@ class ParticipantDto with EquatableMixin {
   final String? bio;
   final String? imageUrl;
   final String? broadcastId;
-  final ParticipantRole? role;
+  final ParticipantRole role;
   final int? numberOfListeners;
   final bool? isHostDisconnected;
   final DateTime? joinedAt;

@@ -8,7 +8,7 @@ final class Participant with EquatableMixin {
     this.bio,
     this.imageUrl,
     this.broadcastId,
-    this.role,
+    this.role = ParticipantRole.unknown,
     this.numberOfListeners,
     this.isHostDisconnected,
     this.joinedAt,
@@ -20,7 +20,7 @@ final class Participant with EquatableMixin {
   final MultiLineString? bio;
   final String? imageUrl;
   final Id? broadcastId;
-  final ParticipantRole? role;
+  final ParticipantRole role;
   final int? numberOfListeners;
   final bool? isHostDisconnected;
   final DateTime? joinedAt;
@@ -59,3 +59,11 @@ final fakeParticipants = List.filled(
     isHostDisconnected: true,
   ),
 );
+
+extension ParticipantBoolX on Participant {
+  bool get isHost => role.isHost;
+
+  bool get isCohost => role.isCohost;
+
+  bool get isListener => role.isListener;
+}

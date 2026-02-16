@@ -1,5 +1,5 @@
 /// Clean domain enum
-enum ParticipantRole { host, cohost, listener }
+enum ParticipantRole { host, cohost, listener, unknown }
 
 // ============================================================================
 // EXTENSION METHODS FOR SERIALIZATION
@@ -22,6 +22,7 @@ extension ParticipantRoleSerialization on ParticipantRole {
 
   bool get isHost => this == ParticipantRole.host;
   bool get isCohost => this == ParticipantRole.cohost;
+  bool get isListener => this == ParticipantRole.listener;
 }
 
 extension ParticipantRoleParsing on String {
