@@ -148,6 +148,27 @@ class BroadcastLocalDataSource {
     }
   }
 
+  Future<void> saveBroadcastSummary(
+    String userId,
+    BroadcastSummaryDto summary,
+  ) async {
+    final key = StorageKeys.broadcastSummary(userId);
+    final jsonString = jsonEncode(summary.toJson());
+    await _storage.setString(key, jsonString);
+  }
+
+  BroadcastSummaryDto? getLatestBroadcastSummary(String userId) {
+    final key = StorageKeys.broadcastSummary(userId);
+    final jsonString = _storage.getString(key);
+    if (jsonString == null) return null;
+    return BroadcastSummaryDto.fromJson(jsonDecode(jsonString));
+  }
+
+  Future<void> clearBroadcastSummary(String userId) {
+    final key = StorageKeys.broadcastSummary(userId);
+    return _storage.remove(key);
+  }
+
   // #######################################################################
   // STREAMS
   // #######################################################################

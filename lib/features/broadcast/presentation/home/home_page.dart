@@ -34,8 +34,9 @@ class HomePage extends StatelessWidget {
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
+            spacing: Insets.xxl,
             children: <Widget>[
-              // LiveBroadcastActivityCard(),
+              LiveBroadcastActivityCard(),
               // LiveForYou(),
               NowLiveSectionWidget(),
               RecentlyLiveSectionWidget(),

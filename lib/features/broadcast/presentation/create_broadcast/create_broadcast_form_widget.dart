@@ -101,7 +101,7 @@ class _AvatarField extends WatchingWidget {
   }
 }
 
-class _TitleField extends StatefulWidget {
+class _TitleField extends WatchingStatefulWidget {
   const _TitleField({super.key});
 
   @override
@@ -141,6 +141,7 @@ class _TitleFieldState extends State<_TitleField> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
     return MTextFormField(
       key: widget.key,
       label: 'Broadcast title',
@@ -148,6 +149,7 @@ class _TitleFieldState extends State<_TitleField> {
       controller: _controller,
       onChanged: manager.onTitleChanged,
       textInputAction: TextInputAction.next,
+      enabled: !isLoading,
     );
   }
 }

@@ -10,9 +10,7 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-final class BroadcastRepositoryImpl
-    with MenoLogger
-    implements IBroadcastRepository {
+class BroadcastRepositoryImpl with MenoLogger implements IBroadcastRepository {
   BroadcastRepositoryImpl({
     required BroadcastRemoteDataSource remote,
     required BroadcastLocalDataSource local,
@@ -457,4 +455,24 @@ final class BroadcastRepositoryImpl
 
   @override
   Stream<Unit> get onReconnected => _remote.onReconnected.map((_) => unit);
+
+  @override
+  Future<void> clearBroadcastSummary(Id userId) async {
+    final id = userId.getOrCrash();
+    return _local.clearBroadcastSummary(id);
+  }
+
+  @override
+  Option<BroadcastSummary> getLatestBroadcastSummary(Id userId) {
+    final id = userId.getOrCrash();
+    final dto = _local.getLatestBroadcastSummary(id);
+    if (dto == null) return const None();
+    return Some(dto.toDomain);
+  }
+
+  @override
+  Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary) async {
+    final id = userId.getOrCrash();
+    return _local.saveBroadcastSummary(id, summary.toDto);
+  }
 }

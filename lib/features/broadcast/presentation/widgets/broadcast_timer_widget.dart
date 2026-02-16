@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastTimerWidget extends StatelessWidget {
-  BroadcastTimerWidget({
+  const BroadcastTimerWidget({
     required this.formattedTime,
     this.isRunning = false,
     this.timeAgo = '',
@@ -10,10 +10,7 @@ class BroadcastTimerWidget extends StatelessWidget {
     this.showTimeAgo = true,
     this.textStyle,
     this.color,
-  }) : assert(
-         (isRunning && showTimeAgo) && timeAgo.isNotEmpty,
-         'Time ago must be provided when running',
-       );
+  });
 
   final String formattedTime;
   final bool isRunning;

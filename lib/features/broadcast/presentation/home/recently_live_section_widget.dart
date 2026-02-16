@@ -30,7 +30,6 @@ class RecentlyLiveSectionWidget extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Spaces.verticalXXXLarge,
         MHeader(
           title: 'Recently Live',
           action: InkWell(

@@ -24,6 +24,8 @@ class LiveBroadcastActivityCard extends WatchingWidget {
     final session = snapshot.data;
     if (session == null || !session.isValid) return const SizedBox.shrink();
 
+    if (!allReady()) return const SizedBox.shrink();
+
     final broadcast = session.broadcast;
 
     final status = watchValue((LiveSessionManager m) => m.liveStatus);

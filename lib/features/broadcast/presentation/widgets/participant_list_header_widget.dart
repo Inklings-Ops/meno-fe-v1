@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:meno/features/broadcast/presentation/widgets/participants_modal.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/broadcast/applications/participants_manager.dart';
+import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ParticipantListHeaderWidget extends StatelessWidget {
@@ -21,21 +23,18 @@ class ParticipantListHeaderWidget extends StatelessWidget {
   }
 }
 
-class _ParticipantCountWidget extends StatelessWidget {
+class _ParticipantCountWidget extends WatchingWidget {
   const _ParticipantCountWidget();
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    const numberOfLiveParticipants = 3;
+    final totalCount = watchValue((ParticipantsManager m) => m.totalCount);
     return Row(
       children: [
         Icon(MIcons.hearing, size: 18, color: colors.onDisabled),
         const MenoSpacer.h(Insets.xs),
-        MenoText.caption(
-          numberOfLiveParticipants.toString(),
-          color: colors.onDisabled,
-        ),
+        MenoText.caption(totalCount.toString(), color: colors.onDisabled),
       ],
     );
   }

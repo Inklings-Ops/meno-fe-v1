@@ -68,7 +68,7 @@ final class UnknownException extends MenoException {
 }
 
 final class TimeoutException extends MenoException {
-  const TimeoutException() : super('Request timed out.');
+  const TimeoutException([super.message = 'Request timed out']);
 }
 
 final class PermissionsException extends MenoException {

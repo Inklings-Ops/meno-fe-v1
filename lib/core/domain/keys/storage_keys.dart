@@ -22,4 +22,6 @@ abstract class StorageKeys {
   static String broadcastDrafts(String userId) => 'broadcast_draft_$userId';
 
   static String broadcastCache(String userId) => 'broadcast_cache_$userId';
+
+  static String broadcastSummary(String userId) => 'broadcast_summary_$userId';
 }

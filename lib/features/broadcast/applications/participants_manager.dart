@@ -8,31 +8,39 @@ import 'package:meno/shared/domain/domain.dart';
 
 final class ParticipantsManager with MenoLogger implements Disposable {
   ParticipantsManager({
-    required Id broadcastId,
+    required BroadcastSession session,
     required IBroadcastRepository repository,
-  }) : _broadcastId = broadcastId,
+  }) : _session = session,
        _repository = repository;
 
-  final Id _broadcastId;
+  final BroadcastSession _session;
   final IBroadcastRepository _repository;
+
+  Id get _broadcastId => _session.broadcast.id;
 
   // =========================================================================
   // STORAGE
   // =========================================================================
-  /// Map of participantId → Participant for O(1) lookups
-  /// This is more efficient than LinkedHashSet for add/remove operations
+  /// Current live participants (can leave and rejoin)
   final _participantsMap = MapNotifier<String, Participant>(data: {});
 
-  /// Cached sorted list (rebuilt only when map changes)
+  /// ALL participants that EVER joined (historical - never removed)
+  final _allTimeParticipantsMap = <String, Participant>{};
+
+  /// Sorted list of current live participants
   final _sortedParticipants = ListNotifier<Participant>(data: []);
+
+  /// Last 3 participants to join (for avatar stack)
+  final recentParticipants = ValueNotifier<List<Participant>>([]);
 
   // =========================================================================
   // UI STATE
   // =========================================================================
   final searchQuery = ValueNotifier<String?>(null);
 
-  // Virtual pagination
-  final displayedCount = ValueNotifier<int>(50);
+  final isLoading = ValueNotifier<bool>(true);
+
+  final displayedCount = ValueNotifier<int>(50); // Virtual pagination
 
   final isSearching = ValueNotifier<bool>(false);
 
@@ -56,6 +64,9 @@ final class ParticipantsManager with MenoLogger implements Disposable {
 
   /// Total participant count
   late final totalCount = ValueNotifier<int>(_participantsMap.length);
+
+  /// Total number of ALL participants that ever joined (only goes up!)
+  late final allTimeCount = ValueNotifier<int>(0);
 
   /// Host participant (nullable)
   late final host = _sortedParticipants.where((p) => p.isHost).firstOrNull;
@@ -119,9 +130,18 @@ final class ParticipantsManager with MenoLogger implements Disposable {
     }
 
     log.i('ParticipantsManager: Initializing for broadcast $_broadcastId');
+    isLoading.value = true;
+
     _participantsSubscription = _repository
         .watchLiveParticipants(_broadcastId)
         .listen(_handleEvent, onError: _handleError);
+
+    // Setup search query listener
+    searchQuery
+        .debounce(const Duration(milliseconds: _searchDebounceMs))
+        .listen(_handleSearchChange);
+
+    _isInitialized = true;
   });
 
   /// Load more participants (pagination)
@@ -167,46 +187,64 @@ final class ParticipantsManager with MenoLogger implements Disposable {
 
   /// Update participants with new list
   void _handleEvent(List<Participant> participants) {
-    log.d('ParticipantsManager: Updating ${participants.length} participants');
+    log.d('ParticipantsManager: Received ${participants.length} participants');
 
+    // Update current live participants
     _participantsMap.startTransAction();
-
     _participantsMap.clear();
 
     for (final participant in participants) {
       final id = participant.id.getOrCrash();
       _participantsMap[id] = participant;
+
+      // ⭐ Add to all-time map (never removed!)
+      if (!_allTimeParticipantsMap.containsKey(id)) {
+        _allTimeParticipantsMap[id] = participant;
+      }
     }
 
     _participantsMap.endTransAction();
 
+    // Update all-time count
+    allTimeCount.value = _allTimeParticipantsMap.length;
+
+    // Update recent participants (last 3)
+    _updateRecentParticipants();
+
     // Rebuild sorted list
     _rebuildSortedList();
+
+    isLoading.value = false;
   }
 
   /// Rebuild sorted list from map
   void _rebuildSortedList() {
     log.d('ParticipantsManager: Rebuilding sorted list');
     final participants = _participantsMap.value.values.toList();
+    totalCount.value = participants.length;
 
+    // Sort by role priority only
     participants.sort((a, b) {
-      // Compare by priority
       final priorityA = _getRolePriority(a.role);
       final priorityB = _getRolePriority(b.role);
-
-      // if (priorityA != priorityB) return priorityA.compareTo(priorityB);
-      //
-      // // Same role → sort alphabetically
-      // final nameA = a.fullName.getOrCrash().toLowerCase();
-      // final nameB = b.fullName.getOrCrash().toLowerCase();
-      // return nameA.compareTo(nameB);
-
       return priorityA.compareTo(priorityB);
     });
 
+    // Clear before adding to avoid duplicates
     _sortedParticipants.startTransAction();
+    _sortedParticipants.clear();
     _sortedParticipants.addAll(participants);
     _sortedParticipants.endTransAction();
+  }
+
+  /// Update the last 3 participants for avatar stack
+  void _updateRecentParticipants() {
+    final all = _allTimeParticipantsMap.values.toList();
+
+    // Take last 3 (most recent joiners)
+    final recent = all.length > 3 ? all.sublist(all.length - 3) : all;
+
+    recentParticipants.value = recent;
   }
 
   /// Get numeric priority for role (lower = higher priority)
@@ -218,11 +256,12 @@ final class ParticipantsManager with MenoLogger implements Disposable {
   };
 
   /// Handle search query changes
-  void _handleSearchChange(String query) {
-    isSearching.value = query.isNotEmpty;
+  void _handleSearchChange(String? query, ListenableSubscription _) {
+    final isQueryEmpty = query == null || query.isEmpty;
+    isSearching.value = !isQueryEmpty;
 
     // Show more results when searching
-    if (query.isNotEmpty && displayedCount.value < _maxWithoutViewAll) {
+    if (!isQueryEmpty && displayedCount.value < _maxWithoutViewAll) {
       displayedCount.value = _maxWithoutViewAll;
     }
   }
@@ -230,21 +269,26 @@ final class ParticipantsManager with MenoLogger implements Disposable {
   /// Handle stream errors
   void _handleError(dynamic error) {
     log.e('ParticipantsManager: Stream error - $error');
+    isLoading.value = false;
   }
 
   @override
   FutureOr<dynamic> onDispose() async {
     log.d('ParticipantsManager: Disposing');
+    log.i(
+      '''ParticipantsManager: Final stats - Live: ${totalCount.value}, All-time: ${allTimeCount.value}''',
+    );
 
     await _participantsSubscription?.cancel();
 
     _participantsMap.dispose();
     _sortedParticipants.dispose();
-
-    totalCount.dispose();
     searchQuery.dispose();
     isSearching.dispose();
     displayedCount.dispose();
+    isLoading.dispose();
+    allTimeCount.dispose();
+    recentParticipants.dispose();
 
     initialize.dispose();
     loadMore.dispose();

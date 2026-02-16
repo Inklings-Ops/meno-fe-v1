@@ -100,4 +100,15 @@ abstract class IBroadcastRepository implements Disposable {
 
   /// Stream for socket reconnection
   Stream<Unit> get onReconnected;
+
+  // Add these to IBroadcastRepository
+
+  /// Save broadcast summary after session ends (before scope destruction)
+  Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary);
+
+  /// Get the latest broadcast summary for ended broadcast page
+  Option<BroadcastSummary> getLatestBroadcastSummary(Id userId);
+
+  /// Clear the broadcast summary
+  Future<void> clearBroadcastSummary(Id userId);
 }

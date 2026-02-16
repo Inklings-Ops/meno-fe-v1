@@ -20,42 +20,39 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: Insets.xxl),
-      child: InkWell(
-        onTap: onTap,
-        child: Card(
-          margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
-          shape: RoundedSuperellipseBorder(
-            borderRadius: BorderRadiusGeometry.circular(Insets.lg),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _Badge(badgeTitle: badgeTitle),
-                      const SizedBox(height: 2),
-                      _Title(title: broadcast.title.getOrCrash()),
-                      _CreatorName(
-                        fullName:
-                            broadcast.creator?.fullName.getOrNull() ??
-                            broadcast.creatorFullName?.getOrNull() ??
-                            broadcast.fullName?.getOrNull() ??
-                            '',
-                      ),
-                    ],
-                  ),
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: Insets.lg),
+        shape: RoundedSuperellipseBorder(
+          borderRadius: BorderRadiusGeometry.circular(Insets.lg),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Badge(badgeTitle: badgeTitle),
+                    const SizedBox(height: 2),
+                    _Title(title: broadcast.title.getOrCrash()),
+                    _CreatorName(
+                      fullName:
+                          broadcast.creator?.fullName.getOrNull() ??
+                          broadcast.creatorFullName?.getOrNull() ??
+                          broadcast.fullName?.getOrNull() ??
+                          '',
+                    ),
+                  ],
                 ),
-                Spaces.horizontalMedium,
-                _ActionButton(label: actionButtonLabel, onPressed: action),
-              ],
-            ),
+              ),
+              Spaces.horizontalMedium,
+              _ActionButton(label: actionButtonLabel, onPressed: action),
+            ],
           ),
         ),
       ),

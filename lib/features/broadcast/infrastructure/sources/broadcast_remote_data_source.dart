@@ -76,9 +76,14 @@ class BroadcastRemoteDataSource with MenoLogger {
     String broadcastId, {
     CancelToken? cancelToken,
   }) async {
-    return _api.getList(
+    return _api.get(
       '/broadcasts/$broadcastId/live-listeners',
-      fromJson: (json) => ParticipantDto.fromJson(json as Map<String, dynamic>),
+      fromJson: (json) {
+        if (json is! List) {
+          throw const UnknownException('Expected List but got different type');
+        }
+        return json.map(ParticipantDto.fromJson).toList();
+      },
       cancelToken: cancelToken,
     );
   }

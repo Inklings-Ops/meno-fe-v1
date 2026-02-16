@@ -142,7 +142,6 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
           // ================================================================
 
           // Live Session Manager - Register synchronously to avoid deadlock
-
           // Register as regular singleton (not async)
           di.registerSingletonAsync<LiveSessionManager>(() async {
             log.d('LiveScopeHandler: Initializing Live Session Manager');
@@ -157,6 +156,33 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
             log.d('LiveScopeHandler: Session started successfully');
             return manager;
           }, dependsOn: [LiveKitClient, IBroadcastRepository]);
+
+          await di.isReady<LiveSessionManager>();
+
+          // Register and initialize participants manager
+          di.registerSingletonAsync(() async {
+            final manager = ParticipantsManager(
+              session: session,
+              repository: di<IBroadcastRepository>(),
+            );
+
+            // Check if already live
+            final sessionManager = di<LiveSessionManager>();
+            if (sessionManager.liveStatus.value == LiveStatus.live) {
+              log.d('LiveScopeHandler: Already live, initializing now');
+              await manager.initialize.runAsync();
+            } else {
+              // Wait for live status
+              log.d('LiveScopeHandler: Waiting for live status...');
+              await _waitForLiveStatus(sessionManager, manager);
+            }
+
+            return manager;
+          }, dependsOn: [IBroadcastRepository, LiveSessionManager]);
+
+          await di.isReady<ParticipantsManager>();
+
+          await di.allReady();
 
           // Wait for timer initialization (piped command)
           // Give it a moment to complete
@@ -184,6 +210,18 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
     log.i('LiveScopeHandler: Exiting $_currentScopeName');
 
     try {
+      final isLiveRegistered = di.isRegistered<LiveSessionManager>();
+      final isParticipantsRegistered = di.isRegistered<ParticipantsManager>();
+
+      // Save summary before destroying scope
+      if (isLiveRegistered && isParticipantsRegistered) {
+        final summary = _captureSummary(
+          di<LiveSessionManager>(),
+          di<ParticipantsManager>(),
+        );
+        await _repository.saveBroadcastSummary(_userId, summary);
+      }
+
       // GetIt will automatically dispose all registered services
       await di.popScope();
       _currentScopeName = null;
@@ -191,6 +229,53 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
     } catch (e) {
       log.e('LiveScopeHandler: Error exiting live scope - $e');
       _currentScopeName = null;
+    }
+  }
+
+  BroadcastSummary _captureSummary(
+    LiveSessionManager liveManager,
+    ParticipantsManager participantsManager,
+  ) {
+    return BroadcastSummary(
+      broadcast: liveManager.broadcast,
+      duration: liveManager.timer.currentElapsed,
+      formattedDuration: liveManager.timer.formattedTime.value,
+      qualityScore: liveManager.timer.qualityScore,
+      totalParticipants: participantsManager.totalCount.value,
+      allTimeParticipants: participantsManager.allTimeCount.value,
+      recentParticipants: participantsManager.recentParticipants.value,
+    );
+  }
+
+  Future<void> _waitForLiveStatus(
+    LiveSessionManager sessionManager,
+    ParticipantsManager participantsManager,
+  ) async {
+    final completer = Completer<void>();
+    ListenableSubscription? subscription;
+
+    subscription = sessionManager.liveStatus.listen((status, _) {
+      if (status == LiveStatus.live && !completer.isCompleted) {
+        log.d('LiveScopeHandler: Now live! Initializing participants');
+        participantsManager.initialize.runAsync().then((_) {
+          if (!completer.isCompleted) completer.complete();
+          subscription?.cancel();
+        });
+      }
+    });
+
+    try {
+      await completer.future.timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          log.w('LiveScopeHandler: Timeout waiting for live status');
+          subscription?.cancel();
+          throw const TimeoutException('Broadcast did not go live in time');
+        },
+      );
+    } catch (e) {
+      subscription.cancel();
+      rethrow;
     }
   }
 
