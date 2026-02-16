@@ -248,6 +248,8 @@ enum SocketEvent {
   startedBroadcast('startedBroadcast'),
   joinedBroadcast('joinedBroadcast'),
   endBroadcast('endBroadcast'),
+  newBroadcastListener('newBroadcastListener'),
+  broadcastListenerLeft('broadcastListenerLeft'),
   hostDisconnected('hostDisconnected'),
   hostReconnected('hostReconnected');
 

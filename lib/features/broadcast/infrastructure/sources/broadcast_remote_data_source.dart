@@ -72,6 +72,28 @@ class BroadcastRemoteDataSource with MenoLogger {
     );
   }
 
+  Future<List<ParticipantDto>> getLiveListeners(
+    String broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    return _api.getList(
+      '/broadcasts/$broadcastId/live-listeners',
+      fromJson: (json) => ParticipantDto.fromJson(json as Map<String, dynamic>),
+      cancelToken: cancelToken,
+    );
+  }
+
+  Future<dynamic> getListeners(
+    String broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    return _api.get(
+      '/broadcasts/$broadcastId/listeners',
+      fromJson: (json) => json,
+      cancelToken: cancelToken,
+    );
+  }
+
   // ======================================================================
   // SOCKET EVENT ACTIONS
   // ======================================================================
@@ -182,6 +204,56 @@ class BroadcastRemoteDataSource with MenoLogger {
             controller.add(data);
           } catch (e) {
             log.e('BroadcastRemoteDataSource: Error hostReconnected - $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
+  /// Subscribe to this socket event to be notified when a new [ParticipantDto]
+  /// joins the currently live broadcast
+  Stream<ParticipantDto> get onParticipantJoined {
+    late final StreamController<ParticipantDto> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<ParticipantDto>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.newBroadcastListener, (
+          dynamic data,
+        ) {
+          try {
+            final dto = ParticipantDto.fromJson(data);
+            controller.add(dto);
+          } catch (e) {
+            log.e('Error parsing newBroadcastListener: $e');
+          }
+        });
+      },
+      onCancel: () => subscription?.cancel(),
+    );
+
+    return controller.stream;
+  }
+
+  /// Subscribe to this socket event to be notified when a [ParticipantDto]
+  /// leaves a currently live broadcast
+  Stream<ParticipantDto> get onParticipantLeft {
+    late StreamController<ParticipantDto> controller;
+    SocketSubscription? subscription;
+
+    controller = StreamController<ParticipantDto>.broadcast(
+      onListen: () {
+        subscription = _socket.on(SocketEvent.broadcastListenerLeft, (
+          dynamic data,
+        ) {
+          try {
+            final dto = ParticipantDto.fromJson(data);
+            controller.add(dto);
+          } catch (e) {
+            log.e('Error parsing newBroadcastListener: $e');
           }
         });
       },

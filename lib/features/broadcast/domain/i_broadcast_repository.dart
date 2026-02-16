@@ -40,9 +40,7 @@ abstract class IBroadcastRepository implements Disposable {
 
   Future<Either<MenoException, Broadcast>> startBroadcast(Id id);
 
-  Future<Either<MenoException, PagedList<Participant?>>> listeners(Id id);
-
-  Future<Either<MenoException, List<Participant?>>> liveListeners(Id id);
+  Future<Either<MenoException, PagedList<Participant?>>> getListeners(Id id);
 
   /// Retrieves a paginated list of broadcasts based on the provided query
   /// parameters.
@@ -87,6 +85,8 @@ abstract class IBroadcastRepository implements Disposable {
   // #########################################################################
 
   Stream<List<Broadcast>> get watchNowLiveBroadcasts;
+
+  Stream<List<Participant>> watchLiveParticipants(Id broadcastId);
 
   Stream<EndedBroadcast> get onBroadcastEnded;
 

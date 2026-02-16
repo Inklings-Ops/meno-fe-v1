@@ -133,14 +133,8 @@ final class BroadcastRepositoryImpl
   }
 
   @override
-  Future<Either<MenoException, PagedList<Participant?>>> listeners(Id id) {
+  Future<Either<MenoException, PagedList<Participant?>>> getListeners(Id id) {
     // TODO: implement listeners
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<MenoException, List<Participant?>>> liveListeners(Id id) {
-    // TODO: implement liveListeners
     throw UnimplementedError();
   }
 
@@ -324,7 +318,7 @@ final class BroadcastRepositoryImpl
           controller.addError(e);
         }
 
-        // Listen to DTO Streams (Not Socket Events)
+        // Listen to DTO Streams
         newBroadcastSubscription = _remote.onNewBroadcast.listen((dto) {
           final broadcast = dto.toDomain;
           if (!currentList.any((b) => b.id == broadcast.id)) {
@@ -354,6 +348,89 @@ final class BroadcastRepositoryImpl
         newBroadcastSubscription?.cancel();
         endedBroadcastSubscription?.cancel();
         reconnectionSubscription?.cancel();
+        controller.close();
+      },
+    );
+
+    return controller.stream;
+  }
+
+  @override
+  Stream<List<Participant>> watchLiveParticipants(Id broadcastId) {
+    late StreamController<List<Participant>> controller;
+    final participants = <String, Participant>{};
+
+    // Helper to emit updates easily
+    void emit() => controller.add(participants.values.toList());
+
+    Future<void> initialFetch() async {
+      try {
+        log.i('BroadcastRepository: Fetching participants for $broadcastId');
+
+        final dtos = await _remote.getLiveListeners(broadcastId.getOrCrash());
+        log.i('BroadcastRepository: Received ${dtos.length} participants');
+
+        participants.clear();
+
+        for (final dto in dtos) {
+          final participant = dto.toDomain;
+          final id = participant.id.getOrCrash();
+          participants[id] = participant;
+        }
+
+        emit();
+        log.d('BroadcastRepository: Got ${participants.length} participants');
+      } catch (e, stackTrace) {
+        log.e('BroadcastRepository: Failed to fetch participants - $e');
+        log.e('Stack trace: $stackTrace');
+        controller.addError(e);
+      }
+    }
+
+    StreamSubscription? newParticipantSub;
+    StreamSubscription? participantLeftSub;
+
+    controller = StreamController<List<Participant>>.broadcast(
+      onListen: () async {
+        log.d('BroadcastRepository: Stream listener attached');
+
+        await initialFetch();
+
+        // Listen to the `newBroadcastListener` Socket event via DTO streams
+        newParticipantSub = _remote.onParticipantJoined.listen((dto) {
+          participants[dto.id] = dto.toDomain;
+          emit();
+
+          log.d(
+            'Participant joined: ${dto.fullName} '
+            '(total: ${participants.length})',
+          );
+        });
+
+        participantLeftSub = _remote.onParticipantLeft.listen((dto) {
+          final id = dto.id;
+
+          final removedParticipant = participants.remove(id);
+          if (removedParticipant != null) {
+            emit();
+            log.d(
+              'Participant left: ${dto.fullName} '
+              '(total: ${participants.length})',
+            );
+          } else {
+            log.w(
+              'Attempted to remove unknown participant: '
+              '${dto.fullName}',
+            );
+          }
+        });
+      },
+      onCancel: () {
+        log.d('BroadcastRepository: Stream listener detached');
+
+        newParticipantSub?.cancel();
+        participantLeftSub?.cancel();
+        participants.clear();
         controller.close();
       },
     );
