@@ -197,11 +197,6 @@ class BroadcastRepositoryImpl with MenoLogger implements IBroadcastRepository {
   }
 
   @override
-  FutureOr<dynamic> onDispose() {
-    _drafts.dispose();
-  }
-
-  @override
   Option<BroadcastSession> getActiveBroadcastSession(Id userId) {
     final result = _local.getActiveBroadcastSession(userId.getOrCrash());
     if (result == null) return const None();
@@ -474,5 +469,10 @@ class BroadcastRepositoryImpl with MenoLogger implements IBroadcastRepository {
   Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary) async {
     final id = userId.getOrCrash();
     return _local.saveBroadcastSummary(id, summary.toDto);
+  }
+
+  @override
+  FutureOr<dynamic> onDispose() {
+    _drafts.dispose();
   }
 }

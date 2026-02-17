@@ -250,6 +250,12 @@ enum SocketEvent {
   endBroadcast('endBroadcast'),
   newBroadcastListener('newBroadcastListener'),
   broadcastListenerLeft('broadcastListenerLeft'),
+  newMessage('newMessage'),
+  editedMessage('editedMessage'),
+  deletedMessage('deletedMessage'),
+  sendChatMessage('sendChatMessage'),
+  editChatMessage('editChatMessage'),
+  deleteChatMessage('deleteChatMessage'),
   hostDisconnected('hostDisconnected'),
   hostReconnected('hostReconnected');
 
