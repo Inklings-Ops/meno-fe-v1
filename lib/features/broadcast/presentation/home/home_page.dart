@@ -7,44 +7,48 @@ import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends WatchingWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final nowLiveManager = di<NowLiveBroadcastsManager>();
-    final recentlyLiveManager = di<RecentlyLiveBroadcastsManager>();
-
-    Future<void> onRefresh() async {
-      try {
-        await nowLiveManager.initialize.runAsync();
-        await recentlyLiveManager.fetch.runAsync();
-      } catch (e) {
-        if (context.mounted) context.showErrorSnackBar(e.toString());
-      }
-    }
+    final currentUserIdOption = watchValue((UserManager m) => m.currentUserId);
+    final currentUserId = currentUserIdOption.toNullable();
 
     return Scaffold(
       appBar: const _AppBar(key: Key('homeAppBar')),
       body: RefreshIndicator(
-        onRefresh: onRefresh,
-        child: const SingleChildScrollView(
+        onRefresh: () async => onRefresh(context),
+        child: SingleChildScrollView(
           clipBehavior: Clip.none,
-          physics: AlwaysScrollableScrollPhysics(
+          physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
           child: Column(
             spacing: Insets.xxl,
             children: <Widget>[
-              // LiveBroadcastActivityCard(),
-              // LiveForYou(),
-              NowLiveSectionWidget(),
-              RecentlyLiveSectionWidget(),
+              if (currentUserId != null)
+                LiveBroadcastActivityCard(currentUserId: currentUserId),
+
+              const NowLiveSectionWidget(),
+
+              const RecentlyLiveSectionWidget(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> onRefresh(BuildContext context) async {
+    final nowLiveManager = di<NowLiveBroadcastsManager>();
+    final recentlyLiveManager = di<RecentlyLiveBroadcastsManager>();
+    try {
+      await nowLiveManager.initialize.runAsync();
+      await recentlyLiveManager.fetch.runAsync();
+    } catch (e) {
+      if (context.mounted) context.showErrorSnackBar(e.toString());
+    }
   }
 }
 

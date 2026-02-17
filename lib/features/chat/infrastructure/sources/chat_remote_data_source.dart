@@ -20,6 +20,7 @@ class ChatRemoteDataSource with MLogger {
       '/chat-messages',
       fromJson: (json) => json,
       cancelToken: cancelToken,
+      queryParameters: {'broadcastId': broadcastId},
     );
   }
 

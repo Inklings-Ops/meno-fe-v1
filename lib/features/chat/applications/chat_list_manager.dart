@@ -23,7 +23,7 @@ class ChatListManager with MLogger implements Disposable {
 
   bool _isInitialized = false;
 
-  late final initialize = Command.createSyncNoParamNoResult(() async {
+  late final initialize = Command.createAsyncNoParamNoResult(() async {
     if (_isInitialized) {
       log.w('ParticipantsManager: Already initialized');
       return;

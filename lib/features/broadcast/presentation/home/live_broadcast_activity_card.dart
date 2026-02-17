@@ -8,26 +8,48 @@ import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
 
 class LiveBroadcastActivityCard extends WatchingWidget {
-  const LiveBroadcastActivityCard({super.key});
+  const LiveBroadcastActivityCard({required this.currentUserId, super.key});
+
+  final Id currentUserId;
 
   @override
   Widget build(BuildContext context) {
-    final currentUserIdOption = watchValue((UserManager m) => m.currentUserId);
-    final currentUserId = currentUserIdOption.toNullable();
-    if (currentUserId == null) return const SizedBox.shrink();
+    final isReady = watchFuture<GetIt, void>(
+      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
 
-    final snapshot = watchStream(
+    final session = watchStream(
       (IBroadcastRepository repo) => repo.watchActiveSession(currentUserId),
       initialValue: BroadcastSession.empty,
     );
 
-    final session = snapshot.data;
-    if (session == null || !session.isValid) return const SizedBox.shrink();
+    if (!isReady.hasData || !session.hasData) return const SizedBox.shrink();
+    if (session.data == null) return const SizedBox.shrink();
 
-    if (!allReady()) return const SizedBox.shrink();
+    callOnceAfterThisBuild((context) async => di.allReady());
 
-    final broadcast = session.broadcast;
+    return _ViewWidget(
+      key: key,
+      broadcast: session.data!.broadcast,
+      currentUserId: currentUserId,
+    );
+  }
+}
 
+class _ViewWidget extends WatchingWidget {
+  const _ViewWidget({
+    required this.broadcast,
+    required this.currentUserId,
+    super.key,
+  });
+
+  final Broadcast broadcast;
+  final Id currentUserId;
+
+  @override
+  Widget build(BuildContext context) {
     final status = watchValue((LiveSessionManager m) => m.liveStatus);
     final showCard = status == .live || status == .reconnecting;
     if (!showCard) return const SizedBox.shrink();
