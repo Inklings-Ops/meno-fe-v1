@@ -17,10 +17,11 @@ class LiveLayoutWidget extends WatchingStatefulWidget {
   final List<Widget> children;
 
   @override
-  State<LiveLayoutWidget> createState() => _LiveLayoutWidgetState();
+  State<LiveLayoutWidget> createState() => LiveLayoutWidgetState();
 }
 
-class _LiveLayoutWidgetState extends _LiveLayoutBase {
+class LiveLayoutWidgetState extends State<LiveLayoutWidget>
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   late final TabController controller;
 
   final showChatDot = ValueNotifier(false);
@@ -38,9 +39,6 @@ class _LiveLayoutWidgetState extends _LiveLayoutBase {
 
     if (controller.index != widget.navigationShell.currentIndex) {
       controller.index = widget.navigationShell.currentIndex;
-      // After syncing, ensure chat notification state is correct for the
-      // new tab
-      _processChatNotificationVisibility(controller.index, showChatDot);
     }
   }
 
@@ -61,17 +59,6 @@ class _LiveLayoutWidgetState extends _LiveLayoutBase {
       handler: (context, newValue, cancel) => context.go(R.endedBroadcast),
     );
 
-    final isDIReady = isReady<LiveSessionManager>();
-    if (!isDIReady) return const LiveLoadingIndicatorOverlay();
-
-    final liveStatus = watchValue((LiveSessionManager m) => m.liveStatus);
-
-    final isInitializing =
-        liveStatus == LiveStatus.initializing ||
-        liveStatus == LiveStatus.connecting;
-
-    if (isInitializing) return const LiveLoadingIndicatorOverlay();
-
     return Scaffold(
       appBar: LiveAppBar(
         key: const Key('LiveSessionLayoutAppBar'),
@@ -87,6 +74,27 @@ class _LiveLayoutWidgetState extends _LiveLayoutBase {
     );
   }
 
+  @override
+  bool get wantKeepAlive => true;
+
+  void handleTabControllerIndexChange() {
+    // If the controller's index is different from the shell,
+    // update the shell
+    if (controller.index != widget.navigationShell.currentIndex) {
+      widget.navigationShell.goBranch(controller.index);
+    }
+  }
+
+  void onDirectTabTap(int tappedIndex) {
+    if (controller.index != tappedIndex) {
+      controller.animateTo(tappedIndex);
+    } else {
+      if (widget.navigationShell.currentIndex != tappedIndex) {
+        widget.navigationShell.goBranch(tappedIndex);
+      }
+    }
+  }
+
   // Centralized logic to show/hide the chat dot
   void _processChatNotificationVisibility(
     int targetIndex,
@@ -98,49 +106,5 @@ class _LiveLayoutWidgetState extends _LiveLayoutBase {
         showChatDot.value = false; // Update state using .value
       }
     }
-  }
-
-  @override
-  bool get wantKeepAlive => true;
-
-  void handleTabControllerIndexChange() {
-    // If the controller's index is different from the shell,
-    // update the shell
-    if (controller.index != widget.navigationShell.currentIndex) {
-      widget.navigationShell.goBranch(controller.index);
-    }
-    // Always process chat notification visibility based on the
-    // controller's current index
-    _processChatNotificationVisibility(controller.index, showChatDot);
-  }
-
-  void onDirectTabTap(int tappedIndex) {
-    if (controller.index != tappedIndex) {
-      controller.animateTo(tappedIndex);
-    } else {
-      if (widget.navigationShell.currentIndex != tappedIndex) {
-        widget.navigationShell.goBranch(tappedIndex);
-      }
-      _processChatNotificationVisibility(tappedIndex, showChatDot);
-    }
-  }
-}
-
-abstract class _LiveLayoutBase extends State<LiveLayoutWidget>
-    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  // You can even put shared logic here if you wanted!
-}
-
-class LiveLoadingIndicatorOverlay extends StatelessWidget {
-  const LiveLoadingIndicatorOverlay({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.black.withValues(alpha: 0.8),
-      child: const SizedBox.expand(
-        child: Center(child: MLoadingIndicator(100, 100)),
-      ),
-    );
   }
 }

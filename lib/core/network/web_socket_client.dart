@@ -11,7 +11,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 /// a type-safe interface for socket operations. It should be used within
 /// RemoteDataSource implementations, NOT in the application layer.
 ///
-class WebSocketClient with MenoLogger implements Disposable {
+class WebSocketClient with MLogger implements Disposable {
   WebSocketClient({required String url, required String token})
     : _url = url,
       _token = token;

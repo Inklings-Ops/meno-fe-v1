@@ -5,7 +5,7 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/chat/infrastructure/dtos/message_dto.dart';
 import 'package:meno/features/chat/infrastructure/new_message_params.dart';
 
-class ChatRemoteDataSource with MenoLogger {
+class ChatRemoteDataSource with MLogger {
   const ChatRemoteDataSource({
     required ApiClient api,
     required WebSocketClient socket,

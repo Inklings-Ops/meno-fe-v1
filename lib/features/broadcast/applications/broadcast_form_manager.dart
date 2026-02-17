@@ -6,7 +6,7 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-class BroadcastFormManager with MenoLogger implements Disposable {
+class BroadcastFormManager with MLogger implements Disposable {
   BroadcastFormManager({
     required Id userId,
     required IBroadcastRepository repository,

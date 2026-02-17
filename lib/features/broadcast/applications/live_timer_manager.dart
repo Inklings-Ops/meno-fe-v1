@@ -14,7 +14,7 @@ import 'package:meno/core/core.dart';
 /// - Reactive state updates via Flutter IT
 ///
 /// Lives in the live session scope (per broadcast)
-final class LiveTimerManager with MenoLogger implements Disposable {
+final class LiveTimerManager with MLogger implements Disposable {
   LiveTimerManager({
     required DateTime broadcastStartTime,
     Duration? initialElapsed,

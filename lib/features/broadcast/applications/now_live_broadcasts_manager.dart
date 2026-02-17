@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 
-class NowLiveBroadcastsManager with MenoLogger implements Disposable {
+class NowLiveBroadcastsManager with MLogger implements Disposable {
   NowLiveBroadcastsManager(this._repository);
 
   final IBroadcastRepository _repository;

@@ -12,6 +12,7 @@ import 'package:meno/features/chat/presentation/presentation.dart';
 import 'package:meno/features/discover/presentation/presentation.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
+import 'package:meno/shared/presentation/live_layout/live_session_initialization_page.dart';
 import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -87,8 +88,12 @@ final class MenoRouter {
         builder: (context, state) => const EndedBroadcastPage(),
       ),
 
+      GoRoute(
+        path: R.liveSessionInitialization,
+        builder: (context, state) => const LiveSessionInitializationPage(),
+      ),
       // ######################################################################
-      // LIVE BROADCAST SHELL
+      // LIVE BROADCAST TAB SHELL
       // ######################################################################
       StatefulShellRoute(
         parentNavigatorKey: rootNavigatorKey,

@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             spacing: Insets.xxl,
             children: <Widget>[
-              LiveBroadcastActivityCard(),
+              // LiveBroadcastActivityCard(),
               // LiveForYou(),
               NowLiveSectionWidget(),
               RecentlyLiveSectionWidget(),

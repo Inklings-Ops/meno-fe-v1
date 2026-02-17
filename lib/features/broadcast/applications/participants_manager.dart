@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
+import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-final class ParticipantsManager with MenoLogger implements Disposable {
+final class ParticipantsManager with MLogger implements Disposable {
   ParticipantsManager({
     required BroadcastSession session,
     required IBroadcastRepository repository,
@@ -128,6 +129,9 @@ final class ParticipantsManager with MenoLogger implements Disposable {
       log.w('ParticipantsManager: Already initialized');
       return;
     }
+
+    log.i('ParticipantsManager: Waiting for LiveSessionManager...');
+    await di.isReady<LiveSessionManager>();
 
     log.i('ParticipantsManager: Initializing for broadcast $_broadcastId');
     isLoading.value = true;

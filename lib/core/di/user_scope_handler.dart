@@ -9,7 +9,7 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-final class UserScopeHandler with MenoLogger implements Disposable {
+final class UserScopeHandler with MLogger implements Disposable {
   UserScopeHandler(this._repository) {
     // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);

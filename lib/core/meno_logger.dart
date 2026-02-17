@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logger/logger.dart';
 
-mixin class MenoLogger {
+mixin class MLogger {
   @protected
   Logger get log {
     try {

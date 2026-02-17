@@ -17,7 +17,7 @@ import 'package:meno/shared/domain/domain.dart';
 /// - Provides global session state
 ///
 /// Lives in the live session scope (created/destroyed per broadcast)
-final class LiveSessionManager with MenoLogger implements Disposable {
+class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   LiveSessionManager({
     required Id userId,
     required BroadcastSession session,
@@ -213,6 +213,12 @@ final class LiveSessionManager with MenoLogger implements Disposable {
     } else {
       await _repository.emitJoinedBroadcast(broadcastId);
     }
+
+    // ✅ Signal GetIt that the full pipeline is complete and this manager
+    // is truly ready. Any awaiter of di.isReady<LiveSessionManager>()
+    // will now unblock.
+    GetIt.instance.signalReady(this);
+    log.i('LiveSessionManager: Session is fully live and ready');
   }, errorFilterFn: menoExceptionFilter);
 
   late final endSession = Command.createAsyncNoParamNoResult(() async {
@@ -522,6 +528,8 @@ extension LiveStatusX on LiveStatus {
       .offAir => 'Off Air',
     };
   }
+
+  bool get isInitializing => this == .initializing || this == .connecting;
 
   bool get isActive => this == .live;
 

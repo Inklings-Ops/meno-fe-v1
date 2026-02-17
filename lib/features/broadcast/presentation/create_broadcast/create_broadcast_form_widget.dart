@@ -218,7 +218,7 @@ class StartBroadcastButton extends WatchingWidget {
       select: (BroadcastFormManager m) => m.saveBroadcastSession,
       handler: (context, newValue, cancel) {
         di<BroadcastFormManager>().resetForm.run();
-        context.replace(R.broadcastTab);
+        context.replace(R.liveSessionInitialization);
       },
     );
 

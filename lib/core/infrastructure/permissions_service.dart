@@ -16,7 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 /// - Proper caching and state management
 /// - Comprehensive error handling
 /// - Testable architecture
-final class PermissionsService with MenoLogger implements Disposable {
+final class PermissionsService with MLogger implements Disposable {
   PermissionsService();
 
   // #########################################################################

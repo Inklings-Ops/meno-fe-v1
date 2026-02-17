@@ -66,6 +66,11 @@ final class Message with EquatableMixin {
       status: status ?? this.status,
     );
   }
+
+  Id get effectiveSenderId => senderId ?? sender?.id ?? Id.empty;
+
+  SingleLineString get effectiveSenderName =>
+      fullName ?? sender?.fullName ?? SingleLineString.empty;
 }
 
 enum MessageStatus {
@@ -79,5 +84,6 @@ enum MessageStatus {
   failed('failed');
 
   const MessageStatus(this.value);
+
   final String value;
 }

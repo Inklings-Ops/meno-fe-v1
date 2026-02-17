@@ -10,7 +10,7 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-class BroadcastRepositoryImpl with MenoLogger implements IBroadcastRepository {
+class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   BroadcastRepositoryImpl({
     required BroadcastRemoteDataSource remote,
     required BroadcastLocalDataSource local,

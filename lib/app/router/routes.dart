@@ -29,7 +29,6 @@ class R {
   static const String discover = '/discover';
   static const String notes = '/notes';
   static const String myProfile = '/my-profile';
-  static const String profiles = '/profiles';
   static const String othersProfile = '/others-profile';
   static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
@@ -45,6 +44,7 @@ class R {
   static const String broadcasts = '/broadcasts';
   static const String broadcastDetails = '/broadcasts/:id';
 
+  static const String liveSessionInitialization = '/live-initialization';
   static const String broadcastTab = '/broadcast-tab';
   static const String chatTab = '/chat-tab';
   static const String bibleTab = '/bible-tab';
@@ -54,4 +54,8 @@ class R {
 
   static const String noteSection = '/notes-section';
   static const String folderSection = '/folder-section';
+
+  static const String profiles = '/profiles';
+
+  static String profile(String id) => '/profiles/$id';
 }

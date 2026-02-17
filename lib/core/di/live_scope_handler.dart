@@ -5,6 +5,9 @@ import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
+import 'package:meno/features/chat/applications/applications.dart';
+import 'package:meno/features/chat/domain/domain.dart';
+import 'package:meno/features/chat/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 /// Orchestrates the LiveKit session scope lifecycle
@@ -16,7 +19,7 @@ import 'package:meno/shared/domain/domain.dart';
 /// - Coordinates socket events with LiveKit connection
 ///
 /// Register this ONCE in the user scope (not in root injector)
-final class LiveScopeHandler with MenoLogger implements Disposable {
+final class LiveScopeHandler with MLogger implements Disposable {
   LiveScopeHandler({
     required Id userId,
     required IBroadcastRepository repository,
@@ -123,6 +126,20 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
           // ================================================================
           // INFRASTRUCTURE LAYER
           // ================================================================
+          di.registerSingletonAsync<BroadcastSession>(() async => session);
+
+          di.registerSingletonAsync<ChatRemoteDataSource>(
+            () async => ChatRemoteDataSource(
+              api: di<ApiClient>(),
+              socket: di<WebSocketClient>(),
+            ),
+            dependsOn: [ApiClient, WebSocketClient],
+          );
+
+          di.registerSingletonWithDependencies<IChatRepository>(
+            () => ChatRepositoryImpl(remote: di<ChatRemoteDataSource>()),
+            dependsOn: [ChatRemoteDataSource],
+          );
 
           // LiveKit Client - Register as async singleton
           di.registerSingletonAsync<LiveKitClient>(() async {
@@ -143,50 +160,56 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
 
           // Live Session Manager - Register synchronously to avoid deadlock
           // Register as regular singleton (not async)
-          di.registerSingletonAsync<LiveSessionManager>(() async {
-            log.d('LiveScopeHandler: Initializing Live Session Manager');
-            final manager = LiveSessionManager(
+          di.registerSingletonAsync<LiveSessionManager>(
+            () async => LiveSessionManager(
               userId: _userId,
               session: session,
               repository: di<IBroadcastRepository>(),
               liveKit: di<LiveKitClient>(),
-            );
-            log.d('LiveScopeHandler: Starting session...');
-            await manager.initializeTimer.runAsync();
-            log.d('LiveScopeHandler: Session started successfully');
-            return manager;
-          }, dependsOn: [LiveKitClient, IBroadcastRepository]);
+            ),
+            dependsOn: [LiveKitClient, IBroadcastRepository],
+            onCreated: (manager) => manager.initializeTimer.run(),
+            signalsReady: true,
+          );
 
-          await di.isReady<LiveSessionManager>();
+          di.registerSingletonWithDependencies(
+            () {
+              final manager = ParticipantsManager(
+                repository: di<IBroadcastRepository>(),
+                session: di<BroadcastSession>(),
+              );
+              manager.initialize.run();
+              return manager;
+            },
+            dependsOn: [
+              IBroadcastRepository,
+              BroadcastSession,
+              LiveSessionManager,
+            ],
+          );
 
-          // Register and initialize participants manager
-          di.registerSingletonAsync(() async {
-            final manager = ParticipantsManager(
-              session: session,
-              repository: di<IBroadcastRepository>(),
-            );
+          di.registerSingletonWithDependencies(
+            () {
+              final manager = ChatListManager(
+                repository: di<IChatRepository>(),
+                session: di<BroadcastSession>(),
+              );
+              manager.initialize.run();
+              return manager;
+            },
+            dependsOn: [IChatRepository, BroadcastSession, LiveSessionManager],
+          );
 
-            // Check if already live
-            final sessionManager = di<LiveSessionManager>();
-            if (sessionManager.liveStatus.value == LiveStatus.live) {
-              log.d('LiveScopeHandler: Already live, initializing now');
-              await manager.initialize.runAsync();
-            } else {
-              // Wait for live status
-              log.d('LiveScopeHandler: Waiting for live status...');
-              await _waitForLiveStatus(sessionManager, manager);
-            }
-
-            return manager;
-          }, dependsOn: [IBroadcastRepository, LiveSessionManager]);
-
-          await di.isReady<ParticipantsManager>();
+          di.registerSingletonWithDependencies(
+            () => ChatManager(
+              repository: di<IChatRepository>(),
+              broadcastId: di<BroadcastSession>().broadcast.id,
+              currentUserId: _userId,
+            ),
+            dependsOn: [IChatRepository, LiveSessionManager],
+          );
 
           await di.allReady();
-
-          // Wait for timer initialization (piped command)
-          // Give it a moment to complete
-          await Future<void>.delayed(const Duration(milliseconds: 100));
         },
       );
       _currentScopeName = targetScopeName;
@@ -245,38 +268,6 @@ final class LiveScopeHandler with MenoLogger implements Disposable {
       allTimeParticipants: participantsManager.allTimeCount.value,
       recentParticipants: participantsManager.recentParticipants.value,
     );
-  }
-
-  Future<void> _waitForLiveStatus(
-    LiveSessionManager sessionManager,
-    ParticipantsManager participantsManager,
-  ) async {
-    final completer = Completer<void>();
-    ListenableSubscription? subscription;
-
-    subscription = sessionManager.liveStatus.listen((status, _) {
-      if (status == LiveStatus.live && !completer.isCompleted) {
-        log.d('LiveScopeHandler: Now live! Initializing participants');
-        participantsManager.initialize.runAsync().then((_) {
-          if (!completer.isCompleted) completer.complete();
-          subscription?.cancel();
-        });
-      }
-    });
-
-    try {
-      await completer.future.timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          log.w('LiveScopeHandler: Timeout waiting for live status');
-          subscription?.cancel();
-          throw const TimeoutException('Broadcast did not go live in time');
-        },
-      );
-    } catch (e) {
-      subscription.cancel();
-      rethrow;
-    }
   }
 
   @override

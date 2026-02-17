@@ -7,11 +7,15 @@ import 'package:meno/features/chat/domain/domain.dart';
 import 'package:meno/features/chat/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/value_objects/id.dart';
 
-class ChatRepositoryImpl with MenoLogger implements IChatRepository {
-  const ChatRepositoryImpl({required ChatRemoteDataSource remote})
-    : _remote = remote;
+class ChatRepositoryImpl with MLogger implements IChatRepository {
+  ChatRepositoryImpl({required ChatRemoteDataSource remote}) : _remote = remote;
 
   final ChatRemoteDataSource _remote;
+
+  late final _messages = ListNotifier<Message>();
+
+  @override
+  List<Message> get messages => _messages.value;
 
   @override
   Future<Either<MenoException, Unit>> deleteMessage(
@@ -53,11 +57,10 @@ class ChatRepositoryImpl with MenoLogger implements IChatRepository {
   }
 
   @override
-  Stream<List<Message>> watchChatMessages(Id broadcastId) {
+  Stream<List<Message>> watchMessages(Id broadcastId) {
     late StreamController<List<Message>> controller;
-    final messages = ListNotifier<Message>();
 
-    void emit() => controller.add(messages);
+    void emit() => controller.add(_messages);
 
     Future<void> initialFetch() async {
       try {
@@ -66,10 +69,10 @@ class ChatRepositoryImpl with MenoLogger implements IChatRepository {
         final items = json['chatMessages'] as List<dynamic>;
         final dtos = items.map(MessageDto.fromJson).toList();
         final domainList = dtos.map((e) => e.toDomain).toList();
-        messages.startTransAction();
-        messages.clear();
-        messages.addAll(domainList);
-        messages.endTransAction();
+        _messages.startTransAction();
+        _messages.clear();
+        _messages.addAll(domainList);
+        _messages.endTransAction();
         emit();
       } catch (e, stackTrace) {
         log.e('ChatRepository: Failed to fetch messages - $e');
@@ -91,21 +94,23 @@ class ChatRepositoryImpl with MenoLogger implements IChatRepository {
 
         newMessageSubscription = _remote.onNewMessage(id).listen((dto) {
           log.d('New Message from ${dto.fullName}: ${dto.content}');
-          messages.add(dto.toDomain);
+          _messages.add(dto.toDomain);
           emit();
         });
 
         editedMessageSubscription = _remote.onEditedMessage(id).listen((dto) {
           log.d('Edited Message from ${dto.fullName}: ${dto.content}');
-          final index = messages.indexWhere((m) => m.id.getOrCrash() == dto.id);
+          final index = _messages.indexWhere(
+            (m) => m.id.getOrCrash() == dto.id,
+          );
           if (index == -1) return;
-          messages[index] = dto.toDomain;
+          _messages[index] = dto.toDomain;
           emit();
         });
 
         deletedMessageSubscription = _remote.onDeletedMessage(id).listen((dto) {
           log.d('Deleted Message from ${dto.fullName}: ${dto.content}');
-          messages.removeWhere((m) => m.id.getOrCrash() == dto.id);
+          _messages.removeWhere((m) => m.id.getOrCrash() == dto.id);
           emit();
         });
       },
@@ -115,10 +120,16 @@ class ChatRepositoryImpl with MenoLogger implements IChatRepository {
         newMessageSubscription?.cancel();
         editedMessageSubscription?.cancel();
         deletedMessageSubscription?.cancel();
-        messages.dispose();
+        _messages.dispose();
       },
     );
 
     return controller.stream;
+  }
+
+  @override
+  FutureOr<dynamic> onDispose() {
+    log.d('ChatRepository: Disposed');
+    _messages.dispose();
   }
 }

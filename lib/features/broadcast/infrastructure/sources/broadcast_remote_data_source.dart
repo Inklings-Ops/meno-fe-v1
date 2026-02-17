@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 
-class BroadcastRemoteDataSource with MenoLogger {
+class BroadcastRemoteDataSource with MLogger {
   const BroadcastRemoteDataSource({
     required ApiClient api,
     required WebSocketClient socket,

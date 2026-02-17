@@ -10,7 +10,7 @@ import 'package:meno/core/core.dart';
 /// Manages LiveKit room connection and audio/video streaming.
 /// This is a low-level infrastructure component that should NOT be
 /// exposed to the application layer directly.
-final class LiveKitClient with MenoLogger implements Disposable {
+class LiveKitClient with MLogger implements Disposable {
   LiveKitClient({required String url}) : _url = url;
 
   final String _url;
