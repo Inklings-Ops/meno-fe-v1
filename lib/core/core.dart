@@ -17,5 +17,6 @@ export 'meno_logger.dart';
 export 'network/api_client.dart';
 export 'network/session_interceptor.dart';
 export 'network/web_socket_client.dart';
+export 'storage/database.dart';
 export 'storage/local_storage.dart';
 export 'storage/secure_storage.dart';

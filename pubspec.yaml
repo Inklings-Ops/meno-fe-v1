@@ -32,6 +32,8 @@ dependencies:
       ref: master
   objectbox: ^5.2.0
   objectbox_flutter_libs: ^5.2.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
   permission_handler: ^12.0.1
   responsive_framework: ^1.5.1
   shared_preferences: ^2.5.4
@@ -52,6 +54,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/json/kjv.json
 
   fonts:
     - family: MIcons

@@ -10,14 +10,8 @@ abstract class IBibleRepository with Disposable {
   /// Seeds the KJV from the bundled asset on first launch.
   Future<void> initialize();
 
-  /// All 66 books mapped to their chapter counts.
-  Map<String, int> get books;
-
   /// Translations already downloaded and stored locally.
   List<Translation> get localTranslations;
-
-  /// Translations available for download but not yet stored.
-  List<Translation> get availableTranslations;
 
   /// Returns all verses for a given [book], [chapter], and [translation].
   List<Verse> getVerses({
@@ -44,4 +38,28 @@ abstract class IBibleRepository with Disposable {
 
   /// Emits download progress as a percentage [0–100].
   Stream<int> get downloadProgress;
+
+  /// Returns the current download progress.
+  int get currentProgress;
+
+  /// Remote is the source of truth for `available`.
+  /// Falls back to local hardcoded list where only KJV is available,
+  /// so all others render as "Coming Soon" until the API is fixed.
+  Future<List<Translation>> fetchAvailableTranslations();
+
+  // ==========================================================================
+  // METADATA  — pure in-memory, O(1), no async
+  // ==========================================================================
+  /// Ordered map of book index → canonical name (0 = Genesis).
+  Map<int, String> get books;
+
+  /// Book index → chapter count.
+  Map<int, int> get chapterCounts;
+
+  /// Chapter count for a single book. Convenience over [chapterCounts][bookId].
+  int chapterCount(int bookId);
+
+  /// Verse count for a specific chapter (1-based). Used by the verse picker
+  /// to know its upper bound without hitting the DB.
+  int verseCount(int bookId, int chapter);
 }
