@@ -56,6 +56,7 @@ final class UserScopeHandler with MLogger implements Disposable {
           // ==================================================================
           // DOMAIN LAYER
           // ==================================================================
+          di.registerSingleton<Id>(credentials.user.id);
           di.registerSingleton<Session>(credentials.session);
 
           // ==================================================================

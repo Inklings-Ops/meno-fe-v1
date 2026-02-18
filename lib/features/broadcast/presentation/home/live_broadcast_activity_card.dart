@@ -28,7 +28,9 @@ class LiveBroadcastActivityCard extends WatchingWidget {
     if (!isReady.hasData || !session.hasData) return const SizedBox.shrink();
     if (session.data == null) return const SizedBox.shrink();
 
-    callOnceAfterThisBuild((context) async => di.allReady());
+    callOnceAfterThisBuild(
+      (_) async => Future.delayed(const Duration(seconds: 5), di.allReady),
+    );
 
     return _ViewWidget(
       key: key,

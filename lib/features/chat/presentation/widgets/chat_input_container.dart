@@ -96,6 +96,8 @@ class _ChatTextFieldState extends State<_ChatTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final content = watchValue((ChatManager m) => m.content);
+
     return TextFormField(
       focusNode: _focusNode,
       style: MTextTheme.of(context).captionRegular,
@@ -105,6 +107,7 @@ class _ChatTextFieldState extends State<_ChatTextField> {
       minLines: 1,
       maxLength: 244,
       keyboardType: TextInputType.multiline,
+      validator: (_) => content.failureOrNull?.msg,
       decoration: const InputDecoration(
         hintText: 'Type your comment here...',
         counter: SizedBox(),

@@ -3,11 +3,14 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/chat/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class ChatWelcomeWidget extends StatelessWidget {
+class ChatWelcomeWidget extends WatchingWidget {
   const ChatWelcomeWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isVisible = watchValue((ChatManager m) => m.welcomeMessageVisible);
+    if (!isVisible) return const SizedBox.shrink();
+
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
     return Container(

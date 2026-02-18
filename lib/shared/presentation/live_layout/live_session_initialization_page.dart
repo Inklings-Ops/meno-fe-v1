@@ -27,6 +27,6 @@ class LiveSessionInitializationPage extends WatchingWidget {
       await router.replace<void>(R.broadcastTab);
     });
 
-    return const SizedBox.shrink();
+    return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));
   }
 }

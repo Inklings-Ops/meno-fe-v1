@@ -15,12 +15,22 @@ class ChatRemoteDataSource with MLogger {
   final ApiClient _api;
   final WebSocketClient _socket;
 
-  Future<dynamic> getMessages(String broadcastId, {CancelToken? cancelToken}) {
+  Future<dynamic> getMessages(
+    String broadcastId, {
+    CancelToken? cancelToken,
+    int page = 1,
+    int size = 100,
+  }) {
     return _api.get(
       '/chat-messages',
       fromJson: (json) => json,
       cancelToken: cancelToken,
-      queryParameters: {'broadcastId': broadcastId},
+      queryParameters: {
+        'broadcastId': broadcastId,
+        'page': page,
+        'size': size,
+        'order_by': 'desc',
+      },
     );
   }
 

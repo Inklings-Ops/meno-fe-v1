@@ -71,6 +71,18 @@ final class Message with EquatableMixin {
 
   SingleLineString get effectiveSenderName =>
       fullName ?? sender?.fullName ?? SingleLineString.empty;
+
+  bool get isEditable {
+    final now = DateTime.now();
+    final difference = now.difference(updatedAt ?? createdAt);
+    return difference.inMinutes < 15;
+  }
+
+  bool get isDeletable {
+    final now = DateTime.now();
+    final difference = now.difference(updatedAt ?? createdAt);
+    return difference.inMinutes < 30;
+  }
 }
 
 enum MessageStatus {
