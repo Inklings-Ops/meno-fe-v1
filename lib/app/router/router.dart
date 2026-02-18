@@ -6,7 +6,7 @@ import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/presentation/presentation.dart';
-import 'package:meno/features/bible/presentation/pages/live_bible_tab.dart';
+import 'package:meno/features/bible/presentation/widgets/live_bible_tab.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/features/chat/presentation/presentation.dart';
 import 'package:meno/features/discover/presentation/presentation.dart';

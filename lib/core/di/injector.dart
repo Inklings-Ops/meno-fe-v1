@@ -8,6 +8,9 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
 import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/auth/infrastructure/infrastructure.dart';
+import 'package:meno/features/bible/applications/applications.dart';
+import 'package:meno/features/bible/domain/domain.dart';
+import 'package:meno/features/bible/infrastructure/infrastructure.dart';
 import 'package:meno/shared/application/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,6 +49,8 @@ void setupDependencies() {
     () => SecureStorage(di<FlutterSecureStorage>()),
     dependsOn: [FlutterSecureStorage],
   );
+
+  di.registerSingletonAsync<Database>(Database.create);
 
   // ========================================================================
   // NETWORK LAYER
@@ -99,6 +104,25 @@ void setupDependencies() {
     return repository;
   }, dependsOn: [AuthLocalDataSource, AuthRemoteDataSource]);
 
+  di.registerSingletonWithDependencies(
+    () => BibleLocalDataSource(db: di<Database>()),
+    dependsOn: [Database],
+  );
+
+  di.registerSingletonWithDependencies(
+    () => BibleRemoteDataSource(api: di<ApiClient>()),
+    dependsOn: [ApiClient],
+  );
+
+  di.registerSingletonAsync<IBibleRepository>(() async {
+    final repository = BibleRepositoryImpl(
+      local: di<BibleLocalDataSource>(),
+      remote: di<BibleRemoteDataSource>(),
+    );
+    await repository.initialize();
+    return repository;
+  }, dependsOn: [BibleLocalDataSource, BibleRemoteDataSource]);
+
   // ========================================================================
   // APPLICATION LAYER
   // ========================================================================
@@ -111,6 +135,17 @@ void setupDependencies() {
     () => UserManager(di<IAuthRepository>()),
     dependsOn: [IAuthRepository],
   );
+
+  di.registerSingletonWithDependencies(
+    () => TranslationsManager(di<IBibleRepository>()),
+    dependsOn: [IBibleRepository],
+  );
+
+  di.registerSingletonWithDependencies(() {
+    final manager = BibleManager(di<IBibleRepository>());
+    manager.getVerses.run(const BibleParams());
+    return manager;
+  }, dependsOn: [IBibleRepository]);
 
   // ========================================================================
   // OBSERVER

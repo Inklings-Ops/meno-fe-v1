@@ -45,7 +45,7 @@ abstract class IBibleRepository with Disposable {
   /// Remote is the source of truth for `available`.
   /// Falls back to local hardcoded list where only KJV is available,
   /// so all others render as "Coming Soon" until the API is fixed.
-  Future<List<Translation>> fetchAvailableTranslations();
+  Future<Either<MenoException, List<Translation>>> getRemoteTranslations();
 
   // ==========================================================================
   // METADATA  — pure in-memory, O(1), no async

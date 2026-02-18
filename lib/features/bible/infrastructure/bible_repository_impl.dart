@@ -75,26 +75,30 @@ class BibleRepositoryImpl with MLogger implements IBibleRepository {
   }
 
   @override
-  Future<List<Translation>> fetchAvailableTranslations() async {
+  Future<Either<MenoException, List<Translation>>>
+  getRemoteTranslations() async {
     try {
       final remote = await _remote.fetchAvailableTranslations();
-      if (remote.isNotEmpty) {
-        log.d('BibleRepository: ${remote.length} translations from remote');
-        return remote.map((dto) => dto.toDomain).toList();
-      }
+      log.d('BibleRepository: ${remote.length} translations from remote');
+      if (remote.isEmpty) return const Left(MenoException('No translations'));
+      return Right(remote.map((dto) => dto.toDomain).toList());
     } catch (e) {
       log.w('BibleRepository: remote translations unavailable — $e');
+      if (e is MenoException) return Left(e);
+      return Left(MenoException(e.toString()));
     }
-
-    log.d('BibleRepository: using local translation fallback');
-    return [
-      for (final entry in translationNames.entries)
-        Translation.fromAbbreviation(
-          entry.key,
-          downloaded: false,
-          available: entry.key == 'kjv',
-        ),
-    ];
+    //
+    // log.d('BibleRepository: using local translation fallback');
+    // final fallbackTranslations = [
+    //   for (final entry in translationNames.entries)
+    //     Translation.fromAbbreviation(
+    //       entry.key,
+    //       downloaded: false,
+    //       available: entry.key == 'kjv',
+    //     ),
+    // ];
+    //
+    // return Right(fallbackTranslations);
   }
 
   @override
