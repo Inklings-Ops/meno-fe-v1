@@ -21,33 +21,38 @@ class BibleBooksModal extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // late final AutoScrollController controller;
+    late final AutoScrollController controller;
 
     final manager = di<BibleManager>();
 
     final books = manager.bookNames;
     final currentBook = manager.currentBookName;
 
-    // callOnce((ctx) {
-    //   final index = books.indexWhere((b) => b == currentBook);
-    //   controller = AutoScrollController(suggestedRowHeight: 200);
-    //   controller.scrollToIndex(index, preferPosition: AutoScrollPosition.begin);
-    // });
+    callOnce((ctx) {
+      final index = books.indexWhere((b) => b == currentBook);
+      controller = AutoScrollController(suggestedRowHeight: 200);
+      controller.scrollToIndex(index, preferPosition: AutoScrollPosition.begin);
+    });
 
     return MModal(
       title: 'Bible Books',
       builder: (context) => Material(
         child: ListView.separated(
-          // controller: controller,
+          controller: controller,
           itemCount: books.length,
           separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final book = books[index];
 
-            return BookWidget(
+            return AutoScrollTag(
               key: ValueKey(index),
-              bookName: book,
-              // onTap: () => controller.scrollToIndex(index),
+              index: index,
+              controller: controller,
+              child: BookWidget(
+                key: ValueKey(index),
+                bookName: book,
+                onTap: () => controller.scrollToIndex(index),
+              ),
             );
           },
         ),
