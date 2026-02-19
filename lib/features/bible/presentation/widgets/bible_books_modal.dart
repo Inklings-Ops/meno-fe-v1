@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/bible/applications/applications.dart';
 import 'package:meno/features/bible/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class BibleBooksModal extends StatefulWidget {
   const BibleBooksModal({super.key});
@@ -23,51 +24,64 @@ class BibleBooksModal extends StatefulWidget {
 }
 
 class _BibleBooksModalState extends State<BibleBooksModal> {
-  // One GlobalObjectKey per book name — stable across rebuilds, no package.
-  late final Map<String, GlobalObjectKey> _keys;
+  late final AutoScrollController _controller;
   late final BibleManager _manager;
+  late final List<String> _books;
+
+  static const double _rowHeight = 56;
+  static const double _separatorHeight = 10;
 
   @override
   void initState() {
     super.initState();
     _manager = di<BibleManager>();
-    _keys = {
-      for (final name in _manager.bookNames) name: GlobalObjectKey(name),
-    };
+    _books = _manager.bookNames;
 
-    // Scroll after the first frame so the list is fully laid out.
+    _controller = AutoScrollController(
+      suggestedRowHeight: _rowHeight + _separatorHeight,
+      viewportBoundaryGetter: () =>
+          Rect.fromLTRB(0, 0, 0, MediaQuery.paddingOf(context).bottom),
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
   }
 
-  void _scrollToCurrent() {
-    final key = _keys[_manager.currentBookName];
-    final ctx = key?.currentContext;
-    if (ctx == null) return;
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-    Scrollable.ensureVisible(
-      ctx,
+  Future<void> _scrollToCurrent() async {
+    final index = _books.indexOf(_manager.currentBookName);
+    if (index < 0 || !_controller.hasClients) return;
+
+    await _controller.scrollToIndex(
+      index,
+      preferPosition: AutoScrollPosition.begin,
       duration: const Duration(milliseconds: 350),
-      curve: Curves.easeOut,
-      // Keep the item near the top so its chapter grid is visible below it.
-      alignment: 0.1,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final books = _manager.bookNames;
-
     return MModal(
       title: 'Bible Books',
       builder: (context) => ListView.separated(
-        itemCount: books.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
+        controller: _controller,
+        itemCount: _books.length,
+        separatorBuilder: (_, __) => const SizedBox(height: _separatorHeight),
         itemBuilder: (context, index) {
-          final bookName = books[index];
-          return BookWidget(
-            key: _keys[bookName],
-            bookName: bookName,
-            onChapterSelected: _scrollToCurrent,
+          final bookName = _books[index];
+          return AutoScrollTag(
+            key: ValueKey(bookName),
+            controller: _controller,
+            index: index,
+            child: BookWidget(
+              key: ValueKey(bookName),
+              bookName: bookName,
+              onChapterSelected: _scrollToCurrent,
+            ),
           );
         },
       ),
