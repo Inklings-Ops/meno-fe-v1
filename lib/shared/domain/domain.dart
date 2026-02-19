@@ -7,6 +7,7 @@ export 'entities/user.dart';
 export 'entities/user_role.dart';
 export 'order_by.dart';
 export 'participant_role.dart';
+export 'sync_status.dart';
 export 'value_objects/email.dart';
 export 'value_objects/id.dart';
 export 'value_objects/image_input.dart';

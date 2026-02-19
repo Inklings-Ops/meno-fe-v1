@@ -1,4 +1,5 @@
 export 'email.dart';
+export 'entity.dart';
 export 'id.dart';
 export 'image_input.dart';
 export 'image_origin.dart';
