@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/domain/domain.dart';
-import 'package:meno/features/notes/infrastructure/sources/note_local_data_source.dart';
-import 'package:meno/features/notes/infrastructure/sources/note_remote_data_source.dart';
+import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/value_objects/id.dart';
 
 class NoteRepositoryImpl with MLogger implements INoteRepository {

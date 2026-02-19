@@ -53,7 +53,7 @@ class NoteFolderDto {
   @Property(type: PropertyType.date)
   final DateTime? updatedAt;
 
-  final bool syncPending;
+  bool syncPending;
 
   @Backlink('folder')
   final notes = ToMany<NoteDto>();
