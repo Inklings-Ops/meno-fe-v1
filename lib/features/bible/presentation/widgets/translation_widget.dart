@@ -1,39 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/bible/applications/applications.dart';
 import 'package:meno/features/bible/domain/domain.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class TranslationWidget extends StatelessWidget {
+class TranslationWidget extends WatchingWidget {
   const TranslationWidget({
     required this.translation,
     super.key,
-    this.isSelected = false,
-    this.onTap,
+    this.isDownloaded = true,
+    this.onSelect,
     this.onDownload,
-    this.downloadProgress,
-    this.onCancelDownload,
   });
 
   final Translation translation;
-  final bool isSelected;
-  final VoidCallback? onTap;
+
+  /// True when the translation is already available offline.
+  final bool isDownloaded;
+
+  /// Called when the user taps a downloaded translation to activate it.
+  final VoidCallback? onSelect;
+
+  /// Called when the user initiates a download.
   final VoidCallback? onDownload;
-  final int? downloadProgress;
-  final VoidCallback? onCancelDownload;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
 
+    final currentTranslation = watchValue((BibleManager m) => m.translation);
+    final downloadProgress = watchValue(
+      (TranslationsManager m) => m.downloadProgress,
+    );
+    final downloadingAbbr = watchValue(
+      (TranslationsManager m) => m.downloadingAbbreviation,
+    );
+
+    final abb = translation.abbreviation;
+    final isSelected = currentTranslation == abb;
+    final isThisDownloading = downloadingAbbr == abb;
+
     final borderRadius = BorderRadius.circular(24);
 
-    // A translation tile is "actionable" only if it's downloaded OR available.
-    final isDownloaded = translation.downloaded;
-    final isAvailable = translation.available;
-    final isDownloading = downloadProgress != null;
-
     return InkWell(
-      onTap: isDownloaded ? onTap : null,
+      onTap: isDownloaded ? onSelect : null,
       borderRadius: borderRadius,
       child: Container(
         height: 66,
@@ -47,45 +58,21 @@ class TranslationWidget extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
-                crossAxisAlignment: .start,
-                mainAxisAlignment: .center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  MText(
-                    translation.abbreviation.toUpperCase(),
-                    style: textTheme.bodyMedium,
-                  ),
+                  MText(abb.toUpperCase(), style: textTheme.bodyMedium),
                   MText(translation.name, style: textTheme.microRegular),
                 ],
               ),
             ),
-            if (!isDownloaded) ...[
-              if (isDownloading) ...[
-                _DownloadProgress(
-                  progress: downloadProgress!,
-                  onCancel: onCancelDownload,
-                ),
-              ],
-              if (isAvailable) ...[
-                SizedBox.square(
-                  dimension: 40,
-                  child: IconButton(
-                    iconSize: 24,
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.download_outlined),
-                    onPressed: onDownload,
-                  ),
-                ),
-              ],
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colors.outlineVariant2,
-                  borderRadius: BorderRadius.circular(Insets.md),
-                  border: Border.all(color: colors.primary),
-                ),
-                child: MText('Coming Soon', style: textTheme.captionMedium),
+            if (!isDownloaded)
+              _DownloadButton(
+                isDownloading: isThisDownloading,
+                progress: isThisDownloading ? downloadProgress : null,
+                onDownload: onDownload,
+                onCancel: () => di<TranslationsManager>().cancelDownload.run(),
               ),
-            ],
           ],
         ),
       ),
@@ -93,15 +80,33 @@ class TranslationWidget extends StatelessWidget {
   }
 }
 
-class _DownloadProgress extends StatelessWidget {
-  const _DownloadProgress({required this.progress, this.onCancel});
+// ---------------------------------------------------------------------------
 
-  final int progress;
+class _DownloadButton extends StatelessWidget {
+  const _DownloadButton({
+    required this.isDownloading,
+    this.progress,
+    this.onDownload,
+    this.onCancel,
+  });
+
+  final bool isDownloading;
+  final int? progress;
+  final VoidCallback? onDownload;
   final VoidCallback? onCancel;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
+
+    if (!isDownloading) {
+      return IconButton(
+        icon: const Icon(Icons.download_outlined),
+        iconSize: 24,
+        padding: EdgeInsets.zero,
+        onPressed: onDownload,
+      );
+    }
 
     return SizedBox.square(
       dimension: 40,
@@ -109,16 +114,15 @@ class _DownloadProgress extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           CircularProgressIndicator(
-            value: progress / 100,
+            value: (progress ?? 0) / 100.0,
             strokeCap: StrokeCap.round,
-            strokeWidth: 3,
           ),
           IconButton(
-            onPressed: onCancel,
-            padding: EdgeInsets.zero,
-            iconSize: 16,
-            style: IconButton.styleFrom(foregroundColor: colors.error),
             icon: const Icon(Icons.stop),
+            iconSize: 20,
+            padding: EdgeInsets.zero,
+            style: IconButton.styleFrom(foregroundColor: colors.error),
+            onPressed: onCancel,
           ),
         ],
       ),

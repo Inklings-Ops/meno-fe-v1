@@ -9,10 +9,9 @@ class ScripturePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return const SizedBox(
       height: 56,
-      padding: const EdgeInsets.only(top: 16, bottom: 8),
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
             child: Row(
@@ -24,22 +23,9 @@ class ScripturePicker extends StatelessWidget {
             ),
           ),
           Spaces.horizontalSmall,
-          _PreviousAndNextButton(),
+          _PreviousAndNextButtons(),
         ],
       ),
-    );
-  }
-}
-
-class _ScriptureTranslation extends WatchingWidget {
-  const _ScriptureTranslation();
-
-  @override
-  Widget build(BuildContext context) {
-    final translation = watchValue((BibleManager m) => m.translation);
-    return _Container(
-      content: translation.toUpperCase(),
-      onTap: () => BibleTranslationsModal.show(context),
     );
   }
 }
@@ -50,22 +36,34 @@ class _ScriptureReference extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final reference = watchValue((BibleManager m) => m.reference);
-    return _Container(
-      content: reference,
-      onTap: () => BibleBooksModal.show(context),
+    return _Chip(label: reference, onTap: () => BibleBooksModal.show(context));
+  }
+}
+
+class _ScriptureTranslation extends WatchingWidget {
+  const _ScriptureTranslation();
+
+  @override
+  Widget build(BuildContext context) {
+    final translation = watchValue((BibleManager m) => m.translation);
+    return _Chip(
+      label: translation.toUpperCase(),
+      onTap: () => BibleTranslationsModal.show(context),
     );
   }
 }
 
-class _PreviousAndNextButton extends StatelessWidget {
-  const _PreviousAndNextButton();
+class _PreviousAndNextButtons extends WatchingWidget {
+  const _PreviousAndNextButtons();
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final buttonStyle = IconButton.styleFrom(
-      backgroundColor: colors.outlineVariant2,
-    );
+    final style = IconButton.styleFrom(backgroundColor: colors.outlineVariant2);
+
+    // Watch both book + chapter so buttons enable/disable reactively.
+    watchValue((BibleManager m) => m.book);
+    watchValue((BibleManager m) => m.chapter);
 
     final manager = di<BibleManager>();
 
@@ -77,8 +75,8 @@ class _PreviousAndNextButton extends StatelessWidget {
             icon: const Icon(MIcons.chevron_left),
             padding: EdgeInsets.zero,
             iconSize: 20,
-            style: buttonStyle,
-            onPressed: !manager.isFirstChapter ? manager.prevChapter.run : null,
+            style: style,
+            onPressed: manager.isFirstChapter ? null : manager.prevChapter.run,
           ),
         ),
         const SizedBox(width: 13),
@@ -88,8 +86,8 @@ class _PreviousAndNextButton extends StatelessWidget {
             icon: const Icon(MIcons.chevron_right),
             padding: EdgeInsets.zero,
             iconSize: 20,
-            style: buttonStyle,
-            onPressed: !manager.isLastChapter ? manager.nextChapter.run : null,
+            style: style,
+            onPressed: manager.isLastChapter ? null : manager.nextChapter.run,
           ),
         ),
       ],
@@ -97,28 +95,26 @@ class _PreviousAndNextButton extends StatelessWidget {
   }
 }
 
-class _Container extends StatelessWidget {
-  const _Container({required this.content, required this.onTap});
+class _Chip extends StatelessWidget {
+  const _Chip({required this.label, required this.onTap});
 
-  final String content;
+  final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
-    return InkWell(
+
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 32,
-        constraints: BoxConstraints.loose(const Size.fromHeight(32)),
-        padding: const EdgeInsets.symmetric(horizontal: Insets.lg),
-        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          borderRadius: Corners.circle,
           color: colors.outlineVariant2,
+          borderRadius: Corners.circle,
         ),
-        child: MText(content, style: textTheme.captionMedium),
+        child: MText(label, style: textTheme.captionMedium),
       ),
     );
   }

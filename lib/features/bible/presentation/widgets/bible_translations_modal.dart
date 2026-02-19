@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/bible/applications/applications.dart';
+import 'package:meno/features/bible/domain/domain.dart';
 import 'package:meno/features/bible/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BibleTranslationsModal extends StatelessWidget {
   const BibleTranslationsModal({super.key});
 
-  static Future<dynamic> show(BuildContext context) {
-    return showModalBottomSheet<dynamic>(
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
@@ -19,19 +20,20 @@ class BibleTranslationsModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
+
     return MModal(
       title: 'Bible Translations',
       builder: (context) => SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            MText('Offline Translations', style: textTheme.microRegular),
+            MText('Downloaded', style: textTheme.microRegular),
             Spaces.verticalSmall,
-            const OfflineBibleTranslationsList(),
+            const _DownloadedList(),
             Spaces.verticalXXLarge,
-            MText('Online Translations', style: textTheme.microRegular),
+            MText('Available Online', style: textTheme.microRegular),
             Spaces.verticalSmall,
-            const OnlineBibleTranslationsList(),
+            const _OnlineList(),
           ],
         ),
       ),
@@ -39,8 +41,8 @@ class BibleTranslationsModal extends StatelessWidget {
   }
 }
 
-class OfflineBibleTranslationsList extends WatchingWidget {
-  const OfflineBibleTranslationsList({super.key});
+class _DownloadedList extends WatchingWidget {
+  const _DownloadedList();
 
   @override
   Widget build(BuildContext context) {
@@ -49,24 +51,32 @@ class OfflineBibleTranslationsList extends WatchingWidget {
     );
 
     return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       primary: false,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: translations.length,
-      separatorBuilder: (context, i) => Spaces.verticalLarge,
+      separatorBuilder: (_, __) => Spaces.verticalLarge,
       itemBuilder: (context, index) {
-        final translation = translations[index];
+        final t = translations[index];
         return TranslationWidget(
-          key: ObjectKey(translation.name),
-          translation: translation,
-          onTap: () {},
+          key: ObjectKey(t.abbreviation),
+          translation: t,
+          onSelect: () => _applyTranslation(context, t),
         );
       },
     );
   }
+
+  void _applyTranslation(BuildContext context, Translation t) {
+    final manager = di<BibleManager>();
+    manager.translation.value = t.abbreviation;
+    manager.refreshChapter.run();
+    Navigator.of(context, rootNavigator: true).pop();
+  }
 }
 
-class OnlineBibleTranslationsList extends WatchingWidget {
-  const OnlineBibleTranslationsList({super.key});
+class _OnlineList extends WatchingWidget {
+  const _OnlineList();
 
   @override
   Widget build(BuildContext context) {
@@ -75,17 +85,24 @@ class OnlineBibleTranslationsList extends WatchingWidget {
     );
 
     return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       primary: false,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: translations.length,
-      separatorBuilder: (context, i) => Spaces.verticalLarge,
+      separatorBuilder: (_, __) => Spaces.verticalLarge,
       itemBuilder: (context, index) {
-        final translation = translations[index];
+        final t = translations[index];
         return TranslationWidget(
-          key: ObjectKey(translation),
-          translation: translation,
+          key: ObjectKey(t.abbreviation),
+          translation: t,
+          isDownloaded: false,
+          onDownload: () => _download(context, t),
         );
       },
     );
+  }
+
+  void _download(BuildContext context, Translation t) {
+    di<TranslationsManager>().downloadTranslation.run(t.abbreviation);
   }
 }

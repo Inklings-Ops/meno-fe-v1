@@ -136,10 +136,11 @@ void setupDependencies() {
     dependsOn: [IAuthRepository],
   );
 
-  di.registerSingletonWithDependencies(
-    () => TranslationsManager(di<IBibleRepository>()),
-    dependsOn: [IBibleRepository],
-  );
+  di.registerSingletonWithDependencies(() {
+    final manager = TranslationsManager(di<IBibleRepository>());
+    manager.initialize.run();
+    return manager;
+  }, dependsOn: [IBibleRepository]);
 
   di.registerSingletonWithDependencies(() {
     final manager = BibleManager(di<IBibleRepository>());
