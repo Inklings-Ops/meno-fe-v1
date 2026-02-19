@@ -1,4 +1,16 @@
-enum SyncStatus { synced, pending, conflict }
+enum SyncStatus {
+  synced('synced'),
+  pending('pending'),
+  conflict('conflict');
+
+  const SyncStatus(this.value);
+
+  static SyncStatus fromBool(bool syncPending) {
+    return syncPending ? SyncStatus.pending : SyncStatus.synced;
+  }
+
+  final String value;
+}
 
 extension SyncStatusX on SyncStatus {
   bool get isSynced => this == SyncStatus.synced;

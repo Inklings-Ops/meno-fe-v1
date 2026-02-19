@@ -7,7 +7,7 @@ class Note with EquatableMixin implements IEntity {
     required this.id,
     required this.title,
     required this.content,
-    this.pinned,
+    this.pinned = false,
     this.folder,
     this.creator,
     this.createdAt,
@@ -19,7 +19,7 @@ class Note with EquatableMixin implements IEntity {
   final Id id;
   final SingleLineString title;
   final MultiLineString content;
-  final bool? pinned;
+  final bool pinned;
   final NoteFolder? folder;
   final NoteCreator? creator;
   final DateTime? createdAt;

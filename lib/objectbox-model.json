@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:59681589110653738",
-      "lastPropertyId": "4:315220220233956907",
+      "lastPropertyId": "5:689720394495996777",
       "name": "TranslationDto",
       "properties": [
         {
@@ -27,6 +27,11 @@
         {
           "id": "4:315220220233956907",
           "name": "downloaded",
+          "type": 1
+        },
+        {
+          "id": "5:689720394495996777",
+          "name": "available",
           "type": 1
         }
       ],
@@ -75,10 +80,164 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:990965173351703839",
+      "lastPropertyId": "8:3886588324791615314",
+      "name": "NoteFolderDto",
+      "properties": [
+        {
+          "id": "1:2482137969759491726",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8023440449682537735",
+          "name": "id",
+          "indexId": "1:3584825549173762973",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:2186953031762977912",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:7382176390426741199",
+          "name": "numberOfNotes",
+          "type": 6
+        },
+        {
+          "id": "5:9083236399807897794",
+          "name": "pinned",
+          "type": 1
+        },
+        {
+          "id": "6:764813846680691757",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "7:492798467484872568",
+          "name": "syncPending",
+          "type": 1
+        },
+        {
+          "id": "8:3886588324791615314",
+          "name": "updatedAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:431983484412537902",
+      "lastPropertyId": "5:4902922655694206022",
+      "name": "NoteCreatorDto",
+      "properties": [
+        {
+          "id": "1:1238060569736240102",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7643442599350222462",
+          "name": "id",
+          "indexId": "2:4280980117577714783",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:6674540686932819719",
+          "name": "fullName",
+          "type": 9
+        },
+        {
+          "id": "4:7834060803664292843",
+          "name": "email",
+          "type": 9
+        },
+        {
+          "id": "5:4902922655694206022",
+          "name": "imageUrl",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:2015786496822452086",
+      "lastPropertyId": "10:499032068531445473",
+      "name": "NoteDto",
+      "properties": [
+        {
+          "id": "1:7646214577215660197",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2024052525577557536",
+          "name": "id",
+          "indexId": "3:2714625910852528873",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "3:4680286828413875186",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "4:7432039416641120384",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "5:1861024166363003708",
+          "name": "pinned",
+          "type": 1
+        },
+        {
+          "id": "6:447827869786687707",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "7:9191825751553465238",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "8:8458760549788722828",
+          "name": "syncPending",
+          "type": 1
+        },
+        {
+          "id": "9:3191957506761259248",
+          "name": "folderId",
+          "indexId": "4:8407684975677135187",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "NoteFolderDto"
+        },
+        {
+          "id": "10:499032068531445473",
+          "name": "creatorId",
+          "indexId": "5:2181938524488617512",
+          "type": 11,
+          "flags": 520,
+          "relationTarget": "NoteCreatorDto"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:4670190721821531198",
-  "lastIndexId": "0:0",
+  "lastEntityId": "5:2015786496822452086",
+  "lastIndexId": "5:2181938524488617512",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

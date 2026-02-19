@@ -6,8 +6,8 @@ class NoteFolder with EquatableMixin implements IEntity {
   const NoteFolder({
     required this.id,
     required this.title,
-    this.numberOfNotes,
-    this.pinned,
+    this.numberOfNotes = 0,
+    this.pinned = false,
     this.createdAt,
     this.notes = const <Note?>[],
     this.syncStatus = SyncStatus.synced,
@@ -17,8 +17,8 @@ class NoteFolder with EquatableMixin implements IEntity {
   final Id id;
 
   final SingleLineString title;
-  final int? numberOfNotes;
-  final bool? pinned;
+  final int numberOfNotes;
+  final bool pinned;
   final DateTime? createdAt;
   final List<Note?> notes;
   final SyncStatus syncStatus;
