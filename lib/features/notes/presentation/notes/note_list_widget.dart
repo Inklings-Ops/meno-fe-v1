@@ -25,7 +25,7 @@ class NoteListWidget extends WatchingWidget {
     final notes = watchValue((NotesManager m) => m.notes);
     final isLoading = watchValue((NotesManager m) => m.initialize.isRunning);
 
-    const padding = EdgeInsets.symmetric(horizontal: Insets.lg);
+    const padding = EdgeInsets.all(Insets.lg);
 
     if (isLoading) {
       return Padding(
@@ -42,14 +42,11 @@ class NoteListWidget extends WatchingWidget {
       return const Padding(padding: padding, child: EmptyNoteListWidget());
     }
 
-    return Padding(
-      padding: padding,
-      child: NotesList(
-        notes: notes,
-        showAddButton: showAddButton,
-        onNoteTap: (note) => _onNoteTap(context, note),
-        onOptionTap: _onOptionsTap,
-      ),
+    return NotesList(
+      notes: notes,
+      showAddButton: showAddButton,
+      onNoteTap: (note) => _onNoteTap(context, note),
+      onOptionTap: _onOptionsTap,
     );
   }
 

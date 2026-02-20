@@ -7,11 +7,6 @@ import 'package:meno/features/notes/domain/domain.dart';
 
 class NotesManager with MLogger implements Disposable {
   NotesManager(this._repository) {
-    searchQuery
-        .debounce(const Duration(milliseconds: 300))
-        .where((term) => term.length >= 3)
-        .listen((term, _) => _performSearch(term));
-
     pinnedFilter.listen((value, _) => _onPinnedFilterChanged(value));
   }
 
@@ -67,6 +62,12 @@ class NotesManager with MLogger implements Disposable {
 
   /// Updates [searchQuery] and re-subscribes the notes stream with the new
   /// keyword filter.
+  late final performSearch = Command.createSync<String, void>(
+    _performSearch,
+    initialValue: null,
+    // restriction: searchQuery.map((term) => term.isNotEmpty && term.length < 3),
+  );
+
   void _performSearch(String query) {
     if (searchQuery.value == query) return;
     searchQuery.value = query;
@@ -123,5 +124,6 @@ class NotesManager with MLogger implements Disposable {
     initialize.dispose();
     syncFromRemote.dispose();
     retryPendingSync.dispose();
+    performSearch.dispose();
   }
 }

@@ -1,4 +1,4 @@
-import 'package:meno/features/notes/domain/entities/note_folder.dart';
+import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/dtos/note_dto.dart';
 import 'package:meno/shared/domain/domain.dart' as domain;
 import 'package:objectbox/objectbox.dart';
@@ -83,7 +83,16 @@ extension NoteFolderDtoX on NoteFolderDto {
     pinned: pinned,
     createdAt: createdAt,
     syncStatus: domain.SyncStatus.fromBool(syncPending),
-    notes: notes.map((n) => n.toDomain).toList(),
+  );
+
+  NoteFolder toDomainWithNotes(List<Note> notes) => NoteFolder(
+    id: domain.Id.fromString(id),
+    title: domain.SingleLineString(title),
+    numberOfNotes: numberOfNotes,
+    pinned: pinned,
+    createdAt: createdAt,
+    syncStatus: domain.SyncStatus.fromBool(syncPending),
+    notes: notes,
   );
 }
 

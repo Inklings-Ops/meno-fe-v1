@@ -2,7 +2,6 @@ import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/dtos/note_creator_dto.dart';
 import 'package:meno/features/notes/infrastructure/dtos/note_folder_dto.dart';
 import 'package:meno/shared/domain/domain.dart' as domain;
-import 'package:meno/shared/shared.dart' hide Id;
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -103,7 +102,7 @@ extension NoteDtoX on NoteDto {
     pinned: pinned,
     createdAt: createdAt,
     updatedAt: updatedAt,
-    syncStatus: SyncStatus.fromBool(syncPending),
+    syncStatus: domain.SyncStatus.fromBool(syncPending),
     folder: folder.target?.toDomain,
     creator: creator.target?.toDomain,
   );

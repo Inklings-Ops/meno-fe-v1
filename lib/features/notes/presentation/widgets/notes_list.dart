@@ -10,6 +10,7 @@ class NotesList extends StatelessWidget {
     this.onNoteTap,
     this.onOptionTap,
     this.selectedNote,
+    this.padding,
     super.key,
   });
 
@@ -18,13 +19,13 @@ class NotesList extends StatelessWidget {
   final void Function(Note)? onNoteTap;
   final void Function(Note)? onOptionTap;
   final Note? selectedNote;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
       itemCount: notes.length,
+      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
       separatorBuilder: (context, index) => Spaces.verticalLarge,
       itemBuilder: (context, index) {
         final note = notes[index];

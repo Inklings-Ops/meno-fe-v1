@@ -306,11 +306,11 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
   @override
   Stream<List<NoteFolder>> watchFolders({String? keywords}) {
     late StreamController<List<NoteFolder>> controller;
-    StreamSubscription<List<NoteFolderDto>>? subscription;
+    StreamSubscription<List<NoteFolderDto>>? sub;
 
     controller = StreamController<List<NoteFolder>>(
       onListen: () {
-        subscription = _local
+        sub = _local
             .watchFolders(keywords: keywords)
             .listen(
               (dtos) => controller.add(dtos.map((d) => d.toDomain).toList()),
@@ -318,7 +318,7 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
             );
       },
       onCancel: () {
-        subscription?.cancel();
+        sub?.cancel();
         controller.close();
       },
     );
@@ -326,7 +326,7 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
     return controller.stream;
   }
 
-  /// Combines [watchFolder] (folder metadata) and (notes)
+  /// Combines [watchFolder] (folder metadata) and watchNotesInFolder (notes)
   /// into a single [NoteFolder] stream, emitting whenever either source
   /// changes.
   ///
@@ -338,8 +338,8 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
     final idStr = folderId.getOrCrash();
 
     late StreamController<NoteFolder> controller;
-    StreamSubscription<NoteFolderDto?>? folderSubscription;
-    StreamSubscription<List<NoteDto>>? notesSubscription;
+    StreamSubscription<NoteFolderDto?>? folderSub;
+    StreamSubscription<List<NoteDto>>? notesSub;
 
     // Mutable state shared between the two inner subscriptions.
     NoteFolderDto? latestFolder;
@@ -349,25 +349,27 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
       final folder = latestFolder;
       if (folder == null) return; // folder not yet loaded, wait
 
-      final notes = latestNotes.map((n) => n.toDomain).toList();
-      controller.add(folder.toDomain.copyWith(notes: notes));
+      // Map notes first — NoteDto.toDomain gives a metadata-only folder,
+      // so no circular traversal. Then compose via toDomainWithNotes.
+      final domainNotes = latestNotes.map((n) => n.toDomain).toList();
+      controller.add(folder.toDomainWithNotes(domainNotes));
     }
 
     controller = StreamController<NoteFolder>(
       onListen: () {
-        folderSubscription = _local.watchFolder(idStr).listen((dto) {
+        folderSub = _local.watchFolder(idStr).listen((dto) {
           latestFolder = dto;
           tryEmit();
         }, onError: controller.addError);
 
-        notesSubscription = _local.watchNotesInFolder(idStr).listen((dtos) {
+        notesSub = _local.watchNotesInFolder(idStr).listen((dtos) {
           latestNotes = dtos;
           tryEmit();
         }, onError: controller.addError);
       },
       onCancel: () {
-        folderSubscription?.cancel();
-        notesSubscription?.cancel();
+        folderSub?.cancel();
+        notesSub?.cancel();
         controller.close();
       },
     );
@@ -377,6 +379,7 @@ class NotesRepositoryImpl with MLogger implements INoteRepository {
 
   @override
   FutureOr<dynamic> onDispose() {
-    throw UnimplementedError();
+    _local.clearAll();
+    log.i('NoteRepositoryImpl: disposed — local store cleared');
   }
 }

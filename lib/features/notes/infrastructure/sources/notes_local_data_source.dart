@@ -83,7 +83,9 @@ class NotesLocalDataSource {
   // ========================================================================
   Stream<List<NoteFolderDto>> watchFolders({String? keywords}) {
     final builder = keywords != null && keywords.isNotEmpty
-        ? _folders.query(NoteFolderDto_.title.contains(keywords))
+        ? _folders.query(
+            NoteFolderDto_.title.contains(keywords, caseSensitive: false),
+          )
         : _folders.query();
 
     return builder
@@ -229,13 +231,23 @@ class NotesLocalDataSource {
 
     if (keywords != null && keywords.isNotEmpty) {
       final kwCondition = NoteDto_.title
-          .contains(keywords)
-          .or(NoteDto_.content.contains(keywords));
+          .contains(keywords, caseSensitive: false)
+          .or(NoteDto_.content.contains(keywords, caseSensitive: false));
       condition = condition == null ? kwCondition : condition & kwCondition;
     }
 
     final builder = _notes.query(condition);
 
     return builder.order(NoteDto_.updatedAt, flags: Order.descending);
+  }
+
+  /// Removes all notes, folders, and creators from the local store.
+  /// Called on logout before the user scope is destroyed.
+  void clearAll() {
+    _db.runWriteTx(() {
+      _notes.removeAll();
+      _folders.removeAll();
+      _creators.removeAll();
+    });
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NotesGroupWidget extends StatelessWidget {
@@ -31,11 +33,29 @@ class NotesGroupWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             MText('Notes', style: textTheme.captionMedium, color: foreground),
-            // TODO(gettoknowdavid): Add notes number
-            MText('0', style: textTheme.heading2Medium, color: foreground),
+            _ValueWidget(color: foreground),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ValueWidget extends WatchingWidget {
+  const _ValueWidget({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+
+    final notes = watchValue((NotesManager m) => m.notes);
+
+    return MText(
+      notes.length.toString(),
+      style: textTheme.heading2Medium,
+      color: color,
     );
   }
 }
