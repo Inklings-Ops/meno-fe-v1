@@ -7,6 +7,7 @@ import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
+import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
@@ -115,6 +116,8 @@ final class UserScopeHandler with MLogger implements Disposable {
           // ==================================================================
           // APPLICATION LAYER
           // ==================================================================
+
+          // Broadcasts
           di.registerSingletonWithDependencies(() {
             return BroadcastFormManager(
               userId: userId,
@@ -139,6 +142,7 @@ final class UserScopeHandler with MLogger implements Disposable {
             return manager;
           }, dependsOn: [IBroadcastRepository]);
 
+          // Live Broadcast/Stream Session
           di.registerSingletonWithDependencies(() async {
             final handler = LiveScopeHandler(
               repository: di<IBroadcastRepository>(),
@@ -147,6 +151,13 @@ final class UserScopeHandler with MLogger implements Disposable {
             await handler.initialize();
             return handler;
           }, dependsOn: [IBroadcastRepository]);
+
+          // Notes/Folders
+          di.registerSingletonWithDependencies(() {
+            final manager = NotesManager(di<INoteRepository>());
+            manager.initialize.run();
+            return manager;
+          }, dependsOn: [INoteRepository]);
         },
       );
     }
