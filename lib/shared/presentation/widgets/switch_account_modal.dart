@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/auth/application/auth_manager.dart';
-import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -62,11 +61,13 @@ class _AllSavedCredentialsContent extends WatchingWidget {
   Widget build(BuildContext context) {
     final manager = di<AuthManager>();
 
-    final userId = watchValue((AuthManager m) => m.userId);
     final accounts = watchValue((AuthManager m) => m.accounts);
+    final lastKnownUser = watchValue((AuthManager m) => m.lastKnownUser);
 
-    final selectedCredential = accounts[userId.toNullable() ?? Id.empty];
+    final lastKnownUserId = lastKnownUser.toNullable()?.id ?? Id.empty;
+
     final availableAccounts = accounts.values.toList();
+    final selectedCredential = accounts[lastKnownUserId];
 
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
@@ -77,15 +78,14 @@ class _AllSavedCredentialsContent extends WatchingWidget {
         ...availableAccounts.map((credential) {
           final user = credential.user;
           return RadioGroup(
-            key: ObjectKey(credential),
-            groupValue: selectedCredential,
+            key: ValueKey(user.id),
+            groupValue: selectedCredential?.user.id,
             onChanged: (value) {
-              // router.pop(context);
-              // ontext.read<AccountBloc>().add(AccountSwitchRequested(value!));
+              if (value == null) return;
+              manager.switchAccount.run(value);
             },
-            child: RadioListTile<UserCredential?>(
-              value: credential,
-              selected: credential == selectedCredential,
+            child: RadioListTile(
+              value: user.id,
               controlAffinity: ListTileControlAffinity.trailing,
               contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
               title: Row(

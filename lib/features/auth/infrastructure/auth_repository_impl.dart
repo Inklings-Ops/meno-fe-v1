@@ -203,9 +203,26 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<MenoException, Unit>> switchAccount(Id userId) {
-    // TODO: implement switchAccount
-    throw UnimplementedError();
+  Future<Either<MenoException, Unit>> switchAccount(Id userId) async {
+    try {
+      final targetIdStr = userId.getOrCrash();
+
+      // Overwrite hot keys in secure storage (Vault → Hot Cache)
+      await _local.switchActiveUser(targetIdStr);
+
+      // Look up the full credential from the in-memory vault
+      final cred = _accounts.value[userId];
+      if (cred == null) return const Left(MenoException('Account not found'));
+
+      _activeUserId.value = some(userId);
+      _lastKnownUser.value = some(cred.user);
+
+      return const Right(unit);
+    } on StorageException catch (e) {
+      return Left(MenoException(e.message));
+    } catch (e) {
+      return Left(MenoException(e.toString()));
+    }
   }
 
   @override

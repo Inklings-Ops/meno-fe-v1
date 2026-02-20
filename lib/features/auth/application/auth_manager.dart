@@ -22,6 +22,11 @@ final class AuthManager extends ChangeNotifier implements Disposable {
       _repository.logout,
       errorFilterFn: menoExceptionFilter,
     );
+
+    switchAccount = Command.createAsyncNoResult((userId) async {
+      final result = await _repository.switchAccount(userId);
+      return result.fold((error) => throw error, (_) {});
+    }, errorFilterFn: menoExceptionFilter);
   }
 
   final IAuthRepository _repository;
@@ -47,10 +52,13 @@ final class AuthManager extends ChangeNotifier implements Disposable {
 
   late final Command<void, void> logout;
 
+  late final Command<Id, void> switchAccount;
+
   @override
   FutureOr<dynamic> onDispose() {
     logout.dispose();
     login.dispose();
+    switchAccount.dispose();
   }
 }
 
