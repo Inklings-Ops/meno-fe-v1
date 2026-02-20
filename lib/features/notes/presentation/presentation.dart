@@ -1,12 +1,22 @@
 //GENERATED BARREL FILE
 export './folders/empty_folder_list_widget.dart';
+export './folders/empty_folder_page_widget.dart';
+export './folders/folder_clipper.dart';
+export './folders/folder_list_failure_widget.dart';
 export './folders/folder_list_widget.dart';
+export './note_editor/note_editor.dart';
+export './note_editor/note_editor_autosave_widget.dart';
+export './note_editor/note_editor_toolbar.dart';
+export './note_editor/note_editor_widget.dart';
+export './note_editor/note_title_field.dart';
 export './notes/delete_note_alert_dialog.dart';
 export './notes/empty_note_list_widget.dart';
 export './notes/live_notes_tab.dart';
 export './notes/note_card_options_modal.dart';
+export './notes/note_editor_page.dart';
 export './notes/note_list_failure_widget.dart';
 export './notes/note_list_widget.dart';
+export './widgets/folder_tag.dart';
 export './widgets/folders_group_widget.dart';
 export './widgets/folders_search_bar_widget.dart';
 export './widgets/note_card.dart';

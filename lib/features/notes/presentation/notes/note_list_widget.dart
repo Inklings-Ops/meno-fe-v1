@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/entities/note.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
@@ -40,7 +42,10 @@ class NoteListWidget extends WatchingWidget {
     return NotesList(
       notes: notes,
       showAddButton: showAddButton,
-      onNoteTap: (note) => _onNoteTap(context, note),
+      onNoteTap: (note) => context.pushNamed(
+        R.noteEditorName,
+        pathParameters: {'noteId': note.id.getOrCrash()},
+      ),
       onOptionTap: (note) => NoteCardOptionsModal.show(context, note: note),
     );
   }

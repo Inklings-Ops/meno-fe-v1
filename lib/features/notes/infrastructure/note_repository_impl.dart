@@ -41,6 +41,13 @@ class NotesRepositoryImpl with MLogger implements INotesRepository {
   }
 
   @override
+  Future<Either<MenoException, Note>> getNote(Id noteId) async {
+    final localDto = _local.findNoteByRemoteId(noteId.getOrCrash());
+    if (localDto != null) return Right(localDto.toDomain);
+    return const Left(MenoException('Note not found'));
+  }
+
+  @override
   Future<Either<MenoException, Note>> updateNote(Note note) async {
     final idStr = note.id.getOrCrash();
 

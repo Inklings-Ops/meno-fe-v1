@@ -89,12 +89,22 @@ final class MenoRouter {
       ),
 
       GoRoute(
-        path: R.liveSessionInitialization,
-        builder: (context, state) => const LiveSessionInitializationPage(),
+        name: R.noteEditorName,
+        path: '/note-editor/:noteId',
+        builder: (context, state) {
+          final noteId = state.pathParameters['noteId'];
+          return NoteEditorPage(noteId: noteId);
+        },
       ),
+
       // ######################################################################
       // LIVE BROADCAST TAB SHELL
       // ######################################################################
+      GoRoute(
+        path: R.liveSessionInitialization,
+        builder: (context, state) => const LiveSessionInitializationPage(),
+      ),
+
       StatefulShellRoute(
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state, navigationShell) => navigationShell,

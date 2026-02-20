@@ -11,6 +11,8 @@ abstract class INotesRepository implements Disposable {
   /// Live stream of all notes from local DB, sorted by updatedAt DESC.
   Stream<List<Note>> watchNotes({String? keywords, bool? pinned});
 
+  Future<Either<MenoException, Note>> getNote(Id noteId);
+
   /// Optimistically creates locally, then syncs to remote.
   Future<Either<MenoException, Note>> createNote(Note note);
 

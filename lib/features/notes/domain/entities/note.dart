@@ -16,6 +16,14 @@ class Note with EquatableMixin implements IEntity {
     this.syncStatus = SyncStatus.synced,
   });
 
+  factory Note.fromNewId(Id noteId) {
+    return Note(
+      id: noteId,
+      title: SingleLineString.empty,
+      content: MultiLineString.empty,
+    );
+  }
+
   @override
   final Id id;
   final SingleLineString title;
