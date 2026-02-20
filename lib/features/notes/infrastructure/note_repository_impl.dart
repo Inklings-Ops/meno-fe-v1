@@ -6,7 +6,7 @@ import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/value_objects/id.dart';
 
-class NotesRepositoryImpl with MLogger implements INoteRepository {
+class NotesRepositoryImpl with MLogger implements INotesRepository {
   const NotesRepositoryImpl({
     required NotesLocalDataSource local,
     required NotesRemoteDataSource remote,

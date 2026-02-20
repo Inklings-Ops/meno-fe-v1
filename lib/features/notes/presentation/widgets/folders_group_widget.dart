@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class FoldersGroupWidget extends StatelessWidget {
@@ -34,11 +36,29 @@ class FoldersGroupWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             MText('Folders', style: textTheme.captionMedium, color: foreground),
-            // TODO(gettoknowdavid): Add folders number
-            MText('0', style: textTheme.heading2Medium, color: foreground),
+            _ValueWidget(color: foreground),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ValueWidget extends WatchingWidget {
+  const _ValueWidget({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+
+    final notes = watchValue((FoldersManager m) => m.folders);
+
+    return MText(
+      notes.length.toString(),
+      style: textTheme.heading2Medium,
+      color: color,
     );
   }
 }

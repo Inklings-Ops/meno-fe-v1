@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class FolderSearchBarWidget extends StatefulWidget {
+class FolderSearchBarWidget extends WatchingStatefulWidget {
   const FolderSearchBarWidget({super.key});
 
   @override
@@ -9,42 +13,46 @@ class FolderSearchBarWidget extends StatefulWidget {
 }
 
 class _FolderSearchBarWidgetState extends State<FolderSearchBarWidget> {
-  final _controller = TextEditingController();
+  final _manager = di<FoldersManager>();
+
+  late TextEditingController _controller;
+
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: _manager.searchQuery.value);
+  }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
-  void _onSearchChanged(String query) {
-    // context.read<FoldersBloc>().add(FoldersSearchKeywordsChanged(query));
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 400), () {
+      _manager.performSearch.run(value);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
 
-    // final showSearch = context.select<FoldersBloc, bool>(
-    //       (bloc) => !(bloc.state.status == FoldersStatus.success &&
-    //       bloc.state.folders.isEmpty &&
-    //       (bloc.state.currentKeywords?.isEmpty ?? true)),
-    // );
-    //
-    // final isLoading = context.select<FoldersBloc, bool>(
-    //       (bloc) => bloc.state.status == FoldersStatus.loading,
-    // );
-    //
-    // if (!showSearch && !isLoading) return const SizedBox.shrink();
+    watchValue((FoldersManager m) => m.searchQuery);
 
     return Padding(
       padding: const EdgeInsets.all(Insets.lg),
       child: SizedBox(
         height: 40,
         child: SearchBar(
-          controller: _controller,
           elevation: const WidgetStatePropertyAll(0),
-          onChanged: _onSearchChanged,
+          controller: _controller,
+          onChanged: _onChanged,
           hintText: 'Search for folder',
           hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
           padding: const WidgetStatePropertyAll(
@@ -57,7 +65,7 @@ class _FolderSearchBarWidgetState extends State<FolderSearchBarWidget> {
                 icon: const Icon(Icons.clear, size: Insets.lg),
                 onPressed: () {
                   _controller.clear();
-                  _onSearchChanged('');
+                  _manager.searchQuery.value = '';
                 },
               ),
           ],

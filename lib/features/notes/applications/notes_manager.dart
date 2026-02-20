@@ -10,7 +10,7 @@ class NotesManager with MLogger implements Disposable {
     pinnedFilter.listen((value, _) => _onPinnedFilterChanged(value));
   }
 
-  final INoteRepository _repository;
+  final INotesRepository _repository;
 
   /// The live list of notes, filtered by [searchQuery] and [pinnedFilter].
   late final notes = ListNotifier<Note>(data: []);
@@ -65,7 +65,6 @@ class NotesManager with MLogger implements Disposable {
   late final performSearch = Command.createSync<String, void>(
     _performSearch,
     initialValue: null,
-    // restriction: searchQuery.map((term) => term.isNotEmpty && term.length < 3),
   );
 
   void _performSearch(String query) {

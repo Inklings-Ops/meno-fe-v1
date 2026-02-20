@@ -27,12 +27,7 @@ class NoteListWidget extends WatchingWidget {
 
     const padding = EdgeInsets.all(Insets.lg);
 
-    if (isLoading) {
-      return Padding(
-        padding: padding,
-        child: Skeletonizer(child: NotesList(notes: fakeNotes)),
-      );
-    }
+    if (isLoading) return Skeletonizer(child: NotesList(notes: fakeNotes));
 
     if (error != null && notes.isEmpty) {
       return const Padding(padding: padding, child: NoteListFailureWidget());

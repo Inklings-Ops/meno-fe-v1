@@ -106,7 +106,7 @@ final class UserScopeHandler with MLogger implements Disposable {
             dependsOn: [ApiClient],
           );
 
-          di.registerSingletonAsync<INoteRepository>(() async {
+          di.registerSingletonAsync<INotesRepository>(() async {
             return NotesRepositoryImpl(
               local: di<NotesLocalDataSource>(),
               remote: di<NotesRemoteDataSource>(),
@@ -154,10 +154,16 @@ final class UserScopeHandler with MLogger implements Disposable {
 
           // Notes/Folders
           di.registerSingletonWithDependencies(() {
-            final manager = NotesManager(di<INoteRepository>());
+            final manager = NotesManager(di<INotesRepository>());
             manager.initialize.run();
             return manager;
-          }, dependsOn: [INoteRepository]);
+          }, dependsOn: [INotesRepository]);
+
+          di.registerSingletonWithDependencies(() {
+            final manager = FoldersManager(di<INotesRepository>());
+            manager.initialize.run();
+            return manager;
+          }, dependsOn: [INotesRepository]);
         },
       );
     }

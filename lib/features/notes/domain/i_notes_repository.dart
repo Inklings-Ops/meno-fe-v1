@@ -4,7 +4,7 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/domain/entities/entities.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-abstract class INoteRepository implements Disposable {
+abstract class INotesRepository implements Disposable {
   // =========================================================================
   // NOTES
   // =========================================================================
