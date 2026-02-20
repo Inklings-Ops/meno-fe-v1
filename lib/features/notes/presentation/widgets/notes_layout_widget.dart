@@ -3,21 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class NotesPageLayout extends StatefulWidget {
-  const NotesPageLayout({
+class NotesLayoutWidget extends StatefulWidget {
+  const NotesLayoutWidget({
     required this.navigationShell,
     required this.children,
     Key? key,
-  }) : super(key: key ?? const ValueKey<String>('NotesPageLayout'));
+  }) : super(key: key ?? const ValueKey<String>('NotesLayoutWidget'));
 
   final StatefulNavigationShell navigationShell;
   final List<Widget> children;
 
   @override
-  State<NotesPageLayout> createState() => _NotesPageLayoutState();
+  State<NotesLayoutWidget> createState() => _NotesLayoutWidgetState();
 }
 
-class _NotesPageLayoutState extends State<NotesPageLayout> {
+class _NotesLayoutWidgetState extends State<NotesLayoutWidget> {
   late PageController _controller;
 
   @override

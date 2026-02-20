@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notes/applications/applications.dart';
+import 'package:meno/features/notes/domain/entities/note.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class NoteListWidget extends StatefulWidget {
+class NoteListWidget extends WatchingWidget {
   const NoteListWidget({
     super.key,
     this.showAddButton = false,
@@ -16,91 +20,53 @@ class NoteListWidget extends StatefulWidget {
   final bool isForLiveScaffold;
 
   @override
-  State<NoteListWidget> createState() => _NoteListWidgetState();
-}
-
-class _NoteListWidgetState extends State<NoteListWidget> {
-  final _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom) {
-      // context.read<NotesBloc>().add(const NotesFetchMoreNotesRequested());
-    }
-  }
-
-  // Helper to check if scroll position is near the bottom
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    return currentScroll >= (maxScroll * 0.9);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // final bloc = context.read<NotesBloc>();
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: Insets.lg),
-      child: EmptyNoteListWidget(),
-      // child: RefreshIndicator(
-      //   onRefresh: () async => bloc.add(const NotesFetchNotesRequested()),
-      //   child: BlocBuilder<NotesBloc, NotesState>(
-      //     builder: (context, state) {
-      //       switch (state.status) {
-      //         case NotesStatus.initial:
-      //         case NotesStatus.loading:
-      //           return Skeletonizer(child: NotesList(notes: fakeNotes));
-      //         case NotesStatus.failure:
-      //           return const NoteListFailureWidget();
-      //         case NotesStatus.loadingMore:
-      //         case NotesStatus.loadSuccess:
-      //           if (state.notes.isEmpty) return const EmptyNoteListWidget();
-      //           return NotesList(
-      //             notes: state.notes,
-      //             hasReachedMax: state.hasReachedMax,
-      //             scrollController: _scrollController,
-      //             showAddButton: widget.showAddButton,
-      //             onNoteTap: (note) => _onNoteTap(context, note),
-      //             onOptionTap: _onOptionsTap,
-      //             bottomWidget: (state.status == NotesStatus.loadingMore)
-      //                 ? const MLoadingIndicator.four()
-      //                 : null,
-      //           );
-      //       }
-      //     },
-      //   ),
-      // ),
+    final error = watchValue((NotesManager m) => m.error);
+    final notes = watchValue((NotesManager m) => m.notes);
+    final isLoading = watchValue((NotesManager m) => m.initialize.isRunning);
+
+    const padding = EdgeInsets.symmetric(horizontal: Insets.lg);
+
+    if (isLoading) {
+      return Padding(
+        padding: padding,
+        child: Skeletonizer(child: NotesList(notes: fakeNotes)),
+      );
+    }
+
+    if (error != null && notes.isEmpty) {
+      return const Padding(padding: padding, child: NoteListFailureWidget());
+    }
+
+    if (error == null && notes.isEmpty) {
+      return const Padding(padding: padding, child: EmptyNoteListWidget());
+    }
+
+    return Padding(
+      padding: padding,
+      child: NotesList(
+        notes: notes,
+        showAddButton: showAddButton,
+        onNoteTap: (note) => _onNoteTap(context, note),
+        onOptionTap: _onOptionsTap,
+      ),
     );
   }
 
-  // Future<void> _onNoteTap(BuildContext context, Note note) async {
-  // final bloc = context.read<NotesBloc>();
-  // Note? newN;
-  //
-  // if (widget.isForLiveScaffold) {
-  //   newN = await router.push<Note?>(Routes.notesTabEditorFull, extra: note);
-  // } else {
-  //   newN = await router.push<Note?>(Routes.noteEditor, extra: note);
-  // }
-  //
-  // if (newN != null) return bloc.add(NotesNoteReceived(newN));
-  // }
+  Future<void> _onNoteTap(BuildContext context, Note note) async {
+    // final bloc = context.read<NotesBloc>();
+    // Note? newN;
+    //
+    // if (widget.isForLiveScaffold) {
+    //  newN = await router.push<Note?>(Routes.notesTabEditorFull, extra: note);
+    // } else {
+    //   newN = await router.push<Note?>(Routes.noteEditor, extra: note);
+    // }
+    //
+    // if (newN != null) return bloc.add(NotesNoteReceived(newN));
+  }
 
-  // Future<void> _onOptionsTap(Note note) {
-  // return router.push(Routes.noteCardOptionsModal, extra: {'note': note});
-  // }
+  Future<void> _onOptionsTap(Note note) async {
+    // return router.push(Routes.noteCardOptionsModal, extra: {'note': note});
+  }
 }

@@ -194,7 +194,7 @@ final class MenoRouter {
               StatefulShellRoute(
                 builder: (context, state, navigationShell) => navigationShell,
                 navigatorContainerBuilder: (_, navigationShell, children) {
-                  return NotesPageLayout(
+                  return NotesLayoutWidget(
                     key: notesLayoutKey,
                     navigationShell: navigationShell,
                     children: children,

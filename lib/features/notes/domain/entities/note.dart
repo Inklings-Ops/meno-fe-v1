@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/features/notes/domain/entities/entities.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class Note with EquatableMixin implements IEntity {
   const Note({
@@ -70,3 +71,17 @@ class Note with EquatableMixin implements IEntity {
     );
   }
 }
+
+final fakeNotes = List.filled(
+  3,
+  Note(
+    id: Id.fromString('uniqueIdStr'),
+    title: SingleLineString(BoneMock.title),
+    content: MultiLineString(BoneMock.longParagraph),
+    folder: NoteFolder(
+      id: Id.fromString('id'),
+      title: SingleLineString(BoneMock.name),
+    ),
+    createdAt: DateTime.now(),
+  ),
+);

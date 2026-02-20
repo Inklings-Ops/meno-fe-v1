@@ -14,7 +14,7 @@ class NotesRemoteDataSource {
   /// Creates a new note on the remote and returns the persisted [NoteDto].
   Future<NoteDto> createNote(NoteDto dto) {
     return _api.post(
-      '/api/v1/notes',
+      '/notes',
       data: {'title': dto.title, 'content': dto.content},
       fromJson: NoteDto.fromJson,
     );
@@ -28,11 +28,11 @@ class NotesRemoteDataSource {
     String sortBy = 'updatedAt',
     String orderBy = 'DESC',
     int page = 1,
-    int size = 100,
+    int size = 50,
     CancelToken? cancelToken,
   }) {
     return _api.get(
-      '/api/v1/notes/',
+      '/notes/',
       fromJson: (json) =>
           PagedList<NoteDto>.fromJson(json, NoteDto.fromJson, listKey: 'notes'),
       queryParameters: {
@@ -50,13 +50,13 @@ class NotesRemoteDataSource {
 
   /// Fetches a single note by its remote id.
   Future<NoteDto> getNote(String noteId) {
-    return _api.get('/api/v1/notes/$noteId', fromJson: NoteDto.fromJson);
+    return _api.get('/notes/$noteId', fromJson: NoteDto.fromJson);
   }
 
   /// Updates an existing note.
   Future<NoteDto> updateNote(String noteId, NoteDto dto) {
     return _api.put(
-      '/api/v1/notes/$noteId',
+      '/notes/$noteId',
       data: {'title': dto.title, 'content': dto.content, 'pinned': dto.pinned},
       fromJson: NoteDto.fromJson,
     );
@@ -64,7 +64,7 @@ class NotesRemoteDataSource {
 
   /// Deletes a note. Throws [MenoException] on failure.
   Future<void> deleteNote(String noteId) {
-    return _api.deleteUnit('/api/v1/notes/$noteId');
+    return _api.deleteUnit('/notes/$noteId');
   }
 
   /// Adds a note to a folder and returns the updated [NoteDto] with the
@@ -74,7 +74,7 @@ class NotesRemoteDataSource {
     required String folderId,
   }) {
     return _api.put(
-      '/api/v1/notes/$noteId/folders/$folderId',
+      '/notes/$noteId/folders/$folderId',
       fromJson: NoteDto.fromJson,
     );
   }
@@ -84,7 +84,7 @@ class NotesRemoteDataSource {
     required String noteId,
     required String folderId,
   }) {
-    return _api.deleteUnit('/api/v1/notes/$noteId/folders/$folderId');
+    return _api.deleteUnit('/notes/$noteId/folders/$folderId');
   }
 
   // ===========================================================================
@@ -99,11 +99,11 @@ class NotesRemoteDataSource {
     String sortBy = 'createdAt',
     String orderBy = 'DESC',
     int page = 1,
-    int size = 100,
+    int size = 50,
     CancelToken? cancelToken,
   }) {
     return _api.get(
-      '/api/v1/folders/',
+      '/folders/',
       fromJson: (json) => PagedList<NoteFolderDto>.fromJson(
         json,
         NoteFolderDto.fromJson,
@@ -138,7 +138,7 @@ class NotesRemoteDataSource {
     CancelToken? cancelToken,
   }) {
     return _api.get(
-      '/api/v1/folders/$folderId',
+      '/folders/$folderId',
       fromJson: (json) =>
           FolderWithNotes.fromJson(json as Map<String, dynamic>),
       queryParameters: {
@@ -157,7 +157,7 @@ class NotesRemoteDataSource {
   /// Fetches a single folder together without notes.
   Future<NoteFolderDto> getFolder(String folderId, {CancelToken? cancelToken}) {
     return _api.get(
-      '/api/v1/folders/$folderId',
+      '/folders/$folderId',
       fromJson: NoteFolderDto.fromJson,
       queryParameters: {'includeNotes': false},
       cancelToken: cancelToken,
@@ -167,7 +167,7 @@ class NotesRemoteDataSource {
   /// Creates a new folder on the remote.
   Future<NoteFolderDto> createFolder(NoteFolderDto dto) {
     return _api.post(
-      '/api/v1/folders',
+      '/folders',
       data: {'title': dto.title},
       fromJson: NoteFolderDto.fromJson,
     );
@@ -176,7 +176,7 @@ class NotesRemoteDataSource {
   /// Updates an existing folder's title and/or pinned state.
   Future<NoteFolderDto> updateFolder(String folderId, NoteFolderDto dto) {
     return _api.put(
-      '/api/v1/folders/$folderId',
+      '/folders/$folderId',
       data: {'title': dto.title, 'pinned': dto.pinned},
       fromJson: NoteFolderDto.fromJson,
     );
@@ -184,6 +184,6 @@ class NotesRemoteDataSource {
 
   /// Deletes a folder. Notes inside are detached on the server side.
   Future<void> deleteFolder(String folderId) {
-    return _api.deleteUnit('/api/v1/folders/$folderId');
+    return _api.deleteUnit('/folders/$folderId');
   }
 }
