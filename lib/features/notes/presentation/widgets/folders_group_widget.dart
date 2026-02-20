@@ -52,11 +52,9 @@ class _ValueWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
-
-    final notes = watchValue((FoldersManager m) => m.folders);
-
+    final count = watchValue((FoldersManager m) => m.totalFoldersCount);
     return MText(
-      notes.length.toString(),
+      count.toString(),
       style: textTheme.heading2Medium,
       color: color,
     );

@@ -41,7 +41,7 @@ class NoteListWidget extends WatchingWidget {
       notes: notes,
       showAddButton: showAddButton,
       onNoteTap: (note) => _onNoteTap(context, note),
-      onOptionTap: _onOptionsTap,
+      onOptionTap: (note) => NoteCardOptionsModal.show(context, note: note),
     );
   }
 
@@ -56,9 +56,5 @@ class NoteListWidget extends WatchingWidget {
     // }
     //
     // if (newN != null) return bloc.add(NotesNoteReceived(newN));
-  }
-
-  Future<void> _onOptionsTap(Note note) async {
-    // return router.push(Routes.noteCardOptionsModal, extra: {'note': note});
   }
 }

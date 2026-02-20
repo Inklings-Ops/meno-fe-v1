@@ -12,11 +12,14 @@ class FoldersManager with MLogger implements Disposable {
 
   final folders = ListNotifier<NoteFolder>(data: []);
 
+  final totalFoldersCount = ValueNotifier<int>(0);
+
   final searchQuery = ValueNotifier<String>('');
 
   final error = ValueNotifier<MenoException?>(null);
 
   StreamSubscription<List<NoteFolder>>? _subscription;
+  StreamSubscription<List<NoteFolder>>? _countSubscription;
 
   late final initialize = Command.createAsyncNoParamNoResult(
     _resubscribe,
@@ -38,7 +41,15 @@ class FoldersManager with MLogger implements Disposable {
 
   Future<void> _resubscribe() async {
     await _subscription?.cancel();
+    await _countSubscription?.cancel();
+
     _subscription = null;
+    _countSubscription = null;
+
+    _countSubscription = _repository.watchFolders().listen(
+      (all) => totalFoldersCount.value = all.length,
+      onError: (_) {},
+    );
 
     final keywords = searchQuery.value.isNotEmpty ? searchQuery.value : null;
 
@@ -62,13 +73,19 @@ class FoldersManager with MLogger implements Disposable {
   @override
   FutureOr<dynamic> onDispose() {
     log.d('FoldersManager: Disposing...');
+
     folders.dispose();
     searchQuery.dispose();
     error.dispose();
+    totalFoldersCount.dispose();
 
     _subscription?.cancel();
     _subscription = null;
 
+    _countSubscription?.cancel();
+    _countSubscription = null;
+
     initialize.dispose();
+    performSearch.dispose();
   }
 }

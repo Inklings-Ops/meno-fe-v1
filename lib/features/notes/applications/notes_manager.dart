@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/domain/domain.dart';
+import 'package:meno/shared/domain/value_objects/id.dart';
 
 class NotesManager with MLogger implements Disposable {
   NotesManager(this._repository) {
@@ -15,6 +16,8 @@ class NotesManager with MLogger implements Disposable {
   /// The live list of notes, filtered by [searchQuery] and [pinnedFilter].
   late final notes = ListNotifier<Note>(data: []);
 
+  final totalNotesCount = ValueNotifier<int>(0);
+
   /// Current search query. Updating this re-subscribes the notes stream.
   final searchQuery = ValueNotifier<String>('');
 
@@ -25,6 +28,7 @@ class NotesManager with MLogger implements Disposable {
   final error = ValueNotifier<MenoException?>(null);
 
   StreamSubscription<List<Note>>? _subscription;
+  StreamSubscription<List<Note>>? _countSubscription;
 
   /// Subscribes to the local notes stream and triggers a remote sync.
   ///
@@ -67,6 +71,15 @@ class NotesManager with MLogger implements Disposable {
     initialValue: null,
   );
 
+  late final deleteNote = Command.createAsync<Id, bool?>(
+    (Id noteId) async {
+      final result = await _repository.deleteNote(noteId);
+      return result.fold((failure) => throw failure, (_) => true);
+    },
+    initialValue: null,
+    errorFilterFn: (e, _) => ErrorReaction.globalHandler,
+  );
+
   void _performSearch(String query) {
     if (searchQuery.value == query) return;
     searchQuery.value = query;
@@ -87,7 +100,15 @@ class NotesManager with MLogger implements Disposable {
 
   Future<void> _resubscribe() async {
     await _subscription?.cancel();
+    await _countSubscription?.cancel();
+
     _subscription = null;
+    _countSubscription = null;
+
+    _countSubscription = _repository.watchNotes().listen(
+      (all) => totalNotesCount.value = all.length,
+      onError: (_) {},
+    );
 
     final keywords = searchQuery.value.isEmpty ? null : searchQuery.value;
     final pinned = pinnedFilter.value;
@@ -114,15 +135,21 @@ class NotesManager with MLogger implements Disposable {
     log.d('NotesManager: Disposing...');
 
     _subscription?.cancel();
+    _subscription = null;
+
+    _countSubscription?.cancel();
+    _countSubscription = null;
 
     notes.dispose();
     searchQuery.dispose();
     pinnedFilter.dispose();
     error.dispose();
+    totalNotesCount.dispose();
 
     initialize.dispose();
     syncFromRemote.dispose();
     retryPendingSync.dispose();
     performSearch.dispose();
+    deleteNote.dispose();
   }
 }

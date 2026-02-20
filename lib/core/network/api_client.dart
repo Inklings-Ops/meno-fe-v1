@@ -422,8 +422,8 @@ class ApiClient {
   /// Parse the inner data field
   T _parseData<T>(dynamic data, FromJson<T> fromJson, bool isList) {
     if (data == null) {
-      // For Unit returns or empty responses
       if (T == Unit) return unit as T;
+      if (T == Null) return null as T; // ← add this
       throw const MenoException('Response data is null');
     }
 

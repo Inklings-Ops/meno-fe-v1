@@ -49,11 +49,9 @@ class _ValueWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
-
-    final notes = watchValue((NotesManager m) => m.notes);
-
+    final count = watchValue((NotesManager m) => m.totalNotesCount);
     return MText(
-      notes.length.toString(),
+      count.toString(),
       style: textTheme.heading2Medium,
       color: color,
     );
