@@ -54,9 +54,9 @@ class NoteRemoteDataSource {
   }
 
   /// Updates an existing note.
-  Future<NoteDto> updateNote(NoteDto dto) {
+  Future<NoteDto> updateNote(String noteId, NoteDto dto) {
     return _api.put(
-      '/api/v1/notes/${dto.id}',
+      '/api/v1/notes/$noteId',
       data: {'title': dto.title, 'content': dto.content, 'pinned': dto.pinned},
       fromJson: NoteDto.fromJson,
     );
@@ -174,9 +174,9 @@ class NoteRemoteDataSource {
   }
 
   /// Updates an existing folder's title and/or pinned state.
-  Future<NoteFolderDto> updateFolder(NoteFolderDto dto) {
+  Future<NoteFolderDto> updateFolder(String folderId, NoteFolderDto dto) {
     return _api.put(
-      '/api/v1/folders/${dto.id}',
+      '/api/v1/folders/$folderId',
       data: {'title': dto.title, 'pinned': dto.pinned},
       fromJson: NoteFolderDto.fromJson,
     );
