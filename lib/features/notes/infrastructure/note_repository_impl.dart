@@ -6,15 +6,15 @@ import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/value_objects/id.dart';
 
-class NoteRepositoryImpl with MLogger implements INoteRepository {
-  const NoteRepositoryImpl({
-    required NoteLocalDataSource local,
-    required NoteRemoteDataSource remote,
+class NotesRepositoryImpl with MLogger implements INoteRepository {
+  const NotesRepositoryImpl({
+    required NotesLocalDataSource local,
+    required NotesRemoteDataSource remote,
   }) : _local = local,
        _remote = remote;
 
-  final NoteLocalDataSource _local;
-  final NoteRemoteDataSource _remote;
+  final NotesLocalDataSource _local;
+  final NotesRemoteDataSource _remote;
 
   // ===========================================================================
   // NOTES — WRITES (optimistic)

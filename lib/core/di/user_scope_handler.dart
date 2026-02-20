@@ -7,6 +7,8 @@ import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
+import 'package:meno/features/notes/domain/domain.dart';
+import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
 final class UserScopeHandler with MLogger implements Disposable {
@@ -71,6 +73,7 @@ final class UserScopeHandler with MLogger implements Disposable {
             return client;
           });
 
+          // Broadcast
           di.registerSingletonWithDependencies(
             () => BroadcastLocalDataSource(di<LocalStorage>()),
             dependsOn: [LocalStorage],
@@ -90,6 +93,24 @@ final class UserScopeHandler with MLogger implements Disposable {
               remote: di<BroadcastRemoteDataSource>(),
             );
           }, dependsOn: [BroadcastLocalDataSource, BroadcastRemoteDataSource]);
+
+          // Notes/Folders
+          di.registerSingletonWithDependencies(
+            () => NotesLocalDataSource(di<Database>()),
+            dependsOn: [Database],
+          );
+
+          di.registerSingletonWithDependencies(
+            () => NotesRemoteDataSource(di<ApiClient>()),
+            dependsOn: [ApiClient],
+          );
+
+          di.registerSingletonAsync<INoteRepository>(() async {
+            return NotesRepositoryImpl(
+              local: di<NotesLocalDataSource>(),
+              remote: di<NotesRemoteDataSource>(),
+            );
+          }, dependsOn: [NotesLocalDataSource, NotesRemoteDataSource]);
 
           // ==================================================================
           // APPLICATION LAYER

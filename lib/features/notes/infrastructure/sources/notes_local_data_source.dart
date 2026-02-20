@@ -2,8 +2,8 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/objectbox.g.dart';
 
-class NoteLocalDataSource {
-  const NoteLocalDataSource(this._db);
+class NotesLocalDataSource {
+  const NotesLocalDataSource(this._db);
 
   final Database _db;
 

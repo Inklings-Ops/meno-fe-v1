@@ -3,8 +3,8 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 
-class NoteRemoteDataSource {
-  const NoteRemoteDataSource(this._api);
+class NotesRemoteDataSource {
+  const NotesRemoteDataSource(this._api);
 
   final ApiClient _api;
 
