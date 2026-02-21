@@ -78,6 +78,8 @@ class Note with EquatableMixin implements IEntity {
       syncStatus: syncStatus ?? this.syncStatus,
     );
   }
+
+  bool get isValid => id.isValid && title.isValid && content.isValid;
 }
 
 final fakeNotes = List.filled(

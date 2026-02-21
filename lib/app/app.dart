@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -28,6 +29,7 @@ class _MenoAppState extends State<MenoApp> {
     return MaterialApp.router(
       darkTheme: MTheme.dark,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [FlutterQuillLocalizations.delegate],
       routerConfig: di<MenoRouter>().routerConfig,
       theme: MTheme.light,
       scaffoldMessengerKey: rootScaffoldMessengerKey,

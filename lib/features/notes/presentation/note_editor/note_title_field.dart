@@ -1,20 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteTitleField extends WatchingWidget {
-  const NoteTitleField({super.key});
+  const NoteTitleField({required this.quillFocusNode, super.key});
+
+  /// When the user presses "next" / return, focus moves here.
+  final FocusNode quillFocusNode;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+
+    final manager = di<NoteEditorManager>();
+
+    final controller = createOnce(() {
+      final currentTitle = manager.title.value;
+      return TextEditingController(text: currentTitle.getOrElse((_) => ''));
+    });
+
+    callOnce((_) {
+      manager.title.listen((newTitle, _) {
+        final text = newTitle.getOrElse((_) => '');
+        if (controller.text != text) controller.text = text;
+      });
+    });
+
+    final status = watchValue((NoteEditorManager m) => m.status);
+
     return TextFormField(
-      // controller: textController,
-      // enabled: state is! NoteEditorSaveInProgress,
-      // onChanged: (value) {},
-      // validator: (_) {},
+      controller: controller,
       autofocus: true,
-      style: MTextTheme.of(context).heading3Bold,
+      style: textTheme.heading3Bold,
       textInputAction: TextInputAction.next,
+      maxLines: null,
+      keyboardType: TextInputType.multiline,
+      enabled: !status.isSaving,
+      onChanged: manager.onTitleChanged,
+      onFieldSubmitted: (_) => quillFocusNode.requestFocus(),
       decoration: InputDecoration(
         border: InputBorder.none,
         errorBorder: InputBorder.none,
@@ -24,7 +48,7 @@ class NoteTitleField extends WatchingWidget {
         focusedErrorBorder: InputBorder.none,
         hintText: 'Enter Title',
         contentPadding: EdgeInsets.zero,
-        hintStyle: MTextTheme.of(context).heading3Bold,
+        hintStyle: textTheme.heading3Bold.copyWith(color: Colors.grey.shade400),
       ),
     );
   }
