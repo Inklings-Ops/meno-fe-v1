@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logger/logger.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
-import 'package:meno/features/notes/presentation/folders/folder_clipper.dart';
+import 'package:meno/features/notes/infrastructure/dtos/note_folder_dto.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
