@@ -10,94 +10,115 @@ import 'package:meno/shared/domain/domain.dart';
 const _kAutoSaveDebounce = Duration(milliseconds: 1500);
 
 class NoteEditorManager with MLogger implements Disposable {
-  NoteEditorManager({required INotesRepository repository, required Id? noteId})
-    : _repository = repository,
-      _noteId = noteId;
+  NoteEditorManager({
+    required INotesRepository repository,
+    required String? noteId,
+  }) : _repository = repository,
+       _noteId = noteId;
 
   final INotesRepository _repository;
-  final Id? _noteId;
+  final String? _noteId;
 
+  // Flips to true after the first successful createNote call so that
+  // all subsequent persists use updateNote.
+  bool _hasBeenCreated = false;
+
+  late Note _note;
   Timer? _debounce;
 
-  /// The canonical note held in memory during the editing session.
-  final note = ValueNotifier<Note>(Note.empty);
-
-  /// Title mirror — kept in sync so the title TextField can observe it
-  /// without coupling to [note] directly (avoids cursor jumps).
-  final title = ValueNotifier<SingleLineString>(SingleLineString.empty);
-
-  final status = ValueNotifier<NoteEditorStatus>(NoteEditorStatus.idle);
-
+  // =========================================================================
+  // PUBLIC STATE
+  // =========================================================================
+  final note = ValueNotifier<Note>(.empty);
+  final title = ValueNotifier<SingleLineString>(.empty);
+  final status = ValueNotifier<NoteEditorStatus>(.idle);
   final error = ValueNotifier<MenoException?>(null);
 
+  // =========================================================================
+  // INITIALISATION
+  // =========================================================================
+
+  /// Must be called once after the manager is registered in the scope.
+  /// For existing notes, reads from the local ObjectBox cache (instant).
+  /// For new notes, primes an empty note with a fresh ID.
   late final initialize = Command.createAsyncNoParamNoResult(() async {
     if (_noteId == null) {
-      final tempId = Id.unique();
-      note.value = Note.fromNewId(tempId);
-      title.value = SingleLineString.empty;
+      _note = Note.fromNewId(Id.unique());
     } else {
-      final result = await _repository.getNote(_noteId);
-      result.fold((failure) => throw failure, (success) {
-        note.value = success;
-        title.value = success.title;
-      });
+      final id = Id.fromString(_noteId);
+      final result = await _repository.getNote(id);
+      result.fold((failure) => throw failure, (success) => _note = success);
+      _hasBeenCreated = true;
     }
+    // Synchronously prime the notifiers before the widget's first build
+    note.value = _note;
+    title.value = _note.title;
   }, errorFilterFn: menoExceptionFilter);
 
+  // =========================================================================
+  // EDITOR CHANGE HANDLERS
+  // =========================================================================
   void onTitleChanged(String value) {
     final newTitle = SingleLineString(value);
     title.value = newTitle;
-    note.value = note.value.copyWith(title: newTitle);
+    _note = _note.copyWith(title: newTitle);
     _markDirtyAndScheduleAutoSave();
   }
 
   void onContentChanged(String deltaJson) {
-    final newContent = MultiLineString(deltaJson);
-    note.value = note.value.copyWith(content: newContent);
+    _note = _note.copyWith(content: MultiLineString(deltaJson));
     _markDirtyAndScheduleAutoSave();
   }
 
+  // =========================================================================
+  // SAVE
+  // =========================================================================
   Future<void> saveNow() async {
     _debounce?.cancel();
     await _persist();
   }
 
   void _markDirtyAndScheduleAutoSave() {
-    status.value = NoteEditorStatus.dirty;
+    status.value = .dirty;
     _debounce?.cancel();
-    _debounce = Timer.periodic(_kAutoSaveDebounce, (_) async => _persist());
+    _debounce = Timer(_kAutoSaveDebounce, _persist);
   }
 
   Future<void> _persist() async {
-    final current = note.value;
-
     if (status.value.isSaving) return;
-    if (!current.title.isValid) return;
+    if (!_note.title.isValid) return;
 
-    status.value = NoteEditorStatus.saving;
+    status.value = .saving;
     error.value = null;
 
-    final exists = _noteId != null && current.isValid;
-    final result = exists
-        ? await _repository.updateNote(current)
-        : await _repository.createNote(current);
+    final result = _hasBeenCreated
+        ? await _repository.updateNote(_note)
+        : await _repository.createNote(_note);
 
     result.fold(
       (failure) {
         log.e('NoteEditorManager: persist failed — $failure');
         error.value = failure;
-        status.value = NoteEditorStatus.failure;
+        status.value = .failure;
       },
-      (saved) {
-        // Update in-memory note with the server-confirmed version
-        // (e.g. real ID after first create, updated timestamps).
-        note.value = saved;
-        status.value = NoteEditorStatus.saved;
-        log.d('NoteEditorManager: note saved — ${saved.id}');
+      (success) {
+        _hasBeenCreated = true;
+        note.value = success;
+        title.value = success.title;
+        status.value = .saved;
+        log.d('''
+NoteEditorManager: note saved:
+    id: ${success.id.getOrCrash()},
+    title: ${success.title.getOrCrash()},
+    content: ${success.content.getOrCrash()},
+''');
       },
     );
   }
 
+  // =========================================================================
+  // DISPOSE
+  // =========================================================================
   @override
   FutureOr<dynamic> onDispose() {
     log.i('NoteEditorManager: Disposing...');

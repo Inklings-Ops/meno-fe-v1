@@ -60,5 +60,5 @@ class R {
 
   static const String noteEditorName = 'note-editor';
 
-  static String noteEditor([String? noteId]) => '/note-editor/$noteId';
+  static String noteEditor([String? id]) => '/note-editor/${id ?? 'new'}';
 }

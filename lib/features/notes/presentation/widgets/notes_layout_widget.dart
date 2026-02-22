@@ -31,14 +31,14 @@ class _NotesLayoutWidgetState extends State<NotesLayoutWidget> {
           addTopMargin: true,
           padding: EdgeInsets.zero,
         ),
-        // actions: [
-        //   switch (currentIndex) {
-        //     0 => const NewNoteActionButton(),
-        //     1 => const NewFolderActionButton(),
-        //     _ => const SizedBox(),
-        //   },
-        //   Spaces.horizontalLarge,
-        // ],
+        actions: [
+          switch (currentIndex) {
+            0 => const NewNoteActionButton(),
+            1 => const NewFolderActionButton(),
+            _ => const SizedBox(),
+          },
+          Spaces.horizontalLarge,
+        ],
       ),
       body: Column(
         children: [

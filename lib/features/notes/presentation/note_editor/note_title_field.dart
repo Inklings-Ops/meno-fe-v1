@@ -6,7 +6,6 @@ import 'package:meno_design_system/meno_design_system.dart';
 class NoteTitleField extends WatchingWidget {
   const NoteTitleField({required this.quillFocusNode, super.key});
 
-  /// When the user presses "next" / return, focus moves here.
   final FocusNode quillFocusNode;
 
   @override
@@ -18,13 +17,6 @@ class NoteTitleField extends WatchingWidget {
     final controller = createOnce(() {
       final currentTitle = manager.title.value;
       return TextEditingController(text: currentTitle.getOrElse((_) => ''));
-    });
-
-    callOnce((_) {
-      manager.title.listen((newTitle, _) {
-        final text = newTitle.getOrElse((_) => '');
-        if (controller.text != text) controller.text = text;
-      });
     });
 
     final status = watchValue((NoteEditorManager m) => m.status);

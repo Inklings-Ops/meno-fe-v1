@@ -92,7 +92,8 @@ final class MenoRouter {
         name: R.noteEditorName,
         path: '/note-editor/:noteId',
         builder: (context, state) {
-          final noteId = state.pathParameters['noteId'];
+          final rawId = state.pathParameters['noteId'];
+          final noteId = (rawId == null || rawId == 'new') ? null : rawId;
           return NoteEditorPage(noteId: noteId);
         },
       ),

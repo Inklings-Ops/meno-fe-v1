@@ -1,16 +1,12 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/features/notes/applications/note_editor_manager.dart';
-import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
+import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-
-/// The heart of the people will be opened to receive the
-/// gospel to them through any available means (2 Thessalonians 3:1)
 
 class NoteEditorWidget extends WatchingWidget {
   const NoteEditorWidget({super.key});
@@ -18,52 +14,36 @@ class NoteEditorWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = MTextTheme.of(context);
-    final colors = MColorScheme.of(context);
 
     final manager = di<NoteEditorManager>();
+    final scrollController = createOnce(ScrollController.new);
+    final quillScrollController = createOnce(ScrollController.new);
+    final quillFocusNode = createOnce(FocusNode.new);
+    final quillController = createOnce(QuillController.basic);
 
-    final scrollController = createOnce<ScrollController>(ScrollController.new);
+    callOnce((_) {
+      final content = manager.note.value.content;
+      if (!content.isValid) return;
 
-    final quillController = createOnce<QuillController>(QuillController.basic);
+      // Attempt to load note content if the note is an existing note
+      // On failure or in case of a malformed note, show the error snack bar
+      try {
+        final deltaJson = jsonDecode(content.getOrCrash()) as List<dynamic>;
+        quillController.document = Document.fromJson(deltaJson);
+      } catch (_) {
+        context.showErrorSnackBar('Error loading note content');
+      }
 
-    final quillFocusNode = createOnce<FocusNode>(FocusNode.new);
-
-    final quillChangeSub = createOnce<StreamSubscription<DocChange>>(() {
-      void onQuillDocumentChanged(DocChange change) {
+      // Listen for changes on the Quill Editor to update the note content
+      quillController.document.changes.listen((change) {
         if (change.change.isEmpty) return;
         final delta = jsonEncode(quillController.document.toDelta().toJson());
         manager.onContentChanged(delta);
-      }
-
-      return quillController.document.changes.listen(onQuillDocumentChanged);
-    });
-
-    void loadContentFromNote(Note note) {
-      if (!note.content.isValid) return;
-      try {
-        final json = jsonDecode(note.content.getOrCrash()) as List<dynamic>;
-        quillController.document = Document.fromJson(json);
-      } catch (_) {
-        // Malformed delta — leave editor empty.
-      }
-    }
-
-    callOnce((_) {
-      loadContentFromNote(manager.note.value);
-      manager.note.listen((note, _) {
-        // Only re-populate if note identity changed(new → existing transition).
-        if (note.id == manager.note.value.id) return;
-        loadContentFromNote(note);
       });
     });
 
-    onDispose(quillChangeSub.cancel);
-
-    // Watch save status to update AppBar indicator.
+    final folder = watchValue((NoteEditorManager m) => m.note).folder;
     final status = watchValue((NoteEditorManager m) => m.status);
-
-    // Watch folder for folder tag row.
-    final note = watchValue((NoteEditorManager m) => m.note);
 
     return Scaffold(
       appBar: AppBar(
@@ -72,21 +52,7 @@ class NoteEditorWidget extends WatchingWidget {
         leading: const MNotesBackButton(title: 'Notes'),
         actions: [
           NoteEditorAutosaveWidget(status: status),
-          // "Done" button when keyboard is up
-          ListenableBuilder(
-            listenable: quillFocusNode,
-            builder: (context, _) {
-              if (!quillFocusNode.hasFocus) return const SizedBox.shrink();
-              return TextButton(
-                onPressed: quillFocusNode.unfocus,
-                child: MText(
-                  'Done',
-                  color: colors.primary,
-                  style: textTheme.captionMedium,
-                ),
-              );
-            },
-          ),
+          _DoneButton(focusNode: quillFocusNode),
           Spaces.horizontalLarge,
         ],
       ),
@@ -102,11 +68,11 @@ class NoteEditorWidget extends WatchingWidget {
                     child: NoteTitleField(quillFocusNode: quillFocusNode),
                   ),
                 ),
-                if (note.folder != null)
+                if (folder != null)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-                      child: FolderTag(folder: note.folder!),
+                      child: FolderTag(folder: folder),
                     ),
                   ),
                 SliverFillRemaining(
@@ -116,7 +82,7 @@ class NoteEditorWidget extends WatchingWidget {
                     child: QuillEditor.basic(
                       controller: quillController,
                       focusNode: quillFocusNode,
-                      scrollController: ScrollController(),
+                      scrollController: quillScrollController,
                       config: QuillEditorConfig(
                         padding: MediaQuery.viewInsetsOf(context),
                         placeholder: 'Start writing...',
@@ -150,8 +116,33 @@ class NoteEditorWidget extends WatchingWidget {
           ),
         ],
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: NoteEditorToolbar(controller: contentController),
+    );
+  }
+}
+
+class _DoneButton extends StatelessWidget {
+  const _DoneButton({required this.focusNode});
+
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+    final colors = MColorScheme.of(context);
+
+    return ListenableBuilder(
+      listenable: focusNode,
+      builder: (context, _) {
+        if (!focusNode.hasFocus) return const SizedBox.shrink();
+        return TextButton(
+          onPressed: focusNode.unfocus,
+          child: MText(
+            'Done',
+            color: colors.primary,
+            style: textTheme.captionMedium,
+          ),
+        );
+      },
     );
   }
 }

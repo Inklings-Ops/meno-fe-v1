@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
-import 'package:meno/shared/domain/value_objects/id.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteEditorPage extends WatchingWidget {
@@ -17,12 +16,8 @@ class NoteEditorPage extends WatchingWidget {
     pushScope(
       init: (getIt) {
         getIt.registerLazySingleton<NoteEditorManager>(() {
-          final effectiveNoteId = noteId != null
-              ? Id.fromString(noteId!)
-              : null;
-
           return NoteEditorManager(
-            noteId: effectiveNoteId,
+            noteId: noteId,
             repository: di<INotesRepository>(),
           );
         }, onCreated: (instance) => instance.initialize.run());
@@ -67,17 +62,7 @@ class _ContentState extends State<_Content> with WidgetsBindingObserver {
 
   Future<void> _onPopInvoked(bool didPop) async {
     if (didPop) return;
-
-    // If nothing to save, pop immediately.
-    if (!_manager.status.value.isDirty) {
-      if (mounted) context.pop();
-      return;
-    }
-
-    // Fire the save and let the optimistic local write complete before popping.
-    // The remote part is fire-and-forget inside the repository.
-    await _manager.saveNow();
-
+    if (_manager.status.value.isDirty) await _manager.saveNow();
     if (mounted) context.pop();
   }
 
