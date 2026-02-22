@@ -5,7 +5,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/features/notes/applications/note_editor_manager.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
-import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteEditorWidget extends WatchingWidget {
@@ -23,15 +22,13 @@ class NoteEditorWidget extends WatchingWidget {
 
     callOnce((_) {
       final content = manager.note.value.content;
-      if (!content.isValid) return;
-
       // Attempt to load note content if the note is an existing note
       // On failure or in case of a malformed note, show the error snack bar
-      try {
-        final deltaJson = jsonDecode(content.getOrCrash()) as List<dynamic>;
-        quillController.document = Document.fromJson(deltaJson);
-      } catch (_) {
-        context.showErrorSnackBar('Error loading note content');
+      if (content.isValid) {
+        try {
+          final json = jsonDecode(content.getOrCrash()) as List<dynamic>;
+          quillController.document = Document.fromJson(json);
+        } catch (_) {}
       }
 
       // Listen for changes on the Quill Editor to update the note content
@@ -44,6 +41,9 @@ class NoteEditorWidget extends WatchingWidget {
 
     final folder = watchValue((NoteEditorManager m) => m.note).folder;
     final status = watchValue((NoteEditorManager m) => m.status);
+
+    const padding = EdgeInsets.symmetric(horizontal: Insets.lg);
+    const contentPadding = EdgeInsets.symmetric(horizontal: 20);
 
     return Scaffold(
       appBar: AppBar(
@@ -64,21 +64,21 @@ class NoteEditorWidget extends WatchingWidget {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    padding: padding,
                     child: NoteTitleField(quillFocusNode: quillFocusNode),
                   ),
                 ),
                 if (folder != null)
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                      padding: padding,
                       child: FolderTag(folder: folder),
                     ),
                   ),
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    padding: contentPadding,
                     child: QuillEditor.basic(
                       controller: quillController,
                       focusNode: quillFocusNode,
@@ -89,14 +89,14 @@ class NoteEditorWidget extends WatchingWidget {
                         expands: true,
                         customStyles: DefaultStyles(
                           paragraph: DefaultTextBlockStyle(
-                            textTheme.captionRegular,
+                            textTheme.bodyRegular,
                             HorizontalSpacing.zero,
                             VerticalSpacing.zero,
                             VerticalSpacing.zero,
                             null,
                           ),
                           placeHolder: DefaultTextBlockStyle(
-                            textTheme.captionRegular,
+                            textTheme.bodyRegular,
                             HorizontalSpacing.zero,
                             VerticalSpacing.zero,
                             VerticalSpacing.zero,

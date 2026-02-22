@@ -23,14 +23,12 @@ class NoteEditorManager with MLogger implements Disposable {
   // all subsequent persists use updateNote.
   bool _hasBeenCreated = false;
 
-  late Note _note;
   Timer? _debounce;
 
   // =========================================================================
   // PUBLIC STATE
   // =========================================================================
   final note = ValueNotifier<Note>(.empty);
-  final title = ValueNotifier<SingleLineString>(.empty);
   final status = ValueNotifier<NoteEditorStatus>(.idle);
   final error = ValueNotifier<MenoException?>(null);
 
@@ -43,16 +41,13 @@ class NoteEditorManager with MLogger implements Disposable {
   /// For new notes, primes an empty note with a fresh ID.
   late final initialize = Command.createAsyncNoParamNoResult(() async {
     if (_noteId == null) {
-      _note = Note.fromNewId(Id.unique());
+      note.value = Note.fromNewId(Id.unique());
     } else {
       final id = Id.fromString(_noteId);
       final result = await _repository.getNote(id);
-      result.fold((failure) => throw failure, (success) => _note = success);
+      result.fold((error) => throw error, (success) => note.value = success);
       _hasBeenCreated = true;
     }
-    // Synchronously prime the notifiers before the widget's first build
-    note.value = _note;
-    title.value = _note.title;
   }, errorFilterFn: menoExceptionFilter);
 
   // =========================================================================
@@ -60,13 +55,13 @@ class NoteEditorManager with MLogger implements Disposable {
   // =========================================================================
   void onTitleChanged(String value) {
     final newTitle = SingleLineString(value);
-    title.value = newTitle;
-    _note = _note.copyWith(title: newTitle);
+    note.value = note.value.copyWith(title: newTitle);
     _markDirtyAndScheduleAutoSave();
   }
 
   void onContentChanged(String deltaJson) {
-    _note = _note.copyWith(content: MultiLineString(deltaJson));
+    final newContent = MultiLineString(deltaJson);
+    note.value = note.value.copyWith(content: newContent);
     _markDirtyAndScheduleAutoSave();
   }
 
@@ -86,14 +81,16 @@ class NoteEditorManager with MLogger implements Disposable {
 
   Future<void> _persist() async {
     if (status.value.isSaving) return;
-    if (!_note.title.isValid) return;
+
+    final currentNote = note.value;
+    if (!currentNote.isValid) return;
 
     status.value = .saving;
     error.value = null;
 
     final result = _hasBeenCreated
-        ? await _repository.updateNote(_note)
-        : await _repository.createNote(_note);
+        ? await _repository.updateNote(currentNote)
+        : await _repository.createNote(currentNote);
 
     result.fold(
       (failure) {
@@ -104,14 +101,8 @@ class NoteEditorManager with MLogger implements Disposable {
       (success) {
         _hasBeenCreated = true;
         note.value = success;
-        title.value = success.title;
         status.value = .saved;
-        log.d('''
-NoteEditorManager: note saved:
-    id: ${success.id.getOrCrash()},
-    title: ${success.title.getOrCrash()},
-    content: ${success.content.getOrCrash()},
-''');
+        log.d('NoteEditorManager: note saved: ${success.id.getOrCrash()}');
       },
     );
   }
@@ -123,7 +114,6 @@ NoteEditorManager: note saved:
   FutureOr<dynamic> onDispose() {
     log.i('NoteEditorManager: Disposing...');
     note.dispose();
-    title.dispose();
     status.dispose();
     error.dispose();
 

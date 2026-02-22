@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:go_router/go_router.dart';
-import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 

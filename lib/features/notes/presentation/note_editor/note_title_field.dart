@@ -15,8 +15,8 @@ class NoteTitleField extends WatchingWidget {
     final manager = di<NoteEditorManager>();
 
     final controller = createOnce(() {
-      final currentTitle = manager.title.value;
-      return TextEditingController(text: currentTitle.getOrElse((_) => ''));
+      final currentTitle = manager.note.value.title.getOrElse((_) => '');
+      return TextEditingController(text: currentTitle);
     });
 
     final status = watchValue((NoteEditorManager m) => m.status);
