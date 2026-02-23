@@ -46,7 +46,7 @@ class NoteListWidget extends WatchingWidget {
         R.noteEditorName,
         pathParameters: {'noteId': note.id.getOrCrash()},
       ),
-      onOptionTap: (note) => NoteCardOptionsModal.show(context, note: note),
+      onOptionTap: (note) => NoteCardOptionsModal.show(context, note),
     );
   }
 }

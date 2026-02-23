@@ -16,6 +16,7 @@ class FolderManager with MLogger implements Disposable {
 
   final folder = ValueNotifier<NoteFolder>(.empty);
   final notes = ListNotifier<Note>(data: []);
+  final searchQuery = ValueNotifier<String>('');
   final totalNotesCount = ValueNotifier<int>(0);
   final error = ValueNotifier<MenoException?>(null);
 
@@ -24,6 +25,35 @@ class FolderManager with MLogger implements Disposable {
 
   late final initialize = Command.createAsyncNoParamNoResult(
     _resubscribe,
+    errorFilterFn: menoExceptionFilter,
+  );
+
+  late final performSearch = Command.createSync<String, void>(
+    _onSearchChanged,
+    initialValue: null,
+  );
+
+  late final assignNotesToFolder = Command.createAsync<List<Id>, AssignResult>(
+    (List<Id> noteIds) async {
+      if (noteIds.isEmpty) throw const MenoException('No notes selected');
+      return _repository.assignNotesToFolder(
+        noteIds: noteIds,
+        folderId: _folderId,
+      );
+    },
+    initialValue: AssignResult.empty,
+    errorFilterFn: menoExceptionFilter,
+  );
+
+  late final unassignNotesToFolder = Command.createAsync(
+    (List<Id> noteIds) async {
+      if (noteIds.isEmpty) return null;
+      return _repository.unassignNotesFromFolder(
+        noteIds: noteIds,
+        folderId: _folderId,
+      );
+    },
+    initialValue: null,
     errorFilterFn: menoExceptionFilter,
   );
 
@@ -52,6 +82,12 @@ class FolderManager with MLogger implements Disposable {
         .listen((event) => totalNotesCount.value = event.notes.length);
   }
 
+  void _onSearchChanged(String query) {
+    if (searchQuery.value == query) return;
+    searchQuery.value = query;
+    _resubscribe();
+  }
+
   @override
   FutureOr<dynamic> onDispose() {
     log.d('FolderManager: Disposing...');
@@ -60,8 +96,12 @@ class FolderManager with MLogger implements Disposable {
     notes.dispose();
     totalNotesCount.dispose();
     error.dispose();
+    searchQuery.dispose();
 
     initialize.dispose();
+    assignNotesToFolder.dispose();
+    unassignNotesToFolder.dispose();
+    performSearch.dispose();
 
     _subscription?.cancel();
     _subscription = null;

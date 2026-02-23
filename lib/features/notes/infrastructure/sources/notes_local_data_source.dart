@@ -2,7 +2,7 @@ import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/objectbox.g.dart';
 
-class NotesLocalDataSource {
+class NotesLocalDataSource with MLogger {
   const NotesLocalDataSource(this._db);
 
   final Database _db;
@@ -76,6 +76,61 @@ class NotesLocalDataSource {
     if (existing == null) return;
     existing.syncPending = false;
     _notes.put(existing);
+  }
+
+  void batchAssignNotesToFolder({
+    required List<String> remoteNoteIds,
+    required String remoteFolderId,
+  }) {
+    final folderDto = findFolderByRemoteId(remoteFolderId);
+
+    // Nothing to wire against; bail early rather than writing garbage.
+    if (folderDto == null) {
+      throw const MenoException('Folder not found, skipping optimistic write');
+    }
+
+    _db.runWriteTx(() {
+      _mergeFolderDbId(folderDto);
+      final notesToUpdate = <NoteDto>[];
+      for (final remoteId in remoteNoteIds) {
+        final noteDto = findNoteByRemoteId(remoteId);
+
+        if (noteDto == null) {
+          // Note note yet in local cache, so it is not an error, just skip.
+          log.w('batchAssignNotesToFolder: $remoteId not found — skipping.');
+          continue;
+        }
+
+        noteDto.folder.target = folderDto;
+        noteDto.syncPending = true;
+        notesToUpdate.add(noteDto);
+      }
+
+      if (notesToUpdate.isNotEmpty) _notes.putMany(notesToUpdate);
+    });
+  }
+
+  void batchRemoveNotesFromFolder(List<String> remoteNoteIds) {
+    _db.runWriteTx(() {
+      final notesToUpdate = <NoteDto>[];
+      for (final remoteId in remoteNoteIds) {
+        final noteDto = findNoteByRemoteId(remoteId);
+
+        if (noteDto == null) {
+          // Note note yet in local cache, so it is not an error, just skip.
+          log.w('batchRemoveNotesFromFolder: $remoteId not found — skipping.');
+          continue;
+        }
+
+        if (noteDto.folder.target == null) continue;
+
+        noteDto.folder.target = null;
+        noteDto.syncPending = true;
+        notesToUpdate.add(noteDto);
+      }
+
+      if (notesToUpdate.isNotEmpty) _notes.putMany(notesToUpdate);
+    });
   }
 
   // ========================================================================

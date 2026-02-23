@@ -396,4 +396,86 @@ class NotesRepositoryImpl with MLogger implements INotesRepository {
     _local.clearAll();
     log.i('NoteRepositoryImpl: disposed — local store cleared');
   }
+
+  @override
+  Future<AssignResult> assignNotesToFolder({
+    required List<Id> noteIds,
+    required Id folderId,
+  }) async {
+    final remoteFolderId = folderId.getOrCrash();
+
+    _local.batchAssignNotesToFolder(
+      remoteFolderId: remoteFolderId,
+      remoteNoteIds: noteIds.map((id) => id.getOrCrash()).toList(),
+    );
+
+    final result = await Future.wait<(Id, dynamic)>(
+      noteIds.map((noteId) async {
+        try {
+          final dto = await _remote.addNoteToFolder(
+            noteId: noteId.getOrCrash(),
+            folderId: remoteFolderId,
+          );
+
+          _local.upsertNote(dto);
+
+          // We simply just return a Record of the note's id and a null error
+          return (noteId, null);
+        } catch (e) {
+          log.w('addNotesToFolder: ${noteId.getOrCrash()} failed — $e');
+          // We also return a record of the note that failed and the error
+          return (noteId, e);
+        }
+      }),
+    );
+
+    final succeededIds = <Id>[];
+    final failedIds = <Id>[];
+
+    for (final (id, error) in result) {
+      error == null ? succeededIds.add(id) : failedIds.add(id);
+    }
+
+    return AssignResult(succeededIds: succeededIds, failedIds: failedIds);
+  }
+
+  @override
+  Future<AssignResult> unassignNotesFromFolder({
+    required List<Id> noteIds,
+    required Id folderId,
+  }) async {
+    final remoteNoteIds = noteIds.map((id) => id.getOrCrash()).toList();
+
+    _local.batchRemoveNotesFromFolder(remoteNoteIds);
+
+    final result = await Future.wait<(Id, dynamic)>(
+      noteIds.map((noteId) async {
+        try {
+          await _remote.removeNoteFromFolder(
+            noteId: noteId.getOrCrash(),
+            folderId: folderId.getOrCrash(),
+          );
+
+          final existing = _local.findNoteByRemoteId(noteId.getOrCrash());
+          if (existing != null) _local.upsertNote(existing);
+
+          // We simply just return a Record of the note's id and a null error
+          return (noteId, null);
+        } catch (e) {
+          log.w('removeNotesFromFolder: ${noteId.getOrCrash()} failed — $e');
+          // We also return a record of the note that failed and the error
+          return (noteId, e);
+        }
+      }),
+    );
+
+    final succeededIds = <Id>[];
+    final failedIds = <Id>[];
+
+    for (final (id, error) in result) {
+      error == null ? succeededIds.add(id) : failedIds.add(id);
+    }
+
+    return AssignResult(succeededIds: succeededIds, failedIds: failedIds);
+  }
 }

@@ -13,11 +13,7 @@ class NoteCardOptionsModal extends WatchingWidget {
   final Note note;
   final Id? folderId;
 
-  static Future<dynamic> show(
-    BuildContext context, {
-    required Note note,
-    Id? folderId,
-  }) {
+  static Future<dynamic> show(BuildContext context, Note note, [Id? folderId]) {
     return showModalBottomSheet<dynamic>(
       context: context,
       isScrollControlled: true,
@@ -42,6 +38,8 @@ class NoteCardOptionsModal extends WatchingWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (folderId != null) ...[
+            // Show this option only when a [folderId] is passed to modal when
+            // it is called from the Folder Page
             MModalListTile(
               leading: const Icon(MIcons.file_02),
               title: 'Move Note',
@@ -49,25 +47,41 @@ class NoteCardOptionsModal extends WatchingWidget {
             ),
             Spaces.verticalSmall,
           ],
+
           if (note.folder != null)
+            // Show if the note is in a folder, regardless of where the modal
+            // is called from
             MModalListTile(
               leading: const Icon(MIcons.x_close),
               title: 'Remove from Folder',
               onTap: _removeFromFolder,
             )
           else
+            // Show if the note is not in a folder, regardless of where the
+            // modal is called from
             MModalListTile(
               leading: const Icon(MIcons.plus),
               title: 'Add to Folder',
               onTap: _addToFolder,
             ),
-          Spaces.verticalSmall,
-          const MModalListTile(leading: Icon(MIcons.share), title: 'Share'),
-          Spaces.verticalSmall,
-          const MModalListTile(
-            leading: Icon(MIcons.link_02),
-            title: 'Copy Link',
-          ),
+
+          if (folderId == null || note.folder == null) ...[
+            // Show if a [folderId] is passed or the note is not in a folder
+            Spaces.verticalSmall,
+            MModalListTile(
+              leading: const Icon(MIcons.share),
+              title: 'Share',
+              onTap: () {},
+            ),
+            Spaces.verticalSmall,
+            MModalListTile(
+              leading: const Icon(MIcons.link_02),
+              title: 'Copy Link',
+              onTap: () {},
+            ),
+          ],
+
+          // Always show the rest
           Spaces.verticalSmall,
           MModalListTile(
             leading: Icon(MIcons.trash, color: colors.error),

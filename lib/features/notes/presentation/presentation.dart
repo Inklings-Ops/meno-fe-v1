@@ -1,5 +1,5 @@
 //GENERATED BARREL FILE
-export './folders/add_folder_notes_modal.dart';
+export './folders/add_notes_to_folder_modal.dart';
 export './folders/empty_folder_list_widget.dart';
 export './folders/empty_folder_page_widget.dart';
 export './folders/folder_card.dart';
@@ -8,7 +8,6 @@ export './folders/folder_clipper.dart';
 export './folders/folder_editor_modal.dart';
 export './folders/folder_list_failure_widget.dart';
 export './folders/folder_list_widget.dart';
-export './folders/folder_notes_list.dart';
 export './folders/folder_page.dart';
 export './note_editor/note_editor.dart';
 export './note_editor/note_editor_autosave_widget.dart';

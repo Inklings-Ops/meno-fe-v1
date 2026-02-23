@@ -1,4 +1,5 @@
 //GENERATED BARREL FILE
+export 'folder_assignment_manager.dart';
 export 'folder_editor_manager.dart';
 export 'folder_manager.dart';
 export 'folders_manager.dart';

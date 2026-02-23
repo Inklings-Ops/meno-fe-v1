@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:meno/app/router/router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/notes/applications/applications.dart';
-import 'package:meno/features/notes/domain/entities/note_folder.dart';
-import 'package:meno/features/notes/domain/i_notes_repository.dart';
+import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -73,7 +75,7 @@ class _FolderPageContent extends WatchingWidget {
                     child: _SearchBox(),
                   ),
                 ),
-              const SliverFillRemaining(child: FolderNotesList()),
+              const SliverFillRemaining(child: _FolderNotesList()),
             ],
           ],
         ),
@@ -159,7 +161,7 @@ class _PageOptionsButton extends StatelessWidget {
               MModalListTile(
                 leading: const Icon(MIcons.file_plus_02),
                 title: 'Add Notes',
-                onTap: () => AddNotesToFolderModal.show(ctx, folder: folder),
+                onTap: () => AddNotesToFolderModal.show(ctx, folder),
               ),
               Spaces.verticalSmall,
               MModalListTile(
@@ -206,25 +208,118 @@ class _SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final manager = di<FolderManager>();
+    final query = watchValue((FolderManager m) => m.searchQuery);
+    final controller = createOnce(() => TextEditingController(text: query));
+
+    Timer? debounce;
+
+    void onChanged(String value) {
+      debounce?.cancel();
+      debounce = Timer(const Duration(milliseconds: 400), () {
+        manager.performSearch.run(value);
+      });
+    }
+
+    onDispose(() => debounce?.cancel());
+
     final textTheme = MTextTheme.of(context);
 
     return SizedBox(
       height: 40,
       child: SearchBar(
         elevation: const WidgetStatePropertyAll(0),
-        onChanged: (value) {},
+        controller: controller,
+        onChanged: onChanged,
         hintText: 'Search for note',
         hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
         padding: const WidgetStatePropertyAll(
           EdgeInsets.symmetric(horizontal: Insets.md),
         ),
         leading: const Icon(MIcons.search, size: Insets.lg),
+        trailing: [
+          if (controller.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear, size: Insets.lg),
+              onPressed: () {
+                controller.clear();
+                manager.searchQuery.value = '';
+                manager.performSearch.run('');
+              },
+            ),
+        ],
         shape: const WidgetStatePropertyAll(
           RoundedRectangleBorder(
             side: BorderSide(color: Color(0xFFC2C7D0)),
             borderRadius: Corners.sm,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _FolderNotesList extends WatchingWidget {
+  const _FolderNotesList();
+
+  @override
+  Widget build(BuildContext ctx) {
+    final folder = watchValue((FolderManager m) => m.folder);
+    final notes = folder.notes;
+
+    if (notes.isEmpty) return _EmptyFolderPlaceholder(folder: folder);
+
+    return NotesList(
+      notes: notes,
+      onNoteTap: (note) => ctx.pushNamed(
+        R.noteEditorName,
+        pathParameters: {'noteId': note.id.getOrCrash()},
+      ),
+      onOptionTap: (note) => NoteCardOptionsModal.show(ctx, note, folder.id),
+    );
+  }
+}
+
+class _EmptyFolderPlaceholder extends StatelessWidget {
+  const _EmptyFolderPlaceholder({required this.folder});
+
+  final NoteFolder folder;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+    final textTheme = MTextTheme.of(context);
+
+    return Container(
+      width: 266,
+      height: 224,
+      margin: const EdgeInsets.only(top: 64),
+      child: Column(
+        children: [
+          Assets.images.newFile.image(height: 120, width: 160),
+          MText(
+            'Let’s add some notes to this folder',
+            style: textTheme.bodyRegular,
+            textAlign: TextAlign.center,
+          ),
+          Spaces.verticalXLarge,
+          SizedBox(
+            width: 155,
+            height: 32,
+            child: MSecondaryButton.icon(
+              label: 'Add to this Folder',
+              icon: const Icon(MIcons.plus),
+              style: OutlinedButton.styleFrom(
+                textStyle: textTheme.microMedium,
+                foregroundColor: colors.onBackground,
+                iconColor: colors.onBackground,
+                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
+                side: BorderSide(color: colors.outlineVariant3, width: 1.50),
+              ),
+              onPressed: () => AddNotesToFolderModal.show(context, folder),
+            ),
+          ),
+        ],
       ),
     );
   }

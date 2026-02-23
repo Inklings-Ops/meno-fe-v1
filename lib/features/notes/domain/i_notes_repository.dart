@@ -32,6 +32,20 @@ abstract class INotesRepository implements Disposable {
     required Id folderId,
   });
 
+  /// Optimistically assigns [noteIds] to [folderId] locally in one transaction,
+  /// then fires remote calls concurrently. Individual remote failures are
+  /// captured; successfully synced notes are confirmed. Returns a summary.
+  Future<AssignResult> assignNotesToFolder({
+    required List<Id> noteIds,
+    required Id folderId,
+  });
+
+  /// Moves [noteIds] from the current folder the note is in..
+  Future<AssignResult> unassignNotesFromFolder({
+    required List<Id> noteIds,
+    required Id folderId,
+  });
+
   // =========================================================================
   // FOLDERS
   // =========================================================================
