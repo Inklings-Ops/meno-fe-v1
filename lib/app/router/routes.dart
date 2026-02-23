@@ -33,7 +33,6 @@ class R {
   static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
   static const String notifications = '/notifications';
-  static const String folder = '/folder';
   static const String settings = '/settings';
   static const String notificationSettings = '/settings/notifications';
   static const String securitySettings = '/settings/security';
@@ -61,4 +60,8 @@ class R {
   static const String noteEditorName = 'note-editor';
 
   static String noteEditor([String? id]) => '/note-editor/${id ?? 'new'}';
+
+  static const String folderName = 'folder';
+
+  static String folder(String id) => '/folders/$id';
 }

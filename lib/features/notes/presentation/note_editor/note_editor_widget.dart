@@ -5,6 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/features/notes/applications/note_editor_manager.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
+import 'package:meno/shared/presentation/widgets/m_custom_back_button.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteEditorWidget extends WatchingWidget {
@@ -49,7 +50,7 @@ class NoteEditorWidget extends WatchingWidget {
       appBar: AppBar(
         toolbarHeight: 42,
         leadingWidth: 90,
-        leading: const MNotesBackButton(title: 'Notes'),
+        leading: const MCustomBackButton(title: 'Notes'),
         actions: [
           NoteEditorAutosaveWidget(status: status),
           _DoneButton(focusNode: quillFocusNode),
@@ -143,32 +144,6 @@ class _DoneButton extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class MNotesBackButton extends StatelessWidget {
-  const MNotesBackButton({required this.title, super.key});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context);
-    return Container(
-      width: 56,
-      height: 18,
-      padding: const EdgeInsets.only(left: 16),
-      child: GestureDetector(
-        onTap: () => Navigator.maybePop(context),
-        child: Row(
-          children: [
-            const Icon(MIcons.chevron_left, size: 16),
-            Spaces.horizontalMicro,
-            MText(title, style: textTheme.captionMedium),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -49,17 +49,4 @@ class NoteListWidget extends WatchingWidget {
       onOptionTap: (note) => NoteCardOptionsModal.show(context, note: note),
     );
   }
-
-  Future<void> _onNoteTap(BuildContext context, Note note) async {
-    // final bloc = context.read<NotesBloc>();
-    // Note? newN;
-    //
-    // if (widget.isForLiveScaffold) {
-    //  newN = await router.push<Note?>(Routes.notesTabEditorFull, extra: note);
-    // } else {
-    //   newN = await router.push<Note?>(Routes.noteEditor, extra: note);
-    // }
-    //
-    // if (newN != null) return bloc.add(NotesNoteReceived(newN));
-  }
 }

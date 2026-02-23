@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/domain/domain.dart';
+import 'package:meno/shared/domain/value_objects/id.dart';
 
 class FoldersManager with MLogger implements Disposable {
   FoldersManager(this._repository);
@@ -38,6 +39,15 @@ class FoldersManager with MLogger implements Disposable {
     searchQuery.value = query;
     _resubscribe();
   }
+
+  late final deleteFolder = Command.createAsync<Id, bool?>(
+    (folderId) async {
+      final result = await _repository.deleteFolder(folderId);
+      return result.fold((failure) => throw failure, (_) => true);
+    },
+    initialValue: null,
+    errorFilterFn: (e, _) => ErrorReaction.globalHandler,
+  );
 
   Future<void> _resubscribe() async {
     await _subscription?.cancel();
@@ -87,5 +97,6 @@ class FoldersManager with MLogger implements Disposable {
 
     initialize.dispose();
     performSearch.dispose();
+    deleteFolder.dispose();
   }
 }

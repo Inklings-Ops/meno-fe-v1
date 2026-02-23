@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/entities/note.dart';
-import 'package:meno/features/notes/presentation/notes/delete_note_alert_dialog.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/presentation/widgets/delete_alert_dialog.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteCardOptionsModal extends WatchingWidget {
@@ -29,8 +29,6 @@ class NoteCardOptionsModal extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-
-    final notesManager = di<NotesManager>();
 
     registerHandler(
       select: (NotesManager m) => m.deleteNote,
@@ -75,13 +73,7 @@ class NoteCardOptionsModal extends WatchingWidget {
             leading: Icon(MIcons.trash, color: colors.error),
             title: 'Delete',
             titleColor: colors.error,
-            onTap: () async {
-              final result = await DeleteNoteAlertDialog.show(context);
-              if (result ?? false) {
-                notesManager.deleteNote.run(note.id);
-                if (context.mounted) context.pop();
-              }
-            },
+            onTap: () => _deleteNote(context),
           ),
           Spaces.verticalSmall,
         ],
@@ -105,5 +97,18 @@ class NoteCardOptionsModal extends WatchingWidget {
   Future<void> _removeFromFolder() async {
     //final r=await router.push(Routes.remoteNoteFromFolderDialog, extra: note);
     // if (r == true) return router.pop(r);
+  }
+
+  Future<void> _deleteNote(BuildContext context) async {
+    final result = await DeleteAlertDialog.show(
+      context,
+      title: 'Delete Note?',
+      description: 'Do want to delete this note?',
+    );
+
+    if (result ?? false) {
+      di<NotesManager>().deleteNote.run(note.id);
+      if (context.mounted) context.pop();
+    }
   }
 }

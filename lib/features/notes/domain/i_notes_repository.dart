@@ -41,6 +41,8 @@ abstract class INotesRepository implements Disposable {
   /// Live stream of a single folder + its notes.
   Stream<NoteFolder> watchFolder(Id folderId);
 
+  Future<Either<MenoException, NoteFolder>> getFolder(Id folderId);
+
   Future<Either<MenoException, NoteFolder>> createFolder(NoteFolder folder);
 
   Future<Either<MenoException, NoteFolder>> updateFolder(NoteFolder folder);

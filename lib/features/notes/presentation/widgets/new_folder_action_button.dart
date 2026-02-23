@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/notes/applications/applications.dart';
+import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NewFolderActionButton extends WatchingWidget {
@@ -16,7 +17,7 @@ class NewFolderActionButton extends WatchingWidget {
 
     // Only show the add button if there already folders in the list
     return InkWell(
-      onTap: () {},
+      onTap: () => FolderEditorModal.show(context),
       child: Row(
         children: [
           Icon(MIcons.plus, size: 22, color: colors.primary),

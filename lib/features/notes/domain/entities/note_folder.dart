@@ -14,6 +14,10 @@ class NoteFolder with EquatableMixin implements IEntity {
     this.syncStatus = SyncStatus.synced,
   });
 
+  factory NoteFolder.fromNewId(Id folderId) {
+    return NoteFolder(id: folderId, title: SingleLineString.empty);
+  }
+
   @override
   final Id id;
 
@@ -59,6 +63,8 @@ class NoteFolder with EquatableMixin implements IEntity {
       syncStatus: syncStatus ?? this.syncStatus,
     );
   }
+
+  bool get isValid => id.isValid && title.isValid;
 }
 
 final fakeFolders = List.filled(

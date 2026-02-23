@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class DeleteNoteAlertDialog extends StatelessWidget {
-  const DeleteNoteAlertDialog({super.key});
+class DeleteAlertDialog extends StatelessWidget {
+  const DeleteAlertDialog({
+    required this.title,
+    required this.description,
+    super.key,
+  });
 
-  static Future<bool?> show(BuildContext context) {
+  final String title;
+  final String description;
+
+  static Future<bool?> show(
+    BuildContext context, {
+    required String title,
+    required String description,
+  }) {
     return showDialog<bool>(
       context: context,
-      builder: (context) => const DeleteNoteAlertDialog(),
+      builder: (_) => DeleteAlertDialog(title: title, description: description),
     );
   }
 
@@ -18,12 +29,9 @@ class DeleteNoteAlertDialog extends StatelessWidget {
     final textTheme = MTextTheme.of(context);
 
     return AlertDialog(
-      title: MText('Delete Note?', style: textTheme.heading2Regular),
+      title: MText(title, style: textTheme.heading2Regular),
       contentPadding: const EdgeInsets.all(24),
-      content: MText(
-        'Do want to delete this note?',
-        style: textTheme.captionRegular,
-      ),
+      content: MText(description, style: textTheme.captionRegular),
       actions: [
         SizedBox.fromSize(
           size: const Size(85, 40),

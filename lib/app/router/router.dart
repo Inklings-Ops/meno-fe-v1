@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart'
-    show GlobalKey, NavigatorState, ScaffoldMessengerState;
+    show
+        BuildContext,
+        GlobalKey,
+        Navigator,
+        NavigatorState,
+        ScaffoldMessengerState;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
@@ -95,6 +100,15 @@ final class MenoRouter {
           final rawId = state.pathParameters['noteId'];
           final noteId = (rawId == null || rawId == 'new') ? null : rawId;
           return NoteEditorPage(noteId: noteId);
+        },
+      ),
+
+      GoRoute(
+        name: R.folderName,
+        path: '/folders/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return FolderPage(id: id);
         },
       ),
 
@@ -255,4 +269,23 @@ final class MenoRouter {
       ),
     ],
   );
+}
+
+extension AppRouterExtensions on BuildContext {
+  /// Pops the [BuildContext] [count] number of times.
+  ///
+  /// For example, to pop twice: context.popCount(2);
+  void popCount(int count) {
+    var popped = 0;
+    Navigator.of(this).popUntil((_) => popped++ >= count);
+  }
+
+  /// Alias for semantic clarity if you prefer "pop multiple"
+  void popMultiple(int count) => popCount(count);
+
+  void popUntil(String targetPathName) {
+    return Navigator.of(
+      this,
+    ).popUntil((r) => r.settings.name == targetPathName);
+  }
 }
