@@ -20,6 +20,12 @@ class FolderManager with MLogger implements Disposable {
   final totalNotesCount = ValueNotifier<int>(0);
   final error = ValueNotifier<MenoException?>(null);
 
+  /// Whether the folder page is in bulk-selection mode.
+  final isSelecting = ValueNotifier<bool>(false);
+
+  /// Notes the user has selected during a bulk-move session.
+  final selectedNoteIds = SetNotifier<Id>(data: {});
+
   StreamSubscription<NoteFolder>? _subscription;
   StreamSubscription<NoteFolder>? _notesCountSubscription;
 
@@ -56,6 +62,55 @@ class FolderManager with MLogger implements Disposable {
     initialValue: null,
     errorFilterFn: menoExceptionFilter,
   );
+
+  /// This command is placed here as trade-off
+  /// Since I (gettoknowdavid) do not want create another manager just to
+  /// handle moving of notes to a folder; I also do no want to put business
+  /// logic in the UI layer, so I decided to place this here.
+  ///
+  /// It is similar to the [assignNotesToFolder] command with the major
+  /// difference of needing the `targetFolderId`
+  late final moveNotes = Command.createAsyncNoResult<(List<Id>, Id)>((
+    (List<Id>, Id) params,
+  ) async {
+    final noteIds = params.$1;
+    final targetFolderId = params.$2;
+    if (noteIds.isEmpty) throw const MenoException('No notes selected');
+    error.value = null;
+    final result = await _repository.assignNotesToFolder(
+      noteIds: noteIds,
+      folderId: targetFolderId,
+    );
+    if (result.hasFailures) {
+      final failedIdsCount = result.failedIds.length;
+      error.value = MenoException(
+        '$failedIdsCount note${failedIdsCount == 1 ? '' : 's'} '
+        'could not be synced and will retry automatically.',
+      );
+    }
+  }, errorFilterFn: menoExceptionFilter);
+
+  void enterSelectionMode() => isSelecting.value = true;
+
+  void exitSelectionMode() {
+    selectedNoteIds.clear();
+    isSelecting.value = false;
+  }
+
+  void toggleNoteSelection(Id noteId) {
+    selectedNoteIds.contains(noteId)
+        ? selectedNoteIds.remove(noteId)
+        : selectedNoteIds.add(noteId);
+  }
+
+  void selectAll() {
+    selectedNoteIds.startTransAction();
+    selectedNoteIds.clear();
+    for (final note in folder.value.notes) {
+      if (note != null) selectedNoteIds.add(note.id);
+    }
+    selectedNoteIds.endTransAction();
+  }
 
   Future<void> _resubscribe() async {
     await _subscription?.cancel();
@@ -97,6 +152,8 @@ class FolderManager with MLogger implements Disposable {
     totalNotesCount.dispose();
     error.dispose();
     searchQuery.dispose();
+    isSelecting.dispose();
+    selectedNoteIds.dispose();
 
     initialize.dispose();
     assignNotesToFolder.dispose();

@@ -12,10 +12,7 @@ class FolderCardOptionsModal extends WatchingWidget {
 
   final NoteFolder folder;
 
-  static Future<dynamic> show(
-    BuildContext context, {
-    required NoteFolder folder,
-  }) {
+  static Future<dynamic> show(BuildContext context, NoteFolder folder) {
     return showModalBottomSheet<dynamic>(
       context: context,
       isScrollControlled: true,

@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/entities/note.dart';
+import 'package:meno/features/notes/presentation/folders/move_notes_to_folder_modal.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:meno/shared/presentation/widgets/delete_alert_dialog.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -43,7 +44,7 @@ class NoteCardOptionsModal extends WatchingWidget {
             MModalListTile(
               leading: const Icon(MIcons.file_02),
               title: 'Move Note',
-              onTap: _moveNote,
+              onTap: () => MoveNotesToFolderModal.show(context, note),
             ),
             Spaces.verticalSmall,
           ],

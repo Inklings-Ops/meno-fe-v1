@@ -5,6 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
+import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class AddNotesToFolderModal extends WatchingWidget {
@@ -50,6 +51,14 @@ class _Content extends WatchingWidget {
     final notes = watchValue((FolderAssignmentManager m) => m.notes);
     final isLoading = watchValue(
       (FolderAssignmentManager m) => m.confirm.isRunning,
+    );
+
+    registerHandler(
+      select: (FolderAssignmentManager m) => m.error,
+      handler: (context, error, cancel) {
+        if (error == null) return;
+        context.showErrorSnackBar(error.message);
+      },
     );
 
     return MModal(
