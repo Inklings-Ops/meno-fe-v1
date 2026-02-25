@@ -20,11 +20,7 @@ class FolderManager with MLogger implements Disposable {
   final totalNotesCount = ValueNotifier<int>(0);
   final error = ValueNotifier<MenoException?>(null);
 
-  /// Whether the folder page is in bulk-selection mode.
-  final isSelecting = ValueNotifier<bool>(false);
-
-  /// Notes the user has selected during a bulk-move session.
-  final selectedNoteIds = SetNotifier<Id>(data: {});
+  String _activeKeywords = '';
 
   StreamSubscription<NoteFolder>? _subscription;
   StreamSubscription<NoteFolder>? _notesCountSubscription;
@@ -39,79 +35,6 @@ class FolderManager with MLogger implements Disposable {
     initialValue: null,
   );
 
-  late final assignNotesToFolder = Command.createAsync<List<Id>, AssignResult>(
-    (List<Id> noteIds) async {
-      if (noteIds.isEmpty) throw const MenoException('No notes selected');
-      return _repository.assignNotesToFolder(
-        noteIds: noteIds,
-        folderId: _folderId,
-      );
-    },
-    initialValue: AssignResult.empty,
-    errorFilterFn: menoExceptionFilter,
-  );
-
-  late final unassignNotesToFolder = Command.createAsync(
-    (List<Id> noteIds) async {
-      if (noteIds.isEmpty) return null;
-      return _repository.unassignNotesFromFolder(
-        noteIds: noteIds,
-        folderId: _folderId,
-      );
-    },
-    initialValue: null,
-    errorFilterFn: menoExceptionFilter,
-  );
-
-  /// This command is placed here as trade-off
-  /// Since I (gettoknowdavid) do not want create another manager just to
-  /// handle moving of notes to a folder; I also do no want to put business
-  /// logic in the UI layer, so I decided to place this here.
-  ///
-  /// It is similar to the [assignNotesToFolder] command with the major
-  /// difference of needing the `targetFolderId`
-  late final moveNotes = Command.createAsyncNoResult<(List<Id>, Id)>((
-    (List<Id>, Id) params,
-  ) async {
-    final noteIds = params.$1;
-    final targetFolderId = params.$2;
-    if (noteIds.isEmpty) throw const MenoException('No notes selected');
-    error.value = null;
-    final result = await _repository.assignNotesToFolder(
-      noteIds: noteIds,
-      folderId: targetFolderId,
-    );
-    if (result.hasFailures) {
-      final failedIdsCount = result.failedIds.length;
-      error.value = MenoException(
-        '$failedIdsCount note${failedIdsCount == 1 ? '' : 's'} '
-        'could not be synced and will retry automatically.',
-      );
-    }
-  }, errorFilterFn: menoExceptionFilter);
-
-  void enterSelectionMode() => isSelecting.value = true;
-
-  void exitSelectionMode() {
-    selectedNoteIds.clear();
-    isSelecting.value = false;
-  }
-
-  void toggleNoteSelection(Id noteId) {
-    selectedNoteIds.contains(noteId)
-        ? selectedNoteIds.remove(noteId)
-        : selectedNoteIds.add(noteId);
-  }
-
-  void selectAll() {
-    selectedNoteIds.startTransAction();
-    selectedNoteIds.clear();
-    for (final note in folder.value.notes) {
-      if (note != null) selectedNoteIds.add(note.id);
-    }
-    selectedNoteIds.endTransAction();
-  }
-
   Future<void> _resubscribe() async {
     await _subscription?.cancel();
     await _notesCountSubscription?.cancel();
@@ -119,12 +42,11 @@ class FolderManager with MLogger implements Disposable {
     _subscription = null;
     _notesCountSubscription = null;
 
+    final keywords = searchQuery.value.isEmpty ? null : searchQuery.value;
     _subscription = _repository
-        .watchFolder(_folderId)
+        .watchFolder(_folderId, keywords: keywords)
         .listen(
-          (event) {
-            folder.value = event;
-          },
+          (event) => folder.value = event,
           onError: (dynamic err) {
             if (err is MenoException) error.value = err;
             error.value = MenoException(err.toString());
@@ -138,8 +60,9 @@ class FolderManager with MLogger implements Disposable {
   }
 
   void _onSearchChanged(String query) {
-    if (searchQuery.value == query) return;
     searchQuery.value = query;
+    if (_activeKeywords == query) return;
+    _activeKeywords = query;
     _resubscribe();
   }
 
@@ -152,12 +75,8 @@ class FolderManager with MLogger implements Disposable {
     totalNotesCount.dispose();
     error.dispose();
     searchQuery.dispose();
-    isSelecting.dispose();
-    selectedNoteIds.dispose();
 
     initialize.dispose();
-    assignNotesToFolder.dispose();
-    unassignNotesToFolder.dispose();
     performSearch.dispose();
 
     _subscription?.cancel();

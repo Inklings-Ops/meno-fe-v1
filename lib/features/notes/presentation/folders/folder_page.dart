@@ -68,13 +68,12 @@ class _FolderPageContent extends WatchingWidget {
                   child: _FolderWidget(),
                 ),
               ),
-              if (folder.notes.isNotEmpty)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: _SearchBox(),
-                  ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: _SearchBox(),
                 ),
+              ),
               const SliverFillRemaining(child: _FolderNotesList()),
             ],
           ],
@@ -161,7 +160,14 @@ class _PageOptionsButton extends StatelessWidget {
               MModalListTile(
                 leading: const Icon(MIcons.file_plus_02),
                 title: 'Add Notes',
-                onTap: () => AddNotesToFolderModal.show(ctx, folder),
+                onTap: () async {
+                  final result = await SelectNotesModal.show(ctx, folder.id);
+                  if (result == null) return;
+                  di<NoteActionsManager>().assignNotesToFolder.run((
+                    noteIds: result,
+                    targetFolderId: folder.id,
+                  ));
+                },
               ),
               Spaces.verticalSmall,
               MModalListTile(
@@ -203,7 +209,7 @@ class _PageOptionsButton extends StatelessWidget {
   }
 }
 
-class _SearchBox extends StatelessWidget {
+class _SearchBox extends WatchingWidget {
   const _SearchBox();
 
   @override
@@ -264,10 +270,20 @@ class _FolderNotesList extends WatchingWidget {
 
   @override
   Widget build(BuildContext ctx) {
+    final textTheme = MTextTheme.of(ctx);
     final folder = watchValue((FolderManager m) => m.folder);
     final notes = folder.notes;
 
-    if (notes.isEmpty) return _EmptyFolderPlaceholder(folder: folder);
+    if (notes.isEmpty) {
+      return Padding(
+        padding: const .all(Insets.lg),
+        child: MText(
+          'No notes found in this folder',
+          style: textTheme.bodyRegular,
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
 
     return NotesList(
       notes: notes,
@@ -275,7 +291,7 @@ class _FolderNotesList extends WatchingWidget {
         R.noteEditorName,
         pathParameters: {'noteId': note.id.getOrCrash()},
       ),
-      onOptionTap: (note) => NoteCardOptionsModal.show(ctx, note, folder.id),
+      onNoteOptionsTap: (note) => _NoteOptionsModal.show(ctx, note, folder.id),
     );
   }
 }
@@ -316,11 +332,87 @@ class _EmptyFolderPlaceholder extends StatelessWidget {
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 side: BorderSide(color: colors.outlineVariant3, width: 1.50),
               ),
-              onPressed: () => AddNotesToFolderModal.show(context, folder),
+              onPressed: () async {
+                final result = await SelectNotesModal.show(context);
+                if (result == null) return;
+                di<NoteActionsManager>().assignNotesToFolder.run((
+                  noteIds: result,
+                  targetFolderId: folder.id,
+                ));
+              },
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class _NoteOptionsModal extends WatchingWidget {
+  const _NoteOptionsModal._({required this.note, this.folderId})
+    : super(key: null);
+
+  final Note note;
+  final Id? folderId;
+
+  static Future<dynamic> show(BuildContext context, Note note, [Id? folderId]) {
+    return showModalBottomSheet<dynamic>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      builder: (_) => _NoteOptionsModal._(note: note, folderId: folderId),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MModal(
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          MModalListTile(
+            leading: const Icon(MIcons.file_02),
+            title: 'Move Note',
+            onTap: () async => _moveNoteToFolder(context),
+          ),
+          Spaces.verticalSmall,
+          MModalListTile(
+            leading: const Icon(MIcons.folder_x),
+            title: 'Remove from Folder',
+            onTap: () async => _removeNoteFromFolder(context),
+          ),
+          Spaces.verticalSmall,
+        ],
+      ),
+    );
+  }
+
+  Future<void> _moveNoteToFolder(BuildContext ctx) async {
+    final folder = await SelectFolderModal.show(ctx, 'Move Note', isMove: true);
+    if (folder == null) return;
+    di<NoteActionsManager>().assignNotesToFolder.run((
+      noteIds: [note.id],
+      targetFolderId: folder.id,
+    ));
+    if (ctx.mounted) ctx.pop();
+  }
+
+  Future<void> _removeNoteFromFolder(BuildContext context) async {
+    final folderId = note.folder?.id;
+    if (folderId == null) return;
+
+    final result = await RemoveAlertDialog.show(
+      context,
+      title: 'Remove Note',
+      description: 'Do you want to remove this note from this folder?',
+    );
+
+    if (result == false) return;
+
+    di<NoteActionsManager>().removeNotesFromFolder.run((
+      noteIds: [note.id],
+      folderId: folderId,
+    ));
+    if (context.mounted) context.pop();
   }
 }

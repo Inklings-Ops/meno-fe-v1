@@ -26,8 +26,11 @@ class NotesLocalDataSource with MLogger {
   }
 
   /// Live stream of all notes that belong to a specific folder.
-  Stream<List<NoteDto>> watchNotesInFolder(String folderId) {
-    final result = _notes.query();
+  Stream<List<NoteDto>> watchNotesInFolder(
+    String folderId, [
+    String? keywords,
+  ]) {
+    final result = _buildNoteQuery(keywords: keywords);
     result.link(NoteDto_.folder, NoteFolderDto_.id.equals(folderId));
 
     return result

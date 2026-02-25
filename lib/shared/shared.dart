@@ -41,4 +41,5 @@ export './presentation/widgets/m_custom_back_button.dart';
 export './presentation/widgets/meno_search_bar.dart';
 export './presentation/widgets/paginated_broadcast_list_widget.dart';
 export './presentation/widgets/permissions_dialog.dart';
+export './presentation/widgets/remove_alert_dialog.dart';
 export './presentation/widgets/switch_account_modal.dart';

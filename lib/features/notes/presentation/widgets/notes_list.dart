@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
+import 'package:meno/shared/domain/value_objects/id.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NotesList extends StatelessWidget {
@@ -8,8 +9,9 @@ class NotesList extends StatelessWidget {
     required this.notes,
     this.showAddButton = false,
     this.onNoteTap,
-    this.onOptionTap,
-    this.selectedNote,
+    this.onNoteLongPress,
+    this.onNoteOptionsTap,
+    this.selectedNoteIds = const [],
     this.padding,
     super.key,
   });
@@ -17,8 +19,9 @@ class NotesList extends StatelessWidget {
   final List<Note?> notes;
   final bool showAddButton;
   final void Function(Note)? onNoteTap;
-  final void Function(Note)? onOptionTap;
-  final Note? selectedNote;
+  final void Function(Note)? onNoteLongPress;
+  final void Function(Note)? onNoteOptionsTap;
+  final List<Id> selectedNoteIds;
   final EdgeInsetsGeometry? padding;
 
   @override
@@ -34,9 +37,10 @@ class NotesList extends StatelessWidget {
           key: ValueKey(note.id),
           note: note,
           showAddButton: showAddButton,
-          selected: selectedNote?.id == note.id,
-          onTap: () async => onNoteTap?.call(note),
-          onOptionsTap: () => onOptionTap?.call(note),
+          selected: selectedNoteIds.contains(note.id),
+          onTap: () => onNoteTap?.call(note),
+          onLongPress: () => onNoteLongPress?.call(note),
+          onOptionsTap: () => onNoteOptionsTap?.call(note),
         );
       },
     );

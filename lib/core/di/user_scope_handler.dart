@@ -164,6 +164,10 @@ final class UserScopeHandler with MLogger implements Disposable {
             manager.initialize.run();
             return manager;
           }, dependsOn: [INotesRepository]);
+
+          di.registerSingletonWithDependencies(() {
+            return NoteActionsManager(di<INotesRepository>());
+          }, dependsOn: [INotesRepository]);
         },
       );
     }

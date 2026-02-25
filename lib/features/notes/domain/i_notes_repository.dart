@@ -53,7 +53,7 @@ abstract class INotesRepository implements Disposable {
   Stream<List<NoteFolder>> watchFolders({String? keywords});
 
   /// Live stream of a single folder + its notes.
-  Stream<NoteFolder> watchFolder(Id folderId);
+  Stream<NoteFolder> watchFolder(Id folderId, {String? keywords});
 
   Future<Either<MenoException, NoteFolder>> getFolder(Id folderId);
 

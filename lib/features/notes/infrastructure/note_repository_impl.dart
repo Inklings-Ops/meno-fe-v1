@@ -348,7 +348,7 @@ class NotesRepositoryImpl with MLogger implements INotesRepository {
   /// either inner stream fires. Both inner streams are ObjectBox watch streams
   /// that already trigger immediately, so the first event is guaranteed.
   @override
-  Stream<NoteFolder> watchFolder(Id folderId) {
+  Stream<NoteFolder> watchFolder(Id folderId, {String? keywords}) {
     final idStr = folderId.getOrCrash();
 
     late StreamController<NoteFolder> controller;
@@ -376,7 +376,7 @@ class NotesRepositoryImpl with MLogger implements INotesRepository {
           tryEmit();
         }, onError: controller.addError);
 
-        notesSub = _local.watchNotesInFolder(idStr).listen((dtos) {
+        notesSub = _local.watchNotesInFolder(idStr, keywords).listen((dtos) {
           latestNotes = dtos;
           tryEmit();
         }, onError: controller.addError);

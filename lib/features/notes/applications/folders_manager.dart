@@ -22,6 +22,8 @@ class FoldersManager with MLogger implements Disposable {
   StreamSubscription<List<NoteFolder>>? _subscription;
   StreamSubscription<List<NoteFolder>>? _countSubscription;
 
+  String _activeKeywords = '';
+
   late final initialize = Command.createAsyncNoParamNoResult(
     _resubscribe,
     errorFilterFn: menoExceptionFilter,
@@ -35,8 +37,9 @@ class FoldersManager with MLogger implements Disposable {
   );
 
   void _performSearch(String query) {
-    if (searchQuery.value == query) return;
     searchQuery.value = query;
+    if (_activeKeywords == query) return;
+    _activeKeywords = query;
     _resubscribe();
   }
 

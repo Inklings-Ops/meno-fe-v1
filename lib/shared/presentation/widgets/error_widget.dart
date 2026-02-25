@@ -6,6 +6,7 @@ class MenoErrorWidget extends StatelessWidget {
   const MenoErrorWidget({
     this.error,
     this.message,
+    this.showRetryButton = true,
     this.onRetry,
     super.key,
     this.margin = const EdgeInsets.symmetric(horizontal: 16),
@@ -17,6 +18,7 @@ class MenoErrorWidget extends StatelessWidget {
 
   final Object? error;
   final String? message;
+  final bool showRetryButton;
   final RefreshCallback? onRetry;
 
   final EdgeInsetsGeometry? margin;
@@ -47,11 +49,13 @@ class MenoErrorWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 5,
           ),
-          Spaces.verticalMedium,
-          SizedBox(
-            height: 32,
-            child: MTextButton(label: 'Retry', onPressed: onRetry),
-          ),
+          if (showRetryButton) ...[
+            Spaces.verticalMedium,
+            SizedBox(
+              height: 32,
+              child: MTextButton(label: 'Retry', onPressed: onRetry),
+            ),
+          ],
         ],
       ),
     );

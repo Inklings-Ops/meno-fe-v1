@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/notes/domain/domain.dart';
-import 'package:meno/shared/domain/value_objects/id.dart';
 
 class NotesManager with MLogger implements Disposable {
   NotesManager(this._repository) {
@@ -29,6 +28,8 @@ class NotesManager with MLogger implements Disposable {
 
   StreamSubscription<List<Note>>? _subscription;
   StreamSubscription<List<Note>>? _countSubscription;
+
+  String _activeKeywords = '';
 
   /// Subscribes to the local notes stream and triggers a remote sync.
   ///
@@ -71,18 +72,10 @@ class NotesManager with MLogger implements Disposable {
     initialValue: null,
   );
 
-  late final deleteNote = Command.createAsync<Id, bool?>(
-    (Id noteId) async {
-      final result = await _repository.deleteNote(noteId);
-      return result.fold((failure) => throw failure, (_) => true);
-    },
-    initialValue: null,
-    errorFilterFn: (e, _) => ErrorReaction.globalHandler,
-  );
-
   void _performSearch(String query) {
-    if (searchQuery.value == query) return;
     searchQuery.value = query;
+    if (_activeKeywords == query) return;
+    _activeKeywords = query;
     _resubscribe();
   }
 
@@ -150,6 +143,5 @@ class NotesManager with MLogger implements Disposable {
     syncFromRemote.dispose();
     retryPendingSync.dispose();
     performSearch.dispose();
-    deleteNote.dispose();
   }
 }

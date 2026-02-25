@@ -14,6 +14,7 @@ class NoteCard extends StatelessWidget {
     required this.onTap,
     required this.onOptionsTap,
     super.key,
+    this.onLongPress,
     this.showAddButton = false,
     this.selected = false,
   });
@@ -21,6 +22,7 @@ class NoteCard extends StatelessWidget {
   final Note note;
   final VoidCallback onTap;
   final VoidCallback onOptionsTap;
+  final VoidCallback? onLongPress;
   final bool showAddButton;
   final bool selected;
 
@@ -39,6 +41,7 @@ class NoteCard extends StatelessWidget {
       constraints: const BoxConstraints.tightForFinite(),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress ?? onOptionsTap,
         borderRadius: Corners.lg,
         child: Card(
           color: colors.surfaceTint,

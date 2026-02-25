@@ -73,6 +73,23 @@ class NoteFolderDto {
     _kCreatedAt: createdAt?.toIso8601String(),
     _kUpdatedAt: updatedAt?.toIso8601String(),
   };
+
+  NoteFolderDto copyWith({
+    String? title,
+    int? numberOfNotes,
+    bool? pinned,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return NoteFolderDto(
+      id: id,
+      title: title ?? this.title,
+      numberOfNotes: numberOfNotes ?? this.numberOfNotes,
+      pinned: pinned ?? this.pinned,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
 }
 
 extension NoteFolderDtoX on NoteFolderDto {

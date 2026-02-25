@@ -64,8 +64,10 @@ class _FolderSearchBarWidgetState extends State<FolderSearchBarWidget> {
               IconButton(
                 icon: const Icon(Icons.clear, size: Insets.lg),
                 onPressed: () {
+                  _debounce?.cancel();
                   _controller.clear();
                   _manager.searchQuery.value = '';
+                  _manager.performSearch.run('');
                 },
               ),
           ],
