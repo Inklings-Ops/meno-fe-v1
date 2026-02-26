@@ -7,9 +7,9 @@ import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/shared.dart';
 
 class DiscoverNowLiveManager with MLogger implements Disposable {
-  DiscoverNowLiveManager(this._feed);
+  DiscoverNowLiveManager(this._source);
 
-  final IBroadcastFeedSource _feed;
+  final IBroadcastFeedSource _source;
 
   final broadcasts = ValueNotifier<PagedList<Broadcast?>>(
     const PagedList.empty(),
@@ -79,7 +79,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
   Future<void> _initializeImpl() async {
     error.value = null;
     final query = BroadcastQuery.nowLive().copyWith(keywords: keywords.value);
-    final result = await _feed.getBroadcasts(query);
+    final result = await _source.getBroadcasts(query);
     result.fold((failure) {
       error.value = failure;
       throw failure;
@@ -91,7 +91,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
     await _startedSubscription?.cancel();
     await _endedSubscription?.cancel();
 
-    _startedSubscription = _feed.onBroadcastStarted.listen((incoming) {
+    _startedSubscription = _source.onBroadcastStarted.listen((incoming) {
       final current = List<Broadcast?>.from(broadcasts.value.items);
       final exists = current.any((b) => b?.id == incoming.id);
       if (!exists) {
@@ -101,7 +101,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
       }
     });
 
-    _endedSubscription = _feed.onBroadcastEnded.listen((ended) {
+    _endedSubscription = _source.onBroadcastEnded.listen((ended) {
       final current = List<Broadcast?>.from(broadcasts.value.items);
       current.removeWhere((b) => b?.id != ended.details.id);
       broadcasts.value = broadcasts.value.copyWith(items: current);
@@ -112,7 +112,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
     if (fetchMore.isRunning.value || !_canFetchMore) return;
 
     final nextQuery = _currentQuery.nextPage();
-    final result = await _feed.getBroadcasts(nextQuery);
+    final result = await _source.getBroadcasts(nextQuery);
     result.fold(
       (failure) => throw failure,
       (page) => broadcasts.value = broadcasts.value.merge(page),
@@ -144,6 +144,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
     _endedSubscription = null;
 
     broadcasts.dispose();
+    keywords.dispose();
     error.dispose();
 
     initialize.dispose();
