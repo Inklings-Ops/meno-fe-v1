@@ -8,6 +8,7 @@ export './domain/entities/general_settings.dart';
 export './domain/entities/notification_settings.dart';
 export './domain/entities/user.dart';
 export './domain/entities/user_role.dart';
+export './domain/i_broadcast_feed_source.dart';
 export './domain/order_by.dart';
 export './domain/participant_role.dart';
 export './domain/sync_status.dart';
