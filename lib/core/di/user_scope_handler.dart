@@ -7,10 +7,12 @@ import 'package:meno/features/auth/domain/domain.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
+import 'package:meno/features/discover/applications/applications.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/shared.dart' show IBroadcastFeedSource;
 
 final class UserScopeHandler with MLogger implements Disposable {
   UserScopeHandler(this._repository) {
@@ -105,6 +107,12 @@ final class UserScopeHandler with MLogger implements Disposable {
             ],
           );
 
+          // Narrow feed interface alias — same instance, no extra cost
+          di.registerSingletonWithDependencies<IBroadcastFeedSource>(
+            () => di<IBroadcastRepository>() as IBroadcastFeedSource,
+            dependsOn: [IBroadcastRepository],
+          );
+
           // Notes/Folders
           di.registerSingletonWithDependencies(
             () => NotesLocalDataSource(di<Database>()),
@@ -178,6 +186,19 @@ final class UserScopeHandler with MLogger implements Disposable {
           di.registerSingletonWithDependencies(() {
             return NoteActionsManager(di<INotesRepository>());
           }, dependsOn: [INotesRepository]);
+
+          // Discover
+          di.registerSingletonWithDependencies(() {
+            final manager = DiscoverNowLiveManager(di<IBroadcastFeedSource>());
+            manager.initialize.run();
+            return manager;
+          }, dependsOn: [IBroadcastFeedSource]);
+
+          di.registerSingletonWithDependencies(() {
+            final mgr = DiscoverRecentlyLiveManager(di<IBroadcastFeedSource>());
+            mgr.initialize.run();
+            return mgr;
+          }, dependsOn: [IBroadcastFeedSource]);
         },
       );
     }
