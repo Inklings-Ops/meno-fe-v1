@@ -81,19 +81,29 @@ final class UserScopeHandler with MLogger implements Disposable {
           );
 
           di.registerSingletonWithDependencies(
-            () => BroadcastRemoteDataSource(
-              api: di<ApiClient>(),
-              socket: di<WebSocketClient>(),
-            ),
-            dependsOn: [ApiClient, WebSocketClient],
+            () => BroadcastHttpDataSource(di<ApiClient>()),
+            dependsOn: [ApiClient],
           );
 
-          di.registerSingletonAsync<IBroadcastRepository>(() async {
-            return BroadcastRepositoryImpl(
-              local: di<BroadcastLocalDataSource>(),
-              remote: di<BroadcastRemoteDataSource>(),
-            );
-          }, dependsOn: [BroadcastLocalDataSource, BroadcastRemoteDataSource]);
+          di.registerSingletonWithDependencies(
+            () => BroadcastSocketDataSource(di<WebSocketClient>()),
+            dependsOn: [WebSocketClient],
+          );
+
+          di.registerSingletonAsync<IBroadcastRepository>(
+            () async {
+              return BroadcastRepositoryImpl(
+                local: di<BroadcastLocalDataSource>(),
+                http: di<BroadcastHttpDataSource>(),
+                socket: di<BroadcastSocketDataSource>(),
+              );
+            },
+            dependsOn: [
+              BroadcastLocalDataSource,
+              BroadcastHttpDataSource,
+              BroadcastSocketDataSource,
+            ],
+          );
 
           // Notes/Folders
           di.registerSingletonWithDependencies(

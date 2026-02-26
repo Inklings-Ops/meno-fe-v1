@@ -12,12 +12,15 @@ import 'package:meno/shared/domain/domain.dart';
 
 class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   BroadcastRepositoryImpl({
-    required BroadcastRemoteDataSource remote,
+    required BroadcastHttpDataSource http,
+    required BroadcastSocketDataSource socket,
     required BroadcastLocalDataSource local,
-  }) : _remote = remote,
+  }) : _http = http,
+       _socket = socket,
        _local = local;
 
-  final BroadcastRemoteDataSource _remote;
+  final BroadcastHttpDataSource _http;
+  final BroadcastSocketDataSource _socket;
   final BroadcastLocalDataSource _local;
 
   final _drafts = ValueNotifier<List<BroadcastDraft?>>([]);
@@ -31,7 +34,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
     List<Id>? cohosts,
   }) async {
     try {
-      final result = await _remote.createBroadcast(
+      final result = await _http.createBroadcast(
         title: title.getOrCrash(),
         description: description.getOrCrash(),
         image: (image?.getOrNull() as LocalImage?)?.file,
@@ -71,7 +74,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
     CancelToken? cancelToken,
   }) async {
     try {
-      final response = await _remote.getBroadcasts(
+      final response = await _http.getBroadcasts(
         query.toApiParams,
         cancelToken: cancelToken,
       );
@@ -107,7 +110,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   }) async {
     try {
       final query = BroadcastQuery(id: id);
-      final response = await _remote.getBroadcasts(
+      final response = await _http.getBroadcasts(
         query.toApiParams,
         cancelToken: cancelToken,
       );
@@ -140,7 +143,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   Future<Either<MenoException, Broadcast>> startBroadcast(Id id) async {
     try {
       final broadcastId = id.getOrCrash();
-      final result = await _remote.startBroadcast(broadcastId);
+      final result = await _http.startBroadcast(broadcastId);
       if (result != null) return Right(result.toDomain);
       return const Left(MenoException('Failed to start broadcast'));
     } catch (error) {
@@ -233,7 +236,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<Either<MenoException, Unit>> emitEndBroadcast(Id broadcastId) async {
     try {
-      await _remote.emitEndBroadcast(broadcastId.getOrCrash());
+      await _socket.emitEndBroadcast(broadcastId.getOrCrash());
       // TODO(gettoknowdavid): Confirm if the local session is cleared elsewhere
       return right(unit);
     } catch (error) {
@@ -245,7 +248,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<Either<MenoException, Unit>> emitStartedBroadcast(Id id) async {
     try {
-      await _remote.emitStartedBroadcast(id.getOrCrash());
+      await _socket.emitStartedBroadcast(id.getOrCrash());
       return right(unit);
     } catch (error) {
       if (error is MenoException) return Left(error);
@@ -256,7 +259,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<Either<MenoException, Unit>> emitJoinedBroadcast(Id id) async {
     try {
-      await _remote.emitJoinedBroadcast(id.getOrCrash());
+      await _socket.emitJoinedBroadcast(id.getOrCrash());
       return right(unit);
     } catch (error) {
       if (error is MenoException) return Left(error);
@@ -267,7 +270,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<Either<MenoException, Unit>> emitLeaveBroadcast(Id broadcastId) async {
     try {
-      await _remote.emitLeaveBroadcast(broadcastId.getOrCrash());
+      await _socket.emitLeaveBroadcast(broadcastId.getOrCrash());
       return right(unit);
     } catch (error) {
       if (error is MenoException) return Left(error);
@@ -278,75 +281,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   // #########################################################################
   // STREAMS
   // #########################################################################
-  @override
-  Stream<List<Broadcast>> get watchNowLiveBroadcasts {
-    late StreamController<List<Broadcast>> controller;
-    final currentList = <Broadcast>[];
-
-    // Helper to emit updates easily
-    void emit() => controller.add(List.of(currentList));
-
-    // Helper to get the now live broadcasts
-    Future<List<Broadcast>> getNowLiveBroadcasts() async {
-      final query = BroadcastQuery.nowLive();
-      final response = await _remote.getBroadcasts(query.toApiParams);
-      final json = response as Map<String, dynamic>;
-      final items = json[r'broadcasts'] as List<dynamic>;
-      final dtos = items.map(BroadcastDto.fromJson).toList();
-      return dtos.map((e) => e.toDomain).toList();
-    }
-
-    StreamSubscription? newBroadcastSubscription;
-    StreamSubscription? endedBroadcastSubscription;
-    StreamSubscription? reconnectionSubscription;
-
-    controller = StreamController<List<Broadcast>>(
-      onListen: () async {
-        try {
-          // Get the initial data using the api client (HTTP)
-          final broadcasts = await getNowLiveBroadcasts();
-          currentList.addAll(broadcasts);
-          emit();
-        } catch (e) {
-          controller.addError(e);
-        }
-
-        // Listen to DTO Streams
-        newBroadcastSubscription = _remote.onNewBroadcast.listen((dto) {
-          final broadcast = dto.toDomain;
-          if (!currentList.any((b) => b.id == broadcast.id)) {
-            currentList.insert(0, broadcast);
-            emit();
-          }
-        });
-
-        endedBroadcastSubscription = _remote.onEndedBroadcast.listen((dto) {
-          currentList.removeWhere((i) => i.id.getOrCrash() == dto.details.id);
-          emit();
-        });
-
-        reconnectionSubscription = _remote.onReconnected.listen((_) async {
-          try {
-            // Silently refresh the list to ensure sync
-            final broadcasts = await getNowLiveBroadcasts();
-            currentList.clear();
-            currentList.addAll(broadcasts);
-            emit();
-          } catch (_) {
-            /* ignore background sync errors */
-          }
-        });
-      },
-      onCancel: () {
-        newBroadcastSubscription?.cancel();
-        endedBroadcastSubscription?.cancel();
-        reconnectionSubscription?.cancel();
-        controller.close();
-      },
-    );
-
-    return controller.stream;
-  }
 
   @override
   Stream<List<Participant>> watchLiveParticipants(Id broadcastId) {
@@ -360,7 +294,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
       try {
         log.i('BroadcastRepository: Fetching participants for $broadcastId');
 
-        final dtos = await _remote.getLiveListeners(broadcastId.getOrCrash());
+        final dtos = await _http.getLiveListeners(broadcastId.getOrCrash());
         log.i('BroadcastRepository: Received ${dtos.length} participants');
 
         participants.clear();
@@ -390,7 +324,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
         await initialFetch();
 
         // Listen to the `newBroadcastListener` Socket event via DTO streams
-        newParticipantSub = _remote.onParticipantJoined.listen((dto) {
+        newParticipantSub = _socket.onParticipantJoined.listen((dto) {
           participants[dto.id] = dto.toDomain;
           emit();
 
@@ -400,7 +334,7 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
           );
         });
 
-        participantLeftSub = _remote.onParticipantLeft.listen((dto) {
+        participantLeftSub = _socket.onParticipantLeft.listen((dto) {
           final id = dto.id;
 
           final removedParticipant = participants.remove(id);
@@ -433,7 +367,12 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
 
   @override
   Stream<EndedBroadcast> get onBroadcastEnded {
-    return _remote.onEndedBroadcast.map((e) => e.toDomain);
+    return _socket.onEndedBroadcast.map((e) => e.toDomain);
+  }
+
+  @override
+  Stream<Broadcast> get onBroadcastStarted {
+    return _socket.onNewBroadcast.map((e) => e.toDomain);
   }
 
   @override
@@ -443,13 +382,13 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   }
 
   @override
-  Stream<dynamic> get onHostDisconnected => _remote.onHostDisconnected;
+  Stream<dynamic> get onHostDisconnected => _socket.onHostDisconnected;
 
   @override
-  Stream<dynamic> get onHostReconnected => _remote.onHostReconnected;
+  Stream<dynamic> get onHostReconnected => _socket.onHostReconnected;
 
   @override
-  Stream<Unit> get onReconnected => _remote.onReconnected.map((_) => unit);
+  Stream<Unit> get onReconnected => _socket.onReconnected.map((_) => unit);
 
   @override
   Future<void> clearBroadcastSummary(Id userId) async {

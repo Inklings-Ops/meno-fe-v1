@@ -1,12 +1,10 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_it/flutter_it.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:meno/core/core.dart';
+import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:fpdart/fpdart.dart' show Either, Option, Unit;
+import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
-import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/shared.dart';
 
-abstract class IBroadcastRepository implements Disposable {
+abstract class IBroadcastRepository implements IBroadcastFeedSource {
   ValueListenable<List<BroadcastDraft?>> get drafts;
 
   Either<MenoException, List<BroadcastDraft?>> getDrafts(Id userId);
@@ -42,26 +40,6 @@ abstract class IBroadcastRepository implements Disposable {
 
   Future<Either<MenoException, PagedList<Participant?>>> getListeners(Id id);
 
-  /// Retrieves a paginated list of broadcasts based on the provided query
-  /// parameters.
-  ///
-  /// Returns [PagedList<Broadcast?>] wrapped in Either for error handling.
-  /// All filtering, sorting, and pagination options are encapsulated in
-  /// [BroadcastQuery].
-  Future<Either<MenoException, PagedList<Broadcast?>>> getBroadcasts(
-    BroadcastQuery query, {
-    CancelToken? cancelToken,
-  });
-
-  /// Retrieves a single broadcast by its ID.
-  ///
-  /// Returns [Broadcast] wrapped in Either for error handling.
-  /// If the broadcast is not found, returns null.
-  Future<Either<MenoException, Broadcast>> getBroadcast(
-    Id id, {
-    CancelToken? cancelToken,
-  });
-
   Option<BroadcastSession> getActiveBroadcastSession(Id userId);
 
   Future<void> saveActiveBroadcastSession(Id userId, Broadcast broadcast);
@@ -84,11 +62,7 @@ abstract class IBroadcastRepository implements Disposable {
   // STREAMS
   // #########################################################################
 
-  Stream<List<Broadcast>> get watchNowLiveBroadcasts;
-
   Stream<List<Participant>> watchLiveParticipants(Id broadcastId);
-
-  Stream<EndedBroadcast> get onBroadcastEnded;
 
   Stream<BroadcastSession?> watchActiveSession(Id userId);
 
@@ -100,8 +74,6 @@ abstract class IBroadcastRepository implements Disposable {
 
   /// Stream for socket reconnection
   Stream<Unit> get onReconnected;
-
-  // Add these to IBroadcastRepository
 
   /// Save broadcast summary after session ends (before scope destruction)
   Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary);

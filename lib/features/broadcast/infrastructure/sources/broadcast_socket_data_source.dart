@@ -1,128 +1,37 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 
-class BroadcastRemoteDataSource with MLogger {
-  const BroadcastRemoteDataSource({
-    required ApiClient api,
-    required WebSocketClient socket,
-  }) : _api = api,
-       _socket = socket;
+class BroadcastSocketDataSource with MLogger {
+  const BroadcastSocketDataSource(this._client);
 
-  final ApiClient _api;
-  final WebSocketClient _socket;
-
-  Future<BroadcastDto?> createBroadcast({
-    required String title,
-    required String description,
-    String? timezone,
-    List<String>? cohosts,
-    File? image,
-    CancelToken? cancelToken,
-  }) async {
-    final data = FormData();
-
-    data.fields.add(MapEntry('title', title));
-
-    data.fields.add(MapEntry('description', description));
-
-    cohosts?.forEach((i) => data.fields.add(MapEntry('cohosts', i)));
-
-    if (timezone != null) data.fields.add(MapEntry('timezone', timezone));
-
-    if (image != null) {
-      final imageData = MultipartFile.fromFileSync(
-        image.path,
-        filename: image.path.split(Platform.pathSeparator).last,
-      );
-      data.files.add(MapEntry('image', imageData));
-    }
-
-    return _api.upload(
-      '/broadcasts',
-      formData: data,
-      fromJson: BroadcastDto.fromJson,
-      cancelToken: cancelToken,
-    );
-  }
-
-  Future<BroadcastDto?> startBroadcast(
-    String broadcastId, {
-    CancelToken? cancelToken,
-  }) async {
-    return _api.put(
-      '/broadcasts/$broadcastId/start',
-      fromJson: BroadcastDto.fromJson,
-      cancelToken: cancelToken,
-    );
-  }
-
-  Future<dynamic> getBroadcasts(
-    Map<String, dynamic> queryParameters, {
-    CancelToken? cancelToken,
-  }) async {
-    return _api.get(
-      '/broadcasts',
-      queryParameters: queryParameters,
-      fromJson: (json) => json,
-      cancelToken: cancelToken,
-    );
-  }
-
-  Future<List<ParticipantDto>> getLiveListeners(
-    String broadcastId, {
-    CancelToken? cancelToken,
-  }) async {
-    return _api.get(
-      '/broadcasts/$broadcastId/live-listeners',
-      fromJson: (json) {
-        if (json is! List) {
-          throw const UnknownException('Expected List but got different type');
-        }
-        return json.map(ParticipantDto.fromJson).toList();
-      },
-      cancelToken: cancelToken,
-    );
-  }
-
-  Future<dynamic> getListeners(
-    String broadcastId, {
-    CancelToken? cancelToken,
-  }) async {
-    return _api.get(
-      '/broadcasts/$broadcastId/listeners',
-      fromJson: (json) => json,
-      cancelToken: cancelToken,
-    );
-  }
+  final WebSocketClient _client;
 
   // ======================================================================
   // SOCKET EVENT ACTIONS
   // ======================================================================
 
   Future<dynamic> emitEndBroadcast(String broadcastId) async {
-    return _socket.emitWithAck(SocketEvent.endBroadcast, {
+    return _client.emitWithAck(SocketEvent.endBroadcast, {
       'broadcastId': broadcastId,
     });
   }
 
   Future<dynamic> emitStartedBroadcast(String broadcastId) async {
-    return _socket.emitWithAck(SocketEvent.startedBroadcast, {
+    return _client.emitWithAck(SocketEvent.startedBroadcast, {
       'broadcastId': broadcastId,
     });
   }
 
   Future<dynamic> emitJoinedBroadcast(String broadcastId) async {
-    return _socket.emitWithAck(SocketEvent.joinedBroadcast, {
+    return _client.emitWithAck(SocketEvent.joinedBroadcast, {
       'broadcastId': broadcastId,
     });
   }
 
   Future<dynamic> emitLeaveBroadcast(String broadcastId) async {
-    return _socket.emitWithAck(SocketEvent.leaveBroadcast, {
+    return _client.emitWithAck(SocketEvent.leaveBroadcast, {
       'broadcastId': broadcastId,
     });
   }
@@ -137,7 +46,7 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<BroadcastDto>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.newBroadcast, (dynamic data) {
+        subscription = _client.on(SocketEvent.newBroadcast, (dynamic data) {
           try {
             final dto = BroadcastDto.fromJson(data);
             controller.add(dto);
@@ -159,7 +68,7 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<EndedBroadcastDto>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.endedBroadcast, (dynamic data) {
+        subscription = _client.on(SocketEvent.endedBroadcast, (dynamic data) {
           try {
             final dto = EndedBroadcastDto.fromJson(data);
             controller.add(dto);
@@ -181,12 +90,12 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<dynamic>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.hostDisconnected, (dynamic data) {
+        subscription = _client.on(SocketEvent.hostDisconnected, (dynamic data) {
           try {
-            log.i('BroadcastRemoteDataSource: Host disconnected: $data');
+            log.i('BroadcastSocketDataSource: Host disconnected: $data');
             controller.add(data);
           } catch (e) {
-            log.e('BroadcastRemoteDataSource: Error hostDisconnected - $e');
+            log.e('BroadcastSocketDataSource: Error hostDisconnected - $e');
           }
         });
       },
@@ -203,12 +112,12 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<dynamic>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.hostReconnected, (dynamic data) {
+        subscription = _client.on(SocketEvent.hostReconnected, (dynamic data) {
           try {
-            log.i('BroadcastRemoteDataSource: Host reconnected: $data');
+            log.i('BroadcastSocketDataSource: Host reconnected: $data');
             controller.add(data);
           } catch (e) {
-            log.e('BroadcastRemoteDataSource: Error hostReconnected - $e');
+            log.e('BroadcastSocketDataSource: Error hostReconnected - $e');
           }
         });
       },
@@ -226,7 +135,7 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<ParticipantDto>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.newBroadcastListener, (
+        subscription = _client.on(SocketEvent.newBroadcastListener, (
           dynamic data,
         ) {
           try {
@@ -251,7 +160,7 @@ class BroadcastRemoteDataSource with MLogger {
 
     controller = StreamController<ParticipantDto>.broadcast(
       onListen: () {
-        subscription = _socket.on(SocketEvent.broadcastListenerLeft, (
+        subscription = _client.on(SocketEvent.broadcastListenerLeft, (
           dynamic data,
         ) {
           try {
@@ -270,7 +179,7 @@ class BroadcastRemoteDataSource with MLogger {
 
   Stream<void> get onReconnected {
     // Filter the connection state stream to only emit on 'connected'
-    return _socket.connectionState
+    return _client.connectionState
         .where((state) => state == SocketConnectionState.connected)
         .map((_) {});
   }
