@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
-import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';

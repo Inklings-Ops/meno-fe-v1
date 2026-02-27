@@ -8,9 +8,12 @@ import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/infrastructure.dart';
 import 'package:meno/features/discover/applications/applications.dart';
+import 'package:meno/features/discover/infrastructure/infrastructure.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
+import 'package:meno/features/profile/domain/domain.dart';
+import 'package:meno/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:meno/shared/shared.dart' show IBroadcastFeedSource;
 
@@ -130,6 +133,22 @@ final class UserScopeHandler with MLogger implements Disposable {
               remote: di<NotesRemoteDataSource>(),
             );
           }, dependsOn: [NotesLocalDataSource, NotesRemoteDataSource]);
+
+          // Discover
+          di.registerSingletonWithDependencies(
+            () => DiscoverLocalDataSource(di<LocalStorage>()),
+            dependsOn: [LocalStorage],
+          );
+
+          // Profile
+          di.registerSingletonWithDependencies(
+            () => ProfileHttpDataSource(di<ApiClient>()),
+            dependsOn: [ApiClient],
+          );
+
+          di.registerSingletonWithDependencies<IProfileRepository>(() {
+            return ProfileRepositoryImpl(http: di<ProfileHttpDataSource>());
+          }, dependsOn: [ProfileHttpDataSource]);
 
           // ==================================================================
           // APPLICATION LAYER

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/discover/applications/discover_manager.dart';
 import 'package:meno/features/discover/domain/filter.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class SearchFilterList extends StatelessWidget {
-  const SearchFilterList({
-    required this.filter,
-    required this.onSelected,
-    super.key,
-  });
-
-  final Filter filter;
-  final ValueChanged<Filter> onSelected;
+class SearchFilterList extends WatchingWidget {
+  const SearchFilterList({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final filter = watchValue((DiscoverManager m) => m.filter);
+
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
     const filters = Filter.values;
@@ -27,7 +24,7 @@ class SearchFilterList extends StatelessWidget {
           ),
           selected: selected,
           labelStyle: textTheme.captionMedium,
-          onSelected: (_) => onSelected(filters[i]),
+          onSelected: (_) => di<DiscoverManager>().onChanged(filters[i]),
         );
       },
       separatorBuilder: (context, i) => Spaces.horizontalLarge,

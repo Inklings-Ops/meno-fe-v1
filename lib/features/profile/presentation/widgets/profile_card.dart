@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/profile/domain/domain.dart';
+import 'package:meno/features/profile/presentation/presentation.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({required this.profile, super.key});
+
   final Profile profile;
 
   @override
@@ -53,14 +55,7 @@ class ProfileCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              // BlocListener<SubscriptionBloc, SubscriptionState>(
-              //   listener: (context, state) {
-              //     if (state.exception != null) {
-              //       context.showErrorSnackBar(state.exception!.message);
-              //     }
-              //   },
-              //   child: SubscribeButton(profile: profile),
-              // ),
+              SubscribeButton(profile: profile),
             ],
           ),
         ),

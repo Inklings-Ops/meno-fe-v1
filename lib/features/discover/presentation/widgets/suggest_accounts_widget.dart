@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/profile/domain/profile.dart';
+import 'package:meno/features/profile/presentation/widgets/profile_card.dart';
 import 'package:meno/shared/domain/domain.dart';
-import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 final _profiles = <Profile>[
   Profile(
@@ -46,86 +45,24 @@ class SuggestAccountsWidget extends StatelessWidget {
 }
 
 class _List extends StatelessWidget {
-  const _List({required this.profiles, this.isLoading = false});
+  const _List({required this.profiles});
 
   final List<Profile?> profiles;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: isLoading,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 24,
-          crossAxisSpacing: 24,
-          childAspectRatio: 159.50 / 192,
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
-        itemBuilder: (context, i) {
-          final profile = profiles[i]!;
-          final colors = MColorScheme.of(context);
-          final textTheme = MTextTheme.of(context);
-          return Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.all(Insets.lg),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  MAvatar(
-                    radius: Insets.xxl,
-                    url: profile.imageUrl,
-                    hasBorder: false,
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    height: Insets.xl,
-                    child: MText(
-                      profile.fullName.getOrCrash(),
-                      style: MTextTheme.of(context).captionMedium,
-                      maxLines: 1,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Spaces.verticalMicro,
-                  SizedBox(
-                    height: 18,
-                    child: MText(
-                      '6, 850 Subscribers',
-                      style: textTheme.captionRegular,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      color: colors.onBackground.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const Spacer(),
-                  Skeleton.unite(
-                    child: MSecondaryButton(
-                      label: 'Subscribe',
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        textStyle: textTheme.microMedium,
-                        fixedSize: const Size(double.infinity, Insets.xxl),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: Corners.sm,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-        itemCount: profiles.length,
-        primary: false,
-        physics: const NeverScrollableScrollPhysics(),
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 24,
+        crossAxisSpacing: 24,
+        childAspectRatio: 159.50 / 192,
       ),
+      padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
+      itemBuilder: (context, i) => ProfileCard(profile: profiles[i]!),
+      itemCount: profiles.length,
+      primary: false,
+      physics: const NeverScrollableScrollPhysics(),
     );
   }
 }

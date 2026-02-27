@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/discover/applications/discover_manager.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class DiscoverSearchBar extends StatelessWidget {
   const DiscoverSearchBar({
-    super.key,
-    this.onTap,
-    this.onCancel,
+    this.controller,
     this.showCancelButton = false,
-    this.height = 40,
+    this.readOnly = false,
+    super.key,
     this.padding,
-    this.onChanged,
-    this.autofocus = false,
+    this.onSubmitted,
   });
-  final VoidCallback? onTap;
-  final VoidCallback? onCancel;
-  final bool showCancelButton;
-  final double height;
+
+  final TextEditingController? controller;
+  final void Function(String)? onSubmitted;
   final EdgeInsetsGeometry? padding;
-  final ValueChanged<String>? onChanged;
-  final bool autofocus;
+  final bool showCancelButton;
+  final bool readOnly;
+
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
@@ -30,12 +30,15 @@ class DiscoverSearchBar extends StatelessWidget {
         children: [
           Expanded(
             child: SizedBox(
-              height: height,
+              height: 40,
               child: SearchBar(
+                readOnly: readOnly,
                 elevation: const WidgetStatePropertyAll(0),
-                autoFocus: autofocus,
-                onTap: onTap,
-                onChanged: onChanged,
+                autoFocus: true,
+                onTap: di<DiscoverManager>().openSearch,
+                controller: controller,
+                onSubmitted: onSubmitted,
+                textInputAction: TextInputAction.search,
                 hintText: 'Search broadcasts',
                 hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
                 padding: const WidgetStatePropertyAll(
@@ -54,7 +57,7 @@ class DiscoverSearchBar extends StatelessWidget {
           if (showCancelButton) ...[
             Spaces.horizontalSmall,
             InkWell(
-              onTap: onCancel,
+              onTap: di<DiscoverManager>().closeSearch,
               child: MText(
                 'Cancel',
                 style: textTheme.captionMedium,

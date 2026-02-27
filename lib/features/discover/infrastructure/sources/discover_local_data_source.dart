@@ -6,8 +6,7 @@ import 'package:meno/core/core.dart';
 /// Does NOT cache broadcast/profile results — those are the broadcast
 /// repository's concern.
 class DiscoverLocalDataSource {
-  const DiscoverLocalDataSource({required LocalStorage storage})
-    : _storage = storage;
+  const DiscoverLocalDataSource(this._storage);
 
   final LocalStorage _storage;
 
