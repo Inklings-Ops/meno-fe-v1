@@ -188,6 +188,8 @@ final class UserScopeHandler with MLogger implements Disposable {
           }, dependsOn: [INotesRepository]);
 
           // Discover
+          di.registerSingleton<DiscoverManager>(DiscoverManager());
+
           di.registerSingletonWithDependencies(() {
             final manager = DiscoverNowLiveManager(di<IBroadcastFeedSource>());
             manager.initialize.run();

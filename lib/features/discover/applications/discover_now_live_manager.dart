@@ -60,6 +60,11 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
     errorFilterFn: menoExceptionFilter,
   );
 
+  late final isLoading = initialize.isRunning.combineLatest(
+    refresh.isRunning,
+    (isInitializing, isRefreshing) => isInitializing || isRefreshing,
+  );
+
   // ==========================================================================
   // HELPERS
   // ==========================================================================
@@ -109,7 +114,7 @@ class DiscoverNowLiveManager with MLogger implements Disposable {
   }
 
   Future<void> _fetchMoreImpl() async {
-    if (fetchMore.isRunning.value || !_canFetchMore) return;
+    if (!_canFetchMore) return;
 
     final nextQuery = _currentQuery.nextPage();
     final result = await _source.getBroadcasts(nextQuery);

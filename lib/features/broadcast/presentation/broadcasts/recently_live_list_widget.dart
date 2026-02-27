@@ -26,7 +26,7 @@ class RecentlyLiveListWidget extends StatelessWidget {
       endTime: broadcast.endTime,
       imageUrl: broadcast.imageUrl,
       creator: broadcast.effectiveCreatorName.getOrNull(),
-      onTap: () => context.push('${R.broadcasts}/${broadcast.id.getOrCrash()}'),
+      onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
     );
   }
 

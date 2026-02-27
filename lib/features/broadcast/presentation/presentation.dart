@@ -1,4 +1,5 @@
 //GENERATED BARREL FILE
+export './broadcast_details/broadcast_details_page.dart';
 export './broadcasts/broadcasts_page.dart';
 export './broadcasts/ended_broadcast_page.dart';
 export './broadcasts/now_live_list_widget.dart';
@@ -23,7 +24,6 @@ export './widgets/broadcast_listening_tab.dart';
 export './widgets/broadcast_status_widget.dart';
 export './widgets/broadcast_timer_widget.dart';
 export './widgets/broadcast_title_widget.dart';
-export './widgets/live_broadcast_card.dart';
 export './widgets/live_broadcast_tab.dart';
 export './widgets/participant_info_modal.dart';
 export './widgets/participant_item.dart';

@@ -39,8 +39,6 @@ class R {
   static const String about = '/settings/about';
   static const String endedBroadcast = '/endedBroadcast';
   static const String biblePage = '/bible-page';
-  static const String broadcasts = '/broadcasts';
-  static const String broadcastDetails = '/broadcasts/:id';
 
   static const String liveSessionInitialization = '/live-initialization';
   static const String broadcastTab = '/broadcast-tab';
@@ -53,9 +51,13 @@ class R {
   static const String noteSection = '/notes-section';
   static const String folderSection = '/folder-section';
 
+  static const String broadcasts = '/broadcasts';
+
+  static String broadcast(String id) => '$broadcasts/$id';
+
   static const String profiles = '/profiles';
 
-  static String profile(String id) => '/profiles/$id';
+  static String profile(String id) => '$profiles/$id';
 
   static const String noteEditorName = 'note-editor';
 

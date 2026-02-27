@@ -1,4 +1,5 @@
 //GENERATED BARREL FILE
+export 'broadcast_details_manager.dart';
 export 'broadcast_form_manager.dart';
 export 'broadcasts_manager.dart';
 export 'live_session_manager.dart';

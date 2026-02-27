@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart'
-    show
-        BuildContext,
-        GlobalKey,
-        Navigator,
-        NavigatorState,
-        ScaffoldMessengerState;
+import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
@@ -17,7 +11,6 @@ import 'package:meno/features/chat/presentation/presentation.dart';
 import 'package:meno/features/discover/presentation/presentation.dart';
 import 'package:meno/features/notes/presentation/presentation.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
-import 'package:meno/shared/presentation/live_layout/live_session_initialization_page.dart';
 import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -86,6 +79,15 @@ final class MenoRouter {
           final query = BroadcastQuery.fromRouter(params);
           return BroadcastsPage(query: query);
         },
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return BroadcastDetailsPage(id: id);
+            },
+          ),
+        ],
       ),
 
       GoRoute(
