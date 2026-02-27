@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart' show CancelToken;
 import 'package:fpdart/fpdart.dart' show Either, Left, Right;
+import 'package:fpdart/src/unit.dart';
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/profile/domain/domain.dart';
 import 'package:meno/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/broadcast_query.dart';
 import 'package:meno/shared/domain/order_by.dart';
 import 'package:meno/shared/domain/value_objects/id.dart';
+import 'package:meno/shared/domain/value_objects/image_input.dart';
+import 'package:meno/shared/domain/value_objects/multi_line_string.dart';
 import 'package:meno/shared/domain/value_objects/paged_list.dart';
+import 'package:meno/shared/domain/value_objects/single_line_string.dart';
 
 class ProfileRepositoryImpl implements IProfileRepository {
   const ProfileRepositoryImpl({required ProfileHttpDataSource http})
@@ -59,5 +63,52 @@ class ProfileRepositoryImpl implements IProfileRepository {
       if (error is MenoException) return Left(error);
       return Left(UnknownException(error.toString()));
     }
+  }
+
+  @override
+  Future<Either<MenoException, Profile>> editProfile({
+    required Id id,
+    SingleLineString? fullName,
+    MultiLineString? bio,
+    ImageInput? image,
+  }) {
+    // TODO: implement editProfile
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<MenoException, PagedList<Profile?>>> getSubscribers({
+    required Id subscriptionId,
+    PaginationParams pagination = const PaginationParams(),
+    String? keywords,
+    bool includeSubscribed = true,
+    CancelToken? cancelToken,
+  }) {
+    // TODO: implement getSubscribers
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<MenoException, PagedList<Profile?>>> getSubscriptions({
+    required Id subscriberId,
+    PaginationParams pagination = const PaginationParams(),
+    String? keywords,
+    bool includeSubscribed = true,
+    CancelToken? cancelToken,
+  }) {
+    // TODO: implement getSubscriptions
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> subscribe(Id id) {
+    // TODO: implement subscribe
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<MenoException, Unit>> unsubscribe(Id id) {
+    // TODO: implement unsubscribe
+    throw UnimplementedError();
   }
 }
