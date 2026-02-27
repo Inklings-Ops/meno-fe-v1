@@ -32,6 +32,7 @@ ErrorReaction menoExceptionFilter(Object error, StackTrace stacktrace) {
     // - Local: Widget shows field-level errors (red text, error messages)
     // - Global: Show toast "Please check your inputs"
     ValidationException() => ErrorReaction.localAndGlobalHandler,
+    CancelledException() => ErrorReaction.localHandler,
 
     // ========================================================================
     // AUTHENTICATION ERRORS
@@ -53,7 +54,6 @@ ErrorReaction menoExceptionFilter(Object error, StackTrace stacktrace) {
     ServerException() => ErrorReaction.globalHandler,
     TimeoutException() => ErrorReaction.globalHandler,
     StorageException() => ErrorReaction.globalHandler,
-
     // ========================================================================
     // GENERIC MENO EXCEPTION
     // ========================================================================

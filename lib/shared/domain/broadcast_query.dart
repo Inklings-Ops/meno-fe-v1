@@ -29,6 +29,7 @@ enum BroadcastsType {
 
 /// Represents the sort items for query results
 enum SortBy {
+  fullName('fullName'),
   title('title'),
   status('status'),
   startTime('startTime'),

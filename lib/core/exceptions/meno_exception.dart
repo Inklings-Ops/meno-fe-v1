@@ -94,3 +94,9 @@ final class SocketNotConnectedException extends SocketException {
 final class SocketTimeoutException extends SocketException {
   const SocketTimeoutException(super.message);
 }
+
+/// Thrown when a request is intentionally cancelled (e.g. debounce).
+/// This is NOT a user-facing error — it should never show a snack bar.
+final class CancelledException extends MenoException {
+  const CancelledException() : super('Request was cancelled');
+}

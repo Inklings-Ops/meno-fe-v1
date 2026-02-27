@@ -468,7 +468,7 @@ class ApiClient {
         );
 
       case DioExceptionType.cancel:
-        return const MenoException('Request was cancelled');
+        return const CancelledException();
 
       case DioExceptionType.connectionError:
         if (e.error is SocketException) return const NetworkException();
