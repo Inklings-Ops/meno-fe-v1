@@ -7,7 +7,7 @@ import 'package:meno/shared/domain/domain.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class SwitchAccountModal extends WatchingWidget {
-  const SwitchAccountModal({super.key});
+  const SwitchAccountModal._() : super(key: null);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class SwitchAccountModal extends WatchingWidget {
   static Future<dynamic> show(BuildContext context) {
     return showModalBottomSheet<dynamic>(
       context: context,
-      builder: (context) => const SwitchAccountModal(),
+      builder: (context) => const SwitchAccountModal._(),
       isScrollControlled: true,
       useRootNavigator: true,
     );

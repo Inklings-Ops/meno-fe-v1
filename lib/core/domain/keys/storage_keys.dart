@@ -14,7 +14,7 @@ abstract class StorageKeys {
   static const accounts = 'all_accounts';
 
   // #######################################################################
-  // #  BROADCAST KEYS
+  // BROADCAST KEYS
   // #######################################################################
 
   static String activeBroadcast(String userId) => 'broadcast_session_$userId';
@@ -26,4 +26,14 @@ abstract class StorageKeys {
   static String broadcastSummary(String userId) => 'broadcast_summary_$userId';
 
   static String recentSearches(String userId) => 'recent_search_$userId';
+
+  // #######################################################################
+  // PROFILE KEYS
+  // #######################################################################
+
+  static String profileCache(String userId) => 'profile_cache_$userId';
+
+  static String profileFavorites(String userId) => 'profile_favorites_$userId';
+
+  static String profileRecordings(String userId) => 'profile_recording_$userId';
 }

@@ -1,45 +1,355 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/features/auth/application/application.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
+import 'package:meno/features/broadcast/domain/domain.dart';
+import 'package:meno/features/discover/applications/discover_recently_live_manager.dart';
+import 'package:meno/features/profile/applications/my_profile_manager.dart';
+import 'package:meno/features/profile/domain/domain.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:readmore/readmore.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+const _kTabBarHeight = 32.0;
 
 class MyProfilePage extends WatchingWidget {
   const MyProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final userId = watchValue((UserManager m) => m.currentUserId);
-    return const MyProfileView();
+    final snapshot = watchFuture<GetIt, void>(
+      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
+
+    if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
+
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));
+    }
+
+    final profile = watchValue((MyProfileManager m) => m.profile);
+    return _Content(profile: profile);
   }
 }
 
-class MyProfileView extends StatelessWidget {
-  const MyProfileView({super.key});
+class _Content extends StatefulWidget {
+  const _Content({required this.profile});
+
+  final Profile? profile;
+
+  @override
+  State<_Content> createState() => _ContentState();
+}
+
+class _ContentState extends State<_Content> with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final bloc = context.read<MyProfileCubit>();
-    // final recentlyLiveCubit = context.read<RecentlyLiveBloc>();
+    final profile = widget.profile;
 
-    Future<void> onRefresh() async {
-      // final myProfile = bloc.stream.first;
-      // await bloc.fetch();
-      //
-      // final recentlyLive = recentlyLiveCubit.stream.first;
-      // recentlyLiveCubit.add(const RecentlyLiveStarted());
-      //
-      // await Future.wait([myProfile, recentlyLive]);
-    }
+    final colors = MColorScheme.of(context);
+    final textTheme = MTextTheme.of(context);
 
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: .center,
+      backgroundColor: colors.background,
+      body: RefreshIndicator(
+        onRefresh: di<MyProfileManager>().refresh.runAsync,
+        child: NestedScrollView(
+          // headerSliverBuilder produces the collapsing header.
+          // Everything inside returns as slivers; the pinned SliverAppBar
+          // stays visible while the FlexibleSpaceBar scrolls away.
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                // Enough room for avatar row + badge row + bio + buttons
+                expandedHeight: _computeExpandedHeight(profile),
+                backgroundColor: colors.background,
+                surfaceTintColor: Colors.transparent,
+                pinned: true,
+                forceElevated: innerBoxIsScrolled,
+                elevation: innerBoxIsScrolled ? 1 : 0,
+                shadowColor: colors.onBackground.withValues(alpha: 0.08),
+
+                // The always-visible top bar: profile name + settings icon.
+                title: _ProfileTitle(profile: profile),
+                titleSpacing: 0,
+                leading: _LeadingAccent(),
+                leadingWidth: 23,
+                actions: [
+                  MIconButton(
+                    icon: const Icon(MIcons.settings),
+                    color: colors.primary,
+                    onPressed: () => context.push(R.settings),
+                  ),
+                  Spaces.horizontalLarge,
+                ],
+
+                // The collapsible content: avatar, stats, badge, bio, buttons.
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: SafeArea(
+                    bottom: false,
+                    child: _ProfileHeader(profile: profile),
+                  ),
+                ),
+
+                // The tab bar, pinned just below the app bar title row.
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(_kTabBarHeight),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      height: _kTabBarHeight,
+                      child: TabBar(
+                        controller: _tabController,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        labelStyle: textTheme.captionMedium,
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        labelPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        tabs: const [
+                          Tab(text: 'Recent broadcasts'),
+                          Tab(text: 'All broadcasts'),
+                          Tab(text: 'Favorites'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ];
+          },
+
+          // The scrollable body — each tab's list scrolls independently inside
+          // the NestedScrollView, extending the unified scroll physics.
+          body: TabBarView(
+            controller: _tabController,
+            children: const [
+              _RecentBroadcastsTab(),
+              _AllBroadcastsTab(),
+              _FavoritesTab(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Approximates the expanded height so FlexibleSpaceBar fits without
+  /// clipping or unnecessary whitespace.
+  ///
+  /// kToolbarHeight  = pinned app-bar row
+  /// 48              = tab bar
+  /// Content below:  avatar row (80) + badge (36) + bio (72) + buttons (48) +
+  ///                 spacing (~40)
+  double _computeExpandedHeight(Profile? profile) {
+    // Extra height when bio is present so text isn't clipped.
+    final bioHeight = (profile?.bio != null) ? 72.0 : 0.0;
+    return kToolbarHeight +
+        _kTabBarHeight +
+        80 +
+        36 +
+        bioHeight +
+        _kTabBarHeight +
+        40;
+  }
+}
+
+class _LeadingAccent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: ColoredBox(
+          color: colors.secondary,
+          child: const SizedBox(height: 30, width: 3),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileTitle extends StatelessWidget {
+  const _ProfileTitle({required this.profile});
+
+  final Profile? profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+    final textTheme = MTextTheme.of(context);
+    final name = profile?.fullName.getOrNull() ?? '';
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => SwitchAccountModal.show(context),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Center(
-            child: MPrimaryButton(
-              label: 'Log out',
-              onPressed: di<AuthManager>().logout.run,
+          MText(
+            name,
+            style: textTheme.heading3Bold,
+            color: colors.onBackground,
+          ),
+          Spaces.horizontalSmall,
+          Icon(MIcons.chevron_down, size: 20, color: colors.onBackground),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({required this.profile});
+
+  final Profile? profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = profile == null;
+
+    return Skeletonizer(
+      enabled: isLoading,
+      child: SingleChildScrollView(
+        // Not interactive — this is inside FlexibleSpaceBar's background.
+        // NestedScrollView drives the scroll; we just need the Column to size.
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 8, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Avatar + stats row
+            Row(
+              children: [
+                MAvatar(radius: 40, url: profile?.imageUrl),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _ProfileStats(
+                    numberOfBroadcasts: profile?.numberOfBroadcasts,
+                    numberOfSubscribers: profile?.numberOfSubscribers,
+                    numberOfSubscriptions: profile?.numberOfSubscriptions,
+                  ),
+                ),
+              ],
+            ),
+            Spaces.verticalLarge,
+
+            // Account tier badge
+            const _AccountUpgradeSection(),
+            Spaces.verticalLarge,
+
+            // Biography
+            if (profile?.bio != null) ...[
+              _ProfileBio(bio: profile!.bio!),
+              Spaces.verticalLarge,
+            ],
+
+            // Edit + Share buttons
+            const _ProfileButtons(),
+            Spaces.verticalLarge,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileStats extends StatelessWidget {
+  const _ProfileStats({
+    this.numberOfBroadcasts = 0,
+    this.numberOfSubscribers = 0,
+    this.numberOfSubscriptions = 0,
+  });
+
+  final int? numberOfBroadcasts;
+  final int? numberOfSubscribers;
+  final int? numberOfSubscriptions;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 46,
+      child: Row(
+        children: [
+          const SizedBox(width: 2),
+          _StatItem(title: 'Broadcasts', count: numberOfBroadcasts ?? 0),
+          const Spacer(),
+          _StatItem(title: 'Subscribers', count: numberOfSubscribers ?? 0),
+          const Spacer(),
+          _StatItem(title: 'Subscriptions', count: numberOfSubscriptions ?? 0),
+          const SizedBox(width: 2),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  const _StatItem({required this.title, required this.count});
+
+  final String title;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+    final colors = MColorScheme.of(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        MText(count.toString(), style: textTheme.heading3Medium),
+        MText(
+          title,
+          style: textTheme.microMedium,
+          color: colors.onBackgroundVariant,
+        ),
+      ],
+    );
+  }
+}
+
+class _AccountUpgradeSection extends StatelessWidget {
+  const _AccountUpgradeSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+    return SizedBox(
+      height: 24,
+      child: Row(
+        children: [
+          const MTag(title: 'FREE ACCOUNT', height: 24),
+          Spaces.horizontalLarge,
+          MTextButton(
+            label: 'Upgrade to Premium',
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              textStyle: textTheme.captionMedium.copyWith(
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
         ],
@@ -48,195 +358,313 @@ class MyProfileView extends StatelessWidget {
   }
 }
 
-// class _Scaffold extends HookWidget {
-//   const _Scaffold({required this.profile, this.loading = false});
-//
-//   final Profile profile;
-//   final bool loading;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final colors = MColorScheme.of(context);
-//     final textTheme = MTextTheme.of(context);
-//     final tabController = useTabController(initialLength: 4);
-//
-//     return Skeletonizer(
-//       enabled: loading,
-//       child: Scaffold(
-//         body: NestedScrollView(
-//           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-//             SliverAppBar(
-//               expandedHeight: 340,
-//               backgroundColor: colors.background,
-//               pinned: true,
-//               leading: Align(
-//                 alignment: Alignment.centerLeft,
-//                 child: Padding(
-//                   padding: const EdgeInsets.only(left: Insets.lg),
-//                   child: ColoredBox(
-//                     color: colors.secondary,
-//                     child: const SizedBox(height: 30, width: 3),
-//                   ),
-//                 ),
-//               ),
-//               titleTextStyle: textTheme.heading3Bold,
-//               leadingWidth: 23,
-//               collapsedHeight: 58,
-//               titleSpacing: 0,
-//               title: GestureDetector(
-//                 // onTap: () => context.push(R.switchAccountModal),
-//                 child: Row(
-//                   children: [
-//                     MText(
-//                       profile.fullName.getOrCrash(),
-//                       color: colors.onBackground,
-//                     ),
-//                     Spaces.horizontalSmall,
-//                     const Icon(MIcons.chevron_down, size: 24),
-//                   ],
-//                 ),
-//               ),
-//               actions: [
-//                 MIconButton(
-//                   icon: const Icon(MIcons.settings),
-//                   color: colors.primary,
-//                   onPressed: () => context.push(R.settings),
-//                 ),
-//                 Spaces.horizontalLarge,
-//               ],
-//               bottom: PreferredSize(
-//                 preferredSize: const Size.fromHeight(32),
-//                 child: Container(
-//                   color: colors.background,
-//                   height: 32,
-//                   child: TabBar(
-//                     controller: tabController,
-//                     padding: const EdgeInsets.symmetric(horizontal: 16),
-//                     labelStyle: textTheme.captionMedium,
-//                     isScrollable: true,
-//                     tabAlignment: TabAlignment.start,
-//                     labelPadding: const EdgeInsets.symmetric(
-//                       horizontal: 16,
-//                       vertical: 6,
-//                     ),
-//                     tabs: const [
-//                       Tab(text: 'Recent broadcasts'),
-//                       Tab(text: 'All broadcasts'),
-//                       Tab(text: 'Favorites'),
-//                       Tab(text: 'Recordings'),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               flexibleSpace: FlexibleSpaceBar(
-//                 background: SafeArea(
-//                   child: SingleChildScrollView(
-//                     padding: const EdgeInsets.fromLTRB(
-//                       16,
-//                       kToolbarHeight,
-//                       16,
-//                       0,
-//                     ),
-//                     child: Column(
-//                       children: [
-//                         Row(
-//                           children: [
-//                             MAvatar(radius: 40, url: profile.imageUrl),
-//                             const SizedBox(width: 24),
-//                             // Expanded(child: ProfileStats(stats: profile.stats)),
-//                           ],
-//                         ),
-//                         Spaces.verticalLarge,
-//                         // const AccountUpgradeSection(),
-//                         Spaces.verticalLarge,
-//                         // Align(
-//                         //   alignment: Alignment.centerLeft,
-//                         //   child: ProfileBio(bio: profile.bio),
-//                         // ),
-//                         Spaces.verticalLarge,
-//                         // const ProfileButtons(),
-//                         Spaces.verticalLarge,
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ],
-//           body: CustomScrollView(
-//             primary: false,
-//             slivers: [
-//               SliverFillRemaining(
-//                 child: Padding(
-//                   padding: MediaQuery.viewInsetsOf(context),
-//                   child: TabBarView(
-//                     controller: tabController,
-//                     children: [
-//                       // const _RecentBroadcastsTab(),
-//                       // const _AllBroadcastsTab(),
-//                       // EmptyStateWidget(actionTitle: 'Favorites', action: () {}),
-//                       // EmptyStateWidget(
-//                       //   actionTitle: 'Recordings',
-//                       //   action: () {},
-//                       // ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class _RecentBroadcastsTab extends StatelessWidget {
-//   const _RecentBroadcastsTab();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final profileBloc = context.read<MyProfileCubit>();
-//     final recentlyLiveBloc = context.read<UsersRecentBroadcastsBloc>();
-//
-//     Future<void> onRefresh() async {
-//       final myProfile = profileBloc.stream.first;
-//       await profileBloc.fetch();
-//
-//       final recentlyLive = recentlyLiveBloc.stream.first;
-//       recentlyLiveBloc.add(const UsersRecentBroadcastsFetchRequested());
-//
-//       await Future.wait([myProfile, recentlyLive]);
-//     }
-//
-//     return RefreshIndicator(
-//       onRefresh: onRefresh,
-//       child: const ProfileRecentBroadcastsTab(),
-//     );
-//   }
-// }
-//
-// class _AllBroadcastsTab extends StatelessWidget {
-//   const _AllBroadcastsTab();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final profileBloc = context.read<MyProfileCubit>();
-//     final allBroadcastsBloc = context.read<UsersAllBroadcastsBloc>();
-//
-//     Future<void> onRefresh() async {
-//       final myProfile = profileBloc.stream.first;
-//       await profileBloc.fetch();
-//
-//       final allBroadcasts = allBroadcastsBloc.stream.first;
-//       allBroadcastsBloc.add(const UsersAllBroadcastsFetchRequested());
-//
-//       await Future.wait([myProfile, allBroadcasts]);
-//     }
-//
-//     return RefreshIndicator(
-//       onRefresh: onRefresh,
-//       child: const ProfileAllBroadcastsTab(),
-//     );
-//   }
-// }
+class _ProfileBio extends StatelessWidget {
+  const _ProfileBio({required this.bio});
+
+  final MultiLineString bio;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = MTextTheme.of(context);
+    final style = textTheme.captionMedium.copyWith(
+      color: MColorScheme.of(context).onBackgroundVariant,
+    );
+    return ReadMoreText(
+      bio.getOrNull() ?? '',
+      style: textTheme.captionRegular,
+      trimLines: 3,
+      trimMode: TrimMode.Line,
+      trimExpandedText: '\nless',
+      trimCollapsedText: '\nmore',
+      moreStyle: style,
+      lessStyle: style,
+    );
+  }
+}
+
+class _ProfileButtons extends StatelessWidget {
+  const _ProfileButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
+    final textStyle = MTextTheme.of(context).microMedium;
+
+    return SizedBox(
+      height: 32,
+      child: Row(
+        children: [
+          Expanded(
+            child: MPrimaryButton.icon(
+              label: 'Edit profile',
+              icon: const Icon(MIcons.edit_05),
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                textStyle: textStyle,
+                shape: shape,
+              ),
+            ),
+          ),
+          Spaces.horizontalLarge,
+          Expanded(
+            child: MSecondaryButton.icon(
+              label: 'Share profile',
+              icon: const Icon(MIcons.share),
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                textStyle: textStyle,
+                shape: shape,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecentBroadcastsTab extends WatchingWidget {
+  const _RecentBroadcastsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
+
+    final isLoading = watchValue(
+      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
+    );
+
+    final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
+
+    if (error != null && page.items.isEmpty) {
+      return _EmptyStateWidget(
+        title: 'No broadcasts published yet',
+        actionTitle: 'View recordings',
+        action: () {},
+      );
+    }
+
+    if (!isLoading && page.items.isEmpty) {
+      return _EmptyStateWidget(
+        title: 'No broadcasts published yet',
+        actionTitle: 'View recordings',
+        action: () {},
+      );
+    }
+
+    return _BroadcastList(
+      broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
+      isLoading: isLoading && page.isEmpty,
+      hasMore: page.hasMore,
+      onFetchMore: di<DiscoverRecentlyLiveManager>().fetchMore.run,
+    );
+  }
+}
+
+class _AllBroadcastsTab extends WatchingWidget {
+  const _AllBroadcastsTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
+
+    final isLoading = watchValue(
+      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
+    );
+
+    final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
+
+    if (error != null && page.items.isEmpty) {
+      return _EmptyStateWidget(
+        title: 'No broadcasts published yet',
+        actionTitle: 'View recordings',
+        action: () {},
+      );
+    }
+
+    if (!isLoading && page.items.isEmpty) {
+      return _EmptyStateWidget(
+        title: 'No broadcasts published yet',
+        actionTitle: 'View recordings',
+        action: () {},
+      );
+    }
+
+    return _BroadcastList(
+      broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
+      isLoading: isLoading && page.isEmpty,
+      hasMore: page.hasMore,
+      onFetchMore: di<DiscoverRecentlyLiveManager>().fetchMore.run,
+    );
+  }
+}
+
+class _FavoritesTab extends StatelessWidget {
+  const _FavoritesTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return _EmptyStateWidget(
+      title: 'No favourite broadcasts yet',
+      actionTitle: 'View recordings',
+      action: () {},
+    );
+  }
+}
+
+class _BroadcastList extends StatefulWidget {
+  const _BroadcastList({
+    required this.broadcasts,
+    required this.hasMore,
+    required this.onFetchMore,
+    this.isLoading = false,
+  });
+
+  final List<Broadcast?> broadcasts;
+  final bool hasMore;
+  final bool isLoading;
+  final VoidCallback onFetchMore;
+
+  @override
+  State<_BroadcastList> createState() => _BroadcastListState();
+}
+
+class _BroadcastListState extends State<_BroadcastList> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final current = _scrollController.offset;
+    if (max - current <= 200 && widget.hasMore) widget.onFetchMore();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Skeletonizer(
+      enabled: widget.isLoading,
+      child: ListView.separated(
+        controller: _scrollController,
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+        separatorBuilder: (_, __) => Spaces.verticalLarge,
+        itemCount: widget.broadcasts.length + 1,
+        itemBuilder: (context, index) {
+          if (index < widget.broadcasts.length) {
+            final broadcast = widget.broadcasts[index];
+            return _BroadcastListItem(broadcast: broadcast);
+          }
+          return _ListFooter(hasMore: widget.hasMore);
+        },
+      ),
+    );
+  }
+}
+
+class _BroadcastListItem extends StatelessWidget {
+  const _BroadcastListItem({required this.broadcast});
+
+  final Broadcast? broadcast;
+
+  @override
+  Widget build(BuildContext context) {
+    if (broadcast == null) {
+      // Skeletonizer placeholder — must have same shape as real item.
+      return const MRecentlyLiveListTile(
+        title: 'Placeholder broadcast title',
+        creator: 'Creator name',
+      );
+    }
+
+    return MRecentlyLiveListTile(
+      title: broadcast!.title.getOrCrash(),
+      creator: broadcast?.effectiveCreatorName.getOrNull(),
+      endTime: broadcast!.endTime,
+      imageUrl: broadcast!.imageUrl,
+      onTap: () => context.push(R.broadcast(broadcast!.id.getOrCrash())),
+    );
+  }
+}
+
+class _ListFooter extends StatelessWidget {
+  const _ListFooter({required this.hasMore});
+
+  final bool hasMore;
+
+  @override
+  Widget build(BuildContext context) {
+    if (hasMore) return const MLoadingIndicator.box();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: MText(
+        "You've reached the end 🎉",
+        style: MTextTheme.of(context).captionRegular,
+        color: MColorScheme.of(context).onBackgroundVariant,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class _EmptyStateWidget extends StatelessWidget {
+  const _EmptyStateWidget({
+    required this.actionTitle,
+    required this.action,
+    this.title,
+  });
+
+  final String? title;
+  final String actionTitle;
+  final VoidCallback action;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = MColorScheme.of(context);
+    final textTheme = MTextTheme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 40),
+      child: Column(
+        children: [
+          Assets.images.liveForYou.image(height: 120, width: 120),
+          MText(
+            title ?? 'No broadcasts published yet',
+            style: textTheme.captionMedium,
+            textAlign: TextAlign.center,
+          ),
+          Spaces.verticalLarge,
+          SizedBox(
+            height: 32,
+            child: MSecondaryButton.icon(
+              label: 'View $actionTitle',
+              icon: Icon(MIcons.share, color: colorScheme.onBackground),
+              onPressed: action,
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                side: BorderSide(color: colorScheme.outlineVariant3),
+                foregroundColor: colorScheme.onBackground,
+                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

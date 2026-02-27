@@ -16,8 +16,6 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
     const PagedList.empty(),
   );
 
-  final keywords = ValueNotifier<String?>(null);
-
   final error = ValueNotifier<MenoException?>(null);
 
   StreamSubscription<EndedBroadcast>? _endedBroadcastSubscription;
@@ -37,11 +35,6 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
     errorFilterFn: menoExceptionFilter,
   );
 
-  late final search = Command.createAsyncNoResult<String?>(
-    _searchImpl,
-    errorFilterFn: menoExceptionFilter,
-  );
-
   late final refresh = Command.createAsyncNoParamNoResult(
     _refreshImpl,
     errorFilterFn: menoExceptionFilter,
@@ -54,10 +47,7 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
 
   Future<void> _initializeImpl() async {
     error.value = null;
-    final query = BroadcastQuery.recentlyLive().copyWith(
-      keywords: keywords.value,
-    );
-    final result = await _source.getBroadcasts(query);
+    final result = await _source.getBroadcasts(BroadcastQuery.recentlyLive());
     result.fold((failure) {
       error.value = failure;
       throw failure;
@@ -90,17 +80,7 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
     );
   }
 
-  Future<void> _searchImpl(String? value) async {
-    keywords.value = value?.trim().isEmpty ?? true ? null : value?.trim();
-    broadcasts.value = const PagedList.empty();
-
-    // Restart: fetch page 1 with new keyword, then re-subscribe socket
-    await _initializeImpl();
-    await _listenToSocketImpl();
-  }
-
   Future<void> _refreshImpl() async {
-    keywords.value = null;
     broadcasts.value = const PagedList.empty();
     await _initializeImpl();
     await _listenToSocketImpl();
@@ -114,7 +94,6 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
       broadcasts.value.currentPage < broadcasts.value.totalPages;
 
   BroadcastQuery get _currentQuery => BroadcastQuery.recentlyLive().copyWith(
-    keywords: keywords.value,
     pagination: PaginationParams(page: broadcasts.value.currentPage),
   );
 
@@ -125,13 +104,11 @@ class DiscoverRecentlyLiveManager with MLogger implements Disposable {
     _endedBroadcastSubscription = null;
 
     broadcasts.dispose();
-    keywords.dispose();
     error.dispose();
 
     initialize.dispose();
     listenToSocket.dispose();
     fetchMore.dispose();
-    search.dispose();
     refresh.dispose();
   }
 }

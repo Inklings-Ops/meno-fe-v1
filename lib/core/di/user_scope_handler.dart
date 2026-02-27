@@ -12,6 +12,7 @@ import 'package:meno/features/discover/infrastructure/infrastructure.dart';
 import 'package:meno/features/notes/applications/applications.dart';
 import 'package:meno/features/notes/domain/domain.dart';
 import 'package:meno/features/notes/infrastructure/infrastructure.dart';
+import 'package:meno/features/profile/applications/my_profile_manager.dart';
 import 'package:meno/features/profile/domain/domain.dart';
 import 'package:meno/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
@@ -146,8 +147,16 @@ final class UserScopeHandler with MLogger implements Disposable {
             dependsOn: [ApiClient],
           );
 
+          di.registerSingletonWithDependencies(
+            () => ProfileLocalDataSource(di<LocalStorage>()),
+            dependsOn: [LocalStorage],
+          );
+
           di.registerSingletonWithDependencies<IProfileRepository>(() {
-            return ProfileRepositoryImpl(http: di<ProfileHttpDataSource>());
+            return ProfileRepositoryImpl(
+              http: di<ProfileHttpDataSource>(),
+              local: di<ProfileLocalDataSource>(),
+            );
           }, dependsOn: [ProfileHttpDataSource]);
 
           // ==================================================================
@@ -220,6 +229,18 @@ final class UserScopeHandler with MLogger implements Disposable {
             mgr.initialize.run();
             return mgr;
           }, dependsOn: [IBroadcastFeedSource]);
+
+          // Profile
+          di.registerSingletonAsync<MyProfileManager>(
+            () async => MyProfileManager(
+              profileRepository: di<IProfileRepository>(),
+              broadcastFeed: di<IBroadcastFeedSource>(),
+              userId: userId,
+            ),
+            signalsReady: true,
+            onCreated: (instance) => instance.initialize.run(),
+            dependsOn: [IProfileRepository, IBroadcastFeedSource],
+          );
         },
       );
     }
