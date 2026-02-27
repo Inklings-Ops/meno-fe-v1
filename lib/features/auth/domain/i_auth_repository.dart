@@ -135,6 +135,8 @@ abstract interface class IAuthRepository implements Disposable {
   ///
   /// If the removed account is currently active, logs out.
   Future<void> removeAccount(Id userId);
+
+  Future<void> clearActiveSession();
 }
 
 // ========================================================================

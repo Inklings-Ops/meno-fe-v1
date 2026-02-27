@@ -26,9 +26,7 @@ class MyProfilePage extends WatchingWidget {
 
     if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
 
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));
-    }
+    if (snapshot.isLoading) return const LoadingPage();
 
     final profile = watchValue((MyProfileManager m) => m.profile);
     return _Content(profile: profile);
@@ -46,17 +44,38 @@ class _Content extends StatefulWidget {
 
 class _ContentState extends State<_Content> with TickerProviderStateMixin {
   late final TabController _tabController;
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final current = _scrollController.offset;
+    if (max - current <= 200) {
+      switch (_tabController.index) {
+        case 0:
+          di<DiscoverRecentlyLiveManager>().fetchMore.run();
+        case 1:
+        case 2:
+        default:
+          break;
+      }
+    }
   }
 
   @override
@@ -69,15 +88,16 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: colors.background,
       body: RefreshIndicator(
-        onRefresh: di<MyProfileManager>().refresh.runAsync,
+        onRefresh: () => Future.wait([
+          di<MyProfileManager>().refresh.runAsync(),
+          di<DiscoverRecentlyLiveManager>().refresh.runAsync(),
+        ]),
         child: NestedScrollView(
-          // headerSliverBuilder produces the collapsing header.
-          // Everything inside returns as slivers; the pinned SliverAppBar
-          // stays visible while the FlexibleSpaceBar scrolls away.
+          physics: const AlwaysScrollableScrollPhysics(),
+          controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
-                // Enough room for avatar row + badge row + bio + buttons
                 expandedHeight: _computeExpandedHeight(profile),
                 backgroundColor: colors.background,
                 surfaceTintColor: Colors.transparent,
@@ -85,8 +105,6 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
                 forceElevated: innerBoxIsScrolled,
                 elevation: innerBoxIsScrolled ? 1 : 0,
                 shadowColor: colors.onBackground.withValues(alpha: 0.08),
-
-                // The always-visible top bar: profile name + settings icon.
                 title: _ProfileTitle(profile: profile),
                 titleSpacing: 0,
                 leading: _LeadingAccent(),
@@ -99,8 +117,6 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
                   ),
                   Spaces.horizontalLarge,
                 ],
-
-                // The collapsible content: avatar, stats, badge, bio, buttons.
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: SafeArea(
@@ -108,8 +124,6 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
                     child: _ProfileHeader(profile: profile),
                   ),
                 ),
-
-                // The tab bar, pinned just below the app bar title row.
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(_kTabBarHeight),
                   child: Align(
@@ -164,13 +178,7 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
   double _computeExpandedHeight(Profile? profile) {
     // Extra height when bio is present so text isn't clipped.
     final bioHeight = (profile?.bio != null) ? 72.0 : 0.0;
-    return kToolbarHeight +
-        _kTabBarHeight +
-        80 +
-        36 +
-        bioHeight +
-        _kTabBarHeight +
-        40;
+    return kToolbarHeight + _kTabBarHeight + 80 + 36 + bioHeight + 48 + 40;
   }
 }
 
@@ -456,7 +464,6 @@ class _RecentBroadcastsTab extends WatchingWidget {
       broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
       isLoading: isLoading && page.isEmpty,
       hasMore: page.hasMore,
-      onFetchMore: di<DiscoverRecentlyLiveManager>().fetchMore.run,
     );
   }
 }
@@ -494,7 +501,6 @@ class _AllBroadcastsTab extends WatchingWidget {
       broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
       isLoading: isLoading && page.isEmpty,
       hasMore: page.hasMore,
-      onFetchMore: di<DiscoverRecentlyLiveManager>().fetchMore.run,
     );
   }
 }
@@ -512,64 +518,34 @@ class _FavoritesTab extends StatelessWidget {
   }
 }
 
-class _BroadcastList extends StatefulWidget {
+class _BroadcastList extends StatelessWidget {
   const _BroadcastList({
     required this.broadcasts,
     required this.hasMore,
-    required this.onFetchMore,
     this.isLoading = false,
   });
 
   final List<Broadcast?> broadcasts;
   final bool hasMore;
   final bool isLoading;
-  final VoidCallback onFetchMore;
-
-  @override
-  State<_BroadcastList> createState() => _BroadcastListState();
-}
-
-class _BroadcastListState extends State<_BroadcastList> {
-  late final ScrollController _scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController()..addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final max = _scrollController.position.maxScrollExtent;
-    final current = _scrollController.offset;
-    if (max - current <= 200 && widget.hasMore) widget.onFetchMore();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: widget.isLoading,
-      child: ListView.separated(
-        controller: _scrollController,
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-        separatorBuilder: (_, __) => Spaces.verticalLarge,
-        itemCount: widget.broadcasts.length + 1,
-        itemBuilder: (context, index) {
-          if (index < widget.broadcasts.length) {
-            final broadcast = widget.broadcasts[index];
-            return _BroadcastListItem(broadcast: broadcast);
-          }
-          return _ListFooter(hasMore: widget.hasMore);
-        },
-      ),
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const .symmetric(horizontal: 16, vertical: 24),
+          sliver: SliverList.separated(
+            separatorBuilder: (_, __) => Spaces.verticalLarge,
+            itemCount: broadcasts.length,
+            itemBuilder: (context, i) => Skeletonizer(
+              enabled: isLoading,
+              child: _BroadcastListItem(broadcast: broadcasts[i]),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(child: _ListFooter(hasMore: hasMore)),
+      ],
     );
   }
 }

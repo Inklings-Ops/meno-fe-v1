@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/application/application.dart';
 import 'package:meno/shared/shared.dart';
+import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class MenoLayout extends WatchingWidget {
@@ -14,26 +16,34 @@ class MenoLayout extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final firebaseMessaging = FirebaseMessaging.instance;
-    // final initMessage = useState<String?>(null);
+    final snapshot = watchFuture<GetIt, void>(
+      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
 
-    // void onInitialMessage(RemoteMessage? value) {
-    //   initMessage.value = value?.data.toString();
-    // }
-    //
-    // final permissions = di<PermissionsService>();
-    //
-    // useEffect(() {
-    //   // Initialize the Bible and start parsing the KJV to store in the DB
-    //   di<IBibleFacade>().initialize();
-    //   firebaseMessaging.getInitialMessage().then(onInitialMessage);
-    //   FirebaseMessaging.onMessage.listen(showFlutterNotification);
-    //   FirebaseMessaging.onMessageOpenedApp.listen(openNotifications);
-    //   handleFCMToken();
-    //
-    //   return null;
-    // }, [firebaseMessaging, initMessage, permissions]);
+    if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
 
+    if (snapshot.isLoading) return const LoadingPage();
+
+    final userId = watchValue((AuthManager m) => m.userId).toNullable();
+
+    return _Content(
+      key: ValueKey('menoLayout_${userId?.getOrNull()}'),
+      shell: shell,
+      currentRoute: currentRoute,
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  const _Content({required this.shell, required this.currentRoute, super.key});
+
+  final StatefulNavigationShell shell;
+  final String? currentRoute;
+
+  @override
+  Widget build(BuildContext context) {
     final index = shell.currentIndex;
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
@@ -49,10 +59,8 @@ class MenoLayout extends WatchingWidget {
       );
     }
 
-    final userId = watchValue((AuthManager m) => m.userId);
-
     return Scaffold(
-      key: ValueKey('menoLayout_$userId'),
+      key: key,
       body: Row(
         children: [
           sideNavRail,

@@ -292,4 +292,10 @@ final class AuthRepositoryImpl implements IAuthRepository {
     _lastKnownUser.dispose();
     _tokenSubscription?.cancel();
   }
+
+  @override
+  Future<void> clearActiveSession() async {
+    await _local.clearCredential();
+    _activeUserId.value = const None();
+  }
 }

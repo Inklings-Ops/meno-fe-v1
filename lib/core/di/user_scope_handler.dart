@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
@@ -27,6 +28,8 @@ final class UserScopeHandler with MLogger implements Disposable {
     _syncScopeWithState(_repository.activeUserId.value, _subscription);
   }
 
+  final isScopeReady = ValueNotifier(false);
+
   final IAuthRepository _repository;
   late final ListenableSubscription _subscription;
 
@@ -42,220 +45,224 @@ final class UserScopeHandler with MLogger implements Disposable {
     final targetScopeName = 'user_${userId.value.getOrElse((_) => '')}';
     log.i('ScopeHandler: Requesting enter $targetScopeName');
 
-    // Safety Check: Don't push if we are already in this user's scope
-    // Now that we wait for exitScope, this check is safe and accurate.
     if (di.currentScopeName == targetScopeName) {
       log.i('ScopeHandler: Already in $targetScopeName. Skipping.');
+      // Ensure flag is true if we somehow skipped with it false
+      if (!isScopeReady.value) isScopeReady.value = true;
       return;
     }
 
-    // Clean up old scope if switching users
+    // Clean up old scope first (sets isScopeReady = false inside)
     await _exitScope();
 
-    // Get Data from Vault (Repo)
-    // The Orchestrator is allowed to talk to the Repo to get the data needed
-    // for injection
     final credentials = _repository.accounts.value[userId];
-
-    if (credentials != null) {
-      di.pushNewScope(
-        isFinal: true,
-        scopeName: targetScopeName,
-        init: (_) async {
-          // ==================================================================
-          // DOMAIN LAYER
-          // ==================================================================
-          di.registerSingleton<Id>(credentials.user.id);
-          di.registerSingleton<Session>(credentials.session);
-
-          // ==================================================================
-          // INFRASTRUCTURE LAYER
-          // ==================================================================
-          di.registerSingletonAsync<WebSocketClient>(() async {
-            final client = WebSocketClient(
-              url: Env.webSocketUrl,
-              token: credentials.session.accessToken.getOrCrash(),
-            );
-            await client.connect();
-            return client;
-          });
-
-          // Broadcast
-          di.registerSingletonWithDependencies(
-            () => BroadcastLocalDataSource(di<LocalStorage>()),
-            dependsOn: [LocalStorage],
-          );
-
-          di.registerSingletonWithDependencies(
-            () => BroadcastHttpDataSource(di<ApiClient>()),
-            dependsOn: [ApiClient],
-          );
-
-          di.registerSingletonWithDependencies(
-            () => BroadcastSocketDataSource(di<WebSocketClient>()),
-            dependsOn: [WebSocketClient],
-          );
-
-          di.registerSingletonAsync<IBroadcastRepository>(
-            () async {
-              return BroadcastRepositoryImpl(
-                local: di<BroadcastLocalDataSource>(),
-                http: di<BroadcastHttpDataSource>(),
-                socket: di<BroadcastSocketDataSource>(),
-              );
-            },
-            dependsOn: [
-              BroadcastLocalDataSource,
-              BroadcastHttpDataSource,
-              BroadcastSocketDataSource,
-            ],
-          );
-
-          // Narrow feed interface alias — same instance, no extra cost
-          di.registerSingletonWithDependencies<IBroadcastFeedSource>(
-            () => di<IBroadcastRepository>() as IBroadcastFeedSource,
-            dependsOn: [IBroadcastRepository],
-          );
-
-          // Notes/Folders
-          di.registerSingletonWithDependencies(
-            () => NotesLocalDataSource(di<Database>()),
-            dependsOn: [Database],
-          );
-
-          di.registerSingletonWithDependencies(
-            () => NotesRemoteDataSource(di<ApiClient>()),
-            dependsOn: [ApiClient],
-          );
-
-          di.registerSingletonAsync<INotesRepository>(() async {
-            return NotesRepositoryImpl(
-              local: di<NotesLocalDataSource>(),
-              remote: di<NotesRemoteDataSource>(),
-            );
-          }, dependsOn: [NotesLocalDataSource, NotesRemoteDataSource]);
-
-          // Discover
-          di.registerSingletonWithDependencies(
-            () => DiscoverLocalDataSource(di<LocalStorage>()),
-            dependsOn: [LocalStorage],
-          );
-
-          // Profile
-          di.registerSingletonWithDependencies(
-            () => ProfileHttpDataSource(di<ApiClient>()),
-            dependsOn: [ApiClient],
-          );
-
-          di.registerSingletonWithDependencies(
-            () => ProfileLocalDataSource(di<LocalStorage>()),
-            dependsOn: [LocalStorage],
-          );
-
-          di.registerSingletonWithDependencies<IProfileRepository>(() {
-            return ProfileRepositoryImpl(
-              http: di<ProfileHttpDataSource>(),
-              local: di<ProfileLocalDataSource>(),
-            );
-          }, dependsOn: [ProfileHttpDataSource]);
-
-          // ==================================================================
-          // APPLICATION LAYER
-          // ==================================================================
-
-          // Broadcasts
-          di.registerSingletonWithDependencies(() {
-            return BroadcastFormManager(
-              userId: userId,
-              repository: di<IBroadcastRepository>(),
-              mediaService: di<MediaService>(),
-            );
-          }, dependsOn: [IBroadcastRepository, MediaService]);
-
-          di.registerSingletonWithDependencies(() {
-            final manager = RecentlyLiveBroadcastsManager(
-              di<IBroadcastRepository>(),
-            );
-            manager.initialize.run();
-            return manager;
-          }, dependsOn: [IBroadcastRepository]);
-
-          di.registerSingletonWithDependencies(() {
-            final manager = NowLiveBroadcastsManager(
-              di<IBroadcastRepository>(),
-            );
-            manager.initialize.run();
-            return manager;
-          }, dependsOn: [IBroadcastRepository]);
-
-          // Live Broadcast/Stream Session
-          di.registerSingletonWithDependencies(() async {
-            final handler = LiveScopeHandler(
-              repository: di<IBroadcastRepository>(),
-              userId: userId,
-            );
-            await handler.initialize();
-            return handler;
-          }, dependsOn: [IBroadcastRepository]);
-
-          // Notes/Folders
-          di.registerSingletonWithDependencies(() {
-            final manager = NotesManager(di<INotesRepository>());
-            manager.initialize.run();
-            return manager;
-          }, dependsOn: [INotesRepository]);
-
-          di.registerSingletonWithDependencies(() {
-            final manager = FoldersManager(di<INotesRepository>());
-            manager.initialize.run();
-            return manager;
-          }, dependsOn: [INotesRepository]);
-
-          di.registerSingletonWithDependencies(() {
-            return NoteActionsManager(di<INotesRepository>());
-          }, dependsOn: [INotesRepository]);
-
-          // Discover
-          di.registerSingleton<DiscoverManager>(DiscoverManager());
-
-          di.registerSingletonWithDependencies(() {
-            final manager = DiscoverNowLiveManager(di<IBroadcastFeedSource>());
-            manager.initialize.run();
-            return manager;
-          }, dependsOn: [IBroadcastFeedSource]);
-
-          di.registerSingletonWithDependencies(() {
-            final mgr = DiscoverRecentlyLiveManager(di<IBroadcastFeedSource>());
-            mgr.initialize.run();
-            return mgr;
-          }, dependsOn: [IBroadcastFeedSource]);
-
-          // Profile
-          di.registerSingletonAsync<MyProfileManager>(
-            () async => MyProfileManager(
-              profileRepository: di<IProfileRepository>(),
-              broadcastFeed: di<IBroadcastFeedSource>(),
-              userId: userId,
-            ),
-            signalsReady: true,
-            onCreated: (instance) => instance.initialize.run(),
-            dependsOn: [IProfileRepository, IBroadcastFeedSource],
-          );
-        },
-      );
+    if (credentials == null) {
+      log.w('ScopeHandler: No credentials found for $userId. Aborting.');
+      return;
     }
+
+    await di.pushNewScopeAsync(
+      scopeName: targetScopeName,
+      init: (_) async {
+        // ==================================================================
+        // DOMAIN LAYER
+        // ==================================================================
+        di.registerSingleton<Id>(credentials.user.id);
+        di.registerSingleton<Session>(credentials.session);
+
+        // ==================================================================
+        // INFRASTRUCTURE LAYER
+        // ==================================================================
+        di.registerSingletonAsync<WebSocketClient>(() async {
+          final client = WebSocketClient(
+            url: Env.webSocketUrl,
+            token: credentials.session.accessToken.getOrCrash(),
+          );
+          await client.connect();
+          return client;
+        });
+
+        // Broadcast
+        di.registerSingletonWithDependencies(
+          () => BroadcastLocalDataSource(di<LocalStorage>()),
+          dependsOn: [LocalStorage],
+        );
+
+        di.registerSingletonWithDependencies(
+          () => BroadcastHttpDataSource(di<ApiClient>()),
+          dependsOn: [ApiClient],
+        );
+
+        di.registerSingletonWithDependencies(
+          () => BroadcastSocketDataSource(di<WebSocketClient>()),
+          dependsOn: [WebSocketClient],
+        );
+
+        di.registerSingletonAsync<IBroadcastRepository>(
+          () async {
+            return BroadcastRepositoryImpl(
+              local: di<BroadcastLocalDataSource>(),
+              http: di<BroadcastHttpDataSource>(),
+              socket: di<BroadcastSocketDataSource>(),
+            );
+          },
+          dependsOn: [
+            BroadcastLocalDataSource,
+            BroadcastHttpDataSource,
+            BroadcastSocketDataSource,
+          ],
+        );
+
+        // Narrow feed interface alias — same instance, no extra cost
+        di.registerSingletonWithDependencies<IBroadcastFeedSource>(
+          () => di<IBroadcastRepository>() as IBroadcastFeedSource,
+          dependsOn: [IBroadcastRepository],
+        );
+
+        // Notes/Folders
+        di.registerSingletonWithDependencies(
+          () => NotesLocalDataSource(di<Database>()),
+          dependsOn: [Database],
+        );
+
+        di.registerSingletonWithDependencies(
+          () => NotesRemoteDataSource(di<ApiClient>()),
+          dependsOn: [ApiClient],
+        );
+
+        di.registerSingletonAsync<INotesRepository>(() async {
+          return NotesRepositoryImpl(
+            local: di<NotesLocalDataSource>(),
+            remote: di<NotesRemoteDataSource>(),
+          );
+        }, dependsOn: [NotesLocalDataSource, NotesRemoteDataSource]);
+
+        // Discover
+        di.registerSingletonWithDependencies(
+          () => DiscoverLocalDataSource(di<LocalStorage>()),
+          dependsOn: [LocalStorage],
+        );
+
+        // Profile
+        di.registerSingletonWithDependencies(
+          () => ProfileHttpDataSource(di<ApiClient>()),
+          dependsOn: [ApiClient],
+        );
+
+        di.registerSingletonWithDependencies(
+          () => ProfileLocalDataSource(di<LocalStorage>()),
+          dependsOn: [LocalStorage],
+        );
+
+        di.registerSingletonWithDependencies<IProfileRepository>(() {
+          return ProfileRepositoryImpl(
+            http: di<ProfileHttpDataSource>(),
+            local: di<ProfileLocalDataSource>(),
+          );
+        }, dependsOn: [ProfileHttpDataSource]);
+
+        // ==================================================================
+        // APPLICATION LAYER
+        // ==================================================================
+
+        // Broadcasts
+        di.registerSingletonWithDependencies(() {
+          return BroadcastFormManager(
+            userId: userId,
+            repository: di<IBroadcastRepository>(),
+            mediaService: di<MediaService>(),
+          );
+        }, dependsOn: [IBroadcastRepository, MediaService]);
+
+        di.registerSingletonWithDependencies(() {
+          final manager = RecentlyLiveBroadcastsManager(
+            di<IBroadcastRepository>(),
+          );
+          manager.initialize.run();
+          return manager;
+        }, dependsOn: [IBroadcastRepository]);
+
+        di.registerSingletonWithDependencies(() {
+          final manager = NowLiveBroadcastsManager(di<IBroadcastRepository>());
+          manager.initialize.run();
+          return manager;
+        }, dependsOn: [IBroadcastRepository]);
+
+        // Live Broadcast/Stream Session
+        di.registerSingletonWithDependencies(() async {
+          final handler = LiveScopeHandler(
+            repository: di<IBroadcastRepository>(),
+            userId: userId,
+          );
+          await handler.initialize();
+          return handler;
+        }, dependsOn: [IBroadcastRepository]);
+
+        // Notes/Folders
+        di.registerSingletonWithDependencies(() {
+          final manager = NotesManager(di<INotesRepository>());
+          manager.initialize.run();
+          return manager;
+        }, dependsOn: [INotesRepository]);
+
+        di.registerSingletonWithDependencies(() {
+          final manager = FoldersManager(di<INotesRepository>());
+          manager.initialize.run();
+          return manager;
+        }, dependsOn: [INotesRepository]);
+
+        di.registerSingletonWithDependencies(() {
+          return NoteActionsManager(di<INotesRepository>());
+        }, dependsOn: [INotesRepository]);
+
+        // Discover
+        di.registerSingleton<DiscoverManager>(DiscoverManager());
+
+        di.registerSingletonWithDependencies(() {
+          final manager = DiscoverNowLiveManager(di<IBroadcastFeedSource>());
+          manager.initialize.run();
+          return manager;
+        }, dependsOn: [IBroadcastFeedSource]);
+
+        di.registerSingletonWithDependencies(() {
+          final mgr = DiscoverRecentlyLiveManager(di<IBroadcastFeedSource>());
+          mgr.initialize.run();
+          return mgr;
+        }, dependsOn: [IBroadcastFeedSource]);
+
+        // Profile
+        di.registerSingletonAsync<MyProfileManager>(
+          () async => MyProfileManager(
+            profileRepository: di<IProfileRepository>(),
+            broadcastFeed: di<IBroadcastFeedSource>(),
+            userId: userId,
+          ),
+          signalsReady: true,
+          onCreated: (instance) => instance.initialize.run(),
+          dependsOn: [IProfileRepository, IBroadcastFeedSource],
+        );
+
+        await di.allReady();
+      },
+    );
+
+    isScopeReady.value = true;
+    log.i('ScopeHandler: Scope $targetScopeName is ready');
   }
 
   Future<void> _exitScope() async {
-    // Only pop if we are NOT at the root
-    if (di.currentScopeName != 'root') {
-      log.d('ScopeHandler: Popping scope ${di.currentScopeName}');
-      await di.popScope();
-    }
+    if (di.currentScopeName == 'root') return;
+
+    // Signal to UI immediately: don't render user-scoped widgets anymore
+    isScopeReady.value = false;
+
+    log.d('ScopeHandler: Popping scope ${di.currentScopeName}');
+    await di.popScope();
   }
 
   @override
   FutureOr<dynamic> onDispose() {
     _subscription.cancel();
+    isScopeReady.dispose();
   }
 }

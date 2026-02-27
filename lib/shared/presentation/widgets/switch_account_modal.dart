@@ -80,9 +80,18 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           return RadioGroup(
             key: ValueKey(user.id),
             groupValue: selectedCredential?.user.id,
+            // onChanged: (value) {
+            //   if (value == null) return;
+            //   manager.switchAccount.run(value);
+            // },
             onChanged: (value) {
               if (value == null) return;
-              manager.switchAccount.run(value);
+              context.pop();
+              // small post-frame delay ensures modal is fully popped
+              // before scope switch
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                manager.switchAccount.run(value);
+              });
             },
             child: RadioListTile(
               value: user.id,
@@ -107,8 +116,8 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           titleColor: colors.primary,
           contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           onTap: () {
-            manager.clearLastKnownUser();
-            context.push(R.login);
+            context.pop();
+            manager.addAccount.run();
           },
         ),
         MModalListTile(
