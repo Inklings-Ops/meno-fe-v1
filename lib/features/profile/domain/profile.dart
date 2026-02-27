@@ -10,11 +10,11 @@ final class Profile with EquatableMixin {
     this.stats,
     this.imageUrl,
     this.role,
-    this.isSubscribedToUser,
-    this.numberOfBroadcasts,
-    this.numberOfSubscribers,
-    this.numberOfSubscriptions,
-    this.subscribed,
+    this.numberOfBroadcasts = 0,
+    this.numberOfSubscribers = 0,
+    this.numberOfSubscriptions = 0,
+    this.isSubscribedToUser = false,
+    this.subscribed = false,
   });
 
   factory Profile.fromUserEntity(User user) {
@@ -33,11 +33,11 @@ final class Profile with EquatableMixin {
   final UserStats? stats;
   final String? imageUrl;
   final UserRole? role;
-  final bool? isSubscribedToUser;
-  final int? numberOfBroadcasts;
-  final int? numberOfSubscribers;
-  final int? numberOfSubscriptions;
-  final bool? subscribed;
+  final int numberOfBroadcasts;
+  final int numberOfSubscribers;
+  final int numberOfSubscriptions;
+  final bool isSubscribedToUser;
+  final bool subscribed;
 
   Profile copyWith({
     Id? id,
