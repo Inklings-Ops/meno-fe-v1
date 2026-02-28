@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/core/exceptions/meno_exception.dart';
-import 'package:meno/features/auth/application/application.dart';
+import 'package:meno/features/auth/applications/applications.dart';
 import 'package:meno/features/auth/domain/domain.dart' show Password;
 import 'package:meno/features/auth/presentation/presentation.dart';
 import 'package:meno/shared/shared.dart';

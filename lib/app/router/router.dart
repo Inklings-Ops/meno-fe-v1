@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
-import 'package:meno/features/auth/application/auth_manager.dart';
-import 'package:meno/features/auth/domain/domain.dart';
-import 'package:meno/features/auth/presentation/presentation.dart';
-import 'package:meno/features/bible/presentation/widgets/live_bible_tab.dart';
-import 'package:meno/features/broadcast/presentation/presentation.dart';
-import 'package:meno/features/chat/presentation/presentation.dart';
-import 'package:meno/features/discover/presentation/presentation.dart';
-import 'package:meno/features/notes/presentation/presentation.dart';
-import 'package:meno/features/profile/presentation/presentation.dart';
+import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/bible/bible.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
+import 'package:meno/features/chat/chat.dart';
+import 'package:meno/features/discover/discover.dart';
+import 'package:meno/features/notes/notes.dart';
+import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -56,7 +54,7 @@ final class MenoRouter {
         path: '/switch-account/:id',
         builder: (context, state) {
           final userId = state.pathParameters['id'] ?? '';
-          return SwitchAccountPage(userId: userId);
+          return SwitchAccountPage(userIdStr: userId);
         },
       ),
 

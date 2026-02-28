@@ -1,3 +1,3 @@
-export 'injector.dart';
-export 'live_scope_handler.dart';
-export 'user_scope_handler.dart';
+export 'global_injector.dart';
+export 'live_scope_injector.dart';
+export 'user_scope_injector.dart';

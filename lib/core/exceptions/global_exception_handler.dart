@@ -12,7 +12,7 @@ import 'package:meno/shared/shared.dart';
 /// 3. Logs errors for debugging
 ///
 /// Must be called in main() before runApp().
-void setupGlobalExceptionHandler() {
+void configureGlobalExceptionHandler() {
   Command.globalExceptionHandler = (commandError, stackTrace) {
     final error = commandError.error;
 
@@ -100,6 +100,6 @@ void _handleUnknownError(BuildContext context, Object error) {
   // Show generic error message
   context.showErrorSnackBar('An unexpected error occurred');
 
-  // TODO: Log to crash reporting service (Sentry, Firebase Crashlytics, etc.)
+  // Log to crash reporting service (Sentry, Firebase Crashlytics, etc.)
   // logToCrashReporter(error, stackTrace);
 }

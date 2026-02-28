@@ -1,14 +1,11 @@
 export 'di/di.dart';
-export 'di/injector.dart';
-export 'di/live_scope_handler.dart';
-export 'di/user_scope_handler.dart';
 export 'domain/keys/storage_keys.dart';
 export 'domain/value_objects/value_exception.dart';
 export 'domain/value_objects/value_object.dart';
 export 'env/env.dart';
 export 'exceptions/meno_exception.dart';
 export 'exceptions/meno_exception_filter.dart';
-export 'exceptions/setup_global_exception_handler.dart';
+export 'exceptions/global_exception_handler.dart';
 export 'infrastructure/livekit_client.dart';
 export 'infrastructure/meno_response.dart';
 export 'infrastructure/permissions_service.dart';

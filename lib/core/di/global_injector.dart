@@ -5,16 +5,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
-import 'package:meno/features/auth/application/auth_manager.dart';
-import 'package:meno/features/auth/domain/domain.dart';
-import 'package:meno/features/auth/infrastructure/infrastructure.dart';
-import 'package:meno/features/bible/applications/applications.dart';
-import 'package:meno/features/bible/domain/domain.dart';
-import 'package:meno/features/bible/infrastructure/infrastructure.dart';
+import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/bible/bible.dart';
 import 'package:meno/shared/application/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void setupDependencies() {
+Future<void> configureGlobalDependencies() async {
   // Push the base scope
   di.pushNewScope(scopeName: 'root');
 
@@ -151,13 +147,16 @@ void setupDependencies() {
   // ========================================================================
   // OBSERVER
   // ========================================================================
-  di.registerSingletonWithDependencies(
-    () => UserScopeHandler(di<IAuthRepository>()),
-    dependsOn: [IAuthRepository],
-  );
+  di.registerSingletonAsync(() async {
+    final scope = UserScopeInjector(di<IAuthRepository>());
+    await scope.initialize();
+    return scope;
+  }, dependsOn: [IAuthRepository]);
 
   // ========================================================================
   // PRESENTATION LAYER
   // ========================================================================
   di.registerLazySingleton(() => MenoRouter(di<IAuthRepository>()));
+
+  await di.allReady();
 }
