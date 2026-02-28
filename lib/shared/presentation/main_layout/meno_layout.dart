@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/application/application.dart';
 import 'package:meno/shared/shared.dart';
-import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class MenoLayout extends WatchingWidget {
@@ -16,34 +14,18 @@ class MenoLayout extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final snapshot = watchFuture<GetIt, void>(
-      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
-      target: di,
-      initialValue: null,
-    );
-
-    if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
-
-    if (snapshot.isLoading) return const LoadingPage();
+    // final snapshot = watchFuture<GetIt, void>(
+    //   (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+    //   target: di,
+    //   initialValue: null,
+    // );
+    //
+    // if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
+    //
+    // if (snapshot.isLoading) return const LoadingPage();
 
     final userId = watchValue((AuthManager m) => m.userId).toNullable();
 
-    return _Content(
-      key: ValueKey('menoLayout_${userId?.getOrNull()}'),
-      shell: shell,
-      currentRoute: currentRoute,
-    );
-  }
-}
-
-class _Content extends StatelessWidget {
-  const _Content({required this.shell, required this.currentRoute, super.key});
-
-  final StatefulNavigationShell shell;
-  final String? currentRoute;
-
-  @override
-  Widget build(BuildContext context) {
     final index = shell.currentIndex;
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
@@ -60,7 +42,7 @@ class _Content extends StatelessWidget {
     }
 
     return Scaffold(
-      key: key,
+      key: ValueKey(userId?.getOrNull()),
       body: Row(
         children: [
           sideNavRail,

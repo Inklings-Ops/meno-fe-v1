@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart' show CancelToken;
 import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:fpdart/fpdart.dart' show Either, Unit;
+import 'package:fpdart/fpdart.dart' show Either, Option, Unit;
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/profile/domain/domain.dart';
@@ -15,6 +15,7 @@ import 'package:meno/shared/domain/domain.dart';
 ///   notifiers as a side-effect and return the outcome for error handling.
 /// - The domain layer is completely decoupled from HTTP and storage.
 abstract interface class IProfileRepository {
+  Future<void> initialize();
   // =========================================================================
   // REACTIVE STATE  (ValueListenable — UI watches these)
   // =========================================================================
@@ -23,7 +24,7 @@ abstract interface class IProfileRepository {
   ///
   /// Seeded from the local cache on startup; refreshed from the network
   /// by [fetchMyProfile].
-  ValueListenable<Profile?> get myProfile;
+  ValueListenable<Option<Profile>> get myProfile;
 
   // =========================================================================
   // OWN PROFILE
@@ -33,7 +34,7 @@ abstract interface class IProfileRepository {
   /// network refresh in the background and updates [myProfile] again.
   ///
   /// Call this once when the profile screen mounts.
-  Future<Either<MenoException, Profile>> fetchMyProfile(Id userId);
+  Future<Either<MenoException, Profile>> fetchMyProfile();
 
   /// Fetches any user's profile by [userId].
   ///

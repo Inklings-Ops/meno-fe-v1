@@ -1,12 +1,9 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:fpdart/fpdart.dart' show Either, Option, Unit;
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/shared.dart';
 
 abstract class IBroadcastRepository implements IBroadcastFeedSource {
-  ValueListenable<List<BroadcastDraft?>> get drafts;
-
   Either<MenoException, List<BroadcastDraft?>> getDrafts(Id userId);
 
   Future<void> saveDraft({required Id userId, required BroadcastDraft draft});

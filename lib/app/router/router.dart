@@ -64,6 +64,16 @@ final class MenoRouter {
     },
     refreshListenable: di<AuthManager>().userId,
     routes: [
+      GoRoute(path: R.loading, builder: (_, _) => const LoadingPage()),
+
+      GoRoute(
+        path: '/switch-account/:id',
+        builder: (context, state) {
+          final userId = state.pathParameters['id'] ?? '';
+          return SwitchAccountPage(userId: userId);
+        },
+      ),
+
       GoRoute(path: R.login, builder: (_, _) => const LoginPage()),
 
       GoRoute(

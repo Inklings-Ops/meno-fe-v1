@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
@@ -22,8 +21,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   final BroadcastHttpDataSource _http;
   final BroadcastSocketDataSource _socket;
   final BroadcastLocalDataSource _local;
-
-  final _drafts = ValueNotifier<List<BroadcastDraft?>>([]);
 
   @override
   Future<Either<MenoException, Broadcast>> createBroadcast({
@@ -155,27 +152,24 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<void> clearDrafts(Id userId) async {
     await _local.clearDraft(userId.getOrCrash());
-    _drafts.value = [];
+    // _drafts.value = [];
   }
 
   @override
   Future<void> deleteDraft({required Id userId, required Id draftId}) async {
-    final updatedList = await _local.deleteDraft(
+    await _local.deleteDraft(
       userId: userId.getOrCrash(),
       draftId: draftId.getOrCrash(),
     );
-    _drafts.value = updatedList.map((e) => e?.toDomain).toList();
+    // _drafts.value = updatedList.map((e) => e?.toDomain).toList();
   }
-
-  @override
-  ValueListenable<List<BroadcastDraft?>> get drafts => _drafts;
 
   @override
   Either<MenoException, List<BroadcastDraft?>> getDrafts(Id userId) {
     try {
       final dtos = _local.getAllDrafts(userId.getOrCrash());
       final transformedList = dtos.map((e) => e?.toDomain).toList();
-      _drafts.value = transformedList;
+      // _drafts.value = transformedList;
       return Right(transformedList);
     } catch (error) {
       if (error is MenoException) return Left(error);
@@ -189,11 +183,8 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
     required BroadcastDraft draft,
   }) async {
     try {
-      final updatedList = await _local.saveDraft(
-        userId: userId.getOrCrash(),
-        draft: draft.toDto,
-      );
-      _drafts.value = updatedList.map((e) => e?.toDomain).toList();
+      await _local.saveDraft(userId: userId.getOrCrash(), draft: draft.toDto);
+      // _drafts.value = updatedList.map((e) => e?.toDomain).toList();
     } catch (error) {
       throw MenoException(error.toString());
     }
@@ -408,10 +399,5 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary) async {
     final id = userId.getOrCrash();
     return _local.saveBroadcastSummary(id, summary.toDto);
-  }
-
-  @override
-  FutureOr<dynamic> onDispose() {
-    _drafts.dispose();
   }
 }

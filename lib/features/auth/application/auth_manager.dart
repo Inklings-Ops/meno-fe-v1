@@ -66,6 +66,7 @@ final class AuthManager extends ChangeNotifier implements Disposable {
     logout.dispose();
     login.dispose();
     switchAccount.dispose();
+    addAccount.dispose();
   }
 }
 

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart' show CancelToken;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:fpdart/fpdart.dart' show Either, Left, Right, Unit, unit;
+import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/profile/domain/domain.dart';
 import 'package:meno/features/profile/infrastructure/infrastructure.dart';
@@ -32,32 +32,57 @@ final class ProfileRepositoryImpl implements IProfileRepository, Disposable {
   ProfileRepositoryImpl({
     required ProfileHttpDataSource http,
     required ProfileLocalDataSource local,
+    required Id currentUserId,
   }) : _http = http,
-       _local = local;
+       _local = local,
+       _currentUserId = currentUserId;
 
   final ProfileHttpDataSource _http;
   final ProfileLocalDataSource _local;
+  final Id _currentUserId;
+
+  @override
+  Future<void> initialize() async {
+    final userId = _currentUserId.getOrCrash();
+    // Seed from cache for instant render.
+    final cached = _local.getCachedProfile(userId);
+    if (cached != null) _myProfile.value = Some(cached.toDomain);
+
+    // Refresh from network.
+    try {
+      final dto = await _http.getProfile(userId);
+      if (dto == null) {
+        _myProfile.value = const None();
+        return;
+      }
+
+      _myProfile.value = Some(dto.toDomain);
+      unawaited(_local.cacheProfile(userId, dto));
+    } catch (error) {
+      _myProfile.value = const None();
+    }
+  }
 
   // =========================================================================
   // NOTIFIERS  — UI watches these
   // =========================================================================
 
-  final _myProfile = ValueNotifier<Profile?>(null);
+  late final _myProfile = ValueNotifier<Option<Profile>>(const None());
 
   @override
-  ValueListenable<Profile?> get myProfile => _myProfile;
+  ValueListenable<Option<Profile>> get myProfile => _myProfile;
 
   // =========================================================================
   // OWN PROFILE
   // =========================================================================
 
   @override
-  Future<Either<MenoException, Profile>> fetchMyProfile(Id userId) async {
-    final rawId = userId.getOrCrash();
+  Future<Either<MenoException, Profile>> fetchMyProfile() async {
+    final rawId = _currentUserId.getOrCrash();
 
     // Seed from cache for instant render.
     final cached = _local.getCachedProfile(rawId);
-    if (cached != null) _myProfile.value = cached.toDomain;
+    if (cached != null) _myProfile.value = Some(cached.toDomain);
 
     // Refresh from network.
     try {
@@ -68,7 +93,7 @@ final class ProfileRepositoryImpl implements IProfileRepository, Disposable {
       }
 
       final profile = dto.toDomain;
-      _myProfile.value = profile;
+      _myProfile.value = Some(profile);
 
       // Persist fresh data locally (fire-and-forget).
       unawaited(_local.cacheProfile(rawId, dto));
@@ -115,7 +140,7 @@ final class ProfileRepositoryImpl implements IProfileRepository, Disposable {
 
       final profile = dto.toDomain;
 
-      _myProfile.value = profile;
+      _myProfile.value = some(profile);
       unawaited(_local.cacheProfile(id.getOrCrash(), dto));
 
       return Right(profile);
@@ -272,10 +297,10 @@ final class ProfileRepositoryImpl implements IProfileRepository, Disposable {
   /// The server is authoritative; [fetchMyProfile] will correct any drift
   /// the next time the profile screen opens.
   void _patchSubscriberCount({required bool increment}) {
-    final current = _myProfile.value;
+    final current = _myProfile.value.toNullable();
     if (current == null) return;
 
-    _myProfile.value = current.copyWith(
+    final updated = current.copyWith(
       numberOfSubscriptions: increment
           ? current.numberOfSubscriptions + 1
           : (current.numberOfSubscriptions - 1).clamp(
@@ -283,5 +308,6 @@ final class ProfileRepositoryImpl implements IProfileRepository, Disposable {
               double.maxFinite.toInt(),
             ),
     );
+    _myProfile.value = some(updated);
   }
 }

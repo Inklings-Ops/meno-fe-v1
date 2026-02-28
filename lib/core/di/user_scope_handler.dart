@@ -36,30 +36,34 @@ final class UserScopeHandler with MLogger implements Disposable {
   Future<void> _queue = Future<void>.value();
 
   void _syncScopeWithState(Option<Id> id, ListenableSubscription _) {
-    // This forces _enterScope to wait until _exitScope (if running)
+    // This forces _enterScope to wait until exitScope (if running)
     // is 100% done.
-    _queue = _queue.then((_) async => id.fold(_exitScope, _enterScope));
+    _queue = _queue.then((_) async => id.fold(exitScope, enterScope));
   }
 
-  Future<void> _enterScope(Id userId) async {
-    final targetScopeName = 'user_${userId.value.getOrElse((_) => '')}';
+  int _scopeNumber = 1;
+
+  Future<void> enterScope(Id userId) async {
+    _scopeNumber++;
+    final targetScopeName = '${_scopeNumber}_${userId.getOrCrash()}';
     log.i('ScopeHandler: Requesting enter $targetScopeName');
 
+    // Guard: already in this exact scope, nothing to do
     if (di.currentScopeName == targetScopeName) {
       log.i('ScopeHandler: Already in $targetScopeName. Skipping.');
-      // Ensure flag is true if we somehow skipped with it false
-      if (!isScopeReady.value) isScopeReady.value = true;
       return;
     }
 
-    // Clean up old scope first (sets isScopeReady = false inside)
-    await _exitScope();
+    // Exit any existing user scope BEFORE pushing the new one
+    await exitScope();
 
-    final credentials = _repository.accounts.value[userId];
-    if (credentials == null) {
+    final credential = _repository.accounts.value[userId];
+    if (credential == null) {
       log.w('ScopeHandler: No credentials found for $userId. Aborting.');
       return;
     }
+
+    log.i('ScopeHandler: Entering $targetScopeName');
 
     await di.pushNewScopeAsync(
       scopeName: targetScopeName,
@@ -67,8 +71,8 @@ final class UserScopeHandler with MLogger implements Disposable {
         // ==================================================================
         // DOMAIN LAYER
         // ==================================================================
-        di.registerSingleton<Id>(credentials.user.id);
-        di.registerSingleton<Session>(credentials.session);
+        di.registerSingleton<Id>(userId);
+        di.registerSingleton<Session>(credential.session);
 
         // ==================================================================
         // INFRASTRUCTURE LAYER
@@ -76,7 +80,7 @@ final class UserScopeHandler with MLogger implements Disposable {
         di.registerSingletonAsync<WebSocketClient>(() async {
           final client = WebSocketClient(
             url: Env.webSocketUrl,
-            token: credentials.session.accessToken.getOrCrash(),
+            token: credential.session.accessToken.getOrCrash(),
           );
           await client.connect();
           return client;
@@ -154,12 +158,15 @@ final class UserScopeHandler with MLogger implements Disposable {
           dependsOn: [LocalStorage],
         );
 
-        di.registerSingletonWithDependencies<IProfileRepository>(() {
-          return ProfileRepositoryImpl(
+        di.registerSingletonAsync<IProfileRepository>(() async {
+          final repository = ProfileRepositoryImpl(
             http: di<ProfileHttpDataSource>(),
             local: di<ProfileLocalDataSource>(),
+            currentUserId: userId,
           );
-        }, dependsOn: [ProfileHttpDataSource]);
+          await repository.initialize();
+          return repository;
+        }, dependsOn: [ProfileHttpDataSource, ProfileLocalDataSource]);
 
         // ==================================================================
         // APPLICATION LAYER
@@ -231,15 +238,9 @@ final class UserScopeHandler with MLogger implements Disposable {
         }, dependsOn: [IBroadcastFeedSource]);
 
         // Profile
-        di.registerSingletonAsync<MyProfileManager>(
-          () async => MyProfileManager(
-            profileRepository: di<IProfileRepository>(),
-            broadcastFeed: di<IBroadcastFeedSource>(),
-            userId: userId,
-          ),
-          signalsReady: true,
-          onCreated: (instance) => instance.initialize.run(),
-          dependsOn: [IProfileRepository, IBroadcastFeedSource],
+        di.registerSingletonWithDependencies<MyProfileManager>(
+          () => MyProfileManager(di<IProfileRepository>()),
+          dependsOn: [IProfileRepository],
         );
 
         await di.allReady();
@@ -250,7 +251,7 @@ final class UserScopeHandler with MLogger implements Disposable {
     log.i('ScopeHandler: Scope $targetScopeName is ready');
   }
 
-  Future<void> _exitScope() async {
+  Future<void> exitScope() async {
     if (di.currentScopeName == 'root') return;
 
     // Signal to UI immediately: don't render user-scoped widgets anymore

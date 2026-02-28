@@ -80,18 +80,9 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           return RadioGroup(
             key: ValueKey(user.id),
             groupValue: selectedCredential?.user.id,
-            // onChanged: (value) {
-            //   if (value == null) return;
-            //   manager.switchAccount.run(value);
-            // },
-            onChanged: (value) {
+            onChanged: (value) async {
               if (value == null) return;
-              context.pop();
-              // small post-frame delay ensures modal is fully popped
-              // before scope switch
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                manager.switchAccount.run(value);
-              });
+              context.go(R.switchAccount(value.getOrCrash()));
             },
             child: RadioListTile(
               value: user.id,

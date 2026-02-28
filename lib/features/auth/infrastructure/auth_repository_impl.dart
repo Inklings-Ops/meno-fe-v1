@@ -125,22 +125,6 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<void> logout() async {
-    try {
-      // Keep lastKnownUser for "Welcome back" on next visit
-      // Only clear active session
-      await _local.clearCredential();
-      _activeUserId.value = const None();
-
-      // Note: We intentionally DON'T clear _lastKnownUser here
-      // so the user sees "Welcome back" when they return
-    } catch (error) {
-      // Logout should always succeed
-      _activeUserId.value = const None();
-    }
-  }
-
-  @override
   Future<Either<MenoException, UserCredential>> register({
     required SingleLineString fullName,
     required Email email,
@@ -205,6 +189,9 @@ final class AuthRepositoryImpl implements IAuthRepository {
   @override
   Future<Either<MenoException, Unit>> switchAccount(Id userId) async {
     try {
+      // await _local.clearCredential();
+      // _activeUserId.value = const None();
+
       final targetIdStr = userId.getOrCrash();
 
       // Overwrite hot keys in secure storage (Vault → Hot Cache)
@@ -222,6 +209,22 @@ final class AuthRepositoryImpl implements IAuthRepository {
       return Left(MenoException(e.message));
     } catch (e) {
       return Left(MenoException(e.toString()));
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      // Keep lastKnownUser for "Welcome back" on next visit
+      // Only clear active session
+      await _local.clearCredential();
+      _activeUserId.value = const None();
+
+      // Note: We intentionally DON'T clear _lastKnownUser here
+      // so the user sees "Welcome back" when they return
+    } catch (error) {
+      // Logout should always succeed
+      _activeUserId.value = const None();
     }
   }
 

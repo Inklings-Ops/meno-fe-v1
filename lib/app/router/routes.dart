@@ -2,7 +2,7 @@ class R {
   const R._();
 
   static const List<String> publicRoutes = [
-    R.loading,
+    // R.loading,
     R.login,
     R.onboarding,
     R.register,
@@ -66,4 +66,6 @@ class R {
   static const String folderName = 'folder';
 
   static String folder(String id) => '/folders/$id';
+
+  static String switchAccount(String userId) => '/switch-account/$userId';
 }

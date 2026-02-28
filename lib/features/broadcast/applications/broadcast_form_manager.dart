@@ -14,7 +14,7 @@ class BroadcastFormManager with MLogger implements Disposable {
   }) : _userId = userId,
        _repository = repository,
        _mediaService = mediaService {
-    _repository.getDrafts(userId);
+    _loadDrafts();
 
     _form
         .debounce(const Duration(milliseconds: 500))
@@ -34,7 +34,7 @@ class BroadcastFormManager with MLogger implements Disposable {
   // Track which step we've completed
   final step = ValueNotifier(BroadcastCreationStep.none);
 
-  ValueListenable<List<BroadcastDraft?>> get drafts => _repository.drafts;
+  late final drafts = ListNotifier<BroadcastDraft?>(data: []);
 
   final title = ValueNotifier(SingleLineString.empty);
   final desc = ValueNotifier(MultiLineString.empty);
@@ -245,10 +245,20 @@ class BroadcastFormManager with MLogger implements Disposable {
 
       // If we're deleting the current draft, reset the form
       if (_currentDraftId == draftId) resetForm.run();
+      _loadDrafts();
     } catch (e) {
       log.e('BroadcastFormManager: Failed to delete draft - $e');
       rethrow;
     }
+  }
+
+  void _loadDrafts() {
+    _repository.getDrafts(_userId).fold((_) {}, (r) {
+      drafts.startTransAction();
+      drafts.clear();
+      drafts.addAll(r);
+      drafts.endTransAction();
+    });
   }
 
   /// Persists creation state to the current draft for crash recovery
@@ -270,6 +280,7 @@ class BroadcastFormManager with MLogger implements Disposable {
 
       // Save back to storage
       await _repository.saveDraft(userId: _userId, draft: updatedDraft);
+      _loadDrafts();
       log.d('BroadcastFormManager: Persisted creation state to draft');
     } catch (e) {
       log.e('BroadcastFormManager: Failed to persist creation state - $e');
@@ -281,11 +292,13 @@ class BroadcastFormManager with MLogger implements Disposable {
     // Don't save empty/useless drafts
     if (!draft.title.isValid && !draft.description.isValid) return;
     await _repository.saveDraft(userId: _userId, draft: draft);
+    _loadDrafts();
   }
 
   @override
   FutureOr<dynamic> onDispose() {
     step.dispose();
+    drafts.dispose();
 
     title.dispose();
     desc.dispose();

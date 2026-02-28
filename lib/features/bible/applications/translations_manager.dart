@@ -32,7 +32,7 @@ class TranslationsManager with MLogger implements Disposable {
   late final initialize = Command.createSyncNoParamNoResult(
     _refreshDownloaded,
     errorFilterFn: menoExceptionFilter,
-  )..pipeToCommand(getRemoteTranslations);
+  );
 
   late final getRemoteTranslations = Command.createSyncNoParamNoResult(
     () async {

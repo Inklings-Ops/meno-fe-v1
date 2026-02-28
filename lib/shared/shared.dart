@@ -37,6 +37,7 @@ export './presentation/main_layout/meno_layout.dart';
 export './presentation/main_layout/rail_widget.dart';
 export './presentation/main_layout/side_nav_rail.dart';
 export './presentation/pages/loading_page.dart';
+export './presentation/pages/switch_account_page.dart';
 export './presentation/widgets/delete_alert_dialog.dart';
 export './presentation/widgets/empty_list_widget.dart';
 export './presentation/widgets/error_widget.dart';

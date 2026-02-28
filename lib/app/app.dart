@@ -3,10 +3,12 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/app/router/router.dart';
+import 'package:meno/features/auth/domain/domain.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-class MenoApp extends StatefulWidget {
+class MenoApp extends WatchingStatefulWidget {
   const MenoApp({super.key});
 
   @override
@@ -26,35 +28,61 @@ class _MenoAppState extends State<MenoApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      darkTheme: MTheme.dark,
+    final snapshot = watchFuture<GetIt, void>(
+      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
+
+    if (snapshot.hasError) return MenoAppErrorWidget(error: snapshot.error);
+
+    if (snapshot.isLoading) return const MenoAppLoadingWidget();
+
+    return ValueListenableBuilder(
+      valueListenable: di<IAuthRepository>().activeUserId,
+      builder: (context, value, child) {
+        return MaterialApp.router(
+          darkTheme: MTheme.dark,
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [FlutterQuillLocalizations.delegate],
+          routerConfig: di<MenoRouter>().routerConfig,
+          theme: MTheme.light,
+          scaffoldMessengerKey: rootScaffoldMessengerKey,
+          builder: (context, child) => ResponsiveBreakpoints.builder(
+            breakpoints: const [
+              Breakpoint(start: 0, end: 450, name: PHONE),
+              Breakpoint(start: 451, end: 600, name: MOBILE),
+              Breakpoint(start: 601, end: 800, name: TABLET),
+              Breakpoint(start: 801, end: 1920, name: DESKTOP),
+            ],
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MenoAppLoadingWidget extends StatelessWidget {
+  const MenoAppLoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [FlutterQuillLocalizations.delegate],
-      routerConfig: di<MenoRouter>().routerConfig,
+      darkTheme: MTheme.dark,
       theme: MTheme.light,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
-      builder: (context, child) => ResponsiveBreakpoints.builder(
-        breakpoints: const [
-          Breakpoint(start: 0, end: 450, name: PHONE),
-          Breakpoint(start: 451, end: 600, name: MOBILE),
-          Breakpoint(start: 601, end: 800, name: TABLET),
-          Breakpoint(start: 801, end: 1920, name: DESKTOP),
-        ],
-        child: child ?? const SizedBox.shrink(),
-      ),
+      home: const LoadingPage(),
     );
   }
 }
 
 class MenoAppErrorWidget extends StatelessWidget {
-  const MenoAppErrorWidget({
-    required this.error,
-    required this.onRetry,
-    super.key,
-  });
+  const MenoAppErrorWidget({required this.error, this.onRetry, super.key});
 
-  final Object error;
-  final VoidCallback onRetry;
+  final Object? error;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {

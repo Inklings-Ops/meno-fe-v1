@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart' show CancelToken;
-import 'package:flutter_it/flutter_it.dart' show Disposable;
 import 'package:fpdart/fpdart.dart' show Either;
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/applications/now_live_broadcasts_manager.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/infrastructure/broadcast_repository_impl.dart';
-import 'package:meno/features/discover/applications/discover_now_live_manager.dart';
+import 'package:meno/features/discover/applications/applications.dart';
 import 'package:meno/shared/shared.dart' show BroadcastQuery, Id, PagedList;
 
 /// Narrow feed contract consumed by broadcast list managers.
@@ -21,7 +20,7 @@ import 'package:meno/shared/shared.dart' show BroadcastQuery, Id, PagedList;
 ///   - [NowLiveBroadcastsManager]   (home page preview strip)
 ///   - [DiscoverNowLiveManager]     (discover full paginated list)
 ///   - [DiscoverRecentlyLiveManager]
-abstract interface class IBroadcastFeedSource implements Disposable {
+abstract interface class IBroadcastFeedSource {
   /// Fires each time a new broadcast goes live.
   ///
   /// Managers prepend the incoming broadcast to their local list.
