@@ -298,6 +298,8 @@ final class AuthRepositoryImpl implements IAuthRepository {
 
   @override
   Future<void> clearActiveSession() async {
+    _activeUserId.value = const None();
+    _lastKnownUser.value = const None();
     await _local.clearCredential();
     _activeUserId.value = const None();
   }

@@ -23,7 +23,7 @@ void setupGlobalExceptionHandler() {
     debugPrint('└─────────────────────────────────────────────────────────');
 
     // Get current BuildContext from navigator
-    final context = rootNavigatorKey.currentContext;
+    final context = rootScaffoldMessengerKey.currentContext;
     if (context == null) {
       debugPrint('⚠️ Cannot show error: No BuildContext available');
       return;

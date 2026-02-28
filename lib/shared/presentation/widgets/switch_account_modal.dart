@@ -80,7 +80,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           return RadioGroup(
             key: ValueKey(user.id),
             groupValue: selectedCredential?.user.id,
-            onChanged: (value) async {
+            onChanged: (value) {
               if (value == null) return;
               context.go(R.switchAccount(value.getOrCrash()));
             },

@@ -15,41 +15,27 @@ import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-final rootNavigatorKey = GlobalKey<NavigatorState>();
-final mainLayoutKey = GlobalKey<NavigatorState>();
-final broadcastLayoutKey = GlobalKey<NavigatorState>();
-
-final broadcastTabKey = GlobalKey<NavigatorState>();
-final streamTabKey = GlobalKey<NavigatorState>();
-final chatTabKey = GlobalKey<NavigatorState>();
-final bibleTabKey = GlobalKey<NavigatorState>();
-final notesTabKey = GlobalKey<NavigatorState>();
-
-final dashboardKey = GlobalKey<NavigatorState>();
-final discoverKey = GlobalKey<NavigatorState>();
-final notesKey = GlobalKey<NavigatorState>();
-final profileKey = GlobalKey<NavigatorState>();
-
-final notesLayoutKey = GlobalKey<NavigatorState>();
-final noteSectionKey = GlobalKey<NavigatorState>();
-final folderSectionKey = GlobalKey<NavigatorState>();
-
 final class MenoRouter {
   MenoRouter(this._repository);
 
   final IAuthRepository _repository;
 
+  // late final rootNavigatorKey = GlobalKey<NavigatorState>();
+
   late final GoRouter routerConfig = GoRouter(
     debugLogDiagnostics: true,
     initialLocation: R.home,
-    navigatorKey: rootNavigatorKey,
+    // navigatorKey: rootNavigatorKey,
     redirect: (context, state) {
       final nextRoute = state.matchedLocation;
       final isPublicRoute = R.publicRoutes.contains(nextRoute);
       final isAuthenticated = _repository.activeUserId.value.isSome();
 
       if (!isAuthenticated) {
-        if (!isPublicRoute) return R.login;
+        if (!isPublicRoute) {
+          if (nextRoute.contains('switch-account')) return null;
+          return R.login;
+        }
         return null;
       }
 
@@ -133,18 +119,16 @@ final class MenoRouter {
       ),
 
       StatefulShellRoute(
-        parentNavigatorKey: rootNavigatorKey,
+        // parentNavigatorKey: rootNavigatorKey,
         builder: (context, state, navigationShell) => navigationShell,
         navigatorContainerBuilder: (context, navigationShell, children) {
           return LiveLayoutWidget(
-            key: broadcastLayoutKey,
             navigationShell: navigationShell,
             children: children,
           );
         },
         branches: [
           StatefulShellBranch(
-            navigatorKey: broadcastTabKey,
             routes: <RouteBase>[
               GoRoute(
                 path: R.broadcastTab,
@@ -157,7 +141,6 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: chatTabKey,
             routes: <RouteBase>[
               GoRoute(
                 path: R.chatTab,
@@ -166,7 +149,6 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: bibleTabKey,
             routes: <RouteBase>[
               GoRoute(
                 path: R.bibleTab,
@@ -175,7 +157,6 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: notesTabKey,
             routes: <RouteBase>[
               GoRoute(
                 path: R.notesTab,
@@ -200,14 +181,10 @@ final class MenoRouter {
       // MAIN APP NAVIGATION SHELL
       // ######################################################################
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => MenoLayout(
-          key: mainLayoutKey,
-          shell: navigationShell,
-          currentRoute: state.path,
-        ),
+        builder: (context, state, navigationShell) =>
+            MenoLayout(shell: navigationShell, currentRoute: state.path),
         branches: [
           StatefulShellBranch(
-            navigatorKey: dashboardKey,
             routes: [
               GoRoute(
                 path: R.home,
@@ -216,7 +193,6 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: discoverKey,
             routes: [
               GoRoute(
                 path: R.discover,
@@ -225,21 +201,18 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: notesKey,
             routes: [
               /// Notes Page Shell Route
               StatefulShellRoute(
                 builder: (context, state, navigationShell) => navigationShell,
                 navigatorContainerBuilder: (_, navigationShell, children) {
                   return NotesLayoutWidget(
-                    key: notesLayoutKey,
                     navigationShell: navigationShell,
                     children: children,
                   );
                 },
                 branches: [
                   StatefulShellBranch(
-                    navigatorKey: noteSectionKey,
                     routes: [
                       GoRoute(
                         path: R.noteSection,
@@ -248,7 +221,6 @@ final class MenoRouter {
                     ],
                   ),
                   StatefulShellBranch(
-                    navigatorKey: folderSectionKey,
                     routes: [
                       GoRoute(
                         path: R.folderSection,
@@ -261,7 +233,6 @@ final class MenoRouter {
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: profileKey,
             routes: [
               GoRoute(
                 path: R.myProfile,

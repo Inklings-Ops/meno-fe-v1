@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
@@ -19,33 +18,25 @@ import 'package:meno/features/profile/infrastructure/infrastructure.dart';
 import 'package:meno/shared/domain/domain.dart';
 import 'package:meno/shared/shared.dart' show IBroadcastFeedSource;
 
-final class UserScopeHandler with MLogger implements Disposable {
+class UserScopeHandler with MLogger implements Disposable, WillSignalReady {
   UserScopeHandler(this._repository) {
-    // LISTEN: We watch the Anchor
     _subscription = _repository.activeUserId.listen(_syncScopeWithState);
-
-    // Initial check (fire and forget, but processed in order)
     _syncScopeWithState(_repository.activeUserId.value, _subscription);
   }
 
-  final isScopeReady = ValueNotifier(false);
+  // final isScopeReady = ValueNotifier(false);
 
   final IAuthRepository _repository;
   late final ListenableSubscription _subscription;
 
-  Future<void> _queue = Future<void>.value();
+  // Future<void> _queue = Future<void>.value();
 
   void _syncScopeWithState(Option<Id> id, ListenableSubscription _) {
-    // This forces _enterScope to wait until exitScope (if running)
-    // is 100% done.
-    _queue = _queue.then((_) async => id.fold(exitScope, enterScope));
+    id.fold(exitScope, enterScope);
   }
 
-  int _scopeNumber = 1;
-
   Future<void> enterScope(Id userId) async {
-    _scopeNumber++;
-    final targetScopeName = '${_scopeNumber}_${userId.getOrCrash()}';
+    const targetScopeName = 'authenticated';
     log.i('ScopeHandler: Requesting enter $targetScopeName');
 
     // Guard: already in this exact scope, nothing to do
@@ -242,12 +233,11 @@ final class UserScopeHandler with MLogger implements Disposable {
           () => MyProfileManager(di<IProfileRepository>()),
           dependsOn: [IProfileRepository],
         );
-
-        await di.allReady();
       },
     );
 
-    isScopeReady.value = true;
+    // isScopeReady.value = true;
+    GetIt.instance.signalReady(this);
     log.i('ScopeHandler: Scope $targetScopeName is ready');
   }
 
@@ -255,7 +245,7 @@ final class UserScopeHandler with MLogger implements Disposable {
     if (di.currentScopeName == 'root') return;
 
     // Signal to UI immediately: don't render user-scoped widgets anymore
-    isScopeReady.value = false;
+    // isScopeReady.value = false;
 
     log.d('ScopeHandler: Popping scope ${di.currentScopeName}');
     await di.popScope();
@@ -264,6 +254,6 @@ final class UserScopeHandler with MLogger implements Disposable {
   @override
   FutureOr<dynamic> onDispose() {
     _subscription.cancel();
-    isScopeReady.dispose();
+    // isScopeReady.dispose();
   }
 }

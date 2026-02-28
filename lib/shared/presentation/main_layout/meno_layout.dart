@@ -14,15 +14,15 @@ class MenoLayout extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final snapshot = watchFuture<GetIt, void>(
-    //   (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
-    //   target: di,
-    //   initialValue: null,
-    // );
-    //
-    // if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
-    //
-    // if (snapshot.isLoading) return const LoadingPage();
+    final snapshot = watchFuture<GetIt, void>(
+      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
+
+    if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
+
+    if (snapshot.isLoading) return const LoadingPage();
 
     final userId = watchValue((AuthManager m) => m.userId).toNullable();
 
