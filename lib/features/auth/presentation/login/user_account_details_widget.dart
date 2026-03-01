@@ -10,18 +10,18 @@ class UserAccountDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
+
     return SizedBox(
       height: 74,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: .stretch,
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: action != null
-                  ? MainAxisAlignment.end
-                  : MainAxisAlignment.center,
+              crossAxisAlignment: .start,
+              mainAxisAlignment: action != null ? .end : .center,
               children: [
                 MText('Welcome back,', style: textTheme.subheadingMedium),
                 MText(
@@ -34,16 +34,16 @@ class UserAccountDetailsWidget extends StatelessWidget {
           GestureDetector(
             onTap: action,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: .end,
+              mainAxisAlignment: .center,
               children: [
-                MAvatar(radius: 24, url: user.imageUrl),
+                MAvatar(radius: 24, url: user.image?.getUrl()),
                 if (action != null) ...[
                   Spaces.verticalMicro,
                   MText(
                     'Switch account',
                     style: textTheme.captionMedium,
-                    color: MColorScheme.of(context).primary,
+                    color: colors.primary,
                   ),
                 ],
               ],

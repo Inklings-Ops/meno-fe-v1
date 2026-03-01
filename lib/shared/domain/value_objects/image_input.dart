@@ -51,3 +51,9 @@ class ImageInput extends ValueObject<ImageOrigin?> {
     return Right(NetworkImage(url));
   }
 }
+
+extension ImageInputX on ImageInput {
+  String? getUrl() => (getOrNull() as NetworkImage?)?.url;
+
+  File? getFile() => (getOrNull() as LocalImage?)?.file;
+}

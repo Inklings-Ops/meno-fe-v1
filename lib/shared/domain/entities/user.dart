@@ -10,7 +10,7 @@ final class User with EquatableMixin {
     this.generalSettings,
     this.role,
     this.imageId,
-    this.imageUrl,
+    this.image,
     this.verified = false,
     this.emailAccountType,
   });
@@ -22,7 +22,7 @@ final class User with EquatableMixin {
   final GeneralSettings? generalSettings;
   final UserRole? role;
   final String? imageId;
-  final String? imageUrl;
+  final ImageInput? image;
   final bool verified;
   final String? emailAccountType;
 
@@ -41,7 +41,7 @@ final class User with EquatableMixin {
     GeneralSettings? generalSettings,
     UserRole? role,
     String? imageId,
-    String? imageUrl,
+    ImageInput? image,
     bool? verified,
     String? emailAccountType,
   }) {
@@ -53,7 +53,7 @@ final class User with EquatableMixin {
       generalSettings: generalSettings ?? this.generalSettings,
       role: role ?? this.role,
       imageId: imageId ?? this.imageId,
-      imageUrl: imageUrl ?? this.imageUrl,
+      image: image ?? this.image,
       verified: verified ?? this.verified,
       emailAccountType: emailAccountType ?? this.emailAccountType,
     );
@@ -68,7 +68,7 @@ final class User with EquatableMixin {
     generalSettings,
     role,
     imageId,
-    imageUrl,
+    image,
     verified,
     emailAccountType,
   ];

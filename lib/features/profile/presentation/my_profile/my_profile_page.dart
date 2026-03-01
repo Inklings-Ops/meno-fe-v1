@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NetworkImage;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/discover/applications/discover_recently_live_manager.dart';
-import 'package:meno/features/profile/applications/my_profile_manager.dart';
-import 'package:meno/features/profile/domain/domain.dart';
+import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:readmore/readmore.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:skeletonizer/skeletonizer.dart' hide NetworkImage;
 
 const _kTabBarHeight = 32.0;
 
@@ -18,16 +17,6 @@ class MyProfilePage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final snapshot = watchFuture<GetIt, void>(
-    //   (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
-    //   target: di,
-    //   initialValue: null,
-    // );
-    //
-    // if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
-    //
-    // if (snapshot.isLoading) return const LoadingPage();
-
     final profile = watchValue((MyProfileManager m) => m.profile);
     return _Content(profile: profile);
   }
@@ -251,7 +240,7 @@ class _ProfileHeader extends StatelessWidget {
             // Avatar + stats row
             Row(
               children: [
-                MAvatar(radius: 40, url: profile?.imageUrl),
+                MAvatar(radius: 40, url: profile?.image?.getUrl()),
                 const SizedBox(width: 24),
                 Expanded(
                   child: _ProfileStats(
@@ -390,13 +379,15 @@ class _ProfileBio extends StatelessWidget {
   }
 }
 
-class _ProfileButtons extends StatelessWidget {
+class _ProfileButtons extends WatchingWidget {
   const _ProfileButtons();
 
   @override
   Widget build(BuildContext context) {
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
     final textStyle = MTextTheme.of(context).microMedium;
+
+    final profile = watchValue((MyProfileManager m) => m.profile);
 
     return SizedBox(
       height: 32,
@@ -406,7 +397,9 @@ class _ProfileButtons extends StatelessWidget {
             child: MPrimaryButton.icon(
               label: 'Edit profile',
               icon: const Icon(MIcons.edit_05),
-              onPressed: () {},
+              onPressed: profile != null
+                  ? () => ProfileEditorModal.show(context, profile)
+                  : () {},
               style: ElevatedButton.styleFrom(
                 textStyle: textStyle,
                 shape: shape,

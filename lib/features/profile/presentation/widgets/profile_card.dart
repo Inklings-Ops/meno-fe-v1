@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/profile/domain/domain.dart';
 import 'package:meno/features/profile/presentation/presentation.dart';
+import 'package:meno/shared/domain/domain.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileCard extends StatelessWidget {
@@ -28,7 +29,7 @@ class ProfileCard extends StatelessWidget {
             children: [
               MAvatar(
                 radius: Insets.xxl,
-                url: profile.imageUrl,
+                url: profile.image?.getUrl(),
                 hasBorder: false,
               ),
               const Spacer(),

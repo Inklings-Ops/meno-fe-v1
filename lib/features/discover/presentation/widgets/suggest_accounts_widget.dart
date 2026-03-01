@@ -8,8 +8,9 @@ final _profiles = <Profile>[
     id: Id.fromString('178d88c6-1674-4135-a68b-88877b902ab2'),
     bio: MultiLineString("The Lord's favoured."),
     fullName: SingleLineString('Christie David Michael'),
-    imageUrl: '''
-https://res.cloudinary.com/gson007/image/upload/v1668024849/pjxxonawlab2bvn8la9o.jpg''',
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1668024849/pjxxonawlab2bvn8la9o.jpg',
+    ),
   ),
   Profile(
     id: Id.fromString('6fe8dbf2-e0ec-4d8c-bb13-fb9583cda788'),
@@ -18,20 +19,23 @@ https://res.cloudinary.com/gson007/image/upload/v1668024849/pjxxonawlab2bvn8la9o
 David Michael: Always wanting to know more of God. Super charged with the Spirit.\nHallelujah!''',
     ),
     fullName: SingleLineString('David Michael'),
-    imageUrl: '''
-https://res.cloudinary.com/gson007/image/upload/v1741767889/erixhls5hpuuibb6ou9h.jpg''',
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1741767889/erixhls5hpuuibb6ou9h.jpg',
+    ),
   ),
   Profile(
     id: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
     fullName: SingleLineString('David Michael II'),
-    imageUrl: '''
-https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg''',
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg',
+    ),
   ),
   Profile(
     id: Id.fromString('6a86d27a-f923-4e52-9b01-b8667591375a'),
     fullName: SingleLineString('STU David Michael'),
-    imageUrl: '''
-https://res.cloudinary.com/gson007/image/upload/v1668023831/l0kvyd27pddlspuwa2xp.jpg''',
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1668023831/l0kvyd27pddlspuwa2xp.jpg',
+    ),
   ),
 ];
 

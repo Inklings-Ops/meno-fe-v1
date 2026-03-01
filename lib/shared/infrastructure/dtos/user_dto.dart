@@ -110,7 +110,7 @@ extension UserDtoX on UserDto {
       role: role,
       emailAccountType: emailAccountType,
       imageId: imageId,
-      imageUrl: imageUrl,
+      image: imageUrl != null ? ImageInput.fromUrl(imageUrl) : null,
       verified: verified,
     );
   }
@@ -127,7 +127,11 @@ extension UserToDomainX on User {
       role: role,
       emailAccountType: emailAccountType,
       imageId: imageId,
-      imageUrl: imageUrl,
+      imageUrl: switch (image?.getOrNull()) {
+        NetworkImage(:final url) => url,
+        LocalImage(:final file) => file.path,
+        _ => null,
+      },
       verified: verified,
     );
   }

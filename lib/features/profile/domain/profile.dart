@@ -8,7 +8,7 @@ final class Profile with EquatableMixin {
     required this.fullName,
     this.bio,
     this.stats,
-    this.imageUrl,
+    this.image,
     this.role,
     this.numberOfBroadcasts = 0,
     this.numberOfSubscribers = 0,
@@ -23,7 +23,7 @@ final class Profile with EquatableMixin {
       fullName: user.fullName,
       bio: user.bio,
       role: user.role,
-      imageUrl: user.imageUrl,
+      image: user.image,
     );
   }
 
@@ -31,7 +31,7 @@ final class Profile with EquatableMixin {
   final SingleLineString fullName;
   final MultiLineString? bio;
   final UserStats? stats;
-  final String? imageUrl;
+  final ImageInput? image;
   final UserRole? role;
   final int numberOfBroadcasts;
   final int numberOfSubscribers;
@@ -44,7 +44,7 @@ final class Profile with EquatableMixin {
     SingleLineString? fullName,
     MultiLineString? bio,
     UserStats? stats,
-    String? imageUrl,
+    ImageInput? image,
     UserRole? role,
     bool? isSubscribedToUser,
     int? numberOfBroadcasts,
@@ -57,7 +57,7 @@ final class Profile with EquatableMixin {
       fullName: fullName ?? this.fullName,
       bio: bio ?? this.bio,
       stats: stats ?? this.stats,
-      imageUrl: imageUrl ?? this.imageUrl,
+      image: image ?? this.image,
       role: role ?? this.role,
       isSubscribedToUser: isSubscribedToUser ?? this.isSubscribedToUser,
       numberOfBroadcasts: numberOfBroadcasts ?? this.numberOfBroadcasts,
@@ -77,7 +77,7 @@ final class Profile with EquatableMixin {
     fullName,
     bio,
     stats,
-    imageUrl,
+    image,
     role,
     isSubscribedToUser,
     numberOfBroadcasts,
@@ -93,7 +93,7 @@ extension ProfileX on Profile {
       id: id,
       fullName: fullName,
       bio: bio,
-      imageUrl: imageUrl,
+      image: image,
       stats: stats,
     );
   }
@@ -105,6 +105,5 @@ final fakeProfile = Profile(
   bio: MultiLineString(
     '''This is a group that is committed to the growth of those that have been re-birthed in Christ. The vision of this group is to bring to light the possibilities of the New Creation in Christ via the teaching of the word, prayer-- equipping each member for the work of ministry, that each may walk worthy of the Lord in all things.''',
   ),
-  imageUrl: '',
   stats: const UserStats(broadcasts: 14, subscribers: 300, subscriptions: 15),
 );

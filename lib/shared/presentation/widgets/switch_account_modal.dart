@@ -90,7 +90,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
               contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
               title: Row(
                 children: [
-                  MAvatar(radius: 20, url: user.imageUrl),
+                  MAvatar(radius: 20, url: user.image?.getUrl()),
                   Spaces.horizontalLarge,
                   MText(
                     user.fullName.getOrCrash(),
