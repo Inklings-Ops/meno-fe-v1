@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class EditProfileButton extends StatelessWidget {
   const EditProfileButton({required this.profile, super.key});
@@ -29,11 +30,13 @@ class ShareProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
     final textStyle = MTextTheme.of(context).microMedium;
-    return MSecondaryButton.icon(
-      label: 'Share profile',
-      icon: const Icon(MIcons.share),
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(textStyle: textStyle, shape: shape),
+    return Skeleton.unite(
+      child: MSecondaryButton.icon(
+        label: 'Share profile',
+        icon: const Icon(MIcons.share),
+        onPressed: () {},
+        style: OutlinedButton.styleFrom(textStyle: textStyle, shape: shape),
+      ),
     );
   }
 }

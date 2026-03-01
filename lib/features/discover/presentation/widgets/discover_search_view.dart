@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/discover/applications/discover_search_manager.dart';
 import 'package:meno/features/discover/domain/domain.dart';
@@ -182,7 +184,10 @@ class _SearchResults extends WatchingWidget {
             itemCount: results.length,
             itemBuilder: (context, i) => switch (results[i]) {
               BroadcastResult(:final broadcast) => _BroadcastCard(broadcast),
-              ProfileResult(:final profile) => ProfileCard(profile: profile),
+              ProfileResult(:final profile) => ProfileCard(
+                profile: profile,
+                onTap: () => context.push(R.profile(profile.id.getOrCrash())),
+              ),
             },
           ),
         ),

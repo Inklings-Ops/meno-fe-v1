@@ -112,7 +112,7 @@ class _PaginatedBroadcastListState extends State<PaginatedBroadcastList> {
 
     // Empty state
     if (pagedList.items.isEmpty) {
-      return const EmptyListWidget();
+      return const MenoEmptyWidget();
     }
 
     // Content with refresh

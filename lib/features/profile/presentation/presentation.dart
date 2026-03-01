@@ -1,5 +1,6 @@
 //GENERATED BARREL FILE
-export './my_profile/my_profile_page.dart';
+export './pages/my_profile_page.dart';
+export './pages/profile_page.dart';
 export './widgets/profile_broadcast_list_widget.dart';
 export './widgets/profile_buttons.dart';
 export './widgets/profile_card.dart';

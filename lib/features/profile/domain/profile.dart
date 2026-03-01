@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/features/profile/domain/user_stats.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 final class Profile with EquatableMixin {
   const Profile({
@@ -101,9 +102,7 @@ extension ProfileX on Profile {
 
 final fakeProfile = Profile(
   id: Id.empty,
-  fullName: SingleLineString('New Birth Group'),
-  bio: MultiLineString(
-    '''This is a group that is committed to the growth of those that have been re-birthed in Christ. The vision of this group is to bring to light the possibilities of the New Creation in Christ via the teaching of the word, prayer-- equipping each member for the work of ministry, that each may walk worthy of the Lord in all things.''',
-  ),
+  fullName: SingleLineString(BoneMock.fullName),
+  bio: MultiLineString(BoneMock.paragraph),
   stats: const UserStats(broadcasts: 14, subscribers: 300, subscriptions: 15),
 );

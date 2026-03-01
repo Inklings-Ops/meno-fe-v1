@@ -85,6 +85,14 @@ final class MenoRouter {
       ),
 
       GoRoute(
+        path: '/users/:userId/profile',
+        builder: (context, state) {
+          final params = state.pathParameters;
+          return ProfilePage(userId: params['userId']!);
+        },
+      ),
+
+      GoRoute(
         path: R.endedBroadcast,
         builder: (context, state) => const EndedBroadcastPage(),
       ),

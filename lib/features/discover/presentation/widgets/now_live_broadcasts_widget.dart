@@ -42,7 +42,7 @@ class NowLiveBroadcastsWidget extends WatchingWidget {
       return MenoErrorWidget(error: error, onRetry: manager.refresh.runAsync);
     }
 
-    if (broadcasts.items.isEmpty && !isLoading) return const EmptyListWidget();
+    if (broadcasts.items.isEmpty && !isLoading) return const MenoEmptyWidget();
 
     return RefreshIndicator(
       onRefresh: manager.refresh.runAsync,

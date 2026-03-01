@@ -55,9 +55,9 @@ class R {
 
   static String broadcast(String id) => '$broadcasts/$id';
 
-  static const String profiles = '/profiles';
+  static const String profiles = '/users/profiles';
 
-  static String profile(String id) => '$profiles/$id';
+  static String profile(String userId) => '/users/$userId/profile';
 
   static const String noteEditorName = 'note-editor';
 

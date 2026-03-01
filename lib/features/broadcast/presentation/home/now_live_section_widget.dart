@@ -55,7 +55,7 @@ class _List extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (broadcasts.isEmpty) return const EmptyListWidget();
+    if (broadcasts.isEmpty) return const MenoEmptyWidget();
 
     return Skeletonizer(
       enabled: isLoading,

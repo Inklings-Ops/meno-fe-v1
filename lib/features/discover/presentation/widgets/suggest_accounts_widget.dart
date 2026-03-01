@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/profile/domain/profile.dart';
 import 'package:meno/features/profile/presentation/widgets/profile_card.dart';
 import 'package:meno/shared/domain/domain.dart';
@@ -63,10 +65,18 @@ class _List extends StatelessWidget {
         childAspectRatio: 159.50 / 192,
       ),
       padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
-      itemBuilder: (context, i) => ProfileCard(profile: profiles[i]!),
-      itemCount: profiles.length,
       primary: false,
       physics: const NeverScrollableScrollPhysics(),
+      itemCount: profiles.length,
+      itemBuilder: (context, index) {
+        final profile = profiles[index];
+        if (profile == null) return const SizedBox.shrink();
+
+        return ProfileCard(
+          profile: profile,
+          onTap: () => context.push(R.profile(profile.id.getOrCrash())),
+        );
+      },
     );
   }
 }

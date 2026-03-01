@@ -5,9 +5,10 @@ import 'package:meno/shared/domain/domain.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({required this.profile, super.key});
+  const ProfileCard({required this.profile, required this.onTap, super.key});
 
   final Profile profile;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ProfileCard extends StatelessWidget {
     // final isSubscribed = profile.subscribed ?? false;
 
     return InkWell(
-      // onTap: () => context.push(Routes.othersProfile, extra: profile.id),
+      onTap: onTap,
       borderRadius: Corners.lg,
       child: Card(
         margin: EdgeInsets.zero,

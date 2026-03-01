@@ -47,7 +47,7 @@ class _NowLiveSection extends WatchingWidget {
       onSeeAll: di<DiscoverManager>().goToNowLive,
       loading: isLoading,
       itemBuilder: (_, broadcast) => LiveBroadcastCard(broadcast: broadcast),
-      emptyListBuilder: (context) => const EmptyListWidget(),
+      emptyListBuilder: (context) => const MenoEmptyWidget(),
     );
   }
 }
@@ -76,7 +76,7 @@ class _RecentlyLiveSection extends WatchingWidget {
         host: broadcast.effectiveCreatorName.getOrCrash(),
         onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
       ),
-      emptyListBuilder: (context) => const EmptyListWidget(),
+      emptyListBuilder: (context) => const MenoEmptyWidget(),
     );
   }
 }

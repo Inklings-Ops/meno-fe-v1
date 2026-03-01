@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/broadcast/domain/entities/broadcast.dart';
 import 'package:meno/features/discover/domain/filter.dart';
-import 'package:meno/shared/presentation/widgets/empty_list_widget.dart';
+import 'package:meno/shared/presentation/widgets/meno_empty_widget.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class DiscoverBroadcastGridView extends StatelessWidget {
@@ -28,7 +28,7 @@ class DiscoverBroadcastGridView extends StatelessWidget {
         return switch (filter) {
           Filter.recentlyLive => _RecentlyLiveCard(broadcast: broadcast),
           Filter.nowLive => _NowLiveCard(broadcast: broadcast),
-          _ => const EmptyListWidget(),
+          _ => const MenoEmptyWidget(),
         };
       },
       itemCount: broadcasts.length,

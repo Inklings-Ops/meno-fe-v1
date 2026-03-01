@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
 import 'package:meno/shared/application/user_manager.dart';
-import 'package:meno/shared/presentation/widgets/empty_list_widget.dart';
+import 'package:meno/shared/presentation/widgets/meno_empty_widget.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -23,7 +23,7 @@ class ParticipantsGrid extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isSearching && participants.isEmpty) return const EmptyListWidget();
+    if (isSearching && participants.isEmpty) return const MenoEmptyWidget();
 
     final currentUserIdOption = watchValue((UserManager m) => m.currentUserId);
     final currentUserId = currentUserIdOption.toNullable();

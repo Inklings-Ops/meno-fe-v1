@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class EmptyListWidget extends StatelessWidget {
-  const EmptyListWidget({super.key, this.title});
+class MenoEmptyWidget extends StatelessWidget {
+  const MenoEmptyWidget({super.key, this.title});
 
   final String? title;
 

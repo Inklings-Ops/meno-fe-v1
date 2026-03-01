@@ -32,43 +32,47 @@ class ProfileHeaderContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: .start,
-      children: [
-        Row(
-          children: [
-            MAvatar(radius: 40, url: profile.image?.getUrl()),
-            const SizedBox(width: 24),
-            Expanded(child: ProfileStatsWidget(stats: profile.stats)),
-          ],
-        ),
-        Spaces.verticalLarge,
-
-        if (isMyProfile) ...[
-          const AccountUpgradeSectionWidget(),
-          Spaces.verticalLarge,
-        ],
-
-        if (profile.bio != null) ...[
-          ProfileBioWidget(bio: profile.bio, forceHeight: true),
-          Spaces.verticalLarge,
-        ],
-
-        SizedBox(
-          height: 32,
-          child: Row(
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, kToolbarHeight, 16, 0),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          Row(
             children: [
-              if (isMyProfile)
-                Expanded(child: EditProfileButton(profile: profile))
-              else
-                Expanded(child: SubscribeButton(profile: profile)),
-              Spaces.horizontalLarge,
-              Expanded(child: ShareProfileButton(profile: profile)),
+              MAvatar(radius: 40, url: profile.image?.getUrl()),
+              const SizedBox(width: 24),
+              Expanded(child: ProfileStatsWidget(stats: profile.stats)),
             ],
           ),
-        ),
-        Spaces.verticalLarge,
-      ],
+          Spaces.verticalLarge,
+
+          if (isMyProfile) ...[
+            const AccountUpgradeSectionWidget(),
+            Spaces.verticalLarge,
+          ],
+
+          if (profile.bio != null) ...[
+            ProfileBioWidget(bio: profile.bio!),
+            Spaces.verticalLarge,
+          ],
+
+          SizedBox(
+            height: 32,
+            child: Row(
+              children: [
+                if (isMyProfile)
+                  Expanded(child: EditProfileButton(profile: profile))
+                else
+                  Expanded(child: SubscribeButton(profile: profile)),
+                Spaces.horizontalLarge,
+                Expanded(child: ShareProfileButton(profile: profile)),
+              ],
+            ),
+          ),
+          Spaces.verticalLarge,
+        ],
+      ),
     );
   }
 }
@@ -129,7 +133,7 @@ class ProfileBioWidget extends StatelessWidget {
     super.key,
   });
 
-  final MultiLineString? bio;
+  final MultiLineString bio;
   final bool forceHeight;
 
   @override
@@ -139,18 +143,16 @@ class ProfileBioWidget extends StatelessWidget {
     final style = textTheme.captionMedium.copyWith(
       color: colors.onBackgroundVariant,
     );
-    return SizedBox(
-      height: forceHeight ? 72 : 0,
-      child: ReadMoreText(
-        bio?.getOrNull() ?? '',
-        style: textTheme.captionRegular,
-        trimLines: 3,
-        trimMode: TrimMode.Line,
-        trimExpandedText: '\nless',
-        trimCollapsedText: '\nmore',
-        moreStyle: style,
-        lessStyle: style,
-      ),
+    return ReadMoreText(
+      bio.getOrNull() ?? '',
+      style: textTheme.captionRegular,
+      trimLines: 3,
+
+      trimMode: TrimMode.Line,
+      trimExpandedText: '\nless',
+      trimCollapsedText: '\nmore',
+      moreStyle: style,
+      lessStyle: style,
     );
   }
 }
