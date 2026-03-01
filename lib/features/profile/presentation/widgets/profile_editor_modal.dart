@@ -50,18 +50,20 @@ class ProfileEditorModal extends WatchingWidget {
         child: Form(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Spaces.verticalLarge,
-              Align(child: ProfileFormAvatar()),
+              Align(
+                child: ProfileFormAvatar(imageUrl: profile.image?.getUrl()),
+              ),
               Spaces.verticalXLarge,
-              ProfileFormNameField(),
+              const ProfileFormNameField(),
               Spaces.verticalXLarge,
-              ProfileFormDescriptionField(),
+              const ProfileFormDescriptionField(),
               Spaces.verticalXLarge,
-              ProfileFormSubmitButton(),
-              SizedBox(height: 56),
+              const ProfileFormSubmitButton(),
+              const SizedBox(height: 56),
             ],
           ),
         ),
@@ -71,14 +73,15 @@ class ProfileEditorModal extends WatchingWidget {
 }
 
 class ProfileFormAvatar extends WatchingWidget {
-  const ProfileFormAvatar({super.key});
+  const ProfileFormAvatar({required this.imageUrl, super.key});
+
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
 
     final manager = di<_Manager>();
-    final profile = watchValue((MyProfileManager m) => m.profile);
     final image = watchValue((_Manager m) => m.image);
 
     return SizedBox.square(
@@ -87,7 +90,7 @@ class ProfileFormAvatar extends WatchingWidget {
         children: [
           MAvatar(
             radius: 49,
-            url: profile?.image?.getUrl(),
+            url: imageUrl,
             file: image?.getFile(),
             hasBorder: false,
             onTap: () => context.showModal<void>(
@@ -122,7 +125,6 @@ class ProfileFormNameField extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<_Manager>();
-    final profile = watchValue((MyProfileManager m) => m.profile);
     final fullName = watchValue((_Manager m) => m.fullName);
     final isLoading = watchValue((_Manager m) => m.submit.isRunning);
 
@@ -131,7 +133,7 @@ class ProfileFormNameField extends WatchingWidget {
       hint: 'John Doe',
       required: true,
       enabled: !isLoading,
-      initialValue: profile?.fullName.getOrNull(),
+      initialValue: fullName.getOrNull(),
       onChanged: manager.onFullNameChanged,
       validator: (_) => fullName.failureOrNull?.msg,
     );
@@ -144,7 +146,6 @@ class ProfileFormDescriptionField extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<_Manager>();
-    final profile = watchValue((MyProfileManager m) => m.profile);
     final bio = watchValue((_Manager m) => m.bio);
     final isLoading = watchValue((_Manager m) => m.submit.isRunning);
 
@@ -154,7 +155,7 @@ class ProfileFormDescriptionField extends WatchingWidget {
       maxLines: 5,
       maxLength: 244,
       enabled: !isLoading,
-      initialValue: profile?.bio?.getOrNull(),
+      initialValue: bio?.getOrNull(),
       onChanged: manager.onBioChanged,
       validator: (_) => bio?.failureOrNull?.msg,
     );

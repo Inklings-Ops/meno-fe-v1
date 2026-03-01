@@ -50,7 +50,7 @@ class ProfileHeaderContent extends StatelessWidget {
         ],
 
         if (profile.bio != null) ...[
-          ProfileBioWidget(bio: profile.bio),
+          ProfileBioWidget(bio: profile.bio, forceHeight: true),
           Spaces.verticalLarge,
         ],
 
@@ -59,11 +59,11 @@ class ProfileHeaderContent extends StatelessWidget {
           child: Row(
             children: [
               if (isMyProfile)
-                EditProfileButton(profile: profile)
+                Expanded(child: EditProfileButton(profile: profile))
               else
-                SubscribeButton(profile: profile),
+                Expanded(child: SubscribeButton(profile: profile)),
               Spaces.horizontalLarge,
-              ShareProfileButton(profile: profile),
+              Expanded(child: ShareProfileButton(profile: profile)),
             ],
           ),
         ),
@@ -123,9 +123,14 @@ class _StatItem extends StatelessWidget {
 }
 
 class ProfileBioWidget extends StatelessWidget {
-  const ProfileBioWidget({required this.bio, super.key});
+  const ProfileBioWidget({
+    required this.bio,
+    this.forceHeight = false,
+    super.key,
+  });
 
   final MultiLineString? bio;
+  final bool forceHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -134,15 +139,18 @@ class ProfileBioWidget extends StatelessWidget {
     final style = textTheme.captionMedium.copyWith(
       color: colors.onBackgroundVariant,
     );
-    return ReadMoreText(
-      bio?.getOrNull() ?? '',
-      style: textTheme.captionRegular,
-      trimLines: 3,
-      trimMode: TrimMode.Line,
-      trimExpandedText: '\nless',
-      trimCollapsedText: '\nmore',
-      moreStyle: style,
-      lessStyle: style,
+    return SizedBox(
+      height: forceHeight ? 72 : 0,
+      child: ReadMoreText(
+        bio?.getOrNull() ?? '',
+        style: textTheme.captionRegular,
+        trimLines: 3,
+        trimMode: TrimMode.Line,
+        trimExpandedText: '\nless',
+        trimCollapsedText: '\nmore',
+        moreStyle: style,
+        lessStyle: style,
+      ),
     );
   }
 }

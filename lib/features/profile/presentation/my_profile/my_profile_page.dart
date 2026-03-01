@@ -14,8 +14,11 @@ class MyProfilePage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = watchValue((MyProfileManager m) => m.profile);
-    return _Content(profile: profile);
+    final profileOption = watchValue((MyProfileManager m) => m.profile);
+    return profileOption.match(
+      () => const SizedBox.shrink(),
+      (profile) => _Content(profile: profile),
+    );
   }
 }
 

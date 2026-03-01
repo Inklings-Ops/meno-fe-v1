@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/broadcast/applications/applications.dart';
 import 'package:meno/features/broadcast/presentation/presentation.dart';
+import 'package:meno/features/profile/applications/applications.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -57,12 +58,12 @@ class _AppBar extends WatchingWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userOption = watchValue((UserManager m) => m.currentUser);
-    return userOption.match(
+    final profileOption = watchValue((MyProfileManager m) => m.profile);
+    return profileOption.match(
       () => const SizedBox(),
-      (user) => MAppBar.home(
-        title: user.fullName.getOrCrash(),
-        avatarImageUrl: user.image?.getUrl(),
+      (profile) => MAppBar.home(
+        title: profile.fullName.getOrCrash(),
+        avatarImageUrl: profile.image?.getUrl(),
         onAvatarTap: () => context.go(R.myProfile),
         onNotificationBellTap: () => context.push(R.notifications),
       ),

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/profile/domain/domain.dart';
 import 'package:meno/shared/domain/i_broadcast_feed_source.dart';
@@ -16,18 +17,20 @@ import 'package:meno/shared/domain/i_broadcast_feed_source.dart';
 ///
 /// Lifecycle: registered in the user scope (singleton per session).
 class MyProfileManager with MLogger implements Disposable {
-  MyProfileManager(this._profileRepository);
+  MyProfileManager(this._repository);
 
-  final IProfileRepository _profileRepository;
+  final IProfileRepository _repository;
 
   // =========================================================================
   // PUBLIC STATE — widgets watch these
   // =========================================================================
 
   /// Delegates directly to the repository notifier — zero duplication.
-  ValueListenable<Profile?> get profile => _profileRepository.myProfile.map(
-    (option) => option.fold(() => null, (value) => value),
-  );
+  // ValueListenable<Profile?> get profile => _repository.myProfile.map(
+  //   (option) => option.fold(() => null, (value) => value),
+  // );
+
+  ValueListenable<Option<Profile>> get profile => _repository.myProfile;
 
   // =========================================================================
   // COMMANDS
@@ -44,7 +47,7 @@ class MyProfileManager with MLogger implements Disposable {
   // =========================================================================
 
   Future<void> _refreshProfile() async {
-    final result = await _profileRepository.fetchMyProfile();
+    final result = await _repository.fetchMyProfile();
     result.fold((err) => log.w('Profile fetch error: ${err.message}'), (_) {});
   }
 
