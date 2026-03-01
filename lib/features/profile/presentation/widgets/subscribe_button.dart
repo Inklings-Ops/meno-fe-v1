@@ -21,9 +21,7 @@ class SubscribeButton extends StatelessWidget {
     final textTheme = MTextTheme.of(context);
 
     final isSubscribedToUser = profile.isSubscribedToUser;
-
     final subscribed = profile.subscribed;
-
     final isSubscribed = isSubscribedToUser || subscribed;
 
     final defaultStyle = OutlinedButton.styleFrom(
@@ -35,28 +33,28 @@ class SubscribeButton extends StatelessWidget {
       foregroundColor: isSubscribed ? colors.onPrimary : colors.primary,
     );
 
-    final icon = Icon(
-      isSubscribed ? MIcons.user_minus_01 : MIcons.user_check,
-      color: isSubscribed ? colors.onPrimary : colors.primary,
-    );
-
     final label = isSubscribed ? 'Unsubscribe' : 'Subscribe';
 
     void handleSubscription() {}
 
-    return Skeleton.unite(
-      child: showIcon
-          ? MSecondaryButton.icon(
-              label: label,
-              icon: icon,
-              onPressed: handleSubscription,
-              style: style ?? defaultStyle,
-            )
-          : MSecondaryButton(
-              label: label,
-              onPressed: handleSubscription,
-              style: style ?? defaultStyle,
-            ),
+    Widget child = MSecondaryButton(
+      label: label,
+      onPressed: handleSubscription,
+      style: style ?? defaultStyle,
     );
+
+    if (showIcon) {
+      child = MSecondaryButton.icon(
+        label: label,
+        onPressed: handleSubscription,
+        style: style ?? defaultStyle,
+        icon: Icon(
+          isSubscribed ? MIcons.user_minus_01 : MIcons.user_check,
+          color: isSubscribed ? colors.onPrimary : colors.primary,
+        ),
+      );
+    }
+
+    return Skeleton.unite(child: child);
   }
 }

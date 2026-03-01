@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart' hide NetworkImage;
+import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
-import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/features/discover/applications/discover_recently_live_manager.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:readmore/readmore.dart';
-import 'package:skeletonizer/skeletonizer.dart' hide NetworkImage;
 
 const _kTabBarHeight = 32.0;
 
@@ -141,9 +138,6 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
               ),
             ];
           },
-
-          // The scrollable body — each tab's list scrolls independently inside
-          // the NestedScrollView, extending the unified scroll physics.
           body: TabBarView(
             controller: _tabController,
             children: const [
@@ -225,201 +219,12 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = profile == null;
+    if (profile == null) return const SizedBox.shrink();
 
-    return Skeletonizer(
-      enabled: isLoading,
-      child: SingleChildScrollView(
-        // Not interactive — this is inside FlexibleSpaceBar's background.
-        // NestedScrollView drives the scroll; we just need the Column to size.
-        physics: const NeverScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 8, 16, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Avatar + stats row
-            Row(
-              children: [
-                MAvatar(radius: 40, url: profile?.image?.getUrl()),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: _ProfileStats(
-                    numberOfBroadcasts: profile?.numberOfBroadcasts,
-                    numberOfSubscribers: profile?.numberOfSubscribers,
-                    numberOfSubscriptions: profile?.numberOfSubscriptions,
-                  ),
-                ),
-              ],
-            ),
-            Spaces.verticalLarge,
-
-            // Account tier badge
-            const _AccountUpgradeSection(),
-            Spaces.verticalLarge,
-
-            // Biography
-            if (profile?.bio != null) ...[
-              _ProfileBio(bio: profile!.bio!),
-              Spaces.verticalLarge,
-            ],
-
-            // Edit + Share buttons
-            const _ProfileButtons(),
-            Spaces.verticalLarge,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileStats extends StatelessWidget {
-  const _ProfileStats({
-    this.numberOfBroadcasts = 0,
-    this.numberOfSubscribers = 0,
-    this.numberOfSubscriptions = 0,
-  });
-
-  final int? numberOfBroadcasts;
-  final int? numberOfSubscribers;
-  final int? numberOfSubscriptions;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 46,
-      child: Row(
-        children: [
-          const SizedBox(width: 2),
-          _StatItem(title: 'Broadcasts', count: numberOfBroadcasts ?? 0),
-          const Spacer(),
-          _StatItem(title: 'Subscribers', count: numberOfSubscribers ?? 0),
-          const Spacer(),
-          _StatItem(title: 'Subscriptions', count: numberOfSubscriptions ?? 0),
-          const SizedBox(width: 2),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  const _StatItem({required this.title, required this.count});
-
-  final String title;
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context);
-    final colors = MColorScheme.of(context);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        MText(count.toString(), style: textTheme.heading3Medium),
-        MText(
-          title,
-          style: textTheme.microMedium,
-          color: colors.onBackgroundVariant,
-        ),
-      ],
-    );
-  }
-}
-
-class _AccountUpgradeSection extends StatelessWidget {
-  const _AccountUpgradeSection();
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context);
-    return SizedBox(
-      height: 24,
-      child: Row(
-        children: [
-          const MTag(title: 'FREE ACCOUNT', height: 24),
-          Spaces.horizontalLarge,
-          MTextButton(
-            label: 'Upgrade to Premium',
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              textStyle: textTheme.captionMedium.copyWith(
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfileBio extends StatelessWidget {
-  const _ProfileBio({required this.bio});
-
-  final MultiLineString bio;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = MTextTheme.of(context);
-    final style = textTheme.captionMedium.copyWith(
-      color: MColorScheme.of(context).onBackgroundVariant,
-    );
-    return ReadMoreText(
-      bio.getOrNull() ?? '',
-      style: textTheme.captionRegular,
-      trimLines: 3,
-      trimMode: TrimMode.Line,
-      trimExpandedText: '\nless',
-      trimCollapsedText: '\nmore',
-      moreStyle: style,
-      lessStyle: style,
-    );
-  }
-}
-
-class _ProfileButtons extends WatchingWidget {
-  const _ProfileButtons();
-
-  @override
-  Widget build(BuildContext context) {
-    const shape = RoundedRectangleBorder(borderRadius: Corners.sm);
-    final textStyle = MTextTheme.of(context).microMedium;
-
-    final profile = watchValue((MyProfileManager m) => m.profile);
-
-    return SizedBox(
-      height: 32,
-      child: Row(
-        children: [
-          Expanded(
-            child: MPrimaryButton.icon(
-              label: 'Edit profile',
-              icon: const Icon(MIcons.edit_05),
-              onPressed: profile != null
-                  ? () => ProfileEditorModal.show(context, profile)
-                  : () {},
-              style: ElevatedButton.styleFrom(
-                textStyle: textStyle,
-                shape: shape,
-              ),
-            ),
-          ),
-          Spaces.horizontalLarge,
-          Expanded(
-            child: MSecondaryButton.icon(
-              label: 'Share profile',
-              icon: const Icon(MIcons.share),
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                textStyle: textStyle,
-                shape: shape,
-              ),
-            ),
-          ),
-        ],
-      ),
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, kToolbarHeight + 8, 16, 0),
+      child: ProfileHeaderContent.myProfile(profile!),
     );
   }
 }
@@ -437,26 +242,20 @@ class _RecentBroadcastsTab extends WatchingWidget {
 
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
-    if (error != null && page.items.isEmpty) {
-      return _EmptyStateWidget(
+    return ProfileBroadcastListWidget(
+      page: page,
+      emptyListWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
-      );
-    }
-
-    if (!isLoading && page.items.isEmpty) {
-      return _EmptyStateWidget(
+      ),
+      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
-      );
-    }
-
-    return _BroadcastList(
-      broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
+      ),
       isLoading: isLoading && page.isEmpty,
-      hasMore: page.hasMore,
+      hasError: error != null,
     );
   }
 }
@@ -474,26 +273,20 @@ class _AllBroadcastsTab extends WatchingWidget {
 
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
-    if (error != null && page.items.isEmpty) {
-      return _EmptyStateWidget(
+    return ProfileBroadcastListWidget(
+      page: page,
+      emptyListWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
-      );
-    }
-
-    if (!isLoading && page.items.isEmpty) {
-      return _EmptyStateWidget(
+      ),
+      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
-      );
-    }
-
-    return _BroadcastList(
-      broadcasts: isLoading && page.isEmpty ? fakeBroadcasts : page.items,
+      ),
       isLoading: isLoading && page.isEmpty,
-      hasMore: page.hasMore,
+      hasError: error != null,
     );
   }
 }
@@ -503,137 +296,10 @@ class _FavoritesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _EmptyStateWidget(
+    return ProfileEmptyBroadcastsListWidget(
       title: 'No favourite broadcasts yet',
       actionTitle: 'View recordings',
       action: () {},
-    );
-  }
-}
-
-class _BroadcastList extends StatelessWidget {
-  const _BroadcastList({
-    required this.broadcasts,
-    required this.hasMore,
-    this.isLoading = false,
-  });
-
-  final List<Broadcast?> broadcasts;
-  final bool hasMore;
-  final bool isLoading;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const .symmetric(horizontal: 16, vertical: 24),
-          sliver: SliverList.separated(
-            separatorBuilder: (_, __) => Spaces.verticalLarge,
-            itemCount: broadcasts.length,
-            itemBuilder: (context, i) => Skeletonizer(
-              enabled: isLoading,
-              child: _BroadcastListItem(broadcast: broadcasts[i]),
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(child: _ListFooter(hasMore: hasMore)),
-      ],
-    );
-  }
-}
-
-class _BroadcastListItem extends StatelessWidget {
-  const _BroadcastListItem({required this.broadcast});
-
-  final Broadcast? broadcast;
-
-  @override
-  Widget build(BuildContext context) {
-    if (broadcast == null) {
-      // Skeletonizer placeholder — must have same shape as real item.
-      return const MRecentlyLiveListTile(
-        title: 'Placeholder broadcast title',
-        creator: 'Creator name',
-      );
-    }
-
-    return MRecentlyLiveListTile(
-      title: broadcast!.title.getOrCrash(),
-      creator: broadcast?.effectiveCreatorName.getOrNull(),
-      endTime: broadcast!.endTime,
-      imageUrl: broadcast!.imageUrl,
-      onTap: () => context.push(R.broadcast(broadcast!.id.getOrCrash())),
-    );
-  }
-}
-
-class _ListFooter extends StatelessWidget {
-  const _ListFooter({required this.hasMore});
-
-  final bool hasMore;
-
-  @override
-  Widget build(BuildContext context) {
-    if (hasMore) return const MLoadingIndicator.box();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: MText(
-        "You've reached the end 🎉",
-        style: MTextTheme.of(context).captionRegular,
-        color: MColorScheme.of(context).onBackgroundVariant,
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-}
-
-class _EmptyStateWidget extends StatelessWidget {
-  const _EmptyStateWidget({
-    required this.actionTitle,
-    required this.action,
-    this.title,
-  });
-
-  final String? title;
-  final String actionTitle;
-  final VoidCallback action;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(top: 40),
-      child: Column(
-        children: [
-          Assets.images.liveForYou.image(height: 120, width: 120),
-          MText(
-            title ?? 'No broadcasts published yet',
-            style: textTheme.captionMedium,
-            textAlign: TextAlign.center,
-          ),
-          Spaces.verticalLarge,
-          SizedBox(
-            height: 32,
-            child: MSecondaryButton.icon(
-              label: 'View $actionTitle',
-              icon: Icon(MIcons.share, color: colorScheme.onBackground),
-              onPressed: action,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                side: BorderSide(color: colorScheme.outlineVariant3),
-                foregroundColor: colorScheme.onBackground,
-                shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
