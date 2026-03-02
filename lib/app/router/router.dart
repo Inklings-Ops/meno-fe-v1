@@ -88,7 +88,7 @@ final class MenoRouter {
         path: '/users/:userId/profile',
         builder: (context, state) {
           final params = state.pathParameters;
-          return ProfilePage(userId: params['userId']!);
+          return ProfilePage(userIdStr: params['userId']!);
         },
       ),
 

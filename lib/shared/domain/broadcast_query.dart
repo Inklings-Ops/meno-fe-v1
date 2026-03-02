@@ -174,11 +174,13 @@ final class BroadcastQuery with EquatableMixin {
   /// Recently ended broadcasts
   factory BroadcastQuery.recentlyLive({
     PaginationParams pagination = const PaginationParams(size: 8),
-  }) => const BroadcastQuery(
+    Id? creatorId,
+  }) => BroadcastQuery(
+    creatorId: creatorId,
     type: BroadcastsType.recentlyLive,
     sortParams: SortParams.endTimeDesc,
-    endTimeRange: TimeRange.exists(),
-    startTimeRange: TimeRange.exists(),
+    endTimeRange: const TimeRange.exists(),
+    startTimeRange: const TimeRange.exists(),
     includeTotalListeners: true,
   ).copyWith(pagination: pagination);
 

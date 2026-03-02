@@ -284,6 +284,24 @@ class UserScopeInjector with MLogger implements Disposable, WillSignalReady {
       () => MyProfileManager(di<IProfileRepository>()),
       dependsOn: [IProfileRepository],
     );
+
+    di.registerSingletonWithDependencies<MyRecentBroadcastsManager>(() {
+      final manager = MyRecentBroadcastsManager(
+        currentUserId: userId,
+        broadcastFeedSource: di<IBroadcastFeedSource>(),
+      );
+      manager.initialize.run();
+      return manager;
+    }, dependsOn: [IBroadcastFeedSource]);
+
+    di.registerSingletonWithDependencies<MyBroadcastsManager>(() {
+      final manager = MyBroadcastsManager(
+        currentUserId: userId,
+        broadcastFeedSource: di<IBroadcastFeedSource>(),
+      );
+      manager.initialize.run();
+      return manager;
+    }, dependsOn: [IBroadcastFeedSource]);
   }
 
   @override

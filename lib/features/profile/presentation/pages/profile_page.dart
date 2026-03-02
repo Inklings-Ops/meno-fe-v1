@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meno/app/router/routes.dart';
+import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/discover/applications/discover_recently_live_manager.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
@@ -9,22 +11,31 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 const _kTabBarHeight = 32.0;
 
-class ProfilePage extends WatchingWidget {
-  const ProfilePage({required this.userId, super.key});
+typedef _Mgr = ProfileManager;
+typedef _RecentBroadcastsMgr = ProfileRecentBroadcastsManager;
+typedef _AllBroadcastsMgr = ProfileBroadcastsManager;
 
-  final String userId;
+class ProfilePage extends WatchingWidget {
+  const ProfilePage({required this.userIdStr, super.key});
+
+  final String userIdStr;
 
   @override
   Widget build(BuildContext context) {
-    pushScope(
-      init: (getIt) {
-        getIt.registerLazySingleton(() {
-          return ProfileManager(
-            repository: getIt<IProfileRepository>(),
-            userId: Id.fromString(userId),
-          );
-        }, onCreated: (instance) => instance.fetch.run());
+    pushScope(init: _registerDependencies);
+
+    registerHandler(
+      handler: (context, errors, cancel) {
+        final error = errors?.error;
+        if (error == null) return;
+        if (error is MenoException) {
+          context.showErrorSnackBar(error.message);
+        } else {
+          context.showErrorSnackBar(error.toString());
+        }
+        context.pop();
       },
+      select: (_Mgr manager) => manager.fetch.errors,
     );
 
     final profile = watchValue((ProfileManager m) => m.profile);
@@ -33,6 +44,31 @@ class ProfilePage extends WatchingWidget {
     if (isFetching) return _Content.loading();
     if (!isFetching && profile == null) return const _EmptyPage();
     return _Content(profile: profile!);
+  }
+
+  void _registerDependencies(GetIt getIt) {
+    final userId = Id.fromString(userIdStr);
+
+    getIt.registerLazySingleton(() {
+      return ProfileManager(
+        userId: userId,
+        repository: getIt<IProfileRepository>(),
+      );
+    }, onCreated: (instance) => instance.fetch.run());
+
+    getIt.registerLazySingleton(() {
+      return ProfileRecentBroadcastsManager(
+        broadcastFeedSource: di<IBroadcastFeedSource>(),
+        userId: userId,
+      );
+    }, onCreated: (instance) => instance.fetch.run());
+
+    getIt.registerLazySingleton(() {
+      return ProfileBroadcastsManager(
+        broadcastFeedSource: di<IBroadcastFeedSource>(),
+        userId: userId,
+      );
+    }, onCreated: (instance) => instance.fetch.run());
   }
 }
 
@@ -63,11 +99,11 @@ class _ContentState extends State<_Content> with TickerProviderStateMixin {
         if (!controller.hasClients) return;
         final max = controller.position.maxScrollExtent;
         final current = controller.offset;
-        if (max - current <= 200) {
-          return switch (tabController.index) {
-            0 => di<DiscoverRecentlyLiveManager>().fetchMore.run(),
-            _ => () {},
-          };
+
+        // Only fetch more when we're close to the end of the list and
+        // if we are on the _AllBroadcastsTab
+        if (max - current <= 200 && tabController.index == 1) {
+          di<_AllBroadcastsMgr>().fetchMore.run();
         }
       });
       return controller;
@@ -191,28 +227,47 @@ class _RecentBroadcastsTab extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
-
-    final isLoading = watchValue(
-      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
-    );
+    final broadcasts = watchValue((_RecentBroadcastsMgr m) => m.broadcasts);
+    final isLoading = watchValue((_RecentBroadcastsMgr m) => m.fetch.isRunning);
 
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
-    return ProfileBroadcastListWidget(
-      page: page,
-      emptyListWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
+    if (error != null && !isLoading) {
+      return MenoErrorWidget(
+        error: error,
+        onRetry: di<_RecentBroadcastsMgr>().fetch.runAsync,
+      );
+    }
+
+    if (broadcasts.isEmpty && !isLoading) {
+      return ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
+      );
+    }
+
+    return Skeletonizer(
+      enabled: isLoading,
+      child: ListView.separated(
+        padding: const .all(Insets.lg),
+        separatorBuilder: (_, __) => Spaces.verticalLarge,
+        itemCount: broadcasts.length,
+        itemBuilder: (context, index) {
+          final broadcast = broadcasts[index];
+          if (broadcast == null) return const SizedBox.shrink();
+          return Skeletonizer(
+            enabled: isLoading,
+            child: MRecentlyLiveListTile(
+              title: broadcast.title.getOrCrash(),
+              creator: broadcast.effectiveCreatorName.getOrNull(),
+              endTime: broadcast.endTime,
+              imageUrl: broadcast.imageUrl,
+              onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
+            ),
+          );
+        },
       ),
-      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
-        title: 'No broadcasts published yet',
-        actionTitle: 'View recordings',
-        action: () {},
-      ),
-      isLoading: isLoading && page.isEmpty,
-      hasError: error != null,
     );
   }
 }
@@ -222,11 +277,8 @@ class _AllBroadcastsTab extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
-
-    final isLoading = watchValue(
-      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
-    );
+    final page = watchValue((_AllBroadcastsMgr m) => m.pagedList);
+    final isFetching = watchValue((_AllBroadcastsMgr m) => m.fetch.isRunning);
 
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
@@ -237,12 +289,11 @@ class _AllBroadcastsTab extends WatchingWidget {
         actionTitle: 'View recordings',
         action: () {},
       ),
-      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
-        title: 'No broadcasts published yet',
-        actionTitle: 'View recordings',
-        action: () {},
+      errorWidgetBuilder: (context) => MenoErrorWidget(
+        error: error,
+        onRetry: di<_AllBroadcastsMgr>().fetch.runAsync,
       ),
-      isLoading: isLoading && page.isEmpty,
+      isLoading: isFetching && page.isEmpty,
       hasError: error != null,
     );
   }

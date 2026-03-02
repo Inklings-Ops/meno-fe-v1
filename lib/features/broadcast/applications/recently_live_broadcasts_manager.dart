@@ -19,6 +19,7 @@ class RecentlyLiveBroadcastsManager implements Disposable {
     final result = await _repository.getBroadcasts(queryParameters);
     result.fold((error) => throw error, (page) {
       broadcasts.startTransAction();
+      broadcasts.clear();
       broadcasts.addAll(page.items);
       broadcasts.endTransAction();
     });

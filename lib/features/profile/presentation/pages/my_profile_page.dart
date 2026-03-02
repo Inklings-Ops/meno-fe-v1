@@ -6,15 +6,20 @@ import 'package:meno/features/discover/applications/discover_recently_live_manag
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 const _kTabBarHeight = 32.0;
+
+typedef _Mgr = MyProfileManager;
+typedef _RecentBroadcastsMgr = MyRecentBroadcastsManager;
+typedef _AllBroadcastsMgr = MyBroadcastsManager;
 
 class MyProfilePage extends WatchingWidget {
   const MyProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final profileOption = watchValue((MyProfileManager m) => m.profile);
+    final profileOption = watchValue((_Mgr m) => m.profile);
     return profileOption.match(
       () => const MenoEmptyWidget(),
       (profile) => _Content(profile: profile),
@@ -213,28 +218,46 @@ class _RecentBroadcastsTab extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
-
-    final isLoading = watchValue(
-      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
-    );
-
+    final broadcasts = watchValue((_RecentBroadcastsMgr m) => m.broadcasts);
+    final isLoading = watchValue((_RecentBroadcastsMgr m) => m.fetch.isRunning);
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
-    return ProfileBroadcastListWidget(
-      page: page,
-      emptyListWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
+    if (error != null && !isLoading) {
+      return MenoErrorWidget(
+        error: error,
+        onRetry: di<_RecentBroadcastsMgr>().fetch.runAsync,
+      );
+    }
+
+    if (broadcasts.isEmpty && !isLoading) {
+      return ProfileEmptyBroadcastsListWidget(
         title: 'No broadcasts published yet',
         actionTitle: 'View recordings',
         action: () {},
+      );
+    }
+
+    return Skeletonizer(
+      enabled: isLoading,
+      child: ListView.separated(
+        padding: const .all(Insets.lg),
+        separatorBuilder: (_, __) => Spaces.verticalLarge,
+        itemCount: broadcasts.length,
+        itemBuilder: (context, index) {
+          final broadcast = broadcasts[index];
+          if (broadcast == null) return const SizedBox.shrink();
+          return Skeletonizer(
+            enabled: isLoading,
+            child: MRecentlyLiveListTile(
+              title: broadcast.title.getOrCrash(),
+              creator: broadcast.effectiveCreatorName.getOrNull(),
+              endTime: broadcast.endTime,
+              imageUrl: broadcast.imageUrl,
+              onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
+            ),
+          );
+        },
       ),
-      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
-        title: 'No broadcasts published yet',
-        actionTitle: 'View recordings',
-        action: () {},
-      ),
-      isLoading: isLoading && page.isEmpty,
-      hasError: error != null,
     );
   }
 }
@@ -244,12 +267,8 @@ class _AllBroadcastsTab extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final page = watchValue((DiscoverRecentlyLiveManager m) => m.broadcasts);
-
-    final isLoading = watchValue(
-      (DiscoverRecentlyLiveManager m) => m.initialize.isRunning,
-    );
-
+    final page = watchValue((_AllBroadcastsMgr m) => m.pagedList);
+    final isFetching = watchValue((_AllBroadcastsMgr m) => m.fetch.isRunning);
     final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
 
     return ProfileBroadcastListWidget(
@@ -259,12 +278,11 @@ class _AllBroadcastsTab extends WatchingWidget {
         actionTitle: 'View recordings',
         action: () {},
       ),
-      errorWidgetBuilder: (context) => ProfileEmptyBroadcastsListWidget(
-        title: 'No broadcasts published yet',
-        actionTitle: 'View recordings',
-        action: () {},
+      errorWidgetBuilder: (context) => MenoErrorWidget(
+        error: error,
+        onRetry: di<_AllBroadcastsMgr>().fetch.runAsync,
       ),
-      isLoading: isLoading && page.isEmpty,
+      isLoading: isFetching && page.isEmpty,
       hasError: error != null,
     );
   }
