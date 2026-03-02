@@ -187,7 +187,7 @@ class _ProfileAppBar extends StatelessWidget {
           child: MIconButton(
             icon: const Icon(MIcons.dots_horizontal),
             color: colors.primary,
-            onPressed: () {},
+            onPressed: () => ProfilePageOptionsModal.show(context),
           ),
         ),
         Spaces.horizontalLarge,

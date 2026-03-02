@@ -18,7 +18,6 @@ export './note_editor/note_editor_widget.dart';
 export './note_editor/note_title_field.dart';
 export './notes/empty_note_list_widget.dart';
 export './notes/live_notes_tab.dart';
-export './notes/note_card_options_modal.dart';
 export './notes/note_list_failure_widget.dart';
 export './notes/note_list_widget.dart';
 export './widgets/folder_tag.dart';
