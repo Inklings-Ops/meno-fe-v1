@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/domain/entities/user_display.dart';
 
 final class GeneralSettings with EquatableMixin {
   const GeneralSettings({
@@ -9,7 +10,7 @@ final class GeneralSettings with EquatableMixin {
     this.pushNotifications = false,
     this.appNotifications = true,
     this.emailNotifications = false,
-    this.display = 'light',
+    this.display = UserDisplay.system,
     this.language = 'en/English',
     this.pushNotificationToken,
   });
@@ -20,7 +21,7 @@ final class GeneralSettings with EquatableMixin {
   final bool pushNotifications;
   final bool appNotifications;
   final bool emailNotifications;
-  final String display;
+  final UserDisplay display;
   final String language;
   final String? pushNotificationToken;
 
@@ -31,7 +32,7 @@ final class GeneralSettings with EquatableMixin {
     bool? pushNotifications,
     bool? appNotifications,
     bool? emailNotifications,
-    String? display,
+    UserDisplay? display,
     String? language,
     String? pushNotificationToken,
   }) {

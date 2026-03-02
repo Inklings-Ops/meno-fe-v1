@@ -7,12 +7,15 @@ import 'package:meno/app/router/router.dart';
 import 'package:meno/core/core.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
+import 'package:meno/features/settings/settings.dart';
 import 'package:meno/shared/application/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> configureGlobalDependencies() async {
   // Push the base scope
   di.pushNewScope(scopeName: 'root');
+
+  di.registerSingleton<Settings>(const GuestsSettings());
 
   di.registerSingleton(Logger.new);
 
@@ -118,6 +121,24 @@ Future<void> configureGlobalDependencies() async {
     await repository.initialize();
     return repository;
   }, dependsOn: [BibleLocalDataSource, BibleRemoteDataSource]);
+
+  // Settings
+  di.registerSingletonWithDependencies(
+    () => SettingsLocalDataSource(di<LocalStorage>()),
+    dependsOn: [LocalStorage],
+  );
+
+  di.registerSingletonWithDependencies(
+    () => SettingsHttpDataSource(di<ApiClient>()),
+    dependsOn: [ApiClient],
+  );
+
+  di.registerSingletonAsync<ISettingsRepository>(() async {
+    return SettingsRepositoryImpl(
+      local: di<SettingsLocalDataSource>(),
+      http: di<SettingsHttpDataSource>(),
+    );
+  }, dependsOn: [SettingsLocalDataSource, SettingsHttpDataSource]);
 
   // ========================================================================
   // APPLICATION LAYER

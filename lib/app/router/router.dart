@@ -9,6 +9,7 @@ import 'package:meno/features/chat/chat.dart';
 import 'package:meno/features/discover/discover.dart';
 import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/settings/settings.dart';
 import 'package:meno/shared/shared.dart';
 
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -59,6 +60,25 @@ final class MenoRouter {
       ),
 
       GoRoute(path: R.login, builder: (_, _) => const LoginPage()),
+
+      GoRoute(
+        path: R.settings,
+        builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: R.notificationSettings,
+        builder: (context, state) => const NotificationsSettingsPage(),
+      ),
+      GoRoute(
+        path: R.securitySettings,
+        builder: (context, state) => const SecuritySettingsPage(),
+      ),
+      GoRoute(path: R.about, builder: (context, state) => const AboutPage()),
+
+      GoRoute(
+        path: R.notificationSettings,
+        builder: (context, state) => const NotificationsSettingsPage(),
+      ),
 
       GoRoute(
         path: R.createBroadcast,

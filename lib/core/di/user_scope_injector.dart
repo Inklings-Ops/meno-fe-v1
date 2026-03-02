@@ -7,6 +7,7 @@ import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/discover/discover.dart';
 import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/settings/settings.dart';
 import 'package:meno/shared/shared.dart';
 
 class UserScopeInjector with MLogger implements Disposable, WillSignalReady {
@@ -302,6 +303,16 @@ class UserScopeInjector with MLogger implements Disposable, WillSignalReady {
       manager.initialize.run();
       return manager;
     }, dependsOn: [IBroadcastFeedSource]);
+
+    // Settings
+    di.registerSingletonWithDependencies<SettingsManager>(() {
+      final manager = SettingsManager(
+        repository: di<ISettingsRepository>(),
+        currentUserId: userId,
+      );
+      manager.initialize.run(credential);
+      return manager;
+    }, dependsOn: [ISettingsRepository]);
   }
 
   @override

@@ -91,14 +91,14 @@ final class UserDto with EquatableMixin {
 }
 
 extension UserDtoX on UserDto {
-  UserDto get stripped {
-    return UserDto(
-      id: id,
-      fullName: fullName,
-      email: email,
-      imageUrl: imageUrl,
-    );
-  }
+  // UserDto get stripped {
+  //   return UserDto(
+  //     id: id,
+  //     fullName: fullName,
+  //     email: email,
+  //     imageUrl: imageUrl,
+  //   );
+  // }
 
   User get toDomain {
     return User(

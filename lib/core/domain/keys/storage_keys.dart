@@ -36,4 +36,10 @@ abstract class StorageKeys {
   static String profileFavorites(String userId) => 'profile_favorites_$userId';
 
   static String profileRecordings(String userId) => 'profile_recording_$userId';
+
+  // #######################################################################
+  // SETTINGS KEYS
+  // #######################################################################
+
+  static String userSettingsCache(String userId) => 'user_settings_$userId';
 }

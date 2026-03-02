@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/core/exceptions/meno_exception.dart';
-import 'package:meno/features/discover/applications/discover_recently_live_manager.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -229,8 +228,7 @@ class _RecentBroadcastsTab extends WatchingWidget {
   Widget build(BuildContext context) {
     final broadcasts = watchValue((_RecentBroadcastsMgr m) => m.broadcasts);
     final isLoading = watchValue((_RecentBroadcastsMgr m) => m.fetch.isRunning);
-
-    final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
+    final error = watchValue((_RecentBroadcastsMgr m) => m.fetch.errors);
 
     if (error != null && !isLoading) {
       return MenoErrorWidget(
@@ -279,8 +277,7 @@ class _AllBroadcastsTab extends WatchingWidget {
   Widget build(BuildContext context) {
     final page = watchValue((_AllBroadcastsMgr m) => m.pagedList);
     final isFetching = watchValue((_AllBroadcastsMgr m) => m.fetch.isRunning);
-
-    final error = watchValue((DiscoverRecentlyLiveManager m) => m.error);
+    final error = watchValue((_AllBroadcastsMgr m) => m.error);
 
     return ProfileBroadcastListWidget(
       page: page,

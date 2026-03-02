@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/domain/entities/user_display.dart';
 import 'package:meno/shared/infrastructure/dtos/notification_setting_dto.dart';
 
 final class GeneralSettingsDto with EquatableMixin {
@@ -10,7 +11,7 @@ final class GeneralSettingsDto with EquatableMixin {
     this.pushNotifications = false,
     this.appNotifications = true,
     this.emailNotifications = false,
-    this.display = 'light',
+    this.display = UserDisplay.system,
     this.language = 'en/English',
     this.pushNotificationToken,
   });
@@ -29,7 +30,7 @@ final class GeneralSettingsDto with EquatableMixin {
       pushNotifications: json[_kPushNotifications] as bool,
       appNotifications: json[_kAppNotifications] as bool,
       emailNotifications: json[_kEmailNotifications] as bool,
-      display: json[_kDisplay] as String,
+      display: UserDisplay.fromJson(json[_kDisplay]),
       language: json[_kLanguage] as String,
       pushNotificationToken: json[_kPushNotificationToken] as String?,
     );
@@ -67,7 +68,7 @@ final class GeneralSettingsDto with EquatableMixin {
   final bool pushNotifications;
   final bool appNotifications;
   final bool emailNotifications;
-  final String display;
+  final UserDisplay display;
   final String language;
   final String? pushNotificationToken;
 

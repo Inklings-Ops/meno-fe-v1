@@ -4,6 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/app/router/router.dart';
 import 'package:meno/features/auth/domain/domain.dart';
+import 'package:meno/features/settings/applications/applications.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -38,6 +39,8 @@ class _MenoAppState extends State<MenoApp> {
 
     if (snapshot.isLoading) return const MenoAppLoadingWidget();
 
+    final settings = watchValue((SettingsManager m) => m.settings);
+
     return ValueListenableBuilder(
       valueListenable: di<IAuthRepository>().activeUserId,
       builder: (context, value, child) {
@@ -47,6 +50,7 @@ class _MenoAppState extends State<MenoApp> {
           localizationsDelegates: const [FlutterQuillLocalizations.delegate],
           routerConfig: di<MenoRouter>().routerConfig,
           theme: MTheme.light,
+          themeMode: settings.display.toThemeMode,
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           builder: (context, child) => ResponsiveBreakpoints.builder(
             breakpoints: const [
