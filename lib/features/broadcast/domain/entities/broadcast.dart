@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 final class Broadcast with EquatableMixin {
   const Broadcast({
@@ -164,4 +165,31 @@ final fakeBroadcasts = List.filled(
     liveListeners: 100,
     totalListeners: 200,
   ),
+);
+
+final fakeLiveBroadcast = Broadcast(
+  id: Id.fromString('87f4a2fb-0130-4d3e-aaed-a239829515a3'),
+  title: SingleLineString('The Glory of the Lord'),
+  description: MultiLineString(BoneMock.chars(244)),
+  creator: Participant(
+    id: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
+    fullName: SingleLineString('David Michael II'),
+    bio: MultiLineString(BoneMock.chars(244)),
+    imageUrl:
+        'https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg',
+  ),
+  creatorId: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
+  fullName: SingleLineString('David Michael II'),
+  startTime: DateTime.now(),
+  createdAt: DateTime.parse('2026-03-02T21:19:31.979Z'),
+  creatorFullName: SingleLineString('David Michael II'),
+  creatorBio: MultiLineString(BoneMock.chars(244)),
+  creatorImageUrl:
+      'https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg',
+  status: .active,
+  broadcastToken: BoneMock.subtitle,
+  liveListeners: 20380,
+  totalListeners: 44600,
+  imageUrl:
+      'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggruNurWPCNlOvEXA0pzSkR2eeihtnzRal_qXF0M25prd1V_Xu36aUdlD9bKaYo3b3Y7exXwxglHp_SfK6cu_93W8e5VzO7RzZzFmwwoQQ3Be_tr6N6G0wmjNs8vlYTaFi08jefOa5L4iu/s320/glory+of+God.jpg',
 );

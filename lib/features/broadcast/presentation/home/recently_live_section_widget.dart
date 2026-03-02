@@ -74,7 +74,7 @@ class _Card extends StatelessWidget {
       title: broadcast.title.getOrCrash(),
       host: broadcast.effectiveCreatorName.getOrElse((_) => ''),
       imageUrl: broadcast.imageUrl,
-      onTap: () => context.push('${R.broadcasts}/${broadcast.id.getOrCrash()}'),
+      onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
     );
   }
 }

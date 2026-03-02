@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
-import 'package:meno/features/broadcast/applications/applications.dart';
-import 'package:meno/features/broadcast/presentation/presentation.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/profile/applications/applications.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -30,9 +29,8 @@ class HomePage extends WatchingWidget {
             children: <Widget>[
               if (currentUserId != null)
                 LiveBroadcastActivityCard(currentUserId: currentUserId),
-
+              const LiveForYouSectionWidget(),
               const NowLiveSectionWidget(),
-
               const RecentlyLiveSectionWidget(),
             ],
           ),
