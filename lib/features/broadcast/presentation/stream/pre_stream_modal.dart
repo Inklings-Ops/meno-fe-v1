@@ -61,7 +61,6 @@ class PreStreamModal extends WatchingWidget {
                 creatorId: broadcast.effectiveCreatorId,
               ),
             ),
-            // const SliverToBoxAdapter(child: Spaces.verticalXLarge),
           ],
         ),
       ),
@@ -79,7 +78,7 @@ class _TopSection extends StatelessWidget {
     final textTheme = MTextTheme.of(context);
 
     return LimitedBox(
-      maxHeight: 164,
+      maxHeight: 142,
       child: Row(
         children: [
           PreStreamArtwork(url: broadcast.imageUrl),

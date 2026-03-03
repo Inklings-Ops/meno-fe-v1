@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart' show Either, Option, Unit;
 import 'package:meno/core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/domain/domain.dart';
@@ -20,22 +21,29 @@ abstract class IBroadcastRepository implements IBroadcastFeedSource {
     List<Id>? cohosts,
   });
 
-  Future<Either<MenoException, Unit>> deleteBroadcast(Id id);
+  Future<Either<MenoException, Unit>> deleteBroadcast(
+    Id broadcastId, {
+    CancelToken? cancelToken,
+  });
 
   Future<Either<MenoException, Broadcast>> editBroadcast({
-    required Id id,
+    required Id broadcastId,
     SingleLineString? title,
     MultiLineString? description,
     ImageInput? image,
-    String? timeZone,
+    String? timezone,
     DateTime? startTime,
+    List<Id>? cohosts,
   });
 
-  Future<Either<MenoException, Broadcast>> joinBroadcast(Id id);
+  Future<Either<MenoException, Broadcast>> joinBroadcast(Id broadcastId);
 
-  Future<Either<MenoException, Broadcast>> startBroadcast(Id id);
+  Future<Either<MenoException, Broadcast>> startBroadcast(Id broadcastId);
 
-  Future<Either<MenoException, PagedList<Participant?>>> getListeners(Id id);
+  Future<Either<MenoException, PagedList<Participant?>>> getListeners(
+    Id broadcastId, {
+    CancelToken? cancelToken,
+  });
 
   Option<BroadcastSession> getActiveBroadcastSession(Id userId);
 

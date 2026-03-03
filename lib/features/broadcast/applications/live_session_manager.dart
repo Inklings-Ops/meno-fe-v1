@@ -199,9 +199,9 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
         timer.start.run();
       },
     );
-  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(emitStartedEvent);
+  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(emitBroadcastEvent);
 
-  late final emitStartedEvent = Command.createAsyncNoParamNoResult(() async {
+  late final emitBroadcastEvent = Command.createAsyncNoParamNoResult(() async {
     log.i('LiveSessionManager: Notifying server that broadcast started');
 
     final broadcastId = _session.broadcast.id;
@@ -443,7 +443,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     initializeTimer.dispose();
     startSession.dispose();
     connectToLiveKit.dispose();
-    emitStartedEvent.dispose();
+    emitBroadcastEvent.dispose();
     endSession.dispose();
     toggleMicrophone.dispose();
     reconnectToSocket.dispose();

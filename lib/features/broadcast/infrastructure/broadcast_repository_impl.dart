@@ -47,22 +47,48 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   }
 
   @override
-  Future<Either<MenoException, Unit>> deleteBroadcast(Id id) {
-    // TODO: implement deleteBroadcast
-    throw UnimplementedError();
+  Future<Either<MenoException, Unit>> deleteBroadcast(
+    Id broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      await _http.deleteBroadcast(
+        broadcastId.getOrCrash(),
+        cancelToken: cancelToken,
+      );
+      return const Right(unit);
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
   Future<Either<MenoException, Broadcast>> editBroadcast({
-    required Id id,
+    required Id broadcastId,
     SingleLineString? title,
     MultiLineString? description,
     ImageInput? image,
-    String? timeZone,
+    String? timezone,
     DateTime? startTime,
-  }) {
-    // TODO: implement editBroadcast
-    throw UnimplementedError();
+    List<Id>? cohosts,
+  }) async {
+    try {
+      final result = await _http.editBroadcast(
+        broadcastId.getOrCrash(),
+        title: title?.getOrCrash(),
+        description: description?.getOrCrash(),
+        image: (image?.getOrNull() as LocalImage?)?.file,
+        cohosts: cohosts?.map((e) => e.getOrCrash()).toList(),
+        timezone: timezone,
+        startTime: startTime?.toIso8601String(),
+      );
+      if (result != null) return Right(result.toDomain);
+      return const Left(MenoException('Failed to edit broadcast'));
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
@@ -125,22 +151,58 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   }
 
   @override
-  Future<Either<MenoException, Broadcast>> joinBroadcast(Id id) {
-    // TODO: implement joinBroadcast
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<MenoException, PagedList<Participant?>>> getListeners(Id id) {
-    // TODO: implement listeners
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<MenoException, Broadcast>> startBroadcast(Id id) async {
+  Future<Either<MenoException, Broadcast>> joinBroadcast(Id broadcastId) async {
     try {
-      final broadcastId = id.getOrCrash();
-      final result = await _http.startBroadcast(broadcastId);
+      final result = await _http.joinBroadcast(broadcastId.getOrCrash());
+      if (result != null) return Right(result.toDomain);
+      return const Left(MenoException('Failed to join broadcast'));
+    } catch (error) {
+      if (error is MenoException) return Left(error);
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, PagedList<Participant?>>> getListeners(
+    Id broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _http.getListeners(
+        broadcastId.getOrCrash(),
+        cancelToken: cancelToken,
+      );
+
+      final json = response as Map<String, dynamic>;
+
+      final items = json[r'broadcastListeners'] as List<dynamic>;
+      final currentPage = json[r'currentPage'] as int;
+      final totalItems = json[r'totalItems'] as int;
+      final totalPages = json[r'totalPages'] as int;
+
+      final sanitizedResponse = PagedList<Participant?>(
+        items: items.isNotEmpty
+            ? items.map((e) => ParticipantDto.fromJson(e).toDomain).toList()
+            : const [],
+        currentPage: currentPage,
+        totalItems: totalItems,
+        totalPages: totalPages,
+      );
+
+      return Right(sanitizedResponse);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, Broadcast>> startBroadcast(
+    Id broadcastId,
+  ) async {
+    try {
+      final result = await _http.startBroadcast(broadcastId.getOrCrash());
       if (result != null) return Right(result.toDomain);
       return const Left(MenoException('Failed to start broadcast'));
     } catch (error) {
@@ -152,7 +214,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   @override
   Future<void> clearDrafts(Id userId) async {
     await _local.clearDraft(userId.getOrCrash());
-    // _drafts.value = [];
   }
 
   @override
@@ -161,7 +222,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
       userId: userId.getOrCrash(),
       draftId: draftId.getOrCrash(),
     );
-    // _drafts.value = updatedList.map((e) => e?.toDomain).toList();
   }
 
   @override
@@ -169,7 +229,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
     try {
       final dtos = _local.getAllDrafts(userId.getOrCrash());
       final transformedList = dtos.map((e) => e?.toDomain).toList();
-      // _drafts.value = transformedList;
       return Right(transformedList);
     } catch (error) {
       if (error is MenoException) return Left(error);
@@ -184,7 +243,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   }) async {
     try {
       await _local.saveDraft(userId: userId.getOrCrash(), draft: draft.toDto);
-      // _drafts.value = updatedList.map((e) => e?.toDomain).toList();
     } catch (error) {
       throw MenoException(error.toString());
     }
@@ -228,7 +286,6 @@ class BroadcastRepositoryImpl with MLogger implements IBroadcastRepository {
   Future<Either<MenoException, Unit>> emitEndBroadcast(Id broadcastId) async {
     try {
       await _socket.emitEndBroadcast(broadcastId.getOrCrash());
-      // TODO(gettoknowdavid): Confirm if the local session is cleared elsewhere
       return right(unit);
     } catch (error) {
       if (error is MenoException) return Left(error);

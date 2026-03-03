@@ -209,6 +209,43 @@ class _DescriptionFieldState extends State<_DescriptionField> {
   }
 }
 
+class CoHostSection extends StatelessWidget {
+  const CoHostSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const LimitedBox(
+      maxHeight: 72,
+      child: Row(
+        children: [ParticipantItem(), Spaces.horizontalSmall, Wrap(spacing: 8)],
+      ),
+    );
+  }
+}
+
+class RecordToggleSwitchField extends WatchingWidget {
+  const RecordToggleSwitchField({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final manager = di<BroadcastFormManager>();
+    final record = watchValue((BroadcastFormManager m) => m.record);
+    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
+
+    return CreateBroadcastListTile(
+      leadingText: 'Enable recording',
+      subtitleText: 'Record your broadcast to listen back to later',
+      trailing: SizedBox(
+        width: 48,
+        child: Switch(
+          value: record,
+          onChanged: isLoading ? null : manager.onToggleRecord,
+        ),
+      ),
+    );
+  }
+}
+
 class StartBroadcastButton extends WatchingWidget {
   const StartBroadcastButton({super.key});
 
@@ -251,43 +288,6 @@ class StartBroadcastButton extends WatchingWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CoHostSection extends StatelessWidget {
-  const CoHostSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const LimitedBox(
-      maxHeight: 72,
-      child: Row(
-        children: [ParticipantItem(), Spaces.horizontalSmall, Wrap(spacing: 8)],
-      ),
-    );
-  }
-}
-
-class RecordToggleSwitchField extends WatchingWidget {
-  const RecordToggleSwitchField({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final manager = di<BroadcastFormManager>();
-    final record = watchValue((BroadcastFormManager m) => m.record);
-    final isLoading = watchValue((BroadcastFormManager m) => m.isRunning);
-
-    return CreateBroadcastListTile(
-      leadingText: 'Enable recording',
-      subtitleText: 'Record your broadcast to listen back to later',
-      trailing: SizedBox(
-        width: 48,
-        child: Switch(
-          value: record,
-          onChanged: isLoading ? null : manager.onToggleRecord,
-        ),
       ),
     );
   }

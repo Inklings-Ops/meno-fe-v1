@@ -44,6 +44,73 @@ class BroadcastHttpDataSource with MLogger {
     );
   }
 
+  Future<BroadcastDto?> editBroadcast(
+    String broadcastId, {
+    String? title,
+    String? description,
+    String? timezone,
+    List<String>? cohosts,
+    String? startTime,
+    File? image,
+    CancelToken? cancelToken,
+  }) async {
+    final data = FormData();
+
+    if (title != null) data.fields.add(MapEntry('title', title));
+
+    if (description != null) {
+      data.fields.add(MapEntry('description', description));
+    }
+
+    if (timezone != null) data.fields.add(MapEntry('timezone', timezone));
+
+    if (cohosts != null) {
+      for (final i in cohosts) {
+        data.fields.add(MapEntry('cohosts', i));
+      }
+    }
+
+    if (startTime != null) data.fields.add(MapEntry('startTime', startTime));
+
+    if (image != null) {
+      final imageData = MultipartFile.fromFileSync(
+        image.path,
+        filename: image.path.split(Platform.pathSeparator).last,
+      );
+      data.files.add(MapEntry('image', imageData));
+    }
+
+    return _client.put(
+      '/broadcasts/$broadcastId',
+      data: data,
+      fromJson: BroadcastDto.fromJson,
+      cancelToken: cancelToken,
+    );
+  }
+
+  Future<void> deleteBroadcast(String broadcastId, {CancelToken? cancelToken}) {
+    return _client.deleteUnit(
+      '/broadcasts/$broadcastId',
+      cancelToken: cancelToken,
+    );
+  }
+
+  Future<BroadcastDto?> joinBroadcast(
+    String broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    return _client.post(
+      '/broadcasts/$broadcastId/join',
+      fromJson: (json) {
+        if (json is! Map<String, dynamic>) throw Exception('Unknown type');
+        final broadcastJson = json['broadcast'];
+        final broadcastToken = json['broadcastToken'] as String?;
+        return BroadcastDto.fromJson(broadcastJson, broadcastToken);
+      },
+      cancelToken: cancelToken,
+    );
+  }
+
   Future<BroadcastDto?> startBroadcast(
     String broadcastId, {
     CancelToken? cancelToken,

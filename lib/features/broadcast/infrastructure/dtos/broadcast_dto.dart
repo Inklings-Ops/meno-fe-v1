@@ -25,7 +25,7 @@ final class BroadcastDto with EquatableMixin {
     this.creatorImageUrl,
   });
 
-  factory BroadcastDto.fromJson(dynamic json) {
+  factory BroadcastDto.fromJson(dynamic json, [String? broadcastToken]) {
     if (json is! Map<String, dynamic>) {
       throw const FormatException('Invalid broadcast JSON');
     }
@@ -37,7 +37,7 @@ final class BroadcastDto with EquatableMixin {
       status: json[_kStatus] != null
           ? BroadcastStatus.fromJson(json[_kStatus] as String)
           : BroadcastStatus.inactive,
-      broadcastToken: json[_kBroadcastToken] as String?,
+      broadcastToken: broadcastToken ?? json[_kBroadcastToken] as String?,
       creatorId: json[_kCreatorId] as String?,
       creator: json[_kCreator] != null
           ? ParticipantDto.fromJson(json[_kCreator])

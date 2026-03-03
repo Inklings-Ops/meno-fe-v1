@@ -3,7 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/features/auth/applications/auth_manager.dart';
+import 'package:meno/features/profile/profile.dart';
 import 'package:meno/shared/domain/domain.dart';
+import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class SwitchAccountModal extends WatchingWidget {
@@ -63,6 +65,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
 
     final accounts = watchValue((AuthManager m) => m.accounts);
     final lastKnownUser = watchValue((AuthManager m) => m.lastKnownUser);
+    final profile = watchValue((MyProfileManager m) => m.profile).toNullable();
 
     final lastKnownUserId = lastKnownUser.toNullable()?.id ?? Id.empty;
 
@@ -87,7 +90,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
             child: RadioListTile(
               value: user.id,
               controlAffinity: ListTileControlAffinity.trailing,
-              contentPadding: const EdgeInsets.fromLTRB(16, 12, 14, 12),
+              contentPadding: const .fromLTRB(16, 0, 14, 0),
               title: Row(
                 children: [
                   MAvatar(radius: 20, url: user.image?.getUrl()),
@@ -101,24 +104,36 @@ class _AllSavedCredentialsContent extends WatchingWidget {
             ),
           );
         }),
+        Spaces.verticalSmall,
         MModalListTile(
           leading: const Icon(MIcons.plus_circle),
           title: 'Add account',
           titleColor: colors.primary,
-          contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          contentPadding: const .fromLTRB(16, 0, 16, 0),
           onTap: () {
             context.pop();
             manager.addAccount.run();
           },
         ),
+        Spaces.verticalSmall,
         MModalListTile(
           leading: const Icon(MIcons.log_out),
           title: 'Logout',
           titleColor: colors.error,
-          onTap: manager.logout.run,
-          contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          onTap: () => _onLogout(context, profile),
+          contentPadding: const .fromLTRB(16, 0, 16, 0),
         ),
       ],
     );
+  }
+
+  Future<void> _onLogout(BuildContext context, Profile? profile) async {
+    final fullName = profile?.fullName.getOrElse((_) => 'this account');
+    final confirmed = await ConfirmationDialog.show(
+      context,
+      title: 'Log out from account?',
+      description: 'You are about to log out from $fullName',
+    );
+    if (confirmed ?? false) di<AuthManager>().logout.run();
   }
 }

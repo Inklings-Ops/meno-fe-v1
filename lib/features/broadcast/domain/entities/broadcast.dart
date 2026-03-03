@@ -173,13 +173,13 @@ final fakeLiveBroadcast = Broadcast(
   description: MultiLineString(BoneMock.chars(244)),
   creator: Participant(
     id: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
-    fullName: SingleLineString('David Michael II'),
+    fullName: SingleLineString('David Michael III'),
     bio: MultiLineString(BoneMock.chars(244)),
     imageUrl:
         'https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg',
   ),
   creatorId: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
-  fullName: SingleLineString('David Michael II'),
+  fullName: SingleLineString('David Michael III'),
   startTime: DateTime.now(),
   createdAt: DateTime.parse('2026-03-02T21:19:31.979Z'),
   creatorFullName: SingleLineString('David Michael II'),
