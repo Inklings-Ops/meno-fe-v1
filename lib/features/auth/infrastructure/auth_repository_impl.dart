@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/core/core.dart';
@@ -10,14 +11,14 @@ import 'package:meno/shared/shared.dart';
 final class AuthRepositoryImpl implements IAuthRepository {
   AuthRepositoryImpl({
     required AuthLocalDataSource local,
-    required AuthRemoteDataSource remote,
+    required AuthHttpDataSource http,
   }) : _local = local,
-       _remote = remote {
+       _http = http {
     _tokenSubscription = _local.onCredentialChanged.listen(_onAuthChanged);
   }
 
   final AuthLocalDataSource _local;
-  final AuthRemoteDataSource _remote;
+  final AuthHttpDataSource _http;
 
   final _activeUserId = ValueNotifier<Option<Id>>(const None());
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
@@ -106,16 +107,17 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<MenoException, UserCredential>> login(
-    Email email,
-    Password password,
-  ) async {
+  Future<Either<MenoException, UserCredential>> login({
+    required Email email,
+    required Password password,
+    String? pushNotificationToken,
+  }) async {
     try {
-      final dto = await _remote.login(
-        email.getOrCrash(),
-        password.getOrCrash(),
+      final dto = await _http.login(
+        email: email.getOrCrash(),
+        password: password.getOrCrash(),
+        pushNotificationToken: pushNotificationToken,
       );
-
       return _handleSuccessfulAuth(dto);
     } on MenoException catch (exception) {
       return Left(exception);
@@ -130,12 +132,14 @@ final class AuthRepositoryImpl implements IAuthRepository {
     required Email email,
     required Password password,
     required TermsAcceptance terms,
+    String? pushNotificationToken,
   }) async {
     try {
-      final dto = await _remote.register(
+      final dto = await _http.register(
         fullName: fullName.getOrCrash(),
         email: email.getOrCrash(),
         password: password.getOrCrash(),
+        pushNotificationToken: pushNotificationToken,
       );
 
       return _handleSuccessfulAuth(dto);
@@ -150,30 +154,88 @@ final class AuthRepositoryImpl implements IAuthRepository {
   Future<Either<MenoException, Unit>> changePassword({
     required Password currentPassword,
     required Password newPassword,
-  }) {
-    // TODO: implement changePassword
+  }) async {
+    try {
+      await _http.changePassword(
+        currentPassword: currentPassword.getOrCrash(),
+        newPassword: newPassword.getOrCrash(),
+      );
+      return const Right(unit);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, UserCredential>> googleSignIn({
+    required String idToken,
+    String? pushNotificationToken,
+  }) async {
+    try {
+      final dto = await _http.googleSignIn(
+        idToken: idToken,
+        pushNotificationToken: pushNotificationToken,
+      );
+      return _handleSuccessfulAuth(dto);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<Either<MenoException, UserCredential>> googleSignUp({
+    required String idToken,
+    String? pushNotificationToken,
+  }) async {
+    try {
+      final dto = await _http.googleSignUp(
+        idToken: idToken,
+        pushNotificationToken: pushNotificationToken,
+      );
+      return _handleSuccessfulAuth(dto);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
+  }
+
+  @override
+  Future<void> removeAccount(Id userId) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<MenoException, UserCredential>> googleSignIn() {
-    // TODO: implement googleSignIn
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> removeAccount(Id userId) {
-    // TODO: implement removeAccount
-    throw UnimplementedError();
+  Future<Either<MenoException, Unit>> deleteAccount([
+    CancelToken? cancelToken,
+  ]) async {
+    try {
+      await _http.deleteUser(cancelToken);
+      return const Right(unit);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
   Future<Either<MenoException, Unit>> requestOtp({
     required Email email,
     required OtpType type,
-  }) {
-    // TODO: implement requestOtp
-    throw UnimplementedError();
+  }) async {
+    try {
+      await _http.requestOtp(email: email.getOrCrash(), type: type.value);
+      return const Right(unit);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
@@ -181,9 +243,19 @@ final class AuthRepositoryImpl implements IAuthRepository {
     required Email email,
     required String code,
     required Password newPassword,
-  }) {
-    // TODO: implement resetPassword
-    throw UnimplementedError();
+  }) async {
+    try {
+      await _http.resetPassword(
+        email: email.getOrCrash(),
+        code: code,
+        newPassword: newPassword.getOrCrash(),
+      );
+      return const Right(unit);
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
   }
 
   @override
@@ -229,12 +301,27 @@ final class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<Either<MenoException, Unit>> verifyEmail({
+  Future<Either<MenoException, UserCredential>> verifyEmail({
     required Email email,
     required String code,
-  }) {
-    // TODO: implement verifyEmail
-    throw UnimplementedError();
+  }) async {
+    try {
+      await _http.verifyEmail(email: email.getOrCrash(), code: code);
+      final credential = currentCredential.toNullable();
+      if (credential != null) {
+        final verifiedUser = credential.user.copyWith(verified: true);
+        final verifiedCredential = UserCredential(
+          session: credential.session,
+          user: verifiedUser,
+        );
+        return _handleSuccessfulAuth(verifiedCredential.toDto);
+      }
+      return const Left(MenoException('User verified but caught an error'));
+    } on MenoException catch (exception) {
+      return Left(exception);
+    } catch (error) {
+      return Left(MenoException(error.toString()));
+    }
   }
 
   // ========================================================================

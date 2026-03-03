@@ -90,18 +90,18 @@ Future<void> configureGlobalDependencies() async {
   );
 
   di.registerSingletonWithDependencies(
-    () => AuthRemoteDataSource(di<ApiClient>()),
+    () => AuthHttpDataSource(di<ApiClient>()),
     dependsOn: [ApiClient],
   );
 
   di.registerSingletonAsync<IAuthRepository>(() async {
     final repository = AuthRepositoryImpl(
       local: di<AuthLocalDataSource>(),
-      remote: di<AuthRemoteDataSource>(),
+      http: di<AuthHttpDataSource>(),
     );
     await repository.initialize();
     return repository;
-  }, dependsOn: [AuthLocalDataSource, AuthRemoteDataSource]);
+  }, dependsOn: [AuthLocalDataSource, AuthHttpDataSource]);
 
   di.registerSingletonWithDependencies(
     () => BibleLocalDataSource(db: di<Database>()),

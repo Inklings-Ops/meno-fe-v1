@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:fpdart/fpdart.dart';
@@ -54,10 +55,11 @@ abstract interface class IAuthRepository implements Disposable {
   /// - Returns authenticated [UserCredential]
   /// - Updates [activeUserId]
   /// - Stores credential in secure storage
-  Future<Either<MenoException, UserCredential>> login(
-    Email email,
-    Password password,
-  );
+  Future<Either<MenoException, UserCredential>> login({
+    required Email email,
+    required Password password,
+    String? pushNotificationToken,
+  });
 
   /// Registers a new user account.
   ///
@@ -70,13 +72,22 @@ abstract interface class IAuthRepository implements Disposable {
     required Email email,
     required Password password,
     required TermsAcceptance terms,
+    String? pushNotificationToken,
   });
 
   /// Authenticates or registers via Google OAuth.
   ///
   /// Auto-registers if user doesn't exist.
   /// On success, updates [activeUserId] and stores credential.
-  Future<Either<MenoException, UserCredential>> googleSignIn();
+  Future<Either<MenoException, UserCredential>> googleSignIn({
+    required String idToken,
+    String? pushNotificationToken,
+  });
+
+  Future<Either<MenoException, UserCredential>> googleSignUp({
+    required String idToken,
+    String? pushNotificationToken,
+  });
 
   /// Clears current session.
   ///
@@ -99,7 +110,7 @@ abstract interface class IAuthRepository implements Disposable {
   /// Verifies user's email with OTP code.
   ///
   /// On success, updates user's verification status.
-  Future<Either<MenoException, Unit>> verifyEmail({
+  Future<Either<MenoException, UserCredential>> verifyEmail({
     required Email email,
     required String code,
   });
@@ -134,7 +145,10 @@ abstract interface class IAuthRepository implements Disposable {
   /// Permanently removes an account from local storage.
   ///
   /// If the removed account is currently active, logs out.
+
   Future<void> removeAccount(Id userId);
+
+  Future<Either<MenoException, Unit>> deleteAccount([CancelToken? cancelToken]);
 
   Future<void> clearActiveSession();
 }

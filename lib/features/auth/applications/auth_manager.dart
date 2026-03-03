@@ -11,7 +11,10 @@ final class AuthManager extends ChangeNotifier implements Disposable {
   AuthManager(this._repository) {
     login = Command.createAsync(
       (params) async {
-        final result = await _repository.login(params.email, params.password);
+        final result = await _repository.login(
+          email: params.email,
+          password: params.password,
+        );
         return result.fold((error) => throw error, (credential) => credential);
       },
       initialValue: UserCredential.empty,
