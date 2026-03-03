@@ -257,7 +257,8 @@ enum SocketEvent {
   editChatMessage('editChatMessage'),
   deleteChatMessage('deleteChatMessage'),
   hostDisconnected('hostDisconnected'),
-  hostReconnected('hostReconnected');
+  hostReconnected('hostReconnected'),
+  notification('notification');
 
   const SocketEvent(this.value);
 

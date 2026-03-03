@@ -110,7 +110,7 @@ class BroadcastDraftModal extends WatchingWidget {
       builder: (context) => AlertDialog(
         title: MText('Delete Draft?', style: textTheme.heading3Medium),
         content: MText(
-          'This draft will be permanently deleted. This action cannot be undone.',
+          'This draft will be permanently deleted. This cannot be undone.',
           style: textTheme.bodyRegular,
         ),
         actions: [
