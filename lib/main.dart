@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:meno/app/app.dart';
-import 'package:meno/core/core.dart';
+import 'package:meno/app.dart';
 
 /// Entry point for the app.
 Future<void> main() async {
@@ -10,8 +9,8 @@ Future<void> main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   try {
-    await configureGlobalDependencies();
-    configureGlobalExceptionHandler();
+    // await configureGlobalDependencies();
+    // configureGlobalExceptionHandler();
 
     // Start the app if DI is ready
     runApp(const MenoApp());

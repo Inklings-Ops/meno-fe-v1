@@ -18,7 +18,7 @@ class AuthRedirectionText extends StatelessWidget {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         MText(title, style: textTheme.captionMedium),
         Spaces.horizontalMicro,
