@@ -1,25 +1,19 @@
 import 'dart:convert';
+import 'package:meno/src/_constants/constants.dart' show StorageKeys;
+import 'package:meno/src/_shared/_shared.dart';
+import 'package:meno/src/features/auth/dtos/dtos.dart';
+import 'package:meno/src/features/auth/models/models.dart';
 
-import 'package:meno/core/core.dart';
-import 'package:meno/features/auth/domain/domain.dart';
-import 'package:meno/features/auth/infrastructure/infrastructure.dart';
-
-final class AuthLocalDataSource {
-  const AuthLocalDataSource(this._storage);
+/// Infrastructure: Local persistence service for authentication.
+final class AuthLocalService {
+  const AuthLocalService(this._storage);
 
   final SecureStorage _storage;
 
   /// Emits the updated credential whenever the token changes on disk.
-  ///
-  /// - Emits `null` if the token is deleted (Session Expired).
-  /// - Emits `UserCredentialDto` if the token is refreshed/saved.
   Stream<UserCredentialDto?> get onCredentialChanged {
-    // We watch the low-level key here, where it belongs.
     return _storage.watchKey(StorageKeys.accessToken).asyncMap((token) async {
-      if (token == null) return null; // Logged out
-
-      // If token exists, fetch the full fresh object
-      // This handles the "Refresh" scenario automatically
+      if (token == null) return null;
       return getCredential();
     });
   }
@@ -28,48 +22,28 @@ final class AuthLocalDataSource {
   // PRIMARY OPERATIONS (Complete Credential)
   // ======================================================================
 
-  /// Saves the complete credential with individual field caching.
-  ///
-  /// Strategy:
-  /// 1. Store complete credential as JSON (source of truth)
-  /// 2. Cache individual fields for fast interceptor access
   Future<void> saveCredential(UserCredentialDto dto) async {
-    // Batch write for atomicity
     await Future.wait([
-      // Complete credential (source of truth)
       _storage.write(StorageKeys.credential, value: jsonEncode(dto.toJson())),
-
-      // Cached fields for fast access
       _storage.write(StorageKeys.userId, value: dto.user.id),
       _storage.write(StorageKeys.accessToken, value: dto.token),
-
       if (dto.refreshToken != null)
         _storage.write(StorageKeys.refreshToken, value: dto.refreshToken),
-
       if (dto.expiry != null)
         _storage.write(StorageKeys.sessionExpiry, value: dto.expiry),
     ]);
-
-    // Update multi-account storage
     await _updateStoredAccounts(dto);
   }
 
-  /// Retrieves the complete credential.
   Future<UserCredentialDto?> getCredential() async {
-    // We read the 'Hot Keys' directly. Fast.
     final token = await _storage.read(StorageKeys.accessToken);
     if (token == null) return null;
 
-    // If we have a token but no full user data, we might need to fetch from
-    // the Vault. But for the simple check, we construct what we have.
-    // Ideally, you read the full JSON blob for the 'credential' key you
-    // already save.
     final jsonStr = await _storage.read(StorageKeys.credential);
     if (jsonStr != null) return UserCredentialDto.fromJson(jsonDecode(jsonStr));
     return null;
   }
 
-  /// Clears all credential data (logout).
   Future<void> clearCredential() async {
     await Future.wait([
       _storage.delete(StorageKeys.credential),
@@ -84,10 +58,6 @@ final class AuthLocalDataSource {
   // FAST ACCESS METHODS (For Interceptor)
   // ======================================================================
 
-  /// Gets just the session (no JSON parsing of user data).
-  ///
-  /// Used by: SessionInterceptor (called on every request)
-  /// Priority: Speed over completeness
   Future<Session?> getSession() async {
     try {
       final token = await _storage.read(StorageKeys.accessToken);
@@ -106,17 +76,11 @@ final class AuthLocalDataSource {
     }
   }
 
-  /// Updates just the session tokens (after refresh).
-  ///
-  /// Strategy:
-  /// 1. Update cached fields immediately (for interceptor)
-  /// 2. Then update complete credential (for consistency)
   Future<void> updateSession(Session session) async {
-    final accessToken = session.accessToken.getOrElse((_) => '');
-    final refreshToken = session.accessToken.getOrNull();
+    final accessToken = session.accessToken.getOrCrash();
+    final refreshToken = session.refreshToken.getOrNull();
     final expiry = session.expiry?.toIso8601String();
 
-    // First, update cached fields
     await Future.wait([
       _storage.write(StorageKeys.accessToken, value: accessToken),
       _storage.write(StorageKeys.refreshToken, value: refreshToken),
@@ -124,12 +88,9 @@ final class AuthLocalDataSource {
         _storage.write(StorageKeys.sessionExpiry, value: expiry),
     ]);
 
-    // Then, update complete credential for consistency
     final currentCredential = await getCredential();
-
     if (currentCredential == null) return;
 
-    // Create updated credential with new session
     final updatedCredential = UserCredentialDto(
       user: currentCredential.user,
       token: accessToken,
@@ -137,11 +98,9 @@ final class AuthLocalDataSource {
       expiry: expiry,
     );
 
-    // Update complete credential
     final value = jsonEncode(updatedCredential.toJson());
     await _storage.write(StorageKeys.credential, value: value);
 
-    // Update accounts
     await _updateStoredAccounts(updatedCredential);
   }
 
@@ -149,19 +108,13 @@ final class AuthLocalDataSource {
   // MULTI-ACCOUNT SUPPORT
   // ======================================================================
 
-  /// Switches the active user by copying from Vault -> Hot Cache
   Future<void> switchActiveUser(String targetUserId) async {
     final accounts = await getAllAccounts();
     final dto = accounts[targetUserId];
-
-    if (dto == null) throw const StorageException('Target account not found');
-
-    // OVERWRITE the Hot Keys with the target user's data.
-    // The Interceptor will immediately start using this new token.
+    if (dto == null) throw Exception('Target account not found');
     await saveCredential(dto);
   }
 
-  /// Gets all stored accounts.
   Future<Map<String, UserCredentialDto>> getAllAccounts() async {
     final accountsJson = await _storage.read(StorageKeys.accounts);
     if (accountsJson == null) return {};
@@ -175,7 +128,6 @@ final class AuthLocalDataSource {
           final dto = UserCredentialDto.fromJson(entry.value);
           accounts[entry.key] = dto;
         } catch (e) {
-          // Skip corrupted accounts
           continue;
         }
       }
@@ -194,9 +146,7 @@ final class AuthLocalDataSource {
     if (accounts.isEmpty) {
       await _storage.delete(StorageKeys.accounts);
     } else {
-      final accountsMap = accounts.map(
-        (id, credential) => MapEntry(id, credential.toJson()),
-      );
+      final accountsMap = accounts.map((id, crd) => MapEntry(id, crd.toJson()));
       await _storage.write(
         StorageKeys.accounts,
         value: jsonEncode(accountsMap),
@@ -205,46 +155,17 @@ final class AuthLocalDataSource {
 
     // If removed account was current, clear current
     final currentUserId = await _storage.read(StorageKeys.userId);
-    if (currentUserId == userId) {
-      await clearCredential();
-    }
+    if (currentUserId == userId) await clearCredential();
   }
 
-  /// Updates the stored accounts map with current credential.
   Future<void> _updateStoredAccounts(UserCredentialDto dto) async {
     try {
       final accounts = await getAllAccounts();
-      final userId = dto.user.id;
-
-      accounts[userId] = dto;
-
+      accounts[dto.user.id] = dto;
       final map = accounts.map((id, c) => MapEntry(id, c.toJson()));
       await _storage.write(StorageKeys.accounts, value: jsonEncode(map));
     } catch (e) {
-      // Don't block the flow if multi-account storage fails
+      // Ignore
     }
   }
-
-  // ======================================================================
-  // VALIDATION & MIGRATION
-  // ======================================================================
-
-  /// Validates stored data integrity.
-  ///
-  /// Checks if cached fields match the complete credential.
-  /// Useful for debugging or migration scenarios.
-  // Future<bool> validateIntegrity() async {
-  //   final credential = await getCredential();
-  //   if (credential == null) return false;
-  //
-  //   final cachedToken = await _storage.read(StorageKeys.accessToken);
-  //   return cachedToken == credential.token;
-  // }
-  //
-  // /// Repairs storage if cached fields don't match credential.
-  // Future<void> repairStorage() async {
-  //   final credential = await getCredential();
-  //   if (credential == null) return clearCredential();
-  //   return saveCredential(credential);
-  // }
 }

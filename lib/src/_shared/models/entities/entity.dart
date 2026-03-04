@@ -6,6 +6,8 @@ import 'package:meno/shared/domain/value_objects/id.dart';
 /// It uses the [EquatableMixin] to enforce equality checks based solely
 /// on the entity's [id].
 abstract class IEntity with EquatableMixin {
+  const IEntity();
+
   /// The unique identifier for the entity.
   Id get id;
 
@@ -13,8 +15,4 @@ abstract class IEntity with EquatableMixin {
   /// is determined *only* by the [id] field.
   @override
   List<Object?> get props => [id];
-}
-
-extension IEntityX on IEntity {
-  bool get isValid => id.isValid;
 }
