@@ -16,3 +16,7 @@ final class UserCredential with EquatableMixin {
   @override
   List<Object?> get props => [session, user];
 }
+
+extension UserCredX on UserCredential {
+  bool get isEmpty => this == .empty;
+}

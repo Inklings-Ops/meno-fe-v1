@@ -34,7 +34,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
   Widget build(BuildContext context) {
     final auth = di<AuthManager>();
 
-    final user = watchValue((UserManager m) => m.user);
+    final user = watchValue((AuthManager m) => m.currentUser);
     final accounts = watchValue((AuthManager m) => m.accounts);
     final lastKnownUserId = watchValue((AuthManager m) => m.lastKnownUser).id;
 

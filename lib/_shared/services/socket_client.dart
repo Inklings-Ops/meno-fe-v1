@@ -32,14 +32,14 @@ class SocketClient with MLogger implements Disposable {
   bool get isConnected => _socket?.connected ?? false;
 
   /// Initialize and connect to the socket server
-  FutureOr<void> connect() async {
+  void connect() {
     if (_socket?.connected ?? false) {
       log.f('Already connected');
       return;
     }
 
     // Dispose old socket if exists
-    await _disposeSocket();
+    _disposeSocket();
 
     log.i('SocketClient: Connecting to $_url');
     _connectionContr.add(.connecting);
@@ -191,13 +191,13 @@ class SocketClient with MLogger implements Disposable {
   }
 
   /// Disconnect from the socket server
-  Future<void> disconnect() async {
+  void disconnect() {
     log.i('SocketClient: Disconnecting...');
     _connectionContr.add(SocketConnectionState.disconnected);
-    await _disposeSocket();
+    _disposeSocket();
   }
 
-  FutureOr<void> _disposeSocket() {
+  void _disposeSocket() {
     log.d('Disposing socket internally');
     _socket?.clearListeners();
     _socket?.dispose();
@@ -207,7 +207,7 @@ class SocketClient with MLogger implements Disposable {
   @override
   FutureOr<dynamic> onDispose() async {
     log.d('SocketClient: Disposing');
-    await _disposeSocket();
+    _disposeSocket();
     _eventHandlers.clear();
     await _connectionContr.close();
   }

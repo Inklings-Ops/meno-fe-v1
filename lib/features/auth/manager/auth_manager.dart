@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 
 final class AuthManager extends ChangeNotifier implements Disposable {
   AuthManager(this._http, this._local) {
-    _authSubscription = _local.onCredentialChanged.listen(_onAuthChanged);
+    _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
 
     login = Command.createAsync<LoginArgs, UserCredential>(
       (args) async {
@@ -119,7 +120,7 @@ final class AuthManager extends ChangeNotifier implements Disposable {
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
   final _lastKnownUser = ValueNotifier<User>(User.empty);
 
-  StreamSubscription<UserCredentialDto?>? _authSubscription;
+  StreamSubscription<UserCredentialDto?>? _subscription;
 
   // ======================================================================
   // STATE ACCESSORS
@@ -133,8 +134,19 @@ final class AuthManager extends ChangeNotifier implements Disposable {
 
   bool get isAuthenticated => _activeUserId.value.isValid;
 
-  UserCredential get currentCredential =>
-      _accounts.value[_activeUserId.value] ?? UserCredential.empty;
+  ValueListenable<UserCredential> get currentCredential {
+    return _activeUserId.combineLatest(
+      _accounts,
+      (id, accounts) => accounts[id] ?? UserCredential.empty,
+    );
+  }
+
+  ValueListenable<User> get currentUser {
+    return _activeUserId.combineLatest(
+      _accounts,
+      (id, accounts) => accounts[id]?.user ?? .empty,
+    );
+  }
 
   // ======================================================================
   // COMMANDS
@@ -222,11 +234,17 @@ final class AuthManager extends ChangeNotifier implements Disposable {
   void _onAuthChanged(UserCredentialDto? dto) {
     if (dto == null) {
       _activeUserId.value = .empty;
+
+      popUserSessionScope();
     } else {
       final credential = dto.toDomain;
-      _updateAccountInternal(credential);
+
       _activeUserId.value = credential.user.id;
       _lastKnownUser.value = credential.user;
+
+      _updateAccountInternal(credential);
+
+      pushUserSessionScope(credential);
     }
   }
 
@@ -235,7 +253,7 @@ final class AuthManager extends ChangeNotifier implements Disposable {
     _activeUserId.dispose();
     _accounts.dispose();
     _lastKnownUser.dispose();
-    _authSubscription?.cancel();
+    _subscription?.cancel();
     login.dispose();
     register.dispose();
     googleSignIn.dispose();
