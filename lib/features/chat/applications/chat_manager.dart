@@ -66,7 +66,7 @@ class ChatManager with MLogger implements Disposable {
         id: message.id.getOrCrash(),
         senderId: message.effectiveSenderId.getOrCrash(),
         broadcastId: message.broadcastId.getOrCrash(),
-        content: message.content.getOrCrash(),
+        content: content.value.getOrCrash(),
         createdAt: message.createdAt,
         updatedAt: message.updatedAt,
       );
@@ -80,6 +80,8 @@ class ChatManager with MLogger implements Disposable {
     errorFilterFn: menoExceptionFilter,
     restriction: messageToEdit.map((value) => value != null),
   );
+
+  late final isEditing = messageToEdit.map((value) => value != null);
 
   @override
   FutureOr<dynamic> onDispose() {

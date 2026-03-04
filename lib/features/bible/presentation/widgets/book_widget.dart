@@ -39,11 +39,7 @@ class BookWidget extends WatchingWidget {
             final idx = names.indexOf(bookName);
             if (idx == -1) return;
             manager.getVerses.run(
-              BibleParams(
-                book: idx,
-                chapter: 1,
-                translation: manager.translation.value,
-              ),
+              BibleParams(book: idx, translation: manager.translation.value),
             );
           },
         ),

@@ -18,6 +18,9 @@ class ChatSendButton extends WatchingWidget {
       return const SizedBox.shrink();
     }
 
+    final manager = di<ChatManager>();
+    final isEditing = watchValue((ChatManager m) => m.isEditing);
+
     return Column(
       children: [
         Spaces.horizontalSmall,
@@ -30,7 +33,7 @@ class ChatSendButton extends WatchingWidget {
           iconSize: 20,
           onPressed: () {
             FocusScope.of(context).unfocus();
-            di<ChatManager>().sendMessage.run();
+            isEditing ? manager.editMessage.run() : manager.sendMessage.run();
             scrollController.animateTo(
               0,
               duration: const Duration(milliseconds: 300),

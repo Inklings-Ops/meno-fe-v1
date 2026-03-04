@@ -9,6 +9,7 @@ export './create_broadcast/create_broadcast_form_widget.dart';
 export './create_broadcast/create_broadcast_list_tile.dart';
 export './create_broadcast/create_broadcast_page.dart';
 export './home/activity_card.dart';
+export './home/broadcast_section.dart';
 export './home/home_page.dart';
 export './home/live_broadcast_activity_card.dart';
 export './home/live_for_you_section_widget.dart';

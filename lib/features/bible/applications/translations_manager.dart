@@ -49,7 +49,7 @@ class TranslationsManager with MLogger implements Disposable {
     errorFilterFn: menoExceptionFilter,
   );
 
-  /// Downloads a translation by [abbreviation].
+  /// Downloads a translation by abbreviation.
   ///
   /// Progress is surfaced via [downloadProgress] + [downloadingAbbreviation].
   /// On success the translation is moved to [downloadedTranslations].

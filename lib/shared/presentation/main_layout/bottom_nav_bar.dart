@@ -3,8 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/app/router/routes.dart';
 import 'package:meno/core/core.dart';
-import 'package:meno/shared/domain/domain.dart' show Destination;
-import 'package:meno/shared/extensions/m_snack_bar_extension.dart';
 import 'package:meno/shared/shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
