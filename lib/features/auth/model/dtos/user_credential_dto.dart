@@ -1,6 +1,6 @@
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/dtos/user_dto.dart';
-import 'package:meno/features/auth/models/models.dart';
+import 'package:meno/features/auth/model/model.dart';
 
 final class UserCredentialDto {
   const UserCredentialDto({

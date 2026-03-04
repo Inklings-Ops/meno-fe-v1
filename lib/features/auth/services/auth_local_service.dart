@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:meno/_core/_core.dart' show StorageKeys;
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/dtos/dtos.dart';
-import 'package:meno/features/auth/models/value_objects/session.dart';
+import 'package:meno/features/auth/model/model.dart';
 
 /// Infrastructure: Local persistence service for authentication.
 final class AuthLocalService {

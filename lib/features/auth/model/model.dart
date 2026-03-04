@@ -1,3 +1,4 @@
+export 'dtos/dtos.dart';
 export 'entities/otp_type.dart';
 export 'entities/user_credential.dart';
 export 'value_objects/password.dart';

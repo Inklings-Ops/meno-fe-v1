@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:meno/features/auth/models/value_objects/token.dart';
+import 'package:meno/features/auth/model/value_objects/token.dart';
 
 final class Session with EquatableMixin {
   const Session({
