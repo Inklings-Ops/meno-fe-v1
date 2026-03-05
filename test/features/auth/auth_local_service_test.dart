@@ -1,13 +1,12 @@
 import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/model/dtos/user_credential_dto.dart';
 import 'package:meno/features/auth/model/model.dart';
-import 'package:meno/features/auth/model/dtos/dtos.dart';
 import 'package:meno/features/auth/services/auth_local_service.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([SecureStorage])
 import 'auth_local_service_test.mocks.dart';
