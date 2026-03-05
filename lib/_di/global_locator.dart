@@ -4,8 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:meno/_core/env/env.dart';
+import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/bible/bible.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String kRootScopeName = 'root-session';
@@ -52,6 +54,7 @@ void configureGlobalDependencies() {
     dependsOn: [SessionInterceptor, LogInterceptor],
   );
 
+  // Auth
   di.registerSingletonWithDependencies(
     () => AuthLocalService(di<SecureStorage>()),
     dependsOn: [SecureStorage],
@@ -63,5 +66,35 @@ void configureGlobalDependencies() {
   di.registerSingletonWithDependencies(
     () => AuthManager(di<AuthHttpService>(), di<AuthLocalService>()),
     dependsOn: [AuthHttpService, AuthLocalService],
+  );
+
+  // Bible
+  di.registerSingletonWithDependencies(
+    () => BibleLocalService(di<Database>()),
+    dependsOn: [Database],
+  );
+
+  di.registerSingletonWithDependencies(
+    () => BibleHttpService(di<HttpClient>()),
+    dependsOn: [HttpClient],
+  );
+
+  di.registerSingletonAsync(() async {
+    final manager = TranslationsManager(
+      di<BibleHttpService>(),
+      di<BibleLocalService>(),
+    );
+    manager.initialize.run();
+    return manager;
+  }, dependsOn: [BibleHttpService, BibleLocalService]);
+
+  di.registerSingletonWithDependencies(() {
+    return BibleManager(di<BibleLocalService>());
+  }, dependsOn: [BibleLocalService, TranslationsManager]);
+
+  // Router
+  di.registerSingletonWithDependencies(
+    () => MenoRouter(di<AuthManager>()),
+    dependsOn: [AuthManager],
   );
 }
