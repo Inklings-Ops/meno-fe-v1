@@ -3,6 +3,7 @@ enum OrderBy {
   desc('DESC');
 
   const OrderBy(this.value);
+
   final String value;
 
   static OrderBy? fromString(String? value) {
@@ -21,16 +22,9 @@ enum SyncStatus {
   conflict('conflict');
 
   const SyncStatus(this.value);
+
   final String value;
 
   static SyncStatus fromBool(bool syncPending) =>
       syncPending ? SyncStatus.pending : SyncStatus.synced;
-}
-
-enum ParticipantRole { host, cohost, listener, unknown }
-
-extension ParticipantRoleX on ParticipantRole {
-  bool get isHost => this == ParticipantRole.host;
-  bool get isCohost => this == ParticipantRole.cohost;
-  bool get isListener => this == ParticipantRole.listener;
 }
