@@ -1,14 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:meno/_core/exceptions/meno_exception.dart';
 import 'package:meno/features/broadcast/model/model.dart';
 
 final class BroadcastSessionDto with EquatableMixin {
   const BroadcastSessionDto({required this.broadcast, required this.timestamp});
 
   factory BroadcastSessionDto.fromJson(dynamic json) {
-    if (json is! Map<String, dynamic>) {
-      throw const FormatException('Invalid JSON format');
-    }
-
+    if (json is! Map<String, dynamic>) throw FormatError<BroadcastDraftDto>();
     return BroadcastSessionDto(
       broadcast: BroadcastDto.fromJson(json[_kBroadcast]),
       timestamp: DateTime.parse(json[_kTimestamp] as String),

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_shared/model/entities/common_enums.dart';
 import 'package:meno/features/broadcast/model/model.dart';
 
 final class BroadcastDto with EquatableMixin {

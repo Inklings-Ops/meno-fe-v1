@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:meno/_core/keys/storage_keys.dart';
+import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/local_storage.dart';
-import 'package:meno/features/broadcast/model/dtos/dtos.dart';
+import 'package:meno/features/broadcast/model/model.dart';
 
 final class BroadcastLocalService {
   const BroadcastLocalService(this._storage);
@@ -19,26 +19,26 @@ final class BroadcastLocalService {
   /// Saves the active broadcast ID specifically for THIS user.
   /// Saves a [BroadcastSessionDto] class/object.
   Future<void> saveActiveBroadcastSession({
-    required String userId,
-    required BroadcastSessionDto session,
+    required Id userId,
+    required BroadcastSession session,
   }) async {
-    final key = StorageKeys.activeBroadcast(userId);
-    await _storage.setString(key, jsonEncode(session.toJson()));
+    final key = StorageKeys.activeBroadcast(userId.getOrCrash());
+    await _storage.setString(key, jsonEncode(session.toDto.toJson()));
   }
 
   /// Retrieves the ID if the app was killed mid-broadcast.
   /// Returns a [List] of the broadcast ID and the broadcast token.
-  BroadcastSessionDto? getActiveBroadcastSession(String userId) {
-    final key = StorageKeys.activeBroadcast(userId);
+  BroadcastSession? getActiveBroadcastSession(Id userId) {
+    final key = StorageKeys.activeBroadcast(userId.getOrCrash());
     final jsonString = _storage.getString(key);
     if (jsonString == null) return null;
     final json = jsonDecode(jsonString) as Map<String, dynamic>;
-    return BroadcastSessionDto.fromJson(json);
+    return BroadcastSessionDto.fromJson(json).toDomain;
   }
 
   /// Clears the ID when the user taps "End Broadcast" gracefully.
-  Future<void> clearActiveBroadcastId(String userId) async {
-    final key = StorageKeys.activeBroadcast(userId);
+  Future<void> clearActiveBroadcastId(Id userId) async {
+    final key = StorageKeys.activeBroadcast(userId.getOrCrash());
     await _storage.remove(key);
   }
 
@@ -46,13 +46,15 @@ final class BroadcastLocalService {
   // BROADCAST DRAFTS
   // ======================================================================
   /// Returns all drafts sorted by 'lastModified' (Newest first)
-  List<BroadcastDraftDto?> getAllDrafts(String userId) {
-    final key = StorageKeys.broadcastDrafts(userId);
+  List<BroadcastDraft?> getAllDrafts(Id userId) {
+    final key = StorageKeys.broadcastDrafts(userId.getOrCrash());
     final jsonString = _storage.getString(key);
     if (jsonString == null) return [];
     try {
       final list = jsonDecode(jsonString) as List<dynamic>;
-      final drafts = list.map(BroadcastDraftDto.fromJson).toList();
+      final drafts = list
+          .map((e) => BroadcastDraftDto.fromJson(e).toDomain)
+          .toList();
 
       // Sort in descending order (from newest to oldest)
       drafts.sort((a, b) => b.lastModified.compareTo(a.lastModified));
@@ -64,11 +66,11 @@ final class BroadcastLocalService {
 
   /// Saves the form data (Title, Desc, Tags) so the user can come back later.
   /// Returns the updated list of drafts
-  Future<List<BroadcastDraftDto?>> saveDraft({
-    required String userId,
-    required BroadcastDraftDto draft,
+  Future<List<BroadcastDraft?>> saveDraft({
+    required Id userId,
+    required BroadcastDraft draft,
   }) async {
-    final key = StorageKeys.broadcastDrafts(userId);
+    final key = StorageKeys.broadcastDrafts(userId.getOrCrash());
     final currentList = getAllDrafts(userId);
 
     currentList.removeWhere((element) => element?.id == draft.id);
@@ -79,7 +81,7 @@ final class BroadcastLocalService {
       currentList.removeRange(_maxDrafts, currentList.length);
     }
 
-    final jsonList = currentList.map((draft) => draft?.toJson()).toList();
+    final jsonList = currentList.map((draft) => draft?.toDto.toJson()).toList();
     final jsonListString = jsonEncode(jsonList);
     await _storage.setString(key, jsonListString);
 
@@ -88,11 +90,11 @@ final class BroadcastLocalService {
 
   /// Deletes a specific draft using the draft [draftId]
   /// Returns the updated list of drafts
-  Future<List<BroadcastDraftDto?>> deleteDraft({
-    required String userId,
-    required String draftId,
+  Future<List<BroadcastDraft?>> deleteDraft({
+    required Id userId,
+    required Id draftId,
   }) async {
-    final key = StorageKeys.broadcastDrafts(userId);
+    final key = StorageKeys.broadcastDrafts(userId.getOrCrash());
     final currentList = getAllDrafts(userId);
 
     currentList.removeWhere((element) => element?.id == draftId);
@@ -100,8 +102,8 @@ final class BroadcastLocalService {
     if (currentList.isNotEmpty) {
       await _storage.remove(key);
     } else {
-      final jsonList = currentList.map((draft) => draft?.toJson()).toList();
-      final jsonListString = jsonEncode(jsonList);
+      final list = currentList.map((draft) => draft?.toDto.toJson()).toList();
+      final jsonListString = jsonEncode(list);
       await _storage.setString(key, jsonListString);
     }
 
@@ -109,8 +111,8 @@ final class BroadcastLocalService {
   }
 
   /// Clears all drafts for the user.
-  Future<void> clearDraft(String userId) async {
-    final key = StorageKeys.broadcastDrafts(userId);
+  Future<void> clearDraft(Id userId) async {
+    final key = StorageKeys.broadcastDrafts(userId.getOrCrash());
     await _storage.remove(key);
   }
 
@@ -120,53 +122,50 @@ final class BroadcastLocalService {
 
   /// Saves the list of broadcasts for the user.
   Future<void> cacheRecentBroadcasts({
-    required String userId,
-    required List<BroadcastDto> list,
+    required Id userId,
+    required List<Broadcast> list,
   }) async {
-    final key = StorageKeys.broadcastCache(userId);
+    final key = StorageKeys.broadcastCache(userId.getOrCrash());
 
     if (list.isEmpty) {
       await _storage.remove(key);
       return;
     }
 
-    final jsonList = list.map((draft) => draft.toJson()).toList();
+    final jsonList = list.map((draft) => draft.toDto.toJson()).toList();
     final jsonListString = jsonEncode(jsonList);
     await _storage.setString(key, jsonListString);
   }
 
   /// Retrieves the list of broadcasts for the user.
-  Future<List<BroadcastDto>> getCachedBroadcasts(String userId) async {
-    final key = StorageKeys.broadcastCache(userId);
+  Future<List<Broadcast>> getCachedBroadcasts(Id userId) async {
+    final key = StorageKeys.broadcastCache(userId.getOrCrash());
     final jsonString = _storage.getString(key);
     if (jsonString == null) return [];
 
     try {
       final raw = jsonDecode(jsonString) as List<dynamic>;
-      return raw.map(BroadcastDto.fromJson).toList();
+      return raw.map((e) => BroadcastDto.fromJson(e).toDomain).toList();
     } catch (_) {
       return [];
     }
   }
 
-  Future<void> saveBroadcastSummary(
-    String userId,
-    BroadcastSummaryDto summary,
-  ) async {
-    final key = StorageKeys.broadcastSummary(userId);
-    final jsonString = jsonEncode(summary.toJson());
+  Future<void> saveBroadcastSummary(Id userId, BroadcastSummary summary) async {
+    final key = StorageKeys.broadcastSummary(userId.getOrCrash());
+    final jsonString = jsonEncode(summary.toDto.toJson());
     await _storage.setString(key, jsonString);
   }
 
-  BroadcastSummaryDto? getLatestBroadcastSummary(String userId) {
-    final key = StorageKeys.broadcastSummary(userId);
+  BroadcastSummary? getLatestBroadcastSummary(Id userId) {
+    final key = StorageKeys.broadcastSummary(userId.getOrCrash());
     final jsonString = _storage.getString(key);
     if (jsonString == null) return null;
-    return BroadcastSummaryDto.fromJson(jsonDecode(jsonString));
+    return BroadcastSummaryDto.fromJson(jsonDecode(jsonString)).toDomain;
   }
 
-  Future<void> clearBroadcastSummary(String userId) {
-    final key = StorageKeys.broadcastSummary(userId);
+  Future<void> clearBroadcastSummary(Id userId) {
+    final key = StorageKeys.broadcastSummary(userId.getOrCrash());
     return _storage.remove(key);
   }
 
@@ -178,14 +177,14 @@ final class BroadcastLocalService {
   /// Because LocalStorage.watchKey emits the current value immediately
   /// (if using startWith) or we can manually yield it, this stream is always
   /// up to date.
-  Stream<BroadcastSessionDto?> watchActiveSession(String userId) {
-    final key = StorageKeys.activeBroadcast(userId);
+  Stream<BroadcastSession?> watchActiveSession(Id userId) {
+    final key = StorageKeys.activeBroadcast(userId.getOrCrash());
 
     return _storage.watchKey(key).map((jsonString) {
       if (jsonString == null) return null;
       try {
         final json = jsonDecode(jsonString) as Map<String, dynamic>;
-        return BroadcastSessionDto.fromJson(json);
+        return BroadcastSessionDto.fromJson(json).toDomain;
       } catch (_) {
         return null;
       }

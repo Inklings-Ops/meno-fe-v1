@@ -1,38 +1,43 @@
 import 'dart:async';
-import 'dart:io' show File, Platform;
+import 'dart:io' show Platform;
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' show CancelToken, FormData, MultipartFile;
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/services/http_client.dart';
-import 'package:meno/features/broadcast/model/dtos/dtos.dart';
+import 'package:meno/_shared/_shared.dart';
+import 'package:meno/features/broadcast/model/model.dart';
 
 final class BroadcastHttpDataSource {
   const BroadcastHttpDataSource(this._client);
 
   final HttpClient _client;
 
-  Future<BroadcastDto?> createBroadcast({
-    required String title,
-    required String description,
+  Future<Broadcast> createBroadcast({
+    required SingleLineString title,
+    required MultiLineString description,
     String? timezone,
-    List<String>? cohosts,
-    File? image,
+    List<Id>? cohosts,
+    ImageInput? image,
     CancelToken? cancelToken,
   }) async {
     final data = FormData();
 
-    data.fields.add(MapEntry('title', title));
+    data.fields.add(MapEntry('title', title.getOrCrash()));
 
-    data.fields.add(MapEntry('description', description));
+    data.fields.add(MapEntry('description', description.getOrCrash()));
 
-    cohosts?.forEach((i) => data.fields.add(MapEntry('cohosts', i)));
+    if (cohosts?.isNotEmpty ?? false) {
+      cohosts?.forEach(
+        (i) => data.fields.add(MapEntry('cohosts', i.getOrCrash())),
+      );
+    }
 
     if (timezone != null) data.fields.add(MapEntry('timezone', timezone));
 
-    if (image != null) {
+    final imageFile = image?.getFile();
+    if (imageFile != null) {
       final imageData = MultipartFile.fromFileSync(
-        image.path,
-        filename: image.path.split(Platform.pathSeparator).last,
+        imageFile.path,
+        filename: imageFile.path.split(Platform.pathSeparator).last,
       );
       data.files.add(MapEntry('image', imageData));
     }
@@ -40,43 +45,46 @@ final class BroadcastHttpDataSource {
     return _client.upload(
       '/broadcasts',
       formData: data,
-      fromJson: BroadcastDto.fromJson,
+      fromJson: (json) => BroadcastDto.fromJson(json).toDomain,
       cancelToken: cancelToken,
     );
   }
 
-  Future<BroadcastDto?> editBroadcast(
-    String broadcastId, {
-    String? title,
-    String? description,
+  Future<Broadcast> editBroadcast(
+    Id broadcastId, {
+    SingleLineString? title,
+    MultiLineString? description,
     String? timezone,
-    List<String>? cohosts,
-    String? startTime,
-    File? image,
+    List<Id>? cohosts,
+    DateTime? startTime,
+    ImageInput? image,
     CancelToken? cancelToken,
   }) async {
     final data = FormData();
 
-    if (title != null) data.fields.add(MapEntry('title', title));
+    if (title != null) data.fields.add(MapEntry('title', title.getOrCrash()));
 
     if (description != null) {
-      data.fields.add(MapEntry('description', description));
+      data.fields.add(MapEntry('description', description.getOrCrash()));
     }
 
     if (timezone != null) data.fields.add(MapEntry('timezone', timezone));
 
     if (cohosts != null) {
       for (final i in cohosts) {
-        data.fields.add(MapEntry('cohosts', i));
+        data.fields.add(MapEntry('cohosts', i.getOrCrash()));
       }
     }
 
-    if (startTime != null) data.fields.add(MapEntry('startTime', startTime));
+    if (startTime != null) {
+      data.fields.add(MapEntry('startTime', startTime.toIso8601String()));
+    }
 
-    if (image != null) {
+    final imageFile = image?.getFile();
+    if (imageFile != null) {
       final imageData = MultipartFile.fromFileSync(
-        image.path,
-        filename: image.path.split(Platform.pathSeparator).last,
+        imageFile.path,
+        filename: imageFile.path.split(Platform.pathSeparator).last,
       );
       data.files.add(MapEntry('image', imageData));
     }
@@ -84,78 +92,101 @@ final class BroadcastHttpDataSource {
     return _client.put(
       '/broadcasts/$broadcastId',
       data: data,
-      fromJson: BroadcastDto.fromJson,
+      fromJson: (json) => BroadcastDto.fromJson(json).toDomain,
       cancelToken: cancelToken,
     );
   }
 
-  Future<void> deleteBroadcast(String broadcastId, {CancelToken? cancelToken}) {
+  Future<void> deleteBroadcast(Id broadcastId, {CancelToken? cancelToken}) {
     return _client.deleteUnit(
-      '/broadcasts/$broadcastId',
+      '/broadcasts/${broadcastId.getOrCrash()}',
       cancelToken: cancelToken,
     );
   }
 
-  Future<BroadcastDto?> joinBroadcast(
-    String broadcastId, {
+  Future<Broadcast> joinBroadcast(
+    Id broadcastId, {
     CancelToken? cancelToken,
   }) async {
     return _client.post(
-      '/broadcasts/$broadcastId/join',
+      '/broadcasts/${broadcastId.getOrCrash()}/join',
       fromJson: (json) {
         if (json is! Map<String, dynamic>) throw Exception('Unknown type');
         final broadcastJson = json['broadcast'];
         final broadcastToken = json['broadcastToken'] as String?;
-        return BroadcastDto.fromJson(broadcastJson, broadcastToken);
+        return BroadcastDto.fromJson(broadcastJson, broadcastToken).toDomain;
       },
       cancelToken: cancelToken,
     );
   }
 
-  Future<BroadcastDto?> startBroadcast(
-    String broadcastId, {
+  Future<Broadcast> startBroadcast(
+    Id broadcastId, {
     CancelToken? cancelToken,
   }) async {
     return _client.put(
-      '/broadcasts/$broadcastId/start',
-      fromJson: BroadcastDto.fromJson,
+      '/broadcasts/${broadcastId.getOrCrash()}/start',
+      fromJson: (json) => BroadcastDto.fromJson(json).toDomain,
       cancelToken: cancelToken,
     );
   }
 
-  Future<dynamic> getBroadcasts(
-    Map<String, dynamic> queryParameters, {
+  Future<PagedList<Broadcast?>> getBroadcasts(
+    BroadcastQuery query, {
     CancelToken? cancelToken,
   }) async {
     return _client.get(
       '/broadcasts',
-      queryParameters: queryParameters,
-      fromJson: (json) => json,
+      queryParameters: query.toApiParams,
+      fromJson: (json) => PagedList<Broadcast?>.fromJson(
+        json as Map<String, dynamic>,
+        (jsonT) => BroadcastDto.fromJson(jsonT).toDomain,
+      ),
       cancelToken: cancelToken,
     );
   }
 
-  Future<List<ParticipantDto>> getLiveListeners(
-    String broadcastId, {
+  Future<Broadcast> getBroadcast(
+    Id broadcastId, {
     CancelToken? cancelToken,
   }) async {
     return _client.get(
-      '/broadcasts/$broadcastId/live-listeners',
+      '/broadcasts',
+      queryParameters: {'id': broadcastId.getOrCrash()},
       fromJson: (json) {
-        if (json is! List) throw FormatError<List<ParticipantDto>>();
-        return json.map(ParticipantDto.fromJson).toList();
+        if (json is! Map<String, dynamic>) throw Exception('Unknown type');
+        final items = json['broadcasts'] as List<dynamic>;
+        if (items.isEmpty) throw const MenoException('No broadcast found');
+        return BroadcastDto.fromJson(items.first).toDomain;
       },
       cancelToken: cancelToken,
     );
   }
 
-  Future<dynamic> getListeners(
-    String broadcastId, {
+  Future<List<Participant>> getLiveListeners(
+    Id broadcastId, {
     CancelToken? cancelToken,
   }) async {
     return _client.get(
-      '/broadcasts/$broadcastId/listeners',
-      fromJson: (json) => json,
+      '/broadcasts/${broadcastId.getOrCrash()}/live-listeners',
+      fromJson: (json) {
+        if (json is! List) throw FormatError<List<ParticipantDto>>();
+        return json.map((e) => ParticipantDto.fromJson(e).toDomain).toList();
+      },
+      cancelToken: cancelToken,
+    );
+  }
+
+  Future<PagedList<Participant?>> getListeners(
+    Id broadcastId, {
+    CancelToken? cancelToken,
+  }) async {
+    return _client.get(
+      '/broadcasts/${broadcastId.getOrCrash()}/listeners',
+      fromJson: (json) => PagedList<Participant?>.fromJson(
+        json as Map<String, dynamic>,
+        (jsonT) => ParticipantDto.fromJson(jsonT).toDomain,
+      ),
       cancelToken: cancelToken,
     );
   }

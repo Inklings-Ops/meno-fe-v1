@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
+import 'package:meno/_shared/model/entities/common_enums.dart';
 import 'package:meno/features/broadcast/model/entities/entities.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
