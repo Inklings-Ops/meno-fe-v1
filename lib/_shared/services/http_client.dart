@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/dtos/response_dto.dart';
+import 'package:meno/_shared/model/model.dart' show ResponseDto;
 
 // ========================================================================
 // TYPE DEFINITIONS

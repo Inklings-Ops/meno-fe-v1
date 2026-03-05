@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meno/_shared/models/user.dart';
+import 'package:meno/_shared/model/entities/user.dart';
 import 'package:meno/features/auth/model/value_objects/session.dart';
 
 final class UserCredential with EquatableMixin {

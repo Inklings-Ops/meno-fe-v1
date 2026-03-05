@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meno/_shared/dtos/response_dto.dart';
+import 'package:meno/_shared/model/model.dart' show ResponseDto;
 
 /// The base class for all logical errors in the app
 final class MenoException with EquatableMixin implements Exception {

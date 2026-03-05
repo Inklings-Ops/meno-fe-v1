@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
-import 'package:meno/_shared/models/models.dart';
+import 'package:meno/_shared/model/entities/entities.dart';
 
 final class User with EquatableMixin implements IEntity {
   const User({

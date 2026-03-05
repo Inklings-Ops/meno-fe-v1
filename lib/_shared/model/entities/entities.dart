@@ -1,3 +1,4 @@
+//GENERATED BARREL FILE
 export 'common_enums.dart';
 export 'entity.dart';
 export 'general_settings.dart';

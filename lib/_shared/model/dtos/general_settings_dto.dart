@@ -1,7 +1,6 @@
 import 'package:meno/_core/_core.dart' show FormatError;
 import 'package:meno/_core/value_objects/id.dart';
-import 'package:meno/_shared/dtos/notification_setting_dto.dart';
-import 'package:meno/_shared/models/models.dart';
+import 'package:meno/_shared/model/model.dart';
 
 final class GeneralSettingsDto {
   const GeneralSettingsDto({

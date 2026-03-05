@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno/_core/value_objects/image_value_objects.dart';
-import 'package:meno/_shared/models/models.dart';
+import 'package:meno/_shared/model/entities/user.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class UserAccountDetailsWidget extends StatelessWidget {
