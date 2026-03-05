@@ -7,7 +7,7 @@ import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 
-final class AuthManager extends ChangeNotifier implements Disposable {
+class AuthManager extends ChangeNotifier implements Disposable {
   AuthManager(this._http, this._local) {
     _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
 

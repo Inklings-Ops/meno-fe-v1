@@ -16,7 +16,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// - Acts as the single source of truth for secure data
 /// - Decouples infrastructure (interceptors) from features (auth)
 /// - Enables observer pattern without tight coupling
-final class SecureStorage {
+class SecureStorage {
   SecureStorage(this._storage);
 
   final FlutterSecureStorage _storage;

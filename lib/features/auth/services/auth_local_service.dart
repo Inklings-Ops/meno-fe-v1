@@ -4,7 +4,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/model/model.dart';
 
 /// Infrastructure: Local persistence service for authentication.
-final class AuthLocalService {
+class AuthLocalService {
   const AuthLocalService(this._storage);
 
   final SecureStorage _storage;

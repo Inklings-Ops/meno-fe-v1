@@ -1,9 +1,9 @@
 export 'manager/auth_manager.dart';
 export 'model/model.dart';
 export 'pages/login_page.dart';
+export 'services/auth_http_service.dart';
+export 'services/auth_local_service.dart';
 export 'widgets/auth_redirection_text.dart';
 export 'widgets/google_divider.dart';
 export 'widgets/login_form_widget.dart';
 export 'widgets/user_account_details_widget.dart';
-export 'services/auth_http_service.dart';
-export 'services/auth_local_service.dart';
