@@ -6,8 +6,8 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/model/model.dart';
 
-final class BroadcastHttpDataSource {
-  const BroadcastHttpDataSource(this._client);
+final class BroadcastHttpService {
+  const BroadcastHttpService(this._client);
 
   final HttpClient _client;
 

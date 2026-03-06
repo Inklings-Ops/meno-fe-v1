@@ -6,7 +6,7 @@ import 'package:meno/features/broadcast/services/broadcast_http_service.dart';
 /// Concrete [PagedFeedDataSource] for [Broadcast] items.
 class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
   BroadcastFeedDataSource({
-    required BroadcastHttpDataSource http,
+    required BroadcastHttpService http,
     required BroadcastQuery initialQuery,
   }) : _http = http,
        _query = initialQuery {
@@ -14,7 +14,7 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
     initFetchingSync();
   }
 
-  final BroadcastHttpDataSource _http;
+  final BroadcastHttpService _http;
   BroadcastQuery _query;
 
   @override

@@ -104,3 +104,9 @@ final class CancelledException extends MenoException {
 final class FormatError<T> extends MenoException {
   const FormatError() : super('Invalid format for type $T');
 }
+
+final class NoBroadcastToken extends MenoException {
+  const NoBroadcastToken([
+    super.message = 'No broadcast token found. Cannot start session.',
+  ]);
+}

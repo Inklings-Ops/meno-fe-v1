@@ -10,7 +10,7 @@ import 'package:meno/features/broadcast/services/services.dart';
 
 final class BroadcastEditorManager with MLogger implements Disposable {
   BroadcastEditorManager({
-    required BroadcastHttpDataSource http,
+    required BroadcastHttpService http,
     required BroadcastLocalService local,
     required MediaService media,
     required Id currentUserId,
@@ -19,7 +19,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
        _media = media,
        _currentUserId = currentUserId;
 
-  final BroadcastHttpDataSource _http;
+  final BroadcastHttpService _http;
   final BroadcastLocalService _local;
   final MediaService _media;
   final Id _currentUserId;
