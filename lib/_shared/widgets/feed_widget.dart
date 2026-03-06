@@ -3,12 +3,12 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class FeedViewWidget<TItem> extends WatchingWidget {
-  const FeedViewWidget({
+class FeedWidget<TItem> extends WatchingWidget {
+  const FeedWidget({
     required this.feedSource,
     required this.itemBuilder,
-    required this.skeleton,
     this.layout = FeedLayout.verticalList,
     this.emptyWidget = const MenoEmptyWidget(),
     this.gridCrossAxisCount = 2,
@@ -22,14 +22,13 @@ class FeedViewWidget<TItem> extends WatchingWidget {
     super.key,
   });
 
+  /// Data source for the feed. The widget listens to its notifiers and commands
   final PagedFeedDataSource<TItem> feedSource;
+
+  /// Builds each item in the feed. The feed widget handles fetching items from
   final Widget Function(BuildContext context, TItem item) itemBuilder;
 
-  /// Called while the very first fetch is in-flight (no data yet).
-  /// Return a skeleton/shimmer widget that matches the item shape.
-  final Widget Function(BuildContext context) skeleton;
-
-  /// Dictates how items are arranged inside [FeedViewWidget].
+  /// Dictates how items are arranged inside [FeedWidget].
   final FeedLayout layout;
 
   /// Grid-only: number of columns. Default 2.
@@ -63,10 +62,6 @@ class FeedViewWidget<TItem> extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Watch both notifiers — ordering is stable.
-    final itemCount = watch(feedSource.itemCount).value;
-    final isFetching = watch(feedSource.isFetching).value;
-
     // Trigger the first fetch exactly once.
     callOnce((_) => feedSource.updateDataCommand.run());
 
@@ -85,14 +80,17 @@ class FeedViewWidget<TItem> extends WatchingWidget {
       },
     );
 
+    // Watch both notifiers — ordering is stable.
+    final itemCount = watch(feedSource.itemCount).value;
+    final isFetching = watch(feedSource.isFetching).value;
+    final isInitialLoading = !feedSource.updateWasCalled && isFetching;
+
     if (feedSource.commandErrors.value != null && itemCount == 0) {
       return MenoErrorWidget(
         error: feedSource.commandErrors.value,
         onRetry: feedSource.updateDataCommand.runAsync,
       );
     }
-
-    if (!feedSource.updateWasCalled && isFetching) return skeleton(context);
 
     if (itemCount == 0 && feedSource.updateWasCalled) return emptyWidget;
 
@@ -103,20 +101,22 @@ class FeedViewWidget<TItem> extends WatchingWidget {
     final listItemCount = itemCount + (isFetching ? 1 : 0);
 
     return switch (layout) {
-      FeedLayout.verticalList => _VerticalList(
-        feedSource: feedSource,
-        itemBuilder: itemBuilder,
-        itemCount: listItemCount,
-        isFetching: isFetching,
-        padding: padding,
-        shrinkWrap: shrinkWrap,
-        physics: physics,
-      ),
       FeedLayout.horizontalList => _HorizontalList(
         feedSource: feedSource,
         itemBuilder: itemBuilder,
         itemCount: itemCount,
+        isInitialLoading: isInitialLoading,
         itemExtent: horizontalItemExtent,
+        padding: padding,
+        shrinkWrap: shrinkWrap,
+        physics: physics,
+      ),
+      FeedLayout.verticalList => _VerticalList(
+        feedSource: feedSource,
+        itemBuilder: itemBuilder,
+        itemCount: listItemCount,
+        isInitialLoading: isInitialLoading,
+        isFetching: isFetching,
         padding: padding,
         shrinkWrap: shrinkWrap,
         physics: physics,
@@ -131,6 +131,7 @@ class FeedViewWidget<TItem> extends WatchingWidget {
         childAspectRatio: gridChildAspectRatio,
         mainAxisSpacing: gridMainAxisSpacing,
         crossAxisSpacing: gridCrossAxisSpacing,
+        isInitialLoading: isInitialLoading,
         padding: padding,
         shrinkWrap: shrinkWrap,
         physics: physics,
@@ -145,6 +146,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
     required this.feedSource,
     required this.itemBuilder,
     required this.itemCount,
+    required this.isInitialLoading,
     this.itemExtent,
     this.padding,
     this.shrinkWrap = false,
@@ -158,19 +160,24 @@ class _HorizontalList<TItem> extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final bool isInitialLoading;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       scrollDirection: .horizontal,
-      padding: padding ?? .zero,
+      clipBehavior: .none,
+      padding: padding ?? const .symmetric(horizontal: Insets.lg),
       shrinkWrap: shrinkWrap,
       physics: physics,
-      itemExtent: itemExtent,
+      separatorBuilder: (context, i) => const SizedBox(width: 24),
       itemCount: itemCount,
       itemBuilder: (context, index) {
         final item = feedSource.getItemAtIndex(index);
-        return itemBuilder(context, item);
+        return Skeletonizer(
+          enabled: isInitialLoading,
+          child: itemBuilder(context, item),
+        );
       },
     );
   }
@@ -183,6 +190,7 @@ class _VerticalList<TItem> extends StatelessWidget {
     required this.itemBuilder,
     required this.itemCount,
     required this.isFetching,
+    required this.isInitialLoading,
     this.padding,
     this.shrinkWrap = false,
     this.physics,
@@ -195,11 +203,12 @@ class _VerticalList<TItem> extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final bool isInitialLoading;
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => feedSource.updateDataCommand.runAsync(),
+      onRefresh: feedSource.updateDataCommand.runAsync,
       child: CustomScrollView(
         shrinkWrap: shrinkWrap,
         physics: physics,
@@ -211,16 +220,21 @@ class _VerticalList<TItem> extends StatelessWidget {
               separatorBuilder: (_, __) => Spaces.verticalLarge,
               itemBuilder: (context, index) {
                 final item = feedSource.getItemAtIndex(index);
-                return itemBuilder(context, item);
+                return Skeletonizer(
+                  enabled: isInitialLoading,
+                  child: itemBuilder(context, item),
+                );
               },
             ),
           ),
-          SliverToBoxAdapter(
-            child: MenoPagedLoadingIndicator(
-              isLoading: isFetching,
-              hasMore: feedSource.hasNextPage,
+          if (!isInitialLoading) ...[
+            SliverToBoxAdapter(
+              child: MenoPagedLoadingIndicator(
+                isLoading: isFetching,
+                hasMore: feedSource.hasNextPage,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -239,6 +253,7 @@ class _GridList<TItem> extends StatelessWidget {
     required this.childAspectRatio,
     required this.mainAxisSpacing,
     required this.crossAxisSpacing,
+    required this.isInitialLoading,
     this.padding,
     this.shrinkWrap = false,
     this.physics,
@@ -256,11 +271,12 @@ class _GridList<TItem> extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final bool isInitialLoading;
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => feedSource.updateDataCommand.runAsync(),
+      onRefresh: feedSource.updateDataCommand.runAsync,
       child: CustomScrollView(
         shrinkWrap: shrinkWrap,
         physics: physics,
@@ -276,7 +292,10 @@ class _GridList<TItem> extends StatelessWidget {
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
                 final item = feedSource.getItemAtIndex(index);
-                return itemBuilder(context, item);
+                return Skeletonizer(
+                  enabled: isInitialLoading,
+                  child: itemBuilder(context, item),
+                );
               }, childCount: itemCount),
             ),
           ),
@@ -292,7 +311,7 @@ class _GridList<TItem> extends StatelessWidget {
   }
 }
 
-/// Dictates how items are arranged inside [FeedViewWidget].
+/// Dictates how items are arranged inside [FeedWidget].
 enum FeedLayout {
   /// Vertical [ListView] — default. Good for profile broadcast tiles.
   verticalList,

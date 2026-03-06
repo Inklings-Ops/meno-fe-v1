@@ -32,11 +32,9 @@ class _AllSavedCredentialsContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = di<AuthManager>();
-
-    final user = watchValue((AuthManager m) => m.currentUser);
-    final accounts = watchValue((AuthManager m) => m.accounts);
-    final lastKnownUserId = watchValue((AuthManager m) => m.lastKnownUser).id;
+    final user = watchValue((UserManager m) => m.currentUser);
+    final accounts = watchValue((UserManager m) => m.accounts);
+    final lastKnownUserId = watchValue((UserManager m) => m.lastKnownUser).id;
 
     final availableAccounts = accounts.values.toList();
     final selectedCredential = accounts[lastKnownUserId];
@@ -81,7 +79,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           onTap: () {
             context.pop();
-            auth.addAccount.run();
+            di<AuthManager>().addAccount.run();
           },
         ),
         Spaces.verticalSmall,

@@ -9,8 +9,8 @@ class MenoErrorWidget extends StatelessWidget {
     this.showRetryButton = true,
     this.onRetry,
     super.key,
-    this.margin = const EdgeInsets.symmetric(horizontal: 16),
-    this.padding = const EdgeInsets.all(16),
+    this.margin = const .all(16),
+    this.padding = const .all(16),
   }) : assert(
          error != null || message != null,
          'Either error or message must be provided',

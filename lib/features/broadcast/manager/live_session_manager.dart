@@ -30,16 +30,17 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   late final BroadcastTimerManager timer;
 
   late final broadcast = ValueNotifier<Broadcast>(_session.broadcast);
-  final sessionState = ValueNotifier<LiveSessionState>(const .initializing());
+  final state = ValueNotifier<LiveSessionState>(const .initializing());
   final status = ValueNotifier<LiveStatus>(.initializing);
   final isMicrophoneEnabled = ValueNotifier<bool>(false);
+  final isHost = ValueNotifier<bool>(false);
 
   StreamSubscription<LiveKitState>? _liveKitStateSubscription;
   StreamSubscription<EndedBroadcast>? _endedBroadcastSubscription;
   StreamSubscription<dynamic>? _hostDisconnectedSubscription;
   StreamSubscription<dynamic>? _hostReconnectedSubscription;
 
-  bool _isHost = false;
+  // bool isHost.value = false;
   Timer? _reconnectionTimer;
   int _reconnectionAttempts = 0;
   static const int _maxReconnectionAttempts = 5;
@@ -64,10 +65,10 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
 
   late final _initializeSession = Command.createSyncNoParamNoResult(() {
     final broadcast = _session.broadcast;
-    sessionState.value = const .initializing();
+    state.value = const .initializing();
     status.value = .initializing;
 
-    _isHost = broadcast.effectiveCreatorId == _currentUserId;
+    isHost.value = broadcast.effectiveCreatorId == _currentUserId;
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(_connectToLiveKit);
 
   late final _connectToLiveKit = Command.createAsyncNoParamNoResult(() async {
@@ -76,7 +77,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     final broadcastToken = _session.broadcast.broadcastToken;
     if (broadcastToken == null) throw const NoBroadcastToken();
 
-    await switch (_isHost) {
+    await switch (isHost.value) {
       true => _livekit.broadcast(broadcastToken),
       false => _livekit.stream(broadcastToken),
     };
@@ -84,7 +85,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
 
   late final _emitSocketEvent = Command.createAsyncNoParamNoResult(() async {
     final broadcastId = _session.broadcast.id;
-    if (_isHost) {
+    if (isHost.value) {
       await _socket.emitStartedBroadcast(broadcastId);
       await _local.deleteDraft(userId: _currentUserId, draftId: broadcastId);
     } else {
@@ -93,8 +94,8 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(_finalizeSession);
 
   late final _finalizeSession = Command.createSyncNoParamNoResult(() {
-    if (_isHost) isMicrophoneEnabled.value = _livekit.isMicrophoneEnabled;
-    sessionState.value = _isHost ? const .broadcasting() : const .listening();
+    if (isHost.value) isMicrophoneEnabled.value = _livekit.isMicrophoneEnabled;
+    state.value = isHost.value ? const .broadcasting() : const .streaming();
     status.value = .live;
     _reconnectionAttempts = 0;
     timer.start.run();
@@ -108,7 +109,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     timer.stop.run();
     log.i('LiveSessionManager: Timer stopped - ${timer.currentElapsed}');
 
-    await switch (_isHost) {
+    await switch (isHost.value) {
       true => _socket.emitEndBroadcast(broadcastId),
       false => _socket.emitLeaveBroadcast(broadcastId),
     };
@@ -127,11 +128,11 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   late final reconnectToSocket = Command.createAsyncNoParamNoResult(() async {
     log.i('LiveSessionManager: Socket reconnected, syncing state');
     // If we're a broadcaster and LiveKit is connected, notify server again
-    if (_isHost && _livekit.connected) {
+    if (isHost.value && _livekit.connected) {
       log.i('LiveSessionManager: Notifying server that broadcast started');
 
       // Emit socket event
-      if (_isHost) {
+      if (isHost.value) {
         await _socket.emitStartedBroadcast(_session.broadcast.id);
       } else {
         await _socket.emitJoinedBroadcast(_session.broadcast.id);
@@ -189,7 +190,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       final err = error.error;
       log.e('LiveSessionManager: LiveKit connection failed - $err');
       final errorStr = _getErrorMessage(err);
-      sessionState.value = .error(errorStr);
+      state.value = .error(errorStr);
       status.value = .offAir;
 
       // Retry connection for certain failures
@@ -207,7 +208,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       final e = error.error;
       log.e('LiveSessionManager: Socket connection failed - $e');
       final errorStr = _getErrorMessage(e);
-      sessionState.value = .error(errorStr);
+      state.value = .error(errorStr);
       status.value = .offAir;
 
       if (e is SocketNotConnectedException || e is SocketTimeoutException) {
@@ -222,7 +223,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       if (result.hasError) {
         final error = result.error;
         log.e('LiveSessionManager: Error ending session - $error');
-        sessionState.value = .error(_getErrorMessage(error));
+        state.value = .error(_getErrorMessage(error));
         status.value = LiveStatus.offAir;
       }
 
@@ -230,7 +231,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
         log.i('LiveSessionManager: Broadcast ended on server');
         await _livekit.disconnect();
         await _local.clearActiveBroadcastId(_currentUserId);
-        sessionState.value = const .ended();
+        state.value = const .ended();
         status.value = .offAir;
       }
     });
@@ -267,17 +268,17 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
         if (timer.isRunning.value) timer.pause.run();
 
         // Auto-reconnect if session is still active
-        if (sessionState.value is! LiveSessionError) _scheduleReconnection();
+        if (this.state.value is! LiveSessionError) _scheduleReconnection();
     }
   }
 
   void _handleHostDisconnected(dynamic data) {
     // Only relevant for listeners
-    if (_isHost) return;
+    if (isHost.value) return;
 
     log.w('LiveSessionManager: Host disconnected from broadcast');
     status.value = .hostDisconnected;
-    sessionState.value = const .hostDisconnected();
+    state.value = const .hostDisconnected();
 
     // Pause timer for listeners when host disconnects
     if (timer.isRunning.value) timer.pause.run();
@@ -285,13 +286,13 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
 
   void _handleHostReconnected(dynamic data) {
     // Only relevant for listeners
-    if (_isHost) return;
+    if (isHost.value) return;
 
     log.i('LiveSessionManager: Host reconnected to broadcast');
     status.value = .live;
 
     // Restore previous state
-    sessionState.value = const .listening();
+    state.value = const .streaming();
 
     // Resume timer for listeners when host reconnects
     if (!timer.isRunning.value) timer.resume.run();
@@ -303,7 +304,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     // Stop timer
     timer.stop.run();
 
-    sessionState.value = const .ended();
+    state.value = const .ended();
     status.value = .offAir;
 
     // Clean up session
@@ -313,7 +314,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   void _scheduleReconnection() {
     if (_reconnectionAttempts >= _maxReconnectionAttempts) {
       // Throw error, reset status & stop timer after max reconnection attempts
-      sessionState.value = const .error('Connection lost. Please restart');
+      state.value = const .error('Connection lost. Please restart');
       status.value = .offAir;
       timer.stop.run();
       return;
@@ -343,11 +344,18 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     await _hostDisconnectedSubscription?.cancel();
     await _hostReconnectedSubscription?.cancel();
 
+    _liveKitStateSubscription = null;
+    _endedBroadcastSubscription = null;
+    _hostDisconnectedSubscription = null;
+    _hostReconnectedSubscription = null;
+
     await timer.onDispose();
 
-    sessionState.dispose();
+    broadcast.dispose();
+    state.dispose();
     status.dispose();
     isMicrophoneEnabled.dispose();
+    isHost.dispose();
 
     setupConfigs.dispose();
     _initializeSession.dispose();

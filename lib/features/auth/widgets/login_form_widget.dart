@@ -11,18 +11,16 @@ class LoginFormWidget extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = di<AuthManager>();
-
     final formKey = createOnce(GlobalKey<FormState>.new);
     final emailCtrl = createOnce(TextEditingController.new);
     final passwordCtrl = createOnce(TextEditingController.new);
 
     callOnce((_) {
-      final user = auth.lastKnownUser.value;
+      final user = di<UserManager>().lastKnownUser.value;
       if (!user.isEmpty) emailCtrl.text = user.email.getOrElse((_) => '');
     });
 
-    final lastKnownUser = watchValue((AuthManager m) => m.lastKnownUser);
+    final lastKnownUser = watchValue((UserManager m) => m.lastKnownUser);
 
     final textTheme = MTextTheme.of(context);
 
@@ -65,7 +63,7 @@ class LoginFormWidget extends WatchingWidget {
                 Email(emailCtrl.text),
                 Password.login(passwordCtrl.text),
               );
-              auth.login.run(params);
+              di<AuthManager>().login.run(params);
             },
           ),
         ],

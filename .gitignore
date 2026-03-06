@@ -47,3 +47,5 @@ app.*.map.json
 **.g.dart
 
 GEMINI.md
+
+lib/_aaa/**

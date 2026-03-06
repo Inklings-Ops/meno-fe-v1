@@ -134,19 +134,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
   bool get isAuthenticated => _activeUserId.value.isValid;
 
-  ValueListenable<UserCredential> get currentCredential {
-    return _activeUserId.combineLatest(
-      _accounts,
-      (id, accounts) => accounts[id] ?? UserCredential.empty,
-    );
-  }
-
-  ValueListenable<User> get currentUser {
-    return _activeUserId.combineLatest(
-      _accounts,
-      (id, accounts) => accounts[id]?.user ?? .empty,
-    );
-  }
 
   // ======================================================================
   // COMMANDS

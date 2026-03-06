@@ -1,4 +1,3 @@
-//GENERATED BARREL FILE
 export 'broadcast.dart';
 export 'broadcast_draft.dart';
 export 'broadcast_session.dart';

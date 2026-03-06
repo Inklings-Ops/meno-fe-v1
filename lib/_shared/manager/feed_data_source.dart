@@ -8,11 +8,8 @@ abstract class FeedDataSource<TItem> implements Disposable {
   FeedDataSource({List<TItem>? initialItems}) : items = initialItems ?? [];
 
   final List<TItem> items;
-
   final _itemCount = ValueNotifier<int>(0);
-
   ValueListenable<int> get itemCount => _itemCount;
-
   bool updateWasCalled = false;
 
   late final updateDataCommand = Command.createAsyncNoParamNoResult(() async {
@@ -22,7 +19,6 @@ abstract class FeedDataSource<TItem> implements Disposable {
   }, errorFilterFn: menoExceptionFilter);
 
   ValueListenable<bool> get isFetching => updateDataCommand.isRunning;
-
   ValueListenable<CommandError?> get commandErrors => updateDataCommand.errors;
 
   /// Subclasses implement - fetch data and populate items list
