@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/exceptions/meno_exception.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 
 final class BroadcastSessionDto with EquatableMixin {
   const BroadcastSessionDto({required this.broadcast, required this.timestamp});

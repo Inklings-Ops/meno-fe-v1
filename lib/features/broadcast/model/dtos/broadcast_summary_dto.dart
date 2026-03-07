@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 
 final class BroadcastSummaryDto with EquatableMixin {
   const BroadcastSummaryDto({

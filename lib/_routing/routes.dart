@@ -24,7 +24,7 @@ class R {
   static const String resetPwdSuccess = '/resetPasswordSuccess';
   static const String createNewPassword = '/createNewPassword';
   static const String webCreateBroadcast = '/web-createBroadcast';
-  static const String createBroadcast = '/createBroadcast';
+  static const String broadcastEditor = '/broadcast-editor';
   static const String home = '/home';
   static const String discover = '/discover';
   static const String notes = '/notes';

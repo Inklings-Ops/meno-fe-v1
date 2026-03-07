@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/services.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 import 'package:meno/objectbox.g.dart' as obj;
 
 final class BroadcastLocalService {

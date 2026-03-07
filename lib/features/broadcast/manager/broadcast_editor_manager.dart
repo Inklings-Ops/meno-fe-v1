@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/_shared/services/media_service.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 import 'package:meno/features/broadcast/services/_services.dart';
 
 final class BroadcastEditorManager with MLogger implements Disposable {
@@ -138,6 +138,22 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     _resetCreationState();
   });
 
+  late final selectDraft = Command.createSyncNoResult((BroadcastDraft draft) {
+    _currentDraftId = draft.id;
+
+    title.value = draft.title;
+    desc.value = draft.description;
+    image.value = draft.image ?? ImageInput.empty;
+    cohosts.value = draft.cohosts;
+    record.value = draft.record;
+
+    // Restore creation state from draft
+    if (draft.createdBroadcastId != null) {
+      _createdBroadcastId = draft.createdBroadcastId;
+      step.value = draft.creationStep;
+    }
+  });
+
   late final deleteDraft = Command.createAsyncNoResult((Id draftId) async {
     log.i('BroadcastFormManager: Deleting draft - $draftId');
     await _local.deleteDraft(userId: _currentUserId, draftId: draftId);
@@ -241,6 +257,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     saveBroadcastSession.dispose();
     resetForm.dispose();
     fetchBroadcast.dispose();
+    selectDraft.dispose();
     deleteDraft.dispose();
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/manager/user_manager.dart';
 import 'package:meno/features/broadcast/manager/live_session_manager.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
 import 'package:meno/features/broadcast/widgets/broadcast_exit_alert_dialog.dart';
 import 'package:meno_design_system/meno_design_system.dart';

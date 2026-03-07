@@ -3,7 +3,7 @@ import 'dart:io' show File;
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/exceptions/meno_exception.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 
 final class BroadcastDraftDto with EquatableMixin {
   const BroadcastDraftDto({

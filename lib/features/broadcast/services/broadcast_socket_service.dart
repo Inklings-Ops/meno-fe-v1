@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 
 final class BroadcastSocketService {
   const BroadcastSocketService(this._client);

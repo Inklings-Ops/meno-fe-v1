@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/broadcast/pages/broadcast_editor_page.dart';
 
 final class MenoRouter {
   MenoRouter(this._auth);
@@ -42,6 +43,37 @@ final class MenoRouter {
       ),
 
       GoRoute(path: R.login, builder: (_, _) => const LoginPage()),
+
+      // Broadcasts
+      GoRoute(
+        path: R.broadcastEditor,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const BroadcastEditorPage(),
+            transitionDuration: const Duration(milliseconds: 310),
+            reverseTransitionDuration: const Duration(milliseconds: 250),
+            transitionsBuilder: (_, animation, secondaryAnimation, child) {
+              final curved = CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCirc,
+                reverseCurve: Curves.easeInCubic,
+              );
+
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 1),
+                  end: .zero,
+                ).animate(curved),
+                child: FadeTransition(
+                  opacity: Tween<double>(begin: 0, end: 1).animate(curved),
+                  child: child,
+                ),
+              );
+            },
+          );
+        },
+      ),
     ],
   );
 }

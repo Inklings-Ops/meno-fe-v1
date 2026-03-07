@@ -4,7 +4,7 @@ import 'dart:io' show Platform;
 import 'package:dio/dio.dart' show CancelToken, FormData, MultipartFile;
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/features/broadcast/model/_model.dart';
 
 final class BroadcastHttpService {
   const BroadcastHttpService(this._client);
