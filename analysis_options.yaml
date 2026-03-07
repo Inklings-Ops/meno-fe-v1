@@ -7,6 +7,7 @@ analyzer:
     - lib/objectbox.g.dart
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - "**/*.mocks.dart"
   errors:
     avoid_js_rounded_ints: ignore
     avoid_positional_boolean_parameters: ignore
