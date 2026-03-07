@@ -72,6 +72,13 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
     refreshItemCount();
   }
 
+
+  void removeOnEnded(EndedBroadcast ended) {
+    items.removeWhere((b) => b?.id == ended.details.id);
+    refreshItemCount();
+  }
+
+
   // -------------------------------------------------------------------------
   // Filter / query update
   // -------------------------------------------------------------------------

@@ -162,7 +162,7 @@ final class BroadcastQuery with EquatableMixin {
 
   // Now live broadcasts
   factory BroadcastQuery.nowLive({
-    PaginationParams pagination = const PaginationParams(size: 8),
+    PaginationParams pagination = const PaginationParams(),
   }) => const BroadcastQuery(
     type: BroadcastsType.nowLive,
     sortParams: SortParams.startTimeAsc,
@@ -174,7 +174,7 @@ final class BroadcastQuery with EquatableMixin {
 
   /// Recently ended broadcasts
   factory BroadcastQuery.recentlyLive({
-    PaginationParams pagination = const PaginationParams(size: 8),
+    PaginationParams pagination = const PaginationParams(),
     Id? creatorId,
   }) => BroadcastQuery(
     creatorId: creatorId,
@@ -192,6 +192,7 @@ final class BroadcastQuery with EquatableMixin {
     type: BroadcastsType.forYou,
     sortParams: SortParams.startTimeDesc,
     includeTotalListeners: true,
+    onlySubscriptions: true,
   ).copyWith(pagination: pagination);
 
   /// User's subscriptions

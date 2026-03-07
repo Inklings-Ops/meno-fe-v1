@@ -35,7 +35,9 @@ class _MenoAppState extends State<MenoApp> {
       initialValue: null,
     );
 
-    if (snapshot.hasError) return MenoAppErrorWidget(error: snapshot.error);
+    if (snapshot.hasError) {
+      return _ErrorWidget(error: snapshot.error, onRetry: di.allReady);
+    }
 
     if (snapshot.connectionState == .waiting) return const _LoadingWidget();
 
@@ -79,8 +81,8 @@ class _LoadingWidget extends StatelessWidget {
   }
 }
 
-class MenoAppErrorWidget extends StatelessWidget {
-  const MenoAppErrorWidget({required this.error, this.onRetry, super.key});
+class _ErrorWidget extends StatelessWidget {
+  const _ErrorWidget({required this.error, this.onRetry});
 
   final Object? error;
   final VoidCallback? onRetry;
