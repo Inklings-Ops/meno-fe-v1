@@ -6,7 +6,7 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/livekit_client.dart';
 import 'package:meno/features/broadcast/manager/broadcast_timer_manager.dart';
 import 'package:meno/features/broadcast/model/model.dart';
-import 'package:meno/features/broadcast/services/services.dart';
+import 'package:meno/features/broadcast/services/_services.dart';
 
 class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   LiveSessionManager({

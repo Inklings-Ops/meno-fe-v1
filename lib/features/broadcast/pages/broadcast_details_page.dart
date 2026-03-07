@@ -20,8 +20,9 @@ class BroadcastDetailsPage extends WatchingWidget {
       init: (getIt) {
         getIt.registerLazySingletonAsync(() async {
           final manager = BroadcastDetailsManager(
-            di<BroadcastHttpService>(),
-            Id.fromString(broadcastIdStr),
+            http: di<BroadcastHttpService>(),
+            currentUserId: di<UserManager>().currentUserId.value,
+            broadcastId: Id.fromString(broadcastIdStr),
           );
           await manager.fetch.runAsync();
           return manager;
@@ -30,12 +31,14 @@ class BroadcastDetailsPage extends WatchingWidget {
     );
 
     final isFetching = watchValue((_Manager m) => m.fetch.isRunning);
-    final broadcast = watchValue((_Manager m) => m.broadcast);
+    final proxy = watchValue((_Manager m) => m.proxy);
     final error = watchValue((_Manager m) => m.fetch.errors);
 
     if (isFetching) {
       return Skeletonizer(
-        child: BroadcastDetailsView(broadcast: fakeLiveBroadcast),
+        child: BroadcastDetailsView(
+          proxy: BroadcastProxy(fakeLiveBroadcast, Id.empty),
+        ),
       );
     }
 
@@ -49,7 +52,7 @@ class BroadcastDetailsPage extends WatchingWidget {
       );
     }
 
-    if (broadcast == null) {
+    if (proxy == null) {
       return MScaffold(
         appBar: MAppBar.secondary(title: 'Not Found'),
         body: MenoErrorWidget(
@@ -59,26 +62,33 @@ class BroadcastDetailsPage extends WatchingWidget {
       );
     }
 
-    return BroadcastDetailsView(broadcast: broadcast);
+    return BroadcastDetailsView(proxy: proxy);
   }
 }
 
-class BroadcastDetailsView extends StatelessWidget {
-  const BroadcastDetailsView({required this.broadcast, super.key});
+class BroadcastDetailsView extends WatchingWidget {
+  const BroadcastDetailsView({required this.proxy, super.key});
 
-  final Broadcast broadcast;
+  final BroadcastProxy proxy;
 
   @override
   Widget build(BuildContext context) {
+    watch(proxy);
+
     return MScaffold(
       appBar: MAppBar.secondary(
-        title: broadcast.title.getOrCrash(),
+        title: proxy.title,
         actions: [
-          MIconButton(icon: const Icon(MIcons.star_border), onPressed: () {}),
+          MIconButton(
+            icon: proxy.isFavourited
+                ? const Icon(Icons.star)
+                : const Icon(Icons.star_border),
+            onPressed: proxy.toggleIsFavourite.run,
+          ),
           Spaces.horizontalLarge,
           MIconButton(
             icon: const Icon(MIcons.dots_horizontal),
-            onPressed: () {},
+            onPressed: () => _OptionsModal.show(context, proxy.broadcast),
           ),
           Spaces.horizontalLarge,
         ],
@@ -87,12 +97,12 @@ class BroadcastDetailsView extends StatelessWidget {
         child: Column(
           children: [
             Spaces.verticalLarge,
-            Align(child: _Artwork(imageUrl: broadcast.imageUrl)),
+            Align(child: _Artwork(imageUrl: proxy.imageUrl)),
             Spaces.verticalSmall,
-            _Title(title: broadcast.title),
+            _Title(title: proxy.title),
             Spaces.verticalMicro,
             _Creator(
-              name: broadcast.effectiveCreatorName,
+              name: proxy.creatorName,
               onPressed: () {
                 // TODO(gettoknowdavid): Handle navigation to user's profile
               },
@@ -106,7 +116,7 @@ class BroadcastDetailsView extends StatelessWidget {
             Spaces.verticalLarge,
             const MDivider(),
             Spaces.verticalXLarge,
-            _Description(description: broadcast.description),
+            _Description(description: proxy.description),
           ],
         ),
       ),
@@ -161,7 +171,7 @@ class _Artwork extends StatelessWidget {
 class _Title extends StatelessWidget {
   const _Title({required this.title});
 
-  final SingleLineString title;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +179,7 @@ class _Title extends StatelessWidget {
     return SizedBox(
       height: 24,
       child: MText(
-        title.getOrCrash(),
+        title,
         style: textTheme.subheadingMedium,
         textAlign: TextAlign.center,
         maxLines: 1,
@@ -181,7 +191,8 @@ class _Title extends StatelessWidget {
 
 class _Creator extends StatelessWidget {
   const _Creator({required this.name, this.onPressed});
-  final SingleLineString name;
+
+  final String name;
   final VoidCallback? onPressed;
 
   @override
@@ -190,7 +201,7 @@ class _Creator extends StatelessWidget {
     return SizedBox(
       height: 16,
       child: MTextButton.icon(
-        label: name.getOrCrash(),
+        label: name,
         icon: const Icon(MIcons.chevron_right),
         iconPlacement: .right,
         style: TextButton.styleFrom(
@@ -207,7 +218,7 @@ class _Creator extends StatelessWidget {
 class _Description extends StatelessWidget {
   const _Description({this.description});
 
-  final MultiLineString? description;
+  final String? description;
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +235,7 @@ class _Description extends StatelessWidget {
           ],
         ),
         Spaces.verticalLarge,
-        Align(alignment: .centerLeft, child: MText(description!.getOrCrash())),
+        Align(alignment: .centerLeft, child: MText(description!)),
       ],
     );
   }
@@ -242,9 +253,9 @@ class _OptionsModal extends StatelessWidget {
         children: [
           _Artwork(imageUrl: broadcast.imageUrl),
           Spaces.verticalSmall,
-          _Title(title: broadcast.title),
+          _Title(title: broadcast.title.getOrCrash()),
           Spaces.verticalMicro,
-          _Creator(name: broadcast.effectiveCreatorName),
+          _Creator(name: broadcast.effectiveCreatorName.getOrCrash()),
           Spaces.verticalXLarge,
           MModalListTile(
             leading: const Icon(MIcons.user),

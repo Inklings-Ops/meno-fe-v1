@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/features/broadcast/model/entities/entities.dart';
+import 'package:meno/features/broadcast/model/entities/_entities.dart';
 
 class ParticipantDto with EquatableMixin {
   const ParticipantDto({

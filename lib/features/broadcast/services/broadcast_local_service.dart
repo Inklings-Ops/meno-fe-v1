@@ -1,13 +1,15 @@
 import 'dart:convert';
 
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/services/local_storage.dart';
+import 'package:meno/_shared/services/services.dart';
 import 'package:meno/features/broadcast/model/model.dart';
+import 'package:meno/objectbox.g.dart' as obj;
 
 final class BroadcastLocalService {
-  const BroadcastLocalService(this._storage);
+  const BroadcastLocalService(this._storage, this._db);
 
   final LocalStorage _storage;
+  final Database _db;
 
   /// Maximum number of drafts to keep in storage before deleting the oldest
   static const int _maxDrafts = 20;
@@ -189,5 +191,57 @@ final class BroadcastLocalService {
         return null;
       }
     });
+  }
+
+  // #######################################################################
+  // FAVOURITES
+  // #######################################################################
+  obj.Box<FavouriteBroadcast> get _favouriteBroadcastBox {
+    return _db.favouriteBroadcastBox;
+  }
+
+  obj.QueryBuilder<FavouriteBroadcast> _buildFavouriteQuery({
+    required Id broadcastId,
+    required Id ownerId,
+  }) {
+    return _favouriteBroadcastBox.query(
+      obj.FavouriteBroadcast_.broadcastId
+          .equals(broadcastId.getOrCrash())
+          .and(obj.FavouriteBroadcast_.ownerId.equals(ownerId.getOrCrash())),
+    );
+  }
+
+  bool isFavourited({required Id broadcastId, required Id ownerId}) {
+    final query = _buildFavouriteQuery(
+      broadcastId: broadcastId,
+      ownerId: ownerId,
+    ).build();
+    final count = query.count();
+    query.close();
+    return count > 0;
+  }
+
+  void toggleIsFavourite({required Broadcast broadcast, required Id ownerId}) {
+    final query = _buildFavouriteQuery(
+      broadcastId: broadcast.id,
+      ownerId: ownerId,
+    ).build();
+    final existing = query.findFirst();
+    query.close();
+    if (existing != null) {
+      _favouriteBroadcastBox.remove(existing.id);
+    } else {
+      _favouriteBroadcastBox.put(broadcast.toFavourite(ownerId: ownerId));
+    }
+  }
+
+  Stream<List<FavouriteBroadcast>> watchFavouriteBroadcasts(Id ownerId) {
+    final builder = _favouriteBroadcastBox.query(
+      obj.FavouriteBroadcast_.ownerId.equals(ownerId.getOrCrash()),
+    );
+    return builder
+        .order(obj.FavouriteBroadcast_.savedAt, flags: obj.Order.descending)
+        .watch(triggerImmediately: true)
+        .map((query) => query.find());
   }
 }

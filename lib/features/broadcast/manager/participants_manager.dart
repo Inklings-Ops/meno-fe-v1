@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/features/broadcast/model/model.dart';
-import 'package:meno/features/broadcast/services/services.dart';
+import 'package:meno/features/broadcast/services/_services.dart';
 
 final class ParticipantsManager with MLogger implements Disposable {
   ParticipantsManager({

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meno/features/broadcast/model/entities/entities.dart';
+import 'package:meno/features/broadcast/model/entities/_entities.dart';
 
 /// Summary captured when ending broadcast (before scope disposal)
 final class BroadcastSummary with EquatableMixin {

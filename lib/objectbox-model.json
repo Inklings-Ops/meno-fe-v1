@@ -80,10 +80,58 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "7:9141226887826498895",
+      "lastPropertyId": "7:1492312453982664960",
+      "name": "FavouriteBroadcast",
+      "properties": [
+        {
+          "id": "1:4449486304132626798",
+          "name": "dbId",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:997614367034871183",
+          "name": "broadcastId",
+          "indexId": "7:6199578412426917173",
+          "type": 9,
+          "flags": 2048
+        },
+        {
+          "id": "3:2799700734120983778",
+          "name": "ownerId",
+          "indexId": "8:4879013364036148210",
+          "type": 9,
+          "flags": 2080
+        },
+        {
+          "id": "4:8602065151158828444",
+          "name": "title",
+          "type": 9
+        },
+        {
+          "id": "5:1095954267237965361",
+          "name": "creatorName",
+          "type": 9
+        },
+        {
+          "id": "6:7063079109426654521",
+          "name": "savedAt",
+          "type": 10
+        },
+        {
+          "id": "7:1492312453982664960",
+          "name": "imageUrl",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "6:1797865757503972589",
-  "lastIndexId": "6:3326036711390533426",
+  "lastEntityId": "7:9141226887826498895",
+  "lastIndexId": "8:4879013364036148210",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

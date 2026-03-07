@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meno/features/broadcast/model/entities/entities.dart';
+import 'package:meno/features/broadcast/model/entities/_entities.dart';
 
 class BroadcastSession with EquatableMixin {
   const BroadcastSession({required this.broadcast, required this.timestamp});

@@ -6,7 +6,7 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/_shared/services/media_service.dart';
 import 'package:meno/features/broadcast/model/model.dart';
-import 'package:meno/features/broadcast/services/services.dart';
+import 'package:meno/features/broadcast/services/_services.dart';
 
 final class BroadcastEditorManager with MLogger implements Disposable {
   BroadcastEditorManager({

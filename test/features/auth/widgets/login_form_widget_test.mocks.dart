@@ -91,28 +91,6 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
           as bool);
 
   @override
-  _i2.ValueListenable<_i4.UserCredential> get currentCredential =>
-      (super.noSuchMethod(
-            Invocation.getter(#currentCredential),
-            returnValue: _FakeValueListenable_0<_i4.UserCredential>(
-              this,
-              Invocation.getter(#currentCredential),
-            ),
-          )
-          as _i2.ValueListenable<_i4.UserCredential>);
-
-  @override
-  _i2.ValueListenable<_i6.User> get currentUser =>
-      (super.noSuchMethod(
-            Invocation.getter(#currentUser),
-            returnValue: _FakeValueListenable_0<_i6.User>(
-              this,
-              Invocation.getter(#currentUser),
-            ),
-          )
-          as _i2.ValueListenable<_i6.User>);
-
-  @override
   _i3.Command<_i4.LoginArgs, _i4.UserCredential> get login =>
       (super.noSuchMethod(
             Invocation.getter(#login),
