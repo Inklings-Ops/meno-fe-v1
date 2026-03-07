@@ -1,4 +1,4 @@
-export 'manager/manager.dart';
+export 'manager/_manager.dart';
 export 'model/model.dart';
 export 'pages/pages.dart';
 export 'services/services.dart';
