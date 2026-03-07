@@ -7,11 +7,13 @@ class HomeBroadcastSectionWidget extends StatelessWidget {
     required this.title,
     required this.builder,
     super.key,
+    this.titleIcon,
     this.onSeeAll,
     this.maxContentHeight = 184.0,
   });
 
-  final Widget title;
+  final String title;
+  final Widget? titleIcon;
   final Widget Function(BuildContext context) builder;
   final VoidCallback? onSeeAll;
   final double maxContentHeight;
@@ -21,7 +23,15 @@ class HomeBroadcastSectionWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: .start,
       children: [
-        MenoHeaderWidget(title: title, action: _buildOnSeeAllButton(context)),
+        MenoHeaderWidget(
+          title: Row(
+            children: [
+              MText(title),
+              if (titleIcon != null) ...[Spaces.horizontalSmall, titleIcon!],
+            ],
+          ),
+          action: _buildOnSeeAllButton(context),
+        ),
         const SizedBox(height: 24),
         LimitedBox(maxHeight: maxContentHeight, child: builder(context)),
       ],

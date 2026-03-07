@@ -1,21 +1,39 @@
+import 'dart:async';
+
 import 'package:meno/_shared/manager/feed_data_source.dart';
 import 'package:meno/_shared/model/broadcast_query.dart';
-import 'package:meno/features/broadcast/model/model.dart';
-import 'package:meno/features/broadcast/services/broadcast_http_service.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
 
 /// Concrete [PagedFeedDataSource] for [Broadcast] items.
+///
+/// Socket behaviour is driven entirely by [BroadcastsType] on the query:
+///
+/// | Type          | New Broadcast    | Ended Broadcast          |
+/// |---------------|------------------|--------------------------|
+/// | nowLive       | prepend          | remove                   |
+/// | forYou        | prepend          | remove                   |
+/// | recentlyLive  | —                | prepend (ended → recent) |
+/// | null / other  | —                | —                        |
+///
+/// Pass socket to opt into real-time updates. Omit it (or pass null) for
+/// purely HTTP-backed feeds (profile, search, etc.) that need no socket.
 class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
   BroadcastFeedDataSource({
     required BroadcastHttpService http,
-    required BroadcastQuery initialQuery,
+    required BroadcastQuery query,
+    BroadcastSocketService? socket,
   }) : _http = http,
-       _query = initialQuery {
+       _query = query {
     // Wire the combined isFetching notifier immediately.
     initFetchingSync();
+    _bindSocketService(socket);
   }
 
   final BroadcastHttpService _http;
+
   BroadcastQuery _query;
+  StreamSubscription<Broadcast>? _newBroadcastSub;
+  StreamSubscription<EndedBroadcast>? _endedBroadcastSub;
 
   @override
   bool itemsAreEqual(Broadcast? a, Broadcast? b) => a?.id == b?.id;
@@ -58,26 +76,40 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
     );
   }
 
+  void _bindSocketService(BroadcastSocketService? socket) {
+    final type = _query.type;
+    if (socket == null || type == null) return;
+    switch (type) {
+      case BroadcastsType.forYou:
+      case BroadcastsType.nowLive:
+        _newBroadcastSub = socket.onNewBroadcast.listen(_onNewBroadcast);
+        _endedBroadcastSub = socket.onEndedBroadcast.listen(_onEndedBroadcast);
+      case BroadcastsType.recentlyLive:
+        _endedBroadcastSub = socket.onEndedBroadcast.listen(_onRecentBroadcast);
+    }
+  }
+
   /// Prepend a newly-ended broadcast (from socket) without re-fetching.
   ///
   /// Idempotent — does nothing if the broadcast is already in the list.
-  void prependFromSocket(Broadcast broadcast) {
+  void _onNewBroadcast(Broadcast broadcast) {
     if (items.any((b) => b?.id == broadcast.id)) return;
     addItemAtStart(broadcast);
   }
 
   /// Remove a broadcast by id (now-live feeds use this when a broadcast ends).
-  void removeById(String broadcastId) {
-    items.removeWhere((b) => b?.id.getOrNull() == broadcastId);
+  void _onEndedBroadcast(EndedBroadcast ended) {
+    removeObject(items.firstWhere((b) => b?.id == ended.details.id));
     refreshItemCount();
   }
 
-
-  void removeOnEnded(EndedBroadcast ended) {
-    items.removeWhere((b) => b?.id == ended.details.id);
-    refreshItemCount();
+  /// When a broadcast ends it moves from now-live → recently-live.
+  /// Prepend it to the recently-live feed immediately without re-fetching.
+  void _onRecentBroadcast(EndedBroadcast ended) {
+    final broadcast = ended.details;
+    if (items.any((b) => b?.id == broadcast.id)) return;
+    addItemAtStart(broadcast);
   }
-
 
   // -------------------------------------------------------------------------
   // Filter / query update
@@ -93,9 +125,21 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
 
   /// Convenience: update only the keyword filter and refresh.
   void updateKeywords(String? keywords) {
-    updateQuery(_query.updateKeywords(keywords));
+    if (keywords == null || keywords.trim().isEmpty) return;
+    return updateQuery(_query.updateKeywords(keywords.trim()));
   }
 
   /// Read-only access to the current query (useful for debugging / tests).
   BroadcastQuery get currentQuery => _query;
+
+  @override
+  void onDispose() {
+    _endedBroadcastSub?.cancel();
+    _endedBroadcastSub = null;
+
+    _newBroadcastSub?.cancel();
+    _newBroadcastSub = null;
+
+    super.onDispose();
+  }
 }

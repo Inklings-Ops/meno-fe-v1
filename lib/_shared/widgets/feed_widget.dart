@@ -114,7 +114,7 @@ class FeedWidget<TItem> extends WatchingWidget {
       FeedLayout.verticalList => _VerticalList(
         feedSource: feedSource,
         itemBuilder: itemBuilder,
-        itemCount: listItemCount,
+        itemCount: itemCount,
         isInitialLoading: isInitialLoading,
         isFetching: isFetching,
         padding: padding,
@@ -164,21 +164,24 @@ class _HorizontalList<TItem> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      scrollDirection: .horizontal,
-      clipBehavior: .none,
-      padding: padding ?? const .symmetric(horizontal: Insets.lg),
-      shrinkWrap: shrinkWrap,
-      physics: physics,
-      separatorBuilder: (context, i) => const SizedBox(width: 24),
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        final item = feedSource.getItemAtIndex(index);
-        return Skeletonizer(
-          enabled: isInitialLoading,
-          child: itemBuilder(context, item),
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: feedSource.updateDataCommand.runAsync,
+      child: ListView.separated(
+        scrollDirection: .horizontal,
+        clipBehavior: .none,
+        padding: padding ?? const .symmetric(horizontal: Insets.lg),
+        shrinkWrap: shrinkWrap,
+        physics: physics,
+        separatorBuilder: (context, i) => const SizedBox(width: 24),
+        itemCount: itemCount,
+        itemBuilder: (context, index) {
+          final item = feedSource.getItemAtIndex(index);
+          return Skeletonizer(
+            enabled: isInitialLoading,
+            child: itemBuilder(context, item),
+          );
+        },
+      ),
     );
   }
 }

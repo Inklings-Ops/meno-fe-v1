@@ -1,3 +1,4 @@
+//GENERATED BARREL FILE
 export '_loading_page.dart';
 export '_switch_account_page.dart';
 export 'broadcast_card.dart';
@@ -11,3 +12,4 @@ export 'meno_header_widget.dart';
 export 'meno_paged_loading_indicator.dart';
 export 'meno_search_bar.dart';
 export 'switch_account_modal.dart';
+export 'user_avatar_widget.dart';

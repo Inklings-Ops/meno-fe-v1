@@ -10,20 +10,20 @@ class BroadcastCard extends StatelessWidget {
     super.key,
   });
 
-  const BroadcastCard.live({
-    required Broadcast broadcast,
+  const BroadcastCard.live(
+    Broadcast broadcast, {
     required VoidCallback onTap,
     Key? key,
   }) : this._(broadcast, onTap: onTap, type: .live, key: key);
 
-  const BroadcastCard.recentlyLiveCard({
-    required Broadcast broadcast,
+  const BroadcastCard.recentlyLiveCard(
+    Broadcast broadcast, {
     required VoidCallback onTap,
     Key? key,
   }) : this._(broadcast, onTap: onTap, type: .rCard, key: key);
 
-  const BroadcastCard.recentlyLiveTile({
-    required Broadcast broadcast,
+  const BroadcastCard.tile(
+    Broadcast broadcast, {
     required VoidCallback onTap,
     Key? key,
   }) : this._(broadcast, onTap: onTap, type: .rTile, key: key);
