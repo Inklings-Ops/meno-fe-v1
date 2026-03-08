@@ -35,7 +35,7 @@ class BroadcastCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = broadcast.title.getOrCrash();
-    final creator = broadcast.effectiveCreatorName.getOrElse((_) => '');
+    final creator = broadcast.hostName.getOrElse((_) => '');
     final imageUrl = broadcast.imageUrl;
     final liveCount = broadcast.totalListeners;
     final endTime = broadcast.endTime;

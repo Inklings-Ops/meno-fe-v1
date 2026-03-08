@@ -1,5 +1,5 @@
 import 'package:meno/_core/_core.dart' show FormatError;
-import 'package:meno/_shared/model/model.dart';
+import 'package:meno/_shared/model/_model.dart';
 
 final class NotificationSettingDto {
   const NotificationSettingDto({

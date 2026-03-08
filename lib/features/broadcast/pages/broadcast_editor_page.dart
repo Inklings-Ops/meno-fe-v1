@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/extensions/m_bottom_sheets_extensions.dart';
-import 'package:meno/_shared/extensions/m_snack_bar_extension.dart';
+import 'package:meno/_shared/widgets/extensions/m_bottom_sheets_extensions.dart';
+import 'package:meno/_shared/widgets/extensions/m_snack_bar_extension.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 

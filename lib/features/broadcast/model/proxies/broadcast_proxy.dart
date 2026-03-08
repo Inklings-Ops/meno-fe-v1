@@ -27,7 +27,7 @@ class BroadcastProxy extends ChangeNotifier {
 
   String get description => _broadcast.description.getOrElse((_) => '');
 
-  String get creatorName => _broadcast.effectiveCreatorName.getOrCrash();
+  String get creatorName => _broadcast.hostName.getOrCrash();
 
   String? get imageUrl => _broadcast.imageUrl;
 

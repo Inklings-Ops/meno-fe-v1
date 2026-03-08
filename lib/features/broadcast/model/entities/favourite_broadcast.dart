@@ -44,7 +44,7 @@ extension FavouriteToBroadcastX on Broadcast {
       broadcastId: id.getOrCrash(),
       ownerId: ownerId.getOrCrash(),
       title: title.getOrCrash(),
-      creatorName: effectiveCreatorName.getOrCrash(),
+      creatorName: hostName.getOrCrash(),
       savedAt: DateTime.now(),
       imageUrl: imageUrl,
     );

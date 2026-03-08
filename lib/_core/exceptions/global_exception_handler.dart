@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/exceptions/meno_exception.dart';
 import 'package:meno/_core/keys/meno_keys.dart';
-import 'package:meno/_shared/extensions/m_snack_bar_extension.dart';
+import 'package:meno/_shared/widgets/extensions/m_snack_bar_extension.dart';
 
 /// Sets up the global exception handler for all Commands.
 ///

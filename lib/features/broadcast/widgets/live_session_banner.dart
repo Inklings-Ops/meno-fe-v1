@@ -53,7 +53,7 @@ class _SessionBannerContent extends WatchingWidget {
     return _Banner(
       key: ValueKey('broadcastBanner-${broadcast.id.getOrCrash()}'),
       broadcastTitle: broadcast.title.getOrCrash(),
-      broadcastCreatorName: broadcast.effectiveCreatorName.getOrElse((_) => ''),
+      broadcastCreatorName: broadcast.hostName.getOrElse((_) => ''),
       badgeTitle: isHost ? status.hostTitle : status.participantTitle,
       actionButtonLabel: isHost ? 'End' : 'Leave',
       action: () => _handleAction(context, isHost),

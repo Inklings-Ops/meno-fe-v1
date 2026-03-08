@@ -125,9 +125,9 @@ final class Broadcast with EquatableMixin {
     timeZone,
   ];
 
-  Id get effectiveCreatorId => creator?.id ?? creatorId ?? Id.empty;
+  Id get hostId => creator?.id ?? creatorId ?? Id.empty;
 
-  SingleLineString get effectiveCreatorName =>
+  SingleLineString get hostName =>
       fullName ??
       creator?.fullName ??
       creatorFullName ??

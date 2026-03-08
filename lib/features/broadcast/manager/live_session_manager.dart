@@ -68,7 +68,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     state.value = const .initializing();
     status.value = .initializing;
 
-    isHost.value = broadcast.effectiveCreatorId == _currentUserId;
+    isHost.value = broadcast.hostId == _currentUserId;
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(_connectToLiveKit);
 
   late final _connectToLiveKit = Command.createAsyncNoParamNoResult(() async {

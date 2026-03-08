@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_shared/extensions/m_snack_bar_extension.dart';
+import 'package:meno/_shared/widgets/extensions/m_snack_bar_extension.dart';
 import 'package:meno/features/bible/manager/bible_manager.dart';
 import 'package:meno/features/bible/widgets/verse_options_modal.dart';
 import 'package:meno/features/bible/widgets/verse_widget.dart';

@@ -255,7 +255,7 @@ class _OptionsModal extends StatelessWidget {
           Spaces.verticalSmall,
           _Title(title: broadcast.title.getOrCrash()),
           Spaces.verticalMicro,
-          _Creator(name: broadcast.effectiveCreatorName.getOrCrash()),
+          _Creator(name: broadcast.hostName.getOrCrash()),
           Spaces.verticalXLarge,
           MModalListTile(
             leading: const Icon(MIcons.user),

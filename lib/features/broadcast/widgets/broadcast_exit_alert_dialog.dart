@@ -26,7 +26,7 @@ class BroadcastExitAlertDialog extends StatelessWidget {
 
     return AlertDialog(
       title: MText(label, style: textTheme.heading2Regular),
-      contentPadding: const EdgeInsets.all(24),
+      contentPadding: const .all(24),
       content: MText(content, style: textTheme.captionRegular),
       actions: [
         SizedBox.fromSize(

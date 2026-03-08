@@ -74,6 +74,17 @@ final class MenoRouter {
           );
         },
       ),
+
+      GoRoute(
+        path: R.liveSessionInitialization,
+        builder: (context, state) => const LiveSessionInitPage(),
+      ),
+
+      StatefulShellRoute(
+        builder: (context, state, navigationShell) => navigationShell,
+        navigatorContainerBuilder: LiveSessionShell.builder,
+        branches: [],
+      ),
     ],
   );
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/widgets/_loading_page.dart';
+import 'package:meno/_shared/pages/loading_page.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
 
 class SwitchAccountPage extends WatchingWidget {

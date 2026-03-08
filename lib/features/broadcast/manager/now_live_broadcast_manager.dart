@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/model/model.dart';
+import 'package:meno/_shared/model/_model.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 
 final class NowLiveBroadcastManager implements Disposable {
