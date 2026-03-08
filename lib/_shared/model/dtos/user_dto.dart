@@ -27,7 +27,7 @@ final class UserDto with EquatableMixin {
           ? GeneralSettingsDto.fromJson(json['generalSettings'])
           : null,
       role: json['role'] != null
-          ? UserRole.fromString(json['role'] as String)
+          ? UserRole.fromJson(json['role'] as String)
           : null,
       imageId: json['imageId'] as String?,
       imageUrl: json['imageUrl'] as String?,

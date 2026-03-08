@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:meno/_core/_core.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
 import 'package:meno/_shared/model/entities/entities.dart';
 
@@ -90,9 +91,10 @@ enum UserRole {
 
   final String value;
 
-  static UserRole fromString(String value) {
+  static UserRole fromJson(dynamic val) {
+    if (val is! String) throw const FormatException('UserRole expects string');
     return UserRole.values.firstWhere(
-      (e) => e.value == value,
+      (e) => e.value == val,
       orElse: () => UserRole.guest,
     );
   }
