@@ -25,3 +25,10 @@ final class UserStats with EquatableMixin {
   @override
   List<Object?> get props => [subscribers, subscriptions, broadcasts];
 }
+
+extension UserStatsX on int {
+  String toSanitizedStr(String unit) {
+    if (this == 1) return 'unit';
+    return '${unit}s';
+  }
+}

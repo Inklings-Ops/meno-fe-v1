@@ -9,12 +9,9 @@ final class Profile with EquatableMixin {
     required this.id,
     required this.fullName,
     this.bio,
-    this.stats,
+    this.stats = const UserStats(),
     this.image,
     this.role,
-    this.numberOfBroadcasts = 0,
-    this.numberOfSubscribers = 0,
-    this.numberOfSubscriptions = 0,
     this.isSubscribedToUser = false,
     this.subscribed = false,
   });
@@ -32,12 +29,9 @@ final class Profile with EquatableMixin {
   final Id id;
   final SingleLineString fullName;
   final MultiLineString? bio;
-  final UserStats? stats;
+  final UserStats stats;
   final ImageInput? image;
   final UserRole? role;
-  final int numberOfBroadcasts;
-  final int numberOfSubscribers;
-  final int numberOfSubscriptions;
   final bool isSubscribedToUser;
   final bool subscribed;
 
@@ -62,10 +56,6 @@ final class Profile with EquatableMixin {
       image: image ?? this.image,
       role: role ?? this.role,
       isSubscribedToUser: isSubscribedToUser ?? this.isSubscribedToUser,
-      numberOfBroadcasts: numberOfBroadcasts ?? this.numberOfBroadcasts,
-      numberOfSubscribers: numberOfSubscribers ?? this.numberOfSubscribers,
-      numberOfSubscriptions:
-          numberOfSubscriptions ?? this.numberOfSubscriptions,
       subscribed: subscribed ?? this.subscribed,
     );
   }
@@ -82,9 +72,6 @@ final class Profile with EquatableMixin {
     image,
     role,
     isSubscribedToUser,
-    numberOfBroadcasts,
-    numberOfSubscribers,
-    numberOfSubscriptions,
     subscribed,
   ];
 }
@@ -107,3 +94,41 @@ final fakeProfile = Profile(
   bio: MultiLineString(BoneMock.paragraph),
   stats: const UserStats(broadcasts: 14, subscribers: 300, subscriptions: 15),
 );
+
+final fakeProfiles = <Profile>[
+  Profile(
+    id: Id.fromString('178d88c6-1674-4135-a68b-88877b902ab2'),
+    bio: MultiLineString("The Lord's favoured."),
+    fullName: SingleLineString('Christie David Michael'),
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1668024849/pjxxonawlab2bvn8la9o.jpg',
+    ),
+  ),
+  Profile(
+    id: Id.fromString('6fe8dbf2-e0ec-4d8c-bb13-fb9583cda788'),
+    bio: MultiLineString(
+      '''
+David Michael: Always wanting to know more of God. Super charged with the Spirit.\nHallelujah!''',
+    ),
+    fullName: SingleLineString('David Michael'),
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1741767889/erixhls5hpuuibb6ou9h.jpg',
+    ),
+  ),
+  Profile(
+    id: Id.fromString('3e43bf4d-7ab1-4d30-92d7-02fedf2d5ed1'),
+    fullName: SingleLineString('David Michael II'),
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1698913558/nephz6baho5wgkg8wrz0.jpg',
+    ),
+  ),
+  Profile(
+    id: Id.fromString('6a86d27a-f923-4e52-9b01-b8667591375a'),
+    fullName: SingleLineString('STU David Michael'),
+    image: ImageInput.fromUrl(
+      'https://res.cloudinary.com/gson007/image/upload/v1668023831/l0kvyd27pddlspuwa2xp.jpg',
+    ),
+  ),
+];
+
+final fakeProfileIds = fakeProfiles.map((p) => p.id).toList();

@@ -1,3 +1,4 @@
+import 'package:meno/_core/exceptions/meno_exception.dart';
 import 'package:meno/features/profile/model/entities/user_stats.dart';
 
 final class UserStatsDto {
@@ -8,9 +9,7 @@ final class UserStatsDto {
   });
 
   factory UserStatsDto.fromJson(dynamic json) {
-    if (json is! Map<String, dynamic>) {
-      throw const FormatException('Invalid UserStats JSON');
-    }
+    if (json is! Map<String, dynamic>) throw FormatError<UserStatsDto>();
 
     return UserStatsDto(
       subscribers: (json[_kSubscribers] as num?)?.toInt() ?? 0,

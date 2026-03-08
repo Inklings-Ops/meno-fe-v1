@@ -33,7 +33,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
   final title = ValueNotifier(SingleLineString.empty);
   final desc = ValueNotifier(MultiLineString.empty);
   final image = ValueNotifier(ImageInput.empty);
-  final cohosts = ValueNotifier(<Id>[]);
+  final cohosts = SetNotifier<Id>(data: {});
   final record = ValueNotifier(false);
 
   void onTitleChanged(String input) => title.value = SingleLineString(input);
@@ -49,9 +49,14 @@ final class BroadcastEditorManager with MLogger implements Disposable {
 
   void onToggleRecord(bool input) => record.value = input;
 
-  void onAddCohost() {}
-
-  void onRemoveCohost() {}
+  void toggleCohost(Id cohost) {
+    if (cohosts.contains(cohost)) {
+      cohosts.remove(cohost);
+    } else {
+      if (cohosts.length == 1) return;
+      cohosts.add(cohost);
+    }
+  }
 
   late final fetchBroadcast = Command.createAsync<Id, Broadcast>(
     _http.getBroadcast,
@@ -110,7 +115,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
       final broadcast = await _http.createBroadcast(
         title: title.value,
         description: desc.value,
-        cohosts: cohosts.value,
+        cohosts: cohosts.toList(),
         image: image.value,
       );
 
@@ -132,7 +137,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     title.value = SingleLineString.empty;
     desc.value = MultiLineString.empty;
     image.value = ImageInput.empty;
-    cohosts.value = [];
+    cohosts.clear();
     record.value = false;
     _currentDraftId = null;
     _resetCreationState();
@@ -144,8 +149,11 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     title.value = draft.title;
     desc.value = draft.description;
     image.value = draft.image ?? ImageInput.empty;
-    cohosts.value = draft.cohosts;
     record.value = draft.record;
+    cohosts.startTransAction();
+    cohosts.clear();
+    cohosts.addAll(draft.cohosts);
+    cohosts.endTransAction();
 
     // Restore creation state from draft
     if (draft.createdBroadcastId != null) {
@@ -176,7 +184,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
       title: titleValue,
       description: descriptionValue,
       image: imageValue,
-      cohosts: cohostsValue,
+      cohosts: cohostsValue.toList(),
       record: recordValue,
       lastModified: DateTime.now(),
     );
