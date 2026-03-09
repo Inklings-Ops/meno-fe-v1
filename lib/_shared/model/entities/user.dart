@@ -10,7 +10,7 @@ final class User with EquatableMixin implements IEntity {
     required this.email,
     this.bio,
     this.generalSettings,
-    this.role,
+    this.role = .guest,
     this.imageId,
     this.image,
     this.verified = false,
@@ -23,7 +23,7 @@ final class User with EquatableMixin implements IEntity {
   final Email email;
   final MultiLineString? bio;
   final GeneralSettings? generalSettings;
-  final UserRole? role;
+  final UserRole role;
   final String? imageId;
   final ImageInput? image;
   final bool verified;

@@ -235,7 +235,7 @@ final class BroadcastLocalService {
     }
   }
 
-  Stream<List<FavouriteBroadcast>> watchFavouriteBroadcasts(Id ownerId) {
+  Stream<List<FavouriteBroadcast>> watchFavourites(Id ownerId) {
     final builder = _favouriteBroadcastBox.query(
       obj.FavouriteBroadcast_.ownerId.equals(ownerId.getOrCrash()),
     );

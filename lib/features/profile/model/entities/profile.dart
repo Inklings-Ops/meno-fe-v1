@@ -11,7 +11,7 @@ final class Profile with EquatableMixin {
     this.bio,
     this.stats = const UserStats(),
     this.image,
-    this.role,
+    this.role = .guest,
     this.isSubscribedToUser = false,
     this.subscribed = false,
   });
@@ -26,12 +26,18 @@ final class Profile with EquatableMixin {
     );
   }
 
+  static const Profile empty = Profile(
+    id: Id.empty,
+    fullName: SingleLineString.empty,
+    bio: MultiLineString.empty,
+  );
+
   final Id id;
   final SingleLineString fullName;
   final MultiLineString? bio;
   final UserStats stats;
   final ImageInput? image;
-  final UserRole? role;
+  final UserRole role;
   final bool isSubscribedToUser;
   final bool subscribed;
 
@@ -86,6 +92,10 @@ extension ProfileX on Profile {
       stats: stats,
     );
   }
+
+  bool get isEmpty => this == .empty;
+
+  bool get isValid => id.isValid && fullName.isValid;
 }
 
 final fakeProfile = Profile(

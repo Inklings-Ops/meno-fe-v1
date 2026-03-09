@@ -9,7 +9,7 @@ final class ProfileDto {
     this.bio,
     this.stats = const UserStatsDto(),
     this.imageUrl,
-    this.role,
+    this.role = .guest,
     this.isSubscribedToUser = false,
     this.subscribed = false,
   });
@@ -32,7 +32,7 @@ final class ProfileDto {
       bio: json[_kBio] as String?,
       stats: stats,
       imageUrl: json[_kImageUrl] as String?,
-      role: json[_kRole] != null ? UserRole.fromJson(json[_kRole]) : null,
+      role: json[_kRole] != null ? UserRole.fromJson(json[_kRole]) : .guest,
       isSubscribedToUser: json[_kIsSubscribedToUser] as bool? ?? false,
       subscribed: json[_kSubscribed] as bool? ?? false,
     );
@@ -43,7 +43,7 @@ final class ProfileDto {
   final String? bio;
   final UserStatsDto stats;
   final String? imageUrl;
-  final UserRole? role;
+  final UserRole role;
   final bool isSubscribedToUser;
   final bool subscribed;
 
@@ -65,7 +65,7 @@ final class ProfileDto {
     _kBio: bio,
     _kStats: stats.toJson(),
     _kImageUrl: imageUrl,
-    _kRole: role?.value,
+    _kRole: role.value,
     _kIsSubscribedToUser: isSubscribedToUser,
     _kSubscribed: subscribed,
   };

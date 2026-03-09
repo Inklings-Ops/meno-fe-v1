@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:meno/features/profile/model/_model.dart';
+import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+class SubscribeButton extends StatelessWidget {
+  const SubscribeButton({
+    required this.profile,
+    this.style,
+    this.showIcon = false,
+    super.key,
+  });
+
+  final Profile profile;
+  final ButtonStyle? style;
+  final bool showIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+    final textTheme = MTextTheme.of(context);
+
+    final isSubscribedToUser = profile.isSubscribedToUser;
+    final subscribed = profile.subscribed;
+    final isSubscribed = isSubscribedToUser || subscribed;
+
+    final defaultStyle = OutlinedButton.styleFrom(
+      textStyle: textTheme.microMedium,
+      fixedSize: const Size(double.infinity, Insets.xxl),
+      side: BorderSide(color: colors.primary),
+      shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
+      backgroundColor: isSubscribed ? colors.primary : Colors.transparent,
+      foregroundColor: isSubscribed ? colors.onPrimary : colors.primary,
+    );
+
+    final label = isSubscribed ? 'Unsubscribe' : 'Subscribe';
+
+    void handleSubscription() {}
+
+    Widget child = MSecondaryButton(
+      label: label,
+      onPressed: handleSubscription,
+      style: style ?? defaultStyle,
+    );
+
+    if (showIcon) {
+      child = MSecondaryButton.icon(
+        label: label,
+        onPressed: handleSubscription,
+        style: style ?? defaultStyle,
+        icon: Icon(
+          isSubscribed ? MIcons.user_minus_01 : MIcons.user_check,
+          color: isSubscribed ? colors.onPrimary : colors.primary,
+        ),
+      );
+    }
+
+    return Skeleton.unite(child: child);
+  }
+}

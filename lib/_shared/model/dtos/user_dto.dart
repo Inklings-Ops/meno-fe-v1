@@ -9,7 +9,7 @@ final class UserDto with EquatableMixin {
     required this.email,
     this.generalSettings,
     this.bio,
-    this.role,
+    this.role = .guest,
     this.imageId,
     this.imageUrl,
     this.verified = false,
@@ -28,7 +28,7 @@ final class UserDto with EquatableMixin {
           : null,
       role: json['role'] != null
           ? UserRole.fromJson(json['role'] as String)
-          : null,
+          : UserRole.guest,
       imageId: json['imageId'] as String?,
       imageUrl: json['imageUrl'] as String?,
       verified: json['verified'] as bool? ?? false,
@@ -43,7 +43,7 @@ final class UserDto with EquatableMixin {
       'email': email,
       'bio': bio,
       'generalSettings': generalSettings?.toJson(),
-      'role': role?.value,
+      'role': role.value,
       'imageId': imageId,
       'imageUrl': imageUrl,
       'verified': verified,
@@ -56,7 +56,7 @@ final class UserDto with EquatableMixin {
   final String email;
   final String? bio;
   final GeneralSettingsDto? generalSettings;
-  final UserRole? role;
+  final UserRole role;
   final String? imageId;
   final String? imageUrl;
   final bool verified;
