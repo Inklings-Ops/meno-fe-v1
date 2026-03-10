@@ -10,5 +10,6 @@ export 'meno_error_widget.dart';
 export 'meno_header_widget.dart';
 export 'meno_paged_loading_indicator.dart';
 export 'meno_search_bar.dart';
+export 'remove_alert_dialog.dart';
 export 'switch_account_modal.dart';
 export 'user_avatar_widget.dart';
