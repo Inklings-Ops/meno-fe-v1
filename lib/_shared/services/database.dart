@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart' show MLogger;
 import 'package:meno/features/bible/model/model.dart';
 import 'package:meno/features/broadcast/model/entities/favourite_broadcast.dart';
+import 'package:meno/features/notes/model/dtos/_dtos.dart';
 import 'package:meno/objectbox.g.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -13,9 +14,9 @@ class Database with MLogger implements Disposable {
     _verseBox = _store.box<VerseDto>();
     _translationBox = _store.box<TranslationDto>();
     _favouriteBroadcastBox = _store.box<FavouriteBroadcast>();
-    // _noteBox = _store.box<NoteDto>();
-    // _noteFolderBox = _store.box<NoteFolderDto>();
-    // _noteCreatorBox = _store.box<NoteCreatorDto>();
+    _noteBox = _store.box<NoteDto>();
+    _noteFolderBox = _store.box<NoteFolderDto>();
+    _noteCreatorBox = _store.box<NoteCreatorDto>();
   }
 
   final Store _store;
@@ -34,9 +35,9 @@ class Database with MLogger implements Disposable {
   // ==========================================================================
   // NOTES
   // ==========================================================================
-  // late final Box<NoteDto> _noteBox;
-  // late final Box<NoteFolderDto> _noteFolderBox;
-  // late final Box<NoteCreatorDto> _noteCreatorBox;
+  late final Box<NoteDto> _noteBox;
+  late final Box<NoteFolderDto> _noteFolderBox;
+  late final Box<NoteCreatorDto> _noteCreatorBox;
 
   // ==========================================================================
   // FACTORY
@@ -61,9 +62,11 @@ class Database with MLogger implements Disposable {
 
   Box<FavouriteBroadcast> get favouriteBroadcastBox => _favouriteBroadcastBox;
 
-  // Box<NoteDto> get noteBox => _noteBox;
-  // Box<NoteFolderDto> get noteFolderBox => _noteFolderBox;
-  // Box<NoteCreatorDto> get noteCreatorBox => _noteCreatorBox;
+  Box<NoteDto> get noteBox => _noteBox;
+
+  Box<NoteFolderDto> get noteFolderBox => _noteFolderBox;
+
+  Box<NoteCreatorDto> get noteCreatorBox => _noteCreatorBox;
 
   // ==========================================================================
   // TRANSACTION HELPERS

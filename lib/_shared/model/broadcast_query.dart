@@ -34,7 +34,9 @@ enum SortBy {
   title('title'),
   status('status'),
   startTime('startTime'),
-  endTime('endTime');
+  endTime('endTime'),
+  createdAt('createdAt'),
+  updatedAt('updatedAt');
 
   const SortBy(this.value);
 

@@ -27,6 +27,10 @@ enum SyncStatus {
 
   static SyncStatus fromBool(bool syncPending) =>
       syncPending ? SyncStatus.pending : SyncStatus.synced;
+
+  bool get isPending => this == SyncStatus.pending;
+
+  bool get hasSyncFailed => this == SyncStatus.conflict;
 }
 
 enum BroadcastStatus {
