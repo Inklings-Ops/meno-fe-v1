@@ -1,0 +1,108 @@
+import 'package:meno/_core/value_objects/id.dart';
+import 'package:meno/_shared/_shared.dart';
+import 'package:meno/features/chat/model/_model.dart';
+import 'package:meno/features/chat/services/_services.dart';
+
+/// 80 ms — coalesces bursts of socket messages into a single list rebuild
+/// while still feeling instant to the user.
+const _kChatDebounceDuration = Duration(milliseconds: 80);
+
+final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
+  ChatFeedSource({
+    required ChatHttpService http,
+    required ChatDataRepository repository,
+    required Id broadcastId,
+    super.initialItems,
+  }) : _http = http,
+       _repository = repository,
+       _broadcastId = broadcastId,
+       // Pass the debounce duration — socket bursts are coalesced,
+       // page loads always flush immediately via flushItemCount().
+       super(debounceDuration: _kChatDebounceDuration);
+
+  final ChatHttpService _http;
+  final ChatDataRepository _repository;
+  final Id _broadcastId;
+
+  @override
+  bool itemsAreEqual(MessageProxy item1, MessageProxy item2) {
+    return item1.idStr == item2.idStr;
+  }
+
+  @override
+  Future<void> requestNextPage() async {
+    if (!hasNextPage) return;
+
+    final response = await _http.getMessages(
+      _broadcastId.getOrCrash(),
+      pagination: PaginationParams(page: nextPageIndex, size: 100),
+    );
+
+    items.addAll(response.items.map(_repository.acquire));
+
+    updatePaginationState(
+      currentPage: nextPageIndex,
+      totalPages: response.totalPages,
+    );
+
+    flushItemCount(); // Flush immediately — appended page must appear at once.
+  }
+
+  @override
+  Future<void> updateFeedData() async {
+    final response = await _http.getMessages(_broadcastId.getOrCrash());
+
+    final oldItems = List<MessageProxy>.from(items);
+    items.clear();
+
+    items.addAll(response.items.map(_repository.acquire));
+
+    updatePaginationState(currentPage: 1, totalPages: response.totalPages);
+
+    flushItemCount(); // the full first page must appear without delay.
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _repository.releaseAll(oldItems);
+    });
+  }
+
+  void addMessageAtStart(Message message) {
+    final proxy = _repository.acquire(message);
+    addItemAtStart(proxy);
+  }
+
+  void updateMessage(Message message) {
+    final index = items.indexWhere((i) => i.id == message.id);
+    if (index == -1) return;
+    // This updates the message proxy in place
+    _repository.acquire(message);
+    // Immediately release the extra reference count
+    _repository.release(items[index]);
+  }
+
+  void removeMessage(String messageIdStr) {
+    final index = items.indexWhere((i) => i.id.getOrCrash() == messageIdStr);
+    if (index == -1) return;
+    final proxy = items[index];
+    removeObject(proxy);
+    _repository.release(proxy);
+  }
+
+  /// Increments ref count before inserting so the repository knows this feed
+  /// holds a reference to the proxy.
+  @override
+  void addItemAtStart(MessageProxy item) {
+    item.referenceCount++;
+    super.addItemAtStart(item);
+  }
+
+  bool get hasReachedEnd => !hasNextPage && updateWasCalled;
+
+  @override
+  void onDispose() {
+    // Release all proxies the feed currently holds before tearing down.
+    _repository.releaseAll(List<MessageProxy>.from(items));
+    items.clear();
+    super.onDispose();
+  }
+}

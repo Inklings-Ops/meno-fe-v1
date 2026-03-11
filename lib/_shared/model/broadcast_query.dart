@@ -118,7 +118,7 @@ final class SortParams with EquatableMixin {
 final class PaginationParams with EquatableMixin {
   const PaginationParams({this.page = 1, this.size = 20})
     : assert(page > 0, 'Page must be greater than 0'),
-      assert(size > 0 && size <= 20, 'Size must be between 1 and 20');
+      assert(size > 0 && size <= 100, 'Size must be between 1 and 100');
 
   static const defaultSize = 20;
   static const maxSize = 100;

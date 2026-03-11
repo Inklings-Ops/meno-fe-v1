@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/features/chat/model/dtos/message_sender_dto.dart';
-import 'package:meno/features/chat/model/entities/entities.dart';
+import 'package:meno/features/chat/model/entities/_entities.dart';
 
 final class MessageDto with EquatableMixin {
   const MessageDto({

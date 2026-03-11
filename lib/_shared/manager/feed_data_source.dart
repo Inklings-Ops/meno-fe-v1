@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
@@ -9,6 +10,7 @@ abstract class FeedDataSource<TItem> implements Disposable {
 
   final List<TItem> items;
   final _itemCount = ValueNotifier<int>(0);
+
   ValueListenable<int> get itemCount => _itemCount;
   bool updateWasCalled = false;
 
@@ -19,6 +21,7 @@ abstract class FeedDataSource<TItem> implements Disposable {
   }, errorFilterFn: menoExceptionFilter);
 
   ValueListenable<bool> get isFetching => updateDataCommand.isRunning;
+
   ValueListenable<CommandError?> get commandErrors => updateDataCommand.errors;
 
   /// Subclasses implement - fetch data and populate items list
@@ -51,7 +54,7 @@ abstract class FeedDataSource<TItem> implements Disposable {
   }
 
   @override
-  void onDispose() {
+  FutureOr<dynamic> onDispose() {
     _itemCount.dispose();
     updateDataCommand.dispose();
   }
@@ -59,16 +62,21 @@ abstract class FeedDataSource<TItem> implements Disposable {
 
 /// Extends FeedDataSource with pagination support
 abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
-  PagedFeedDataSource({super.initialItems}) {
+  PagedFeedDataSource({super.initialItems, this.debounceDuration}) {
     // Merge both commands' isRunning into a single isFetching notifier.
     updateDataCommand.isRunning.addListener(_syncFetching);
     requestNextPageCommand.isRunning.addListener(_syncFetching);
   }
 
+  final Duration? debounceDuration;
+
   int _currentPage = 1;
   int _totalPages = 1;
+  Timer? _debounceTimer;
 
   bool get hasNextPage => _currentPage < _totalPages;
+
+  int get nextPageIndex => _currentPage + 1;
 
   late final requestNextPageCommand = Command.createAsyncNoParamNoResult(
     () async {
@@ -76,7 +84,6 @@ abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
       refreshItemCount();
     },
     errorFilterFn: menoExceptionFilter,
-    restriction: ValueNotifier(false),
   );
 
   /// Subclasses implement - fetch next page and append to items
@@ -91,7 +98,31 @@ abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
     _totalPages = totalPages;
   }
 
-  int get nextPageIndex => _currentPage + 1;
+  /// Overrides base [refreshItemCount] to apply debouncing when
+  /// [debounceDuration] is set.
+  ///
+  /// The initial load ([updateDataCommand]) and pagination
+  /// ([requestNextPageCommand]) always flush immediately — debouncing only
+  /// applies to socket-driven structural mutations (add/remove).
+  @override
+  void refreshItemCount() {
+    final duration = debounceDuration;
+    if (duration == null) {
+      super.refreshItemCount();
+      return;
+    }
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(duration, super.refreshItemCount);
+  }
+
+  /// Immediately flushes any pending debounced count notification.
+  /// Call this after [updateFeedData] and [requestNextPage] complete so the
+  /// list always reflects a full page load without delay.
+  void flushItemCount() {
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
+    super.refreshItemCount();
+  }
 
   @override
   TItem getItemAtIndex(int index) {
@@ -107,13 +138,7 @@ abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
   @override
   ValueListenable<bool> get isFetching => _isFetching;
 
-  late final _isFetching = ValueNotifier<bool>(false);
-
-  // Initializing logic to sync isFetching with both commands
-  void initFetchingSync() {
-    updateDataCommand.isRunning.addListener(_syncFetching);
-    requestNextPageCommand.isRunning.addListener(_syncFetching);
-  }
+  final _isFetching = ValueNotifier<bool>(false);
 
   void _syncFetching() {
     _isFetching.value =
@@ -129,11 +154,13 @@ abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
   }
 
   @override
-  void onDispose() {
+  FutureOr<dynamic> onDispose() {
     updateDataCommand.isRunning.removeListener(_syncFetching);
     requestNextPageCommand.isRunning.removeListener(_syncFetching);
     requestNextPageCommand.dispose();
     _isFetching.dispose();
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
     super.onDispose();
   }
 }

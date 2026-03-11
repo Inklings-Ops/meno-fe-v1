@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:meno/_shared/services/socket_client.dart';
-import 'package:meno/features/chat/model/model.dart';
+import 'package:meno/features/chat/model/_model.dart';
 
 final class ChatSocketService {
   const ChatSocketService(this._client);
@@ -20,47 +20,25 @@ final class ChatSocketService {
     return _client.emitWithAck(.deleteChatMessage, args.toJson());
   }
 
-  Stream<MessageDto> onNewMessage(String broadcastId) {
+  Stream<MessageDto> get onNewMessage => _messageStream(.newMessage);
+
+  Stream<MessageDto> get onEditedMessage => _messageStream(.editedMessage);
+
+  Stream<MessageDto> get onDeletedMessage => _messageStream(.deletedMessage);
+
+  // =========================================================================
+  // PRIVATE
+  // =========================================================================
+
+  /// Single shared broadcast stream per socket event type.
+  /// All where filters above are cheap downstream operations on this stream.
+  Stream<MessageDto> _messageStream(SocketEvent event) {
     late StreamController<MessageDto> controller;
     SocketSubscription? subscription;
 
     controller = StreamController<MessageDto>.broadcast(
       onListen: () {
-        subscription = _client.on(SocketEvent.newMessage, (dynamic data) {
-          final dto = MessageDto.fromJson(data);
-          controller.add(dto);
-        });
-      },
-      onCancel: () => subscription?.cancel(),
-    );
-
-    return controller.stream;
-  }
-
-  Stream<MessageDto> onEditedMessage(String broadcastId) {
-    late StreamController<MessageDto> controller;
-    SocketSubscription? subscription;
-
-    controller = StreamController<MessageDto>.broadcast(
-      onListen: () {
-        subscription = _client.on(SocketEvent.editedMessage, (dynamic data) {
-          final dto = MessageDto.fromJson(data);
-          controller.add(dto);
-        });
-      },
-      onCancel: () => subscription?.cancel(),
-    );
-
-    return controller.stream;
-  }
-
-  Stream<MessageDto> onDeletedMessage(String broadcastId) {
-    late StreamController<MessageDto> controller;
-    SocketSubscription? subscription;
-
-    controller = StreamController<MessageDto>.broadcast(
-      onListen: () {
-        subscription = _client.on(SocketEvent.deletedMessage, (dynamic data) {
+        subscription = _client.on(event, (dynamic data) {
           final dto = MessageDto.fromJson(data);
           controller.add(dto);
         });

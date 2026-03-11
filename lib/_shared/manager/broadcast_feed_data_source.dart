@@ -25,7 +25,6 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
   }) : _http = http,
        _query = query {
     // Wire the combined isFetching notifier immediately.
-    initFetchingSync();
     _bindSocketService(socket);
   }
 
