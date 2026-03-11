@@ -30,6 +30,10 @@ final class LocalStorage implements Disposable {
     return result;
   }
 
+  Future<bool> setBool(String key, bool value) async {
+    return _preferences.setBool(key, value);
+  }
+
   Future<bool> remove(String key) async {
     final result = await _preferences.remove(key);
     if (result) _controller.add(key);
@@ -43,6 +47,8 @@ final class LocalStorage implements Disposable {
   }
 
   bool hasKey(String key) => _preferences.containsKey(key);
+
+  bool? getBool(String key) => _preferences.getBool(key);
 
   String? getString(String key) => _preferences.getString(key);
 

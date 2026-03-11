@@ -9,6 +9,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
 import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
+import 'package:meno/features/onboarding/manager/onboarding_manager.dart';
 import 'package:meno/features/settings/services/settings_local_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,6 +63,13 @@ void configureGlobalDependencies() {
       interceptors: [di<SessionInterceptor>(), di<LogInterceptor>()],
     );
   }, dependsOn: [SessionInterceptor, LogInterceptor]);
+
+  // Onboarding
+  di.registerSingletonWithDependencies(() {
+    final manager = OnboardingManager(di<LocalStorage>());
+    manager.initialize.run();
+    return manager;
+  }, dependsOn: [LocalStorage]);
 
   // Auth
   di.registerSingletonWithDependencies(() {
@@ -120,6 +128,9 @@ void configureGlobalDependencies() {
 
   // Router
   di.registerSingletonWithDependencies(() {
-    return MenoRouter(di<AuthManager>());
+    return MenoRouter(
+      auth: di<AuthManager>(),
+      onboarding: di<OnboardingManager>(),
+    );
   }, dependsOn: [AuthManager]);
 }

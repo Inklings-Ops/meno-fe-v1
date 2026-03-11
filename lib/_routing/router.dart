@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
 import 'package:meno/features/auth/pages/_pages.dart';
 import 'package:meno/features/broadcast/pages/_pages.dart';
+import 'package:meno/features/onboarding/onboarding.dart';
 
 final class MenoRouter {
-  MenoRouter(this._auth);
+  MenoRouter({required AuthManager auth, required OnboardingManager onboarding})
+    : _auth = auth,
+      _onboarding = onboarding;
 
   final AuthManager _auth;
+  final OnboardingManager _onboarding;
 
   late final GoRouter routerConfig = GoRouter(
     debugLogDiagnostics: true,
@@ -19,6 +22,12 @@ final class MenoRouter {
       final nextRoute = state.matchedLocation;
       final isPublicRoute = R.publicRoutes.contains(nextRoute);
       final isAuthenticated = _auth.activeUserId.value.isValid;
+      final isOnboarded = _onboarding.isOnboarded.value;
+
+      if (!isOnboarded) {
+        if (!isPublicRoute) return R.onboarding;
+        return null;
+      }
 
       if (!isAuthenticated) {
         if (!isPublicRoute) {
@@ -31,7 +40,10 @@ final class MenoRouter {
       if (isPublicRoute) return R.home;
       return null;
     },
-    refreshListenable: di<AuthManager>().activeUserId,
+    refreshListenable: Listenable.merge([
+      _auth.activeUserId,
+      _onboarding.isOnboarded,
+    ]),
     routes: [
       GoRoute(path: R.loading, builder: (_, _) => const LoadingPage()),
 

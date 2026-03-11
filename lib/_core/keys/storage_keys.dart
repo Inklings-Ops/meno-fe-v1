@@ -13,6 +13,9 @@ abstract class StorageKeys {
   // Multi-account support
   static const accounts = 'all_accounts';
 
+  // Onboarding
+  static const onboarding = 'onboarding';
+
   // #######################################################################
   // BROADCAST KEYS
   // #######################################################################
