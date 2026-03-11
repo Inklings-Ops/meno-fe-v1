@@ -64,7 +64,7 @@ class _LiveForYouSection extends WatchingWidget {
 
     final params = feedSource.currentQuery.toApiParams;
 
-    return HomeBroadcastSectionWidget(
+    return BroadcastSectionWidget(
       title: 'Live For You',
       titleIcon: Assets.images.sparkles.image(height: 24, width: 24),
       onSeeAll: () => context.pushNamed(R.broadcasts, queryParameters: params),
@@ -101,7 +101,7 @@ class _NowLiveSection extends WatchingWidget {
 
     final params = feedSource.currentQuery.toApiParams;
 
-    return HomeBroadcastSectionWidget(
+    return BroadcastSectionWidget(
       title: 'Now Live',
       titleIcon: Assets.images.flame.image(height: 24, width: 24),
       onSeeAll: () => context.pushNamed(R.broadcasts, queryParameters: params),
@@ -138,7 +138,7 @@ class _RecentlyLiveSection extends StatelessWidget {
 
     final params = BroadcastQuery.recentlyLive().toRouterParams;
 
-    return HomeBroadcastSectionWidget(
+    return BroadcastSectionWidget(
       title: 'Recently Live',
       titleIcon: Assets.images.highVoltage.image(height: 24, width: 24),
       onSeeAll: () => context.pushNamed(R.broadcasts, queryParameters: params),
@@ -149,7 +149,7 @@ class _RecentlyLiveSection extends StatelessWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.tile(
+          return BroadcastCard.recentlyLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

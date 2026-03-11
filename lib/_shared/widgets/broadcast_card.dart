@@ -16,7 +16,7 @@ class BroadcastCard extends StatelessWidget {
     Key? key,
   }) : this._(broadcast, onTap: onTap, type: .live, key: key);
 
-  const BroadcastCard.recentlyLiveCard(
+  const BroadcastCard.recentlyLive(
     Broadcast broadcast, {
     required VoidCallback onTap,
     Key? key,
