@@ -75,7 +75,11 @@ final class BroadcastEditorManager with MLogger implements Disposable {
       log.i('BroadcastFormManager: Step 3 - Saving active broadcast session');
       await _local.saveActiveBroadcastSession(
         userId: _currentUserId,
-        session: BroadcastSession.create(broadcast),
+        session: BroadcastSession(
+          currentUserId: _currentUserId,
+          broadcast: broadcast,
+          timestamp: .now(),
+        ),
       );
       step.value = BroadcastCreationStep.saved;
       return broadcast;

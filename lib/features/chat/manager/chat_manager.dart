@@ -3,21 +3,19 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/features/broadcast/model/entities/broadcast_session.dart';
 import 'package:meno/features/chat/model/_model.dart';
 import 'package:meno/features/chat/services/chat_socket_service.dart';
 
 final class ChatManager with MLogger implements Disposable {
   ChatManager({
     required ChatSocketService socket,
-    required Id broadcastId,
-    required Id currentUserId,
+    required BroadcastSession session,
   }) : _socket = socket,
-       _broadcastId = broadcastId,
-       _currentUserId = currentUserId;
+       _session = session;
 
   final ChatSocketService _socket;
-  final Id _broadcastId;
-  final Id _currentUserId;
+  final BroadcastSession _session;
 
   final content = ValueNotifier(MultiLineString.empty);
   final messageToEdit = ValueNotifier<Message?>(null);
@@ -32,8 +30,8 @@ final class ChatManager with MLogger implements Disposable {
   late final sendMessage = Command.createAsyncNoParamNoResult(
     () async {
       final args = NewMessageArgs(
-        senderId: _currentUserId.getOrCrash(),
-        broadcastId: _broadcastId.getOrCrash(),
+        senderId: _session.currentUserId.getOrCrash(),
+        broadcastId: _session.broadcast.id.getOrCrash(),
         content: content.value.getOrCrash(),
         createdAt: .now(),
       );

@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/model/model.dart';
+import 'package:meno/features/auth/model/_model.dart';
 
 /// Production-grade auth interceptor with zero external dependencies.
 ///

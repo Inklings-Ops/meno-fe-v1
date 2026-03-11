@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart' show MLogger;
-import 'package:meno/features/bible/model/model.dart';
+import 'package:meno/features/bible/model/_model.dart';
 import 'package:meno/features/broadcast/model/entities/favourite_broadcast.dart';
 import 'package:meno/features/notes/model/dtos/_dtos.dart';
 import 'package:meno/objectbox.g.dart';

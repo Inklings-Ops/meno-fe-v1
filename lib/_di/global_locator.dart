@@ -8,78 +8,82 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
+import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String kRootScopeName = 'root-session';
+const String kRootScope = 'root-session';
 
 void configureGlobalDependencies() {
-  di.pushNewScope(scopeName: kRootScopeName);
-  di.registerSingleton(Logger.new);
+  // Push te root-session scope
+  di.pushNewScope(scopeName: kRootScope);
+
+  // Local Storage
   di.registerSingletonAsync(SharedPreferences.getInstance);
-  di.registerSingletonAsync(() async => ImagePicker());
+  di.registerSingletonWithDependencies(() {
+    return LocalStorage(di<SharedPreferences>());
+  }, dependsOn: [SharedPreferences]);
+
+  // Secure Storage
   di.registerSingletonAsync(() async => const FlutterSecureStorage());
-  di.registerSingletonWithDependencies(
-    () => MediaService(di<ImagePicker>()),
-    dependsOn: [ImagePicker],
-  );
+  di.registerSingletonWithDependencies(() {
+    return SecureStorage(di<FlutterSecureStorage>());
+  }, dependsOn: [FlutterSecureStorage]);
+
+  // ObjectBox Database
+  di.registerSingletonAsync<Database>(Database.create);
+
+  // Media
+  di.registerSingletonAsync(() async => ImagePicker());
+  di.registerSingletonWithDependencies(() {
+    return MediaService(di<ImagePicker>());
+  }, dependsOn: [ImagePicker]);
+
+  // Permissions
   di.registerSingletonAsync(() async {
     return PermissionsService();
   }, onCreated: (manager) => manager.checkPermissions.run());
-  di.registerSingletonAsync<Database>(Database.create);
-  di.registerSingletonWithDependencies(
-    () => LocalStorage(di<SharedPreferences>()),
-    dependsOn: [SharedPreferences],
-  );
-  di.registerSingletonWithDependencies(
-    () => SecureStorage(di<FlutterSecureStorage>()),
-    dependsOn: [FlutterSecureStorage],
-  );
+
+  // Rest API Client Resources
+  di.registerSingleton(Logger.new);
   di.registerSingletonAsync(() async => LogInterceptor());
-  di.registerFactory<Dio>(
-    () => Dio(BaseOptions(baseUrl: Env.menoApiUrl)),
-    instanceName: 'refreshDio',
-  );
-  di.registerSingletonAsync(
-    () async => SessionInterceptor(
+  di.registerFactory<Dio>(() {
+    return Dio(BaseOptions(baseUrl: Env.menoApiUrl));
+  }, instanceName: 'refreshDio');
+  di.registerSingletonAsync(() async {
+    return SessionInterceptor(
       storage: di<SecureStorage>(),
       dio: di<Dio>(instanceName: 'refreshDio'),
-    ),
-    dependsOn: [SecureStorage],
-  );
-  di.registerSingletonWithDependencies(
-    () => HttpClient(
+    );
+  }, dependsOn: [SecureStorage]);
+  di.registerSingletonWithDependencies(() {
+    return HttpClient(
       baseUrl: Env.menoApiUrl,
       interceptors: [di<SessionInterceptor>(), di<LogInterceptor>()],
-    ),
-    dependsOn: [SessionInterceptor, LogInterceptor],
-  );
+    );
+  }, dependsOn: [SessionInterceptor, LogInterceptor]);
 
   // Auth
-  di.registerSingletonWithDependencies(
-    () => AuthLocalService(di<SecureStorage>()),
-    dependsOn: [SecureStorage],
-  );
-  di.registerSingletonWithDependencies(
-    () => AuthHttpService(di<HttpClient>()),
-    dependsOn: [HttpClient],
-  );
-  di.registerSingletonWithDependencies(
-    () => AuthManager(di<AuthHttpService>(), di<AuthLocalService>()),
-    dependsOn: [AuthHttpService, AuthLocalService],
-  );
+  di.registerSingletonWithDependencies(() {
+    return AuthLocalService(di<SecureStorage>());
+  }, dependsOn: [SecureStorage]);
+  di.registerSingletonWithDependencies(() {
+    return AuthHttpService(di<HttpClient>());
+  }, dependsOn: [HttpClient]);
+  di.registerSingletonWithDependencies(() {
+    return AuthManager(di<AuthHttpService>(), di<AuthLocalService>());
+  }, dependsOn: [AuthHttpService, AuthLocalService]);
 
   // Bible
-  di.registerSingletonWithDependencies(
-    () => BibleLocalService(di<Database>()),
-    dependsOn: [Database],
-  );
-
-  di.registerSingletonWithDependencies(
-    () => BibleHttpService(di<HttpClient>()),
-    dependsOn: [HttpClient],
-  );
-
-  di.registerSingletonAsync(() async {
+  di.registerSingletonWithDependencies(() {
+    return BibleLocalService(di<Database>());
+  }, dependsOn: [Database]);
+  di.registerSingletonWithDependencies(() {
+    return BibleHttpService(di<HttpClient>());
+  }, dependsOn: [HttpClient]);
+  di.registerSingletonWithDependencies(() {
+    return BibleManager(di<BibleLocalService>());
+  }, dependsOn: [BibleLocalService, TranslationsManager]);
+  di.registerSingletonWithDependencies(() {
     final manager = TranslationsManager(
       di<BibleHttpService>(),
       di<BibleLocalService>(),
@@ -88,13 +92,22 @@ void configureGlobalDependencies() {
     return manager;
   }, dependsOn: [BibleHttpService, BibleLocalService]);
 
+  /**
+   * Broadcast Local Service
+   *
+   * So, this is bumped up to the global locator so it can be registered
+   * before above the user scope to enable easy retrieval and reconnection for
+   * "zombie" broadcasts
+   */
   di.registerSingletonWithDependencies(() {
-    return BibleManager(di<BibleLocalService>());
-  }, dependsOn: [BibleLocalService, TranslationsManager]);
+    return BroadcastLocalService(
+      storage: di<LocalStorage>(),
+      database: di<Database>(),
+    );
+  }, dependsOn: [LocalStorage, Database]);
 
   // Router
-  di.registerSingletonWithDependencies(
-    () => MenoRouter(di<AuthManager>()),
-    dependsOn: [AuthManager],
-  );
+  di.registerSingletonWithDependencies(() {
+    return MenoRouter(di<AuthManager>());
+  }, dependsOn: [AuthManager]);
 }

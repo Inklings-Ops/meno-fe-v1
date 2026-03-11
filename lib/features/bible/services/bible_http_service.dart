@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/http_client.dart';
-import 'package:meno/features/bible/model/model.dart';
+import 'package:meno/features/bible/model/_model.dart';
 
 class BibleHttpService with MLogger {
   BibleHttpService(this._http);

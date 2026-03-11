@@ -17,8 +17,8 @@ import 'package:meno/features/profile/model/_model.dart';
 ///
 /// All methods throw [MenoException] on failure — the repository layer
 /// catches and converts to `Either`.
-final class ProfileHttpDataSource {
-  const ProfileHttpDataSource(this._client);
+final class ProfileHttpService {
+  const ProfileHttpService(this._client);
 
   final HttpClient _client;
 

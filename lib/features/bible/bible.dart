@@ -1,4 +1,4 @@
-export 'manager/manager.dart';
-export 'model/model.dart';
-export 'services/services.dart';
-export 'widgets/live_bible_tab.dart';
+//GENERATED BARREL FILE
+export './manager/_manager.dart';
+export './model/_model.dart';
+export 'services/_services.dart';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/profile/widgets/profile_editor_modal.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

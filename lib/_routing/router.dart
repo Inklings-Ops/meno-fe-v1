@@ -3,8 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/auth.dart';
-import 'package:meno/features/broadcast/pages/broadcast_editor_page.dart';
+import 'package:meno/features/auth/manager/auth_manager.dart';
+import 'package:meno/features/auth/pages/_pages.dart';
+import 'package:meno/features/broadcast/pages/_pages.dart';
 
 final class MenoRouter {
   MenoRouter(this._auth);
@@ -83,7 +84,7 @@ final class MenoRouter {
       StatefulShellRoute(
         builder: (context, state, navigationShell) => navigationShell,
         navigatorContainerBuilder: LiveSessionShell.builder,
-        branches: [],
+        branches: const [],
       ),
     ],
   );

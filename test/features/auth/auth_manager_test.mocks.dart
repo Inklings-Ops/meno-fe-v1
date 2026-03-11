@@ -6,8 +6,8 @@
 import 'dart:async' as _i3;
 
 import 'package:dio/dio.dart' as _i6;
-import 'package:meno/features/auth/model/dtos/dtos.dart' as _i4;
-import 'package:meno/features/auth/model/model.dart' as _i8;
+import 'package:meno/features/auth/model/_model.dart' as _i8;
+import 'package:meno/features/auth/model/dtos/_dtos.dart' as _i4;
 import 'package:meno/features/auth/services/auth_http_service.dart' as _i2;
 import 'package:meno/features/auth/services/auth_local_service.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;

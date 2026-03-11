@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_shared/model/entities/user.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
-import 'package:meno/features/auth/model/model.dart';
+import 'package:meno/features/auth/model/_model.dart';
 
 final class UserManager {
   const UserManager(this._auth);

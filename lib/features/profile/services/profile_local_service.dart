@@ -19,8 +19,8 @@ import 'package:meno/features/profile/model/_model.dart';
 /// - Corrupted JSON is silently dropped and treated as a cache miss — the
 ///   repository will re-fetch from the network.
 ///
-final class ProfileLocalDataSource {
-  const ProfileLocalDataSource(this._storage);
+final class ProfileLocalService {
+  const ProfileLocalService(this._storage);
 
   final LocalStorage _storage;
 

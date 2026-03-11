@@ -8,15 +8,15 @@ import 'package:meno/features/profile/services/_services.dart';
 
 class MyProfileManager with MLogger implements Disposable {
   MyProfileManager({
-    required ProfileHttpDataSource http,
-    required ProfileLocalDataSource local,
+    required ProfileHttpService http,
+    required ProfileLocalService local,
     required Id currentUserId,
   }) : _http = http,
        _local = local,
        _currentUserId = currentUserId;
 
-  final ProfileHttpDataSource _http;
-  final ProfileLocalDataSource _local;
+  final ProfileHttpService _http;
+  final ProfileLocalService _local;
   final Id _currentUserId;
 
   final _profile = ValueNotifier<Profile>(.empty);

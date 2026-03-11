@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/model/dtos/dtos.dart';
+import 'package:meno/features/auth/model/dtos/_dtos.dart';
 import 'package:meno/features/auth/services/auth_http_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

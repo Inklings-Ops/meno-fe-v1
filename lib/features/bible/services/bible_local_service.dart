@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/database.dart';
-import 'package:meno/features/bible/model/model.dart';
+import 'package:meno/features/bible/model/_model.dart';
 import 'package:meno/objectbox.g.dart';
 
 class BibleLocalService with MLogger {

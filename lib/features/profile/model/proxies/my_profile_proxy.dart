@@ -58,7 +58,7 @@ class MyProfileProxy extends ChangeNotifier implements Disposable {
 
   late final updateProfile = Command.createAsyncNoParamNoResult(() async {
     final userId = di<UserManager>().currentUserId.value;
-    final updated = await di<ProfileHttpDataSource>().editProfile(
+    final updated = await di<ProfileHttpService>().editProfile(
       userId: userId,
       fullName: _fullName.value,
       bio: _bio.value,
@@ -69,7 +69,7 @@ class MyProfileProxy extends ChangeNotifier implements Disposable {
     _profile = updated;
     notifyListeners();
 
-    unawaited(di<ProfileLocalDataSource>().cacheProfile(userId, updated));
+    unawaited(di<ProfileLocalService>().cacheProfile(userId, updated));
   }, errorFilterFn: menoExceptionFilter);
 
   @override

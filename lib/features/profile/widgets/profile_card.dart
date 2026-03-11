@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/_core/value_objects/image_value_objects.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/profile/widgets/subscribe_button.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileCard extends StatelessWidget {

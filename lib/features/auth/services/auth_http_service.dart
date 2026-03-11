@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:meno/_shared/_shared.dart' show HttpClient;
-import 'package:meno/features/auth/model/dtos/dtos.dart';
+import 'package:meno/features/auth/model/dtos/_dtos.dart';
 
 class AuthHttpService {
   const AuthHttpService(this._client);

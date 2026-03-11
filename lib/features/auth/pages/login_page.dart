@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/auth/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class LoginPage extends StatelessWidget {

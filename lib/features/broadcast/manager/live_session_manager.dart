@@ -10,24 +10,23 @@ import 'package:meno/features/broadcast/services/_services.dart';
 
 class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   LiveSessionManager({
-    required Id currentUserId,
     required BroadcastSession session,
     required BroadcastLocalService local,
     required BroadcastSocketService socket,
     required LiveKitClient livekit,
-  }) : _currentUserId = currentUserId,
-       _session = session,
+  }) : _session = session,
        _local = local,
        _socket = socket,
        _livekit = livekit;
 
-  final Id _currentUserId;
   final BroadcastSession _session;
   final BroadcastLocalService _local;
   final BroadcastSocketService _socket;
   final LiveKitClient _livekit;
 
   late final BroadcastTimerManager timer;
+
+  Id get _currentUserId => _session.currentUserId;
 
   late final broadcast = ValueNotifier<Broadcast>(_session.broadcast);
   final state = ValueNotifier<LiveSessionState>(const .initializing());

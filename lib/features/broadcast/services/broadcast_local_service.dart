@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/services/services.dart';
+import 'package:meno/_shared/services/_services.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
 import 'package:meno/objectbox.g.dart' as obj;
 
 final class BroadcastLocalService {
-  const BroadcastLocalService(this._storage, this._db);
+  BroadcastLocalService({
+    required LocalStorage storage,
+    required Database database,
+  }) : _storage = storage,
+       _db = database;
 
   final LocalStorage _storage;
   final Database _db;

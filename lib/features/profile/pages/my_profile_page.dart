@@ -4,6 +4,7 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/services/_services.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 const _kTabBarHeight = 32.0;

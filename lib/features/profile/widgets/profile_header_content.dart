@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:readmore/readmore.dart';
 

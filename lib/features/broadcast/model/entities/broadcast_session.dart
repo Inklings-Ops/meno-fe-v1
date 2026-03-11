@@ -1,18 +1,21 @@
 import 'package:equatable/equatable.dart';
+import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/features/broadcast/model/entities/_entities.dart';
 
 class BroadcastSession with EquatableMixin {
-  const BroadcastSession({required this.broadcast, required this.timestamp});
+  const BroadcastSession({
+    required this.currentUserId,
+    required this.broadcast,
+    required this.timestamp,
+  });
 
-  factory BroadcastSession.create(Broadcast broadcast) {
-    return BroadcastSession(broadcast: broadcast, timestamp: DateTime.now());
-  }
-
+  final Id currentUserId;
   final Broadcast broadcast;
   final DateTime timestamp;
 
   static BroadcastSession empty = BroadcastSession(
-    broadcast: Broadcast.empty,
+    currentUserId: .empty,
+    broadcast: .empty,
     timestamp: DateTime(0001),
   );
 
@@ -25,5 +28,5 @@ class BroadcastSession with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [broadcast, timestamp];
+  List<Object?> get props => [currentUserId, broadcast, timestamp];
 }

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/features/bible/model/model.dart';
-import 'package:meno/features/bible/services/services.dart';
+import 'package:meno/features/bible/model/_model.dart';
+import 'package:meno/features/bible/services/_services.dart';
 
 /// Manages the state of the Bible reader, including navigation and selection.
 final class BibleManager with MLogger implements Disposable {

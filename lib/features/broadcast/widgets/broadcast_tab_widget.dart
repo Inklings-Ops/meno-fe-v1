@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
+import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastTabWidget extends WatchingWidget {
