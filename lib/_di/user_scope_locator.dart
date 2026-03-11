@@ -41,6 +41,13 @@ void pushUserSessionScope(UserCredential credential) {
     );
   }, dependsOn: [BroadcastHttpService, BroadcastLocalService, MediaService]);
   di.registerSingletonWithDependencies(() {
+    return StreamManager(
+      currentUserId: currentUserId,
+      http: di<BroadcastHttpService>(),
+      local: di<BroadcastLocalService>(),
+    );
+  }, dependsOn: [BroadcastHttpService, BroadcastLocalService]);
+  di.registerSingletonWithDependencies(() {
     return FavouritesManager(
       currentUserId: currentUserId,
       local: di<BroadcastLocalService>(),
