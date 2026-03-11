@@ -33,17 +33,17 @@ class MyProfilePage extends WatchingWidget {
               ),
             ],
             body: TabBarView(
-              children: isEmpty
-                  ? [
-                      const SizedBox.shrink(),
-                      const SizedBox.shrink(),
-                      const SizedBox.shrink(),
-                    ]
-                  : [
-                      const _RecentBroadcastsTab(),
-                      const _AllBroadcastsTab(),
-                      const _FavouritesTab(),
-                    ],
+              children: [
+                if (isEmpty) ...[
+                  const SizedBox.shrink(),
+                  const SizedBox.shrink(),
+                  const SizedBox.shrink(),
+                ] else ...[
+                  const _RecentBroadcastsTab(),
+                  const _AllBroadcastsTab(),
+                  const _FavouritesTab(),
+                ],
+              ],
             ),
           ),
         ),
