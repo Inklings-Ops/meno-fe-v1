@@ -121,7 +121,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         shrinkWrap: shrinkWrap,
         physics: physics,
       ),
-      FeedLayout.grid => _GridList(
+      FeedLayout.verticalGrid => _GridList(
         feedSource: feedSource,
         itemBuilder: itemBuilder,
         itemCount: itemCount,
@@ -135,6 +135,23 @@ class FeedWidget<TItem> extends WatchingWidget {
         padding: padding,
         shrinkWrap: shrinkWrap,
         physics: physics,
+        scrollDirection: .vertical,
+      ),
+      FeedLayout.horizontalGrid => _GridList(
+        feedSource: feedSource,
+        itemBuilder: itemBuilder,
+        itemCount: itemCount,
+        listItemCount: listItemCount,
+        isFetching: isFetching,
+        crossAxisCount: gridCrossAxisCount,
+        childAspectRatio: gridChildAspectRatio,
+        mainAxisSpacing: gridMainAxisSpacing,
+        crossAxisSpacing: gridCrossAxisSpacing,
+        isInitialLoading: isInitialLoading,
+        padding: padding,
+        shrinkWrap: shrinkWrap,
+        physics: physics,
+        scrollDirection: .horizontal,
       ),
     };
   }
@@ -257,6 +274,7 @@ class _GridList<TItem> extends StatelessWidget {
     required this.mainAxisSpacing,
     required this.crossAxisSpacing,
     required this.isInitialLoading,
+    required this.scrollDirection,
     this.padding,
     this.shrinkWrap = false,
     this.physics,
@@ -275,12 +293,14 @@ class _GridList<TItem> extends StatelessWidget {
   final bool shrinkWrap;
   final ScrollPhysics? physics;
   final bool isInitialLoading;
+  final Axis scrollDirection;
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: feedSource.updateDataCommand.runAsync,
       child: CustomScrollView(
+        scrollDirection: scrollDirection,
         shrinkWrap: shrinkWrap,
         physics: physics,
         slivers: [
@@ -323,5 +343,6 @@ enum FeedLayout {
   horizontalList,
 
   /// [GridView] with a fixed cross-axis count — good for Discover.
-  grid,
+  verticalGrid,
+  horizontalGrid,
 }

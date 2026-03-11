@@ -75,7 +75,7 @@ class _LiveForYouSection extends WatchingWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.live(
+          return BroadcastCard.liveCard(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () {},
@@ -112,7 +112,7 @@ class _NowLiveSection extends WatchingWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.live(
+          return BroadcastCard.liveCard(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () {},
@@ -149,7 +149,7 @@ class _RecentlyLiveSection extends StatelessWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.recentlyLive(
+          return BroadcastCard.recentlyLiveCard(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

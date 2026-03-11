@@ -1,5 +1,6 @@
 //GENERATED BARREL FILE
 export 'broadcast_card.dart';
+export 'broadcast_section_widget.dart';
 export 'confirmation_dialog.dart';
 export 'delete_alert_dialog.dart';
 export 'dynamic_sliver_app_bar.dart';

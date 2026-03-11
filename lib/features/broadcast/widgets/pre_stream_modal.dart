@@ -5,7 +5,6 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class PreStreamModal extends WatchingWidget {
@@ -251,7 +250,7 @@ class PreStreamRecentBroadcastsSection extends WatchingWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.recentlyLive(
+          return BroadcastCard.recentlyLiveCard(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

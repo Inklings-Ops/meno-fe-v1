@@ -40,7 +40,7 @@ class BroadcastsPage extends WatchingWidget {
 
     final feedLayout = switch (type) {
       BroadcastsType.recentlyLive => FeedLayout.verticalList,
-      _ => FeedLayout.grid,
+      _ => FeedLayout.verticalGrid,
     };
 
     final colors = MColorScheme.of(context);
@@ -88,7 +88,7 @@ class BroadcastsPage extends WatchingWidget {
       if (item == null) return const SizedBox.shrink();
       return switch (feedSource.currentQuery.type) {
         .recentlyLive => BroadcastCard.tile(item, onTap: () => onTap(item)),
-        _ => BroadcastCard.live(item, onTap: () => onTap(item)),
+        _ => BroadcastCard.liveCard(item, onTap: () => onTap(item)),
       };
     };
   }
