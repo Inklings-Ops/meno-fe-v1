@@ -9,6 +9,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
 import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
+import 'package:meno/features/settings/services/settings_local_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String kRootScope = 'root-session';
@@ -105,6 +106,17 @@ void configureGlobalDependencies() {
       database: di<Database>(),
     );
   }, dependsOn: [LocalStorage, Database]);
+
+  /**
+   * Settings Local Service
+   *
+   * This is also bumped up to the global locator so we can easily access the
+   * user's local settings (if any) on initial load before syncing with the
+   * remote source.
+   */
+  di.registerSingletonWithDependencies(() {
+    return SettingsLocalService(di<LocalStorage>());
+  }, dependsOn: [LocalStorage]);
 
   // Router
   di.registerSingletonWithDependencies(() {

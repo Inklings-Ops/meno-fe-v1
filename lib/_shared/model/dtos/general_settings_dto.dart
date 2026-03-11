@@ -70,7 +70,7 @@ extension GeneralSettingsDtoX on GeneralSettingsDto {
       pushNotifications: pushNotifications,
       appNotifications: appNotifications,
       emailNotifications: emailNotifications,
-      display: UserDisplay.fromString(display),
+      display: UserDisplay.fromJson(display),
       language: language,
       pushNotificationToken: pushNotificationToken,
     );

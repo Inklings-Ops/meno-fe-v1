@@ -7,7 +7,8 @@ enum UserDisplay {
 
   final String value;
 
-  static UserDisplay fromString(String value) {
+  static UserDisplay fromJson(dynamic value) {
+    if (value is! String) throw Exception('Expected string');
     return UserDisplay.values.firstWhere(
       (e) => e.value == value,
       orElse: () => UserDisplay.system,

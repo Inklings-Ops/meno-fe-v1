@@ -7,6 +7,8 @@ import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/profile/profile.dart';
+import 'package:meno/features/settings/manager/_manager.dart';
+import 'package:meno/features/settings/services/_services.dart';
 
 const String kUserScope = 'user-session';
 
@@ -98,6 +100,18 @@ void pushUserSessionScope(UserCredential credential) {
       local: di<ProfileLocalService>(),
     );
   }, dependsOn: [ProfileHttpService, ProfileLocalService]);
+
+  // Settings
+  di.registerSingletonWithDependencies(() {
+    return SettingsHttpService(di<HttpClient>());
+  }, dependsOn: [HttpClient]);
+  di.registerSingletonWithDependencies(() {
+    return SettingsManager(
+      currentUserId: currentUserId,
+      http: di<SettingsHttpService>(),
+      local: di<SettingsLocalService>(),
+    );
+  }, dependsOn: [SettingsHttpService, SettingsLocalService]);
 
   // "Zombie" Session
   final localBroadcast = di<BroadcastLocalService>();
