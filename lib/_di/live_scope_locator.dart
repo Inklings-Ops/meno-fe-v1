@@ -58,14 +58,12 @@ Future<void> pushLiveSessionScope(BroadcastSession session) async {
 
   // Live Session Manager
   di.registerSingletonAsync(
-    () async {
-      return LiveSessionManager(
-        session: session,
-        local: di<BroadcastLocalService>(),
-        socket: di<BroadcastSocketService>(),
-        livekit: di<LiveKitClient>(),
-      );
-    },
+    () async => LiveSessionManager(
+      session: session,
+      local: di<BroadcastLocalService>(),
+      socket: di<BroadcastSocketService>(),
+      livekit: di<LiveKitClient>(),
+    ),
     dependsOn: [BroadcastLocalService, BroadcastSocketService, LiveKitClient],
     onCreated: (manager) => manager.setupConfigs.run(),
     signalsReady: true,

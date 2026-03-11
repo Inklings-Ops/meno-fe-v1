@@ -1,6 +1,7 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_di/global_locator.dart';
+import 'package:meno/_di/live_scope_locator.dart';
 import 'package:meno/_shared/services/_services.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
@@ -90,6 +91,11 @@ void pushUserSessionScope(UserCredential credential) {
       local: di<ProfileLocalService>(),
     );
   }, dependsOn: [ProfileHttpService, ProfileLocalService]);
+
+  // "Zombie" Session
+  final localBroadcast = di<BroadcastLocalService>();
+  final zombieSession = localBroadcast.getActiveBroadcastSession(currentUserId);
+  if (zombieSession != null) pushLiveSessionScope(zombieSession);
 }
 
 Future<void> popUserSessionScope() async {

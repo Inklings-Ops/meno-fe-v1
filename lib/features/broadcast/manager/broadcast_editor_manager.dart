@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_di/live_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/_shared/services/media_service.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
@@ -64,48 +65,6 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     errorFilterFn: menoExceptionFilter,
   )..errors.listen((error, _) => _resetCreationState());
 
-  late final saveBroadcastSession = Command.createAsync<Broadcast, Broadcast>(
-    (broadcast) async {
-      // Skip if already completed
-      if (step.value.index >= BroadcastCreationStep.saved.index) {
-        log.i('BroadcastFormManager: Session already saved, skipping');
-        return broadcast;
-      }
-
-      log.i('BroadcastFormManager: Step 3 - Saving active broadcast session');
-      await _local.saveActiveBroadcastSession(
-        userId: _currentUserId,
-        session: BroadcastSession(
-          currentUserId: _currentUserId,
-          broadcast: broadcast,
-          timestamp: .now(),
-        ),
-      );
-      step.value = BroadcastCreationStep.saved;
-      return broadcast;
-    },
-    initialValue: Broadcast.empty,
-    errorFilterFn: menoExceptionFilter,
-  );
-
-  late final startBroadcast = Command.createAsync<Id, Broadcast>(
-    (broadcastId) async {
-      // Skip if already completed
-      if (step.value.index >= BroadcastCreationStep.started.index) {
-        log.i('BroadcastFormManager: Broadcast already started, skipping');
-        return fetchBroadcast.runAsync();
-      }
-
-      final result = await _http.startBroadcast(broadcastId);
-      step.value = BroadcastCreationStep.started;
-
-      await _updateDraftWithCreationState(broadcastId, step.value);
-      return result;
-    },
-    initialValue: Broadcast.empty,
-    errorFilterFn: menoExceptionFilter,
-  )..pipeToCommand(saveBroadcastSession, transform: (value) => value);
-
   late final createBroadcast = Command.createAsyncNoParam(
     () async {
       // If we already created a broadcast, skip creation and use existing ID
@@ -135,6 +94,43 @@ final class BroadcastEditorManager with MLogger implements Disposable {
     restriction: isValid.map((value) => !value),
     errorFilterFn: menoExceptionFilter,
   )..pipeToCommand(startBroadcast, transform: (value) => value.id);
+
+  late final startBroadcast = Command.createAsync<Id, Broadcast>(
+    (broadcastId) async {
+      // Skip if already completed
+      if (step.value.index >= BroadcastCreationStep.started.index) {
+        log.i('BroadcastFormManager: Broadcast already started, skipping');
+        return fetchBroadcast.runAsync();
+      }
+
+      final result = await _http.startBroadcast(broadcastId);
+      step.value = BroadcastCreationStep.started;
+
+      await _updateDraftWithCreationState(broadcastId, step.value);
+      return result;
+    },
+    initialValue: Broadcast.empty,
+    errorFilterFn: menoExceptionFilter,
+  )..pipeToCommand(saveBroadcastSession, transform: (value) => value);
+
+  late final saveBroadcastSession = Command.createAsync<Broadcast, Broadcast>(
+    (broadcast) async {
+      // Skip if already completed
+      if (step.value.index >= BroadcastCreationStep.saved.index) {
+        log.i('BroadcastFormManager: Session already saved, skipping');
+        return broadcast;
+      }
+
+      final session = BroadcastSession.create(_currentUserId, broadcast);
+      await _local.saveBroadcastSession(_currentUserId, session);
+      await pushLiveSessionScope(session);
+
+      step.value = BroadcastCreationStep.saved;
+      return broadcast;
+    },
+    initialValue: Broadcast.empty,
+    errorFilterFn: menoExceptionFilter,
+  );
 
   late final resetForm = Command.createSyncNoParamNoResult(() {
     log.i('BroadcastFormManager: Resetting form');

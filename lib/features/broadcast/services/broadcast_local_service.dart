@@ -24,10 +24,7 @@ final class BroadcastLocalService {
 
   /// Saves the active broadcast ID specifically for THIS user.
   /// Saves a [BroadcastSessionDto] class/object.
-  Future<void> saveActiveBroadcastSession({
-    required Id userId,
-    required BroadcastSession session,
-  }) async {
+  Future<void> saveBroadcastSession(Id userId, BroadcastSession session) async {
     final key = StorageKeys.activeBroadcast(userId.getOrCrash());
     await _storage.setString(key, jsonEncode(session.toDto.toJson()));
   }

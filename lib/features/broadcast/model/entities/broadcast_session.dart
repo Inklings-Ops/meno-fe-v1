@@ -9,6 +9,14 @@ class BroadcastSession with EquatableMixin {
     required this.timestamp,
   });
 
+  factory BroadcastSession.create(Id currentUserId, Broadcast broadcast) {
+    return BroadcastSession(
+      currentUserId: currentUserId,
+      broadcast: broadcast,
+      timestamp: DateTime.now(),
+    );
+  }
+
   final Id currentUserId;
   final Broadcast broadcast;
   final DateTime timestamp;
