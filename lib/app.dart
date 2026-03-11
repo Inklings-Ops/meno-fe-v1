@@ -4,28 +4,12 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/_core/keys/meno_keys.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-class MenoApp extends WatchingStatefulWidget {
+class MenoApp extends WatchingWidget {
   const MenoApp({super.key});
-
-  @override
-  State<MenoApp> createState() => _MenoAppState();
-}
-
-class _MenoAppState extends State<MenoApp> {
-  @override
-  void initState() {
-    super.initState();
-    // Remove the splash screen once this widget builds.
-    // This ensures the remove happens AFTER the first frame is painted.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FlutterNativeSplash.remove();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +20,13 @@ class _MenoAppState extends State<MenoApp> {
     );
 
     if (snapshot.hasError) {
+      FlutterNativeSplash.remove();
       return _ErrorWidget(error: snapshot.error, onRetry: di.allReady);
     }
 
-    if (snapshot.connectionState == .waiting) return const _LoadingWidget();
+    if (snapshot.connectionState == .waiting) return const SizedBox.shrink();
 
+    FlutterNativeSplash.remove();
     return ValueListenableBuilder(
       valueListenable: di<AuthManager>().activeUserId,
       builder: (context, value, child) {
@@ -66,20 +52,20 @@ class _MenoAppState extends State<MenoApp> {
   }
 }
 
-class _LoadingWidget extends StatelessWidget {
-  const _LoadingWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      darkTheme: MTheme.dark,
-      theme: MTheme.light,
-      scaffoldMessengerKey: MenoKeys.scaffoldMessengerKey,
-      home: const LoadingPage(),
-    );
-  }
-}
+// class _LoadingWidget extends StatelessWidget {
+//   const _LoadingWidget();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       darkTheme: MTheme.dark,
+//       theme: MTheme.light,
+//       scaffoldMessengerKey: MenoKeys.scaffoldMessengerKey,
+//       home: const LoadingPage(),
+//     );
+//   }
+// }
 
 class _ErrorWidget extends StatelessWidget {
   const _ErrorWidget({required this.error, this.onRetry});
