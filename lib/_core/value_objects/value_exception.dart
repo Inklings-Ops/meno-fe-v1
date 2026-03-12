@@ -102,3 +102,39 @@ final class PasswordMissingNumber extends ValueException<String> {
     super.msg = 'Please include a number in your password',
   });
 }
+
+extension PasswordValidationErrorX on ValueException<String> {
+  String? get title {
+    switch (this) {
+      case PasswordMissingLowercase():
+        return 'a';
+      case PasswordMissingNumber():
+        return '123';
+      case PasswordMissingSpecialCharacter():
+        return '%';
+      case PasswordMissingUppercase():
+        return 'A';
+      case PasswordTooShort():
+        return '8+';
+      default:
+        return null;
+    }
+  }
+
+  String? get subtitle {
+    switch (this) {
+      case PasswordMissingLowercase():
+        return 'Lowercase';
+      case PasswordMissingNumber():
+        return 'Number';
+      case PasswordMissingSpecialCharacter():
+        return 'Symbol';
+      case PasswordMissingUppercase():
+        return 'Uppercase';
+      case PasswordTooShort():
+        return 'Characters';
+      default:
+        return null;
+    }
+  }
+}

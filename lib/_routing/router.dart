@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/auth/manager/auth_manager.dart';
-import 'package:meno/features/auth/pages/_pages.dart';
-import 'package:meno/features/broadcast/pages/_pages.dart';
+import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
 
 final class MenoRouter {
@@ -21,12 +20,20 @@ final class MenoRouter {
     redirect: (context, state) {
       final nextRoute = state.matchedLocation;
       final isPublicRoute = R.publicRoutes.contains(nextRoute);
+
       final isAuthenticated = _auth.activeUserId.value.isValid;
+      final isPendingVerification = _auth.pendingEmailVerification.value;
+
       final isOnboarded = _onboarding.isOnboarded.value;
 
       if (!isOnboarded) {
         if (!isPublicRoute) return R.onboarding;
         return null;
+      }
+
+      if (isAuthenticated && isPendingVerification) {
+        if (nextRoute == R.emailVerification) return null;
+        return R.emailVerification;
       }
 
       if (!isAuthenticated) {
@@ -42,10 +49,66 @@ final class MenoRouter {
     },
     refreshListenable: Listenable.merge([
       _auth.activeUserId,
+      _auth.pendingEmailVerification,
       _onboarding.isOnboarded,
     ]),
     routes: [
-      GoRoute(path: R.loading, builder: (_, _) => const LoadingPage()),
+      /**
+       *  Loading Page
+       */
+      GoRoute(
+        path: R.loading,
+        builder: (context, state) => const LoadingPage(),
+      ),
+
+      /**
+       *  Onboarding
+       */
+      GoRoute(
+        path: R.onboarding,
+        builder: (context, state) => const OnboardingPage(),
+      ),
+
+      /**
+       *  Authentication
+       */
+      GoRoute(
+        path: R.login,
+        builder: (context, state) {
+          final params = state.uri.queryParameters;
+          final implyLeading = bool.parse(params['implyLeading'] ?? 'false');
+          return LoginPage(implyLeading: implyLeading);
+        },
+      ),
+
+      GoRoute(
+        path: R.register,
+        builder: (context, state) {
+          final params = state.uri.queryParameters;
+          final implyLeading = bool.parse(params['implyLeading'] ?? 'false');
+          return RegisterPage(implyLeading: implyLeading);
+        },
+      ),
+
+      GoRoute(
+        path: R.emailVerification,
+        builder: (context, state) => const EmailVerificationPage(),
+      ),
+
+      GoRoute(
+        path: R.resetPassword,
+        builder: (context, state) => const ResetPasswordPage(),
+      ),
+
+      GoRoute(
+        path: R.resetPwdOtp,
+        builder: (context, state) => const ResetPasswordOtpVerificationPage(),
+      ),
+
+      GoRoute(
+        path: R.resetPwdSuccess,
+        builder: (context, state) => const ResetPasswordSuccessPage(),
+      ),
 
       GoRoute(
         path: '/switch-account/:id',
@@ -55,9 +118,9 @@ final class MenoRouter {
         },
       ),
 
-      GoRoute(path: R.login, builder: (_, _) => const LoginPage()),
-
-      // Broadcasts
+      /**
+       *  Broadcasts
+       */
       GoRoute(
         path: R.broadcastEditor,
         pageBuilder: (context, state) {

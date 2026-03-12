@@ -2,26 +2,24 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_core/_core.dart';
-import 'package:meno/_shared/_shared.dart';
+import 'package:meno/features/onboarding/services/_services.dart';
 
 final class OnboardingManager implements Disposable {
-  OnboardingManager(this._storage);
+  OnboardingManager(this._service);
 
-  final LocalStorage _storage;
+  final OnboardingService _service;
 
   final _isOnboarded = ValueNotifier<bool>(false);
 
   ValueListenable<bool> get isOnboarded => _isOnboarded;
 
   late final initialize = Command.createSyncNoParamNoResult(() {
-    final result = _storage.getBool(StorageKeys.onboarding) ?? false;
-    _isOnboarded.value = result;
+    _isOnboarded.value = _service.isOnboarded;
   });
 
   late final completeOnboarding = Command.createAsyncNoParamNoResult(() async {
-    await _storage.setBool(StorageKeys.onboarding, true);
-    _isOnboarded.value = true;
+    if (_isOnboarded.value) return;
+    _isOnboarded.value = await _service.completeOnboarding();
   });
 
   @override

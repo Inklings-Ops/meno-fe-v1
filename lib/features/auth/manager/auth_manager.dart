@@ -6,9 +6,16 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/onboarding/services/onboarding_service.dart';
 
 class AuthManager extends ChangeNotifier implements Disposable {
-  AuthManager(this._http, this._local) {
+  AuthManager({
+    required AuthHttpService http,
+    required AuthLocalService local,
+    required OnboardingService onboarding,
+  }) : _http = http,
+       _local = local,
+       _onboarding = onboarding {
     _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
 
     login = Command.createAsync<LoginArgs, UserCredential>(
@@ -17,6 +24,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
         );
+        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -30,6 +38,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
         );
+        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -39,6 +48,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
     googleSignIn = Command.createAsync<String, UserCredential>(
       (idToken) async {
         final dto = await _http.googleSignIn(idToken: idToken);
+        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -48,6 +58,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
     googleSignUp = Command.createAsync<String, UserCredential>(
       (idToken) async {
         final dto = await _http.googleSignUp(idToken: idToken);
+        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -85,11 +96,10 @@ class AuthManager extends ChangeNotifier implements Disposable {
       errorFilterFn: menoExceptionFilter,
     );
 
-    verifyEmail = Command.createAsyncNoResult<VerifyEmailArgs>(
-      (args) =>
-          _http.verifyEmail(email: args.email.getOrCrash(), code: args.code),
-      errorFilterFn: menoExceptionFilter,
-    );
+    verifyEmail = Command.createAsyncNoResult<VerifyEmailArgs>((args) async {
+      await _http.verifyEmail(email: args.email.getOrCrash(), code: args.code);
+      _pendingEmailVerification.value = false;
+    }, errorFilterFn: menoExceptionFilter);
 
     resetPassword = Command.createAsyncNoResult<ResetPasswordArgs>(
       (args) => _http.resetPassword(
@@ -115,10 +125,12 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
   final AuthHttpService _http;
   final AuthLocalService _local;
+  final OnboardingService _onboarding;
 
   final _activeUserId = ValueNotifier<Id>(Id.empty);
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
   final _lastKnownUser = ValueNotifier<User>(User.empty);
+  final _pendingEmailVerification = ValueNotifier<bool>(false);
 
   StreamSubscription<UserCredentialDto?>? _subscription;
 
@@ -132,8 +144,10 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
   ValueListenable<User> get lastKnownUser => _lastKnownUser;
 
-  bool get isAuthenticated => _activeUserId.value.isValid;
+  ValueListenable<bool> get pendingEmailVerification =>
+      _pendingEmailVerification;
 
+  bool get isAuthenticated => _activeUserId.value.isValid;
 
   // ======================================================================
   // COMMANDS
@@ -205,6 +219,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
     final credential = dto.toDomain;
 
     _updateAccountInternal(credential);
+    _pendingEmailVerification.value = dto.user.verified;
     _lastKnownUser.value = credential.user;
     _activeUserId.value = credential.user.id;
 

@@ -4,16 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/onboarding/services/onboarding_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateMocks([AuthHttpService, AuthLocalService])
+@GenerateMocks([AuthHttpService, AuthLocalService, OnboardingService])
 import 'auth_manager_test.mocks.dart';
 
 void main() {
   late AuthManager manager;
   late MockAuthHttpService mockHttp;
   late MockAuthLocalService mockLocal;
+  late MockOnboardingService mockOnboarding;
   late StreamController<UserCredentialDto?> authChangedController;
 
   final tUserId = Id.unique().getOrCrash();
@@ -35,13 +37,18 @@ void main() {
   setUp(() {
     mockHttp = MockAuthHttpService();
     mockLocal = MockAuthLocalService();
+    mockOnboarding = MockOnboardingService();
     authChangedController = StreamController<UserCredentialDto?>.broadcast();
 
     when(
       mockLocal.onCredentialChanged,
     ).thenAnswer((_) => authChangedController.stream);
 
-    manager = AuthManager(mockHttp, mockLocal);
+    manager = AuthManager(
+      http: mockHttp,
+      local: mockLocal,
+      onboarding: mockOnboarding,
+    );
   });
 
   tearDown(() {

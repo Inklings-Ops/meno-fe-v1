@@ -9,7 +9,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
 import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
-import 'package:meno/features/onboarding/manager/onboarding_manager.dart';
+import 'package:meno/features/onboarding/onboarding.dart';
 import 'package:meno/features/settings/services/settings_local_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,10 +66,13 @@ void configureGlobalDependencies() {
 
   // Onboarding
   di.registerSingletonWithDependencies(() {
-    final manager = OnboardingManager(di<LocalStorage>());
+    return OnboardingService(di<LocalStorage>());
+  }, dependsOn: [LocalStorage]);
+  di.registerSingletonWithDependencies(() {
+    final manager = OnboardingManager(di<OnboardingService>());
     manager.initialize.run();
     return manager;
-  }, dependsOn: [LocalStorage]);
+  }, dependsOn: [OnboardingService]);
 
   // Auth
   di.registerSingletonWithDependencies(() {
@@ -79,8 +82,12 @@ void configureGlobalDependencies() {
     return AuthHttpService(di<HttpClient>());
   }, dependsOn: [HttpClient]);
   di.registerSingletonWithDependencies(() {
-    return AuthManager(di<AuthHttpService>(), di<AuthLocalService>());
-  }, dependsOn: [AuthHttpService, AuthLocalService]);
+    return AuthManager(
+      http: di<AuthHttpService>(),
+      local: di<AuthLocalService>(),
+      onboarding: di<OnboardingService>(),
+    );
+  }, dependsOn: [AuthHttpService, AuthLocalService, OnboardingService]);
 
   // Bible
   di.registerSingletonWithDependencies(() {

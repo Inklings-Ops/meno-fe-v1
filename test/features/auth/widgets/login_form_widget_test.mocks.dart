@@ -83,6 +83,17 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
           as _i2.ValueListenable<_i6.User>);
 
   @override
+  _i2.ValueListenable<bool> get pendingEmailVerification =>
+      (super.noSuchMethod(
+            Invocation.getter(#pendingEmailVerification),
+            returnValue: _FakeValueListenable_0<bool>(
+              this,
+              Invocation.getter(#pendingEmailVerification),
+            ),
+          )
+          as _i2.ValueListenable<bool>);
+
+  @override
   bool get isAuthenticated =>
       (super.noSuchMethod(
             Invocation.getter(#isAuthenticated),

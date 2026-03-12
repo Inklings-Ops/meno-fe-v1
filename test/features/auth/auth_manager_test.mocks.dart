@@ -10,6 +10,8 @@ import 'package:meno/features/auth/model/_model.dart' as _i8;
 import 'package:meno/features/auth/model/dtos/_dtos.dart' as _i4;
 import 'package:meno/features/auth/services/auth_http_service.dart' as _i2;
 import 'package:meno/features/auth/services/auth_local_service.dart' as _i7;
+import 'package:meno/features/onboarding/services/onboarding_service.dart'
+    as _i9;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 
@@ -294,4 +296,26 @@ class MockAuthLocalService extends _i1.Mock implements _i7.AuthLocalService {
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+}
+
+/// A class which mocks [OnboardingService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockOnboardingService extends _i1.Mock implements _i9.OnboardingService {
+  MockOnboardingService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool get isOnboarded =>
+      (super.noSuchMethod(Invocation.getter(#isOnboarded), returnValue: false)
+          as bool);
+
+  @override
+  _i3.Future<bool> completeOnboarding() =>
+      (super.noSuchMethod(
+            Invocation.method(#completeOnboarding, []),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 }

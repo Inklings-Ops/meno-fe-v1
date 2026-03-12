@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/auth/pages/login_page.dart';
 import 'package:meno/features/auth/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:mockito/annotations.dart';
