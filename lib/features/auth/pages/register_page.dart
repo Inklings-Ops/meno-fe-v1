@@ -14,6 +14,12 @@ class RegisterPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    pushScope(
+      init: (getIt) {
+        getIt.registerSingleton(RegisterFormManager());
+      },
+    );
+
     final isOnboarded = watchValue((OnboardingManager m) => m.isOnboarded);
 
     return MScaffold(
