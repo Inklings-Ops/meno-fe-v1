@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/discover/discover.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class AllBroadcastsWidget extends StatelessWidget {
@@ -46,12 +45,14 @@ class _NowLiveSection extends WatchingWidget {
       title: 'Now Live',
       maxContentHeight: 376,
       titleIcon: Assets.images.flame.image(height: 24, width: 24),
-      onSeeAll: di<DiscoverManager>().goToNowLive,
+      onSeeAll: () => context.go(R.discoverNowLiveTab),
       builder: (context) => FeedWidget(
         feedSource: feedSource,
         horizontalItemExtent: 148,
         gridCrossAxisSpacing: 24,
         gridMainAxisSpacing: 24,
+        skeletonItem: BroadcastCard.skeletonLive,
+        skeletonItemCount: 4,
         layout: .horizontalGrid,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
@@ -87,12 +88,14 @@ class _RecentlyLiveSection extends WatchingWidget {
       title: 'Recently Live',
       maxContentHeight: 376,
       titleIcon: Assets.images.highVoltage.image(height: 24, width: 24),
-      onSeeAll: di<DiscoverManager>().goToRecentlyLive,
+      onSeeAll: () => context.go(R.discoverRecentlyLiveTab),
       builder: (context) => FeedWidget(
         feedSource: feedSource,
         horizontalItemExtent: 148,
         gridCrossAxisSpacing: 24,
         gridMainAxisSpacing: 24,
+        skeletonItem: BroadcastCard.skeletonRecentlyLive,
+        skeletonItemCount: 4,
         layout: .horizontalGrid,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {

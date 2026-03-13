@@ -22,6 +22,7 @@ class NowLiveBroadcastsWidget extends WatchingWidget {
       gridMainAxisSpacing: 24,
       gridChildAspectRatio: 159.50 / 176,
       layout: .verticalGrid,
+      skeletonItem: BroadcastCard.skeletonLive,
       padding: const .fromLTRB(16, 28, 16, 32),
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();

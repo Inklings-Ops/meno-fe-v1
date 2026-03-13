@@ -218,7 +218,7 @@ final class MenoRouter {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: '/discover-all',
+                        path: R.discoverAllTab,
                         builder: (context, state) {
                           return const AllBroadcastsWidget();
                         },
@@ -228,7 +228,7 @@ final class MenoRouter {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: '/discover-now-live',
+                        path: R.discoverNowLiveTab,
                         builder: (context, state) {
                           return const NowLiveBroadcastsWidget();
                         },
@@ -238,7 +238,7 @@ final class MenoRouter {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: '/discover-recently-live',
+                        path: R.discoverRecentlyLiveTab,
                         builder: (_, state) {
                           return const RecentlyLiveBroadcastsWidget();
                         },
@@ -248,7 +248,7 @@ final class MenoRouter {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: '/discover-suggested-accounts',
+                        path: R.discoverSuggestedAccountsLiveTab,
                         builder: (_, state) {
                           return const SuggestedAccountsWidget();
                         },

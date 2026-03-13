@@ -16,14 +16,16 @@ class HomePage extends StatelessWidget {
       appBar: _AppBar(),
       body: SingleChildScrollView(
         clipBehavior: .none,
-        padding: .symmetric(vertical: 16),
+        padding: .only(bottom: 32),
         physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
         child: Column(
-          spacing: Insets.xxl,
           children: <Widget>[
             LiveSessionBanner(),
+            Spaces.verticalXLarge,
             _LiveForYouSection(),
+            Spaces.verticalXXLarge,
             _NowLiveSection(),
+            Spaces.verticalXXLarge,
             _RecentlyLiveSection(),
           ],
         ),

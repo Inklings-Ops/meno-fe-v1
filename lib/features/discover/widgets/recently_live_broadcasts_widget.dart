@@ -24,6 +24,7 @@ class RecentlyLiveBroadcastsWidget extends WatchingWidget {
       gridChildAspectRatio: 159.50 / 176,
       layout: .verticalGrid,
       padding: const .fromLTRB(16, 28, 16, 32),
+      skeletonItem: BroadcastCard.skeletonRecentlyLive,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
         return BroadcastCard.rLive(

@@ -69,4 +69,8 @@ class R {
   static String switchAccount(String userId) => '/switch-account/$userId';
 
   static const String discoverSearch = '/discover-search';
+  static const String discoverAllTab = '/discover-all';
+  static const String discoverNowLiveTab = '/discover-now-live';
+  static const String discoverRecentlyLiveTab = '/discover-recently-live';
+  static const String discoverSuggestedAccountsLiveTab = '/discover-accounts';
 }

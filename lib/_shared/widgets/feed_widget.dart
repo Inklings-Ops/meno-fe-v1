@@ -193,22 +193,19 @@ class _HorizontalList<TItem> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: feedSource.updateDataCommand.runAsync,
-      child: ListView.separated(
-        scrollDirection: .horizontal,
-        clipBehavior: .none,
-        padding: padding ?? const .symmetric(horizontal: Insets.lg),
-        shrinkWrap: shrinkWrap,
-        physics: physics,
-        separatorBuilder: (context, i) => const SizedBox(width: 24),
-        itemCount: itemCount,
-        itemBuilder: (context, index) {
-          if (isInitialLoading) return Skeletonizer(child: skeletonItem);
-          final item = feedSource.getItemAtIndex(index);
-          return itemBuilder(context, item);
-        },
-      ),
+    return ListView.separated(
+      scrollDirection: .horizontal,
+      clipBehavior: .none,
+      padding: padding ?? const .symmetric(horizontal: Insets.lg),
+      shrinkWrap: shrinkWrap,
+      physics: physics,
+      separatorBuilder: (context, i) => const SizedBox(width: 24),
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        if (isInitialLoading) return Skeletonizer(child: skeletonItem);
+        final item = feedSource.getItemAtIndex(index);
+        return itemBuilder(context, item);
+      },
     );
   }
 }

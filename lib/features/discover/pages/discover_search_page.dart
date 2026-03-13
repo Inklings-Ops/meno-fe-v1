@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/manager/user_manager.dart';
-import 'package:meno/_shared/widgets/broadcast_card.dart';
+import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/model/entities/broadcast.dart';
 import 'package:meno/features/broadcast/services/broadcast_http_service.dart';
 import 'package:meno/features/discover/discover.dart';
-import 'package:meno/features/discover/widgets/_widgets.dart';
 import 'package:meno/features/profile/services/profile_http_service.dart';
 import 'package:meno/features/profile/widgets/profile_card.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -52,29 +50,24 @@ class _SearchView extends WatchingWidget {
       return controller;
     });
 
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) di<DiscoverManager>().closeSearch();
-      },
-      child: MScaffold(
-        padding: .zero,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: const SizedBox.shrink(),
-          flexibleSpace: Align(
-            alignment: Alignment.bottomCenter,
-            child: DiscoverSearchBar(
-              padding: const .fromLTRB(16, 8, 16, 4),
-              showCancelButton: true,
-              onSubmitted: manager.search.run,
-            ),
+    return MScaffold(
+      padding: .zero,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: const SizedBox.shrink(),
+        flexibleSpace: Align(
+          alignment: Alignment.bottomCenter,
+          child: DiscoverSearchBar(
+            padding: const .fromLTRB(16, 8, 16, 4),
+            showCancelButton: true,
+            onSubmitted: manager.search.run,
           ),
         ),
-        body: CustomScrollView(
-          controller: scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: const [_SearchBody(key: Key('discover-search-body'))],
-        ),
+      ),
+      body: CustomScrollView(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: const [_SearchBody(key: Key('discover-search-body'))],
       ),
     );
   }
@@ -193,7 +186,7 @@ class _SearchResults extends WatchingWidget {
           child: Column(
             children: [
               Spaces.verticalXLarge,
-              DiscoverPaginationIndicator(
+              MenoPagedLoadingIndicator(
                 isLoading: isFetchingMore,
                 hasMore: hasMore,
               ),
