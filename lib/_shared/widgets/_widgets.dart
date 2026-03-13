@@ -2,6 +2,7 @@
 export 'bottom_nav_bar.dart';
 export 'broadcast_card.dart';
 export 'broadcast_section_widget.dart';
+export 'chip_tab_bar.dart';
 export 'confirmation_dialog.dart';
 export 'delete_alert_dialog.dart';
 export 'dynamic_sliver_app_bar.dart';
