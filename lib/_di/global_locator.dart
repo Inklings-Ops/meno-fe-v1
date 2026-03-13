@@ -98,7 +98,7 @@ void configureGlobalDependencies() {
   }, dependsOn: [HttpClient]);
   di.registerSingletonWithDependencies(() {
     return BibleManager(di<BibleLocalService>());
-  }, dependsOn: [BibleLocalService, TranslationsManager]);
+  }, dependsOn: [BibleLocalService]);
   di.registerSingletonWithDependencies(() {
     final manager = TranslationsManager(
       di<BibleHttpService>(),
