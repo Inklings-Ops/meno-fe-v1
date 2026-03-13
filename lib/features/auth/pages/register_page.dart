@@ -25,7 +25,7 @@ class RegisterPage extends WatchingWidget {
     return MScaffold(
       appBar: MAppBar.primary(
         title: 'New Account',
-        backText: 'Go back',
+        backText: !isOnboarded ? 'Onboarding' : '',
         implyLeading: implyLeading,
       ),
       body: SingleChildScrollView(
@@ -169,7 +169,7 @@ class _RememberMeCheckboxTile extends WatchingWidget {
   }
 }
 
-class _RegisterButton extends StatelessWidget {
+class _RegisterButton extends WatchingWidget {
   const _RegisterButton({super.key});
 
   @override

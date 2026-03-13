@@ -77,6 +77,18 @@ class Password extends ValueObject<String> {
 
     return errors;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Password &&
+        other.value == value &&
+        other.input == input &&
+        other.mode == mode;
+  }
+
+  @override
+  int get hashCode => value.hashCode ^ input.hashCode ^ mode.hashCode;
 }
 
 enum PasswordMode { login, register }

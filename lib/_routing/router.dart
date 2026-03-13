@@ -4,7 +4,10 @@ import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
+import 'package:meno/features/discover/pages/discover_page.dart';
+import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
+import 'package:meno/features/profile/pages/_pages.dart';
 
 final class MenoRouter {
   MenoRouter({required AuthManager auth, required OnboardingManager onboarding})
@@ -156,10 +159,76 @@ final class MenoRouter {
         builder: (context, state) => const LiveSessionInitPage(),
       ),
 
+      /**
+       *  Main Navigation Shell
+       *  ------------------------------------------------------------------
+       *  Contains the Home, Discover, Create Broadcast, Notes & Profile
+       *  pages
+       */
       StatefulShellRoute(
         builder: (context, state, navigationShell) => navigationShell,
         navigatorContainerBuilder: LiveSessionShell.builder,
-        branches: const [],
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: R.home,
+                builder: (context, state) => const HomePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: R.discover,
+                builder: (context, state) => const DiscoverPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              /// Notes Page Shell Route
+              StatefulShellRoute(
+                builder: (context, state, navigationShell) => navigationShell,
+                navigatorContainerBuilder: NotesLayoutWidget.builder,
+                branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: R.noteSection,
+                        builder: (context, state) => const NoteListWidget(),
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: R.folderSection,
+                        builder: (context, state) => const FolderListWidget(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: R.myProfile,
+                builder: (context, state) => const MyProfilePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: R.webCreateBroadcast,
+                builder: (context, state) => const BroadcastEditorPage(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

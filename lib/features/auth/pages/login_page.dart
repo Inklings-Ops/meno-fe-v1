@@ -19,7 +19,7 @@ class LoginPage extends WatchingWidget {
     return MScaffold(
       appBar: MAppBar.primary(
         title: 'Log in',
-        backText: isOnboarded ? 'Onboarding' : '',
+        backText: !isOnboarded ? 'Onboarding' : '',
         implyLeading: implyLeading,
       ),
       body: SingleChildScrollView(
@@ -57,11 +57,11 @@ class LoginFormWidget extends WatchingWidget {
     final passwordCtrl = createOnce(TextEditingController.new);
 
     callOnce((_) {
-      final user = di<UserManager>().lastKnownUser.value;
+      final user = di<AuthManager>().lastKnownUser.value;
       if (!user.isEmpty) emailCtrl.text = user.email.getOrElse((_) => '');
     });
 
-    final lastKnownUser = watchValue((UserManager m) => m.lastKnownUser);
+    final lastKnownUser = watchValue((AuthManager m) => m.lastKnownUser);
 
     final textTheme = MTextTheme.of(context);
 

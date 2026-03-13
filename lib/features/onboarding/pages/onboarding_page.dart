@@ -55,16 +55,19 @@ class OnboardingPage extends WatchingWidget {
                   ),
                 ),
                 Spaces.verticalXXXLarge,
-                OnboardingIndicator(
-                  currentIndex: currentIndex.value,
-                  itemsLength: onboardingItems.length,
+                ValueListenableBuilder(
+                  valueListenable: currentIndex,
+                  builder: (context, value, child) => OnboardingIndicator(
+                    currentIndex: value,
+                    itemsLength: onboardingItems.length,
+                  ),
                 ),
                 Spaces.verticalXLarge,
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: MPrimaryButton(
                     label: 'Get started',
-                    onPressed: () => context.push(R.register),
+                    onPressed: () => context.push(R.registerWithLeading),
                   ),
                 ),
                 Spaces.verticalLarge,
