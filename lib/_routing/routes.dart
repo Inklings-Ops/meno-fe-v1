@@ -67,4 +67,6 @@ class R {
   static String folder(String id) => '/folders/$id';
 
   static String switchAccount(String userId) => '/switch-account/$userId';
+
+  static const String discoverSearch = '/discover-search';
 }

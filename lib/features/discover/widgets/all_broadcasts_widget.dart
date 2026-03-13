@@ -35,7 +35,10 @@ class _NowLiveSection extends WatchingWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.nowLive(),
+        query: BroadcastQuery.nowLive(
+          pagination: const PaginationParams(size: 8),
+        ),
+        fetchMoreEnabled: false,
       );
     });
 
@@ -73,7 +76,10 @@ class _RecentlyLiveSection extends WatchingWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.recentlyLive(),
+        query: BroadcastQuery.recentlyLive(
+          pagination: const PaginationParams(size: 8),
+        ),
+        fetchMoreEnabled: false,
       );
     });
 

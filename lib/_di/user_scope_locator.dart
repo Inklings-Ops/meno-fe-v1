@@ -62,6 +62,9 @@ void pushUserSessionScope(UserCredential credential) {
 
   // Discover
   di.registerSingleton(DiscoverManager());
+  di.registerSingletonWithDependencies(() {
+    return DiscoverLocalService(di<LocalStorage>());
+  }, dependsOn: [LocalStorage]);
 
   // Notes & Folders
   di.registerSingletonWithDependencies(() {

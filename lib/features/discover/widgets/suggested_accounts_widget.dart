@@ -40,8 +40,8 @@ David Michael: Always wanting to know more of God. Super charged with the Spirit
   ),
 ];
 
-class SuggestAccountsWidget extends StatelessWidget {
-  const SuggestAccountsWidget({super.key});
+class SuggestedAccountsWidget extends StatelessWidget {
+  const SuggestedAccountsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

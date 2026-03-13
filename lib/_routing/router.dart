@@ -4,7 +4,9 @@ import 'package:meno/_routing/routes.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/discover/pages/discover_page.dart';
+import 'package:meno/features/discover/pages/discover_search_page.dart';
+import 'package:meno/features/discover/pages/discover_shell.dart';
+import 'package:meno/features/discover/widgets/_widgets.dart';
 import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
 import 'package:meno/features/profile/pages/_pages.dart';
@@ -183,6 +185,14 @@ final class MenoRouter {
       ),
 
       /**
+       *  Discover Search
+       */
+      GoRoute(
+        path: R.discoverSearch,
+        builder: (context, state) => const DiscoverSearchPage(),
+      ),
+
+      /**
        *  Main Navigation Shell
        *  ------------------------------------------------------------------
        *  Contains the Home, Discover, Create Broadcast, Notes & Profile
@@ -201,9 +211,51 @@ final class MenoRouter {
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: R.discover,
-                builder: (context, state) => const DiscoverPage(),
+              StatefulShellRoute(
+                builder: (context, state, navigationShell) => navigationShell,
+                navigatorContainerBuilder: DiscoverShell.builder,
+                branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: '/discover-all',
+                        builder: (context, state) {
+                          return const AllBroadcastsWidget();
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: '/discover-now-live',
+                        builder: (context, state) {
+                          return const NowLiveBroadcastsWidget();
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: '/discover-recently-live',
+                        builder: (_, state) {
+                          return const RecentlyLiveBroadcastsWidget();
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: '/discover-suggested-accounts',
+                        builder: (_, state) {
+                          return const SuggestedAccountsWidget();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

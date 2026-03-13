@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno/features/discover/manager/discover_manager.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -57,7 +58,10 @@ class DiscoverSearchBar extends StatelessWidget {
           if (showCancelButton) ...[
             Spaces.horizontalSmall,
             InkWell(
-              onTap: di<DiscoverManager>().closeSearch,
+              onTap: () {
+                di<DiscoverManager>().closeSearch();
+                context.pop();
+              },
               child: MText(
                 'Cancel',
                 style: textTheme.captionMedium,

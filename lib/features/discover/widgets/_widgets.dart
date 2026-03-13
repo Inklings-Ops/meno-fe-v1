@@ -8,4 +8,4 @@ export 'now_live_broadcasts_widget.dart';
 export 'page_broadcast_list_view.dart';
 export 'recently_live_broadcasts_widget.dart';
 export 'search_filter_list.dart';
-export 'suggest_accounts_widget.dart';
+export 'suggested_accounts_widget.dart';
