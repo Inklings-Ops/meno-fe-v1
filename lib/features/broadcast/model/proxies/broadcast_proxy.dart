@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_core/exceptions/meno_exception_filter.dart';
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 
@@ -23,11 +22,11 @@ class BroadcastProxy extends ChangeNotifier {
 
   bool get isFavourited => _isFavouritedOverride ?? false;
 
-  String get title => _broadcast.title.getOrCrash();
+  String get title => _broadcast.title.getOrElse((_) => '');
 
   String get description => _broadcast.description.getOrElse((_) => '');
 
-  String get creatorName => _broadcast.hostName.getOrCrash();
+  String get creatorName => _broadcast.hostName.getOrElse((_) => '');
 
   String? get imageUrl => _broadcast.imageUrl;
 
@@ -49,7 +48,6 @@ class BroadcastProxy extends ChangeNotifier {
       _isFavouritedOverride = undoStack.pop();
       notifyListeners();
     },
-    errorFilterFn: menoExceptionFilter,
   );
 
   @override

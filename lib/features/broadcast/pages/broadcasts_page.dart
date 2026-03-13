@@ -29,7 +29,6 @@ class BroadcastsPage extends WatchingWidget {
       ),
     );
 
-    final focusNode = createOnce(FocusNode.new);
     final keywords = createOnce(() => ValueNotifier<String?>(null));
     final debouncedQuery = createOnce(() => keywords.debounce(_debounceTime));
 
@@ -39,43 +38,36 @@ class BroadcastsPage extends WatchingWidget {
     );
 
     final feedLayout = switch (type) {
-      BroadcastsType.recentlyLive => FeedLayout.verticalList,
+      .recentlyLive => FeedLayout.verticalList,
       _ => FeedLayout.verticalGrid,
     };
 
-    final colors = MColorScheme.of(context);
+    final skeletonType = switch (type) {
+      .recentlyLive => BroadcastCard.skeletonRecentlyLiveTile,
+      _ => BroadcastCard.skeletonLive,
+    };
 
     return MScaffold(
-      appBar: MAppBar.secondary(
-        title: type.title,
+      appBar: AppBar(
+        title: MText(type.title, overflow: .ellipsis, maxLines: 1),
+        bottom: _SearchBar(onChanged: (input) => keywords.value = input),
         centerTitle: true,
         actions: const [UserAvatarWidget(), Spaces.horizontalLarge],
       ),
       padding: .zero,
-      body: Column(
-        children: [
-          Spaces.verticalLarge,
-          Padding(
-            padding: const .symmetric(horizontal: 16),
-            child: MenoSearchBar(
-              focusNode: focusNode,
-              hintText: 'Search broadcasts',
-              onChanged: (input) => keywords.value = input,
-              leading: Icon(MIcons.search, color: colors.disabled, size: 16),
-            ),
-          ),
-          Spaces.verticalMicro,
-          Expanded(
-            child: FeedWidget<Broadcast?>(
-              feedSource: feedSource,
-              layout: feedLayout,
-              itemBuilder: broadcastItemBuilder(
-                feedSource: feedSource,
-                onTap: (b) => context.push(R.broadcast(b.id.getOrCrash())),
-              ),
-            ),
-          ),
-        ],
+      body: FeedWidget<Broadcast?>(
+        feedSource: feedSource,
+        layout: feedLayout,
+        skeletonItem: skeletonType,
+        skeletonItemCount: 4,
+        gridCrossAxisSpacing: 16,
+        gridMainAxisSpacing: 32,
+        gridChildAspectRatio: 163.5 / 176,
+        padding: const .all(16),
+        itemBuilder: broadcastItemBuilder(
+          feedSource: feedSource,
+          onTap: (b) => context.push(R.broadcast(b.id.getOrCrash())),
+        ),
       ),
     );
   }
@@ -87,9 +79,35 @@ class BroadcastsPage extends WatchingWidget {
     return (context, item) {
       if (item == null) return const SizedBox.shrink();
       return switch (feedSource.currentQuery.type) {
-        .recentlyLive => BroadcastCard.tile(item, onTap: () => onTap(item)),
-        _ => BroadcastCard.liveCard(item, onTap: () => onTap(item)),
+        .recentlyLive => BroadcastCard.rLiveTile(
+          item,
+          onTap: () => onTap(item),
+        ),
+        _ => BroadcastCard.nLive(item, onTap: () => onTap(item)),
       };
     };
   }
+}
+
+class _SearchBar extends WatchingWidget implements PreferredSizeWidget {
+  const _SearchBar({required this.onChanged});
+
+  final void Function(String) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final focusNode = createOnce(FocusNode.new);
+
+    return Padding(
+      padding: const .fromLTRB(16, 0, 16, 2),
+      child: MenoSearchBar(
+        focusNode: focusNode,
+        hintText: 'Search broadcasts',
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(56);
 }

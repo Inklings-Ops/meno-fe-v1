@@ -27,7 +27,6 @@ class R {
   static const String broadcastEditor = '/broadcast-editor';
   static const String home = '/home';
   static const String discover = '/discover';
-  static const String notes = '/notes';
   static const String myProfile = '/my-profile';
   static const String othersProfile = '/others-profile';
   static const String nowLive = '/nowLive';
@@ -48,8 +47,8 @@ class R {
   static const String notesTabEditor = 'notes-tab-editor';
   static const String notesTabEditorFull = '/notes-tab/notes-tab-editor';
 
-  static const String noteSection = '/notes-section';
-  static const String folderSection = '/folder-section';
+  static const String notes = '/notes';
+  static const String folders = '/folders';
 
   static const String broadcasts = '/broadcasts';
 
@@ -61,7 +60,7 @@ class R {
 
   static const String noteEditorName = 'note-editor';
 
-  static String noteEditor([String? id]) => '/note-editor/${id ?? 'new'}';
+  static String noteEditor([String? id]) => '/notes/${id ?? 'new'}';
 
   static const String folderName = 'folder';
 

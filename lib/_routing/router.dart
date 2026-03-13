@@ -5,7 +5,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/discover/pages/discover_page.dart';
-import 'package:meno/features/notes/widgets/_widgets.dart';
+import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
 import 'package:meno/features/profile/pages/_pages.dart';
 
@@ -24,19 +24,14 @@ final class MenoRouter {
       final nextRoute = state.matchedLocation;
       final isPublicRoute = R.publicRoutes.contains(nextRoute);
 
-      final isAuthenticated = _auth.activeUserId.value.isValid;
-      final isPendingVerification = _auth.pendingEmailVerification.value;
-
       final isOnboarded = _onboarding.isOnboarded.value;
+
+      final isAuthenticated = _auth.activeUserId.value.isValid;
+      final isEmailVerified = _auth.emailVerified.value;
 
       if (!isOnboarded) {
         if (!isPublicRoute) return R.onboarding;
         return null;
-      }
-
-      if (isAuthenticated && isPendingVerification) {
-        if (nextRoute == R.emailVerification) return null;
-        return R.emailVerification;
       }
 
       if (!isAuthenticated) {
@@ -47,13 +42,18 @@ final class MenoRouter {
         return null;
       }
 
+      if (isAuthenticated && !isEmailVerified) {
+        if (nextRoute == R.emailVerification) return null;
+        return R.emailVerification;
+      }
+
       if (isPublicRoute) return R.home;
       return null;
     },
     refreshListenable: Listenable.merge([
-      _auth.activeUserId,
-      _auth.pendingEmailVerification,
       _onboarding.isOnboarded,
+      _auth.activeUserId,
+      _auth.emailVerified,
     ]),
     routes: [
       /**
@@ -116,8 +116,8 @@ final class MenoRouter {
       GoRoute(
         path: '/switch-account/:id',
         builder: (context, state) {
-          final userId = state.pathParameters['id'] ?? '';
-          return SwitchAccountPage(userIdStr: userId);
+          final userIdStr = state.pathParameters['id'] ?? '';
+          return SwitchAccountPage(userIdStr: userIdStr);
         },
       ),
 
@@ -155,6 +155,29 @@ final class MenoRouter {
       ),
 
       GoRoute(
+        path: R.broadcasts,
+        name: R.broadcasts,
+        builder: (context, state) {
+          final queryParameters = state.uri.queryParameters;
+          return BroadcastsPage(queryParameters: queryParameters);
+        },
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) {
+              final broadcastIdStr = state.pathParameters['id'] ?? '';
+              return BroadcastDetailsPage(broadcastIdStr: broadcastIdStr);
+            },
+          ),
+        ],
+      ),
+
+      GoRoute(
+        path: R.endedBroadcast,
+        builder: (context, state) => const EndedBroadcastPage(),
+      ),
+
+      GoRoute(
         path: R.liveSessionInitialization,
         builder: (context, state) => const LiveSessionInitPage(),
       ),
@@ -165,9 +188,8 @@ final class MenoRouter {
        *  Contains the Home, Discover, Create Broadcast, Notes & Profile
        *  pages
        */
-      StatefulShellRoute(
-        builder: (context, state, navigationShell) => navigationShell,
-        navigatorContainerBuilder: LiveSessionShell.builder,
+      StatefulShellRoute.indexedStack(
+        builder: RootLayout.builder,
         branches: [
           StatefulShellBranch(
             routes: [
@@ -195,16 +217,36 @@ final class MenoRouter {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: R.noteSection,
+                        path: R.notes,
                         builder: (context, state) => const NoteListWidget(),
+                        routes: [
+                          GoRoute(
+                            name: R.noteEditorName,
+                            path: ':id',
+                            builder: (context, state) {
+                              final noteId = state.pathParameters['id'];
+                              return NoteEditorPage(noteId: noteId);
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
-                        path: R.folderSection,
+                        path: R.folders,
                         builder: (context, state) => const FolderListWidget(),
+                        routes: [
+                          GoRoute(
+                            name: R.folderName,
+                            path: ':id',
+                            builder: (context, state) {
+                              final folderId = state.pathParameters['id'] ?? '';
+                              return FolderPage(folderId: folderId);
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -217,14 +259,6 @@ final class MenoRouter {
               GoRoute(
                 path: R.myProfile,
                 builder: (context, state) => const MyProfilePage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: R.webCreateBroadcast,
-                builder: (context, state) => const BroadcastEditorPage(),
               ),
             ],
           ),

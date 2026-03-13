@@ -49,11 +49,11 @@ class _NowLiveSection extends WatchingWidget {
         horizontalItemExtent: 148,
         gridCrossAxisSpacing: 24,
         gridMainAxisSpacing: 24,
-        layout: .verticalGrid,
+        layout: .horizontalGrid,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.liveCard(
+          return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () {},
@@ -64,7 +64,7 @@ class _NowLiveSection extends WatchingWidget {
   }
 }
 
-class _RecentlyLiveSection extends StatelessWidget {
+class _RecentlyLiveSection extends WatchingWidget {
   const _RecentlyLiveSection({super.key});
 
   @override
@@ -87,11 +87,11 @@ class _RecentlyLiveSection extends StatelessWidget {
         horizontalItemExtent: 148,
         gridCrossAxisSpacing: 24,
         gridMainAxisSpacing: 24,
-        layout: .verticalGrid,
+        layout: .horizontalGrid,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.recentlyLiveCard(
+          return BroadcastCard.rLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

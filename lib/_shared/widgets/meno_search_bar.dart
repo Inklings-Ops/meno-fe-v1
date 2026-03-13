@@ -31,14 +31,10 @@ class MenoSearchBar extends StatelessWidget {
       elevation: const WidgetStatePropertyAll(0),
       enabled: enabled,
       trailing: trailing,
-      leading: leading ?? Icon(MIcons.search, color: colors.disabled, size: 16),
+      leading: leading ?? const Icon(MIcons.search, size: 16),
       constraints: BoxConstraints.tight(const Size.fromHeight(40)),
-      padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: Insets.md),
-      ),
-      hintStyle: WidgetStatePropertyAll(
-        textTheme.captionRegular.copyWith(color: colors.disabled),
-      ),
+      padding: const WidgetStatePropertyAll(.symmetric(horizontal: Insets.md)),
+      hintStyle: WidgetStatePropertyAll(textTheme.captionRegular),
       shape: const WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: Corners.sm),
       ),

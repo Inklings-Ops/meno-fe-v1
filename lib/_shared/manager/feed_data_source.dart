@@ -62,13 +62,18 @@ abstract class FeedDataSource<TItem> implements Disposable {
 
 /// Extends FeedDataSource with pagination support
 abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
-  PagedFeedDataSource({super.initialItems, this.debounceDuration}) {
+  PagedFeedDataSource({
+    super.initialItems,
+    this.debounceDuration,
+    this.fetchMoreEnabled = true,
+  }) {
     // Merge both commands' isRunning into a single isFetching notifier.
     updateDataCommand.isRunning.addListener(_syncFetching);
     requestNextPageCommand.isRunning.addListener(_syncFetching);
   }
 
   final Duration? debounceDuration;
+  final bool fetchMoreEnabled;
 
   int _currentPage = 1;
   int _totalPages = 1;
@@ -126,7 +131,8 @@ abstract class PagedFeedDataSource<TItem> extends FeedDataSource<TItem> {
 
   @override
   TItem getItemAtIndex(int index) {
-    if (index >= items.length - 3 &&
+    if (fetchMoreEnabled &&
+        index >= items.length - 3 &&
         commandErrors.value == null &&
         hasNextPage &&
         !requestNextPageCommand.isRunning.value) {

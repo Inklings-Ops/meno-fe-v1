@@ -54,6 +54,8 @@ final class LocalStorage implements Disposable {
 
   List<String>? getList(String key) => _preferences.getStringList(key);
 
+  void clearAll() => _preferences.clear();
+
   @override
   FutureOr<dynamic> onDispose() {
     _controller.close();

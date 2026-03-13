@@ -17,10 +17,7 @@ class NewNoteActionButton extends WatchingWidget {
 
     // Only show the add button if there already notes in the list
     return InkWell(
-      onTap: () => context.pushNamed(
-        R.noteEditorName,
-        pathParameters: {'noteId': 'new'},
-      ),
+      onTap: () => context.pushNamed(R.noteEditorName),
       child: Row(
         children: [
           Icon(MIcons.plus, size: 22, color: colors.primary),

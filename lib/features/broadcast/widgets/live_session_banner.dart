@@ -48,7 +48,8 @@ class _SessionBannerContent extends WatchingWidget {
     final status = watchValue((LiveSessionManager m) => m.status);
     final isHost = watchValue((LiveSessionManager m) => m.isHost);
 
-    if (status.isNotLive) return const SizedBox.shrink();
+    final showCard = status == .live || status == .reconnecting;
+    if (!showCard) return const SizedBox.shrink();
 
     return _Banner(
       key: ValueKey('broadcastBanner-${broadcast.id.getOrCrash()}'),

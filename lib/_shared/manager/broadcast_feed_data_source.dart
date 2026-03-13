@@ -22,6 +22,7 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
     required BroadcastHttpService http,
     required BroadcastQuery query,
     BroadcastSocketService? socket,
+    super.fetchMoreEnabled = true,
   }) : _http = http,
        _query = query {
     // Wire the combined isFetching notifier immediately.

@@ -19,6 +19,8 @@ class FeedWidget<TItem> extends WatchingWidget {
     this.padding,
     this.shrinkWrap = false,
     this.physics,
+    this.skeletonItem = const SizedBox(width: 148, height: 200),
+    this.skeletonItemCount = 8,
     super.key,
   });
 
@@ -60,6 +62,12 @@ class FeedWidget<TItem> extends WatchingWidget {
   /// Empty state placeholder widget.
   final Widget emptyWidget;
 
+  /// The skeleton widget to be displayed on initial loading
+  final Widget skeletonItem;
+
+  /// Number of skeleton widgets to show
+  final int skeletonItemCount;
+
   @override
   Widget build(BuildContext context) {
     // Trigger the first fetch exactly once.
@@ -94,17 +102,16 @@ class FeedWidget<TItem> extends WatchingWidget {
 
     if (itemCount == 0 && feedSource.updateWasCalled) return emptyWidget;
 
-    // itemCount and pagination are fully controlled by BroadcastQuery.
-    // If the query specifies size: 20 and totalPages == 1, hasNextPage is
-    // false and no footer/pagination command ever fires — no presentation
-    // layer cap needed.
-    final listItemCount = itemCount + (isFetching ? 1 : 0);
+    final effectiveItemCount = isInitialLoading ? skeletonItemCount : itemCount;
+    final listItemCount =
+        effectiveItemCount + (isFetching && !isInitialLoading ? 1 : 0);
 
     return switch (layout) {
       FeedLayout.horizontalList => _HorizontalList(
         feedSource: feedSource,
         itemBuilder: itemBuilder,
-        itemCount: itemCount,
+        skeletonItem: skeletonItem,
+        itemCount: effectiveItemCount,
         isInitialLoading: isInitialLoading,
         itemExtent: horizontalItemExtent,
         padding: padding,
@@ -113,8 +120,9 @@ class FeedWidget<TItem> extends WatchingWidget {
       ),
       FeedLayout.verticalList => _VerticalList(
         feedSource: feedSource,
+        skeletonItem: skeletonItem,
         itemBuilder: itemBuilder,
-        itemCount: itemCount,
+        itemCount: effectiveItemCount,
         isInitialLoading: isInitialLoading,
         isFetching: isFetching,
         padding: padding,
@@ -123,8 +131,9 @@ class FeedWidget<TItem> extends WatchingWidget {
       ),
       FeedLayout.verticalGrid => _GridList(
         feedSource: feedSource,
+        skeletonItem: skeletonItem,
         itemBuilder: itemBuilder,
-        itemCount: itemCount,
+        itemCount: effectiveItemCount,
         listItemCount: listItemCount,
         isFetching: isFetching,
         crossAxisCount: gridCrossAxisCount,
@@ -139,6 +148,7 @@ class FeedWidget<TItem> extends WatchingWidget {
       ),
       FeedLayout.horizontalGrid => _GridList(
         feedSource: feedSource,
+        skeletonItem: skeletonItem,
         itemBuilder: itemBuilder,
         itemCount: itemCount,
         listItemCount: listItemCount,
@@ -164,6 +174,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
     required this.itemBuilder,
     required this.itemCount,
     required this.isInitialLoading,
+    required this.skeletonItem,
     this.itemExtent,
     this.padding,
     this.shrinkWrap = false,
@@ -178,6 +189,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
   final bool shrinkWrap;
   final ScrollPhysics? physics;
   final bool isInitialLoading;
+  final Widget skeletonItem;
 
   @override
   Widget build(BuildContext context) {
@@ -192,11 +204,9 @@ class _HorizontalList<TItem> extends StatelessWidget {
         separatorBuilder: (context, i) => const SizedBox(width: 24),
         itemCount: itemCount,
         itemBuilder: (context, index) {
+          if (isInitialLoading) return Skeletonizer(child: skeletonItem);
           final item = feedSource.getItemAtIndex(index);
-          return Skeletonizer(
-            enabled: isInitialLoading,
-            child: itemBuilder(context, item),
-          );
+          return itemBuilder(context, item);
         },
       ),
     );
@@ -211,6 +221,7 @@ class _VerticalList<TItem> extends StatelessWidget {
     required this.itemCount,
     required this.isFetching,
     required this.isInitialLoading,
+    required this.skeletonItem,
     this.padding,
     this.shrinkWrap = false,
     this.physics,
@@ -224,6 +235,7 @@ class _VerticalList<TItem> extends StatelessWidget {
   final bool shrinkWrap;
   final ScrollPhysics? physics;
   final bool isInitialLoading;
+  final Widget skeletonItem;
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +251,7 @@ class _VerticalList<TItem> extends StatelessWidget {
               itemCount: itemCount,
               separatorBuilder: (_, __) => Spaces.verticalLarge,
               itemBuilder: (context, index) {
+                if (isInitialLoading) return Skeletonizer(child: skeletonItem);
                 final item = feedSource.getItemAtIndex(index);
                 return Skeletonizer(
                   enabled: isInitialLoading,
@@ -275,6 +288,7 @@ class _GridList<TItem> extends StatelessWidget {
     required this.crossAxisSpacing,
     required this.isInitialLoading,
     required this.scrollDirection,
+    required this.skeletonItem,
     this.padding,
     this.shrinkWrap = false,
     this.physics,
@@ -294,6 +308,7 @@ class _GridList<TItem> extends StatelessWidget {
   final ScrollPhysics? physics;
   final bool isInitialLoading;
   final Axis scrollDirection;
+  final Widget skeletonItem;
 
   @override
   Widget build(BuildContext context) {
@@ -314,6 +329,7 @@ class _GridList<TItem> extends StatelessWidget {
                 crossAxisSpacing: crossAxisSpacing,
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
+                if (isInitialLoading) return Skeletonizer(child: skeletonItem);
                 final item = feedSource.getItemAtIndex(index);
                 return Skeletonizer(
                   enabled: isInitialLoading,
@@ -322,12 +338,14 @@ class _GridList<TItem> extends StatelessWidget {
               }, childCount: itemCount),
             ),
           ),
-          SliverToBoxAdapter(
-            child: MenoPagedLoadingIndicator(
-              isLoading: isFetching,
-              hasMore: feedSource.hasNextPage,
+          if (!isInitialLoading) ...[
+            SliverToBoxAdapter(
+              child: MenoPagedLoadingIndicator(
+                isLoading: isFetching,
+                hasMore: feedSource.hasNextPage,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

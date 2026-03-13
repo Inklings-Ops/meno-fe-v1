@@ -15,6 +15,21 @@ class LoginPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+      select: (AuthManager m) => m.login,
+      handler: (context, value, cancel) {
+        di<OnboardingManager>().completeOnboarding.run();
+      },
+    );
+
+    registerHandler(
+      select: (AuthManager m) => m.login.errors,
+      handler: (context, error, cancel) {
+        final message = errorMessage(error?.error);
+        context.showErrorSnackBar(message);
+      },
+    );
+
     final isOnboarded = watchValue((OnboardingManager m) => m.isOnboarded);
     return MScaffold(
       appBar: MAppBar.primary(
@@ -38,7 +53,7 @@ class LoginPage extends WatchingWidget {
               buttonText: 'Create an account',
               onPressed: () => isOnboarded
                   ? context.push(R.register)
-                  : context.replace(R.register),
+                  : context.replace(R.registerWithLeading),
             ),
           ],
         ),

@@ -250,7 +250,7 @@ class PreStreamRecentBroadcastsSection extends WatchingWidget {
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.recentlyLiveCard(
+          return BroadcastCard.rLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

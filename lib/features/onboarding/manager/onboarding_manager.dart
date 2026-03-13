@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/onboarding/services/_services.dart';
 
-final class OnboardingManager implements Disposable {
+final class OnboardingManager extends ChangeNotifier implements Disposable {
   OnboardingManager(this._service);
 
   final OnboardingService _service;
@@ -15,11 +15,16 @@ final class OnboardingManager implements Disposable {
 
   late final initialize = Command.createSyncNoParamNoResult(() {
     _isOnboarded.value = _service.isOnboarded;
+    notifyListeners();
   });
 
   late final completeOnboarding = Command.createAsyncNoParamNoResult(() async {
     if (_isOnboarded.value) return;
-    _isOnboarded.value = await _service.completeOnboarding();
+
+    _isOnboarded.value = true;
+    notifyListeners();
+
+    await _service.completeOnboarding();
   });
 
   @override

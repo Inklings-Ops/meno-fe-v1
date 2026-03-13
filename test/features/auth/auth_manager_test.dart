@@ -15,7 +15,6 @@ void main() {
   late AuthManager manager;
   late MockAuthHttpService mockHttp;
   late MockAuthLocalService mockLocal;
-  late MockOnboardingService mockOnboarding;
   late StreamController<UserCredentialDto?> authChangedController;
 
   final tUserId = Id.unique().getOrCrash();
@@ -37,18 +36,13 @@ void main() {
   setUp(() {
     mockHttp = MockAuthHttpService();
     mockLocal = MockAuthLocalService();
-    mockOnboarding = MockOnboardingService();
     authChangedController = StreamController<UserCredentialDto?>.broadcast();
 
     when(
       mockLocal.onCredentialChanged,
     ).thenAnswer((_) => authChangedController.stream);
 
-    manager = AuthManager(
-      http: mockHttp,
-      local: mockLocal,
-      onboarding: mockOnboarding,
-    );
+    manager = AuthManager(http: mockHttp, local: mockLocal);
   });
 
   tearDown(() {
@@ -74,7 +68,7 @@ void main() {
         mockLocal.getCredential(),
       ).thenAnswer((_) async => tUserCredentialDto);
 
-      await manager.init();
+      await manager.initialize();
 
       expect(manager.activeUserId.value.getOrCrash(), tUserId);
       expect(manager.isAuthenticated, isTrue);

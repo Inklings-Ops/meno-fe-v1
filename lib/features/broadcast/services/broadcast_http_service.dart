@@ -141,6 +141,7 @@ final class BroadcastHttpService {
       fromJson: (json) => PagedList<Broadcast?>.fromJson(
         json as Map<String, dynamic>,
         (jsonT) => BroadcastDto.fromJson(jsonT).toDomain,
+        listKey: 'broadcasts',
       ),
       cancelToken: cancelToken,
     );

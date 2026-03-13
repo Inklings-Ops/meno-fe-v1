@@ -13,9 +13,9 @@ import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class FolderPage extends WatchingWidget {
-  const FolderPage({required this.id, super.key});
+  const FolderPage({required this.folderId, super.key});
 
-  final String id;
+  final String folderId;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class FolderPage extends WatchingWidget {
         getIt.registerLazySingleton<FolderManager>(() {
           return FolderManager(
             local: di<NotesLocalService>(),
-            folderId: .fromString(id),
+            folderId: .fromString(folderId),
           );
         }, onCreated: (instance) => instance.initialize.run());
       },

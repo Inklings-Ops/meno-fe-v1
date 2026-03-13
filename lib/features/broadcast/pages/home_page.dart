@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
       appBar: _AppBar(),
       body: SingleChildScrollView(
         clipBehavior: .none,
+        padding: .symmetric(vertical: 16),
         physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
         child: Column(
           spacing: Insets.xxl,
@@ -58,11 +59,14 @@ class _LiveForYouSection extends WatchingWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.forYou(),
+        query: BroadcastQuery.forYou(
+          pagination: const PaginationParams(size: 8),
+        ),
+        fetchMoreEnabled: false,
       );
     });
 
-    final params = feedSource.currentQuery.toApiParams;
+    final params = feedSource.currentQuery.toRouterParams;
 
     return BroadcastSectionWidget(
       title: 'Live For You',
@@ -72,10 +76,12 @@ class _LiveForYouSection extends WatchingWidget {
         feedSource: feedSource,
         horizontalItemExtent: 148,
         layout: .horizontalList,
+        skeletonItem: BroadcastCard.skeletonLive,
+        skeletonItemCount: 4,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.liveCard(
+          return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () {},
@@ -95,11 +101,14 @@ class _NowLiveSection extends WatchingWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.nowLive(),
+        query: BroadcastQuery.nowLive(
+          pagination: const PaginationParams(size: 8),
+        ),
+        fetchMoreEnabled: false,
       );
     });
 
-    final params = feedSource.currentQuery.toApiParams;
+    final params = feedSource.currentQuery.toRouterParams;
 
     return BroadcastSectionWidget(
       title: 'Now Live',
@@ -109,10 +118,12 @@ class _NowLiveSection extends WatchingWidget {
         feedSource: feedSource,
         horizontalItemExtent: 148,
         layout: .horizontalList,
+        skeletonItem: BroadcastCard.skeletonLive,
+        skeletonItemCount: 4,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.liveCard(
+          return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () {},
@@ -123,7 +134,7 @@ class _NowLiveSection extends WatchingWidget {
   }
 }
 
-class _RecentlyLiveSection extends StatelessWidget {
+class _RecentlyLiveSection extends WatchingWidget {
   const _RecentlyLiveSection();
 
   @override
@@ -132,7 +143,10 @@ class _RecentlyLiveSection extends StatelessWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.recentlyLive(),
+        query: BroadcastQuery.recentlyLive(
+          pagination: const PaginationParams(size: 8),
+        ),
+        fetchMoreEnabled: false,
       );
     });
 
@@ -146,10 +160,12 @@ class _RecentlyLiveSection extends StatelessWidget {
         feedSource: feedSource,
         horizontalItemExtent: 148,
         layout: .horizontalList,
+        skeletonItem: BroadcastCard.skeletonRecentlyLive,
+        skeletonItemCount: 4,
         padding: const .symmetric(horizontal: 16),
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
-          return BroadcastCard.recentlyLiveCard(
+          return BroadcastCard.rLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
             onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

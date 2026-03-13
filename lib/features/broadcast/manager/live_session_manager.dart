@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_di/live_scope_locator.dart';
 import 'package:meno/_shared/services/livekit_client.dart';
 import 'package:meno/features/broadcast/manager/broadcast_timer_manager.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
@@ -46,18 +47,16 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
 
   late final setupConfigs = Command.createSyncNoParamNoResult(() {
     final startTime = _session.broadcast.startTime;
+
     if (startTime == null) {
       timer = BroadcastTimerManager(broadcastStartTime: _session.timestamp);
-      return;
+    } else {
+      final calculatedElapsedTime = DateTime.now().difference(startTime);
+      timer = BroadcastTimerManager(
+        broadcastStartTime: startTime,
+        initialElapsedTime: calculatedElapsedTime,
+      );
     }
-
-    final now = DateTime.now();
-    final calculatedElapsedTime = now.difference(startTime);
-
-    timer = BroadcastTimerManager(
-      broadcastStartTime: startTime,
-      initialElapsedTime: calculatedElapsedTime,
-    );
 
     _setupListeners();
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(_initializeSession);
@@ -66,7 +65,6 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     final broadcast = _session.broadcast;
     state.value = const .initializing();
     status.value = .initializing;
-
     isHost.value = broadcast.hostId == _currentUserId;
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(_connectToLiveKit);
 
@@ -187,17 +185,15 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       if (error == null) return;
 
       final err = error.error;
-      log.e('LiveSessionManager: LiveKit connection failed - $err');
-      final errorStr = _getErrorMessage(err);
-      state.value = .error(errorStr);
+      final message = errorMessage(err);
+      log.e('LiveSessionManager: LiveKit connection failed - $message');
+      state.value = .error(message);
       status.value = .offAir;
 
       // Retry connection for certain failures
       if (err is LiveKitConnectionTimeout || err is LiveKtiConnectionFailed) {
         _scheduleReconnection();
       }
-
-      throw MenoException(errorStr);
     });
 
     // Listen for errors on the socket event emission
@@ -205,33 +201,40 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       if (error == null) return;
 
       final e = error.error;
+      final message = errorMessage(e);
       log.e('LiveSessionManager: Socket connection failed - $e');
-      final errorStr = _getErrorMessage(e);
-      state.value = .error(errorStr);
+      state.value = .error(message);
       status.value = .offAir;
 
       if (e is SocketNotConnectedException || e is SocketTimeoutException) {
         _scheduleReconnection();
       }
-
-      throw MenoException(errorStr);
     });
 
-    // Listen for endSession success and failure
+    // ✅ endSession result: on success, disconnect LiveKit + pop live scope.
+    // clearActiveBroadcastId is called here for the host. For listeners, it
+    // was already called when the server fired onEndedBroadcast. Calling it
+    // again is safe (idempotent remove).
     endSession.results.listen((result, _) async {
       if (result.hasError) {
-        final error = result.error;
-        log.e('LiveSessionManager: Error ending session - $error');
-        state.value = .error(_getErrorMessage(error));
-        status.value = LiveStatus.offAir;
+        final message = errorMessage(result.error);
+        log.e('LiveSessionManager: Error ending session - $message');
+        state.value = .error(message);
+        status.value = .offAir;
+        return;
       }
 
       if (result.isSuccess) {
-        log.i('LiveSessionManager: Broadcast ended on server');
+        log.i('LiveSessionManager: Session ended on server, disconnecting');
         await _livekit.disconnect();
         await _local.clearActiveBroadcastId(_currentUserId);
         state.value = const .ended();
         status.value = .offAir;
+
+        // Tear down the live scope — disposes all scoped services and signals
+        // the rest of the app (router, shell) that no session is active.
+        log.i('LiveSessionManager: Popping live session scope');
+        await popLiveSessionScope();
       }
     });
 
@@ -240,7 +243,6 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       final inner = error?.error;
       if (inner == null) return;
       log.e('LiveSessionManager: Failed to toggle microphone - $inner');
-      throw MenoException(_getErrorMessage(inner));
     });
   }
 
@@ -307,7 +309,10 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     status.value = .offAir;
 
     // Clean up session
+    await _livekit.disconnect();
     await _local.clearActiveBroadcastId(_currentUserId);
+
+    await popLiveSessionScope();
   }
 
   void _scheduleReconnection() {

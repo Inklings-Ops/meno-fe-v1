@@ -19,6 +19,10 @@ void configureGlobalDependencies() {
   // Push te root-session scope
   di.pushNewScope(scopeName: kRootScope);
 
+  // Core Resources
+  di.registerSingleton<Logger>(Logger());
+  di.registerSingleton<InteractionManager>(InteractionManager());
+
   // Local Storage
   di.registerSingletonAsync(SharedPreferences.getInstance);
   di.registerSingletonWithDependencies(() {
@@ -46,7 +50,6 @@ void configureGlobalDependencies() {
   }, onCreated: (manager) => manager.checkPermissions.run());
 
   // Rest API Client Resources
-  di.registerSingleton(Logger.new);
   di.registerSingletonAsync(() async => LogInterceptor());
   di.registerFactory<Dio>(() {
     return Dio(BaseOptions(baseUrl: Env.menoApiUrl));
@@ -81,14 +84,18 @@ void configureGlobalDependencies() {
   di.registerSingletonWithDependencies(() {
     return AuthHttpService(di<HttpClient>());
   }, dependsOn: [HttpClient]);
-  di.registerSingletonWithDependencies(() {
-    return AuthManager(
+  di.registerSingletonAsync(() async {
+    final manager = AuthManager(
       http: di<AuthHttpService>(),
       local: di<AuthLocalService>(),
-      onboarding: di<OnboardingService>(),
     );
+    await manager.initialize();
+    return manager;
   }, dependsOn: [AuthHttpService, AuthLocalService, OnboardingService]);
-
+  di.registerSingletonWithDependencies(
+    () => UserManager(di<AuthManager>()),
+    dependsOn: [AuthManager],
+  );
   // Bible
   di.registerSingletonWithDependencies(() {
     return BibleLocalService(di<Database>());

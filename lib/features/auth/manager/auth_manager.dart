@@ -6,16 +6,11 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
-import 'package:meno/features/onboarding/services/onboarding_service.dart';
 
 class AuthManager extends ChangeNotifier implements Disposable {
-  AuthManager({
-    required AuthHttpService http,
-    required AuthLocalService local,
-    required OnboardingService onboarding,
-  }) : _http = http,
-       _local = local,
-       _onboarding = onboarding {
+  AuthManager({required AuthHttpService http, required AuthLocalService local})
+    : _http = http,
+      _local = local {
     _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
 
     login = Command.createAsync<LoginArgs, UserCredential>(
@@ -24,7 +19,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
         );
-        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -38,7 +32,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
         );
-        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -48,7 +41,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
     googleSignIn = Command.createAsync<String, UserCredential>(
       (idToken) async {
         final dto = await _http.googleSignIn(idToken: idToken);
-        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -58,7 +50,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
     googleSignUp = Command.createAsync<String, UserCredential>(
       (idToken) async {
         final dto = await _http.googleSignUp(idToken: idToken);
-        await _onboarding.completeOnboarding();
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -98,7 +89,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
     verifyEmail = Command.createAsyncNoResult<VerifyEmailArgs>((args) async {
       await _http.verifyEmail(email: args.email.getOrCrash(), code: args.code);
-      _pendingEmailVerification.value = false;
+      _emailVerified.value = false;
     }, errorFilterFn: menoExceptionFilter);
 
     resetPassword = Command.createAsyncNoResult<ResetPasswordArgs>(
@@ -125,12 +116,11 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
   final AuthHttpService _http;
   final AuthLocalService _local;
-  final OnboardingService _onboarding;
 
   final _activeUserId = ValueNotifier<Id>(Id.empty);
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});
   final _lastKnownUser = ValueNotifier<User>(User.empty);
-  final _pendingEmailVerification = ValueNotifier<bool>(false);
+  final _emailVerified = ValueNotifier<bool>(false);
 
   StreamSubscription<UserCredentialDto?>? _subscription;
 
@@ -144,8 +134,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
 
   ValueListenable<User> get lastKnownUser => _lastKnownUser;
 
-  ValueListenable<bool> get pendingEmailVerification =>
-      _pendingEmailVerification;
+  ValueListenable<bool> get emailVerified => _emailVerified;
 
   bool get isAuthenticated => _activeUserId.value.isValid;
 
@@ -170,7 +159,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
   // INITIALIZATION
   // ======================================================================
 
-  Future<void> init() async {
+  Future<void> initialize() async {
     try {
       final dtos = await _local.getAllAccounts();
       final map = dtos.map((i, d) => MapEntry(Id.fromString(i), d.toDomain));
@@ -183,6 +172,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
         final user = domainCredential.user;
 
         _lastKnownUser.value = user;
+        _emailVerified.value = user.verified;
 
         if (map.containsKey(activeId)) {
           if (domainCredential.session.isExpired) {
@@ -190,6 +180,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
             await _local.clearCredential();
           } else {
             _activeUserId.value = activeId;
+            pushUserSessionScope(domainCredential);
           }
         } else {
           await _local.clearCredential();
@@ -215,14 +206,16 @@ class AuthManager extends ChangeNotifier implements Disposable {
   // ======================================================================
 
   Future<UserCredential> _handleSuccessfulAuth(UserCredentialDto dto) async {
-    await _local.saveCredential(dto);
     final credential = dto.toDomain;
 
-    _updateAccountInternal(credential);
-    _pendingEmailVerification.value = dto.user.verified;
+    _emailVerified.value = dto.user.verified;
     _lastKnownUser.value = credential.user;
-    _activeUserId.value = credential.user.id;
+    _updateAccountInternal(credential);
 
+    await _local.saveCredential(dto);
+
+    _activeUserId.value = credential.user.id;
+    notifyListeners();
     return credential;
   }
 
@@ -236,7 +229,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
   void _onAuthChanged(UserCredentialDto? dto) {
     if (dto == null) {
       _activeUserId.value = .empty;
-
       popUserSessionScope();
     } else {
       final credential = dto.toDomain;
@@ -245,7 +237,6 @@ class AuthManager extends ChangeNotifier implements Disposable {
       _lastKnownUser.value = credential.user;
 
       _updateAccountInternal(credential);
-
       pushUserSessionScope(credential);
     }
   }

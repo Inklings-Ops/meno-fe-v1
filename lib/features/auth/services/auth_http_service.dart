@@ -13,13 +13,17 @@ class AuthHttpService {
     required String password,
     String? pushNotificationToken,
   }) {
+    final data = <String, String>{};
+
+    data['email'] = email;
+    data['password'] = password;
+    if (pushNotificationToken != null) {
+      data['pushNotificationToken'] = pushNotificationToken;
+    }
+
     return _client.post(
       '/users/signin',
-      data: {
-        'email': email,
-        'password': password,
-        'pushNotificationToken': pushNotificationToken,
-      },
+      data: data,
       fromJson: UserCredentialDto.fromJson,
     );
   }
@@ -31,14 +35,18 @@ class AuthHttpService {
     required String password,
     String? pushNotificationToken,
   }) {
+    final data = <String, String>{};
+
+    data['fullName'] = fullName;
+    data['email'] = email;
+    data['password'] = password;
+    if (pushNotificationToken != null) {
+      data['pushNotificationToken'] = pushNotificationToken;
+    }
+
     return _client.post(
       '/users/signup',
-      data: {
-        'fullName': fullName,
-        'email': email,
-        'password': password,
-        'pushNotificationToken': pushNotificationToken,
-      },
+      data: data,
       fromJson: UserCredentialDto.fromJson,
     );
   }
@@ -47,12 +55,16 @@ class AuthHttpService {
     required String idToken,
     String? pushNotificationToken,
   }) {
+    final data = <String, String>{};
+
+    data['idToken'] = idToken;
+    if (pushNotificationToken != null) {
+      data['pushNotificationToken'] = pushNotificationToken;
+    }
+
     return _client.post(
       '/users/signin/google',
-      data: {
-        'idToken': idToken,
-        'pushNotificationToken': pushNotificationToken,
-      },
+      data: data,
       fromJson: UserCredentialDto.fromJson,
     );
   }
@@ -61,12 +73,16 @@ class AuthHttpService {
     required String idToken,
     String? pushNotificationToken,
   }) {
+    final data = <String, String>{};
+
+    data['idToken'] = idToken;
+    if (pushNotificationToken != null) {
+      data['pushNotificationToken'] = pushNotificationToken;
+    }
+
     return _client.post(
       '/users/signup/google',
-      data: {
-        'idToken': idToken,
-        'pushNotificationToken': pushNotificationToken,
-      },
+      data: data,
       fromJson: UserCredentialDto.fromJson,
     );
   }

@@ -1,13 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_core/_core.dart';
+import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-
-typedef _Manager = BroadcastDetailsManager;
 
 class BroadcastDetailsPage extends WatchingWidget {
   const BroadcastDetailsPage({required this.broadcastIdStr, super.key});
@@ -16,29 +13,24 @@ class BroadcastDetailsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    pushScope(
-      init: (getIt) {
-        getIt.registerLazySingletonAsync(() async {
-          final manager = BroadcastDetailsManager(
-            http: di<BroadcastHttpService>(),
-            currentUserId: di<UserManager>().currentUserId.value,
-            broadcastId: Id.fromString(broadcastIdStr),
-          );
-          await manager.fetch.runAsync();
-          return manager;
-        });
-      },
+    final manager = createOnce(
+      () => BroadcastDetailsManager(
+        http: di<BroadcastHttpService>(),
+        currentUserId: di<UserManager>().currentUserId.value,
+        broadcastId: Id.fromString(broadcastIdStr),
+      ),
     );
 
-    final isFetching = watchValue((_Manager m) => m.fetch.isRunning);
-    final proxy = watchValue((_Manager m) => m.proxy);
-    final error = watchValue((_Manager m) => m.fetch.errors);
+    callOnce((_) => manager.fetch.run());
+
+    final isFetching = watch(manager.fetch.isRunning).value;
+    final proxy = watch(manager.proxy).value;
+    final error = watch(manager.fetch.errors).value;
 
     if (isFetching) {
-      return Skeletonizer(
-        child: BroadcastDetailsView(
-          proxy: BroadcastProxy(fakeLiveBroadcast, Id.empty),
-        ),
+      return MScaffold(
+        appBar: MAppBar.secondary(title: ''),
+        body: const Center(child: MLoadingIndicator.box()),
       );
     }
 
@@ -47,7 +39,7 @@ class BroadcastDetailsPage extends WatchingWidget {
         appBar: MAppBar.secondary(title: 'An error occurred'),
         body: MenoErrorWidget(
           error: error.error,
-          onRetry: di<_Manager>().fetch.runAsync,
+          onRetry: manager.fetch.runAsync,
         ),
       );
     }
@@ -57,11 +49,11 @@ class BroadcastDetailsPage extends WatchingWidget {
         appBar: MAppBar.secondary(title: 'Not Found'),
         body: MenoErrorWidget(
           message: 'No broadcast found. Please try again.',
-          onRetry: di<_Manager>().fetch.runAsync,
+          onRetry: manager.fetch.runAsync,
         ),
       );
     }
-
+    //
     return BroadcastDetailsView(proxy: proxy);
   }
 }

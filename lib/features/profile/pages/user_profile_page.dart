@@ -196,7 +196,7 @@ class _RecentBroadcastsTab extends WatchingWidget {
       padding: const .symmetric(horizontal: 16),
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.tile(
+        return BroadcastCard.rLiveTile(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
           onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
@@ -228,7 +228,7 @@ class _AllBroadcastsTab extends WatchingWidget {
       padding: const .symmetric(horizontal: 16),
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.tile(
+        return BroadcastCard.rLiveTile(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
           onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

@@ -4,6 +4,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meno/_core/keys/meno_keys.dart';
 import 'package:meno/_routing/_routing.dart';
+import 'package:meno/_shared/widgets/interaction_connector.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -27,6 +28,10 @@ class MenoApp extends WatchingWidget {
     if (snapshot.connectionState == .waiting) return const SizedBox.shrink();
 
     FlutterNativeSplash.remove();
+
+    // di<LocalStorage>().clearAll();
+    // di<SecureStorage>().deleteAll();
+
     return ValueListenableBuilder(
       valueListenable: di<AuthManager>().activeUserId,
       builder: (context, value, child) {
@@ -44,7 +49,7 @@ class MenoApp extends WatchingWidget {
               Breakpoint(start: 601, end: 800, name: TABLET),
               Breakpoint(start: 801, end: 1920, name: DESKTOP),
             ],
-            child: child ?? const SizedBox.shrink(),
+            child: InteractionConnector(child: child),
           ),
         );
       },

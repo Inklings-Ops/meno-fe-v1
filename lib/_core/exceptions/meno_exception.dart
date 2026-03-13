@@ -110,3 +110,17 @@ final class NoBroadcastToken extends MenoException {
     super.message = 'No broadcast token found. Cannot start session.',
   ]);
 }
+
+/// Extracts a user-facing error message from a raw command error object.
+///
+/// - Returns `null` for [ValidationException] — these are handled locally
+///   (e.g. inline field errors) and should never surface as a toast/snackbar.
+/// - Returns the localised [MenoException.message] for known domain exceptions.
+/// - Falls back to [error.toString()] for unexpected/untyped exceptions.
+/// - Returns `null` for a null input (no error present).
+String errorMessage(Object? error) {
+  if (error == null) return 'Unknown error. Please try again later.';
+  if (error is ValidationException) return error.message;
+  if (error is MenoException) return error.message;
+  return error.toString();
+}

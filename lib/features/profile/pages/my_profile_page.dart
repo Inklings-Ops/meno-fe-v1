@@ -163,12 +163,12 @@ class _RecentBroadcastsTab extends WatchingWidget {
 
     return FeedWidget(
       feedSource: feedSource,
-      horizontalItemExtent: 148,
-      layout: .horizontalList,
-      padding: const .symmetric(horizontal: 16),
+      padding: const .all(16),
+      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
+      skeletonItemCount: 4,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.tile(
+        return BroadcastCard.rLiveTile(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
           onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
@@ -194,12 +194,12 @@ class _AllBroadcastsTab extends WatchingWidget {
 
     return FeedWidget(
       feedSource: feedSource,
-      horizontalItemExtent: 148,
-      layout: .horizontalList,
-      padding: const .symmetric(horizontal: 16),
+      padding: const .all(16),
+      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
+      skeletonItemCount: 4,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.tile(
+        return BroadcastCard.rLiveTile(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
           onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
@@ -225,12 +225,12 @@ class _FavouritesTab extends WatchingWidget {
 
     return FeedWidget(
       feedSource: feedSource,
-      horizontalItemExtent: 148,
-      layout: .horizontalList,
-      padding: const .symmetric(horizontal: 16),
+      padding: const .all(16),
+      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
+      skeletonItemCount: 4,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.tile(
+        return BroadcastCard.rLiveTile(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
           onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),

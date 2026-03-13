@@ -216,11 +216,11 @@ class _BroadcastCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Now Live Cards
     if (broadcast.isActive) {
-      return BroadcastCard.liveCard(broadcast, onTap: () {});
+      return BroadcastCard.nLive(broadcast, onTap: () {});
     }
 
     // Recently Live Cards
-    return BroadcastCard.recentlyLiveCard(
+    return BroadcastCard.rLive(
       broadcast,
       onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
     );

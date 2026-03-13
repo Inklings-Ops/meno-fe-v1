@@ -16,7 +16,6 @@ void main() {
   late AuthManager manager;
   late MockAuthHttpService mockHttp;
   late MockAuthLocalService mockLocal;
-  late MockOnboardingService mockOnboarding;
   late StreamController<UserCredentialDto?> authChangedController;
   Object? lastGlobalError;
 
@@ -30,7 +29,6 @@ void main() {
   setUp(() {
     mockHttp = MockAuthHttpService();
     mockLocal = MockAuthLocalService();
-    mockOnboarding = MockOnboardingService();
     authChangedController = StreamController<UserCredentialDto?>.broadcast();
     lastGlobalError = null;
 
@@ -43,11 +41,7 @@ void main() {
       mockLocal.onCredentialChanged,
     ).thenAnswer((_) => authChangedController.stream);
 
-    manager = AuthManager(
-      http: mockHttp,
-      local: mockLocal,
-      onboarding: mockOnboarding,
-    );
+    manager = AuthManager(http: mockHttp, local: mockLocal);
   });
 
   tearDown(() {
