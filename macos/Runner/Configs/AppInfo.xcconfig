@@ -8,7 +8,7 @@
 PRODUCT_NAME = meno
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.inklings.meno.meno
+PRODUCT_BUNDLE_IDENTIFIER = com.inklings.meno
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.inklings.meno. All rights reserved.

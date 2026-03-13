@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.inklings.meno.meno"
+    namespace = "com.inklings.meno"
     compileSdk = (rootProject.property("compileSdk") as String).toInt()
     ndkVersion = rootProject.property("ndkVersion") as String
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.inklings.meno.meno"
+        applicationId = "com.inklings.meno"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
