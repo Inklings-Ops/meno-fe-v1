@@ -197,6 +197,17 @@ final class MenoRouter {
       ),
 
       /**
+       *  User Profile
+       */
+      GoRoute(
+        path: '/users/:userId/profile',
+        builder: (context, state) {
+          final params = state.pathParameters;
+          return UserProfilePage(userIdStr: params['userId']!);
+        },
+      ),
+
+      /**
        *  Main Navigation Shell
        *  ------------------------------------------------------------------
        *  Contains the Home, Discover, Create Broadcast, Notes & Profile
@@ -316,9 +327,41 @@ final class MenoRouter {
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: R.myProfile,
-                builder: (context, state) => const MyProfilePage(),
+              StatefulShellRoute(
+                builder: (context, state, navigationShell) => navigationShell,
+                navigatorContainerBuilder: MyProfilePage.builder,
+                branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: R.myProfileRecentTab,
+                        builder: (context, state) {
+                          return const ProfileRecentBroadcastsTab();
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: R.myProfileAllTab,
+                        builder: (context, state) {
+                          return const ProfileAllBroadcastsTab();
+                        },
+                      ),
+                    ],
+                  ),
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: R.myProfileFavouritesTab,
+                        builder: (context, state) {
+                          return const ProfileFavouritesTab();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

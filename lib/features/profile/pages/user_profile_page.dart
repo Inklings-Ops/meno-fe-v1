@@ -7,12 +7,11 @@ import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 const _kTabBarHeight = 32.0;
 
-class ProfilePage extends WatchingWidget {
-  const ProfilePage({required this.userIdStr, super.key});
+class UserProfilePage extends WatchingWidget {
+  const UserProfilePage({required this.userIdStr, super.key});
 
   final String userIdStr;
 
@@ -42,25 +41,36 @@ class ProfilePage extends WatchingWidget {
     final profile = watchValue((UserProfileManager m) => m.profile);
     final isFetching = watchValue((UserProfileManager m) => m.fetch.isRunning);
 
-    if (isFetching) return _Content.loading();
+    if (isFetching) return const LoadingPage();
     if (!isFetching && profile.isEmpty) return const _EmptyPage();
     return _Content(profile: profile);
   }
 }
 
 class _Content extends WatchingWidget {
-  const _Content({required Profile profile}) : this._(profile: profile);
-
-  const _Content._({required this.profile, this.isLoading = false});
-
-  _Content.loading() : this._(profile: fakeProfile, isLoading: true);
+  const _Content({required this.profile});
 
   final Profile profile;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
+
+    final recentBroadcastsFeed = createOnce(() {
+      return BroadcastFeedDataSource(
+        http: di<BroadcastHttpService>(),
+        socket: di<BroadcastSocketService>(),
+        query: BroadcastQuery.recentlyLive(creatorId: profile.id),
+      );
+    });
+
+    final allBroadcastsFeed = createOnce(() {
+      return BroadcastFeedDataSource(
+        http: di<BroadcastHttpService>(),
+        socket: di<BroadcastSocketService>(),
+        query: BroadcastQuery(creatorId: profile.id),
+      );
+    });
 
     return DefaultTabController(
       length: 2,
@@ -75,23 +85,15 @@ class _Content extends WatchingWidget {
                 _ProfileAppBar(
                   profile: profile,
                   innerBoxIsScrolled: innerBoxIsScrolled,
-                  isLoading: isLoading,
                 ),
               ];
             },
-            body: isLoading
-                ? const SizedBox.shrink()
-                : TabBarView(
-                    children: [
-                      if (isLoading) ...[
-                        const SizedBox.shrink(),
-                        const SizedBox.shrink(),
-                      ] else ...[
-                        _RecentBroadcastsTab(creatorId: profile.id),
-                        _AllBroadcastsTab(creatorId: profile.id),
-                      ],
-                    ],
-                  ),
+            body: TabBarView(
+              children: [
+                _RecentBroadcastsTab(feed: recentBroadcastsFeed),
+                _AllBroadcastsTab(feed: allBroadcastsFeed),
+              ],
+            ),
           ),
         ),
       ),
@@ -103,12 +105,10 @@ class _ProfileAppBar extends StatelessWidget {
   const _ProfileAppBar({
     required this.profile,
     required this.innerBoxIsScrolled,
-    this.isLoading = false,
   });
 
   final Profile profile;
   final bool innerBoxIsScrolled;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +123,7 @@ class _ProfileAppBar extends StatelessWidget {
       forceElevated: innerBoxIsScrolled,
       elevation: innerBoxIsScrolled ? 1 : 0,
       shadowColor: colors.onBackground.withValues(alpha: 0.08),
-      title: Skeletonizer(
-        enabled: isLoading,
-        child: MText(profile.fullName.getOrCrash()),
-      ),
+      title: MText(profile.fullName.getOrCrash()),
       titleTextStyle: textTheme.bodyMedium,
       leading: MIconButton(
         icon: const Icon(MIcons.chevron_left),
@@ -135,22 +132,16 @@ class _ProfileAppBar extends StatelessWidget {
       ),
       centerTitle: true,
       actions: [
-        Skeletonizer(
-          enabled: isLoading,
-          child: MIconButton(
-            icon: const Icon(MIcons.dots_horizontal),
-            color: colors.primary,
-            onPressed: () => ProfilePageOptionsModal.show(context),
-          ),
+        MIconButton(
+          icon: const Icon(MIcons.dots_horizontal),
+          color: colors.primary,
+          onPressed: () => ProfilePageOptionsModal.show(context),
         ),
         Spaces.horizontalLarge,
       ],
       flexibleSpace: SafeArea(
         bottom: false,
-        child: Skeletonizer(
-          enabled: isLoading,
-          child: ProfileHeaderContent.usersProfile(profile),
-        ),
+        child: ProfileHeaderContent.usersProfile(profile),
       ),
       bottom: PreferredSize(
         preferredSize: const .fromHeight(_kTabBarHeight),
@@ -175,25 +166,17 @@ class _ProfileAppBar extends StatelessWidget {
 }
 
 class _RecentBroadcastsTab extends WatchingWidget {
-  const _RecentBroadcastsTab({required this.creatorId});
+  const _RecentBroadcastsTab({required this.feed});
 
-  final Id creatorId;
+  final BroadcastFeedDataSource feed;
 
   @override
   Widget build(BuildContext context) {
-    final feedSource = createOnce(() {
-      return BroadcastFeedDataSource(
-        http: di<BroadcastHttpService>(),
-        socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.recentlyLive(creatorId: creatorId),
-      );
-    });
-
     return FeedWidget(
-      feedSource: feedSource,
-      horizontalItemExtent: 148,
-      layout: .horizontalList,
-      padding: const .symmetric(horizontal: 16),
+      feedSource: feed,
+      padding: const .all(16),
+      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
+      skeletonItemCount: 4,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
         return BroadcastCard.rLiveTile(
@@ -207,25 +190,17 @@ class _RecentBroadcastsTab extends WatchingWidget {
 }
 
 class _AllBroadcastsTab extends WatchingWidget {
-  const _AllBroadcastsTab({required this.creatorId});
+  const _AllBroadcastsTab({required this.feed});
 
-  final Id creatorId;
+  final BroadcastFeedDataSource feed;
 
   @override
   Widget build(BuildContext context) {
-    final feedSource = createOnce(() {
-      return BroadcastFeedDataSource(
-        http: di<BroadcastHttpService>(),
-        socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery(creatorId: creatorId),
-      );
-    });
-
     return FeedWidget(
-      feedSource: feedSource,
-      horizontalItemExtent: 148,
-      layout: .horizontalList,
-      padding: const .symmetric(horizontal: 16),
+      feedSource: feed,
+      padding: const .all(16),
+      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
+      skeletonItemCount: 4,
       itemBuilder: (context, broadcast) {
         if (broadcast == null) return const SizedBox.shrink();
         return BroadcastCard.rLiveTile(
