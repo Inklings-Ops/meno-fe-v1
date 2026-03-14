@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/exceptions/meno_exception.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/widgets/extensions/m_snack_bar_extension.dart';
+import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/notes/manager/folder_editor_manager.dart';
 import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -29,6 +29,7 @@ class FolderEditorModal extends WatchingWidget {
           return FolderEditorManager(
             http: di<NotesHttpService>(),
             local: di<NotesLocalService>(),
+            currentUserId: di<UserManager>().currentUserId.value,
             folderId: folderIdStr == null ? null : .fromString(folderIdStr!),
           );
         }, onCreated: (instance) => instance.initialize.run());

@@ -68,7 +68,7 @@ void main() {
         mockLocal.getCredential(),
       ).thenAnswer((_) async => tUserCredentialDto);
 
-      await manager.initialize();
+      manager.initialize.run();
 
       expect(manager.activeUserId.value.getOrCrash(), tUserId);
       expect(manager.isAuthenticated, isTrue);

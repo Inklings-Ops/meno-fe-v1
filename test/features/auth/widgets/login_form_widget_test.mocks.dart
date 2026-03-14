@@ -3,8 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i7;
-import 'dart:ui' as _i8;
+import 'dart:ui' as _i7;
 
 import 'package:flutter/foundation.dart' as _i2;
 import 'package:flutter_it/flutter_it.dart' as _i3;
@@ -83,12 +82,12 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
           as _i2.ValueListenable<_i6.User>);
 
   @override
-  _i2.ValueListenable<bool> get pendingEmailVerification =>
+  _i2.ValueListenable<bool> get emailVerified =>
       (super.noSuchMethod(
-            Invocation.getter(#pendingEmailVerification),
+            Invocation.getter(#emailVerified),
             returnValue: _FakeValueListenable_0<bool>(
               this,
-              Invocation.getter(#pendingEmailVerification),
+              Invocation.getter(#emailVerified),
             ),
           )
           as _i2.ValueListenable<bool>);
@@ -100,6 +99,17 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
             returnValue: false,
           )
           as bool);
+
+  @override
+  _i3.Command<void, void> get initialize =>
+      (super.noSuchMethod(
+            Invocation.getter(#initialize),
+            returnValue: _FakeCommand_1<void, void>(
+              this,
+              Invocation.getter(#initialize),
+            ),
+          )
+          as _i3.Command<void, void>);
 
   @override
   _i3.Command<_i4.LoginArgs, _i4.UserCredential> get login =>
@@ -234,6 +244,12 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
           as _i3.Command<void, void>);
 
   @override
+  set initialize(_i3.Command<void, void>? value) => super.noSuchMethod(
+    Invocation.setter(#initialize, value),
+    returnValueForMissingStub: null,
+  );
+
+  @override
   set login(_i3.Command<_i4.LoginArgs, _i4.UserCredential>? value) =>
       super.noSuchMethod(
         Invocation.setter(#login, value),
@@ -319,22 +335,19 @@ class MockAuthManager extends _i1.Mock implements _i4.AuthManager {
           as bool);
 
   @override
-  _i7.Future<void> init() =>
-      (super.noSuchMethod(
-            Invocation.method(#init, []),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
-          )
-          as _i7.Future<void>);
+  void startListening() => super.noSuchMethod(
+    Invocation.method(#startListening, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

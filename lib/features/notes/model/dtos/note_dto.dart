@@ -1,4 +1,4 @@
-import 'package:meno/_core/_core.dart' as core;
+import 'package:meno/_core/_core.dart' as domain;
 import 'package:meno/_shared/model/entities/common_enums.dart';
 import 'package:meno/features/notes/model/dtos/_dtos.dart';
 import 'package:meno/features/notes/model/entities/_entities.dart';
@@ -10,6 +10,7 @@ class NoteDto {
     required this.id,
     required this.title,
     required this.content,
+    required this.ownerId,
     this.dbId = 0,
     this.pinned = false,
     this.createdAt,
@@ -17,7 +18,7 @@ class NoteDto {
     this.syncPending = false,
   });
 
-  factory NoteDto.fromJson(dynamic json) {
+  factory NoteDto.fromJson(dynamic json, String ownerId) {
     if (json is! Map<String, dynamic>) {
       throw const FormatException('Invalid Note JSON format');
     }
@@ -26,6 +27,7 @@ class NoteDto {
       id: json[_kId] as String,
       title: json[_kTitle] as String? ?? '',
       content: json[_kContent] as String? ?? '',
+      ownerId: ownerId,
       pinned: json[_kPinned] as bool? ?? false,
       createdAt: json[_kCreatedAt] != null
           ? DateTime.tryParse(json[_kCreatedAt] as String)
@@ -36,9 +38,8 @@ class NoteDto {
     );
 
     final folderJson = json[_kFolder];
-
     if (folderJson != null) {
-      dto.folder.target = NoteFolderDto.fromJson(folderJson);
+      dto.folder.target = NoteFolderDto.fromJson(folderJson, ownerId: ownerId);
     }
 
     final creatorJson = json[_kCreator];
@@ -54,6 +55,11 @@ class NoteDto {
 
   @Unique()
   final String id;
+
+  /// The remote user id of the account that owns this note.
+  /// Indexed for fast per-user filtering across a shared ObjectBox store.
+  @Index()
+  final String ownerId;
 
   final String title;
 
@@ -96,9 +102,9 @@ class NoteDto {
 
 extension NoteDtoX on NoteDto {
   Note get toDomain => Note(
-    id: core.Id.fromString(id),
-    title: core.SingleLineString(title),
-    content: core.MultiLineString(content),
+    id: domain.Id.fromString(id),
+    title: domain.SingleLineString(title),
+    content: domain.MultiLineString(content),
     pinned: pinned,
     createdAt: createdAt,
     updatedAt: updatedAt,
@@ -109,9 +115,10 @@ extension NoteDtoX on NoteDto {
 }
 
 extension NoteDomainX on Note {
-  NoteDto toDto({bool pending = false}) {
+  NoteDto toDto({required String ownerId, bool pending = false}) {
     final dto = NoteDto(
       id: id.getOrCrash(),
+      ownerId: ownerId,
       title: title.getOrCrash(),
       content: content.getOrCrash(),
       pinned: pinned,
@@ -120,9 +127,7 @@ extension NoteDomainX on Note {
       syncPending: pending,
     );
 
-    // Set ToOne targets from domain objects so ObjectBox can persist the
-    // foreign-key IDs when the caller puts this DTO into the box.
-    if (folder != null) dto.folder.target = folder!.toDto();
+    if (folder != null) dto.folder.target = folder!.toDto(ownerId: ownerId);
     if (creator != null) dto.creator.target = creator!.toDto;
 
     return dto;

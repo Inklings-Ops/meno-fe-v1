@@ -8,7 +8,7 @@ final class FolderWithNotes {
     required this.meta,
   });
 
-  factory FolderWithNotes.fromJson(dynamic json) {
+  factory FolderWithNotes.fromJson(dynamic json, {required String ownerId}) {
     if (json is! Map<String, dynamic>) throw FormatError<FolderWithNotes>();
 
     final rawFolder = json['folder'];
@@ -34,8 +34,8 @@ final class FolderWithNotes {
     }
 
     return FolderWithNotes(
-      folder: NoteFolderDto.fromJson(rawFolder),
-      notes: rawNotes.map(NoteDto.fromJson).toList(),
+      folder: NoteFolderDto.fromJson(rawFolder, ownerId: ownerId),
+      notes: rawNotes.map((json) => NoteDto.fromJson(json, ownerId)).toList(),
       meta: NotesMetadata.fromJson(rawMeta),
     );
   }

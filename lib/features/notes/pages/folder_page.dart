@@ -25,6 +25,7 @@ class FolderPage extends WatchingWidget {
           return FolderManager(
             local: di<NotesLocalService>(),
             folderId: .fromString(folderId),
+            currentUserId: di<UserManager>().currentUserId.value,
           );
         }, onCreated: (instance) => instance.initialize.run());
       },

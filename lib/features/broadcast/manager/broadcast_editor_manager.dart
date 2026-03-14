@@ -251,21 +251,20 @@ final class BroadcastEditorManager with MLogger implements Disposable {
 
   @override
   FutureOr<dynamic> onDispose() {
+    createBroadcast.dispose();
+    startBroadcast.dispose();
+    saveBroadcastSession.dispose();
+    fetchBroadcast.dispose();
+    resetForm.dispose();
+    selectDraft.dispose();
+    deleteDraft.dispose();
+
     step.dispose();
     drafts.dispose();
-
     title.dispose();
     desc.dispose();
     image.dispose();
     cohosts.dispose();
     record.dispose();
-
-    createBroadcast.dispose();
-    startBroadcast.dispose();
-    saveBroadcastSession.dispose();
-    resetForm.dispose();
-    fetchBroadcast.dispose();
-    selectDraft.dispose();
-    deleteDraft.dispose();
   }
 }

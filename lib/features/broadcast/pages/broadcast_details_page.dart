@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_core/value_objects/id.dart';
+import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -66,6 +66,15 @@ class BroadcastDetailsView extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(proxy);
+
+    registerHandler(
+      target: proxy.toggleIsFavourite.errors,
+      handler: (context, CommandError? errors, cancel) {
+        if (errors?.error == null) return;
+        final message = errorMessage(errors?.error);
+        context.showErrorSnackBar(message);
+      },
+    );
 
     return MScaffold(
       appBar: MAppBar.secondary(

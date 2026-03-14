@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:logger/logger.dart';
 import 'package:meno/_core/keys/meno_keys.dart';
 import 'package:meno/_routing/_routing.dart';
+import 'package:meno/_shared/pages/loading_page.dart';
 import 'package:meno/_shared/widgets/interaction_connector.dart';
 import 'package:meno/features/auth/auth.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -25,7 +27,7 @@ class MenoApp extends WatchingWidget {
       return _ErrorWidget(error: snapshot.error, onRetry: di.allReady);
     }
 
-    if (snapshot.connectionState == .waiting) return const SizedBox.shrink();
+    if (snapshot.connectionState == .waiting) return const _LoadingWidget();
 
     FlutterNativeSplash.remove();
 
@@ -57,20 +59,33 @@ class MenoApp extends WatchingWidget {
   }
 }
 
-// class _LoadingWidget extends StatelessWidget {
-//   const _LoadingWidget();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       darkTheme: MTheme.dark,
-//       theme: MTheme.light,
-//       scaffoldMessengerKey: MenoKeys.scaffoldMessengerKey,
-//       home: const LoadingPage(),
-//     );
-//   }
-// }
+class _LoadingWidget extends StatelessWidget {
+  const _LoadingWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('LOADING...LOADING...LOADING...LOADING...LOADING...LOADING...');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    Logger().w('QWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOPQWERTYUIOP');
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      darkTheme: MTheme.dark,
+      theme: MTheme.light,
+      scaffoldMessengerKey: MenoKeys.scaffoldMessengerKey,
+      home: const LoadingPage(),
+    );
+  }
+}
 
 class _ErrorWidget extends StatelessWidget {
   const _ErrorWidget({required this.error, this.onRetry});

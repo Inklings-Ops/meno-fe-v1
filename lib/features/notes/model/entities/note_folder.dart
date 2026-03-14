@@ -11,6 +11,7 @@ class NoteFolder with EquatableMixin implements IEntity {
     this.numberOfNotes = 0,
     this.pinned = false,
     this.createdAt,
+    this.updatedAt,
     this.notes = const <Note?>[],
     this.syncStatus = SyncStatus.synced,
   });
@@ -26,6 +27,7 @@ class NoteFolder with EquatableMixin implements IEntity {
   final int numberOfNotes;
   final bool pinned;
   final DateTime? createdAt;
+  final DateTime? updatedAt;
   final List<Note?> notes;
   final SyncStatus syncStatus;
 
@@ -41,6 +43,7 @@ class NoteFolder with EquatableMixin implements IEntity {
     numberOfNotes,
     pinned,
     createdAt,
+    updatedAt,
     notes,
     syncStatus,
   ];
@@ -51,6 +54,7 @@ class NoteFolder with EquatableMixin implements IEntity {
     int? numberOfNotes,
     bool? pinned,
     DateTime? createdAt,
+    DateTime? updatedAt,
     List<Note?>? notes,
     SyncStatus? syncStatus,
   }) {
@@ -60,6 +64,7 @@ class NoteFolder with EquatableMixin implements IEntity {
       numberOfNotes: numberOfNotes ?? this.numberOfNotes,
       pinned: pinned ?? this.pinned,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       notes: notes ?? this.notes,
       syncStatus: syncStatus ?? this.syncStatus,
     );

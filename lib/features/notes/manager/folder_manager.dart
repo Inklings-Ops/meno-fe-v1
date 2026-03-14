@@ -7,28 +7,43 @@ import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/_services.dart';
 
 final class FolderManager with MLogger implements Disposable {
-  FolderManager({required NotesLocalService local, required Id folderId})
-    : _local = local,
-      _folderId = folderId;
+  FolderManager({
+    required NotesLocalService local,
+    required Id folderId,
+    required Id currentUserId,
+  }) : _local = local,
+       _folderId = folderId.getOrCrash(),
+       _ownerId = currentUserId.getOrCrash() {
+    _debouncedSearch = searchQuery
+        .where((q) => q != _activeKeywords)
+        .debounce(const Duration(milliseconds: 400))
+        .listen((query, _) {
+          _activeKeywords = query;
+          _resubscribe();
+        });
+  }
 
   final NotesLocalService _local;
-  final Id _folderId;
+  final String _folderId;
+  final String _ownerId;
 
   final folder = ValueNotifier<NoteFolder>(.empty);
   final notes = ListNotifier<Note>(data: []);
   final searchQuery = ValueNotifier<String>('');
   final totalNotesCount = ValueNotifier<int>(0);
 
-  String _activeKeywords = '';
+  ListenableSubscription? _debouncedSearch;
 
   StreamSubscription<NoteFolderDto?>? _folderSubscription;
   StreamSubscription<List<NoteDto>>? _notesInFolderSubscription;
   StreamSubscription<List<NoteDto>>? _notesCountSubscription;
 
-  late final initialize = Command.createAsyncNoParamNoResult(
-    _resubscribe,
-    errorFilterFn: menoExceptionFilter,
-  );
+  String _activeKeywords = '';
+
+  late final initialize = Command.createAsyncNoParamNoResult(() async {
+    log.d('FoldersManager: Initializing...');
+    return _resubscribe();
+  }, errorFilterFn: menoExceptionFilter);
 
   late final performSearch = Command.createSync<String, void>(
     _onSearchChanged,
@@ -39,7 +54,7 @@ final class FolderManager with MLogger implements Disposable {
     await _cancelStreamSubscriptions();
 
     _folderSubscription = _local
-        .watchFolder(_folderId.getOrCrash())
+        .watchFolder(ownerId: _ownerId, folderId: _folderId)
         .listen(
           (incoming) {
             if (incoming == null) return;
@@ -53,8 +68,9 @@ final class FolderManager with MLogger implements Disposable {
 
     _notesInFolderSubscription = _local
         .watchNotesInFolder(
-          _folderId.getOrCrash(),
-          searchQuery.value.isEmpty ? null : searchQuery.value,
+          folderId: _folderId,
+          ownerId: _ownerId,
+          keywords: searchQuery.value.isEmpty ? null : searchQuery.value,
         )
         .listen(
           (incoming) {
@@ -70,7 +86,7 @@ final class FolderManager with MLogger implements Disposable {
         );
 
     _notesCountSubscription = _local
-        .watchNotesInFolder(_folderId.getOrCrash())
+        .watchNotesInFolder(folderId: _folderId, ownerId: _ownerId)
         .listen((all) => totalNotesCount.value = all.length);
   }
 
@@ -96,6 +112,9 @@ final class FolderManager with MLogger implements Disposable {
     log.d('FolderManager: Disposing...');
 
     await _cancelStreamSubscriptions();
+
+    _debouncedSearch?.cancel();
+    _debouncedSearch = null;
 
     folder.dispose();
     notes.dispose();

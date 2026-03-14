@@ -22,7 +22,6 @@ class FavouriteBroadcast with EquatableMixin {
   @Index()
   final String broadcastId;
 
-  @Unique()
   final String ownerId;
 
   final String title;

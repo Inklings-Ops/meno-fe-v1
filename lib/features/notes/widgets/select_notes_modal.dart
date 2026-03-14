@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_routing/_routing.dart';
+import 'package:meno/_shared/manager/user_manager.dart';
 import 'package:meno/_shared/widgets/meno_error_widget.dart';
 import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/notes_local_service.dart';
@@ -31,11 +32,12 @@ class SelectNotesModal extends WatchingWidget {
   Widget build(BuildContext context) {
     final searchQuery = createOnce(() => ValueNotifier<String>(''));
     final query = watch(searchQuery).value;
+    final currentUserId = watchValue((UserManager m) => m.currentUserId);
 
     final snapshot = watchStream(
-      (NotesLocalService r) => r.watchNotes().map(
-        (incomingNotes) => incomingNotes.map((dto) => dto.toDomain),
-      ),
+      (NotesLocalService r) => r
+          .watchNotes(ownerId: currentUserId.getOrCrash())
+          .map((incomingNotes) => incomingNotes.map((dto) => dto.toDomain)),
     );
 
     if (snapshot.connectionState == ConnectionState.waiting) {

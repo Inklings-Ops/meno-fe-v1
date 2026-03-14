@@ -10,14 +10,17 @@ final class FolderEditorManager with MLogger implements Disposable {
   FolderEditorManager({
     required NotesHttpService http,
     required NotesLocalService local,
+    required Id currentUserId,
     required Id? folderId,
   }) : _http = http,
        _local = local,
-       _folderId = folderId;
+       _ownerId = currentUserId.getOrCrash(),
+       _folderId = folderId?.getOrNull();
 
   final NotesHttpService _http;
   final NotesLocalService _local;
-  final Id? _folderId;
+  final String _ownerId;
+  final String? _folderId;
 
   final folder = ValueNotifier<NoteFolder>(.empty);
   final isEdit = ValueNotifier<bool>(false);
@@ -34,7 +37,7 @@ final class FolderEditorManager with MLogger implements Disposable {
       folder.value = NoteFolder.fromNewId(Id.unique());
     } else {
       isEdit.value = true;
-      final result = _local.findFolderByRemoteId(_folderId.getOrCrash());
+      final result = _local.findFolderByRemoteId(_folderId);
       if (result == null) throw const MenoException('No folder found');
       folder.value = result.toDomain;
       _hasBeenCreated = true;
@@ -52,25 +55,25 @@ final class FolderEditorManager with MLogger implements Disposable {
   }, errorFilterFn: menoExceptionFilter);
 
   Future<void> _create(NoteFolder current) async {
-    final dto = current.toDto(pending: true);
+    final dto = current.toDto(ownerId: _ownerId, pending: true);
 
     _local.upsertFolder(dto);
-    final confirmed = await _http.createFolder(dto);
+    final confirmed = await _http.createFolder(ownerId: _ownerId, dto: dto);
 
     _local.deleteFolderByRemoteId(current.id.getOrCrash());
-    _local.upsertFolder(confirmed.toDto());
+    _local.upsertFolder(confirmed.toDto(ownerId: _ownerId));
 
     _hasBeenCreated = true;
     folder.value = confirmed;
   }
 
   Future<void> _update(NoteFolder current) async {
-    final dto = current.toDto(pending: true);
+    final dto = current.toDto(ownerId: _ownerId, pending: true);
 
     _local.upsertFolder(dto);
-    final confirmed = await _http.updateFolder(dto.id, dto);
+    final confirmed = await _http.updateFolder(ownerId: _ownerId, dto: dto);
 
-    _local.upsertFolder(confirmed.toDto());
+    _local.upsertFolder(confirmed.toDto(ownerId: _ownerId));
 
     folder.value = confirmed;
   }

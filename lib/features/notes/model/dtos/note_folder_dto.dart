@@ -9,6 +9,7 @@ class NoteFolderDto {
   NoteFolderDto({
     required this.id,
     required this.title,
+    required this.ownerId,
     this.dbId = 0,
     this.numberOfNotes = 0,
     this.pinned = false,
@@ -17,13 +18,14 @@ class NoteFolderDto {
     this.syncPending = false,
   });
 
-  factory NoteFolderDto.fromJson(dynamic json) {
+  factory NoteFolderDto.fromJson(dynamic json, {required String ownerId}) {
     if (json is! Map<String, dynamic>) {
       throw const FormatException('Invalid NoteFolder JSON format');
     }
 
     return NoteFolderDto(
       id: json[_kId] as String,
+      ownerId: ownerId,
       title: json[_kTitle] as String? ?? '',
       numberOfNotes: (json[_kNumberOfNotes] as int?) ?? 0,
       pinned: json[_kPinned] as bool? ?? false,
@@ -41,6 +43,9 @@ class NoteFolderDto {
 
   @Unique()
   final String id;
+
+  @Index()
+  final String ownerId;
 
   final String title;
 
@@ -76,6 +81,7 @@ class NoteFolderDto {
   };
 
   NoteFolderDto copyWith({
+    String? ownerId,
     String? title,
     int? numberOfNotes,
     bool? pinned,
@@ -84,6 +90,7 @@ class NoteFolderDto {
   }) {
     return NoteFolderDto(
       id: id,
+      ownerId: ownerId ?? this.ownerId,
       title: title ?? this.title,
       numberOfNotes: numberOfNotes ?? this.numberOfNotes,
       pinned: pinned ?? this.pinned,
@@ -115,12 +122,15 @@ extension NoteFolderDtoX on NoteFolderDto {
 }
 
 extension NoteFolderDomainX on NoteFolder {
-  NoteFolderDto toDto({bool pending = false}) => NoteFolderDto(
-    id: id.getOrCrash(),
-    title: title.getOrCrash(),
-    numberOfNotes: numberOfNotes,
-    pinned: pinned,
-    createdAt: createdAt,
-    syncPending: pending,
-  );
+  NoteFolderDto toDto({required String ownerId, bool pending = false}) {
+    return NoteFolderDto(
+      id: id.getOrCrash(),
+      ownerId: ownerId,
+      title: title.getOrCrash(),
+      numberOfNotes: numberOfNotes,
+      pinned: pinned,
+      createdAt: createdAt,
+      syncPending: pending,
+    );
+  }
 }

@@ -96,9 +96,7 @@
         {
           "id": "3:2799700734120983778",
           "name": "ownerId",
-          "indexId": "8:4879013364036148210",
-          "type": 9,
-          "flags": 2080
+          "type": 9
         },
         {
           "id": "4:8602065151158828444",
@@ -167,7 +165,7 @@
     },
     {
       "id": "9:3782500885079038032",
-      "lastPropertyId": "10:6672795395873484979",
+      "lastPropertyId": "11:6003352377649179771",
       "name": "NoteDto",
       "properties": [
         {
@@ -228,13 +226,20 @@
           "type": 11,
           "flags": 520,
           "relationTarget": "NoteCreatorDto"
+        },
+        {
+          "id": "11:6003352377649179771",
+          "name": "ownerId",
+          "indexId": "14:3688215068886536769",
+          "type": 9,
+          "flags": 2048
         }
       ],
       "relations": []
     },
     {
       "id": "10:1145714644784761002",
-      "lastPropertyId": "8:5680976000215354875",
+      "lastPropertyId": "9:4386314679577312149",
       "name": "NoteFolderDto",
       "properties": [
         {
@@ -279,13 +284,20 @@
           "id": "8:5680976000215354875",
           "name": "syncPending",
           "type": 1
+        },
+        {
+          "id": "9:4386314679577312149",
+          "name": "ownerId",
+          "indexId": "15:2957865819950093902",
+          "type": 9,
+          "flags": 2048
         }
       ],
       "relations": []
     }
   ],
   "lastEntityId": "10:1145714644784761002",
-  "lastIndexId": "13:2846691909463598007",
+  "lastIndexId": "15:2957865819950093902",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -296,7 +308,9 @@
     2015786496822452086,
     1797865757503972589
   ],
-  "retiredIndexUids": [],
+  "retiredIndexUids": [
+    4879013364036148210
+  ],
   "retiredPropertyUids": [
     2482137969759491726,
     8023440449682537735,

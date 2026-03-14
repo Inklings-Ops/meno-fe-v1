@@ -19,19 +19,25 @@ class NotesLocalService with MLogger {
   // NOTES — STREAMS
   // ========================================================================
   /// Live stream of notes, rebuilt whenever any [NoteDto] changes.
-  Stream<List<NoteDto>> watchNotes({String? keywords, bool? pinned}) {
+  Stream<List<NoteDto>> watchNotes({
+    required String ownerId,
+    String? keywords,
+    bool? pinned,
+  }) {
     return _buildNoteQuery(
+      ownerId: ownerId,
       keywords: keywords,
       pinned: pinned,
     ).watch(triggerImmediately: true).map((query) => query.find());
   }
 
   /// Live stream of all notes that belong to a specific folder.
-  Stream<List<NoteDto>> watchNotesInFolder(
-    String folderId, [
+  Stream<List<NoteDto>> watchNotesInFolder({
+    required String folderId,
+    required String ownerId,
     String? keywords,
-  ]) {
-    final result = _buildNoteQuery(keywords: keywords);
+  }) {
+    final result = _buildNoteQuery(ownerId: ownerId, keywords: keywords);
     result.link(NoteDto_.folder, NoteFolderDto_.id.equals(folderId));
 
     return result
@@ -46,8 +52,12 @@ class NotesLocalService with MLogger {
   NoteDto? findNoteByRemoteId(String remoteId) =>
       _notes.query(NoteDto_.id.equals(remoteId)).build().findFirst();
 
-  List<NoteDto> getPendingNotes() =>
-      _notes.query(NoteDto_.syncPending.equals(true)).build().find();
+  List<NoteDto> getPendingNotes(String ownerId) => _notes
+      .query(
+        NoteDto_.ownerId.equals(ownerId) & NoteDto_.syncPending.equals(true),
+      )
+      .build()
+      .find();
 
   // ========================================================================
   // NOTES — WRITES
@@ -140,22 +150,34 @@ class NotesLocalService with MLogger {
   // ========================================================================
   // FOLDERS — STREAMS
   // ========================================================================
-  Stream<List<NoteFolderDto>> watchFolders({String? keywords}) {
-    final builder = keywords != null && keywords.isNotEmpty
-        ? _folders.query(
-            NoteFolderDto_.title.contains(keywords, caseSensitive: false),
-          )
-        : _folders.query();
+  Stream<List<NoteFolderDto>> watchFolders({
+    required String ownerId,
+    String? keywords,
+  }) {
+    var condition = NoteFolderDto_.ownerId.equals(ownerId);
 
-    return builder
+    if (keywords != null && keywords.isNotEmpty) {
+      condition =
+          condition &
+          NoteFolderDto_.title.contains(keywords, caseSensitive: false);
+    }
+
+    return _folders
+        .query(condition)
         .order(NoteFolderDto_.createdAt, flags: Order.descending)
         .watch(triggerImmediately: true)
         .map((query) => query.find());
   }
 
-  Stream<NoteFolderDto?> watchFolder(String folderId) {
+  Stream<NoteFolderDto?> watchFolder({
+    required String ownerId,
+    required String folderId,
+  }) {
     return _folders
-        .query(NoteFolderDto_.id.equals(folderId))
+        .query(
+          NoteFolderDto_.ownerId.equals(ownerId) &
+              NoteFolderDto_.id.equals(folderId),
+        )
         .watch(triggerImmediately: true)
         .map((query) => query.findFirst());
   }
@@ -166,8 +188,13 @@ class NotesLocalService with MLogger {
   NoteFolderDto? findFolderByRemoteId(String remoteId) =>
       _folders.query(NoteFolderDto_.id.equals(remoteId)).build().findFirst();
 
-  List<NoteFolderDto> getPendingFolders() =>
-      _folders.query(NoteFolderDto_.syncPending.equals(true)).build().find();
+  List<NoteFolderDto> getPendingFolders(String ownerId) => _folders
+      .query(
+        NoteFolderDto_.ownerId.equals(ownerId) &
+            NoteFolderDto_.syncPending.equals(true),
+      )
+      .build()
+      .find();
 
   // ========================================================================
   // FOLDERS — WRITES
@@ -241,6 +268,28 @@ class NotesLocalService with MLogger {
   }
 
   // ========================================================================
+  // CLEAR
+  // ========================================================================
+
+  /// Removes only the rows belonging to [ownerId].
+  /// Called when removing an account from the device.
+  void clearForUser(String ownerId) {
+    _db.runWriteTx(() {
+      final noteIds = _notes
+          .query(NoteDto_.ownerId.equals(ownerId))
+          .build()
+          .findIds();
+      _notes.removeMany(noteIds);
+
+      final folderIds = _folders
+          .query(NoteFolderDto_.ownerId.equals(ownerId))
+          .build()
+          .findIds();
+      _folders.removeMany(folderIds);
+    });
+  }
+
+  // ========================================================================
   // PRIVATE HELPERS
   // ========================================================================
 
@@ -283,21 +332,27 @@ class NotesLocalService with MLogger {
   }
 
   /// Builds a query for notes.
-  QueryBuilder<NoteDto> _buildNoteQuery({String? keywords, bool? pinned}) {
-    Condition<NoteDto>? condition;
+  QueryBuilder<NoteDto> _buildNoteQuery({
+    required String ownerId,
+    String? keywords,
+    bool? pinned,
+  }) {
+    var condition = NoteDto_.ownerId.equals(ownerId);
 
-    if (pinned != null) condition = NoteDto_.pinned.equals(pinned);
+    if (pinned != null) {
+      condition = condition & NoteDto_.pinned.equals(pinned);
+    }
 
     if (keywords != null && keywords.isNotEmpty) {
       final kwCondition = NoteDto_.title
           .contains(keywords, caseSensitive: false)
           .or(NoteDto_.content.contains(keywords, caseSensitive: false));
-      condition = condition == null ? kwCondition : condition & kwCondition;
+      condition = condition & kwCondition;
     }
 
-    final builder = _notes.query(condition);
-
-    return builder.order(NoteDto_.updatedAt, flags: Order.descending);
+    return _notes
+        .query(condition)
+        .order(NoteDto_.updatedAt, flags: Order.descending);
   }
 
   /// Removes all notes, folders, and creators from the local store.

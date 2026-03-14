@@ -11,9 +11,10 @@ final class FoldersManager with MLogger implements Disposable {
   FoldersManager({
     required NotesHttpService http,
     required NotesLocalService local,
+    required Id currentUserId,
   }) : _http = http,
-       _local = local {
-    // Handle search debounce
+       _local = local,
+       _ownerId = currentUserId.getOrCrash() {
     _debouncedSearch = searchQuery
         .where((q) => q != _activeKeywords)
         .debounce(const Duration(milliseconds: 400))
@@ -25,6 +26,7 @@ final class FoldersManager with MLogger implements Disposable {
 
   final NotesHttpService _http;
   final NotesLocalService _local;
+  final String _ownerId;
 
   final folders = ListNotifier<NoteFolder>(data: []);
 
@@ -48,7 +50,7 @@ final class FoldersManager with MLogger implements Disposable {
     var page = 1;
     while (true) {
       final pagination = PaginationParams(page: page);
-      final response = await _http.getFolders(pagination: pagination);
+      final response = await _http.getFolders(_ownerId, pagination: pagination);
       _local.upsertFolders(response.items.whereType<NoteFolderDto>().toList());
       if (!response.hasMore) break;
       page++;
@@ -70,12 +72,13 @@ final class FoldersManager with MLogger implements Disposable {
   Future<void> _resubscribe() async {
     await _cancelStreamSubscriptions();
 
-    _countSubscription = _local.watchFolders().listen(
-      (all) => totalFoldersCount.value = all.length,
-    );
+    _countSubscription = _local
+        .watchFolders(ownerId: _ownerId)
+        .listen((all) => totalFoldersCount.value = all.length);
 
     _subscription = _local
         .watchFolders(
+          ownerId: _ownerId,
           keywords: searchQuery.value.isNotEmpty ? searchQuery.value : null,
         )
         .listen(

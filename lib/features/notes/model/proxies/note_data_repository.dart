@@ -6,13 +6,13 @@ class NoteDataRepository {
   final _proxies = <Id, NoteProxy>{};
 
   /// Returns the existing proxy updated with [note], or creates a new one.
-  NoteProxy acquire(Note note) {
+  NoteProxy acquire(Note note, {required String currentUserId}) {
     final id = note.id;
     if (_proxies.containsKey(id)) {
       // Update in-place — this calls notifyListeners() on the shared proxy.
       _proxies[id]!.note = note;
     } else {
-      _proxies[id] = NoteProxy(note);
+      _proxies[id] = NoteProxy(note, currentUserId: currentUserId);
     }
     _proxies[id]!.referenceCount++;
     return _proxies[id]!;

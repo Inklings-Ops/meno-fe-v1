@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
-import 'package:meno/features/broadcast/services/_services.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -283,26 +283,24 @@ class ProfileFavouritesTab extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feedSource = createOnce(() {
-      final creatorId = di<UserManager>().currentUserId.value;
-      return BroadcastFeedDataSource(
-        http: di<BroadcastHttpService>(),
-        socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery(creatorId: creatorId),
-      );
-    });
+    final favourites = watchValue((FavouritesManager m) => m.favourites);
 
-    return FeedWidget(
-      feedSource: feedSource,
-      padding: const .all(16),
-      skeletonItem: BroadcastCard.skeletonRecentlyLiveTile,
-      skeletonItemCount: 4,
-      itemBuilder: (context, broadcast) {
-        if (broadcast == null) return const SizedBox.shrink();
-        return BroadcastCard.rLiveTile(
-          broadcast,
-          key: ValueKey(broadcast.id.getOrCrash()),
-          onTap: () => context.push(R.broadcast(broadcast.id.getOrCrash())),
+    if (favourites.isEmpty) {
+      return const MenoEmptyWidget(title: 'No favourite broadcasts yet');
+    }
+
+    return ListView.separated(
+      padding: const .all(Insets.lg),
+      separatorBuilder: (_, __) => Spaces.verticalLarge,
+      itemCount: favourites.length,
+      itemBuilder: (context, index) {
+        final favourite = favourites[index];
+        if (favourite == null) return const SizedBox.shrink();
+        return MRecentlyLiveListTile(
+          title: favourite.title,
+          creator: favourite.creatorName,
+          imageUrl: favourite.imageUrl,
+          onTap: () => context.push(R.broadcast(favourite.broadcastId)),
         );
       },
     );

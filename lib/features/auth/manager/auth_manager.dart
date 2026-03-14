@@ -7,11 +7,15 @@ import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 
-class AuthManager extends ChangeNotifier implements Disposable {
+class AuthManager extends ChangeNotifier
+    implements Disposable, WillSignalReady {
   AuthManager({required AuthHttpService http, required AuthLocalService local})
     : _http = http,
       _local = local {
-    _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
+    initialize = Command.createAsyncNoParamNoResult(
+      _initialize,
+      errorFilterFn: menoExceptionFilter,
+    );
 
     login = Command.createAsync<LoginArgs, UserCredential>(
       (args) async {
@@ -65,12 +69,12 @@ class AuthManager extends ChangeNotifier implements Disposable {
       final targetIdStr = userId.getOrCrash();
       await _local.switchActiveUser(targetIdStr);
 
-      final accounts = _accounts.value;
-      final credential = accounts[userId];
+      final credential = _accounts.value[userId];
       if (credential == null) throw const MenoException('Account not found');
 
       _activeUserId.value = userId;
       _lastKnownUser.value = credential.user;
+      notifyListeners();
     }, errorFilterFn: menoExceptionFilter);
 
     addAccount = Command.createAsyncNoParamNoResult(() async {
@@ -142,6 +146,7 @@ class AuthManager extends ChangeNotifier implements Disposable {
   // COMMANDS
   // ======================================================================
 
+  late final Command<void, void> initialize;
   late final Command<LoginArgs, UserCredential> login;
   late final Command<RegisterArgs, UserCredential> register;
   late final Command<String, UserCredential> googleSignIn;
@@ -159,46 +164,69 @@ class AuthManager extends ChangeNotifier implements Disposable {
   // INITIALIZATION
   // ======================================================================
 
-  Future<void> initialize() async {
+  Future<void> _initialize() async {
+    // Pause stream events during initialization to prevent _onAuthChanged
+    // from firing against partially-built state. Any credential writes
+    // that happen inside (e.g. clearCredential) emit on onCredentialChanged,
+    // which must not be processed until the full state is consistent.
+    _subscription?.pause();
+
     try {
       final dtos = await _local.getAllAccounts();
-      final map = dtos.map((i, d) => MapEntry(Id.fromString(i), d.toDomain));
-      _accounts.value = map;
-
-      final credentialDto = await _local.getCredential();
-      if (credentialDto != null) {
-        final activeId = Id.fromString(credentialDto.user.id);
-        final domainCredential = credentialDto.toDomain;
-        final user = domainCredential.user;
-
-        _lastKnownUser.value = user;
-        _emailVerified.value = user.verified;
-
-        if (map.containsKey(activeId)) {
-          if (domainCredential.session.isExpired) {
-            _activeUserId.value = .empty;
-            await _local.clearCredential();
-          } else {
-            _activeUserId.value = activeId;
-            pushUserSessionScope(domainCredential);
-          }
-        } else {
-          await _local.clearCredential();
-          _activeUserId.value = .empty;
-          _lastKnownUser.value = .empty;
-        }
-      } else if (map.isNotEmpty) {
-        final mostRecentUser = map.values.first.user;
-        _lastKnownUser.value = mostRecentUser;
-        _activeUserId.value = .empty;
-      } else {
-        _activeUserId.value = .empty;
-        _lastKnownUser.value = .empty;
-      }
-    } catch (error) {
-      _activeUserId.value = .empty;
-      _lastKnownUser.value = .empty;
+      _accounts.value = dtos.map(
+        (i, d) => MapEntry(Id.fromString(i), d.toDomain),
+      );
+      await _restoreSession(dtos);
+    } finally {
+      // Always resume — even on error — so the stream stays active for
+      // subsequent operations (login, switchAccount, etc).
+      _subscription?.resume();
+      GetIt.instance.signalReady(this);
     }
+  }
+
+  Future<void> _restoreSession(Map<String, UserCredentialDto> accounts) async {
+    final credentialDto = await _local.getCredential();
+
+    // No active credential stored — leave user on login screen.
+    // _lastKnownUser stays empty: getAllAccounts() has no reliable ordering,
+    // so we cannot safely infer which account was "most recent".
+    if (credentialDto == null) {
+      _activeUserId.value = Id.empty;
+      _lastKnownUser.value = User.empty;
+      await popUserSessionScope();
+      return;
+    }
+
+    final activeId = Id.fromString(credentialDto.user.id);
+    final credential = credentialDto.toDomain;
+    final user = credential.user;
+
+    _lastKnownUser.value = user;
+    _emailVerified.value = user.verified;
+
+    // The stored credential points to an account that no longer exists
+    // in the accounts map (e.g. was deleted from another device).
+    if (!accounts.containsKey(activeId.getOrCrash())) {
+      await _local.clearCredential();
+      _activeUserId.value = Id.empty;
+      _lastKnownUser.value = User.empty;
+      await popUserSessionScope();
+      return;
+    }
+
+    // Session has expired — clear active credential, keep lastKnownUser
+    // so the login screen can pre-fill the email field.
+    if (credential.session.isExpired) {
+      await _local.clearCredential();
+      _activeUserId.value = Id.empty;
+      await popUserSessionScope();
+      return;
+    }
+
+    // Valid, unexpired session — restore the user scope.
+    _activeUserId.value = activeId;
+    await pushUserSessionScope(credential);
   }
 
   // ======================================================================
@@ -226,19 +254,34 @@ class AuthManager extends ChangeNotifier implements Disposable {
     _lastKnownUser.value = credential.user;
   }
 
-  void _onAuthChanged(UserCredentialDto? dto) {
+  Future<void> _onAuthChanged(UserCredentialDto? dto) async {
     if (dto == null) {
-      _activeUserId.value = .empty;
-      popUserSessionScope();
-    } else {
-      final credential = dto.toDomain;
-
-      _activeUserId.value = credential.user.id;
-      _lastKnownUser.value = credential.user;
-
-      _updateAccountInternal(credential);
-      pushUserSessionScope(credential);
+      _activeUserId.value = Id.empty;
+      await popUserSessionScope();
+      return;
     }
+
+    final credential = dto.toDomain;
+
+    _activeUserId.value = credential.user.id;
+    _lastKnownUser.value = credential.user;
+
+    _updateAccountInternal(credential);
+
+    await pushUserSessionScope(credential);
+    notifyListeners();
+  }
+
+  // ======================================================================
+  // LIFECYCLE
+  // ======================================================================
+
+  /// Called once from configureGlobalDependencies immediately after
+  /// construction. Subscribes to credential changes AFTER commands are
+  /// wired so the stream handler always operates on a fully-initialized
+  /// manager.
+  void startListening() {
+    _subscription = _local.onCredentialChanged.listen(_onAuthChanged);
   }
 
   @override
@@ -246,7 +289,9 @@ class AuthManager extends ChangeNotifier implements Disposable {
     _activeUserId.dispose();
     _accounts.dispose();
     _lastKnownUser.dispose();
+    _emailVerified.dispose();
     _subscription?.cancel();
+    initialize.dispose();
     login.dispose();
     register.dispose();
     googleSignIn.dispose();

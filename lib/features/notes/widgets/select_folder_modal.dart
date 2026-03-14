@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_routing/_routing.dart';
-import 'package:meno/_shared/widgets/meno_error_widget.dart';
+import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno/features/notes/widgets/_widgets.dart';
@@ -46,11 +46,12 @@ class SelectFolderModal extends WatchingWidget {
   Widget build(BuildContext context) {
     final searchQuery = createOnce(() => ValueNotifier<String>(''));
     final query = watch(searchQuery).value;
+    final currentUserId = watchValue((UserManager m) => m.currentUserId);
 
     final snapshot = watchStream(
-      (NotesLocalService r) => r.watchFolders().map(
-        (incomingFolders) => incomingFolders.map((dto) => dto.toDomain),
-      ),
+      (NotesLocalService r) => r
+          .watchFolders(ownerId: currentUserId.getOrCrash())
+          .map((incomingFolders) => incomingFolders.map((dto) => dto.toDomain)),
     );
 
     if (snapshot.connectionState == ConnectionState.waiting) {

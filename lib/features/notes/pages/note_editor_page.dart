@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
+import 'package:meno/_shared/manager/user_manager.dart';
 import 'package:meno/features/notes/manager/_manager.dart';
 import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno/features/notes/widgets/note_editor_widget.dart';
@@ -18,6 +19,7 @@ class NoteEditorPage extends WatchingWidget {
           return NoteEditorManager(
             http: di<NotesHttpService>(),
             local: di<NotesLocalService>(),
+            currentUserId: di<UserManager>().currentUserId.value,
             noteId: noteId != null ? .fromString(noteId!) : null,
           );
         }, onCreated: (instance) => instance.initialize.run());

@@ -84,14 +84,27 @@ void configureGlobalDependencies() {
   di.registerSingletonWithDependencies(() {
     return AuthHttpService(di<HttpClient>());
   }, dependsOn: [HttpClient]);
-  di.registerSingletonAsync(() async {
-    final manager = AuthManager(
-      http: di<AuthHttpService>(),
-      local: di<AuthLocalService>(),
-    );
-    await manager.initialize();
-    return manager;
-  }, dependsOn: [AuthHttpService, AuthLocalService, OnboardingService]);
+  di.registerSingletonAsync(
+    () async {
+      // Construct the manager (wires all commands), then:
+      // 1. startListening() — subscribes to onCredentialChanged AFTER all
+      //    commands are ready, so _onAuthChanged never fires against a
+      //    partially-constructed manager.
+      // 2. initialize.run() — kicks off session restoration asynchronously.
+      //    get_it's allReady() does NOT need to wait for this; the router's
+      //    refreshListenable (activeUserId) will drive navigation once
+      //    _restoreSession completes and updates state.
+      final manager = AuthManager(
+        http: di<AuthHttpService>(),
+        local: di<AuthLocalService>(),
+      );
+      manager.startListening();
+      manager.initialize.run();
+      return manager;
+    },
+    dependsOn: [AuthHttpService, AuthLocalService, OnboardingService],
+    signalsReady: true,
+  );
   di.registerSingletonWithDependencies(
     () => UserManager(di<AuthManager>()),
     dependsOn: [AuthManager],

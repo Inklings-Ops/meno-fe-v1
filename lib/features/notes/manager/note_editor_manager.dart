@@ -13,14 +13,17 @@ class NoteEditorManager with MLogger implements Disposable {
   NoteEditorManager({
     required NotesHttpService http,
     required NotesLocalService local,
+    required Id currentUserId,
     required Id? noteId,
   }) : _http = http,
        _local = local,
-       _noteId = noteId;
+       _ownerId = currentUserId.getOrCrash(),
+       _noteId = noteId?.getOrNull();
 
   final NotesHttpService _http;
   final NotesLocalService _local;
-  final Id? _noteId;
+  final String _ownerId;
+  final String? _noteId;
 
   // Flips to true after the first successful createNote call so that
   // all subsequent persists use updateNote.
@@ -45,7 +48,7 @@ class NoteEditorManager with MLogger implements Disposable {
     if (_noteId == null) {
       note.value = Note.fromNewId(Id.unique());
     } else {
-      final result = _local.findNoteByRemoteId(_noteId.getOrCrash());
+      final result = _local.findNoteByRemoteId(_noteId);
       if (result == null) throw const MenoException('Note not found');
       note.value = result.toDomain;
       _hasBeenCreated = true;
@@ -109,10 +112,10 @@ class NoteEditorManager with MLogger implements Disposable {
   }
 
   Future<void> _create(Note current) async {
-    final dto = current.toDto(pending: true);
+    final dto = current.toDto(ownerId: _ownerId, pending: true);
 
     _local.upsertNote(dto);
-    final confirmed = await _http.createNote(dto);
+    final confirmed = await _http.createNote(ownerId: _ownerId, dto: dto);
 
     _local.deleteNoteByRemoteId(current.id.getOrCrash());
     _local.upsertNote(confirmed);
@@ -123,10 +126,10 @@ class NoteEditorManager with MLogger implements Disposable {
   }
 
   Future<void> _update(Note current) async {
-    final dto = current.toDto(pending: true);
+    final dto = current.toDto(ownerId: _ownerId, pending: true);
 
     _local.upsertNote(dto);
-    final confirmed = await _http.updateNote(dto.id, dto);
+    final confirmed = await _http.updateNote(ownerId: _ownerId, dto: dto);
 
     _local.upsertNote(confirmed);
 

@@ -11,9 +11,10 @@ final class NotesManager with MLogger implements Disposable {
   NotesManager({
     required NotesHttpService http,
     required NotesLocalService local,
+    required Id currentUserId,
   }) : _http = http,
-       _local = local {
-    // Handle search debounce
+       _local = local,
+       _ownerId = currentUserId.getOrCrash() {
     _debouncedSearch = searchQuery
         .where((q) => q != _activeKeywords)
         .debounce(const Duration(milliseconds: 400))
@@ -25,6 +26,7 @@ final class NotesManager with MLogger implements Disposable {
 
   final NotesHttpService _http;
   final NotesLocalService _local;
+  final String _ownerId;
 
   /// The live list of notes, filtered by [searchQuery] and [pinnedFilter].
   final notes = ListNotifier<Note>(data: []);
@@ -45,16 +47,16 @@ final class NotesManager with MLogger implements Disposable {
 
   String _activeKeywords = '';
 
-  late final initialize = Command.createAsyncNoParamNoResult(
-    _resubscribe,
-    errorFilterFn: menoExceptionFilter,
-  )..pipeToCommand(syncRemoteNotes);
+  late final initialize = Command.createAsyncNoParamNoResult(() async {
+    log.d('NotesManager: Initializing...');
+    return _resubscribe();
+  }, errorFilterFn: menoExceptionFilter)..pipeToCommand(syncRemoteNotes);
 
   late final syncRemoteNotes = Command.createAsyncNoParamNoResult(() async {
     var page = 1;
     while (true) {
       final pagination = PaginationParams(page: page);
-      final response = await _http.getNotes(pagination: pagination);
+      final response = await _http.getNotes(_ownerId, pagination: pagination);
       _local.upsertNotes(response.items.whereType<NoteDto>().toList());
       if (!response.hasMore) break;
       page++;
@@ -75,12 +77,13 @@ final class NotesManager with MLogger implements Disposable {
   Future<void> _resubscribe() async {
     await _cancelStreamSubscriptions();
 
-    _countSubscription = _local.watchNotes().listen(
-      (all) => totalNotesCount.value = all.length,
-    );
+    _countSubscription = _local
+        .watchNotes(ownerId: _ownerId)
+        .listen((all) => totalNotesCount.value = all.length);
 
     _subscription = _local
         .watchNotes(
+          ownerId: _ownerId,
           keywords: searchQuery.value.isEmpty ? null : searchQuery.value,
           pinned: pinnedFilter.value,
         )
@@ -128,5 +131,7 @@ final class NotesManager with MLogger implements Disposable {
     initialize.dispose();
     performSearch.dispose();
     syncRemoteNotes.dispose();
+
+    _local.clearAll();
   }
 }

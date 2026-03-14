@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' show CancelToken;
-import 'package:meno/_core/_core.dart';
+import 'package:meno/_core/exceptions/meno_exception.dart';
+import 'package:meno/_core/value_objects/paged_list.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/notes/model/_model.dart';
 
@@ -12,17 +13,18 @@ class NotesHttpService {
   // NOTES
   // ========================================================================
   /// Creates a new note on the remote and returns the persisted [NoteDto].
-  Future<NoteDto> createNote(NoteDto dto) {
+  Future<NoteDto> createNote({required String ownerId, required NoteDto dto}) {
     return _http.post(
       '/notes',
       data: {'title': dto.title, 'content': dto.content},
-      fromJson: NoteDto.fromJson,
+      fromJson: (json) => NoteDto.fromJson(json, ownerId),
     );
   }
 
   /// Fetches paginated list of notes.
-  Future<PagedList<NoteDto>> getNotes({
-    Id? noteId,
+  Future<PagedList<NoteDto>> getNotes(
+    String ownerId, {
+    String? noteId,
     SortBy sortBy = SortBy.updatedAt,
     OrderBy orderBy = OrderBy.desc,
     PaginationParams pagination = const PaginationParams(),
@@ -32,11 +34,14 @@ class NotesHttpService {
   }) {
     return _http.get(
       '/notes/',
-      fromJson: (json) =>
-          PagedList<NoteDto>.fromJson(json, NoteDto.fromJson, listKey: 'notes'),
+      fromJson: (json) => PagedList<NoteDto>.fromJson(
+        json,
+        (jsonT) => NoteDto.fromJson(jsonT, ownerId),
+        listKey: 'notes',
+      ),
       queryParameters: {
         if (keywords != null) 'keywords': keywords,
-        if (noteId != null) 'noteId': noteId.getOrCrash(),
+        if (noteId != null) 'noteId': noteId,
         if (pinned != null) 'pinned': pinned,
         'sortBy': sortBy.value,
         'orderBy': orderBy.value,
@@ -48,16 +53,19 @@ class NotesHttpService {
   }
 
   /// Fetches a single note by its remote id.
-  Future<NoteDto> getNote(String noteId) {
-    return _http.get('/notes/$noteId', fromJson: NoteDto.fromJson);
+  Future<NoteDto> getNote({required String ownerId, required String noteId}) {
+    return _http.get(
+      '/notes/$noteId',
+      fromJson: (json) => NoteDto.fromJson(json, ownerId),
+    );
   }
 
   /// Updates an existing note.
-  Future<NoteDto> updateNote(String noteId, NoteDto dto) {
+  Future<NoteDto> updateNote({required String ownerId, required NoteDto dto}) {
     return _http.put(
-      '/notes/$noteId',
+      '/notes/${dto.id}',
       data: {'title': dto.title, 'content': dto.content, 'pinned': dto.pinned},
-      fromJson: NoteDto.fromJson,
+      fromJson: (json) => NoteDto.fromJson(json, ownerId),
     );
   }
 
@@ -69,12 +77,13 @@ class NotesHttpService {
   /// Adds a note to a folder and returns the updated [NoteDto] with the
   /// folder relation populated.
   Future<NoteDto> addNoteToFolder({
+    required String ownerId,
     required String noteId,
     required String folderId,
   }) {
     return _http.put(
       '/notes/$noteId/folders/$folderId',
-      fromJson: NoteDto.fromJson,
+      fromJson: (json) => NoteDto.fromJson(json, ownerId),
     );
   }
 
@@ -89,9 +98,10 @@ class NotesHttpService {
   // ===========================================================================
 
   /// Fetches one page of folders.
-  Future<PagedList<NoteFolderDto>> getFolders({
-    SingleLineString? title,
-    Id? folderId,
+  Future<PagedList<NoteFolderDto>> getFolders(
+    String ownerId, {
+    String? folderId,
+    String? title,
     bool? pinned,
     SortBy sortBy = SortBy.createdAt,
     OrderBy orderBy = OrderBy.desc,
@@ -102,12 +112,12 @@ class NotesHttpService {
       '/folders/',
       fromJson: (json) => PagedList<NoteFolderDto>.fromJson(
         json,
-        NoteFolderDto.fromJson,
+        (jsonT) => NoteFolderDto.fromJson(json, ownerId: ownerId),
         listKey: 'folders',
       ),
       queryParameters: {
-        if (title != null) 'title': title.getOrCrash(),
-        if (folderId != null) 'folderId': folderId.getOrCrash(),
+        if (title != null) 'title': title,
+        if (folderId != null) 'folderId': folderId,
         if (pinned != null) 'pinned': pinned,
         'sortBy': sortBy.value,
         'orderBy': orderBy.value,
@@ -123,8 +133,9 @@ class NotesHttpService {
   /// The compound response is parsed into a [FolderWithNotes] which carries
   /// the folder metadata, the notes list, and the notes pagination info
   /// separately — matching the server shape exactly.
-  Future<FolderWithNotes> getFolderWithNotes(
-    Id folderId, {
+  Future<FolderWithNotes> getFolderWithNotes({
+    required String ownerId,
+    required String folderId,
     String? keywords,
     bool? pinned,
     SortBy sortBy = SortBy.createdAt,
@@ -133,8 +144,8 @@ class NotesHttpService {
     CancelToken? cancelToken,
   }) {
     return _http.get(
-      '/folders/${folderId.getOrCrash()}',
-      fromJson: FolderWithNotes.fromJson,
+      '/folders/$folderId',
+      fromJson: (json) => FolderWithNotes.fromJson(json, ownerId: ownerId),
       queryParameters: {
         'includeNotes': true,
         if (keywords != null) 'keywords': keywords,
@@ -149,30 +160,40 @@ class NotesHttpService {
   }
 
   /// Fetches a single folder together without notes.
-  Future<NoteFolder> getFolder(String folderId, {CancelToken? cancelToken}) {
+  Future<NoteFolder> getFolder({
+    required String ownerId,
+    required String folderId,
+    CancelToken? cancelToken,
+  }) {
     return _http.get(
       '/folders/$folderId',
-      fromJson: (json) => NoteFolderDto.fromJson(json).toDomain,
+      fromJson: (e) => NoteFolderDto.fromJson(e, ownerId: ownerId).toDomain,
       queryParameters: {'includeNotes': false},
       cancelToken: cancelToken,
     );
   }
 
   /// Creates a new folder on the remote.
-  Future<NoteFolder> createFolder(NoteFolderDto dto) {
+  Future<NoteFolder> createFolder({
+    required String ownerId,
+    required NoteFolderDto dto,
+  }) {
     return _http.post(
       '/folders',
       data: {'title': dto.title},
-      fromJson: (json) => NoteFolderDto.fromJson(json).toDomain,
+      fromJson: (e) => NoteFolderDto.fromJson(e, ownerId: ownerId).toDomain,
     );
   }
 
   /// Updates an existing folder's title and/or pinned state.
-  Future<NoteFolder> updateFolder(String folderId, NoteFolderDto dto) {
+  Future<NoteFolder> updateFolder({
+    required String ownerId,
+    required NoteFolderDto dto,
+  }) {
     return _http.put(
-      '/folders/$folderId',
+      '/folders/${dto.id}',
       data: {'title': dto.title, 'pinned': dto.pinned},
-      fromJson: (json) => NoteFolderDto.fromJson(json).toDomain,
+      fromJson: (e) => NoteFolderDto.fromJson(e, ownerId: ownerId).toDomain,
     );
   }
 

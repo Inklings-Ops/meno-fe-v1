@@ -8,11 +8,14 @@ final class NoteActionsManager with MLogger implements Disposable {
   NoteActionsManager({
     required NotesHttpService http,
     required NotesLocalService local,
+    required Id currentUserId,
   }) : _http = http,
-       _local = local;
+       _local = local,
+       _ownerId = currentUserId.getOrCrash();
 
   final NotesHttpService _http;
   final NotesLocalService _local;
+  final String _ownerId;
 
   // =========================================================================
   // NOTE LIFECYCLE
@@ -46,6 +49,7 @@ final class NoteActionsManager with MLogger implements Disposable {
       args.noteIds.map((noteId) async {
         try {
           final dto = await _http.addNoteToFolder(
+            ownerId: _ownerId,
             noteId: noteId.getOrCrash(),
             folderId: remoteFolderId,
           );

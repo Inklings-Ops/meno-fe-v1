@@ -8,10 +8,13 @@ import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/_services.dart';
 
 final class NoteProxy extends ChangeNotifier implements Disposable {
-  NoteProxy(this._note);
+  NoteProxy(this._note, {required String currentUserId})
+    : _currentUserId = currentUserId;
 
   Note _note;
+  final String _currentUserId;
   bool? _pinnedOverride;
+
   NoteFolder? _folderOverride;
   bool _folderOverrideSet = false;
   int referenceCount = 0;
@@ -50,10 +53,11 @@ final class NoteProxy extends ChangeNotifier implements Disposable {
     _pinnedOverride = !pinned;
     notifyListeners();
 
-    final dto = _note.copyWith(pinned: _pinnedOverride).toDto(pending: true);
+    final updated = _note.copyWith(pinned: _pinnedOverride);
+    final dto = updated.toDto(ownerId: _currentUserId, pending: true);
     di<NotesLocalService>().upsertNote(dto);
 
-    await di<NotesHttpService>().updateNote(idStr, dto);
+    await di<NotesHttpService>().updateNote(ownerId: _currentUserId, dto: dto);
 
     _pinnedOverride = null;
     notifyListeners();
@@ -72,6 +76,7 @@ final class NoteProxy extends ChangeNotifier implements Disposable {
     );
 
     await di<NotesHttpService>().addNoteToFolder(
+      ownerId: _currentUserId,
       noteId: idStr,
       folderId: folder.id.getOrCrash(),
     );

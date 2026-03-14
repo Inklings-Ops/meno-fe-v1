@@ -12,7 +12,7 @@ class MyProfileProxy extends ChangeNotifier implements Disposable {
   MyProfileProxy(this._profile)
     : _fullName = ValueNotifier(_profile.fullName),
       _bio = ValueNotifier(_profile.bio),
-      _image = ValueNotifier(_profile.image);
+      _image = ValueNotifier(ImageInput.empty);
 
   Profile _profile;
 
