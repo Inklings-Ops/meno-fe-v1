@@ -9,7 +9,16 @@ import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderListWidget extends WatchingWidget {
-  const FolderListWidget({super.key});
+  const FolderListWidget({
+    super.key,
+    this.physics,
+    this.controller,
+    this.primary,
+  });
+
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+  final bool? primary;
 
   @override
   Widget build(BuildContext ctx) {
@@ -22,6 +31,9 @@ class FolderListWidget extends WatchingWidget {
       folders: folders,
       onTap: (folder) => ctx.push(R.folder(folder.id.getOrCrash())),
       onOptionsTap: (folder) => _OptionsModal.show(ctx, folder),
+      primary: primary,
+      controller: controller,
+      physics: physics,
     );
   }
 }

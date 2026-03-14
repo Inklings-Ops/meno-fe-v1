@@ -19,8 +19,12 @@ final class MenoRouter {
   final AuthManager _auth;
   final OnboardingManager _onboarding;
 
+  // Expose so GoRoutes can reference it via parentNavigatorKey.
+  static final rootNavigatorKey = GlobalKey<NavigatorState>();
+
   late final GoRouter routerConfig = GoRouter(
     debugLogDiagnostics: true,
+    navigatorKey: rootNavigatorKey,
     initialLocation: R.home,
     redirect: (context, state) {
       final nextRoute = state.matchedLocation;
@@ -264,7 +268,7 @@ final class MenoRouter {
               /// Notes Page Shell Route
               StatefulShellRoute(
                 builder: (context, state, navigationShell) => navigationShell,
-                navigatorContainerBuilder: NotesLayoutWidget.builder,
+                navigatorContainerBuilder: NotesFoldersShell.builder,
                 branches: [
                   StatefulShellBranch(
                     routes: [
@@ -273,10 +277,13 @@ final class MenoRouter {
                         builder: (context, state) => const NoteListWidget(),
                         routes: [
                           GoRoute(
-                            name: R.noteEditorName,
                             path: ':id',
+                            parentNavigatorKey: MenoRouter.rootNavigatorKey,
                             builder: (context, state) {
-                              final noteId = state.pathParameters['id'];
+                              final rawId = state.pathParameters['id'];
+                              final noteId = (rawId == null || rawId == 'new')
+                                  ? null
+                                  : rawId;
                               return NoteEditorPage(noteId: noteId);
                             },
                           ),
@@ -293,6 +300,7 @@ final class MenoRouter {
                           GoRoute(
                             name: R.folderName,
                             path: ':id',
+                            parentNavigatorKey: MenoRouter.rootNavigatorKey,
                             builder: (context, state) {
                               final folderId = state.pathParameters['id'] ?? '';
                               return FolderPage(folderId: folderId);

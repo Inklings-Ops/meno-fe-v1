@@ -12,7 +12,16 @@ final class FoldersManager with MLogger implements Disposable {
     required NotesHttpService http,
     required NotesLocalService local,
   }) : _http = http,
-       _local = local;
+       _local = local {
+    // Handle search debounce
+    _debouncedSearch = searchQuery
+        .where((q) => q != _activeKeywords)
+        .debounce(const Duration(milliseconds: 400))
+        .listen((query, _) {
+          _activeKeywords = query;
+          _resubscribe();
+        });
+  }
 
   final NotesHttpService _http;
   final NotesLocalService _local;
@@ -22,6 +31,8 @@ final class FoldersManager with MLogger implements Disposable {
   final totalFoldersCount = ValueNotifier<int>(0);
 
   final searchQuery = ValueNotifier<String>('');
+
+  ListenableSubscription? _debouncedSearch;
 
   StreamSubscription<List<NoteFolderDto>>? _subscription;
   StreamSubscription<List<NoteFolderDto>>? _countSubscription;
@@ -48,9 +59,6 @@ final class FoldersManager with MLogger implements Disposable {
   /// keyword filter.
   late final performSearch = Command.createSyncNoResult<String>((query) {
     searchQuery.value = query;
-    if (_activeKeywords == query) return;
-    _activeKeywords = query;
-    _resubscribe();
   }, errorFilterFn: menoExceptionFilter);
 
   late final deleteFolder = Command.createAsyncNoResult<Id>((folderId) async {
@@ -92,9 +100,18 @@ final class FoldersManager with MLogger implements Disposable {
     _countSubscription = null;
   }
 
+  void clearSearch() {
+    _activeKeywords = '';
+    searchQuery.value = '';
+    _resubscribe();
+  }
+
   @override
   FutureOr<dynamic> onDispose() async {
     log.d('FoldersManager: Disposing...');
+
+    _debouncedSearch?.cancel();
+    _debouncedSearch = null;
 
     await _cancelStreamSubscriptions();
 

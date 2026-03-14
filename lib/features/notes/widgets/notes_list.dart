@@ -15,6 +15,9 @@ class NotesList extends StatelessWidget {
     this.onNoteOptionsTap,
     this.selectedNoteIds = const [],
     this.padding,
+    this.physics,
+    this.controller,
+    this.primary,
     super.key,
   });
 
@@ -25,12 +28,18 @@ class NotesList extends StatelessWidget {
   final void Function(Note)? onNoteOptionsTap;
   final List<Id> selectedNoteIds;
   final EdgeInsetsGeometry? padding;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+  final bool? primary;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: physics,
+      controller: controller,
+      primary: primary,
       itemCount: notes.length,
-      padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: padding ?? const .all(16),
       separatorBuilder: (context, index) => Spaces.verticalLarge,
       itemBuilder: (context, index) {
         final note = notes[index];

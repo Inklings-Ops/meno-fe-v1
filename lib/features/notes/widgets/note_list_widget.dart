@@ -14,6 +14,9 @@ class NoteListWidget extends WatchingWidget {
     super.key,
     this.showAddButton = false,
     this.isForLiveScaffold = false,
+    this.physics,
+    this.controller,
+    this.primary,
   });
 
   final bool showAddButton;
@@ -21,9 +24,12 @@ class NoteListWidget extends WatchingWidget {
   /// Flag to set when the notes list is to be displayed from a Live
   /// Broadcast or Live Stream scaffold.
   final bool isForLiveScaffold;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+  final bool? primary;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     final notes = watchValue((NotesManager m) => m.notes);
     final isLoading = watchValue((NotesManager m) => m.initialize.isRunning);
 
@@ -32,12 +38,12 @@ class NoteListWidget extends WatchingWidget {
     return NotesList(
       notes: notes,
       showAddButton: showAddButton,
-      onNoteTap: (note) => context.pushNamed(
-        R.noteEditorName,
-        pathParameters: {'noteId': note.id.getOrCrash()},
-      ),
-      onNoteOptionsTap: (note) => _OptionsModal.show(context, note),
-      onNoteLongPress: (note) => _OptionsModal.show(context, note),
+      onNoteTap: (note) => ctx.push(R.noteEditor(note.id.getOrCrash())),
+      onNoteOptionsTap: (note) => _OptionsModal.show(ctx, note),
+      onNoteLongPress: (note) => _OptionsModal.show(ctx, note),
+      primary: primary,
+      controller: controller,
+      physics: physics,
     );
   }
 }

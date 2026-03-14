@@ -13,6 +13,9 @@ class FolderList extends StatelessWidget {
     this.onOptionsTap,
     this.onTap,
     this.selectedFolder,
+    this.physics,
+    this.controller,
+    this.primary,
   });
 
   final List<NoteFolder?> folders;
@@ -20,12 +23,17 @@ class FolderList extends StatelessWidget {
   final void Function(NoteFolder)? onTap;
   final void Function(NoteFolder)? onOptionsTap;
   final NoteFolder? selectedFolder;
+  final ScrollPhysics? physics;
+  final ScrollController? controller;
+  final bool? primary;
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: padding ?? const .fromLTRB(16, 0, 16, 16),
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: physics,
+      controller: controller,
+      primary: primary,
+      padding: padding ?? const .all(16),
       itemCount: folders.length,
       separatorBuilder: (context, index) => Spaces.verticalLarge,
       itemBuilder: (ctx, index) {

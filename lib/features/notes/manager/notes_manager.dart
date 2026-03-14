@@ -12,7 +12,16 @@ final class NotesManager with MLogger implements Disposable {
     required NotesHttpService http,
     required NotesLocalService local,
   }) : _http = http,
-       _local = local;
+       _local = local {
+    // Handle search debounce
+    _debouncedSearch = searchQuery
+        .where((q) => q != _activeKeywords)
+        .debounce(const Duration(milliseconds: 400))
+        .listen((query, _) {
+          _activeKeywords = query;
+          _resubscribe();
+        });
+  }
 
   final NotesHttpService _http;
   final NotesLocalService _local;
@@ -28,6 +37,8 @@ final class NotesManager with MLogger implements Disposable {
 
   /// The number of notes
   final totalNotesCount = ValueNotifier<int>(0);
+
+  ListenableSubscription? _debouncedSearch;
 
   StreamSubscription<List<NoteDto>>? _subscription;
   StreamSubscription<List<NoteDto>>? _countSubscription;
@@ -52,9 +63,6 @@ final class NotesManager with MLogger implements Disposable {
 
   late final performSearch = Command.createSyncNoResult<String>((query) {
     searchQuery.value = query;
-    if (_activeKeywords == query) return;
-    _activeKeywords = query;
-    _resubscribe();
   }, errorFilterFn: menoExceptionFilter);
 
   /// Toggling pinned filter re-subscribes the stream with the new constraint.
@@ -90,6 +98,12 @@ final class NotesManager with MLogger implements Disposable {
         );
   }
 
+  void clearSearch() {
+    _activeKeywords = '';
+    searchQuery.value = '';
+    _resubscribe();
+  }
+
   Future<void> _cancelStreamSubscriptions() async {
     await _subscription?.cancel();
     await _countSubscription?.cancel();
@@ -101,6 +115,8 @@ final class NotesManager with MLogger implements Disposable {
   @override
   FutureOr<dynamic> onDispose() async {
     log.d('NotesManager: Disposing...');
+    _debouncedSearch?.cancel();
+    _debouncedSearch = null;
 
     await _cancelStreamSubscriptions();
 

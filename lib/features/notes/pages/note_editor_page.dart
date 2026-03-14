@@ -4,7 +4,6 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/features/notes/manager/_manager.dart';
 import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno/features/notes/widgets/note_editor_widget.dart';
-import 'package:meno_design_system/meno_design_system.dart';
 
 class NoteEditorPage extends WatchingWidget {
   const NoteEditorPage({required this.noteId, super.key});
@@ -69,14 +68,10 @@ class _ContentState extends State<_Content> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final isInit = watchValue((NoteEditorManager m) => m.initialize.isRunning);
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) => _onPopInvoked(didPop),
-      child: isInit
-          ? const Scaffold(body: Center(child: MLoadingIndicator.box()))
-          : const NoteEditorWidget(),
+      child: const NoteEditorWidget(),
     );
   }
 }

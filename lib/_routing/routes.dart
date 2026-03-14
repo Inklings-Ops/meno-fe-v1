@@ -58,8 +58,6 @@ class R {
 
   static String profile(String userId) => '/users/$userId/profile';
 
-  static const String noteEditorName = 'note-editor';
-
   static String noteEditor([String? id]) => '/notes/${id ?? 'new'}';
 
   static const String folderName = 'folder';

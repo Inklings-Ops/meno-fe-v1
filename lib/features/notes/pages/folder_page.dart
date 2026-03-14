@@ -287,10 +287,7 @@ class _FolderNotesList extends WatchingWidget {
 
     return NotesList(
       notes: notes,
-      onNoteTap: (note) => ctx.pushNamed(
-        R.noteEditorName,
-        pathParameters: {'noteId': note.id.getOrCrash()},
-      ),
+      onNoteTap: (note) => ctx.push(R.noteEditor(note.id.getOrCrash())),
       onNoteOptionsTap: (note) => _NoteOptionsModal.show(ctx, note, folder.id),
     );
   }
