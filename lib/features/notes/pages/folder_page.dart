@@ -272,7 +272,7 @@ class _FolderNotesList extends WatchingWidget {
   Widget build(BuildContext ctx) {
     final textTheme = MTextTheme.of(ctx);
     final folder = watchValue((FolderManager m) => m.folder);
-    final notes = folder.notes;
+    final notes = watchValue((FolderManager m) => m.notes);
 
     if (notes.isEmpty) {
       return Padding(
