@@ -30,6 +30,9 @@ class MenoRouter {
 
   final GoRouter config;
 
+  // Expose so GoRoutes can reference it via parentNavigatorKey.
+  static final rootNavigatorKey = GlobalKey<NavigatorState>();
+
   static GoRouter _buildRouter(Listenable refreshListenable) {
     return GoRouter(
       debugLogDiagnostics: true,
@@ -38,25 +41,14 @@ class MenoRouter {
       initialLocation: R.home,
       redirect: _redirect,
       routes: [
-        /**
-         *  Loading Page
-         */
         GoRoute(
           path: R.loading,
           builder: (context, state) => const LoadingPage(),
         ),
-
-        /**
-         *  Onboarding
-         */
         GoRoute(
           path: R.onboarding,
           builder: (context, state) => const OnboardingPage(),
         ),
-
-        /**
-         *  Authentication
-         */
         GoRoute(
           path: R.login,
           builder: (context, state) {
@@ -65,7 +57,6 @@ class MenoRouter {
             return LoginPage(implyLeading: implyLeading);
           },
         ),
-
         GoRoute(
           path: R.register,
           builder: (context, state) {
@@ -74,30 +65,22 @@ class MenoRouter {
             return RegisterPage(implyLeading: implyLeading);
           },
         ),
-
         GoRoute(
           path: R.emailVerification,
           builder: (context, state) => const EmailVerificationPage(),
         ),
-
         GoRoute(
           path: R.resetPassword,
           builder: (context, state) => const ResetPasswordPage(),
         ),
-
         GoRoute(
           path: R.resetPwdOtp,
           builder: (context, state) => const ResetPasswordOtpVerificationPage(),
         ),
-
         GoRoute(
           path: R.resetPwdSuccess,
           builder: (context, state) => const ResetPasswordSuccessPage(),
         ),
-
-        /**
-         *  Broadcasts
-         */
         GoRoute(
           path: R.broadcastEditor,
           pageBuilder: (context, state) {
@@ -127,7 +110,6 @@ class MenoRouter {
             );
           },
         ),
-
         GoRoute(
           path: R.broadcasts,
           name: R.broadcasts,
@@ -145,28 +127,18 @@ class MenoRouter {
             ),
           ],
         ),
-
         GoRoute(
           path: R.endedBroadcast,
           builder: (context, state) => const EndedBroadcastPage(),
         ),
-
         GoRoute(
           path: R.liveSessionInitialization,
           builder: (context, state) => const LiveSessionInitPage(),
         ),
-
-        /**
-         *  Discover Search
-         */
         GoRoute(
           path: R.discoverSearch,
           builder: (context, state) => const DiscoverSearchPage(),
         ),
-
-        /**
-         *  User Profile
-         */
         GoRoute(
           path: '/users/:userId/profile',
           builder: (context, state) {
@@ -196,12 +168,7 @@ class MenoRouter {
               routes: [
                 StatefulShellRoute(
                   builder: (context, state, navigationShell) => navigationShell,
-                  navigatorContainerBuilder: (ctx, navigationShell, children) {
-                    return DiscoverShell(
-                      navigationShell: navigationShell,
-                      children: children,
-                    );
-                  },
+                  navigatorContainerBuilder: DiscoverShell.builder,
                   branches: [
                     StatefulShellBranch(
                       routes: [
@@ -251,20 +218,13 @@ class MenoRouter {
               routes: [
                 StatefulShellRoute(
                   builder: (context, state, navigationShell) => navigationShell,
-                  navigatorContainerBuilder: (ctx, navigationShell, children) {
-                    return NotesFoldersShell(
-                      navigationShell: navigationShell,
-                      children: children,
-                    );
-                  },
+                  navigatorContainerBuilder: NotesFoldersShell.builder,
                   branches: [
                     StatefulShellBranch(
                       routes: [
                         GoRoute(
                           path: R.notes,
-                          builder: (context, state) {
-                            return const NoteListWidget();
-                          },
+                          builder: (context, state) => const NoteListWidget(),
                           routes: [
                             GoRoute(
                               path: ':id',
@@ -285,19 +245,15 @@ class MenoRouter {
                       routes: [
                         GoRoute(
                           path: R.folders,
-                          builder: (context, state) {
-                            return const FolderListWidget();
-                          },
+                          builder: (context, state) => const FolderListWidget(),
                           routes: [
                             GoRoute(
                               name: R.folderName,
                               path: ':id',
                               parentNavigatorKey: MenoRouter.rootNavigatorKey,
-                              builder: (context, state) {
-                                return FolderPage(
-                                  folderId: state.pathParameters['id'] ?? '',
-                                );
-                              },
+                              builder: (context, state) => FolderPage(
+                                folderId: state.pathParameters['id'] ?? '',
+                              ),
                             ),
                           ],
                         ),
@@ -389,9 +345,6 @@ class MenoRouter {
     if (isPublicRoute) return R.home;
     return null;
   }
-
-  // Expose so GoRoutes can reference it via parentNavigatorKey.
-  static final rootNavigatorKey = GlobalKey<NavigatorState>();
 }
 
 extension MenoRouterExtensions on BuildContext {
