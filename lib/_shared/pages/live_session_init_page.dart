@@ -21,9 +21,8 @@ class LiveSessionInitPage extends WatchingWidget {
       return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));
     }
 
-    callOnceAfterThisBuild((ctx) async {
-      final router = di<MenoRouter>().routerConfig;
-      await router.replace<void>(R.broadcastTab);
+    callOnceAfterThisBuild((ctx) {
+      ctx.replace(R.broadcastTab);
     });
 
     return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));

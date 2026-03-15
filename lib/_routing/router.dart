@@ -22,7 +22,7 @@ final class MenoRouter {
   // Expose so GoRoutes can reference it via parentNavigatorKey.
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-  late final GoRouter routerConfig = GoRouter(
+  GoRouter buildRouterConfig() => GoRouter(
     debugLogDiagnostics: true,
     navigatorKey: rootNavigatorKey,
     initialLocation: R.home,
@@ -63,24 +63,24 @@ final class MenoRouter {
     ]),
     routes: [
       /**
-       *  Loading Page
-       */
+           *  Loading Page
+           */
       GoRoute(
         path: R.loading,
         builder: (context, state) => const LoadingPage(),
       ),
 
       /**
-       *  Onboarding
-       */
+           *  Onboarding
+           */
       GoRoute(
         path: R.onboarding,
         builder: (context, state) => const OnboardingPage(),
       ),
 
       /**
-       *  Authentication
-       */
+           *  Authentication
+           */
       GoRoute(
         path: R.login,
         builder: (context, state) {
@@ -128,8 +128,8 @@ final class MenoRouter {
       ),
 
       /**
-       *  Broadcasts
-       */
+           *  Broadcasts
+           */
       GoRoute(
         path: R.broadcastEditor,
         pageBuilder: (context, state) {
@@ -189,16 +189,16 @@ final class MenoRouter {
       ),
 
       /**
-       *  Discover Search
-       */
+           *  Discover Search
+           */
       GoRoute(
         path: R.discoverSearch,
         builder: (context, state) => const DiscoverSearchPage(),
       ),
 
       /**
-       *  User Profile
-       */
+           *  User Profile
+           */
       GoRoute(
         path: '/users/:userId/profile',
         builder: (context, state) {
@@ -208,11 +208,11 @@ final class MenoRouter {
       ),
 
       /**
-       *  Main Navigation Shell
-       *  ------------------------------------------------------------------
-       *  Contains the Home, Discover, Create Broadcast, Notes & Profile
-       *  pages
-       */
+           *  Main Navigation Shell
+           *  ------------------------------------------------------------------
+           *  Contains the Home, Discover, Create Broadcast, Notes & Profile
+           *  pages
+           */
       StatefulShellRoute.indexedStack(
         builder: RootLayout.builder,
         branches: [

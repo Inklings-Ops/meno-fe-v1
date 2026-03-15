@@ -35,12 +35,14 @@ class MenoApp extends WatchingWidget {
 
     return ValueListenableBuilder(
       valueListenable: di<AuthManager>().activeUserId,
-      builder: (context, value, child) {
+      builder: (context, userId, child) {
+        final routerConfig = di<MenoRouter>().buildRouterConfig();
         return MaterialApp.router(
+          key: ValueKey(userId),
           darkTheme: MTheme.dark,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [FlutterQuillLocalizations.delegate],
-          routerConfig: di<MenoRouter>().routerConfig,
+          routerConfig: routerConfig,
           theme: MTheme.light,
           scaffoldMessengerKey: MenoKeys.scaffoldMessengerKey,
           builder: (context, child) => ResponsiveBreakpoints.builder(

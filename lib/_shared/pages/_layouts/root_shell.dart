@@ -55,7 +55,7 @@ class RootLayout extends WatchingWidget {
     }
 
     return Scaffold(
-      key: ValueKey(userId.getOrNull()),
+      key: ValueKey(userId),
       body: Row(
         children: [
           sideNavRail,

@@ -73,7 +73,6 @@ class AuthManager extends ChangeNotifier
 
       _activeUserId.value = userId;
       _lastKnownUser.value = credential.user;
-      notifyListeners();
     }, errorFilterFn: menoExceptionFilter);
 
     addAccount = Command.createAsyncNoParamNoResult(() async {
@@ -193,7 +192,7 @@ class AuthManager extends ChangeNotifier
     if (credentialDto == null) {
       _activeUserId.value = Id.empty;
       _lastKnownUser.value = User.empty;
-      notifyListeners();
+
       return;
     }
 
@@ -203,7 +202,6 @@ class AuthManager extends ChangeNotifier
 
     _lastKnownUser.value = user;
     _emailVerified.value = user.verified;
-    notifyListeners();
 
     // The stored credential points to an account that no longer exists
     // in the accounts map (e.g. was deleted from another device).
@@ -211,7 +209,7 @@ class AuthManager extends ChangeNotifier
       await _local.clearCredential();
       _activeUserId.value = Id.empty;
       _lastKnownUser.value = User.empty;
-      notifyListeners();
+
       return;
     }
 
@@ -220,13 +218,12 @@ class AuthManager extends ChangeNotifier
     if (credential.session.isExpired) {
       await _local.clearCredential();
       _activeUserId.value = Id.empty;
-      notifyListeners();
+
       return;
     }
 
     // Valid, unexpired session — restore the user scope.
     _activeUserId.value = activeId;
-    notifyListeners();
   }
 
   // ======================================================================
@@ -243,7 +240,7 @@ class AuthManager extends ChangeNotifier
     await _local.saveCredential(dto);
 
     _activeUserId.value = credential.user.id;
-    notifyListeners();
+
     return credential;
   }
 
@@ -263,7 +260,6 @@ class AuthManager extends ChangeNotifier
     _activeUserId.value = credential.user.id;
     _lastKnownUser.value = credential.user;
     _updateAccountInternal(credential);
-    notifyListeners();
   }
 
   // ======================================================================
