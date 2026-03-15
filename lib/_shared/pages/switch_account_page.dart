@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_routing/_routing.dart';
+import 'package:meno/_shared/manager/_manager.dart';
 import 'package:meno/_shared/pages/loading_page.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
 
@@ -12,8 +12,8 @@ class SwitchAccountPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((_) {
-      popUserSessionScope();
+    callOnce((_) async {
+      await di<UserScopeManager>().clearUserScope();
       di<AuthManager>().switchAccount.run(.fromString(userIdStr));
     });
 

@@ -112,7 +112,7 @@ class NotesHttpService {
       '/folders/',
       fromJson: (json) => PagedList<NoteFolderDto>.fromJson(
         json,
-        (jsonT) => NoteFolderDto.fromJson(json, ownerId: ownerId),
+        (jsonT) => NoteFolderDto.fromJson(jsonT, ownerId: ownerId),
         listKey: 'folders',
       ),
       queryParameters: {

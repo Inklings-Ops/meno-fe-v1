@@ -11,7 +11,7 @@ import 'package:meno/_core/meno_logger.dart';
 /// This is a low-level infrastructure component that should NOT be
 /// exposed to the application layer directly.
 class LiveKitClient with MLogger implements Disposable {
-  LiveKitClient({required String url}) : _url = url;
+  LiveKitClient._(this._url);
 
   final String _url;
 
@@ -47,9 +47,10 @@ class LiveKitClient with MLogger implements Disposable {
   // ACTIONS
   // #########################################################################
 
-  void initialize() {
-    log.i('LiveKit: Initializing client');
-    _room = sdk.Room(
+  static LiveKitClient initialize(String url) {
+    final client = LiveKitClient._(url);
+    client.log.i('LiveKit: Initializing client');
+    client._room = sdk.Room(
       roomOptions: const sdk.RoomOptions(
         defaultAudioPublishOptions: sdk.AudioPublishOptions(name: 'microphone'),
         adaptiveStream: true,
@@ -57,9 +58,10 @@ class LiveKitClient with MLogger implements Disposable {
       ),
     );
 
-    _listener = _room?.createListener();
-    _setupRoomListeners();
-    log.i('LiveKit: Client initialized successfully');
+    client._listener = client._room?.createListener();
+    client._setupRoomListeners();
+    client.log.i('LiveKit: Client initialized successfully');
+    return client;
   }
 
   /// Connect to LiveKit room as a broadcaster (host)

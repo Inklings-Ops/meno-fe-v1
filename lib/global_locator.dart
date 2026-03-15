@@ -153,11 +153,18 @@ void configureGlobalDependencies() {
     return SettingsLocalService(di<LocalStorage>());
   }, dependsOn: [LocalStorage]);
 
+  // User Scope Manager
+  di.registerSingletonAsync(() async {
+    final scope = UserScopeManager(di<AuthManager>());
+    await scope.initialize();
+    return scope;
+  }, dependsOn: [AuthManager, OnboardingService]);
+
   // Router
   di.registerSingletonWithDependencies(() {
     return MenoRouter(
       auth: di<AuthManager>(),
       onboarding: di<OnboardingManager>(),
     );
-  }, dependsOn: [AuthManager]);
+  }, dependsOn: [AuthManager, OnboardingService]);
 }

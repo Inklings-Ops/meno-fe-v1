@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_di/live_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/_shared/services/media_service.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
@@ -123,8 +122,6 @@ final class BroadcastEditorManager with MLogger implements Disposable {
 
       final session = BroadcastSession.create(_currentUserId, broadcast);
       await _local.saveBroadcastSession(_currentUserId, session);
-      await pushLiveSessionScope(session);
-
       step.value = BroadcastCreationStep.saved;
       return broadcast;
     },

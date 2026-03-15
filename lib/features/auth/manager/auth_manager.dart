@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_di/user_scope_locator.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/auth.dart';
 
@@ -194,7 +193,7 @@ class AuthManager extends ChangeNotifier
     if (credentialDto == null) {
       _activeUserId.value = Id.empty;
       _lastKnownUser.value = User.empty;
-      await popUserSessionScope();
+      notifyListeners();
       return;
     }
 
@@ -204,6 +203,7 @@ class AuthManager extends ChangeNotifier
 
     _lastKnownUser.value = user;
     _emailVerified.value = user.verified;
+    notifyListeners();
 
     // The stored credential points to an account that no longer exists
     // in the accounts map (e.g. was deleted from another device).
@@ -211,7 +211,7 @@ class AuthManager extends ChangeNotifier
       await _local.clearCredential();
       _activeUserId.value = Id.empty;
       _lastKnownUser.value = User.empty;
-      await popUserSessionScope();
+      notifyListeners();
       return;
     }
 
@@ -220,13 +220,13 @@ class AuthManager extends ChangeNotifier
     if (credential.session.isExpired) {
       await _local.clearCredential();
       _activeUserId.value = Id.empty;
-      await popUserSessionScope();
+      notifyListeners();
       return;
     }
 
     // Valid, unexpired session — restore the user scope.
     _activeUserId.value = activeId;
-    await pushUserSessionScope(credential);
+    notifyListeners();
   }
 
   // ======================================================================
@@ -257,18 +257,12 @@ class AuthManager extends ChangeNotifier
   Future<void> _onAuthChanged(UserCredentialDto? dto) async {
     if (dto == null) {
       _activeUserId.value = Id.empty;
-      await popUserSessionScope();
       return;
     }
-
     final credential = dto.toDomain;
-
     _activeUserId.value = credential.user.id;
     _lastKnownUser.value = credential.user;
-
     _updateAccountInternal(credential);
-
-    await pushUserSessionScope(credential);
     notifyListeners();
   }
 

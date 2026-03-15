@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/_di/live_scope_locator.dart';
 import 'package:meno/_shared/services/livekit_client.dart';
 import 'package:meno/features/broadcast/manager/broadcast_timer_manager.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
@@ -234,7 +233,6 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
         // Tear down the live scope — disposes all scoped services and signals
         // the rest of the app (router, shell) that no session is active.
         log.i('LiveSessionManager: Popping live session scope');
-        await popLiveSessionScope();
       }
     });
 
@@ -311,8 +309,6 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     // Clean up session
     await _livekit.disconnect();
     await _local.clearActiveBroadcastId(_currentUserId);
-
-    await popLiveSessionScope();
   }
 
   void _scheduleReconnection() {
@@ -365,6 +361,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     _initializeSession.dispose();
     _connectToLiveKit.dispose();
     _emitSocketEvent.dispose();
+    _finalizeSession.dispose();
     endSession.dispose();
     toggleMicrophone.dispose();
     reconnectToSocket.dispose();

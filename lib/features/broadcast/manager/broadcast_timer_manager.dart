@@ -148,6 +148,20 @@ final class BroadcastTimerManager with MLogger implements Disposable {
   /// Get total pause duration (for analytics)
   Duration get totalPauseDuration => _accumulatedPauseDuration;
 
+  /// Calculate broadcast quality score based on pauses
+  ///
+  /// Returns a percentage (0-100) where:
+  /// - 100% = no pauses
+  /// - Lower % = more pause time relative to total time
+  double get qualityScore {
+    if (elapsed.value.inSeconds == 0) return 100;
+
+    final pausePercentage =
+        (_accumulatedPauseDuration.inSeconds / elapsed.value.inSeconds) * 100;
+
+    return (100 - pausePercentage).clamp(0.0, 100.0);
+  }
+
   @override
   FutureOr<dynamic> onDispose() {
     log.d('BroadcastTimer: Disposing...');

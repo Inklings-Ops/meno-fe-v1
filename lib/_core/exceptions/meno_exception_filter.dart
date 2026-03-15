@@ -31,8 +31,8 @@ ErrorReaction menoExceptionFilter(Object error, StackTrace stacktrace) {
     // These need BOTH local and global handling:
     // - Local: Widget shows field-level errors (red text, error messages)
     // - Global: Show toast "Please check your inputs"
-    ValidationException() => ErrorReaction.localAndGlobalHandler,
-    CancelledException() => ErrorReaction.localHandler,
+    ValidationException() => ErrorReaction.globalHandler,
+    CancelledException() => ErrorReaction.globalHandler,
 
     // ========================================================================
     // AUTHENTICATION ERRORS
@@ -62,7 +62,7 @@ ErrorReaction menoExceptionFilter(Object error, StackTrace stacktrace) {
     // - Global: Show error message to user
     //
     // If you only want global, use ErrorReaction.globalHandler
-    _ => ErrorReaction.localAndGlobalHandler,
+    _ => ErrorReaction.globalHandler,
   };
 }
 
@@ -79,7 +79,7 @@ ErrorReaction globalOnlyErrorFilter(Object error) {
 /// Use this when you want widgets to always have access to errors
 /// AND show global error messages.
 ErrorReaction localAndGlobalErrorFilter(Object error) {
-  return ErrorReaction.localAndGlobalHandler;
+  return ErrorReaction.globalHandler;
 }
 
 /// Alternative filter: Local only for specific errors
@@ -87,5 +87,5 @@ ErrorReaction localAndGlobalErrorFilter(Object error) {
 /// Use this when you want complete control in the widget
 /// and don't want any global error handling.
 ErrorReaction localOnlyErrorFilter(Object error) {
-  return ErrorReaction.localHandler;
+  return ErrorReaction.globalHandler;
 }
