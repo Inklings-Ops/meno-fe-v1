@@ -73,6 +73,7 @@ class AuthManager extends ChangeNotifier
 
       _activeUserId.value = userId;
       _lastKnownUser.value = credential.user;
+      notifyListeners();
     }, errorFilterFn: menoExceptionFilter);
 
     addAccount = Command.createAsyncNoParamNoResult(() async {
@@ -240,7 +241,7 @@ class AuthManager extends ChangeNotifier
     await _local.saveCredential(dto);
 
     _activeUserId.value = credential.user.id;
-
+    notifyListeners();
     return credential;
   }
 
@@ -254,11 +255,14 @@ class AuthManager extends ChangeNotifier
   Future<void> _onAuthChanged(UserCredentialDto? dto) async {
     if (dto == null) {
       _activeUserId.value = Id.empty;
+      notifyListeners();
       return;
     }
     final credential = dto.toDomain;
     _activeUserId.value = credential.user.id;
     _lastKnownUser.value = credential.user;
+    notifyListeners();
+
     _updateAccountInternal(credential);
   }
 

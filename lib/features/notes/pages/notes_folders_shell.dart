@@ -6,21 +6,11 @@ import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class NotesFoldersShell extends WatchingWidget {
-  const NotesFoldersShell._({
+  const NotesFoldersShell({
     required this.navigationShell,
     required this.children,
     super.key,
   });
-
-  static Widget builder(
-    BuildContext context,
-    StatefulNavigationShell navigationShell,
-    List<Widget> children,
-  ) => NotesFoldersShell._(
-    key: const ValueKey<String>('NotesFoldersShell'),
-    navigationShell: navigationShell,
-    children: children,
-  );
 
   final StatefulNavigationShell navigationShell;
   final List<Widget> children;

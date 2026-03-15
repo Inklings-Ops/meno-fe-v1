@@ -50,9 +50,16 @@ class _AllSavedCredentialsContent extends WatchingWidget {
           return RadioGroup(
             key: ValueKey(user.id),
             groupValue: selectedCredential?.user.id,
-            onChanged: (value) {
+            onChanged: (value) async {
               if (value == null) return;
-              context.go(R.switchAccount(value.getOrCrash()));
+
+              await di<UserScopeManager>().clearUserScope();
+
+              if (di.isRegistered<MenoRouter>()) {
+                di.resetLazySingleton<MenoRouter>();
+              }
+
+              di<AuthManager>().switchAccount.run(value);
             },
             child: RadioListTile(
               value: user.id,

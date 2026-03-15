@@ -9,7 +9,6 @@ class R {
     R.resetPassword,
   ];
 
-  static const String root = '/';
   static const String loading = '/loading';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
@@ -25,7 +24,7 @@ class R {
   static const String createNewPassword = '/createNewPassword';
   static const String webCreateBroadcast = '/web-createBroadcast';
   static const String broadcastEditor = '/broadcast-editor';
-  static const String home = '/home';
+  static const String home = '/';
   static const String discover = '/discover';
   static const String myProfile = '/my-profile';
   static const String othersProfile = '/others-profile';

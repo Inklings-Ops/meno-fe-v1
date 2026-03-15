@@ -5,8 +5,8 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
-class RootLayout extends WatchingWidget {
-  const RootLayout._({
+class RootShell extends WatchingWidget {
+  const RootShell._({
     required this.navigationShell,
     required this.currentRoute,
     super.key,
@@ -16,7 +16,7 @@ class RootLayout extends WatchingWidget {
     BuildContext context,
     GoRouterState state,
     StatefulNavigationShell navigationShell,
-  ) => RootLayout._(
+  ) => RootShell._(
     key: const ValueKey<String>('LiveSessionShell'),
     navigationShell: navigationShell,
     currentRoute: state.path,

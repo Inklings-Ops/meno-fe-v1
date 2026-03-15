@@ -161,10 +161,7 @@ void configureGlobalDependencies() {
   }, dependsOn: [AuthManager, OnboardingService]);
 
   // Router
-  di.registerSingletonWithDependencies(() {
-    return MenoRouter(
-      auth: di<AuthManager>(),
-      onboarding: di<OnboardingManager>(),
-    );
-  }, dependsOn: [AuthManager, OnboardingService]);
+  di.registerLazySingleton(() {
+    return MenoRouter.create();
+  });
 }

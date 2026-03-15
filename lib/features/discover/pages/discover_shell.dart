@@ -7,21 +7,11 @@ import 'package:meno/features/discover/discover.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class DiscoverShell extends WatchingStatefulWidget {
-  const DiscoverShell._({
+  const DiscoverShell({
     required this.navigationShell,
     required this.children,
     super.key,
   });
-
-  static Widget builder(
-    BuildContext context,
-    StatefulNavigationShell navigationShell,
-    List<Widget> children,
-  ) => DiscoverShell._(
-    key: const ValueKey<String>('DiscoverShell'),
-    navigationShell: navigationShell,
-    children: children,
-  );
 
   final StatefulNavigationShell navigationShell;
   final List<Widget> children;

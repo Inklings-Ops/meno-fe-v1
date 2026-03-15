@@ -21,6 +21,7 @@ class FeedWidget<TItem> extends WatchingWidget {
     this.physics,
     this.skeletonItem = const SizedBox(width: 148, height: 200),
     this.skeletonItemCount = 8,
+    this.controller,
     super.key,
   });
 
@@ -67,6 +68,8 @@ class FeedWidget<TItem> extends WatchingWidget {
 
   /// Number of skeleton widgets to show
   final int skeletonItemCount;
+
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +120,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         padding: padding,
         shrinkWrap: shrinkWrap,
         physics: physics,
+        controller: controller,
       ),
       FeedLayout.verticalList => _VerticalList(
         feedSource: feedSource,
@@ -128,6 +132,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         padding: padding,
         shrinkWrap: shrinkWrap,
         physics: physics,
+        controller: controller,
       ),
       FeedLayout.verticalGrid => _GridList(
         feedSource: feedSource,
@@ -145,6 +150,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         shrinkWrap: shrinkWrap,
         physics: physics,
         scrollDirection: .vertical,
+        controller: controller,
       ),
       FeedLayout.horizontalGrid => _GridList(
         feedSource: feedSource,
@@ -162,6 +168,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         shrinkWrap: shrinkWrap,
         physics: physics,
         scrollDirection: .horizontal,
+        controller: controller,
       ),
     };
   }
@@ -179,6 +186,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
     this.padding,
     this.shrinkWrap = false,
     this.physics,
+    this.controller,
   });
 
   final PagedFeedDataSource<TItem> feedSource;
@@ -190,6 +198,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
   final ScrollPhysics? physics;
   final bool isInitialLoading;
   final Widget skeletonItem;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +208,7 @@ class _HorizontalList<TItem> extends StatelessWidget {
       padding: padding ?? const .symmetric(horizontal: Insets.lg),
       shrinkWrap: shrinkWrap,
       physics: physics,
+      controller: controller,
       separatorBuilder: (context, i) => const SizedBox(width: 24),
       itemCount: itemCount,
       itemBuilder: (context, index) {
@@ -222,6 +232,7 @@ class _VerticalList<TItem> extends StatelessWidget {
     this.padding,
     this.shrinkWrap = false,
     this.physics,
+    this.controller,
   });
 
   final PagedFeedDataSource<TItem> feedSource;
@@ -233,6 +244,7 @@ class _VerticalList<TItem> extends StatelessWidget {
   final ScrollPhysics? physics;
   final bool isInitialLoading;
   final Widget skeletonItem;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +253,7 @@ class _VerticalList<TItem> extends StatelessWidget {
       child: CustomScrollView(
         shrinkWrap: shrinkWrap,
         physics: physics,
+        controller: controller,
         slivers: [
           SliverPadding(
             padding: padding ?? EdgeInsets.zero,
@@ -250,10 +263,7 @@ class _VerticalList<TItem> extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (isInitialLoading) return Skeletonizer(child: skeletonItem);
                 final item = feedSource.getItemAtIndex(index);
-                return Skeletonizer(
-                  enabled: isInitialLoading,
-                  child: itemBuilder(context, item),
-                );
+                return itemBuilder(context, item);
               },
             ),
           ),
@@ -289,6 +299,7 @@ class _GridList<TItem> extends StatelessWidget {
     this.padding,
     this.shrinkWrap = false,
     this.physics,
+    this.controller,
   });
 
   final PagedFeedDataSource<TItem> feedSource;
@@ -306,12 +317,14 @@ class _GridList<TItem> extends StatelessWidget {
   final bool isInitialLoading;
   final Axis scrollDirection;
   final Widget skeletonItem;
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: feedSource.updateDataCommand.runAsync,
       child: CustomScrollView(
+        controller: controller,
         scrollDirection: scrollDirection,
         shrinkWrap: shrinkWrap,
         physics: physics,
@@ -328,10 +341,7 @@ class _GridList<TItem> extends StatelessWidget {
               delegate: SliverChildBuilderDelegate((context, index) {
                 if (isInitialLoading) return Skeletonizer(child: skeletonItem);
                 final item = feedSource.getItemAtIndex(index);
-                return Skeletonizer(
-                  enabled: isInitialLoading,
-                  child: itemBuilder(context, item),
-                );
+                return itemBuilder(context, item);
               }, childCount: itemCount),
             ),
           ),
@@ -357,7 +367,9 @@ enum FeedLayout {
   /// Horizontal single-row [ListView] — good for home page preview strips.
   horizontalList,
 
-  /// [GridView] with a fixed cross-axis count — good for Discover.
+  /// Vertical [GridView] with a fixed cross-axis count;
   verticalGrid,
+
+  /// Horizontal [GridView] with a fixed main-axis count .
   horizontalGrid,
 }

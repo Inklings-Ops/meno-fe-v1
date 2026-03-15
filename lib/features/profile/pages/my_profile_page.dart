@@ -86,13 +86,15 @@ class _MyProfilePageState extends State<MyProfilePage>
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
 
+    final userId = watchValue((UserManager m) => m.currentUserId).value;
     final profile = watchValue((MyProfileManager m) => m.profile);
     final isEmpty = profile.isEmpty;
 
     return Scaffold(
+      key: ValueKey(userId),
       backgroundColor: colors.background,
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: di<MyProfileManager>().fetch.runAsync,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             _ProfileAppBar(
