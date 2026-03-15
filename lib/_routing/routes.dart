@@ -26,7 +26,7 @@ class R {
   static const String broadcastEditor = '/broadcast-editor';
   static const String home = '/';
   static const String discover = '/discover';
-  static const String myProfile = '/my-profile';
+  // static const String myProfile = '/my-profile';
   static const String othersProfile = '/others-profile';
   static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
