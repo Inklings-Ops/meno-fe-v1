@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/chat/chat.dart';
@@ -23,6 +24,7 @@ class LiveScopeManager with MLogger implements Disposable {
   final Id _currentUserId;
 
   StreamSubscription<BroadcastSession?>? _sessionSub;
+  StreamSubscription<EndedBroadcast>? _endedBroadcastSub;
   StreamSubscription? _socketReconnectionSub;
 
   Future<void> _queue = Future<void>.value();
@@ -34,7 +36,6 @@ class LiveScopeManager with MLogger implements Disposable {
     // Check for zombie broadcast state on startup
     await _checkForZombieBroadcast();
 
-    // Watch for active session changes
     _sessionSub = _local.watchActiveSession(_currentUserId).listen((session) {
       log.d('LiveScopeManager: Session changed - ${session?.broadcast.id}');
 
@@ -44,8 +45,7 @@ class LiveScopeManager with MLogger implements Disposable {
         return _pushScope(session);
       });
     }, onError: (dynamic e) => log.e('LivenScopManager: Session error - $e'));
-
-    _socketReconnectionSub = _socket.onReconnected.listen((_) {
+    _socketReconnectionSub = _socket.onReconnected.listen((_) async {
       log.i('LiveScopeManager: Socket reconnected');
 
       // Get current session
@@ -55,14 +55,27 @@ class LiveScopeManager with MLogger implements Disposable {
       // Only attempt if the live scope is actually active
       if (!di.isRegistered<LiveSessionManager>()) return;
 
-      // Notify LiveSessionManager about socket reconnection
+      log.i('LiveScopeManager: Socket reconnected');
+
       try {
-        log.i('LiveScopeManager: Socket reconnected');
-        di<LiveSessionManager>().reconnectToSocket.run();
+        final manager = di<LiveSessionManager>();
+        await manager.reconnectToSocket.runAsync();
+
+        // Redirect once reconnect is successful
+        final router = di<MenoRouter>().config;
+        final location =
+            router.routerDelegate.currentConfiguration.last.matchedLocation;
+
+        if (!location.startsWith('/live')) {
+          router.go(R.liveSessionInitialization);
+        }
       } catch (e) {
-        log.e('LiveScopeManager: Failed to handle socket reconnection - $e');
+        log.e('LiveScopeManager: Reconnect redirect error - $e');
       }
     }, onError: (dynamic e) => log.e('LiveScopeManager: Recon. error - $e'));
+    _endedBroadcastSub = _socket.onEndedBroadcast.listen((data) async {
+      await _popScope();
+    });
   }
 
   // #########################################################################
@@ -115,11 +128,13 @@ class LiveScopeManager with MLogger implements Disposable {
           // Participants
           getIt.registerSingletonWithDependencies(
             () {
-              return ParticipantsManager(
+              final manager = ParticipantsManager(
                 http: getIt<BroadcastHttpService>(),
                 socket: getIt<BroadcastSocketService>(),
                 session: session,
               );
+              manager.initialize.run();
+              return manager;
             },
             dependsOn: [
               BroadcastHttpService,
@@ -137,11 +152,13 @@ class LiveScopeManager with MLogger implements Disposable {
           }, dependsOn: [SocketClient]);
           getIt.registerSingletonWithDependencies(
             () {
-              return ChatListManager(
+              final manager = ChatListManager(
                 http: getIt<ChatHttpService>(),
                 socket: getIt<ChatSocketService>(),
                 session: session,
               );
+              manager.initialize.run();
+              return manager;
             },
             dependsOn: [ChatHttpService, ChatSocketService, LiveSessionManager],
           );
@@ -219,6 +236,9 @@ class LiveScopeManager with MLogger implements Disposable {
       if (broadcast.isActive) {
         log.i('LiveScopeManager: Broadcast active, recovering session');
         await _pushScope(session);
+
+        // Redirect to live session on recovery
+        di<MenoRouter>().config.go(R.liveSessionInitialization);
       } else {
         log.w('LiveScopeManager: Broadcast is no longer active, clearing');
         await _local.clearActiveBroadcastId(_currentUserId);
@@ -237,8 +257,12 @@ class LiveScopeManager with MLogger implements Disposable {
 
     await _sessionSub?.cancel();
     await _socketReconnectionSub?.cancel();
+    await _endedBroadcastSub?.cancel();
 
-    // Exit live scope if active
+    _sessionSub = null;
+    _socketReconnectionSub = null;
+    _endedBroadcastSub = null;
+
     await _popScope();
 
     log.d('LiveScopeManager: Disposed');

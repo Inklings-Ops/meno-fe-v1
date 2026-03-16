@@ -11,7 +11,7 @@ final class ChatHttpService {
   Future<PagedList<Message>> getMessages(
     String broadcastId, {
     OrderBy orderBy = OrderBy.desc,
-    PaginationParams pagination = const PaginationParams(size: 100),
+    PaginationParams pagination = const PaginationParams(),
     CancelToken? cancelToken,
   }) {
     return _client.get(
@@ -26,7 +26,7 @@ final class ChatHttpService {
         'broadcastId': broadcastId,
         'page': pagination.page,
         'size': pagination.size,
-        'orderBy': orderBy.value,
+        'orderBy': orderBy.value.toLowerCase(),
       },
     );
   }

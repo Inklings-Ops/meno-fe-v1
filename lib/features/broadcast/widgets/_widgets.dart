@@ -7,6 +7,7 @@ export 'broadcast_exit_alert_dialog.dart';
 export 'broadcast_info_modal.dart';
 export 'broadcast_timer_widget.dart';
 export 'ended_broadcast_participants_widget.dart';
+export 'live_broadcast_tab.dart';
 export 'live_broadcast_widgets.dart';
 export 'live_session_banner.dart';
 export 'participant_info_modal.dart';

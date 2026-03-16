@@ -117,9 +117,6 @@ void configureGlobalDependencies() {
     return BibleHttpService(di<HttpClient>());
   }, dependsOn: [HttpClient]);
   di.registerSingletonWithDependencies(() {
-    return BibleManager(di<BibleLocalService>());
-  }, dependsOn: [BibleLocalService]);
-  di.registerSingletonWithDependencies(() {
     final manager = TranslationsManager(
       di<BibleHttpService>(),
       di<BibleLocalService>(),
@@ -127,6 +124,11 @@ void configureGlobalDependencies() {
     manager.initialize.run();
     return manager;
   }, dependsOn: [BibleHttpService, BibleLocalService]);
+  di.registerSingletonWithDependencies(() {
+    final manager = BibleManager(di<BibleLocalService>());
+    manager.getVerses.run(const BibleArgs());
+    return manager;
+  }, dependsOn: [BibleLocalService, BibleHttpService, TranslationsManager]);
 
   /**
    * Broadcast Local Service
@@ -187,7 +189,7 @@ void configureGlobalDependencies() {
   );
 
   // Router
-  di.registerLazySingleton(() {
-    return MenoRouter.create();
-  });
+  di.registerSingletonWithDependencies(() {
+    return MenoRouter.create(di<AuthManager>(), di<OnboardingManager>());
+  }, dependsOn: [AuthManager, OnboardingManager]);
 }

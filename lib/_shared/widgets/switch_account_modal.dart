@@ -56,7 +56,7 @@ class _AllSavedCredentialsContent extends WatchingWidget {
               await di<UserScopeManager>().clearUserScope();
 
               if (di.isRegistered<MenoRouter>()) {
-                di.resetLazySingleton<MenoRouter>();
+                di.unregister<MenoRouter>();
               }
 
               di<AuthManager>().switchAccount.run(value);

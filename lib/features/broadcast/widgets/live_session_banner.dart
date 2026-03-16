@@ -58,7 +58,7 @@ class _SessionBannerContent extends WatchingWidget {
       badgeTitle: isHost ? status.hostTitle : status.participantTitle,
       actionButtonLabel: isHost ? 'End' : 'Leave',
       action: () => _handleAction(context, isHost),
-      onTap: () => context.push<void>(R.broadcastTab),
+      onTap: () => context.push<void>(R.liveBroadcast),
     );
   }
 

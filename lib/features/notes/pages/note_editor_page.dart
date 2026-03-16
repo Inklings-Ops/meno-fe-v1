@@ -7,9 +7,9 @@ import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno/features/notes/widgets/note_editor_widget.dart';
 
 class NoteEditorPage extends WatchingWidget {
-  const NoteEditorPage({required this.noteId, super.key});
+  const NoteEditorPage({required this.noteIdStr, super.key});
 
-  final String? noteId;
+  final String? noteIdStr;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class NoteEditorPage extends WatchingWidget {
             http: di<NotesHttpService>(),
             local: di<NotesLocalService>(),
             currentUserId: di<UserManager>().currentUserId.value,
-            noteId: noteId != null ? .fromString(noteId!) : null,
+            noteId: noteIdStr != null ? .fromString(noteIdStr!) : null,
           );
         }, onCreated: (instance) => instance.initialize.run());
       },

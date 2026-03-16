@@ -29,20 +29,16 @@ class LiveSessionShell extends WatchingStatefulWidget {
 }
 
 class LiveSessionShellState extends State<LiveSessionShell>
-    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late final TabController controller;
 
   final showChatDot = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     registerHandler(
-      select: (LiveSessionManager m) => m.endSession.results,
-      handler: (context, result, cancel) {
-        if (result.isSuccess) context.go(R.endedBroadcast);
-      },
+      select: (LiveSessionManager m) => m.endSession,
+      handler: (context, result, cancel) => context.go(R.endedBroadcast),
     );
 
     return Scaffold(
@@ -83,9 +79,6 @@ class LiveSessionShellState extends State<LiveSessionShell>
     showChatDot.dispose();
     super.dispose();
   }
-
-  @override
-  bool get wantKeepAlive => true;
 
   void handleTabControllerIndexChange() {
     // If the controller's index is different from the shell,

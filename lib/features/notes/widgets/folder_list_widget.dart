@@ -14,11 +14,13 @@ class FolderListWidget extends WatchingWidget {
     this.physics,
     this.controller,
     this.primary,
+    this.isNested = false,
   });
 
   final ScrollPhysics? physics;
   final ScrollController? controller;
   final bool? primary;
+  final bool isNested;
 
   @override
   Widget build(BuildContext ctx) {
@@ -27,13 +29,33 @@ class FolderListWidget extends WatchingWidget {
 
     if (isLoading) return Skeletonizer(child: FolderList(folders: fakeFolders));
 
-    return FolderList(
-      folders: folders,
-      onTap: (folder) => ctx.push(R.folder(folder.id.getOrCrash())),
-      onOptionsTap: (folder) => _OptionsModal.show(ctx, folder),
+    return CustomScrollView(
       primary: primary,
       controller: controller,
       physics: physics,
+      slivers: [
+        if (isNested)
+          Builder(
+            builder: (context) => SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+          ),
+        SliverPadding(
+          padding: const .all(16),
+          sliver: SliverList.separated(
+            itemCount: folders.length,
+            separatorBuilder: (_, __) => Spaces.verticalLarge,
+            itemBuilder: (context, index) {
+              final folder = folders[index];
+              return FolderCard(
+                folder: folder,
+                onTap: () => ctx.push(R.folder(folder.id.getOrCrash())),
+                onOptionsTap: () => _OptionsModal.show(ctx, folder),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

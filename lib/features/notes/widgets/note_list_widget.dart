@@ -17,6 +17,7 @@ class NoteListWidget extends WatchingWidget {
     this.physics,
     this.controller,
     this.primary,
+    this.isNested = false,
   });
 
   final bool showAddButton;
@@ -27,6 +28,7 @@ class NoteListWidget extends WatchingWidget {
   final ScrollPhysics? physics;
   final ScrollController? controller;
   final bool? primary;
+  final bool isNested;
 
   @override
   Widget build(BuildContext ctx) {
@@ -35,15 +37,36 @@ class NoteListWidget extends WatchingWidget {
 
     if (isLoading) return Skeletonizer(child: NotesList(notes: fakeNotes));
 
-    return NotesList(
-      notes: notes,
-      showAddButton: showAddButton,
-      onNoteTap: (note) => ctx.push(R.noteEditor(note.id.getOrCrash())),
-      onNoteOptionsTap: (note) => _OptionsModal.show(ctx, note),
-      onNoteLongPress: (note) => _OptionsModal.show(ctx, note),
+    return CustomScrollView(
       primary: primary,
       controller: controller,
       physics: physics,
+      slivers: [
+        if (isNested)
+          Builder(
+            builder: (context) => SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+          ),
+        SliverPadding(
+          padding: const .all(16),
+          sliver: SliverList.separated(
+            itemCount: notes.length,
+            separatorBuilder: (_, __) => Spaces.verticalLarge,
+            itemBuilder: (context, index) {
+              final note = notes[index];
+              return NoteCard(
+                key: ValueKey(note.id),
+                note: note,
+                showAddButton: showAddButton,
+                onTap: () => ctx.push(R.noteEditor(note.id.getOrCrash())),
+                onLongPress: () => _OptionsModal.show(ctx, note),
+                onOptionsTap: () => _OptionsModal.show(ctx, note),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

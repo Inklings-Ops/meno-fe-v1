@@ -39,29 +39,26 @@ class R {
   static const String biblePage = '/bible-page';
 
   static const String liveSessionInitialization = '/live-initialization';
-  static const String broadcastTab = '/broadcast-tab';
-  static const String chatTab = '/chat-tab';
-  static const String bibleTab = '/bible-tab';
-  static const String notesTab = '/notes-tab';
-  static const String notesTabEditor = 'notes-tab-editor';
+  static const String liveBroadcast = '/live-broadcast';
+  static const String liveChat = '/live-chat';
+  static const String liveBible = '/live-bible';
+  static const String liveNotes = '/live-notes';
+  static const String liveFolders = '/live-folders';
+  static String liveNoteEditor([String id = 'new']) => '$liveNotes/$id';
+  static String liveFolder(String id) => '$liveFolders/$id';
   static const String notesTabEditorFull = '/notes-tab/notes-tab-editor';
 
   static const String notes = '/notes';
+  static String noteEditor([String id = 'new']) => '$notes/$id';
+
   static const String folders = '/folders';
+  static String folder(String id) => '$folders/$id';
 
   static const String broadcasts = '/broadcasts';
-
   static String broadcast(String id) => '$broadcasts/$id';
 
   static const String profiles = '/users/profiles';
-
   static String profile(String userId) => '/users/$userId/profile';
-
-  static String noteEditor([String? id]) => '/notes/${id ?? 'new'}';
-
-  static const String folderName = 'folder';
-
-  static String folder(String id) => '/folders/$id';
 
   static String switchAccount(String userId) => '/switch-account/$userId';
 

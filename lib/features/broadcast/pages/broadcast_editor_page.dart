@@ -27,9 +27,8 @@ class BroadcastEditorPage extends WatchingWidget {
     });
 
     registerHandler(
-      select: (BroadcastEditorManager m) => m.saveBroadcastSession.results,
+      select: (BroadcastEditorManager m) => m.saveBroadcastSession,
       handler: (context, result, cancel) {
-        if (!result.isSuccess || result.hasData) return;
         di<BroadcastEditorManager>().resetForm.run();
         context.replace(R.liveSessionInitialization);
       },

@@ -104,10 +104,7 @@ final class ParticipantsManager with MLogger implements Disposable {
     isSearching.value = false;
   });
 
-  late final isLoading = initialize.isRunning.combineLatest(
-    _fetchParticipants.isRunning,
-    (initializing, fetching) => initializing || fetching,
-  );
+  late final isLoading = _fetchParticipants.isRunning;
 
   late final totalCount = ValueNotifier<int>(_participantsMap.length);
 
