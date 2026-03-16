@@ -283,41 +283,9 @@ class MenoRouter {
             ),
             StatefulShellBranch(
               routes: [
-                StatefulShellRoute(
-                  builder: (context, state, navigationShell) => navigationShell,
-                  navigatorContainerBuilder: MyProfilePage.builder,
-                  branches: [
-                    StatefulShellBranch(
-                      routes: [
-                        GoRoute(
-                          path: R.myProfileRecentTab,
-                          builder: (context, state) {
-                            return const ProfileRecentBroadcastsTab();
-                          },
-                        ),
-                      ],
-                    ),
-                    StatefulShellBranch(
-                      routes: [
-                        GoRoute(
-                          path: R.myProfileAllTab,
-                          builder: (context, state) {
-                            return const ProfileAllBroadcastsTab();
-                          },
-                        ),
-                      ],
-                    ),
-                    StatefulShellBranch(
-                      routes: [
-                        GoRoute(
-                          path: R.myProfileFavouritesTab,
-                          builder: (context, state) {
-                            return const ProfileFavouritesTab();
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                GoRoute(
+                  path: R.myProfile,
+                  builder: (context, state) => const MyProfilePage(),
                 ),
               ],
             ),

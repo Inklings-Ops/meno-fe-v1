@@ -93,7 +93,7 @@ class _ActionButtons extends StatelessWidget {
         Expanded(
           child: MSecondaryButton(
             label: 'Go to Profile',
-            onPressed: () => context.go(R.myProfileRecentTab),
+            onPressed: () => context.go(R.myProfile),
           ),
         ),
       ],

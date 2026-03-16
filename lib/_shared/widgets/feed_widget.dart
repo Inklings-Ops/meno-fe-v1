@@ -22,6 +22,7 @@ class FeedWidget<TItem> extends WatchingWidget {
     this.skeletonItem = const SizedBox(width: 148, height: 200),
     this.skeletonItemCount = 8,
     this.controller,
+    this.topSlivers,
     super.key,
   });
 
@@ -70,6 +71,9 @@ class FeedWidget<TItem> extends WatchingWidget {
   final int skeletonItemCount;
 
   final ScrollController? controller;
+
+  /// Optional slivers at the top of the scrollable (vertical only).
+  final List<Widget>? topSlivers;
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +137,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         shrinkWrap: shrinkWrap,
         physics: physics,
         controller: controller,
+        topSlivers: topSlivers,
       ),
       FeedLayout.verticalGrid => _GridList(
         feedSource: feedSource,
@@ -151,6 +156,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         physics: physics,
         scrollDirection: .vertical,
         controller: controller,
+        topSlivers: topSlivers,
       ),
       FeedLayout.horizontalGrid => _GridList(
         feedSource: feedSource,
@@ -169,6 +175,7 @@ class FeedWidget<TItem> extends WatchingWidget {
         physics: physics,
         scrollDirection: .horizontal,
         controller: controller,
+        topSlivers: topSlivers,
       ),
     };
   }
@@ -233,6 +240,7 @@ class _VerticalList<TItem> extends StatelessWidget {
     this.shrinkWrap = false,
     this.physics,
     this.controller,
+    this.topSlivers,
   });
 
   final PagedFeedDataSource<TItem> feedSource;
@@ -245,6 +253,7 @@ class _VerticalList<TItem> extends StatelessWidget {
   final bool isInitialLoading;
   final Widget skeletonItem;
   final ScrollController? controller;
+  final List<Widget>? topSlivers;
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +264,7 @@ class _VerticalList<TItem> extends StatelessWidget {
         physics: physics,
         controller: controller,
         slivers: [
+          if (topSlivers != null) ...topSlivers!,
           SliverPadding(
             padding: padding ?? EdgeInsets.zero,
             sliver: SliverList.separated(
@@ -300,6 +310,7 @@ class _GridList<TItem> extends StatelessWidget {
     this.shrinkWrap = false,
     this.physics,
     this.controller,
+    this.topSlivers,
   });
 
   final PagedFeedDataSource<TItem> feedSource;
@@ -318,6 +329,7 @@ class _GridList<TItem> extends StatelessWidget {
   final Axis scrollDirection;
   final Widget skeletonItem;
   final ScrollController? controller;
+  final List<Widget>? topSlivers;
 
   @override
   Widget build(BuildContext context) {
@@ -329,6 +341,7 @@ class _GridList<TItem> extends StatelessWidget {
         shrinkWrap: shrinkWrap,
         physics: physics,
         slivers: [
+          if (topSlivers != null) ...topSlivers!,
           SliverPadding(
             padding: padding ?? .zero,
             sliver: SliverGrid(

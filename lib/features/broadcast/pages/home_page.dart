@@ -46,7 +46,7 @@ class _AppBar extends WatchingWidget implements PreferredSizeWidget {
     return MAppBar.home(
       title: user.fullName.getOrElse((_) => ''),
       avatarImageUrl: user.image?.getUrl(),
-      onAvatarTap: () => context.go(R.myProfileRecentTab),
+      onAvatarTap: () => context.go(R.myProfile),
       onNotificationBellTap: () => context.push(R.notifications),
     );
   }

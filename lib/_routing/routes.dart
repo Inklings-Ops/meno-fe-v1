@@ -26,7 +26,7 @@ class R {
   static const String broadcastEditor = '/broadcast-editor';
   static const String home = '/';
   static const String discover = '/discover';
-  // static const String myProfile = '/my-profile';
+  static const String myProfile = '/my-profile';
   static const String othersProfile = '/others-profile';
   static const String nowLive = '/nowLive';
   static const String recentlyLive = '/recentlyLive';
@@ -70,10 +70,6 @@ class R {
   static const String discoverNowLiveTab = '/discover-now-live';
   static const String discoverRecentlyLiveTab = '/discover-recently-live';
   static const String discoverSuggestedAccountsLiveTab = '/discover-accounts';
-
-  static const String myProfileRecentTab = '/my-profile-recent-tab';
-  static const String myProfileAllTab = '/my-profile-all-tab';
-  static const String myProfileFavouritesTab = '/my-profile-favourite-tab';
 
   static const String userProfileRecentTab = '/user-profile-recent-tab';
   static const String userProfileAllTab = '/user-profile-all-tab';
