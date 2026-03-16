@@ -10,7 +10,7 @@ import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/bible/bible.dart';
 import 'package:meno/features/broadcast/services/broadcast_local_service.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
-import 'package:meno/features/settings/services/settings_local_service.dart';
+import 'package:meno/features/settings/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String kRootScope = 'root-session';
@@ -153,17 +153,38 @@ void configureGlobalDependencies() {
     return SettingsLocalService(di<LocalStorage>());
   }, dependsOn: [LocalStorage]);
 
+  // Settings
+  di.registerSingletonWithDependencies(() {
+    return SettingsHttpService(di<HttpClient>());
+  }, dependsOn: [HttpClient]);
+
+  di.registerSingletonAsync<SettingsManager>(() async {
+    return SettingsManager(
+      http: di<SettingsHttpService>(),
+      local: di<SettingsLocalService>(),
+      auth: di<AuthManager>(),
+    ).initialize();
+  }, dependsOn: [SettingsHttpService, SettingsLocalService, AuthManager]);
+
   /**
    * User Scope Manager
    *
    * Depends on SettingsLocalService so the root-scope cache is guaranteed
    * to exist before any user scope tries to read from it.
    */
-  di.registerSingletonAsync(() async {
-    final scope = UserScopeManager(di<AuthManager>());
-    await scope.initialize();
-    return scope;
-  }, dependsOn: [AuthManager, OnboardingService, SettingsLocalService]);
+  di.registerSingletonAsync(
+    () async {
+      final scope = UserScopeManager(di<AuthManager>());
+      await scope.initialize();
+      return scope;
+    },
+    dependsOn: [
+      AuthManager,
+      OnboardingService,
+      SettingsLocalService,
+      SettingsManager,
+    ],
+  );
 
   // Router
   di.registerLazySingleton(() {

@@ -15,15 +15,39 @@ class SettingsHttpService {
     );
   }
 
-  Future<UserSettingsDto> updateUserSettings(
-    UserSettingsPatch patch, {
+  Future<UserSettingsDto> updateUserSettings({
+    String? display,
+    String? language,
+    bool? appNotifications,
+    bool? pushNotifications,
+    bool? emailNotifications,
+    bool? userSubscribed,
+    bool? addedAsCoHost,
+    bool? liveBroadcastStarted,
+    bool? scheduledBroadcast,
     CancelToken? cancelToken,
-  }) {
-    assert(!patch.isEmpty, 'updateUserSettings called with an empty patch');
+  }) async {
+    final notificationSettings = <String, dynamic>{
+      if (userSubscribed != null) 'userSubscribed': userSubscribed,
+      if (addedAsCoHost != null) 'addedAsCoHost': addedAsCoHost,
+      if (liveBroadcastStarted != null)
+        'liveBroadcastStarted': liveBroadcastStarted,
+      if (scheduledBroadcast != null) 'scheduledBroadcast': scheduledBroadcast,
+    };
 
-    return _client.patch(
+    final data = <String, dynamic>{
+      if (display != null) 'display': display,
+      if (language != null) 'language': language,
+      if (appNotifications != null) 'appNotifications': appNotifications,
+      if (pushNotifications != null) 'pushNotifications': pushNotifications,
+      if (emailNotifications != null) 'emailNotifications': emailNotifications,
+      if (notificationSettings.isNotEmpty)
+        'notificationSettings': notificationSettings,
+    };
+
+    return _client.put(
       '/settings',
-      data: patch.toJson(),
+      data: data,
       fromJson: UserSettingsDto.fromJson,
       cancelToken: cancelToken,
     );

@@ -56,19 +56,11 @@ class SettingsPage extends WatchingWidget {
                 SettingsListTile(
                   title: 'Dark Mode',
                   leadingIcon: MIcons.moon_01,
+                  showDivider: false,
                   trailing: Switch(
                     value: settings.display == .dark,
-                    onChanged: manager.toggleDarkMode,
+                    onChanged: manager.toggleDarkMode.run,
                   ),
-                ),
-                SettingsListTile(
-                  title: 'Location',
-                  leadingIcon: MIcons.marker_pin_01,
-                  trailing: Switch(
-                    value: false,
-                    onChanged: manager.toggleLocation,
-                  ),
-                  showDivider: false,
                 ),
               ],
             ),
@@ -95,7 +87,7 @@ class SettingsPage extends WatchingWidget {
               title: 'Other',
               children: [
                 SettingsListTile(
-                  title: 'About Meno',
+                  title: 'About Menō',
                   leadingIcon: MIcons.users,
                   onTap: () => context.push(R.about),
                 ),

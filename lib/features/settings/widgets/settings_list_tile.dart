@@ -48,6 +48,7 @@ class SettingsListTile extends StatelessWidget {
           minTileHeight: 56,
           leading: leadingWidget,
           horizontalTitleGap: Insets.sm,
+          contentPadding: const .symmetric(horizontal: Insets.lg),
           title: MText(
             title,
             style: textTheme.captionMedium,

@@ -12,10 +12,10 @@ class SettingsManager with MLogger implements Disposable {
   SettingsManager({
     required SettingsHttpService http,
     required SettingsLocalService local,
-    required Id? currentUserId,
+    required AuthManager auth,
   }) : _http = http,
        _local = local,
-       _currentUserId = currentUserId {
+       _auth = auth {
     initializeFromCredential = Command.createSyncNoResult((UserCredential arg) {
       final generalSettings = arg.user.generalSettings;
       if (generalSettings == null) return;
@@ -40,11 +40,12 @@ class SettingsManager with MLogger implements Disposable {
         stack.push(settings.value.language);
         settings.value = settings.value.copyWith(language: input);
         _persistLocally();
-        await _http.updateUserSettings(UserSettingsPatch(language: input));
+        await _http.updateUserSettings(language: input);
       },
       undo: (stack, reason) {
         final oldInput = stack.pop();
         settings.value = settings.value.copyWith(language: oldInput);
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
@@ -54,60 +55,58 @@ class SettingsManager with MLogger implements Disposable {
         final display = input ? UserDisplay.dark : UserDisplay.light;
         settings.value = settings.value.copyWith(display: display);
         _persistLocally();
-        await _http.updateUserSettings(UserSettingsPatch(display: display));
+        await _http.updateUserSettings(display: display.value);
       },
       undo: (stack, reason) {
         final oldInput = stack.pop();
         settings.value = settings.value.copyWith(display: oldInput);
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleAppNotifications = Command.createUndoableNoResult<bool, bool>(
+    setAppNotifications = Command.createUndoableNoResult<bool, bool>(
       (input, stack) async {
         stack.push(settings.value.appNotifications);
         settings.value = settings.value.copyWith(appNotifications: input);
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(appNotifications: input),
-        );
+        await _http.updateUserSettings(appNotifications: input);
       },
       undo: (stack, reason) {
         final oldInput = stack.pop();
         settings.value = settings.value.copyWith(appNotifications: oldInput);
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    togglePushNotifications = Command.createUndoableNoResult<bool, bool>(
+    setPushNotifications = Command.createUndoableNoResult<bool, bool>(
       (input, stack) async {
         stack.push(settings.value.pushNotifications);
         settings.value = settings.value.copyWith(pushNotifications: input);
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(pushNotifications: input),
-        );
+        await _http.updateUserSettings(pushNotifications: input);
       },
       undo: (stack, reason) {
         final oldInput = stack.pop();
         settings.value = settings.value.copyWith(pushNotifications: oldInput);
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleEmailNotifications = Command.createUndoableNoResult<bool, bool>(
+    setEmailNotifications = Command.createUndoableNoResult<bool, bool>(
       (input, stack) async {
         stack.push(settings.value.emailNotifications);
         settings.value = settings.value.copyWith(emailNotifications: input);
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(emailNotifications: input),
-        );
+        await _http.updateUserSettings(emailNotifications: input);
       },
       undo: (stack, reason) {
         final oldInput = stack.pop();
         settings.value = settings.value.copyWith(emailNotifications: oldInput);
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleLiveBroadcastNotifications = Command.createUndoableNoResult(
+    setLiveBroadcastNotifications = Command.createUndoableNoResult(
       (input, stack) async {
         final current = settings.value;
         stack.push(current.notificationSettings.liveBroadcastStarted);
@@ -117,13 +116,7 @@ class SettingsManager with MLogger implements Disposable {
           ),
         );
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(
-            notificationSettings: UserNotificationSettingsPatch(
-              liveBroadcastStarted: input,
-            ),
-          ),
-        );
+        await _http.updateUserSettings(liveBroadcastStarted: input);
       },
       undo: (UndoStack<bool> stack, reason) {
         final oldInput = stack.pop();
@@ -133,10 +126,11 @@ class SettingsManager with MLogger implements Disposable {
             liveBroadcastStarted: oldInput,
           ),
         );
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleSubscribersNotifications = Command.createUndoableNoResult(
+    setSubscribersNotifications = Command.createUndoableNoResult(
       (input, stack) async {
         final current = settings.value;
         stack.push(current.notificationSettings.userSubscribed);
@@ -146,13 +140,7 @@ class SettingsManager with MLogger implements Disposable {
           ),
         );
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(
-            notificationSettings: UserNotificationSettingsPatch(
-              userSubscribed: input,
-            ),
-          ),
-        );
+        await _http.updateUserSettings(userSubscribed: input);
       },
       undo: (UndoStack<bool> stack, reason) {
         final oldInput = stack.pop();
@@ -162,10 +150,11 @@ class SettingsManager with MLogger implements Disposable {
             userSubscribed: oldInput,
           ),
         );
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleAddedAsCohostNotifications = Command.createUndoableNoResult(
+    setAddedAsCohostNotifications = Command.createUndoableNoResult(
       (input, stack) async {
         final current = settings.value;
         stack.push(current.notificationSettings.addedAsCoHost);
@@ -175,13 +164,7 @@ class SettingsManager with MLogger implements Disposable {
           ),
         );
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(
-            notificationSettings: UserNotificationSettingsPatch(
-              addedAsCoHost: input,
-            ),
-          ),
-        );
+        await _http.updateUserSettings(addedAsCoHost: input);
       },
       undo: (UndoStack<bool> stack, reason) {
         final oldInput = stack.pop();
@@ -191,10 +174,11 @@ class SettingsManager with MLogger implements Disposable {
             addedAsCoHost: oldInput,
           ),
         );
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
-    toggleScheduledBroadcastNotifications = Command.createUndoableNoResult(
+    setScheduledBroadcastNotifications = Command.createUndoableNoResult(
       (input, stack) async {
         final current = settings.value;
         stack.push(current.notificationSettings.scheduledBroadcast);
@@ -204,13 +188,7 @@ class SettingsManager with MLogger implements Disposable {
           ),
         );
         _persistLocally();
-        await _http.updateUserSettings(
-          UserSettingsPatch(
-            notificationSettings: UserNotificationSettingsPatch(
-              scheduledBroadcast: input,
-            ),
-          ),
-        );
+        await _http.updateUserSettings(scheduledBroadcast: input);
       },
       undo: (UndoStack<bool> stack, reason) {
         final oldInput = stack.pop();
@@ -220,6 +198,7 @@ class SettingsManager with MLogger implements Disposable {
             scheduledBroadcast: oldInput,
           ),
         );
+        _persistLocally();
       },
       errorFilterFn: menoExceptionFilter,
     );
@@ -227,16 +206,21 @@ class SettingsManager with MLogger implements Disposable {
 
   final SettingsHttpService _http;
   final SettingsLocalService _local;
+  final AuthManager _auth;
 
-  /// Null when the user is a guest. All persistence calls are no-ops in that
-  /// case — settings live in memory only and reset on next cold start.
-  final Id? _currentUserId;
+  Id? _currentUserId;
 
-  bool get _isGuest => _currentUserId == null;
+  ListenableSubscription? _authSubscription;
+
+  bool get _isGuest => _currentUserId == null || !_currentUserId!.isValid;
 
   final settings = ValueNotifier<UserSettings>(const UserSettings());
 
   Future<SettingsManager> initialize() async {
+    _currentUserId = _auth.activeUserId.value;
+    _authSubscription = _auth.activeUserId.listen((userId, _) {
+      _onAuthChanged(userId);
+    });
     await _loadFromCache();
     if (!_isGuest) syncFromRemote.run();
     return this;
@@ -247,17 +231,28 @@ class SettingsManager with MLogger implements Disposable {
   late final Command<void, void> syncToRemote;
   late final Command<String, void> changeLanguage;
   late final Command<bool, void> toggleDarkMode;
-  late final Command<bool, void> toggleAppNotifications;
-  late final Command<bool, void> togglePushNotifications;
-  late final Command<bool, void> toggleEmailNotifications;
-  late final Command<bool, void> toggleLiveBroadcastNotifications;
-  late final Command<bool, void> toggleSubscribersNotifications;
-  late final Command<bool, void> toggleAddedAsCohostNotifications;
-  late final Command<bool, void> toggleScheduledBroadcastNotifications;
+  late final Command<bool, void> setAppNotifications;
+  late final Command<bool, void> setPushNotifications;
+  late final Command<bool, void> setEmailNotifications;
+  late final Command<bool, void> setLiveBroadcastNotifications;
+  late final Command<bool, void> setSubscribersNotifications;
+  late final Command<bool, void> setAddedAsCohostNotifications;
+  late final Command<bool, void> setScheduledBroadcastNotifications;
 
   // =========================================================================
   // PRIVATE HELPERS
   // =========================================================================
+
+  void _onAuthChanged(Id? userId) {
+    if (_currentUserId == userId) return;
+    _currentUserId = userId;
+
+    if (_isGuest) {
+      settings.value = const UserSettings();
+    } else {
+      unawaited(_loadFromCache().then((_) => syncFromRemote.run()));
+    }
+  }
 
   /// Loads the cached [UserSettingsDto] for the current user from local
   /// storage and populates [settings]. Falls back to [UserSettings] defaults
@@ -281,9 +276,12 @@ class SettingsManager with MLogger implements Disposable {
   }
 
   @override
-  FutureOr<dynamic> onDispose() {
-    log.d('NotesManager: Disposing...');
+  FutureOr<dynamic> onDispose() async {
+    log.d('SettingsManager: Disposing...');
 
+    await syncToRemote.runAsync();
+
+    _authSubscription?.cancel();
     settings.dispose();
 
     initializeFromCredential.dispose();
@@ -291,12 +289,12 @@ class SettingsManager with MLogger implements Disposable {
     syncToRemote.dispose();
     changeLanguage.dispose();
     toggleDarkMode.dispose();
-    toggleAppNotifications.dispose();
-    togglePushNotifications.dispose();
-    toggleEmailNotifications.dispose();
-    toggleLiveBroadcastNotifications.dispose();
-    toggleSubscribersNotifications.dispose();
-    toggleAddedAsCohostNotifications.dispose();
-    toggleScheduledBroadcastNotifications.dispose();
+    setAppNotifications.dispose();
+    setPushNotifications.dispose();
+    setEmailNotifications.dispose();
+    setLiveBroadcastNotifications.dispose();
+    setSubscribersNotifications.dispose();
+    setAddedAsCohostNotifications.dispose();
+    setScheduledBroadcastNotifications.dispose();
   }
 }

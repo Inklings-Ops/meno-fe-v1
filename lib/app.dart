@@ -7,6 +7,7 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/pages/loading_page.dart';
 import 'package:meno/_shared/widgets/interaction_connector.dart';
 import 'package:meno/features/auth/auth.dart';
+import 'package:meno/features/settings/manager/settings_manager.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
@@ -33,11 +34,20 @@ class MenoApp extends WatchingWidget {
     // di<LocalStorage>().clearAll();
     // di<SecureStorage>().deleteAll();
 
+    final settings = watchValue((SettingsManager m) => m.settings);
+
+    final themeMode = switch (settings.display) {
+      .system => ThemeMode.system,
+      .dark => ThemeMode.dark,
+      .light => ThemeMode.light,
+    };
+
     return ValueListenableBuilder(
       valueListenable: di<AuthManager>().activeUserId,
       builder: (context, userId, child) {
         return MaterialApp.router(
           key: ValueKey(userId),
+          themeMode: themeMode,
           darkTheme: MTheme.dark,
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [FlutterQuillLocalizations.delegate],
