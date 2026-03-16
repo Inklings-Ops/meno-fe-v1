@@ -175,12 +175,14 @@ class UserScopeManager with MLogger implements Disposable {
     getIt.registerSingletonWithDependencies(() {
       return SettingsHttpService(getIt<HttpClient>());
     }, dependsOn: [HttpClient]);
-    getIt.registerSingletonWithDependencies(() {
-      return SettingsManager(
+    getIt.registerSingletonAsync(() async {
+      final manager = await SettingsManager(
         currentUserId: currentUserId,
         http: getIt<SettingsHttpService>(),
         local: getIt<SettingsLocalService>(),
-      );
+      ).initialize();
+      manager.initializeFromCredential.run(credential);
+      return manager;
     }, dependsOn: [SettingsHttpService, SettingsLocalService]);
 
     // Live Scope Manager

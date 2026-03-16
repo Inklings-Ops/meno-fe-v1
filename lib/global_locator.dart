@@ -131,9 +131,8 @@ void configureGlobalDependencies() {
   /**
    * Broadcast Local Service
    *
-   * So, this is bumped up to the global locator so it can be registered
-   * before above the user scope to enable easy retrieval and reconnection for
-   * "zombie" broadcasts
+   * Bumped up to the root scope to enable retrieval and reconnection for
+   * "zombie" broadcasts before a user scope is pushed.
    */
   di.registerSingletonWithDependencies(() {
     return BroadcastLocalService(
@@ -145,20 +144,26 @@ void configureGlobalDependencies() {
   /**
    * Settings Local Service
    *
-   * This is also bumped up to the global locator so we can easily access the
-   * user's local settings (if any) on initial load before syncing with the
-   * remote source.
+   * Bumped up to the root scope so the user's cached settings are readable
+   * immediately on cold start — before the user scope and SettingsManager
+   * are created. SettingsManager.init() reads from this service first, then
+   * fires a background remote sync once the user scope is live.
    */
   di.registerSingletonWithDependencies(() {
     return SettingsLocalService(di<LocalStorage>());
   }, dependsOn: [LocalStorage]);
 
-  // User Scope Manager
+  /**
+   * User Scope Manager
+   *
+   * Depends on SettingsLocalService so the root-scope cache is guaranteed
+   * to exist before any user scope tries to read from it.
+   */
   di.registerSingletonAsync(() async {
     final scope = UserScopeManager(di<AuthManager>());
     await scope.initialize();
     return scope;
-  }, dependsOn: [AuthManager, OnboardingService]);
+  }, dependsOn: [AuthManager, OnboardingService, SettingsLocalService]);
 
   // Router
   di.registerLazySingleton(() {

@@ -11,6 +11,7 @@ import 'package:meno/features/discover/widgets/_widgets.dart';
 import 'package:meno/features/notes/notes.dart';
 import 'package:meno/features/onboarding/onboarding.dart';
 import 'package:meno/features/profile/pages/_pages.dart';
+import 'package:meno/features/settings/pages/_pages.dart';
 
 class MenoRouter {
   /// Factory that wires up the refresh listenable from the DI graph.
@@ -81,6 +82,23 @@ class MenoRouter {
           path: R.resetPwdSuccess,
           builder: (context, state) => const ResetPasswordSuccessPage(),
         ),
+        GoRoute(
+          path: R.settings,
+          builder: (context, state) => const SettingsPage(),
+        ),
+        GoRoute(
+          path: R.notificationSettings,
+          builder: (context, state) => const NotificationsSettingsPage(),
+        ),
+        GoRoute(
+          path: R.securitySettings,
+          builder: (context, state) => const SecuritySettingsPage(),
+        ),
+        GoRoute(
+          path: R.notificationSettings,
+          builder: (context, state) => const NotificationsSettingsPage(),
+        ),
+        GoRoute(path: R.about, builder: (context, state) => const AboutPage()),
         GoRoute(
           path: R.broadcastEditor,
           pageBuilder: (context, state) {
