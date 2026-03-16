@@ -77,7 +77,10 @@ class BottomNavBar extends StatelessWidget {
       // Navigate to create broadcast screen
       await ctx.push(R.broadcastEditor);
     } else if (ctx.mounted) {
-      ctx.showErrorSnackBar('Microphone permission is required to broadcast');
+      final message = service.microphone.value is! PermissionGranted
+          ? 'Microphone permission is required to broadcast'
+          : 'Background permission is required for stable broadcasting';
+      ctx.showErrorSnackBar(message);
     }
   }
 }

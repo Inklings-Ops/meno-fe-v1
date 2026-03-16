@@ -288,15 +288,18 @@ final class PermissionsService with MLogger implements Disposable {
       return;
     }
 
+    // Request notifications (critical for foreground services on Android 13+)
+    if (notifications.value is! PermissionGranted) {
+      await _requestNotificationPermission(context);
+    }
+
     // Request background (Android only, critical for streaming)
     if (Platform.isAndroid && background.value is! PermissionGranted) {
       await _requestBackgroundPermission(context);
     }
 
-    // Request notifications (nice to have, but not critical)
-    if (notifications.value is! PermissionGranted) {
-      await _requestNotificationPermission(context);
-    }
+    // Final verification of all states
+    await _checkAllPermissions();
 
     log.i('PermissionsService: Broadcast permissions flow completed');
   }
