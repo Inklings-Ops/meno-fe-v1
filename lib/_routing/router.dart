@@ -58,6 +58,11 @@ final class MenoRouter {
   /// Convenience navigation forwarders for use outside widget trees.
   void pop() => config.routerDelegate.navigatorKey.currentState?.pop();
 
+  /// Convenience navigation forwarders for use outside widget trees.
+  Future<T?> replace<T>(String route, {Object? extra}) {
+    return config.replace<T?>(route, extra: extra);
+  }
+
   ///  Router definition and assembly
   static GoRouter _buildRouter(
     Listenable refreshListenable,

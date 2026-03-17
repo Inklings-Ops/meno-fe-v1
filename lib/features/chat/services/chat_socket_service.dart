@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/services/socket_client.dart';
 import 'package:meno/features/chat/model/_model.dart';
 
-final class ChatSocketService {
+final class ChatSocketService with MLogger {
   const ChatSocketService(this._client);
 
   final SocketClient _client;
@@ -43,6 +44,7 @@ final class ChatSocketService {
       onListen: () {
         subscription = _client.on(event, (dynamic data) {
           final dto = MessageDto.fromJson(data);
+          log.f('ChatSocketService: ${event.name}: ${dto.content}');
           controller.add(dto);
         });
       },

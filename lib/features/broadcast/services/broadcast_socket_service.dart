@@ -4,7 +4,7 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
 
-final class BroadcastSocketService {
+final class BroadcastSocketService with MLogger {
   const BroadcastSocketService(this._client);
 
   final SocketClient _client;
@@ -116,6 +116,7 @@ final class BroadcastSocketService {
       onListen: () {
         subscription = _client.on(.newBroadcastListener, (dynamic data) {
           final dto = ParticipantDto.fromJson(data);
+          log.f('BroadcastSocketService: Participant Joined: ${dto.fullName}');
           controller.add(dto.toDomain);
         });
       },
@@ -135,6 +136,7 @@ final class BroadcastSocketService {
       onListen: () {
         subscription = _client.on(.broadcastListenerLeft, (dynamic data) {
           final dto = ParticipantDto.fromJson(data);
+          log.f('BroadcastSocketService: Participant Left: ${dto.fullName}');
           controller.add(dto.toDomain);
         });
       },

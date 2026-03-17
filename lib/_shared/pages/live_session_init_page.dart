@@ -22,7 +22,7 @@ class LiveSessionInitPage extends WatchingWidget {
     }
 
     callOnceAfterThisBuild((ctx) {
-      ctx.replace(R.liveBroadcast);
+      di<MenoRouter>().replace<void>(R.liveBroadcast);
     });
 
     return const Scaffold(body: Center(child: MLoadingIndicator(100, 100)));
