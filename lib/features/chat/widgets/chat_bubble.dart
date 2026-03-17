@@ -15,6 +15,7 @@ class ChatBubble extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(message);
     final broadcastCreatorId = di<BroadcastSession>().broadcast.hostId;
     final isHost = broadcastCreatorId == message.senderId;
 

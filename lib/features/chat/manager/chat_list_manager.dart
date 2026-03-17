@@ -27,6 +27,7 @@ final class ChatListManager with MLogger implements Disposable {
   StreamSubscription<MessageDto>? _newMessageSub;
   StreamSubscription<MessageDto>? _editedMessageSub;
   StreamSubscription<MessageDto>? _deletedMessageSub;
+  StreamSubscription<void>? _reconnectSub;
 
   late final initialize = Command.createAsyncNoParamNoResult(() async {
     await _cancelStreamSubscriptions();
@@ -45,15 +46,24 @@ final class ChatListManager with MLogger implements Disposable {
       log.d('ChatListManager: deleted message ${dto.id}');
       feed.removeMessage(dto.id);
     });
+
+    _reconnectSub = _socket.onReconnected.listen((_) {
+      log.i('ChatListManager: socket reconnected, syncing feed');
+      if (feed.updateWasCalled) {
+        feed.updateDataCommand.run();
+      }
+    });
   }, errorFilterFn: menoExceptionFilter)..pipeToCommand(feed.updateDataCommand);
 
   Future<void> _cancelStreamSubscriptions() async {
     await _newMessageSub?.cancel();
     await _editedMessageSub?.cancel();
     await _deletedMessageSub?.cancel();
+    await _reconnectSub?.cancel();
     _newMessageSub = null;
     _editedMessageSub = null;
     _deletedMessageSub = null;
+    _reconnectSub = null;
   }
 
   @override

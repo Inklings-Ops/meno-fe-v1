@@ -52,23 +52,43 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
   Future<void> updateFeedData() async {
     final response = await _http.getMessages(_broadcastId.getOrCrash());
 
-    final oldItems = List<MessageProxy>.from(items);
-    items.clear();
+    final currentIds = items.map((i) => i.idStr).toSet();
 
-    items.addAll(response.items.map(_repository.acquire));
+    // Identify new messages that aren't in the list yet
+    final newMessages = response.items
+        .where((m) => !currentIds.contains(m.id.getOrCrash()))
+        .toList();
+
+    if (newMessages.isNotEmpty) {
+      // Prepend new messages in reverse order (server returns newest first)
+      // We do this manually to avoid repeated O(N) shifts and refresh calls
+      final newProxies = newMessages.reversed.map((m) {
+        final proxy = _repository.acquire(m);
+        proxy.referenceCount++; // Feed reference
+        _repository.release(proxy); // Release acquire reference
+        return proxy;
+      }).toList();
+
+      items.insertAll(0, newProxies);
+    }
+
+    // Update existing messages in case they were edited
+    for (final message in response.items) {
+      if (currentIds.contains(message.id.getOrCrash())) {
+        updateMessage(message);
+      }
+    }
 
     updatePaginationState(currentPage: 1, totalPages: response.totalPages);
 
     flushItemCount(); // the full first page must appear without delay.
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _repository.releaseAll(oldItems);
-    });
   }
 
   void addMessageAtStart(Message message) {
     final proxy = _repository.acquire(message);
     addItemAtStart(proxy);
+    // Release the reference from 'acquire' as the feed now owns it via 'addItemAtStart'
+    _repository.release(proxy);
   }
 
   void updateMessage(Message message) {

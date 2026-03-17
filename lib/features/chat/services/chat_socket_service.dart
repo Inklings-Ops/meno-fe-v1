@@ -26,6 +26,9 @@ final class ChatSocketService {
 
   Stream<MessageDto> get onDeletedMessage => _messageStream(.deletedMessage);
 
+  Stream<void> get onReconnected =>
+      _client.connectionState.where((s) => s == .connected).map((_) {});
+
   // =========================================================================
   // PRIVATE
   // =========================================================================

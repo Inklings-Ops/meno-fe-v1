@@ -134,7 +134,7 @@ class GroupWidgets extends StatelessWidget {
                 ),
               ],
             ),
-            if (isLive) Spaces.verticalXLarge else Spaces.verticalXXLarge,
+            if (isLive) Spaces.verticalXXLarge else Spaces.verticalXXLarge,
           ],
         ),
       ),

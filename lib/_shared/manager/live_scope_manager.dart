@@ -62,12 +62,9 @@ class LiveScopeManager with MLogger implements Disposable {
         await manager.reconnectToSocket.runAsync();
 
         // Redirect once reconnect is successful
-        final router = di<MenoRouter>().config;
-        final location =
-            router.routerDelegate.currentConfiguration.last.matchedLocation;
-
-        if (!location.startsWith('/live')) {
-          router.go(R.liveSessionInitialization);
+        final router = di<MenoRouter>();
+        if (!router.currentLocation.startsWith('/live')) {
+          router.push(R.liveSessionInitialization);
         }
       } catch (e) {
         log.e('LiveScopeManager: Reconnect redirect error - $e');

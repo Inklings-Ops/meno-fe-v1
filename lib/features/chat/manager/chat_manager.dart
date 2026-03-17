@@ -63,7 +63,7 @@ final class ChatManager with MLogger implements Disposable {
         broadcastId: message.broadcastId.getOrCrash(),
         content: content.value.getOrCrash(),
         createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
+        updatedAt: .now(),
       );
 
       await _socket.emitEditMessage(args);
@@ -71,7 +71,10 @@ final class ChatManager with MLogger implements Disposable {
       content.value = .empty;
     },
     errorFilterFn: menoExceptionFilter,
-    restriction: messageToEdit.map((m) => m == null),
+    restriction: messageToEdit.combineLatest(
+      content,
+      (m, c) => m == null || !c.isValid,
+    ),
   );
 
   @override

@@ -17,7 +17,9 @@ class ChatList extends WatchingWidget {
     final itemCount = watch(feed.itemCount).value;
     final isFetching = watch(feed.isFetching).value;
 
-    callOnce((_) => feed.updateDataCommand.run());
+    if (!feed.updateWasCalled) {
+      callOnce((_) => feed.updateDataCommand.run());
+    }
 
     registerHandler(
       target: feed.commandErrors,
