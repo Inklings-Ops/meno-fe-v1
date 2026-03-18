@@ -36,7 +36,7 @@ class ParticipantItemWidget extends StatelessWidget {
                 _ParticipantAvatar(participant: participant, isEmpty: isEmpty),
                 Spaces.verticalSmall,
                 MText(
-                  isEmpty ? participant!.fullName.getOrCrash() : 'Add Co-host',
+                  isEmpty ? 'Add Co-host' : participant!.fullName.getOrCrash(),
                   style: textTheme.microMedium.copyWith(height: 1),
                   maxLines: 1,
                   overflow: .ellipsis,

@@ -99,7 +99,9 @@ class BroadcastFeedDataSource extends PagedFeedDataSource<Broadcast?> {
 
   /// Remove a broadcast by id (now-live feeds use this when a broadcast ends).
   void _onEndedBroadcast(EndedBroadcast ended) {
-    removeObject(items.firstWhere((b) => b?.id == ended.details.id));
+    final index = items.indexWhere((b) => b?.id == ended.details.id);
+    if (index == -1) return;
+    removeObject(items[index]);
     refreshItemCount();
   }
 

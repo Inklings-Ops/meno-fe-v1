@@ -210,30 +210,27 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       }
     });
 
-    // ✅ endSession result: on success, disconnect LiveKit + pop live scope.
-    // clearActiveBroadcastId is called here for the host. For listeners, it
-    // was already called when the server fired onEndedBroadcast. Calling it
-    // again is safe (idempotent remove).
-    endSession.results.listen((result, _) async {
-      if (result.hasError) {
-        final message = errorMessage(result.error);
-        log.e('LiveSessionManager: Error ending session - $message');
-        state.value = .error(message);
-        status.value = .offAir;
-        return;
-      }
+    endSession.listen((_, __) async {
+      log.i('LiveSessionManager: Session ended on server, disconnecting');
+      await _livekit.disconnect();
+      await _local.clearActiveBroadcastId(_currentUserId);
+      state.value = const .ended();
+      status.value = .offAir;
 
-      if (result.isSuccess) {
-        log.i('LiveSessionManager: Session ended on server, disconnecting');
-        await _livekit.disconnect();
-        await _local.clearActiveBroadcastId(_currentUserId);
-        state.value = const .ended();
-        status.value = .offAir;
+      // Tear down the live scope — disposes all scoped services and signals
+      // the rest of the app (router, shell) that no session is active.
+      log.i('LiveSessionManager: Popping live session scope');
+    });
 
-        // Tear down the live scope — disposes all scoped services and signals
-        // the rest of the app (router, shell) that no session is active.
-        log.i('LiveSessionManager: Popping live session scope');
-      }
+    endSession.errors.listen((error, _) async {
+      final message = errorMessage(error?.error);
+
+      // Still attempt to end the broadcast and dispose resources
+      await _livekit.disconnect();
+      await _local.clearActiveBroadcastId(_currentUserId);
+      state.value = const .ended();
+      status.value = .offAir;
+      log.i('LiveSessionManager: Ended live session with error: $message ');
     });
 
     // Listen for errors on the LiveKit toggle microphone

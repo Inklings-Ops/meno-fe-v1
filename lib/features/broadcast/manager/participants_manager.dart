@@ -31,17 +31,20 @@ final class ParticipantsManager with MLogger implements Disposable {
 
   bool _isInitialized = false;
 
-  /// Current live participants (can leave and rejoin)
-  final _participantsMap = MapNotifier<String, Participant>(data: {});
+  /// Map for O(1) lookup of current participants.
+  final _participantsMap = <String, Participant>{};
 
-  /// ALL participants that EVER joined (historical - never removed)
-  final _allTimeParticipantsMap = <String, Participant>{};
+  /// Set of unique IDs that joined throughout the broadcast lifespan.
+  final Set<String> _allTimeIds = {};
 
-  /// Sorted list of current live participants
+  /// Current live participants (sorted: Host -> Cohosts -> Listeners).
   final _sortedParticipants = ListNotifier<Participant>(data: []);
 
-  /// Last 3 participants to join (for avatar stack)
-  final recentParticipants = ValueNotifier<List<Participant>>([]);
+  /// Unique count of participants who joined (only goes up).
+  final allTimeCount = ValueNotifier<int>(0);
+
+  /// Last 3 unique participants who joined (for avatar stack).
+  final recentParticipants = ListNotifier<Participant>(data: []);
 
   final searchQuery = ValueNotifier<String?>(null);
   final displayedCount = ValueNotifier<int>(50);
@@ -50,13 +53,8 @@ final class ParticipantsManager with MLogger implements Disposable {
   late final initialize = Command.createSyncNoParamNoResult(() {
     if (_isInitialized) return;
 
-    _onParticipantJoined = _socket.onParticipantJoined.listen((participant) {
-      _participantsMap[participant.id.getOrCrash()] = participant;
-    });
-
-    _onParticipantLeft = _socket.onParticipantLeft.listen((participant) {
-      _participantsMap.remove(participant.id.getOrCrash());
-    });
+    _onParticipantJoined = _socket.onParticipantJoined.listen(_handleJoin);
+    _onParticipantLeft = _socket.onParticipantLeft.listen(_handleLeave);
 
     const debounceDuration = Duration(milliseconds: _searchDebounceMs);
     searchQuery.debounce(debounceDuration).listen(_handleSearchChange);
@@ -67,15 +65,14 @@ final class ParticipantsManager with MLogger implements Disposable {
   // Initial fetch command after the socket event have been subscribed to
   late final _fetchParticipants = Command.createAsyncNoParamNoResult(() async {
     final participants = await _http.getLiveListeners(_broadcastId);
-    _handleParticipantsList(participants);
+    _handleInitialList(participants);
   }, errorFilterFn: menoExceptionFilter);
 
   /// Load more participants (pagination)
   late final loadMore = Command.createSyncNoParamNoResult(() {
     final current = displayedCount.value;
-    final total = totalCount.value;
+    final total = _sortedParticipants.value.length;
 
-    // Already showing all the participants
     if (current >= total) return;
 
     final newCount = (current + _pageSize).clamp(0, _maxWithoutViewAll);
@@ -84,7 +81,7 @@ final class ParticipantsManager with MLogger implements Disposable {
 
   /// Show all participants (up to max)
   late final showAll = Command.createSyncNoParamNoResult(() {
-    final total = totalCount.value;
+    final total = _sortedParticipants.value.length;
     displayedCount.value = total.clamp(0, _maxWithoutViewAll);
   });
 
@@ -106,119 +103,127 @@ final class ParticipantsManager with MLogger implements Disposable {
 
   late final isLoading = _fetchParticipants.isRunning;
 
-  late final totalCount = ValueNotifier<int>(_participantsMap.length);
-
-  /// Total number of ALL participants that ever joined (only goes up!)
-  late final allTimeCount = ValueNotifier<int>(0);
+  /// Current number of live participants.
+  late final totalCount =
+      (_sortedParticipants as ValueListenable<List<Participant>>).map(
+        (list) => list.length,
+      );
 
   /// Host participant (nullable)
-  late final host = _sortedParticipants.where((p) => p.isHost).firstOrNull;
+  late final host = (_sortedParticipants as ValueListenable<List<Participant>>)
+      .map((list) => list.where((p) => p.isHost).firstOrNull);
 
   /// All cohosts
-  late final cohosts = _sortedParticipants.where((p) => p.isCohost).toList();
+  late final cohosts =
+      (_sortedParticipants as ValueListenable<List<Participant>>).map(
+        (list) => list.where((p) => p.isCohost).toList(),
+      );
 
   /// All listeners
-  late final listeners = _sortedParticipants
-      .where((p) => p.isListener)
-      .toList();
+  late final listeners =
+      (_sortedParticipants as ValueListenable<List<Participant>>).map(
+        (list) => list.where((p) => p.isListener).toList(),
+      );
 
   /// Filtered + paginated participants for display
-  ///
-  /// Pipeline:
-  /// 1. Start with sorted list
-  /// 2. Filter by search query (if active)
-  /// 3. Apply pagination limit
-  /// 4. Debounce for performance
   late final displayedParticipants = searchQuery
-      .combineLatest3(_sortedParticipants, displayedCount, (
-        query,
-        participants,
-        count,
-      ) {
-        // Filter by search
-        final isQueryEmpty = query == null || query.isEmpty;
-        final filtered = isQueryEmpty
-            ? participants
-            : participants.where((p) {
-                final name = p.fullName.getOrElse((_) => '').toLowerCase();
-                final q = query.toLowerCase();
-                return name.contains(q);
-              }).toList();
+      .combineLatest3<List<Participant>, int, List<Participant>>(
+        _sortedParticipants,
+        displayedCount,
+        (query, participants, count) {
+          final isQueryEmpty = query == null || query.isEmpty;
+          final filtered = isQueryEmpty
+              ? participants
+              : participants.where((p) {
+                  final name = p.fullName.getOrElse((_) => '').toLowerCase();
+                  final q = query.toLowerCase();
+                  return name.contains(q);
+                }).toList();
 
-        // Apply pagination
-        final end = count.clamp(0, filtered.length);
-        return filtered.sublist(0, end);
-      })
+          final end = count.clamp(0, filtered.length);
+          return filtered.sublist(0, end);
+        },
+      )
       .debounce(const Duration(milliseconds: _searchDebounceMs));
 
   /// Whether more participants can be loaded
-  late final hasMore = displayedCount.combineLatest(
+  late final hasMore = displayedCount.combineLatest<int, bool>(
     totalCount,
     (displayed, total) => displayed < total && displayed < _maxWithoutViewAll,
   );
 
   /// Whether showing all available participants
-  late final isShowingAll = displayedCount.combineLatest(
+  late final isShowingAll = displayedCount.combineLatest<int, bool>(
     totalCount,
     (displayed, total) => displayed >= total,
   );
 
-  void _handleParticipantsList(List<Participant>? participants) {
-    if (participants == null || participants.isEmpty) return;
+  void _handleJoin(Participant p) {
+    final id = p.id.getOrCrash();
+    if (_participantsMap.containsKey(id)) return;
 
-    _participantsMap.startTransAction();
-    _participantsMap.clear();
-    for (final participant in participants) {
-      final id = participant.id.getOrCrash();
-      _participantsMap[id] = participant;
+    _participantsMap[id] = p;
+    _insertIntoSortedList(p);
 
-      // ⭐ Add to all-time map (never removed!)
-      if (!_allTimeParticipantsMap.containsKey(id)) {
-        _allTimeParticipantsMap[id] = participant;
+    // Track unique all-time joins
+    if (!_allTimeIds.contains(id)) {
+      _allTimeIds.add(id);
+      allTimeCount.value++;
+
+      // Keep only the 3 most recent unique joiners
+      recentParticipants.add(p);
+      if (recentParticipants.length > 3) {
+        recentParticipants.removeAt(0);
       }
     }
-    _participantsMap.endTransAction();
-
-    // Update all-time count
-    allTimeCount.value = _allTimeParticipantsMap.length;
-
-    // Update recent participants (last 3)
-    _updateRecentParticipants();
-
-    // Rebuild sorted list
-    _rebuildSortedList();
   }
 
-  /// Rebuild sorted list from map
-  void _rebuildSortedList() {
-    final participants = _participantsMap.value.values.toList();
-    totalCount.value = participants.length;
+  void _handleLeave(Participant p) {
+    final id = p.id.getOrCrash();
+    if (!_participantsMap.containsKey(id)) return;
 
-    // Sort by role priority only
-    participants.sort((a, b) {
-      final priorityA = _getRolePriority(a.role);
-      final priorityB = _getRolePriority(b.role);
-      return priorityA.compareTo(priorityB);
-    });
+    _participantsMap.remove(id);
+    _sortedParticipants.removeWhere((item) => item.id.getOrCrash() == id);
+  }
 
-    // Clear before adding to avoid duplicates
+  void _handleInitialList(List<Participant>? participants) {
+    if (participants == null) return;
+
     _sortedParticipants.startTransAction();
     _sortedParticipants.clear();
-    _sortedParticipants.addAll(participants);
+    _participantsMap.clear();
+
+    for (final p in participants) {
+      final id = p.id.getOrCrash();
+      _participantsMap[id] = p;
+      _insertIntoSortedList(p);
+
+      if (!_allTimeIds.contains(id)) {
+        _allTimeIds.add(id);
+        allTimeCount.value++;
+
+        recentParticipants.add(p);
+        if (recentParticipants.length > 3) {
+          recentParticipants.removeAt(0);
+        }
+      }
+    }
     _sortedParticipants.endTransAction();
   }
 
-  /// Update the last 3 participants for avatar stack
-  void _updateRecentParticipants() {
-    final all = _allTimeParticipantsMap.values.toList();
-
-    // Take last 3 (most recent joiners)
-    final recent = all.length > 3 ? all.sublist(all.length - 3) : all;
-
-    recentParticipants.value = recent;
+  /// Inserts a participant into the correct position based on role priority.
+  void _insertIntoSortedList(Participant p) {
+    final priority = _getRolePriority(p.role);
+    var index = 0;
+    for (; index < _sortedParticipants.length; index++) {
+      if (_getRolePriority(_sortedParticipants[index].role) > priority) {
+        break;
+      }
+    }
+    _sortedParticipants.insert(index, p);
   }
 
-  /// Get numeric priority for role (lower = higher priority)
+  /// Get numeric priority for role (lower = higher priority).
   int _getRolePriority(ParticipantRole role) => switch (role) {
     ParticipantRole.host => 0,
     ParticipantRole.cohost => 1,
@@ -230,15 +235,9 @@ final class ParticipantsManager with MLogger implements Disposable {
     final isQueryEmpty = query == null || query.isEmpty;
     isSearching.value = !isQueryEmpty;
 
-    // Show more results when searching
     if (!isQueryEmpty && displayedCount.value < _maxWithoutViewAll) {
       displayedCount.value = _maxWithoutViewAll;
     }
-  }
-
-  String _getErrorMessage(Object? error) {
-    if (error is MenoException) return error.message;
-    return error.toString();
   }
 
   @override
@@ -249,13 +248,12 @@ final class ParticipantsManager with MLogger implements Disposable {
     _onParticipantJoined = null;
     _onParticipantLeft = null;
 
-    _participantsMap.dispose();
     _sortedParticipants.dispose();
+    recentParticipants.dispose();
     searchQuery.dispose();
     isSearching.dispose();
     displayedCount.dispose();
     allTimeCount.dispose();
-    recentParticipants.dispose();
 
     _fetchParticipants.dispose();
     initialize.dispose();

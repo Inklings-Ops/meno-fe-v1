@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_routing/_routing.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -17,7 +17,7 @@ class RootShell extends WatchingWidget {
     GoRouterState state,
     StatefulNavigationShell navigationShell,
   ) => RootShell._(
-    key: const ValueKey<String>('LiveSessionShell'),
+    key: const ValueKey<String>('RootShell'),
     navigationShell: navigationShell,
     currentRoute: state.path,
   );
@@ -27,29 +27,47 @@ class RootShell extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final snapshot = watchFuture<GetIt, void>(
-      (getIt) => getIt.allReady(timeout: const Duration(seconds: 30)),
-      target: di,
-      initialValue: null,
+    final futureNotifier = createOnce(
+      () => ValueNotifier<Future<void>>(
+        di.allReady(timeout: const Duration(seconds: 30)),
+      ),
     );
 
-    if (snapshot.hasError) return MenoErrorWidget(error: snapshot.error);
+    final snapshot = watchFuture<ValueNotifier<Future<void>>, void>(
+      (n) => n.value,
+      target: futureNotifier,
+      initialValue: null,
+      allowFutureChange: true,
+    );
 
-    if (snapshot.isLoading) return const LoadingPage();
-
+    // Watch userId unconditionally — ordering rule requires all watch* calls
+    // to run on every build, regardless of the snapshot state.
     final userId = watchValue((AuthManager m) => m.activeUserId);
+
+    if (snapshot.hasError) {
+      return MenoErrorWidget(
+        error: snapshot.error,
+        onRetry: () async {
+          futureNotifier.value = di.allReady(
+            timeout: const Duration(seconds: 30),
+          );
+        },
+      );
+    }
+
+    if (snapshot.connectionState == .waiting) return const LoadingPage();
 
     final index = navigationShell.currentIndex;
     final useSideNavRail = ResponsiveBreakpoints.of(context).largerThan(MOBILE);
 
-    Widget sideNavRail = const SizedBox();
-    Widget? bottomNavBar = BottomNavBar(selectedIndex: index, onTap: onTap);
+    Widget sideNavRail = const SizedBox.shrink();
+    Widget? bottomNavBar = BottomNavBar(selectedIndex: index, onTap: _onTap);
 
     if (useSideNavRail) {
       bottomNavBar = null;
       sideNavRail = SideNavRail(
         selectedIndex: index,
-        onTap: onTap,
+        onTap: _onTap,
         currentRoute: currentRoute,
       );
     }
@@ -66,7 +84,7 @@ class RootShell extends WatchingWidget {
     );
   }
 
-  void onTap(int index) => navigationShell.goBranch(
+  void _onTap(int index) => navigationShell.goBranch(
     index,
     initialLocation: index == navigationShell.currentIndex,
   );

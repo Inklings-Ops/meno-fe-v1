@@ -70,7 +70,7 @@ final class BroadcastEditorManager with MLogger implements Disposable {
       final createdIndex = BroadcastCreationStep.created.index;
       if (step.value.index >= createdIndex && _createdBroadcastId != null) {
         log.i('BroadcastFormManager: Broadcast already created, recovering');
-        return fetchBroadcast.runAsync();
+        return fetchBroadcast.runAsync(_createdBroadcastId);
       }
 
       log.i('BroadcastFormManager: Step 1 - Creating broadcast');

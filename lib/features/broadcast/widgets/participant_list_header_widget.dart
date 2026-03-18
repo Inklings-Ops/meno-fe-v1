@@ -29,7 +29,9 @@ class _ParticipantCountWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final totalCount = watchValue((ParticipantsManager m) => m.totalCount);
+    final totalCount = watchValue<ParticipantsManager, int>(
+      (m) => m.totalCount,
+    );
     return Row(
       children: [
         Icon(MIcons.hearing, size: 18, color: colors.onDisabled),
