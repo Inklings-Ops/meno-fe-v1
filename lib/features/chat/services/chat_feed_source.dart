@@ -10,10 +10,12 @@ const _kChatDebounceDuration = Duration(milliseconds: 80);
 final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
   ChatFeedSource({
     required ChatHttpService http,
+    required ChatSocketService socket,
     required ChatDataRepository repository,
     required Id broadcastId,
     super.initialItems,
   }) : _http = http,
+       _socket = socket,
        _repository = repository,
        _broadcastId = broadcastId,
        // Pass the debounce duration — socket bursts are coalesced,
@@ -21,6 +23,7 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
        super(debounceDuration: _kChatDebounceDuration);
 
   final ChatHttpService _http;
+  final ChatSocketService _socket;
   final ChatDataRepository _repository;
   final Id _broadcastId;
 
@@ -50,12 +53,12 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
 
   @override
   Future<void> updateFeedData() async {
-    final response = await _http.getMessages(_broadcastId.getOrCrash());
+    final result = await _socket.emitGetChatMessages(_broadcastId.getOrCrash());
 
     final currentIds = items.map((i) => i.idStr).toSet();
 
     // Identify new messages that aren't in the list yet
-    final newMessages = response.items
+    final newMessages = result.items
         .where((m) => !currentIds.contains(m.id.getOrCrash()))
         .toList();
 
@@ -73,13 +76,13 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
     }
 
     // Update existing messages in case they were edited
-    for (final message in response.items) {
+    for (final message in result.items) {
       if (currentIds.contains(message.id.getOrCrash())) {
         updateMessage(message);
       }
     }
 
-    updatePaginationState(currentPage: 1, totalPages: response.totalPages);
+    updatePaginationState(currentPage: 1, totalPages: result.totalPages);
 
     flushItemCount(); // the full first page must appear without delay.
   }
@@ -87,7 +90,8 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
   void addMessageAtStart(Message message) {
     final proxy = _repository.acquire(message);
     addItemAtStart(proxy);
-    // Release the reference from 'acquire' as the feed now owns it via 'addItemAtStart'
+    // Release the reference from 'acquire' as the feed now owns it via
+    // 'addItemAtStart'
     _repository.release(proxy);
   }
 

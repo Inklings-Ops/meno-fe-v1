@@ -7,72 +7,10 @@ import 'package:meno/features/notes/manager/_manager.dart';
 import 'package:meno/features/notes/model/entities/note.dart';
 import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
-class NoteListWidget extends WatchingWidget {
-  const NoteListWidget({
-    super.key,
-    this.showAddButton = false,
-    this.isForLiveScaffold = false,
-    this.physics,
-    this.controller,
-    this.primary,
-    this.isNested = false,
-  });
-
-  final bool showAddButton;
-
-  /// Flag to set when the notes list is to be displayed from a Live
-  /// Broadcast or Live Stream scaffold.
-  final bool isForLiveScaffold;
-  final ScrollPhysics? physics;
-  final ScrollController? controller;
-  final bool? primary;
-  final bool isNested;
-
-  @override
-  Widget build(BuildContext ctx) {
-    final notes = watchValue((NotesManager m) => m.notes);
-    final isLoading = watchValue((NotesManager m) => m.initialize.isRunning);
-
-    if (isLoading) return Skeletonizer(child: NotesList(notes: fakeNotes));
-
-    return CustomScrollView(
-      primary: primary,
-      controller: controller,
-      physics: physics,
-      slivers: [
-        if (isNested)
-          Builder(
-            builder: (context) => SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-          ),
-        SliverPadding(
-          padding: const .all(16),
-          sliver: SliverList.separated(
-            itemCount: notes.length,
-            separatorBuilder: (_, __) => Spaces.verticalLarge,
-            itemBuilder: (context, index) {
-              final note = notes[index];
-              return NoteCard(
-                key: ValueKey(note.id),
-                note: note,
-                showAddButton: showAddButton,
-                onTap: () => ctx.push(R.noteEditor(note.id.getOrCrash())),
-                onLongPress: () => _OptionsModal.show(ctx, note),
-                onOptionsTap: () => _OptionsModal.show(ctx, note),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _OptionsModal extends WatchingWidget {
-  const _OptionsModal._({required this.note, this.folderId}) : super(key: null);
+class NoteOptionsModal extends WatchingWidget {
+  const NoteOptionsModal._({required this.note, this.folderId})
+    : super(key: null);
 
   final Note note;
   final Id? folderId;
@@ -82,7 +20,7 @@ class _OptionsModal extends WatchingWidget {
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
-      builder: (_) => _OptionsModal._(note: note, folderId: folderId),
+      builder: (_) => NoteOptionsModal._(note: note, folderId: folderId),
     );
   }
 

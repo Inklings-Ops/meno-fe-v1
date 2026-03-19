@@ -65,13 +65,14 @@ class _FolderPageContent extends WatchingWidget {
             else ...[
               const SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.all(16),
+                  padding: .symmetric(horizontal: 16),
                   child: _FolderWidget(),
                 ),
               ),
+              const SliverToBoxAdapter(child: Spaces.verticalLarge),
               const SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: .symmetric(horizontal: 16),
                   child: _SearchBox(),
                 ),
               ),
@@ -286,7 +287,7 @@ class _FolderNotesList extends WatchingWidget {
       );
     }
 
-    return NotesList(
+    return NotesListWidget(
       notes: notes,
       onNoteTap: (note) => ctx.push(R.noteEditor(note.id.getOrCrash())),
       onNoteOptionsTap: (note) => _NoteOptionsModal.show(ctx, note, folder.id),

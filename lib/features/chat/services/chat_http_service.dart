@@ -3,7 +3,7 @@ import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/chat/model/_model.dart';
 
-final class ChatHttpService {
+final class ChatHttpService with MLogger {
   const ChatHttpService(this._client);
 
   final HttpClient _client;
@@ -13,8 +13,8 @@ final class ChatHttpService {
     OrderBy orderBy = OrderBy.desc,
     PaginationParams pagination = const PaginationParams(),
     CancelToken? cancelToken,
-  }) {
-    return _client.get(
+  }) async {
+    final result = await _client.get(
       '/chat-messages',
       fromJson: (json) => PagedList.fromJson(
         json,
@@ -29,5 +29,7 @@ final class ChatHttpService {
         'orderBy': orderBy.value.toLowerCase(),
       },
     );
+    log.f('ChatHttpService: Got previous messages => $result');
+    return result;
   }
 }

@@ -10,7 +10,6 @@ import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/notes_local_service.dart';
 import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class SelectNotesModal extends WatchingWidget {
   const SelectNotesModal._([this.excludedFolderId]) : super(key: null);
@@ -84,7 +83,7 @@ class _Content extends WatchingWidget {
           _SearchBox(searchQuery: searchQuery),
           Spaces.verticalLarge,
           Expanded(
-            child: NotesList(
+            child: NotesListWidget(
               notes: notes,
               padding: .zero,
               showAddButton: true,
@@ -140,11 +139,7 @@ class _LoadingContent extends StatelessWidget {
         crossAxisAlignment: .stretch,
         children: [
           Spaces.verticalLarge,
-          Expanded(
-            child: Skeletonizer(
-              child: NotesList(notes: fakeNotes, padding: .zero),
-            ),
-          ),
+          Expanded(child: NotesListWidget(notes: fakeNotes, isLoading: true)),
           Spaces.verticalXLarge,
         ],
       ),

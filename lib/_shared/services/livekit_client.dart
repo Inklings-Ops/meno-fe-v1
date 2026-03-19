@@ -82,16 +82,11 @@ class LiveKitClient with MLogger implements Disposable {
   ///
   /// Disconnect from room
   Future<void> disconnect() async {
-    try {
-      log.i('LiveKit: Disconnecting from room');
-      _updateConnectionState(.disconnected);
+    log.i('LiveKit: Disconnecting from room');
+    _updateConnectionState(.disconnected);
 
-      await _room?.disconnect();
-      log.i('LiveKit: Disconnected successfully');
-    } catch (e) {
-      log.e('LiveKit: Error during disconnect - $e');
-      throw LiveKitUnexpectedError(e.toString());
-    }
+    await _room?.disconnect();
+    log.i('LiveKit: Disconnected successfully');
   }
 
   /// Enable or disable local microphone
@@ -262,25 +257,21 @@ class LiveKitClient with MLogger implements Disposable {
   FutureOr<dynamic> onDispose() async {
     log.d('LiveKit: Disposing client');
 
-    try {
-      // Cancel listener
-      await _listener?.cancelAll();
-      _listener = null;
+    // Cancel listener
+    await _listener?.cancelAll();
+    _listener = null;
 
-      // Disconnect from room
-      _room?.removeListener(_setupRoomListeners);
-      await _room?.disconnect();
-      await _room?.dispose();
-      _room = null;
+    // Disconnect from room
+    _room?.removeListener(_setupRoomListeners);
+    await _room?.disconnect();
+    await _room?.dispose();
+    _room = null;
 
-      // Close streams
-      await _connectionStateCtr.close();
-      await _roomEventsCtr.close();
+    // Close streams
+    await _connectionStateCtr.close();
+    await _roomEventsCtr.close();
 
-      log.d('LiveKit: Client disposed successfully');
-    } catch (e) {
-      log.e('LiveKit: Error during disposal - $e');
-    }
+    log.d('LiveKit: Client disposed successfully');
   }
 }
 

@@ -9,6 +9,17 @@ final class ChatSocketService with MLogger {
 
   final SocketClient _client;
 
+  Future<PagedList<Message>> emitGetChatMessages(String broadcastId) async {
+    final response = await _client.emitWithAck(.getChatMessages, {
+      'broadcastId': broadcastId,
+    });
+    return PagedList.fromJson(
+      (response as Map<String, dynamic>)['data'],
+      (jsonT) => MessageDto.fromJson(jsonT).toDomain,
+      listKey: 'chatMessages',
+    );
+  }
+
   Future<void> emitSendChatMessage(NewMessageArgs args) async {
     return _client.emitWithAck(.sendChatMessage, args.toJson());
   }

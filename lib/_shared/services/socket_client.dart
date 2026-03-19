@@ -256,6 +256,7 @@ enum SocketEvent {
   sendChatMessage('sendChatMessage'),
   editChatMessage('editChatMessage'),
   deleteChatMessage('deleteChatMessage'),
+  getChatMessages('getChatMessages'),
   hostDisconnected('hostDisconnected'),
   hostReconnected('hostReconnected'),
   notification('notification');

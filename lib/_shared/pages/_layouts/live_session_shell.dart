@@ -41,17 +41,20 @@ class LiveSessionShellState extends State<LiveSessionShell>
       handler: (context, result, cancel) => context.go(R.endedBroadcast),
     );
 
-    return Scaffold(
-      appBar: _AppBar(
-        key: const Key('LiveSessionLayoutAppBar'),
-        controller: controller,
-        onTabChanged: onDirectTabTap,
-        showChatDot: showChatDot.value,
-      ),
-      body: MTabBarView(
-        controller: controller,
-        children: widget.children,
-        onPageChanged: (_) => FocusScope.of(context).unfocus(),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) => context.replace(R.home),
+      child: Scaffold(
+        appBar: _AppBar(
+          key: const Key('LiveSessionLayoutAppBar'),
+          controller: controller,
+          onTabChanged: onDirectTabTap,
+          showChatDot: showChatDot.value,
+        ),
+        body: MTabBarView(
+          controller: controller,
+          children: widget.children,
+          onPageChanged: (_) => FocusScope.of(context).unfocus(),
+        ),
       ),
     );
   }

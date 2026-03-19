@@ -26,7 +26,7 @@ class ParticipantInfoModal extends StatelessWidget {
     final textTheme = MTextTheme.of(context);
 
     return MModal(
-      builder: (context) => Column(
+      builder: (ctx) => Column(
         mainAxisSize: .min,
         crossAxisAlignment: .stretch,
         children: [
@@ -46,8 +46,8 @@ class ParticipantInfoModal extends StatelessWidget {
                   overflow: .ellipsis,
                 ),
                 switch (participant.role) {
-                  .host => MBadge.host(context),
-                  .cohost => MBadge.cohost(context),
+                  .host => MBadge.host(ctx),
+                  .cohost => MBadge.cohost(ctx),
                   _ => const SizedBox.shrink(),
                 },
               ],
@@ -73,10 +73,7 @@ class ParticipantInfoModal extends StatelessWidget {
           Spaces.verticalSmall,
           MTextButton(
             label: 'View account',
-            onPressed: () => context.pushNamed(
-              R.othersProfile,
-              pathParameters: {'id': participant.id.getOrCrash()},
-            ),
+            onPressed: () => ctx.push(R.profile(participant.id.getOrCrash())),
           ),
         ],
       ),

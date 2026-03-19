@@ -51,18 +51,24 @@ final class LiveShellRoutes {
         routes: [
           GoRoute(
             path: R.liveNotes,
-            builder: (context, state) => const MyNotesPage.live(),
+            builder: (context, state) => const LiveNotesTab(),
             routes: [
               GoRoute(
-                path: '${R.liveNotes}/:id',
+                path: ':id',
                 builder: (_, state) {
                   final raw = state.pathParameters['id'];
                   final noteIdStr = (raw == null || raw == 'new') ? null : raw;
                   return NoteEditorPage(noteIdStr: noteIdStr);
                 },
               ),
+            ],
+          ),
+          GoRoute(
+            path: R.liveFolders,
+            builder: (context, state) => const LiveNotesTab(),
+            routes: [
               GoRoute(
-                path: '${R.liveFolders}/:id',
+                path: ':id',
                 builder: (_, state) {
                   final folderIdStr = state.pathParameters['id'] ?? '';
                   return FolderPage(folderIdStr: folderIdStr);

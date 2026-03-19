@@ -226,6 +226,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
       final message = errorMessage(error?.error);
 
       // Still attempt to end the broadcast and dispose resources
+      await _livekit.setMicrophoneEnabled(false);
       await _livekit.disconnect();
       await _local.clearActiveBroadcastId(_currentUserId);
       state.value = const .ended();

@@ -9,7 +9,6 @@ import 'package:meno/features/notes/model/_model.dart';
 import 'package:meno/features/notes/services/_services.dart';
 import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class SelectFolderModal extends WatchingWidget {
   const SelectFolderModal._(
@@ -113,9 +112,9 @@ class _Content extends WatchingWidget {
             _SearchBox(searchQuery: searchQuery),
             Spaces.verticalLarge,
             Expanded(
-              child: FolderList(
+              child: FoldersListWidget(
                 folders: folders,
-                onTap: (folder) {
+                onFolderTap: (folder) {
                   if (picked?.id == folder.id) {
                     pickedFolder.value = null;
                   } else {
@@ -180,8 +179,10 @@ class _LoadingContent extends StatelessWidget {
         crossAxisAlignment: .stretch,
         children: [
           Expanded(
-            child: Skeletonizer(
-              child: FolderList(folders: fakeFolders, padding: .zero),
+            child: FoldersListWidget(
+              folders: fakeFolders,
+              isLoading: true,
+              padding: .zero,
             ),
           ),
           Spaces.verticalXLarge,

@@ -11,8 +11,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 class NoteCard extends StatelessWidget {
   const NoteCard({
     required this.note,
-    required this.onTap,
-    required this.onOptionsTap,
+    this.onTap,
+    this.onOptionsTap,
     super.key,
     this.onLongPress,
     this.showAddButton = false,
@@ -20,8 +20,8 @@ class NoteCard extends StatelessWidget {
   });
 
   final Note note;
-  final VoidCallback onTap;
-  final VoidCallback onOptionsTap;
+  final VoidCallback? onTap;
+  final VoidCallback? onOptionsTap;
   final VoidCallback? onLongPress;
   final bool showAddButton;
   final bool selected;

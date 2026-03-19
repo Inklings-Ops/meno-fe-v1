@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/id.dart';
-import 'package:meno/features/notes/manager/notes_manager.dart';
 import 'package:meno/features/notes/model/entities/note.dart';
-import 'package:meno/features/notes/widgets/note_card.dart';
+import 'package:meno/features/notes/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class NotesList extends StatelessWidget {
-  const NotesList({
+class NotesListWidget extends StatelessWidget {
+  const NotesListWidget({
     required this.notes,
     this.showAddButton = false,
     this.onNoteTap,
     this.onNoteLongPress,
     this.onNoteOptionsTap,
     this.selectedNoteIds = const [],
-    this.padding,
+    this.padding = const .all(16),
     this.physics,
     this.controller,
     this.primary,
+    this.isNested = false,
+    this.isLoading = false,
     super.key,
   });
 
@@ -27,39 +28,60 @@ class NotesList extends StatelessWidget {
   final void Function(Note)? onNoteLongPress;
   final void Function(Note)? onNoteOptionsTap;
   final List<Id> selectedNoteIds;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry padding;
   final ScrollPhysics? physics;
   final ScrollController? controller;
   final bool? primary;
+  final bool isNested;
+  final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      physics: physics,
-      controller: controller,
+  Widget build(BuildContext ctx) {
+    if (notes.isEmpty) return const EmptyNoteListWidget();
+    return CustomScrollView(
       primary: primary,
-      itemCount: notes.length,
-      padding: padding ?? const .all(16),
-      separatorBuilder: (context, index) => Spaces.verticalLarge,
-      itemBuilder: (context, index) {
-        final note = notes[index];
-        if (note == null) return const SizedBox.shrink();
-        return NoteCard(
-          key: ValueKey(note.id),
-          note: note,
-          showAddButton: showAddButton,
-          selected: selectedNoteIds.contains(note.id),
-          onTap: () => onNoteTap?.call(note),
-          onLongPress: () => onNoteLongPress?.call(note),
-          onOptionsTap: () => onNoteOptionsTap?.call(note),
-        );
-      },
+      controller: controller,
+      physics: physics,
+      slivers: [
+        if (isNested) ...[
+          Builder(
+            builder: (context) => SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+          ),
+        ],
+        SliverPadding(
+          padding: padding,
+          sliver: SliverList.separated(
+            itemCount: notes.length,
+            separatorBuilder: (_, __) => Spaces.verticalLarge,
+            itemBuilder: (context, index) {
+              final note = notes[index];
+              if (note == null) return const SizedBox.shrink();
+
+              if (isLoading) return Skeletonizer(child: NoteCard(note: note));
+
+              return NoteCard(
+                key: ValueKey(note.id),
+                note: note,
+                showAddButton: showAddButton,
+                selected: selectedNoteIds.contains(note.id),
+                onTap: () => onNoteTap?.call(note),
+                onLongPress: () => onNoteLongPress?.call(note),
+                onOptionsTap: () => onNoteOptionsTap?.call(note),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
 
 class NoteListFailureWidget extends StatelessWidget {
-  const NoteListFailureWidget({super.key});
+  const NoteListFailureWidget({required this.onRefresh, super.key});
+
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +108,7 @@ class NoteListFailureWidget extends StatelessWidget {
               shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
               side: BorderSide(color: colors.outlineVariant3, width: 1.50),
             ),
-            onPressed: () => di<NotesManager>().initialize.run(),
+            onPressed: () async => onRefresh(),
           ),
         ),
       ],

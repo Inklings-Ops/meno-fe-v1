@@ -14,6 +14,7 @@ final class ChatListManager with MLogger implements Disposable {
   }) : _socket = socket,
        feed = ChatFeedSource(
          http: http,
+         socket: socket,
          repository: ChatDataRepository(),
          broadcastId: session.broadcast.id,
        );

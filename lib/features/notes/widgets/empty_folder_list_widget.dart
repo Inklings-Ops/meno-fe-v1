@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:meno/features/notes/widgets/new_folder_button.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class EmptyFolderListWidget extends StatelessWidget {
-  const EmptyFolderListWidget({super.key});
+  const EmptyFolderListWidget({this.showAddButton = true, super.key});
+
+  final bool showAddButton;
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +15,7 @@ class EmptyFolderListWidget extends StatelessWidget {
         width: 266,
         child: Column(
           children: [
+            if (showAddButton) Spaces.verticalXLarge,
             Assets.images.folder.image(height: 120, width: 160),
             MText(
               'Welcome! Organize your notes better through folders.',
@@ -19,42 +23,9 @@ class EmptyFolderListWidget extends StatelessWidget {
               textAlign: .center,
             ),
             Spaces.verticalXLarge,
-            const _CreateNewFolderButton(),
+            if (showAddButton) const NewFolderButton.outlined(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _CreateNewFolderButton extends StatelessWidget {
-  const _CreateNewFolderButton();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = MColorScheme.of(context);
-    final textTheme = MTextTheme.of(context);
-    return SizedBox(
-      width: 160,
-      height: 32,
-      child: MSecondaryButton.icon(
-        label: 'Create New Folder',
-        icon: const Icon(MIcons.plus),
-        style: OutlinedButton.styleFrom(
-          textStyle: textTheme.microMedium,
-          foregroundColor: colors.onBackground,
-          iconColor: colors.onBackground,
-          shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
-          side: BorderSide(color: colors.outlineVariant3, width: 1.50),
-        ),
-        onPressed: () async {
-          // TODO(gettoknowdavid): handle CreateNewFolderButton on press
-          // final bloc = context.read<FoldersBloc>();
-          // final newFolder=await router.push<Folder?>(Routes.folderFormModal);
-          // if (newFolder != null) {
-          //   return bloc.add(FoldersUpdateFoldersRequested(newFolder));
-          // }
-        },
       ),
     );
   }
