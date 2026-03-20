@@ -1,35 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/value_objects/value_objects.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:readmore/readmore.dart';
 
-class ProfileHeaderContent extends StatelessWidget {
-  const ProfileHeaderContent._({
-    required this.profile,
-    required this.isMyProfile,
-    super.key,
-  });
-
-  factory ProfileHeaderContent.myProfile(Profile profile, [Key? key]) {
-    return ProfileHeaderContent._(
-      key: key,
-      profile: profile,
-      isMyProfile: true,
-    );
-  }
-
-  factory ProfileHeaderContent.usersProfile(Profile profile, [Key? key]) {
-    return ProfileHeaderContent._(
-      key: key,
-      profile: profile,
-      isMyProfile: false,
-    );
-  }
+class MyProfileHeaderContent extends StatelessWidget {
+  const MyProfileHeaderContent({required this.profile, super.key});
 
   final Profile profile;
-  final bool isMyProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +29,57 @@ class ProfileHeaderContent extends StatelessWidget {
               ],
             ),
             Spaces.verticalLarge,
-
-            if (isMyProfile) ...[
-              const AccountUpgradeSectionWidget(),
-              Spaces.verticalLarge,
-            ],
-
+            const AccountUpgradeSectionWidget(),
+            Spaces.verticalLarge,
             if (profile.bio != null) ...[
               ProfileBioWidget(bio: profile.bio!),
+              Spaces.verticalLarge,
+            ],
+            SizedBox(
+              height: 32,
+              child: Row(
+                children: [
+                  Expanded(child: EditProfileButton(profile: profile)),
+                  Spaces.horizontalLarge,
+                  Expanded(child: ShareProfileButton(profile: profile)),
+                ],
+              ),
+            ),
+            Spaces.verticalLarge,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class UserProfileHeaderContent extends WatchingWidget {
+  const UserProfileHeaderContent({required this.proxy, super.key});
+
+  final UserProfileProxy proxy;
+
+  @override
+  Widget build(BuildContext context) {
+    watch(proxy);
+    return SafeArea(
+      bottom: false,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const .fromLTRB(16, kToolbarHeight, 16, 0),
+        child: Column(
+          crossAxisAlignment: .start,
+          children: [
+            Row(
+              children: [
+                MAvatar(radius: 40, url: proxy.imageUrl),
+                const SizedBox(width: 24),
+                Expanded(child: ProfileStatsWidget(stats: proxy.stats)),
+              ],
+            ),
+            Spaces.verticalLarge,
+
+            if (proxy.bio != null) ...[
+              ProfileBioWidget(bio: proxy.bio!),
               Spaces.verticalLarge,
             ],
 
@@ -64,12 +87,9 @@ class ProfileHeaderContent extends StatelessWidget {
               height: 32,
               child: Row(
                 children: [
-                  if (isMyProfile)
-                    Expanded(child: EditProfileButton(profile: profile))
-                  else
-                    Expanded(child: SubscribeButton(profile: profile)),
+                  Expanded(child: SubscribeButton(proxy: proxy)),
                   Spaces.horizontalLarge,
-                  Expanded(child: ShareProfileButton(profile: profile)),
+                  Expanded(child: ShareProfileButton(profile: proxy.profile)),
                 ],
               ),
             ),

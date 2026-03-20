@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_shared/model/entities/user.dart';
+import 'package:meno/features/broadcast/model/entities/participant.dart';
 import 'package:meno/features/profile/model/entities/user_stats.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -12,8 +13,7 @@ final class Profile with EquatableMixin {
     this.stats = const UserStats(),
     this.image,
     this.role = .guest,
-    this.isSubscribedToUser = false,
-    this.subscribed = false,
+    this.isSubscribed = false,
   });
 
   factory Profile.fromUserEntity(User user) {
@@ -23,6 +23,17 @@ final class Profile with EquatableMixin {
       bio: user.bio,
       role: user.role,
       image: user.image,
+    );
+  }
+
+  factory Profile.fromParticipant(Participant participant) {
+    return Profile(
+      id: participant.id,
+      fullName: participant.fullName,
+      bio: participant.bio,
+      image: participant.imageUrl != null
+          ? ImageInput.fromUrl(participant.imageUrl)
+          : null,
     );
   }
 
@@ -38,8 +49,7 @@ final class Profile with EquatableMixin {
   final UserStats stats;
   final ImageInput? image;
   final UserRole role;
-  final bool isSubscribedToUser;
-  final bool subscribed;
+  final bool isSubscribed;
 
   Profile copyWith({
     Id? id,
@@ -48,11 +58,10 @@ final class Profile with EquatableMixin {
     UserStats? stats,
     ImageInput? image,
     UserRole? role,
-    bool? isSubscribedToUser,
+    bool? isSubscribed,
     int? numberOfBroadcasts,
     int? numberOfSubscribers,
     int? numberOfSubscriptions,
-    bool? subscribed,
   }) {
     return Profile(
       id: id ?? this.id,
@@ -61,8 +70,7 @@ final class Profile with EquatableMixin {
       stats: stats ?? this.stats,
       image: image ?? this.image,
       role: role ?? this.role,
-      isSubscribedToUser: isSubscribedToUser ?? this.isSubscribedToUser,
-      subscribed: subscribed ?? this.subscribed,
+      isSubscribed: isSubscribed ?? this.isSubscribed,
     );
   }
 
@@ -77,8 +85,7 @@ final class Profile with EquatableMixin {
     stats,
     image,
     role,
-    isSubscribedToUser,
-    subscribed,
+    isSubscribed,
   ];
 }
 

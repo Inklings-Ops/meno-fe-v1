@@ -37,6 +37,21 @@ class MyProfileManager with MLogger implements Disposable {
 
   void updateProfile(Profile value) => _profile.value = value;
 
+  // The `.clamp(0, ...)` guard is important — network race conditions can
+  // occasionally cause double-decrements, which could lead to a negative
+  // subscriptions count.
+  void updateStats({required int delta}) {
+    final current = _profile.value;
+    _profile.value = current.copyWith(
+      stats: current.stats.copyWith(
+        subscriptions: (current.stats.subscriptions + delta).clamp(
+          0,
+          double.maxFinite.toInt(),
+        ),
+      ),
+    );
+  }
+
   @override
   FutureOr<dynamic> onDispose() {
     _profile.dispose();

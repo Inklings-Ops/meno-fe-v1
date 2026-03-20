@@ -7,6 +7,8 @@ import 'package:meno/_shared/services/livekit_client.dart';
 import 'package:meno/features/broadcast/manager/broadcast_timer_manager.dart';
 import 'package:meno/features/broadcast/model/_model.dart';
 import 'package:meno/features/broadcast/services/_services.dart';
+import 'package:meno/features/profile/model/entities/profile.dart';
+import 'package:meno/features/profile/model/proxies/user_profile_proxy.dart';
 
 class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   LiveSessionManager({
@@ -33,6 +35,15 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
   final status = ValueNotifier<LiveStatus>(.initializing);
   final isMicrophoneEnabled = ValueNotifier<bool>(false);
   final isHost = ValueNotifier<bool>(false);
+  late final hostProxy = UserProfileProxy(
+    Profile(
+      id: _session.broadcast.hostId,
+      fullName: _session.broadcast.hostName,
+      image: _session.broadcast.hostImageUrl != null
+          ? ImageInput.fromUrl(_session.broadcast.hostImageUrl)
+          : null,
+    ),
+  );
 
   StreamSubscription<LiveKitState>? _liveKitStateSubscription;
   StreamSubscription<EndedBroadcast>? _endedBroadcastSubscription;
@@ -354,6 +365,7 @@ class LiveSessionManager with MLogger implements Disposable, WillSignalReady {
     status.dispose();
     isMicrophoneEnabled.dispose();
     isHost.dispose();
+    hostProxy.dispose();
 
     setupConfigs.dispose();
     _initializeSession.dispose();

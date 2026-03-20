@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/features/broadcast/model/entities/participant.dart';
+import 'package:meno/features/profile/model/entities/profile.dart';
+import 'package:meno/features/profile/model/proxies/user_profile_proxy.dart';
+import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ParticipantInfoModal extends StatelessWidget {
-  const ParticipantInfoModal._({required this.participant, super.key});
+  const ParticipantInfoModal._({required this.participant}) : super(key: null);
 
   final Participant participant;
 
   static Future<dynamic> show(BuildContext context, Participant participant) {
     return showModalBottomSheet<dynamic>(
       context: context,
-      builder: (context) => ParticipantInfoModal._(
-        key: const ValueKey<String>('ParticipantInfoModal'),
-        participant: participant,
-      ),
+      builder: (context) => ParticipantInfoModal._(participant: participant),
       isScrollControlled: true,
       useRootNavigator: true,
     );
@@ -23,6 +24,11 @@ class ParticipantInfoModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final proxy = createOnce(() {
+      final profile = Profile.fromParticipant(participant);
+      return UserProfileProxy(profile);
+    });
+
     final textTheme = MTextTheme.of(context);
 
     return MModal(
@@ -65,11 +71,7 @@ class ParticipantInfoModal extends StatelessWidget {
             Spaces.verticalLarge,
           ] else
             Spaces.verticalLarge,
-          const MPrimaryButton.icon(
-            label: 'Subscribe',
-            icon: Icon(MIcons.user_check),
-            onPressed: null,
-          ),
+          SubscribeButton(proxy: proxy, showIcon: true),
           Spaces.verticalSmall,
           MTextButton(
             label: 'View account',

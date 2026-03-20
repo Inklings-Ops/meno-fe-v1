@@ -43,6 +43,8 @@ class DiscoverSearchManager with MLogger implements Disposable {
 
   StreamSubscription<List<String>>? _recentSearchesSub;
 
+  final _proxyCache = <Id, UserProfileProxy>{};
+
   /// Reactive list of recent searches — the view listens to this directly.
   late final recentSearches = ValueNotifier<List<String>>([]);
 
@@ -167,9 +169,28 @@ class DiscoverSearchManager with MLogger implements Disposable {
     _broadcastHasMore = true;
     _profileHasMore = true;
     hasMore.value = false;
+
+    // Dispose old proxies and clear cache — new search = new result set
+    for (final proxy in _proxyCache.values) {
+      proxy.dispose();
+    }
+    _proxyCache.clear();
   }
 
   void _updateHasMore() => hasMore.value = _broadcastHasMore || _profileHasMore;
+
+  UserProfileProxy _proxyFor(Profile profile) {
+    final existing = _proxyCache[profile.id];
+    if (existing != null) {
+      // Refresh underlying data in case server returned updated fields,
+      // but don't blow away any in-flight optimistic overrides.
+      existing.profile = profile;
+      return existing;
+    }
+    final proxy = UserProfileProxy(profile);
+    _proxyCache[profile.id] = proxy;
+    return proxy;
+  }
 
   List<DiscoverSearchResult> _merge(
     List<Broadcast?> broadcasts,
@@ -186,8 +207,7 @@ class DiscoverSearchManager with MLogger implements Disposable {
       for (var i = 0; i < 3 && bi < b.length; i++, bi++) {
         result.add(BroadcastResult(b[bi]));
       }
-
-      if (pi < p.length) result.add(ProfileResult(p[pi++]));
+      if (pi < p.length) result.add(ProfileResult(_proxyFor(p[pi++])));
     }
 
     return result;
@@ -197,6 +217,12 @@ class DiscoverSearchManager with MLogger implements Disposable {
   FutureOr<dynamic> onDispose() async {
     await _recentSearchesSub?.cancel();
     _recentSearchesSub = null;
+
+    // Dispose all cached proxies
+    for (final proxy in _proxyCache.values) {
+      proxy.dispose();
+    }
+    _proxyCache.clear();
 
     query.dispose();
     results.dispose();

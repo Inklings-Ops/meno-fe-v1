@@ -133,6 +133,8 @@ final class Broadcast with EquatableMixin {
       creatorFullName ??
       SingleLineString.empty;
 
+  String? get hostImageUrl => creatorImageUrl ?? creator?.imageUrl;
+
   bool get isActive =>
       status == .active && startTime != null && endTime == null;
 

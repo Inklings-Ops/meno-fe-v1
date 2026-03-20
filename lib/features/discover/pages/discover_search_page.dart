@@ -175,9 +175,9 @@ class _SearchResults extends WatchingWidget {
             itemCount: results.length,
             itemBuilder: (context, i) => switch (results[i]) {
               BroadcastResult(:final broadcast) => _BroadcastCard(broadcast),
-              ProfileResult(:final profile) => ProfileCard(
-                profile: profile,
-                onTap: () => context.push(R.profile(profile.id.getOrCrash())),
+              ProfileResult(:final proxy) => ProfileCard(
+                proxy: proxy,
+                onTap: () => context.push(R.profile(proxy.id.getOrCrash())),
               ),
             },
           ),

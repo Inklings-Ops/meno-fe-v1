@@ -63,14 +63,14 @@ final class MainShellRoutes {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: R.discoverSuggestedAccountsLiveTab,
-                builder: (_, __) => const SuggestedAccountsWidget(),
-              ),
-            ],
-          ),
+          // StatefulShellBranch(
+          //   routes: [
+          //     GoRoute(
+          //       path: R.discoverSuggestedAccountsLiveTab,
+          //       builder: (_, __) => const SuggestedAccountsWidget(),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     ],

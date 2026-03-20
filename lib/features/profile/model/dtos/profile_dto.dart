@@ -10,8 +10,7 @@ final class ProfileDto {
     this.stats = const UserStatsDto(),
     this.imageUrl,
     this.role = .guest,
-    this.isSubscribedToUser = false,
-    this.subscribed = false,
+    this.isSubscribed = false,
   });
 
   factory ProfileDto.fromJson(dynamic json) {
@@ -33,8 +32,10 @@ final class ProfileDto {
       stats: stats,
       imageUrl: json[_kImageUrl] as String?,
       role: json[_kRole] != null ? UserRole.fromJson(json[_kRole]) : .guest,
-      isSubscribedToUser: json[_kIsSubscribedToUser] as bool? ?? false,
-      subscribed: json[_kSubscribed] as bool? ?? false,
+      isSubscribed:
+          (json[_kIsSubscribedToUser] as bool?) ??
+          (json[_kSubscribed] as bool?) ??
+          false,
     );
   }
 
@@ -44,8 +45,7 @@ final class ProfileDto {
   final UserStatsDto stats;
   final String? imageUrl;
   final UserRole role;
-  final bool isSubscribedToUser;
-  final bool subscribed;
+  final bool isSubscribed;
 
   static const String _kId = 'id';
   static const String _kFullName = 'fullName';
@@ -66,8 +66,8 @@ final class ProfileDto {
     _kStats: stats.toJson(),
     _kImageUrl: imageUrl,
     _kRole: role.value,
-    _kIsSubscribedToUser: isSubscribedToUser,
-    _kSubscribed: subscribed,
+    _kIsSubscribedToUser: isSubscribed,
+    _kSubscribed: isSubscribed,
   };
 }
 
@@ -83,9 +83,8 @@ extension ProfileToDto on Profile {
         LocalImageOrigin(:final file) => file.path,
         _ => null,
       },
-      isSubscribedToUser: isSubscribedToUser,
+      isSubscribed: isSubscribed,
       role: role,
-      subscribed: subscribed,
     );
   }
 }
@@ -98,9 +97,8 @@ extension ProfileToDomain on ProfileDto {
       bio: bio == null ? null : MultiLineString(bio!),
       stats: stats.toDomain,
       image: imageUrl != null ? ImageInput.fromUrl(imageUrl) : null,
-      isSubscribedToUser: isSubscribedToUser,
+      isSubscribed: isSubscribed,
       role: role,
-      subscribed: subscribed,
     );
   }
 

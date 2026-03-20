@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:meno/_core/value_objects/image_value_objects.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/profile/widgets/subscribe_button.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class ProfileCard extends StatelessWidget {
-  const ProfileCard({required this.profile, required this.onTap, super.key});
+  const ProfileCard({required this.proxy, required this.onTap, super.key});
 
-  final Profile profile;
+  final UserProfileProxy proxy;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
-    // final isSubscribed = profile.subscribed ?? false;
 
     return InkWell(
       onTap: onTap,
@@ -30,14 +28,14 @@ class ProfileCard extends StatelessWidget {
             children: [
               MAvatar(
                 radius: Insets.xxl,
-                url: profile.image?.getUrl(),
+                url: proxy.imageUrl,
                 hasBorder: false,
               ),
               const Spacer(),
               SizedBox(
                 height: Insets.xl,
                 child: MText(
-                  profile.fullName.getOrCrash(),
+                  proxy.fullName,
                   style: textTheme.captionMedium,
                   maxLines: 1,
                   textAlign: .center,
@@ -48,7 +46,7 @@ class ProfileCard extends StatelessWidget {
               SizedBox(
                 height: 18,
                 child: MText(
-                  profile.stats.subscribers.toSanitizedStr('Subscribers'),
+                  proxy.stats.subscribers.toSanitizedStr('Subscribers'),
                   style: textTheme.captionRegular,
                   maxLines: 1,
                   textAlign: .center,
@@ -57,7 +55,7 @@ class ProfileCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              SubscribeButton(profile: profile),
+              SubscribeButton(proxy: proxy),
             ],
           ),
         ),

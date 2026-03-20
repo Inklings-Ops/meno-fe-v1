@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/features/broadcast/manager/live_session_manager.dart';
 import 'package:meno/features/broadcast/widgets/live_broadcast_widgets.dart';
+import 'package:meno/features/profile/model/proxies/user_profile_proxy.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastInfoModal extends WatchingWidget {
@@ -21,6 +22,8 @@ class BroadcastInfoModal extends WatchingWidget {
   Widget build(BuildContext context) {
     final broadcast = watchValue((LiveSessionManager m) => m.broadcast);
     final isHost = watchValue((LiveSessionManager m) => m.isHost);
+
+    final hostProxy = di<LiveSessionManager>().hostProxy;
 
     return MModal(
       builder: (context) => Column(
@@ -52,11 +55,7 @@ class BroadcastInfoModal extends WatchingWidget {
               title: 'Minimize Stream',
               onTap: () => context.go(R.home),
             ),
-            MModalListTile(
-              leading: const Icon(MIcons.user_minus_01),
-              title: 'Unsubscribe',
-              onTap: () {},
-            ),
+            _SubscribeTile(proxy: hostProxy),
           ],
           MModalListTile(
             leading: const Icon(MIcons.share),
@@ -71,6 +70,31 @@ class BroadcastInfoModal extends WatchingWidget {
           Spaces.verticalXLarge,
         ],
       ),
+    );
+  }
+}
+
+class _SubscribeTile extends WatchingWidget {
+  const _SubscribeTile({required this.proxy});
+
+  final UserProfileProxy proxy;
+
+  @override
+  Widget build(BuildContext context) {
+    watch(proxy);
+
+    final isRunning = watch(proxy.isRunning).value;
+    final isSubscribed = proxy.isSubscribed;
+
+    void handleSubscription() {
+      if (isSubscribed) return proxy.unsubscribe.run();
+      return proxy.subscribe.run();
+    }
+
+    return MModalListTile(
+      leading: Icon(isSubscribed ? MIcons.user_minus_01 : MIcons.user_check),
+      title: isSubscribed ? 'Unsubscribe' : 'Subscribe',
+      onTap: isRunning ? null : handleSubscription,
     );
   }
 }

@@ -14,16 +14,16 @@ class UserProfileManager with MLogger implements Disposable {
   final ProfileHttpService _http;
   final Id _userId;
 
-  final profile = ValueNotifier<Profile>(.empty);
+  late final proxy = ValueNotifier<UserProfileProxy?>(null);
 
   late final fetch = Command.createAsyncNoParamNoResult(() async {
     final remoteProfile = await _http.getProfile(_userId);
-    profile.value = remoteProfile;
+    proxy.value = UserProfileProxy(remoteProfile);
   }, errorFilterFn: menoExceptionFilter);
 
   @override
   FutureOr<dynamic> onDispose() {
-    profile.dispose();
+    proxy.dispose();
     fetch.dispose();
   }
 }

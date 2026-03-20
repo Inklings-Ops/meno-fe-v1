@@ -135,7 +135,7 @@ class _ProfileAppBar extends StatelessWidget {
           ),
           Spaces.horizontalLarge,
         ],
-        flexibleSpace: ProfileHeaderContent.myProfile(profile),
+        flexibleSpace: MyProfileHeaderContent(profile: profile),
         bottom: PreferredSize(
           preferredSize: const .fromHeight(_kTabBarHeight),
           child: Container(

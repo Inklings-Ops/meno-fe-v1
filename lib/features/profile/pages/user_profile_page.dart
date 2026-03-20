@@ -38,29 +38,31 @@ class UserProfilePage extends WatchingWidget {
       select: (UserProfileManager manager) => manager.fetch.errors,
     );
 
-    final profile = watchValue((UserProfileManager m) => m.profile);
+    final proxy = watchValue((UserProfileManager m) => m.proxy);
     final isFetching = watchValue((UserProfileManager m) => m.fetch.isRunning);
 
     if (isFetching) return const LoadingPage();
-    if (!isFetching && profile.isEmpty) return const _EmptyPage();
-    return _Content(profile: profile);
+    if (!isFetching && proxy == null) return const _EmptyPage();
+    return _Content(proxy: proxy!);
   }
 }
 
 class _Content extends WatchingWidget {
-  const _Content({required this.profile});
+  const _Content({required this.proxy});
 
-  final Profile profile;
+  final UserProfileProxy proxy;
 
   @override
   Widget build(BuildContext context) {
+    watch(proxy);
+
     final colors = MColorScheme.of(context);
 
     final recentBroadcastsFeed = createOnce(() {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery.recentlyLive(creatorId: profile.id),
+        query: BroadcastQuery.recentlyLive(creatorId: proxy.id),
       );
     });
 
@@ -68,7 +70,7 @@ class _Content extends WatchingWidget {
       return BroadcastFeedDataSource(
         http: di<BroadcastHttpService>(),
         socket: di<BroadcastSocketService>(),
-        query: BroadcastQuery(creatorId: profile.id),
+        query: BroadcastQuery(creatorId: proxy.id),
       );
     });
 
@@ -83,7 +85,7 @@ class _Content extends WatchingWidget {
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 _ProfileAppBar(
-                  profile: profile,
+                  proxy: proxy,
                   innerBoxIsScrolled: innerBoxIsScrolled,
                 ),
               ];
@@ -102,12 +104,9 @@ class _Content extends WatchingWidget {
 }
 
 class _ProfileAppBar extends StatelessWidget {
-  const _ProfileAppBar({
-    required this.profile,
-    required this.innerBoxIsScrolled,
-  });
+  const _ProfileAppBar({required this.proxy, required this.innerBoxIsScrolled});
 
-  final Profile profile;
+  final UserProfileProxy proxy;
   final bool innerBoxIsScrolled;
 
   @override
@@ -123,7 +122,7 @@ class _ProfileAppBar extends StatelessWidget {
       forceElevated: innerBoxIsScrolled,
       elevation: innerBoxIsScrolled ? 1 : 0,
       shadowColor: colors.onBackground.withValues(alpha: 0.08),
-      title: MText(profile.fullName.getOrCrash()),
+      title: MText(proxy.fullName),
       titleTextStyle: textTheme.bodyMedium,
       leading: MIconButton(
         icon: const Icon(MIcons.chevron_left),
@@ -141,7 +140,7 @@ class _ProfileAppBar extends StatelessWidget {
       ],
       flexibleSpace: SafeArea(
         bottom: false,
-        child: ProfileHeaderContent.usersProfile(profile),
+        child: UserProfileHeaderContent(proxy: proxy),
       ),
       bottom: PreferredSize(
         preferredSize: const .fromHeight(_kTabBarHeight),
