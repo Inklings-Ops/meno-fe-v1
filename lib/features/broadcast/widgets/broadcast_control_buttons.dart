@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class BroadcastControlButtons extends StatelessWidget {
+class BroadcastControlButtons extends WatchingWidget {
   const BroadcastControlButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    final isHost = watchValue((LiveSessionManager m) => m.isHost);
+    return SizedBox(
       height: 40,
       child: Row(
         mainAxisAlignment: .center,
         children: [
-          _MicrophoneButton(key: Key('BroadcastMicrophoneButton')),
+          if (isHost) ...[
+            const _MicrophoneButton(key: Key('BroadcastMicrophoneButton')),
+            Spaces.horizontalSmall,
+            const _StopBroadcastingButton(key: Key('BroadcastStopButton')),
+          ] else ...[
+            const _LeaveBroadcastButton(key: Key('LeaveBroadcastButton')),
+          ],
           Spaces.horizontalSmall,
-          _StopBroadcastingButton(key: Key('BroadcastStopButton')),
-          Spaces.horizontalSmall,
-          _OptionsButton(key: Key('BroadcastOptionsButton')),
+          const BroadcastOptionsButton(),
         ],
       ),
     );
@@ -69,23 +73,35 @@ class _StopBroadcastingButton extends WatchingWidget {
   }
 }
 
-class _OptionsButton extends WatchingWidget {
-  const _OptionsButton({super.key});
+class _LeaveBroadcastButton extends WatchingWidget {
+  const _LeaveBroadcastButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
-    final broadcast = watchValue((LiveSessionManager m) => m.broadcast);
-    return IconButton.outlined(
-      icon: const Icon(MIcons.dots_horizontal),
-      iconSize: 20,
-      color: colors.onBackground,
-      style: IconButton.styleFrom(
-        fixedSize: const .fromWidth(48),
-        side: BorderSide(color: colors.outlineVariant3),
-        shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
+    final textTheme = MTextTheme.of(context);
+
+    final isEnding = watchValue(
+      (LiveSessionManager m) => m.endSession.isRunning,
+    );
+
+    return MPrimaryButton.icon(
+      label: 'Leave broadcast',
+      icon: const Icon(MIcons.log_out),
+      onPressed: () async {
+        final result = await BroadcastExitAlertDialog.show(context, true);
+        if (result ?? false) di<LiveSessionManager>().endSession.run();
+      },
+      loading: isEnding,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colors.errorContainer.withValues(alpha: 0.3),
+        foregroundColor: colors.error,
+        iconColor: colors.errorContainer,
+        fixedSize: const Size(159, 40),
+        padding: const .symmetric(horizontal: Insets.lg, vertical: Insets.sm),
+        textStyle: textTheme.captionMedium,
+        shape: const RoundedRectangleBorder(borderRadius: Corners.circle),
       ),
-      onPressed: () => BroadcastInfoModal.show(context, broadcast: broadcast),
     );
   }
 }

@@ -23,11 +23,10 @@ class PreStreamModal extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     registerHandler(
-      select: (StreamManager m) => m.saveBroadcastSession.results,
+      select: (StreamManager m) => m.saveBroadcastSession,
       handler: (context, result, cancel) {
-        if (!result.isSuccess || result.hasData) return;
         context.pop();
-        context.replace(R.liveSessionInitialization);
+        context.push(R.liveSessionInitialization);
       },
     );
 

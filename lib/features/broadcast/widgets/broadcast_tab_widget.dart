@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastTabWidget extends WatchingWidget {
@@ -10,7 +9,6 @@ class BroadcastTabWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final broadcast = watchValue((LiveSessionManager m) => m.broadcast);
-    final status = watchValue((LiveSessionManager m) => m.status);
     final time = watchValue((LiveSessionManager m) => m.timer.formattedTime);
     final timeAgo = watchValue((LiveSessionManager m) => m.timer.timeAgo);
     final isRunning = watchValue((LiveSessionManager m) => m.timer.isRunning);
@@ -39,7 +37,7 @@ class BroadcastTabWidget extends WatchingWidget {
                   children: [
                     BroadcastCreatorWidget(name: broadcast.hostName),
                     Spaces.horizontalSmall,
-                    BroadcastStatusWidget(status: status),
+                    const BroadcastStatusWidget(),
                   ],
                 ),
                 Spaces.verticalXLarge,

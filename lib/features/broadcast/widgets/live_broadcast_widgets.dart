@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
-import 'package:meno/features/broadcast/manager/live_session_manager.dart';
-import 'package:meno/features/broadcast/manager/participants_manager.dart';
-import 'package:meno/features/broadcast/model/live_session_state.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
+import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class BroadcastArtworkWidget extends StatelessWidget {
@@ -84,18 +81,19 @@ class BroadcastTitleWidget extends StatelessWidget {
   }
 }
 
-class BroadcastStatusWidget extends StatelessWidget {
-  const BroadcastStatusWidget({required this.status, super.key});
-
-  final LiveStatus status;
+class BroadcastStatusWidget extends WatchingWidget {
+  const BroadcastStatusWidget({super.key});
 
   @override
-  Widget build(BuildContext context) => switch (status) {
-    .live => const MBadge.live(),
-    .offAir => MBadge.offAir(context),
-    .reconnecting => MBadge.reconnecting(context),
-    _ => MBadge.offAir(context),
-  };
+  Widget build(BuildContext context) {
+    final status = watchValue((LiveSessionManager m) => m.status);
+    return switch (status) {
+      .live => const MBadge.live(),
+      .offAir => MBadge.offAir(context),
+      .reconnecting => MBadge.reconnecting(context),
+      _ => MBadge.offAir(context),
+    };
+  }
 }
 
 class BroadcastAboutTab extends WatchingWidget {
@@ -151,6 +149,26 @@ class BroadcastListeningTab extends WatchingWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class BroadcastOptionsButton extends WatchingWidget {
+  const BroadcastOptionsButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
+    return IconButton.outlined(
+      icon: const Icon(MIcons.dots_horizontal),
+      iconSize: 20,
+      color: colors.onBackground,
+      style: IconButton.styleFrom(
+        fixedSize: const .fromWidth(48),
+        side: BorderSide(color: colors.outlineVariant3),
+        shape: const RoundedRectangleBorder(borderRadius: Corners.lg),
+      ),
+      onPressed: () => BroadcastInfoModal.show(context),
     );
   }
 }

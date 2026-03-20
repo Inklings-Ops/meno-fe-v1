@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class LiveBroadcastTab extends WatchingStatefulWidget {
@@ -34,15 +33,13 @@ class _LiveBroadcastTabState extends State<LiveBroadcastTab>
     final timeAgo = watchValue((LiveSessionManager m) => m.timer.timeAgo);
     final isRunning = watchValue((LiveSessionManager m) => m.timer.isRunning);
 
-    final status = watchValue((LiveSessionManager m) => m.status);
-
     return Column(
-      key: const ValueKey('BroadcastTab'),
+      key: const ValueKey('LiveBroadcastTab'),
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+          padding: const .fromLTRB(16, 24, 16, 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: .stretch,
             children: [
               BroadcastArtworkWidget(imageUrl: broadcast.imageUrl),
               Spaces.verticalSmall,
@@ -55,11 +52,11 @@ class _LiveBroadcastTabState extends State<LiveBroadcastTab>
               BroadcastTitleWidget(title: broadcast.title),
               Spaces.verticalSmall,
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: .center,
                 children: [
                   BroadcastCreatorWidget(name: broadcast.hostName),
                   Spaces.horizontalSmall,
-                  BroadcastStatusWidget(status: status),
+                  const BroadcastStatusWidget(),
                 ],
               ),
               Spaces.verticalXLarge,
@@ -70,7 +67,7 @@ class _LiveBroadcastTabState extends State<LiveBroadcastTab>
         SizedBox(
           height: 40,
           child: Padding(
-            padding: const EdgeInsets.only(top: Insets.sm),
+            padding: const .only(top: Insets.sm),
             child: TabBar.secondary(
               controller: tabController,
               tabs: const [
