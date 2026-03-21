@@ -28,7 +28,7 @@ final class UserStats with EquatableMixin {
 
 extension UserStatsX on int {
   String toSanitizedStr(String unit) {
-    if (this == 1) return 'unit';
-    return '${unit}s';
+    if (this == 1) return '$this $unit';
+    return '$this ${unit}s';
   }
 }

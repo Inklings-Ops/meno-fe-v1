@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/profile/widgets/subscribe_button.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class ProfileCard extends StatelessWidget {
+class ProfileCard extends WatchingWidget {
   const ProfileCard({required this.proxy, required this.onTap, super.key});
 
   final UserProfileProxy proxy;
@@ -13,6 +14,8 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
     final textTheme = MTextTheme.of(context);
+
+    watch(proxy);
 
     return InkWell(
       onTap: onTap,
@@ -46,7 +49,7 @@ class ProfileCard extends StatelessWidget {
               SizedBox(
                 height: 18,
                 child: MText(
-                  proxy.stats.subscribers.toSanitizedStr('Subscribers'),
+                  proxy.stats.subscribers.toSanitizedStr('Subscriber'),
                   style: textTheme.captionRegular,
                   maxLines: 1,
                   textAlign: .center,

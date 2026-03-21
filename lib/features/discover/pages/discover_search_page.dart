@@ -126,7 +126,10 @@ class _RecentSearchesWidget extends WatchingWidget {
                 color: colors.onBackground,
                 icon: const Icon(MIcons.x_close),
               ),
-              onTap: () => manager.search.run(term),
+              onTap: () {
+                manager.search.run(term);
+                manager.query.value = term;
+              },
             );
           },
         ),
@@ -148,13 +151,23 @@ class _SearchResults extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isSearching = watchValue(
+      (DiscoverSearchManager m) => m.search.isRunning,
+    );
     final isFetchingMore = watchValue(
       (DiscoverSearchManager m) => m.fetchMore.isRunning,
     );
     final hasMore = watchValue((DiscoverSearchManager m) => m.hasMore);
     final results = watchValue((DiscoverSearchManager m) => m.results);
 
-    if (results.isEmpty) {
+    if (isSearching) {
+      return const SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(child: MLoadingIndicator.box()),
+      );
+    }
+
+    if (results.isEmpty && !isFetchingMore) {
       return const SliverFillRemaining(
         hasScrollBody: false,
         child: _NoResultsWidget(),
