@@ -22,6 +22,8 @@ class BroadcastProxy extends ChangeNotifier {
 
   bool get isFavourited => _isFavouritedOverride ?? false;
 
+  String get id => _broadcast.id.getOrElse((_) => '');
+
   String get title => _broadcast.title.getOrElse((_) => '');
 
   String get description => _broadcast.description.getOrElse((_) => '');

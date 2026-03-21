@@ -92,6 +92,7 @@ class _DiscoverShellState extends State<DiscoverShell>
         bottom: PreferredSize(
           preferredSize: const .fromHeight(110),
           child: Column(
+            crossAxisAlignment: .start,
             children: [
               const DiscoverSearchBar(readOnly: true),
               Spaces.verticalXLarge,

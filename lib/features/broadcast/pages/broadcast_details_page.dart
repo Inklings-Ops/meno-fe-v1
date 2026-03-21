@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -104,9 +105,7 @@ class BroadcastDetailsView extends WatchingWidget {
             Spaces.verticalMicro,
             _Creator(
               name: proxy.creatorName,
-              onPressed: () {
-                // TODO(gettoknowdavid): Handle navigation to user's profile
-              },
+              onPressed: () => context.push(R.profile(proxy.id)),
             ),
             Spaces.verticalLarge,
             MPrimaryButton.icon(
