@@ -8,6 +8,8 @@ import 'package:meno/features/auth/auth.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/discover/services/discover_local_service.dart';
 import 'package:meno/features/notes/notes.dart';
+import 'package:meno/features/notifications/managers/_managers.dart';
+import 'package:meno/features/notifications/services/_services.dart';
 import 'package:meno/features/profile/profile.dart';
 import 'package:meno/features/settings/settings.dart';
 import 'package:meno/global_locator.dart';
@@ -77,6 +79,19 @@ class UserScopeManager with MLogger implements Disposable {
       final accessToken = credential.session.accessToken.getOrCrash();
       return SocketClient(url: Env.webSocketUrl, token: accessToken);
     }, onCreated: (client) => client.connect());
+
+    // Notifications
+    getIt.registerSingletonWithDependencies(() {
+      return NotificationsHttpService(getIt<HttpClient>());
+    }, dependsOn: [HttpClient]);
+    getIt.registerSingletonWithDependencies(() {
+      return NotificationsSocketService(getIt<SocketClient>());
+    }, dependsOn: [SocketClient]);
+    getIt.registerSingletonAsync(() async {
+      final manager = NotificationsManager(getIt<NotificationsSocketService>());
+      await manager.init();
+      return manager;
+    }, dependsOn: [NotificationsSocketService]);
 
     // Broadcasts
     getIt.registerSingletonWithDependencies(() {

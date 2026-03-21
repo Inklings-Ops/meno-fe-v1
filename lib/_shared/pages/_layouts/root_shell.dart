@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/auth/manager/auth_manager.dart';
+import 'package:meno/features/notifications/widgets/notification_toast_stack.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class RootShell extends WatchingWidget {
@@ -74,10 +75,20 @@ class RootShell extends WatchingWidget {
 
     return Scaffold(
       key: ValueKey(userId),
-      body: Row(
+      body: Stack(
         children: [
-          sideNavRail,
-          Expanded(child: navigationShell),
+          Row(
+            children: [
+              sideNavRail,
+              Expanded(child: navigationShell),
+            ],
+          ),
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 8,
+            left: 16,
+            right: 16,
+            child: const NotificationToastStack(),
+          ),
         ],
       ),
       bottomNavigationBar: bottomNavBar,
