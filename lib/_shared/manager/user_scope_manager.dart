@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
+import 'package:meno/_shared/manager/interaction_manager.dart';
 import 'package:meno/_shared/manager/live_scope_manager.dart';
 import 'package:meno/_shared/services/_services.dart';
 import 'package:meno/features/auth/auth.dart';
@@ -212,6 +213,7 @@ class UserScopeManager with MLogger implements Disposable {
   /// Dispose the current scope if it exists.
   Future<void> _disposeCurrentScope() async {
     if (_currentUserId != null && di.currentScopeName == _scopeName) {
+      di<InteractionManager>().removeToastOverlay();
       await di.popScopesTill(kRootScope, inclusive: false);
       log.w('UserScopeManager: Previous scope disposed');
     }

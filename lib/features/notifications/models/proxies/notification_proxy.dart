@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_core/exceptions/meno_exception_filter.dart';
 import 'package:meno/features/notifications/models/_models.dart';
 import 'package:meno/features/notifications/services/_services.dart';
 
@@ -37,7 +36,6 @@ final class NotificationProxy extends ChangeNotifier implements Disposable {
       _isReadOverride = stack.pop();
       notifyListeners();
     },
-    errorFilterFn: menoExceptionFilter,
   );
 
   late final delete = Command.createUndoableNoParamNoResult<Notification>(
@@ -51,7 +49,6 @@ final class NotificationProxy extends ChangeNotifier implements Disposable {
     undo: (stack, reason) {
       stack.pop();
     },
-    errorFilterFn: menoExceptionFilter,
   );
 
   @override

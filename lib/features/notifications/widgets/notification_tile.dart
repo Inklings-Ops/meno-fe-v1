@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/features/notifications/models/_models.dart';
@@ -100,6 +101,7 @@ class _LiveBroadcastNotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = MColorScheme.of(context);
     final styles = MCardStyles.of(context);
     final time = timeago.format(notification.createdAt ?? DateTime.now());
 
@@ -108,7 +110,7 @@ class _LiveBroadcastNotificationTile extends StatelessWidget {
       decoration: ShapeDecoration(
         color: styles.nBackgroundColor,
         shape: const RoundedSuperellipseBorder(
-          borderRadius: BorderRadiusGeometry.all(.circular(16)),
+          borderRadius: .all(.circular(16)),
         ),
       ),
       child: Row(
@@ -116,7 +118,7 @@ class _LiveBroadcastNotificationTile extends StatelessWidget {
         children: [
           const MBadge.small(),
           Spaces.horizontalSmall,
-          const MAvatar(radius: 24),
+          const MAvatar(radius: 24, child: Icon(MIcons.image)),
           Spaces.horizontalSmall,
           Expanded(
             child: Column(
@@ -124,6 +126,7 @@ class _LiveBroadcastNotificationTile extends StatelessWidget {
               children: [
                 MText(
                   notification.content!.title!,
+                  color: colors.onBackground,
                   style: styles.nTitleTextStyle,
                   maxLines: 4,
                 ),
@@ -137,21 +140,39 @@ class _LiveBroadcastNotificationTile extends StatelessWidget {
             ),
           ),
           Spaces.horizontalSmall,
-          Container(
-            height: 80,
-            width: 88,
-            decoration: BoxDecoration(
-              borderRadius: Corners.md,
-              border: Border.all(),
-              image: notification.content?.imageUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(notification.content!.imageUrl!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
+          if (notification.content?.imageUrl != null) ...[
+            CachedNetworkImage(
+              height: 80,
+              width: 88,
+              imageUrl: notification.content!.imageUrl!,
+              imageBuilder: (context, imageProvider) => DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: Corners.md,
+                  border: .all(),
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => const MShimmer(borderRadius: 16),
             ),
-            child: const Center(child: MPlaceholder(dimension: 30)),
-          ),
+          ] else ...[
+            Container(
+              height: 80,
+              width: 88,
+              alignment: .center,
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: Corners.md,
+                border: .all(),
+              ),
+              child: switch (colors.brightness) {
+                .dark => Assets.images.logoLight.svg(height: 32),
+                _ => Assets.images.logoDark.svg(height: 32),
+              },
+            ),
+          ],
           Spaces.horizontalSmall,
           const SizedBox(
             width: 16,
