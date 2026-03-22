@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:meno/features/notifications/widgets/notification_toast_stack.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 final class InteractionManager {
   BuildContext? _context;
+  OverlayEntry? _toastOverlayEntry;
 
-  void setContext(BuildContext context) => _context = context;
+  void setContext(BuildContext context) {
+    _context = context;
+    _ensureToastOverlay();
+  }
 
   BuildContext get stableContext {
     final ctx = _context;
@@ -44,5 +49,34 @@ final class InteractionManager {
         ),
       ),
     );
+  }
+
+  void _ensureToastOverlay() {
+    // Already inserted — nothing to do
+    if (_toastOverlayEntry != null) return;
+
+    final overlay = Overlay.maybeOf(stableContext);
+    if (overlay == null) return;
+
+    _toastOverlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.paddingOf(context).top + 8,
+        left: 16,
+        right: 16,
+        child: const NotificationToastStack(),
+      ),
+    );
+
+    // Schedule insertion after the current frame — overlay must be mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_toastOverlayEntry != null) {
+        overlay.insert(_toastOverlayEntry!);
+      }
+    });
+  }
+
+  void removeToastOverlay() {
+    _toastOverlayEntry?.remove();
+    _toastOverlayEntry = null;
   }
 }

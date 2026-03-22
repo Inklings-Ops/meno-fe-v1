@@ -31,7 +31,6 @@ class MyProfileManager with MLogger implements Disposable {
 
     final remoteProfile = await _http.getProfile(_currentUserId);
     _profile.value = remoteProfile;
-
     unawaited(_local.cacheProfile(_currentUserId, remoteProfile));
   }, errorFilterFn: menoExceptionFilter);
 
@@ -50,6 +49,7 @@ class MyProfileManager with MLogger implements Disposable {
         ),
       ),
     );
+    unawaited(_local.cacheProfile(_currentUserId, _profile.value));
   }
 
   @override

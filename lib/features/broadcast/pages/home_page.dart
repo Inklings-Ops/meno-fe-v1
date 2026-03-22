@@ -4,7 +4,6 @@ import 'package:meno/_core/value_objects/image_value_objects.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
-import 'package:meno/features/broadcast/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class HomePage extends StatelessWidget {
@@ -86,7 +85,7 @@ class _LiveForYouSection extends WatchingWidget {
           return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
-            onTap: () {},
+            onTap: () => PreStreamModal.show(context, broadcast),
           );
         },
       ),
@@ -128,7 +127,7 @@ class _NowLiveSection extends WatchingWidget {
           return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
-            onTap: () {},
+            onTap: () => PreStreamModal.show(context, broadcast),
           );
         },
       ),

@@ -116,39 +116,37 @@ class PreStreamArtwork extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
 
-    final hasImage = url != null;
+    Widget imageWidget = Center(
+      child: SizedBox(
+        height: 142 * 0.4,
+        child: switch (colors.brightness) {
+          .dark => Assets.images.logoLight.svg(),
+          _ => Assets.images.logoDark.svg(),
+        },
+      ),
+    );
 
-    DecorationImage? image;
-
-    if (hasImage) {
-      image = DecorationImage(
-        image: CachedNetworkImageProvider(url!, maxHeight: 240, maxWidth: 240),
-        fit: BoxFit.cover,
+    if (url != null) {
+      imageWidget = CachedNetworkImage(
+        imageUrl: url!,
+        height: 142,
+        width: 142,
+        imageBuilder: (context, imageProvider) => DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: Corners.lg,
+            border: Border.all(color: colors.outlineVariant1),
+            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+          ),
+        ),
+        placeholder: (context, url) => const MShimmer(borderRadius: 16),
       );
     }
 
-    final placeholder = SizedBox(
-      height: 142 * 0.4,
-      child: switch (colors.brightness) {
-        .dark => Assets.images.logoLight.svg(),
-        _ => Assets.images.logoDark.svg(),
-      },
-    );
-
-    return Container(
-      height: 142,
-      width: 142,
-      decoration: BoxDecoration(
-        borderRadius: Corners.lg,
-        border: Border.all(color: colors.outlineVariant1),
-        image: image,
-      ),
-      child: hasImage ? null : Center(child: placeholder),
-    );
+    return imageWidget;
   }
 }
 
-class PreStreamActionButtons extends StatelessWidget {
+class PreStreamActionButtons extends WatchingWidget {
   const PreStreamActionButtons({required this.broadcast, super.key});
 
   final Broadcast broadcast;
@@ -159,6 +157,7 @@ class PreStreamActionButtons extends StatelessWidget {
     final textTheme = MTextTheme.of(context);
 
     final stream = di<StreamManager>();
+    final isJoining = watchValue((StreamManager m) => m.isRunning);
 
     return SizedBox(
       height: 32,
@@ -167,6 +166,7 @@ class PreStreamActionButtons extends StatelessWidget {
           Expanded(
             child: MPrimaryButton(
               label: 'Join',
+              loading: isJoining,
               style: ElevatedButton.styleFrom(
                 shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
                 textStyle: textTheme.microMedium,
@@ -246,7 +246,7 @@ class PreStreamRecentBroadcastsSection extends WatchingWidget {
         feedSource: feedSource,
         horizontalItemExtent: 148,
         layout: .horizontalList,
-        padding: const .symmetric(horizontal: 16),
+        padding: .zero,
         itemBuilder: (context, broadcast) {
           if (broadcast == null) return const SizedBox.shrink();
           return BroadcastCard.rLive(

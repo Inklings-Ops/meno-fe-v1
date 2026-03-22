@@ -192,9 +192,12 @@ final class BroadcastQuery with EquatableMixin {
     PaginationParams pagination = const PaginationParams(),
   }) => const BroadcastQuery(
     type: BroadcastsType.forYou,
-    sortParams: SortParams.startTimeDesc,
     includeTotalListeners: true,
     onlySubscriptions: true,
+    sortParams: SortParams.startTimeAsc,
+    endTimeRange: TimeRange.notExists(),
+    startTimeRange: TimeRange.exists(),
+    status: BroadcastStatus.active,
   ).copyWith(pagination: pagination);
 
   /// User's subscriptions

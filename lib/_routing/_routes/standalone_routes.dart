@@ -5,6 +5,7 @@ import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno/features/discover/pages/discover_search_page.dart';
 import 'package:meno/features/notes/notes.dart';
+import 'package:meno/features/notifications/pages/notifications_page.dart';
 import 'package:meno/features/onboarding/pages/onboarding_page.dart';
 import 'package:meno/features/profile/pages/_pages.dart';
 
@@ -16,6 +17,10 @@ final class StandaloneRoutes {
   static List<RouteBase> get routes => [
     GoRoute(path: R.loading, builder: (_, __) => const LoadingPage()),
     GoRoute(path: R.onboarding, builder: (_, __) => const OnboardingPage()),
+    GoRoute(
+      path: R.notifications,
+      builder: (_, __) => const NotificationsPage(),
+    ),
     GoRoute(
       path: R.discoverSearch,
       builder: (_, __) => const DiscoverSearchPage(),

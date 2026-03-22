@@ -246,7 +246,7 @@ enum SocketEvent {
   endedBroadcast('endedBroadcast'),
   leaveBroadcast('leaveBroadcast'),
   startedBroadcast('startedBroadcast'),
-  joinedBroadcast('joinedBroadcast'),
+  joinBroadcast('joinBroadcast'),
   endBroadcast('endBroadcast'),
   newBroadcastListener('newBroadcastListener'),
   broadcastListenerLeft('broadcastListenerLeft'),

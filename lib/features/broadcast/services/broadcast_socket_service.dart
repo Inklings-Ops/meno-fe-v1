@@ -26,7 +26,7 @@ final class BroadcastSocketService with MLogger {
   }
 
   Future<dynamic> emitJoinedBroadcast(Id broadcastId) async {
-    return _client.emitWithAck(.joinedBroadcast, {
+    return _client.emitWithAck(.joinBroadcast, {
       'broadcastId': broadcastId.getOrCrash(),
     });
   }

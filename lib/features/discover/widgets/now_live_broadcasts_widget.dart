@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/services/_services.dart';
+import 'package:meno/features/broadcast/widgets/pre_stream_modal.dart';
 
 class NowLiveBroadcastsWidget extends WatchingWidget {
   const NowLiveBroadcastsWidget({super.key});
@@ -29,7 +30,7 @@ class NowLiveBroadcastsWidget extends WatchingWidget {
         return BroadcastCard.nLive(
           broadcast,
           key: ValueKey(broadcast.id.getOrCrash()),
-          onTap: () {},
+          onTap: () => PreStreamModal.show(context, broadcast),
         );
       },
     );

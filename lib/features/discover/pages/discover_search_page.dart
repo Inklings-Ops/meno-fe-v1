@@ -4,6 +4,7 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/model/entities/broadcast.dart';
 import 'package:meno/features/broadcast/services/broadcast_http_service.dart';
+import 'package:meno/features/broadcast/widgets/pre_stream_modal.dart';
 import 'package:meno/features/discover/discover.dart';
 import 'package:meno/features/profile/services/profile_http_service.dart';
 import 'package:meno/features/profile/widgets/profile_card.dart';
@@ -221,7 +222,10 @@ class _BroadcastCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Now Live Cards
     if (broadcast.isActive) {
-      return BroadcastCard.nLive(broadcast, onTap: () {});
+      return BroadcastCard.nLive(
+        broadcast,
+        onTap: () => PreStreamModal.show(context, broadcast),
+      );
     }
 
     // Recently Live Cards
