@@ -135,7 +135,7 @@ class _NotesListView extends WatchingWidget {
       notes: notes,
       isNested: true,
       isLoading: isLoading,
-      onNoteTap: (note) => context.push(R.liveNoteEditor(note.id.getOrCrash())),
+      onNoteTap: (note) => context.push(R.noteEditor(note.id.getOrCrash())),
       onNoteLongPress: (note) => NoteOptionsModal.show(context, note),
       onNoteOptionsTap: (note) => NoteOptionsModal.show(context, note),
     );

@@ -69,13 +69,15 @@ class NoteEditorWidget extends WatchingWidget {
                     child: NoteTitleField(quillFocusNode: quillFocusNode),
                   ),
                 ),
-                if (folder != null)
+                if (folder != null) ...[
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: padding,
                       child: FolderTag(folder: folder),
                     ),
                   ),
+                  const SliverToBoxAdapter(child: Spaces.verticalLarge),
+                ],
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Padding(

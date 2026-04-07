@@ -36,6 +36,7 @@ class NoteEditorManager with MLogger implements Disposable {
   // =========================================================================
   final note = ValueNotifier<Note>(.empty);
   final status = ValueNotifier<NoteEditorStatus>(.idle);
+  late final isEdit = ValueNotifier<bool>(_noteId != null);
 
   // =========================================================================
   // INITIALISATION
@@ -145,6 +146,7 @@ class NoteEditorManager with MLogger implements Disposable {
     log.i('NoteEditorManager: Disposing...');
     note.dispose();
     status.dispose();
+    isEdit.dispose();
 
     initialize.dispose();
     _debounce?.cancel();

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:meno/_core/value_objects/id.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/chat/model/_model.dart';
@@ -18,9 +20,9 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
        _socket = socket,
        _repository = repository,
        _broadcastId = broadcastId,
-       // Pass the debounce duration — socket bursts are coalesced,
-       // page loads always flush immediately via flushItemCount().
-       super(debounceDuration: _kChatDebounceDuration);
+       // We manage debouncing locally in this class to include sorting,
+       // so we pass null to super.
+       super(debounceDuration: null);
 
   final ChatHttpService _http;
   final ChatSocketService _socket;
@@ -41,7 +43,12 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
       pagination: PaginationParams(page: nextPageIndex, size: 100),
     );
 
-    items.addAll(response.items.map(_repository.acquire));
+    final currentIds = items.map((i) => i.idStr).toSet();
+    final newItems = response.items
+        .where((m) => !currentIds.contains(m.id.getOrCrash()))
+        .map(_repository.acquire);
+
+    items.addAll(newItems);
 
     updatePaginationState(
       currentPage: nextPageIndex,
@@ -63,9 +70,8 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
         .toList();
 
     if (newMessages.isNotEmpty) {
-      // Prepend new messages in reverse order (server returns newest first)
-      // We do this manually to avoid repeated O(N) shifts and refresh calls
-      final newProxies = newMessages.reversed.map((m) {
+      // Prepend new messages.
+      final newProxies = newMessages.map((m) {
         final proxy = _repository.acquire(m);
         proxy.referenceCount++; // Feed reference
         _repository.release(proxy); // Release acquire reference
@@ -85,6 +91,30 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
     updatePaginationState(currentPage: 1, totalPages: result.totalPages);
 
     flushItemCount(); // the full first page must appear without delay.
+  }
+
+  void _sort() {
+    items.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+  }
+
+  /// Timer for debouncing sort and UI updates.
+  Timer? _localDebounceTimer;
+
+  /// Overridden to ensure we only sort and notify the UI once per burst
+  /// (every [_kChatDebounceDuration]).
+  @override
+  void refreshItemCount() {
+    _localDebounceTimer?.cancel();
+    _localDebounceTimer = Timer(_kChatDebounceDuration, flushItemCount);
+  }
+
+  /// Immediately flushes the pending sort and notification.
+  @override
+  void flushItemCount() {
+    _localDebounceTimer?.cancel();
+    _localDebounceTimer = null;
+    _sort();
+    super.refreshItemCount();
   }
 
   void addMessageAtStart(Message message) {
@@ -124,6 +154,8 @@ final class ChatFeedSource extends PagedFeedDataSource<MessageProxy> {
 
   @override
   void onDispose() {
+    _localDebounceTimer?.cancel();
+    _localDebounceTimer = null;
     // Release all proxies the feed currently holds before tearing down.
     _repository.releaseAll(List<MessageProxy>.from(items));
     items.clear();

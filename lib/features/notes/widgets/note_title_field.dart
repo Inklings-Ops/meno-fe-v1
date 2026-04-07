@@ -13,6 +13,7 @@ class NoteTitleField extends WatchingWidget {
     final textTheme = MTextTheme.of(context);
 
     final manager = di<NoteEditorManager>();
+    final isEdit = watchValue((NoteEditorManager m) => m.isEdit);
 
     final controller = createOnce(() {
       final currentTitle = manager.note.value.title.getOrElse((_) => '');
@@ -23,7 +24,7 @@ class NoteTitleField extends WatchingWidget {
 
     return TextFormField(
       controller: controller,
-      autofocus: true,
+      autofocus: !isEdit,
       style: textTheme.heading3Bold,
       textInputAction: .next,
       maxLines: null,
