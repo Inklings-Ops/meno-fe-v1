@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
+import 'package:meno/_shared/manager/live_scope_manager.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -13,9 +14,11 @@ class PreStreamModal extends WatchingWidget {
 
   final Id broadcastId;
 
-  // static Future<T?> show<T>(BuildContext context, Id broadcastId) {
-  //   return context.push<T?>(R.preStream(broadcastId.getOrCrash()));
-  // }
+  static Future<void> show(BuildContext context, Id broadcastId) {
+    final activeId = di<LiveScopeManager>().activeBroadcastId.value;
+    if (activeId == broadcastId) return context.push(R.liveBroadcast);
+    return context.push(R.preStream(broadcastId.getOrCrash()));
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/_routing/_routing.dart';
@@ -29,6 +30,10 @@ class LiveScopeManager with MLogger implements Disposable {
 
   Future<void> _queue = Future<void>.value();
   String? _currentScopeName;
+
+  /// The ID of the broadcast currently in the live scope, or null when idle.
+  /// Safe to watch from any widget in the user scope — always registered.
+  final activeBroadcastId = ValueNotifier<Id?>(null);
 
   Future<void> initialize() async {
     log.i('LiveScopeManager: Initializing for user $_currentUserId');
@@ -168,6 +173,7 @@ class LiveScopeManager with MLogger implements Disposable {
         },
       );
       _currentScopeName = targetScopeName;
+      activeBroadcastId.value = session.broadcast.id;
       log.i('LiveScopeManager: Entered $targetScopeName successfully');
     } catch (error, stackStrace) {
       log.e('LiveScopeManager Error', error: error, stackTrace: stackStrace);
@@ -210,10 +216,12 @@ class LiveScopeManager with MLogger implements Disposable {
       // GetIt will automatically dispose all registered services
       await di.popScope();
       _currentScopeName = null;
+      activeBroadcastId.value = null;
       log.i('LiveScopeManager: Exited live scope successfully');
     } catch (e) {
       log.e('LiveScopeManager: Error exiting live scope - $e');
       _currentScopeName = null;
+      activeBroadcastId.value = null;
     }
   }
 
@@ -262,6 +270,7 @@ class LiveScopeManager with MLogger implements Disposable {
 
     await _popScope();
 
+    activeBroadcastId.dispose();
     log.d('LiveScopeManager: Disposed');
   }
 }

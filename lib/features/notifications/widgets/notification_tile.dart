@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter_it/flutter_it.dart';
-import 'package:meno/_routing/_routing.dart';
+import 'package:meno/features/broadcast/widgets/pre_stream_modal.dart';
 import 'package:meno/features/notifications/models/_models.dart';
 import 'package:meno/features/notifications/widgets/notification_options_modal.dart';
 import 'package:meno_design_system/meno_design_system.dart';
@@ -36,7 +36,7 @@ class NotificationCard extends WatchingWidget {
           final broadcastId2 = notification.content?.broadcastId;
           final effectiveBroadcastId = broadcastId1 ?? broadcastId2;
           if (effectiveBroadcastId == null) return;
-          context.push(R.preStream(effectiveBroadcastId));
+          PreStreamModal.show(context, .fromString(effectiveBroadcastId));
           proxy.markAsRead.run();
         },
       ),
