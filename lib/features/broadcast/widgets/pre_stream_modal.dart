@@ -92,7 +92,7 @@ class _LoadingSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.sizeOf(context).height * 0.22,
+      height: MediaQuery.sizeOf(context).height * 0.20,
       child: _TopSection(broadcast: fakeLiveBroadcast, isLoading: true),
     );
   }
@@ -157,13 +157,16 @@ class PreStreamArtwork extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = MColorScheme.of(context);
 
-    Widget imageWidget = Center(
-      child: SizedBox(
-        height: 142 * 0.4,
-        child: switch (colors.brightness) {
-          .dark => Assets.images.logoLight.svg(),
-          _ => Assets.images.logoDark.svg(),
-        },
+    Widget imageWidget = SizedBox.square(
+      dimension: 142,
+      child: Center(
+        child: SizedBox(
+          height: 142 * 0.4,
+          child: switch (colors.brightness) {
+            .dark => Assets.images.logoLight.svg(),
+            _ => Assets.images.logoDark.svg(),
+          },
+        ),
       ),
     );
 

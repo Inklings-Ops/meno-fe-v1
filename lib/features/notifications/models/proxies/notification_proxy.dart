@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/features/notifications/managers/notifications_manager.dart';
 import 'package:meno/features/notifications/models/_models.dart';
 import 'package:meno/features/notifications/services/_services.dart';
 
@@ -28,12 +29,14 @@ final class NotificationProxy extends ChangeNotifier implements Disposable {
 
       stack.push(isRead);
       _isReadOverride = !isRead;
+      di<NotificationsManager>().syncUnreadCount();
       notifyListeners();
 
       await di<NotificationsHttpService>().markAsRead(id);
     },
     undo: (stack, reason) {
       _isReadOverride = stack.pop();
+      di<NotificationsManager>().syncUnreadCount();
       notifyListeners();
     },
   );

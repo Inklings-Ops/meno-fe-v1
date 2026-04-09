@@ -5,21 +5,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/meno_logger.dart';
 import 'package:meno/_shared/services/_services.dart';
-import 'package:meno/features/notifications/models/_models.dart';
-import 'package:meno/features/notifications/services/_services.dart';
+import 'package:meno/features/notifications/notifications.dart';
 
 class NotificationsManager with MLogger implements Disposable {
   NotificationsManager({
+    required NotificationsHttpService http,
     required NotificationsSocketService socket,
     required PushNotificationsService pushService,
     required LocalNotificationsService localNotifications,
   }) : _socket = socket,
        _pushService = pushService,
-       _localNotifications = localNotifications;
+       _localNotifications = localNotifications,
+       feed = NotificationsFeedSource(http);
 
   final NotificationsSocketService _socket;
   final PushNotificationsService _pushService;
   final LocalNotificationsService _localNotifications;
+  final NotificationsFeedSource feed;
 
   final unreadCount = ValueNotifier<int>(0);
   final fcmToken = ValueNotifier<String?>(null);
@@ -69,11 +71,19 @@ class NotificationsManager with MLogger implements Disposable {
       _dismissTimer?.cancel();
       _dismissTimer = Timer(const Duration(seconds: 4), dismissToasts);
     });
+
+    feed.updateDataCommand.listen((_, __) => syncUnreadCount());
+
+    feed.updateDataCommand.run();
   }
 
   void dismissToasts() => recentNotifications.value = [];
 
   void resetNewCount() => newNotificationCount.value = 0;
+
+  void syncUnreadCount() {
+    unreadCount.value = feed.items.where((n) => !n.isRead).length;
+  }
 
   @override
   FutureOr<dynamic> onDispose() async {
@@ -94,5 +104,7 @@ class NotificationsManager with MLogger implements Disposable {
 
     newNotificationCount.dispose();
     recentNotifications.dispose();
+
+    feed.onDispose();
   }
 }

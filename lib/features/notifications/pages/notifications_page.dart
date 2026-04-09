@@ -10,17 +10,11 @@ class NotificationsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feedSource = createOnce(
-      () => NotificationsFeedSource(di<NotificationsHttpService>()),
-      dispose: (source) => source.onDispose(),
-    );
-
-    callOnce((_) => feedSource.updateDataCommand.run());
-
+    final manager = di<NotificationsManager>();
     return MScaffold(
       appBar: const _AppBar(),
       body: CustomScrollView(
-        slivers: [_NotificationsPageView(feedSource: feedSource)],
+        slivers: [_NotificationsPageView(feedSource: manager.feed)],
       ),
     );
   }

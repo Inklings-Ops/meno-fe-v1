@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/features/broadcast/manager/live_session_manager.dart';
 import 'package:meno/features/broadcast/model/live_session_state.dart';
+import 'package:meno/features/chat/manager/chat_list_manager.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class LiveSessionShell extends WatchingStatefulWidget {
@@ -38,6 +39,7 @@ class LiveSessionShellState extends State<LiveSessionShell>
   @override
   Widget build(BuildContext context) {
     final state = watchValue((LiveSessionManager m) => m.state);
+    final hasChatDot = watch(showChatDot).value;
 
     registerHandler(
       select: (LiveSessionManager m) => m.endSession,
@@ -54,7 +56,7 @@ class LiveSessionShellState extends State<LiveSessionShell>
           key: const Key('LiveSessionLayoutAppBar'),
           controller: controller,
           onTabChanged: onDirectTabTap,
-          showChatDot: showChatDot.value,
+          showChatDot: hasChatDot,
         ),
         body: MTabBarView(
           controller: controller,
@@ -76,6 +78,14 @@ class LiveSessionShellState extends State<LiveSessionShell>
 
     controller.addListener(handleTabControllerIndexChange);
 
+    // Clear dot when user navigates to chat tab (index 1)
+    controller.addListener(() {
+      if (controller.index == 1 && showChatDot.value) showChatDot.value = false;
+    });
+
+    // Light up dot on new messages when not on chat tab
+    di<ChatListManager>().feed.itemCount.addListener(_onNewMessage);
+
     if (controller.index != widget.navigationShell.currentIndex) {
       controller.index = widget.navigationShell.currentIndex;
     }
@@ -84,6 +94,7 @@ class LiveSessionShellState extends State<LiveSessionShell>
   @override
   void dispose() {
     controller.removeListener(handleTabControllerIndexChange);
+    di<ChatListManager>().feed.itemCount.removeListener(_onNewMessage);
     controller.dispose();
     showChatDot.dispose();
     super.dispose();
@@ -105,6 +116,10 @@ class LiveSessionShellState extends State<LiveSessionShell>
         widget.navigationShell.goBranch(tappedIndex);
       }
     }
+  }
+
+  void _onNewMessage() {
+    if (controller.index != 1) showChatDot.value = true;
   }
 
   // Centralized logic to show/hide the chat dot
