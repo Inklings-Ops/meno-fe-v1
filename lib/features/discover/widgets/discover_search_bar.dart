@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
@@ -34,7 +35,12 @@ class DiscoverSearchBar extends StatelessWidget {
                 readOnly: readOnly,
                 elevation: const WidgetStatePropertyAll(0),
                 autoFocus: true,
-                onTap: () => context.push(R.discoverSearch),
+                onTap: () {
+                  final currentLocation = di<MenoRouter>().currentLocation;
+                  final isSearching = currentLocation == R.discoverSearch;
+                  if (isSearching) return;
+                  context.push(R.discoverSearch);
+                },
                 controller: controller,
                 onSubmitted: onSubmitted,
                 textInputAction: TextInputAction.search,

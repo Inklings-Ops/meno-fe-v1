@@ -40,6 +40,17 @@ class _SearchView extends WatchingWidget {
   Widget build(BuildContext context) {
     final manager = di<DiscoverSearchManager>();
 
+    final searchTextController = createOnce(() {
+      final controller = TextEditingController(text: manager.query.value);
+      manager.query.listen((newValue, p1) {
+        if (controller.text != newValue) {
+          controller.text = newValue;
+          controller.selection = .collapsed(offset: newValue.length);
+        }
+      });
+      return controller;
+    });
+
     final scrollController = createOnce(() {
       final controller = ScrollController();
       controller.addListener(() {
@@ -62,6 +73,7 @@ class _SearchView extends WatchingWidget {
             padding: const .fromLTRB(16, 8, 16, 4),
             showCancelButton: true,
             onSubmitted: manager.search.run,
+            controller: searchTextController,
           ),
         ),
       ),
@@ -128,8 +140,8 @@ class _RecentSearchesWidget extends WatchingWidget {
                 icon: const Icon(MIcons.x_close),
               ),
               onTap: () {
-                manager.search.run(term);
                 manager.query.value = term;
+                manager.search.run(term);
               },
             );
           },
