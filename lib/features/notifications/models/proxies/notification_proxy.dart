@@ -30,7 +30,7 @@ final class NotificationProxy extends ChangeNotifier implements Disposable {
       _isReadOverride = !isRead;
       notifyListeners();
 
-      await di<NotificationsHttpService>().updateNotification(id);
+      await di<NotificationsHttpService>().markAsRead(id);
     },
     undo: (stack, reason) {
       _isReadOverride = stack.pop();

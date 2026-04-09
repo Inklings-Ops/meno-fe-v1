@@ -60,7 +60,7 @@ class _NowLiveSection extends WatchingWidget {
           return BroadcastCard.nLive(
             broadcast,
             key: ValueKey(broadcast.id.getOrCrash()),
-            onTap: () => PreStreamModal.show(context, broadcast),
+            onTap: () => context.push(R.preStream(broadcast.id.getOrCrash())),
           );
         },
       ),

@@ -6,19 +6,45 @@ import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 import 'package:meno_design_system/meno_design_system.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class PreStreamModal extends WatchingWidget {
-  const PreStreamModal._({required this.broadcast}) : super(key: null);
-  final Broadcast broadcast;
+  const PreStreamModal({required this.broadcastId, super.key});
 
-  static Future<dynamic> show(BuildContext context, Broadcast broadcast) {
-    return showModalBottomSheet<dynamic>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      builder: (_) => PreStreamModal._(broadcast: broadcast),
+  final Id broadcastId;
+
+  // static Future<T?> show<T>(BuildContext context, Id broadcastId) {
+  //   return context.push<T?>(R.preStream(broadcastId.getOrCrash()));
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    callOnce((_) => di<StreamManager>().fetchBroadcast.run(broadcastId));
+
+    final isLoading = watchValue<StreamManager, bool>(
+      (manager) => manager.fetchBroadcast.isRunning,
+    );
+
+    final broadcast = watchValue<StreamManager, Broadcast>(
+      (manager) => manager.broadcast,
+    );
+
+    return MModal(
+      title: 'Stream',
+      padding: const .fromLTRB(16, 0, 16, 0),
+      builder: (context) {
+        if (isLoading) return const _LoadingSheet();
+        return _LoadedSheet(broadcast: broadcast);
+      },
     );
   }
+}
+
+class _LoadedSheet extends WatchingWidget {
+  const _LoadedSheet({required this.broadcast})
+    : super(key: const Key('pre-stream-modal-loaded'));
+
+  final Broadcast broadcast;
 
   @override
   Widget build(BuildContext context) {
@@ -30,41 +56,50 @@ class PreStreamModal extends WatchingWidget {
       },
     );
 
-    return MModal(
-      title: 'Stream',
-      padding: const .fromLTRB(16, 0, 16, 0),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.22,
-        minChildSize: 0.22,
-        maxChildSize: 0.85,
-        expand: false,
-        builder: (context, scrollController) => CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            SliverToBoxAdapter(child: _TopSection(broadcast: broadcast)),
-            const SliverToBoxAdapter(child: Spaces.verticalXLarge),
-            SliverToBoxAdapter(
-              child: PreStreamDescriptionSection(
-                description: broadcast.description,
-              ),
+    return DraggableScrollableSheet(
+      initialChildSize: 0.22,
+      minChildSize: 0.22,
+      maxChildSize: 0.85,
+      expand: false,
+      builder: (context, scrollController) => CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverToBoxAdapter(child: _TopSection(broadcast: broadcast)),
+          const SliverToBoxAdapter(child: Spaces.verticalXLarge),
+          SliverToBoxAdapter(
+            child: PreStreamDescriptionSection(
+              description: broadcast.description,
             ),
-            const SliverToBoxAdapter(child: Spaces.verticalXLarge),
-            SliverToBoxAdapter(
-              child: PreStreamRecentBroadcastsSection(
-                creatorId: broadcast.hostId,
-              ),
+          ),
+          const SliverToBoxAdapter(child: Spaces.verticalXLarge),
+          SliverToBoxAdapter(
+            child: PreStreamRecentBroadcastsSection(
+              creatorId: broadcast.hostId,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
+class _LoadingSheet extends StatelessWidget {
+  const _LoadingSheet() : super(key: const Key('pre-stream-modal-loading'));
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.22,
+      child: _TopSection(broadcast: fakeLiveBroadcast, isLoading: true),
+    );
+  }
+}
+
 class _TopSection extends StatelessWidget {
-  const _TopSection({required this.broadcast});
+  const _TopSection({required this.broadcast, this.isLoading = false});
 
   final Broadcast broadcast;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -72,36 +107,39 @@ class _TopSection extends StatelessWidget {
 
     return LimitedBox(
       maxHeight: 142,
-      child: Row(
-        children: [
-          PreStreamArtwork(url: broadcast.imageUrl),
-          Spaces.horizontalLarge,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: .start,
-              mainAxisAlignment: .center,
-              children: [
-                MText(
-                  broadcast.title.getOrCrash(),
-                  style: textTheme.subheadingMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                const MBadge.live(),
-                const SizedBox(height: 6),
-                MText(
-                  broadcast.hostName.getOrElse((_) => ''),
-                  style: textTheme.captionRegular,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Spaces.verticalMedium,
-                PreStreamActionButtons(broadcast: broadcast),
-              ],
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: Row(
+          children: [
+            PreStreamArtwork(url: broadcast.imageUrl),
+            Spaces.horizontalLarge,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: .start,
+                mainAxisAlignment: .center,
+                children: [
+                  MText(
+                    broadcast.title.getOrCrash(),
+                    style: textTheme.subheadingMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  const MBadge.live(),
+                  const SizedBox(height: 6),
+                  MText(
+                    broadcast.hostName.getOrElse((_) => ''),
+                    style: textTheme.captionRegular,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Spaces.verticalMedium,
+                  PreStreamActionButtons(broadcast: broadcast),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

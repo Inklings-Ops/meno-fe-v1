@@ -78,6 +78,7 @@ final class MenoRouter {
         ...StandaloneRoutes.routes,
         ...AuthRoutes.routes,
         ...SettingsRoutes.routes,
+        ...ModalRoutes.routes,
         LiveShellRoutes.shell,
         MainShellRoutes.shell,
       ],

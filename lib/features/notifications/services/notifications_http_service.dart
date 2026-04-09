@@ -31,4 +31,13 @@ class NotificationsHttpService {
   Future<void> updateNotification(String id, {CancelToken? cancelToken}) async {
     return _client.putUnit('/notifications/$id', cancelToken: cancelToken);
   }
+
+  Future<void> markAsRead(String id, {CancelToken? cancelToken}) async {
+    final data = <String, dynamic>{'read': true};
+    return _client.putUnit(
+      '/notifications/$id',
+      data: data,
+      cancelToken: cancelToken,
+    );
+  }
 }

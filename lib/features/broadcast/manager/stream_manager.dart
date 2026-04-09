@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_core/_core.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
 
-final class StreamManager with MLogger implements Disposable {
+class StreamManager with MLogger implements Disposable {
   StreamManager({
     required BroadcastHttpService http,
     required BroadcastLocalService local,
@@ -16,6 +17,13 @@ final class StreamManager with MLogger implements Disposable {
   final BroadcastHttpService _http;
   final BroadcastLocalService _local;
   final Id _currentUserId;
+
+  final broadcast = ValueNotifier<Broadcast>(.empty);
+
+  late final fetchBroadcast = Command.createAsyncNoResult<Id>((id) async {
+    final result = await _http.getBroadcast(id);
+    broadcast.value = result;
+  }, errorFilterFn: menoExceptionFilter);
 
   late final joinBroadcast = Command.createAsync<Id, Broadcast>(
     _http.joinBroadcast,
@@ -40,6 +48,9 @@ final class StreamManager with MLogger implements Disposable {
 
   @override
   FutureOr<dynamic> onDispose() {
+    broadcast.dispose();
+
+    fetchBroadcast.dispose();
     joinBroadcast.dispose();
     saveBroadcastSession.dispose();
   }

@@ -156,7 +156,7 @@ class LocalNotificationsService with MLogger {
 //       // A live broadcast started → go to that broadcast
 //       NotificationType.liveBroadcastStarted =>
 //         payload.broadcastId != null
-//             ? '/broadcasts/${payload.broadcastId}'
+//             ? R.preStream(broadcastId)
 //             : R.notifications,
 //     };
 //   }
