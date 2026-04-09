@@ -29,7 +29,7 @@ class SubscribeButton extends WatchingWidget {
 
     final defaultStyle = OutlinedButton.styleFrom(
       textStyle: textTheme.microMedium,
-      fixedSize: const Size(double.infinity, Insets.xxl),
+      fixedSize: const Size(double.infinity, 40),
       side: BorderSide(color: colors.primary),
       shape: const RoundedRectangleBorder(borderRadius: Corners.sm),
       backgroundColor: isSubscribed ? colors.primary : Colors.transparent,

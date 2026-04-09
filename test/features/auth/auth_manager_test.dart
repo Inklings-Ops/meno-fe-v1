@@ -8,13 +8,19 @@ import 'package:meno/features/onboarding/services/onboarding_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateMocks([AuthHttpService, AuthLocalService, OnboardingService])
+@GenerateMocks([
+  AuthHttpService,
+  AuthLocalService,
+  OnboardingService,
+  PushNotificationsService,
+])
 import 'auth_manager_test.mocks.dart';
 
 void main() {
   late AuthManager manager;
   late MockAuthHttpService mockHttp;
   late MockAuthLocalService mockLocal;
+  late MockPushNotificationsService mockPushService;
   late StreamController<UserCredentialDto?> authChangedController;
 
   final tUserId = Id.unique().getOrCrash();
@@ -36,13 +42,18 @@ void main() {
   setUp(() {
     mockHttp = MockAuthHttpService();
     mockLocal = MockAuthLocalService();
+    mockPushService = MockPushNotificationsService();
     authChangedController = StreamController<UserCredentialDto?>.broadcast();
 
     when(
       mockLocal.onCredentialChanged,
     ).thenAnswer((_) => authChangedController.stream);
 
-    manager = AuthManager(http: mockHttp, local: mockLocal);
+    manager = AuthManager(
+      http: mockHttp,
+      local: mockLocal,
+      pushService: mockPushService,
+    );
   });
 
   tearDown(() {

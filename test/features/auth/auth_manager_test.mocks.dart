@@ -3,17 +3,20 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i5;
 
-import 'package:dio/dio.dart' as _i6;
-import 'package:meno/features/auth/model/_model.dart' as _i8;
-import 'package:meno/features/auth/model/dtos/_dtos.dart' as _i4;
-import 'package:meno/features/auth/services/auth_http_service.dart' as _i2;
-import 'package:meno/features/auth/services/auth_local_service.dart' as _i7;
+import 'package:dio/dio.dart' as _i8;
+import 'package:firebase_messaging/firebase_messaging.dart' as _i3;
+import 'package:logger/logger.dart' as _i2;
+import 'package:meno/_shared/_shared.dart' as _i12;
+import 'package:meno/features/auth/model/_model.dart' as _i10;
+import 'package:meno/features/auth/model/dtos/_dtos.dart' as _i6;
+import 'package:meno/features/auth/services/auth_http_service.dart' as _i4;
+import 'package:meno/features/auth/services/auth_local_service.dart' as _i9;
 import 'package:meno/features/onboarding/services/onboarding_service.dart'
-    as _i9;
+    as _i11;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -30,16 +33,27 @@ import 'package:mockito/src/dummies.dart' as _i5;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
+class _FakeLogger_0 extends _i1.SmartFake implements _i2.Logger {
+  _FakeLogger_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeNotificationSettings_1 extends _i1.SmartFake
+    implements _i3.NotificationSettings {
+  _FakeNotificationSettings_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AuthHttpService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
+class MockAuthHttpService extends _i1.Mock implements _i4.AuthHttpService {
   MockAuthHttpService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i4.UserCredentialDto> login({
+  _i5.Future<_i6.UserCredentialDto> login({
     required String? email,
     required String? password,
     String? pushNotificationToken,
@@ -50,8 +64,8 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #password: password,
               #pushNotificationToken: pushNotificationToken,
             }),
-            returnValue: _i3.Future<_i4.UserCredentialDto>.value(
-              _i5.dummyValue<_i4.UserCredentialDto>(
+            returnValue: _i5.Future<_i6.UserCredentialDto>.value(
+              _i7.dummyValue<_i6.UserCredentialDto>(
                 this,
                 Invocation.method(#login, [], {
                   #email: email,
@@ -61,10 +75,10 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               ),
             ),
           )
-          as _i3.Future<_i4.UserCredentialDto>);
+          as _i5.Future<_i6.UserCredentialDto>);
 
   @override
-  _i3.Future<_i4.UserCredentialDto> register({
+  _i5.Future<_i6.UserCredentialDto> register({
     required String? fullName,
     required String? email,
     required String? password,
@@ -77,8 +91,8 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #password: password,
               #pushNotificationToken: pushNotificationToken,
             }),
-            returnValue: _i3.Future<_i4.UserCredentialDto>.value(
-              _i5.dummyValue<_i4.UserCredentialDto>(
+            returnValue: _i5.Future<_i6.UserCredentialDto>.value(
+              _i7.dummyValue<_i6.UserCredentialDto>(
                 this,
                 Invocation.method(#register, [], {
                   #fullName: fullName,
@@ -89,10 +103,10 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               ),
             ),
           )
-          as _i3.Future<_i4.UserCredentialDto>);
+          as _i5.Future<_i6.UserCredentialDto>);
 
   @override
-  _i3.Future<_i4.UserCredentialDto> googleSignIn({
+  _i5.Future<_i6.UserCredentialDto> googleSignIn({
     required String? idToken,
     String? pushNotificationToken,
   }) =>
@@ -101,8 +115,8 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #idToken: idToken,
               #pushNotificationToken: pushNotificationToken,
             }),
-            returnValue: _i3.Future<_i4.UserCredentialDto>.value(
-              _i5.dummyValue<_i4.UserCredentialDto>(
+            returnValue: _i5.Future<_i6.UserCredentialDto>.value(
+              _i7.dummyValue<_i6.UserCredentialDto>(
                 this,
                 Invocation.method(#googleSignIn, [], {
                   #idToken: idToken,
@@ -111,10 +125,10 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               ),
             ),
           )
-          as _i3.Future<_i4.UserCredentialDto>);
+          as _i5.Future<_i6.UserCredentialDto>);
 
   @override
-  _i3.Future<_i4.UserCredentialDto> googleSignUp({
+  _i5.Future<_i6.UserCredentialDto> googleSignUp({
     required String? idToken,
     String? pushNotificationToken,
   }) =>
@@ -123,8 +137,8 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #idToken: idToken,
               #pushNotificationToken: pushNotificationToken,
             }),
-            returnValue: _i3.Future<_i4.UserCredentialDto>.value(
-              _i5.dummyValue<_i4.UserCredentialDto>(
+            returnValue: _i5.Future<_i6.UserCredentialDto>.value(
+              _i7.dummyValue<_i6.UserCredentialDto>(
                 this,
                 Invocation.method(#googleSignUp, [], {
                   #idToken: idToken,
@@ -133,22 +147,22 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               ),
             ),
           )
-          as _i3.Future<_i4.UserCredentialDto>);
+          as _i5.Future<_i6.UserCredentialDto>);
 
   @override
-  _i3.Future<void> verifyEmail({
+  _i5.Future<void> verifyEmail({
     required String? email,
     required String? code,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#verifyEmail, [], {#email: email, #code: code}),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> changePassword({
+  _i5.Future<void> changePassword({
     required String? currentPassword,
     required String? newPassword,
   }) =>
@@ -157,22 +171,22 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #currentPassword: currentPassword,
               #newPassword: newPassword,
             }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> forgotPassword(String? email) =>
+  _i5.Future<void> forgotPassword(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#forgotPassword, [email]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> resetPassword({
+  _i5.Future<void> resetPassword({
     required String? email,
     required String? code,
     required String? newPassword,
@@ -183,125 +197,125 @@ class MockAuthHttpService extends _i1.Mock implements _i2.AuthHttpService {
               #code: code,
               #newPassword: newPassword,
             }),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> requestOtp({
+  _i5.Future<void> requestOtp({
     required String? email,
     required String? type,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#requestOtp, [], {#email: email, #type: type}),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> deleteUser([_i6.CancelToken? cancelToken]) =>
+  _i5.Future<void> deleteUser([_i8.CancelToken? cancelToken]) =>
       (super.noSuchMethod(
             Invocation.method(#deleteUser, [cancelToken]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [AuthLocalService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthLocalService extends _i1.Mock implements _i7.AuthLocalService {
+class MockAuthLocalService extends _i1.Mock implements _i9.AuthLocalService {
   MockAuthLocalService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Stream<_i4.UserCredentialDto?> get onCredentialChanged =>
+  _i5.Stream<_i6.UserCredentialDto?> get onCredentialChanged =>
       (super.noSuchMethod(
             Invocation.getter(#onCredentialChanged),
-            returnValue: _i3.Stream<_i4.UserCredentialDto?>.empty(),
+            returnValue: _i5.Stream<_i6.UserCredentialDto?>.empty(),
           )
-          as _i3.Stream<_i4.UserCredentialDto?>);
+          as _i5.Stream<_i6.UserCredentialDto?>);
 
   @override
-  _i3.Future<void> saveCredential(_i4.UserCredentialDto? dto) =>
+  _i5.Future<void> saveCredential(_i6.UserCredentialDto? dto) =>
       (super.noSuchMethod(
             Invocation.method(#saveCredential, [dto]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<_i4.UserCredentialDto?> getCredential() =>
+  _i5.Future<_i6.UserCredentialDto?> getCredential() =>
       (super.noSuchMethod(
             Invocation.method(#getCredential, []),
-            returnValue: _i3.Future<_i4.UserCredentialDto?>.value(),
+            returnValue: _i5.Future<_i6.UserCredentialDto?>.value(),
           )
-          as _i3.Future<_i4.UserCredentialDto?>);
+          as _i5.Future<_i6.UserCredentialDto?>);
 
   @override
-  _i3.Future<void> clearCredential() =>
+  _i5.Future<void> clearCredential() =>
       (super.noSuchMethod(
             Invocation.method(#clearCredential, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<_i8.Session?> getSession() =>
+  _i5.Future<_i10.Session?> getSession() =>
       (super.noSuchMethod(
             Invocation.method(#getSession, []),
-            returnValue: _i3.Future<_i8.Session?>.value(),
+            returnValue: _i5.Future<_i10.Session?>.value(),
           )
-          as _i3.Future<_i8.Session?>);
+          as _i5.Future<_i10.Session?>);
 
   @override
-  _i3.Future<void> updateSession(_i8.Session? session) =>
+  _i5.Future<void> updateSession(_i10.Session? session) =>
       (super.noSuchMethod(
             Invocation.method(#updateSession, [session]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<void> switchActiveUser(String? targetUserId) =>
+  _i5.Future<void> switchActiveUser(String? targetUserId) =>
       (super.noSuchMethod(
             Invocation.method(#switchActiveUser, [targetUserId]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i3.Future<Map<String, _i4.UserCredentialDto>> getAllAccounts() =>
+  _i5.Future<Map<String, _i6.UserCredentialDto>> getAllAccounts() =>
       (super.noSuchMethod(
             Invocation.method(#getAllAccounts, []),
-            returnValue: _i3.Future<Map<String, _i4.UserCredentialDto>>.value(
-              <String, _i4.UserCredentialDto>{},
+            returnValue: _i5.Future<Map<String, _i6.UserCredentialDto>>.value(
+              <String, _i6.UserCredentialDto>{},
             ),
           )
-          as _i3.Future<Map<String, _i4.UserCredentialDto>>);
+          as _i5.Future<Map<String, _i6.UserCredentialDto>>);
 
   @override
-  _i3.Future<void> removeAccount(String? userId) =>
+  _i5.Future<void> removeAccount(String? userId) =>
       (super.noSuchMethod(
             Invocation.method(#removeAccount, [userId]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i5.Future<void>);
 }
 
 /// A class which mocks [OnboardingService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockOnboardingService extends _i1.Mock implements _i9.OnboardingService {
+class MockOnboardingService extends _i1.Mock implements _i11.OnboardingService {
   MockOnboardingService() {
     _i1.throwOnMissingStub(this);
   }
@@ -312,10 +326,81 @@ class MockOnboardingService extends _i1.Mock implements _i9.OnboardingService {
           as bool);
 
   @override
-  _i3.Future<bool> completeOnboarding() =>
+  _i5.Future<bool> completeOnboarding() =>
       (super.noSuchMethod(
             Invocation.method(#completeOnboarding, []),
-            returnValue: _i3.Future<bool>.value(false),
+            returnValue: _i5.Future<bool>.value(false),
           )
-          as _i3.Future<bool>);
+          as _i5.Future<bool>);
+}
+
+/// A class which mocks [PushNotificationsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPushNotificationsService extends _i1.Mock
+    implements _i12.PushNotificationsService {
+  MockPushNotificationsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Stream<_i3.RemoteMessage> get onMessage =>
+      (super.noSuchMethod(
+            Invocation.getter(#onMessage),
+            returnValue: _i5.Stream<_i3.RemoteMessage>.empty(),
+          )
+          as _i5.Stream<_i3.RemoteMessage>);
+
+  @override
+  _i5.Stream<String> get onTokenRefresh =>
+      (super.noSuchMethod(
+            Invocation.getter(#onTokenRefresh),
+            returnValue: _i5.Stream<String>.empty(),
+          )
+          as _i5.Stream<String>);
+
+  @override
+  _i5.Stream<_i3.RemoteMessage> get onMessageOpenedApp =>
+      (super.noSuchMethod(
+            Invocation.getter(#onMessageOpenedApp),
+            returnValue: _i5.Stream<_i3.RemoteMessage>.empty(),
+          )
+          as _i5.Stream<_i3.RemoteMessage>);
+
+  @override
+  _i2.Logger get log =>
+      (super.noSuchMethod(
+            Invocation.getter(#log),
+            returnValue: _FakeLogger_0(this, Invocation.getter(#log)),
+          )
+          as _i2.Logger);
+
+  @override
+  _i5.Future<_i3.NotificationSettings> requestPermissions() =>
+      (super.noSuchMethod(
+            Invocation.method(#requestPermissions, []),
+            returnValue: _i5.Future<_i3.NotificationSettings>.value(
+              _FakeNotificationSettings_1(
+                this,
+                Invocation.method(#requestPermissions, []),
+              ),
+            ),
+          )
+          as _i5.Future<_i3.NotificationSettings>);
+
+  @override
+  _i5.Future<_i3.RemoteMessage?> getInitialMessage() =>
+      (super.noSuchMethod(
+            Invocation.method(#getInitialMessage, []),
+            returnValue: _i5.Future<_i3.RemoteMessage?>.value(),
+          )
+          as _i5.Future<_i3.RemoteMessage?>);
+
+  @override
+  _i5.Future<String?> getToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getToken, []),
+            returnValue: _i5.Future<String?>.value(),
+          )
+          as _i5.Future<String?>);
 }

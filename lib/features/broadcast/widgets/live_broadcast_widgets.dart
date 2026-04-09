@@ -116,7 +116,10 @@ class BroadcastAboutTab extends WatchingWidget {
             ],
           ),
           const MenoSpacer.v(Insets.lg),
-          MenoText.caption(desc.getOrNull() ?? '', weight: .regular),
+          MText(
+            desc.getOrNull() ?? '',
+            style: MTextTheme.of(context).captionRegular.copyWith(height: 1.4),
+          ),
         ],
       ),
     );

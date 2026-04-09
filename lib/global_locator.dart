@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -18,6 +20,11 @@ const String kRootScope = 'root-session';
 void configureGlobalDependencies() {
   // Push te root-session scope
   di.pushNewScope(scopeName: kRootScope);
+
+  // Push Notifications
+  di.registerSingleton(FlutterLocalNotificationsPlugin());
+  di.registerSingleton<FirebaseMessaging>(.instance);
+  di.registerSingleton(PushNotificationsService(di<FirebaseMessaging>()));
 
   // Core Resources
   di.registerSingleton<Logger>(Logger());
@@ -97,6 +104,7 @@ void configureGlobalDependencies() {
       final manager = AuthManager(
         http: di<AuthHttpService>(),
         local: di<AuthLocalService>(),
+        pushService: di<PushNotificationsService>(),
       );
       manager.startListening();
       manager.initialize.run();
@@ -192,4 +200,11 @@ void configureGlobalDependencies() {
   di.registerSingletonWithDependencies(() {
     return MenoRouter.create(di<AuthManager>(), di<OnboardingManager>());
   }, dependsOn: [AuthManager, OnboardingManager]);
+
+  // Local Notifications Service
+  di.registerSingletonAsync(() async {
+    final service = LocalNotificationsService(di<MenoRouter>());
+    await service.initialize();
+    return service;
+  }, dependsOn: [MenoRouter]);
 }

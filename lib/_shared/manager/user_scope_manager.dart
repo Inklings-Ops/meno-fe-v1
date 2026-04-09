@@ -89,10 +89,14 @@ class UserScopeManager with MLogger implements Disposable {
       return NotificationsSocketService(getIt<SocketClient>());
     }, dependsOn: [SocketClient]);
     getIt.registerSingletonAsync(() async {
-      final manager = NotificationsManager(getIt<NotificationsSocketService>());
+      final manager = NotificationsManager(
+        socket: getIt<NotificationsSocketService>(),
+        pushService: getIt<PushNotificationsService>(),
+        localNotifications: getIt<LocalNotificationsService>(),
+      );
       await manager.init();
       return manager;
-    }, dependsOn: [NotificationsSocketService]);
+    }, dependsOn: [NotificationsSocketService, LocalNotificationsService]);
 
     // Broadcasts
     getIt.registerSingletonWithDependencies(() {

@@ -8,9 +8,13 @@ import 'package:meno/features/auth/auth.dart';
 
 class AuthManager extends ChangeNotifier
     implements Disposable, WillSignalReady {
-  AuthManager({required AuthHttpService http, required AuthLocalService local})
-    : _http = http,
-      _local = local {
+  AuthManager({
+    required AuthHttpService http,
+    required AuthLocalService local,
+    required PushNotificationsService pushService,
+  }) : _http = http,
+       _local = local,
+       _pushService = pushService {
     initialize = Command.createAsyncNoParamNoResult(
       _initialize,
       errorFilterFn: menoExceptionFilter,
@@ -18,10 +22,15 @@ class AuthManager extends ChangeNotifier
 
     login = Command.createAsync<LoginArgs, UserCredential>(
       (args) async {
+        await _pushService.requestPermissions();
+        final pushNotificationToken = await _pushService.getToken();
+
         final dto = await _http.login(
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
+          pushNotificationToken: pushNotificationToken,
         );
+
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -30,11 +39,16 @@ class AuthManager extends ChangeNotifier
 
     register = Command.createAsync<RegisterArgs, UserCredential>(
       (args) async {
+        await _pushService.requestPermissions();
+        final pushNotificationToken = await _pushService.getToken();
+
         final dto = await _http.register(
           fullName: args.fullName.getOrCrash(),
           email: args.email.getOrCrash(),
           password: args.password.getOrCrash(),
+          pushNotificationToken: pushNotificationToken,
         );
+
         return _handleSuccessfulAuth(dto);
       },
       initialValue: UserCredential.empty,
@@ -119,6 +133,7 @@ class AuthManager extends ChangeNotifier
 
   final AuthHttpService _http;
   final AuthLocalService _local;
+  final PushNotificationsService _pushService;
 
   final _activeUserId = ValueNotifier<Id>(Id.empty);
   final _accounts = ValueNotifier<Map<Id, UserCredential>>({});

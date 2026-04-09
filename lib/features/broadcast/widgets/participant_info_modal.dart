@@ -8,7 +8,7 @@ import 'package:meno/features/profile/widgets/_widgets.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ParticipantInfoModal extends StatelessWidget {
+class ParticipantInfoModal extends WatchingWidget {
   const ParticipantInfoModal._({required this.participant}) : super(key: null);
 
   final Participant participant;

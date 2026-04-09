@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/features/broadcast/manager/live_session_manager.dart';
+import 'package:meno/features/broadcast/model/live_session_state.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
 class LiveSessionShell extends WatchingStatefulWidget {
@@ -36,9 +37,14 @@ class LiveSessionShellState extends State<LiveSessionShell>
 
   @override
   Widget build(BuildContext context) {
+    final state = watchValue((LiveSessionManager m) => m.state);
+
     registerHandler(
       select: (LiveSessionManager m) => m.endSession,
-      handler: (context, result, cancel) => context.go(R.endedBroadcast),
+      handler: (context, result, cancel) {
+        if (state is LiveSessionStreaming) return;
+        context.go(R.endedBroadcast);
+      },
     );
 
     return PopScope(

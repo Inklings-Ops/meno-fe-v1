@@ -1,6 +1,9 @@
 abstract class StorageKeys {
   const StorageKeys._();
 
+  // Firebase Cloud Messaging Token key
+  static const fcmToken = 'fcm_token';
+
   // Complete credential (for repository/UI)
   static const credential = 'current_user_credential';
 
