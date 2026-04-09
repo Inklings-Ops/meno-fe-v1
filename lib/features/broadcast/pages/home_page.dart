@@ -4,28 +4,43 @@ import 'package:meno/_core/value_objects/image_value_objects.dart';
 import 'package:meno/_routing/_routing.dart';
 import 'package:meno/_shared/_shared.dart';
 import 'package:meno/features/broadcast/broadcast.dart';
+import 'package:meno/features/profile/manager/my_profile_manager.dart';
+import 'package:meno/features/profile/model/entities/profile.dart';
 import 'package:meno_design_system/meno_design_system.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends WatchingWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: _AppBar(),
+    final profile = watchValue<MyProfileManager, Profile>((m) => m.profile);
+
+    // So, this is the check or flag I am using for now to determine which
+    // section to show - `_LiveForYouSection` or `_NowLiveSection`
+    //
+    // For now, I am checking if the currently authenticated user is
+    // following at least one account, if they are, then we show live broadcasts
+    // from the `_LiveForYouSection`, else, we show the `_NowLiveSection`
+    final isNewUser = profile.stats.subscriptions > 0;
+
+    return Scaffold(
+      appBar: const _AppBar(),
       body: SingleChildScrollView(
         clipBehavior: .none,
-        padding: .only(bottom: 32),
-        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        padding: const .only(bottom: 32),
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
         child: Column(
           children: <Widget>[
-            LiveSessionBanner(),
+            const LiveSessionBanner(),
             Spaces.verticalXLarge,
-            _LiveForYouSection(),
+            if (isNewUser)
+              const _LiveForYouSection()
+            else
+              const _NowLiveSection(),
             Spaces.verticalXXLarge,
-            _NowLiveSection(),
-            Spaces.verticalXXLarge,
-            _RecentlyLiveSection(),
+            const _RecentlyLiveSection(),
           ],
         ),
       ),
