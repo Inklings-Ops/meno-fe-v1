@@ -87,7 +87,7 @@ class BibleHttpService with MLogger {
 
     try {
       final bytes = Uint8List.fromList(utf8.encode(jsonString));
-      return compute(_parseVerseBytes, (
+      return await compute(_parseVerseBytes, (
         bytes: bytes,
         translation: translation,
       ));

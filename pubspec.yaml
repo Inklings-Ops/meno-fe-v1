@@ -33,7 +33,8 @@ dependencies:
   logger: ^2.6.2
   meno_design_system:
     git:
-      url: git@github.com:Inklings-Ops/meno_design_system.git
+      # url: git@github.com:Inklings-Ops/meno_design_system.git
+      url: https://github.com/Inklings-Ops/meno_design_system.git
       ref: master
   objectbox: ^5.2.0
   objectbox_flutter_libs: ^5.2.0

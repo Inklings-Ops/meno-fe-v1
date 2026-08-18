@@ -8,6 +8,13 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.mocks.dart"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   errors:
     avoid_js_rounded_ints: ignore
     avoid_positional_boolean_parameters: ignore
