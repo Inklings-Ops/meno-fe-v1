@@ -1,3 +1,3 @@
-# meno_fe_v1
+# meno
 
 A new Flutter project.

@@ -1,0 +1,100 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:meno/_routing/_routing.dart';
+import 'package:meno/features/broadcast/manager/live_session_manager.dart';
+import 'package:meno/features/broadcast/widgets/live_broadcast_widgets.dart';
+import 'package:meno/features/profile/model/proxies/user_profile_proxy.dart';
+import 'package:meno_design_system/meno_design_system.dart';
+
+class BroadcastInfoModal extends WatchingWidget {
+  const BroadcastInfoModal._() : super(key: null);
+
+  static Future<dynamic> show(BuildContext context) {
+    return showModalBottomSheet<dynamic>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (_) => const BroadcastInfoModal._(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final broadcast = watchValue((LiveSessionManager m) => m.broadcast);
+    final isHost = watchValue((LiveSessionManager m) => m.isHost);
+
+    final hostProxy = di<LiveSessionManager>().hostProxy;
+
+    return MModal(
+      builder: (context) => Column(
+        mainAxisSize: .min,
+        children: [
+          BroadcastArtworkWidget(imageUrl: broadcast.imageUrl),
+          Spaces.verticalSmall,
+          BroadcastTitleWidget(
+            title: broadcast.title,
+            maxLines: 1,
+            padding: const .symmetric(horizontal: 40),
+          ),
+          Spaces.verticalMicro,
+          Padding(
+            padding: const .symmetric(horizontal: 40),
+            child: Row(
+              mainAxisAlignment: .center,
+              children: [
+                BroadcastCreatorWidget(name: broadcast.hostName),
+                Spaces.horizontalSmall,
+                const BroadcastStatusWidget(),
+              ],
+            ),
+          ),
+          Spaces.verticalXLarge,
+          if (!isHost) ...[
+            MModalListTile(
+              leading: const Icon(MIcons.arrow_narrow_down_left),
+              title: 'Minimize Stream',
+              onTap: () => context.go(R.home),
+            ),
+            _SubscribeTile(proxy: hostProxy),
+          ],
+          MModalListTile(
+            leading: const Icon(MIcons.share),
+            title: 'Share',
+            onTap: () {},
+          ),
+          MModalListTile(
+            leading: const Icon(MIcons.link_02),
+            title: 'Copy Link',
+            onTap: () {},
+          ),
+          Spaces.verticalXLarge,
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscribeTile extends WatchingWidget {
+  const _SubscribeTile({required this.proxy});
+
+  final UserProfileProxy proxy;
+
+  @override
+  Widget build(BuildContext context) {
+    watch(proxy);
+
+    final isRunning = watch(proxy.isRunning).value;
+    final isSubscribed = proxy.isSubscribed;
+
+    void handleSubscription() {
+      if (isSubscribed) return proxy.unsubscribe.run();
+      return proxy.subscribe.run();
+    }
+
+    return MModalListTile(
+      leading: Icon(isSubscribed ? MIcons.user_minus_01 : MIcons.user_check),
+      title: isSubscribed ? 'Unsubscribe' : 'Subscribe',
+      onTap: isRunning ? null : handleSubscription,
+    );
+  }
+}
